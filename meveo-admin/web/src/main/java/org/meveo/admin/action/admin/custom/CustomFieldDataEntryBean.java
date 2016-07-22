@@ -46,11 +46,11 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.index.ElasticClient;
 import org.meveo.model.index.ElasticDocument;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.CustomScriptService;
@@ -90,6 +90,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    private UserService userService;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -674,7 +677,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         		}
         	}
         	if(BusinessEntity.class.isAssignableFrom(entity.getClass())){
-        		ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
+        		User creatorUser = userService.findById(((BusinessEntity)entity).getAuditable().getCreator().getId());
+        		ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity, creatorUser.getUserName());
         		esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity)); 
         		elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentProvider.getCode());
         	}
