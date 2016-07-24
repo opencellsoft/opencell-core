@@ -13,17 +13,15 @@ public class ProductTemplateService extends BusinessService<ProductTemplate> {
 
 	public long productTemplateActiveCount(boolean status) {
 		long result = 0;
-		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName() + " p WHERE p.disabled = "
-				+ status;
-		Query query = getEntityManager().createQuery(sqlQuery);
-		result = (long) query.getSingleResult();
-		return result;
-	}
 
-	public long productTemplateCount() {
-		long result = 0;
-		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName() + " p ";
-		Query query = getEntityManager().createQuery(sqlQuery);
+		Query query;
+
+		if (status) {
+			query = getEntityManager().createNamedQuery("ProductTemplate.countActive");
+		} else {
+			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled");
+		}
+
 		result = (long) query.getSingleResult();
 		return result;
 	}

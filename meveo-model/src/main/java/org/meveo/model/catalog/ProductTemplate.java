@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
@@ -23,6 +25,10 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
+@NamedQueries({
+		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false"),
+		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true"),
+		@NamedQuery(name = "ProductTemplate.countExpiring", query = "SELECT COUNT(*) FROM ProductTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
 public class ProductTemplate extends ProductOffering {
 
 	private static final long serialVersionUID = 6380565206599659432L;
@@ -34,10 +40,10 @@ public class ProductTemplate extends ProductOffering {
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
 	private BusinessProductModel businessProductModel;
-	
-    @ManyToOne
-    @JoinColumn(name = "INVOICING_CALENDAR_ID")
-    private Calendar invoicingCalendar;
+
+	@ManyToOne
+	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	private Calendar invoicingCalendar;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
@@ -67,6 +73,7 @@ public class ProductTemplate extends ProductOffering {
 	public void setInvoicingCalendar(Calendar invoicingCalendar) {
 		this.invoicingCalendar = invoicingCalendar;
 	}
+
 	public List<WalletTemplate> getWalletTemplates() {
 		return walletTemplates;
 	}

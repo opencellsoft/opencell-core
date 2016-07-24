@@ -5,7 +5,8 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/marketingManager/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui"
+	template="/marketingManager/layout/template.xhtml">
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
@@ -97,7 +98,7 @@
 					styleClass="ui-panelgrid-blank" id="productTemplateRow">
 					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 						<p:graphicImage id="productImage" cache="false"
-							value="#{productTemplateListBean.getImageArr(prod)}" height="100" width="100" url="#{productTemplateListBean.getImageArr(prod)}">
+							value="#{productTemplateImageStreamer.image}" height="100">
 							<f:param name="id" value="#{prod.id}"></f:param>
 						</p:graphicImage>
 						<p:panelGrid columns="2">
@@ -118,7 +119,8 @@
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 						<p:panel styleClass="TexAlRight">
 							<div class="FRight">
-								<p:inputSwitch value="#{prod.active}" onLabel="#{messages['accountStatusEnum.active']}"
+								<p:inputSwitch value="#{prod.active}"
+									onLabel="#{messages['accountStatusEnum.active']}"
 									offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 							</div>
 							<div class="FRight" style="padding-top: 5px; margin-right: 10px;">#{messages['commons.status']}</div>
@@ -134,7 +136,7 @@
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="edit" value="true" />
 							</h:link> -->
-							
+
 							<h:link styleClass="fa fa-edit" outcome="mmProductTemplateDetail">
 								<f:param name="objectId" value="#{prod.id}"></f:param>
 								<f:param name="cid"
