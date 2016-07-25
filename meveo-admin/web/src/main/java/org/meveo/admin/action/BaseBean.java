@@ -205,12 +205,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private int activeMainTab = 0;
 
     private Map<String, Boolean> writeAccessMap;
-    
-    @Inject
-    @RequestParam("formEdit")
-    private Instance<Boolean> formEditParam;
-    
-    private boolean formEdit = true;
 
     /**
      * Constructor
@@ -927,9 +921,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return
      */
-    public boolean isEdit() {
-        return true;
-    }
+	public boolean isEdit() {
+		if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit.get())) {
+			return true;
+		}
+
+		return Boolean.valueOf(edit.get());
+	}
 
     protected void clearObjectId() {
         objectIdFromParam = null;
@@ -1265,18 +1263,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 		
 		return null;
-	}
-
-	public boolean isFormEdit() {
-		if (formEditParam != null) {
-			return formEditParam.get();
-		}
-
-		return formEdit;
-	}
-
-	public void setFormEdit(boolean formEdit) {
-		this.formEdit = formEdit;
 	}
 
 }
