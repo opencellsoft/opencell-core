@@ -677,7 +677,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         		}
         	}
         	if(BusinessEntity.class.isAssignableFrom(entity.getClass())){
-        		User creatorUser = userService.findById(((BusinessEntity)entity).getAuditable().getCreator().getId());
+        		User creatorUser = userService.attach(((BusinessEntity)entity).getAuditable().getCreator());
         		ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity, creatorUser.getUserName());
         		esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity)); 
         		elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentProvider.getCode());
