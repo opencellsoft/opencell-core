@@ -27,6 +27,12 @@ public class ElasticDocument {
 		this.creator      = entity.getAuditable().getCreator().getUserName();
 	}
 
+	public ElasticDocument(BusinessEntity entity, String creatorUsername) {
+		this.code         = entity.getCode();
+		this.description  = entity.getDescription();
+		this.created      = entity.getAuditable().getCreated();
+		this.creator      = creatorUsername;
+	}
 
 
 	/**

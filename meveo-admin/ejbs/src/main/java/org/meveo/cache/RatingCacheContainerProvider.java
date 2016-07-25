@@ -33,6 +33,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.slf4j.Logger;
@@ -63,6 +64,9 @@ public class RatingCacheContainerProvider {
 
     @Inject
     private CounterPeriodService counterPeriodService;
+    
+    @Inject
+    private CalendarService calendarService;
 
     /**
      * Contains association between charge code and price plans. Key format: <provider id>_<charge template code, which is pricePlanMatrix.eventCode>
@@ -165,7 +169,8 @@ public class RatingCacheContainerProvider {
 
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
-            calendar.nextCalendarDate(new Date());
+        	calendar = calendarService.attach(calendar);
+			calendar.nextCalendarDate(new Date());
         }
     }
 
