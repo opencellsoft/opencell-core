@@ -171,6 +171,7 @@
 				<f:param name="cid"
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
+			<f:param name="tab" value="#{cc.attrs.backingBean.activeTab}"></f:param>
 		</p:button>
 
         <c:if test="#{! empty customFieldDataEntryBean.getCustomActions(cc.attrs.backingBean.entity)}">

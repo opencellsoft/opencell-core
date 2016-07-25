@@ -12,6 +12,7 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{offerTemplateListBean.preRenderView}" />
+			<f:viewParam name="tab" value="#{offerTemplateListBean.activeTab}" />
 		</f:metadata>
 	</ui:define>
 
@@ -31,10 +32,19 @@
 			<p:panel style="width: 50%">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
-						<ul class="ListNoStyle">
-							<li class="Padding5"><i class="fa fa-plus-circle" /> <p:commandLink
-									value=" #{messages['action.offer.create']}"></p:commandLink></li>
-						</ul>
+						<h:form>
+							<ul class="ListNoStyle">
+								<li class="Padding5"><p:link styleClass="fa fa-plus-circle"
+										outcome="mmOfferDetail"
+										value=" #{messages['action.offer.create']}">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="objectId" value="#{entity.id}"></f:param>
+										<f:param name="edit" value="true"></f:param>
+										<f:param name="backView" value="mmOffers"></f:param>
+									</p:link></li>
+							</ul>
+						</h:form>
 					</p:panel>
 
 					<p:panel>
@@ -74,7 +84,8 @@
 					</p:panelGrid>
 				</p:panelGrid>
 			</p:panel>
-			<p:tabView id="tabView">
+			<p:tabView id="tabView"
+				activeIndex="#{offerTemplateListBean.activeTab}">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
 					<h:form id="mainForm">
 						<p:dataGrid id="dataGrid"
@@ -140,6 +151,7 @@
 															value="#{entity}" />
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
+														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
 													</p:commandLink></li>
@@ -150,6 +162,7 @@
 														<f:param name="objectId" value="#{entity.id}"></f:param>
 														<f:param name="edit" value="true"></f:param>
 														<f:param name="backView" value="mmOffers"></f:param>
+														<f:param name="tab" value="0"></f:param>
 													</p:link></li>
 												<li class="Padding5 FRight"><p:link
 														outcome="mmOfferDetail" styleClass="fa fa-search-plus">
@@ -158,6 +171,7 @@
 														<f:param name="objectId" value="#{entity.id}"></f:param>
 														<f:param name="edit" value="false"></f:param>
 														<f:param name="backView" value="mmOffers"></f:param>
+														<f:param name="tab" value="0"></f:param>
 													</p:link></li>
 											</ul>
 										</p:panel>
@@ -207,7 +221,7 @@
 					</h:form>
 				</p:tab>
 
-				<p:tab
+				<p:tab id="tab1"
 					title="#{messages['marketingManager.catalog.view.condensed']}">
 
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
@@ -239,6 +253,7 @@
 								<f:param name="objectId" value="#{entity.id}"></f:param>
 								<f:param name="edit" value="false"></f:param>
 								<f:param name="backView" value="mmOffers"></f:param>
+								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:link styleClass="Padding5 fa fa-edit" outcome="mmOfferDetail">
 								<f:param name="cid"
@@ -246,6 +261,7 @@
 								<f:param name="objectId" value="#{entity.id}"></f:param>
 								<f:param name="edit" value="true"></f:param>
 								<f:param name="backView" value="mmOffers"></f:param>
+								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:commandLink action="#{offerTemplateListBean.duplicate()}"
 								update="@form" styleClass="Padding5 fa fa-copy">
@@ -253,6 +269,7 @@
 									target="#{offerTemplateListBean.entity}" value="#{entity}" />
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
+								<f:param name="tab" value="1"></f:param>
 								<p:confirm header="#{messages['commons.duplicate']}"
 									message="#{messages['commons.confirmDuplicate']}" />
 							</p:commandLink>
