@@ -3,7 +3,6 @@ package org.meveo.model.order;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.ProductInstance;
@@ -37,6 +37,9 @@ public class OrderItem extends BaseEntity {
     @NotNull
     private Order order;
 
+    /**
+     * Item id in the order
+     */
     @Column(name = "ITEM_ID", length = 10, nullable = false)
     @NotNull
     private String itemId;
@@ -76,7 +79,7 @@ public class OrderItem extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
-    private OrderStatusEnum status;
+    private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
     /**
      * Related product instances. Product instance(s) are created or updated by workflow while processing order item.
@@ -169,5 +172,13 @@ public class OrderItem extends BaseEntity {
             this.productInstances = new ArrayList<>();
         }
         this.productInstances.add(productInstance);
+    }
+
+    /**
+     * Interested in comparing order items within the order only
+     */
+    @Override
+    public boolean equals(Object other) {
+        return StringUtils.compare(getItemId(), ((OrderItem) other).getItemId()) == 0;
     }
 }

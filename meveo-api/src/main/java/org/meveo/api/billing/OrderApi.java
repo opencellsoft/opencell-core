@@ -82,9 +82,8 @@ public class OrderApi extends BaseApi {
     private ProductInstanceService productInstanceService;
 
     @Inject
-    private 
-    ProductChargeInstanceService productChargeInstanceService;
-    
+    private ProductChargeInstanceService productChargeInstanceService;
+
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -136,6 +135,8 @@ public class OrderApi extends BaseApi {
         // order.setDeliveryInstructions("");
         order.setDescription(productOrder.getDescription());
         order.setExternalId(productOrder.getExternalld());
+        order.setReceivedFromApp("API");
+
         order.setOrderDate(productOrder.getOrderDate());
         if (!StringUtils.isBlank(productOrder.getPriority())) {
             order.setPriority(Integer.parseInt(productOrder.getPriority()));
@@ -260,6 +261,7 @@ public class OrderApi extends BaseApi {
         log.info("Processing order {}", order.getCode());
 
         order.setStatus(OrderStatusEnum.IN_PROGRESS);
+        order.setStartDate(new Date());
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             processOrderItem(order, orderItem, currentUser);
@@ -480,11 +482,11 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-        ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,currentUser);
+        ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, currentUser);
         List<ProductChargeInstance> list = new ArrayList<>();
         list.add(pcInstance);
         productInstance.setProductChargeInstances(list);
-        productInstanceService.create(productInstance,currentUser);
+        productInstanceService.create(productInstance, currentUser);
         productChargeInstanceService.apply(pcInstance, null, offerTemplate, chargeDate, null, null, null, null, null, currentUser, true);
         return productInstance;
     }

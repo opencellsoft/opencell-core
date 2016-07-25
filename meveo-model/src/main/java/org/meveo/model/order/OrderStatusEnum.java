@@ -9,6 +9,11 @@ package org.meveo.model.order;
 public enum OrderStatusEnum {
 
     /**
+     * Order being prepared - used for new order entry via GUI
+     */
+    IN_CREATION(""),
+
+    /**
      * The Acknowledged state is where an order has been received and has passed message and basic business validations.
      */
     ACKNOWLEDGED("Acknowledged"),
@@ -62,7 +67,7 @@ public enum OrderStatusEnum {
     }
 
     public String getLabel() {
-        return "orderStatus." + this.name().toLowerCase();
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 
     public static OrderStatusEnum valueByApiState(String apiState) {

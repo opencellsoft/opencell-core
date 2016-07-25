@@ -2023,6 +2023,18 @@
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
+        <navigation-case>
+            <from-outcome>orderDetail</from-outcome>
+            <to-view-id>/pages/order/orders/orderDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>orders</from-outcome>
+            <to-view-id>/pages/order/orders/orders.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>        
 	</navigation-rule>
 
 	<!-- Exception handling -->
