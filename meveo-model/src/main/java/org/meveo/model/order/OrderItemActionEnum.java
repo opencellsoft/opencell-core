@@ -26,5 +26,9 @@ public enum OrderItemActionEnum {
     /**
      * Delete ordered product
      */
-    DELETE
+    DELETE;
+
+    public String getLabel() {
+        return this.getClass().getSimpleName() + "." + this.name();
+    }
 }

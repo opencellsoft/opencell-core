@@ -461,4 +461,31 @@
         <sql>ALTER SEQUENCE adm_user_seq RESTART WITH 4;</sql>
 	</changeSet>
         
+    
+    <changeSet id="#1844_20160722_orders" author="AndriusKarpavicius">
+    
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="18" />
+            <column name="name" value="Orders visualization" />
+            <column name="permission" value="orderVisualization" />
+            <column name="ressource" value="order" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="19" />
+            <column name="name" value="Order management" />
+            <column name="permission" value="orderManagement" />
+            <column name="ressource" value="order" />
+        </insert>    
+        
+        <sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 20</sql>   
+
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="18" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="19" />
+        </insert>        
+    </changeSet>    
 </databaseChangeLog>

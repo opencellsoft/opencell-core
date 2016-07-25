@@ -3037,5 +3037,17 @@ $BODY$
 
 
     </changeSet>
- 	
+
+    <changeSet id="#1844_20160722" author="AndriusKarpavicius">
+        <addColumn tableName="ord_order">
+            <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
+            <column name="ROUTED_TO_USER_ID" type="BIGINT"/>
+            <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
+            <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_ID" baseTableName="ORD_ORDER" constraintName="fk_ord_order_rt_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        
+    </changeSet> 
 </databaseChangeLog>

@@ -2,7 +2,9 @@ package org.meveo.model.order;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -21,6 +25,8 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.UserAccount;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
@@ -61,6 +67,13 @@ public class Order extends BusinessEntity {
     private Date requestedStartDate;
 
     /**
+     * Order processing start date
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "START_DATE")
+    private Date startDate;
+
+    /**
      * Expected completion date as requested by a customer
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -99,13 +112,23 @@ public class Order extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", length = 20, nullable = false)
     @NotNull
-    private OrderStatusEnum status;
+    private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
+
+    @Column(name = "STATUS_MESSAGE", length = 2000)
+    private String statusMessage;
 
     /**
      * A list of order items. Not modifiable once started processing.
      */
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROUTED_TO_USER_ID")
+    private User routedToUser;
+
+    @Column(name = "RECEIVED_FROM", length = 50)
+    private String receivedFromApp;
 
     public String getExternalId() {
         return externalId;
@@ -137,6 +160,14 @@ public class Order extends BusinessEntity {
 
     public void setRequestedStartDate(Date requestedStartDate) {
         this.requestedStartDate = requestedStartDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Date getRequestedCompletionDate() {
@@ -187,6 +218,14 @@ public class Order extends BusinessEntity {
         this.status = status;
     }
 
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
@@ -200,5 +239,37 @@ public class Order extends BusinessEntity {
             this.orderItems = new ArrayList<>();
         }
         this.orderItems.add(orderItem);
+    }
+
+    public User getRoutedToUser() {
+        return routedToUser;
+    }
+
+    public void setRoutedToUser(User routedToUser) {
+        this.routedToUser = routedToUser;
+    }
+
+    public String getRoutedTo() {
+        if (routedToUser != null) {
+            return routedToUser.getName().getFullName();
+        }
+        return null;
+    }
+
+    public String getReceivedFromApp() {
+        return receivedFromApp;
+    }
+
+    public void setReceivedFromApp(String receivedFromApp) {
+        this.receivedFromApp = receivedFromApp;
+    }
+
+    public Set<UserAccount> getUserAccounts() {
+
+        Set<UserAccount> userAccounts = new HashSet<>();
+        for (OrderItem orderItem : orderItems) {
+            userAccounts.add(orderItem.getUserAccount());
+        }
+        return userAccounts;
     }
 }

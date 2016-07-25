@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{orderBean.objectId}" />
+            <f:viewParam name="tab" value="#{orderBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+        <pe:importEnum type="org.meveo.model.order.OrderStatusEnum" var="OrderStatusEnum" />
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.orders']}" disabled="true" />
+                    <p:menuitem outcome="orders" value="#{messages['menu.orders']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+        <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
+            showEditButton="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}">
+            <p:tabView id="tabView" activeIndex="#{orderBean.activeTab}">
+                <p:tab title="#{messages['order.tab.order']}" id="tabOrder">
+
+                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
+                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+                    <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" showOnNew="false" allowEdit="false" />
+                    <hftl:formField label="#{messages['order.priority']}" field="priority" />
+                    <hftl:formField label="#{messages['order.category']}" field="category" />
+
+                    <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" rendered="#{orderBean.entity.receivedFromApp!=null}" />
+                    <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
+
+                    <p:fieldset legend="#{messages['order.processingInstructions']}" styleClass="clearBoth">
+                        <hftl:formField label="#{messages['order.deliveryInstructions']}" field="deliveryInstructions" />
+
+                        <hftl:formField label="#{messages['order.requestedStartDate']}" field="requestedStartDate" />
+                        <hftl:formField label="#{messages['order.requestedCompletionDate']}" field="requestedCompletionDate" />
+                    </p:fieldset>
+                    <p:fieldset legend="#{messages['order.processingStatus']}" styleClass="clearBoth" rendered="#{orderBean.entity.status!=OrderStatusEnum.IN_CREATION}">
+                        <hftl:formField label="#{messages['commons.status']}" field="status" showOnNew="false" edit="false" />
+                        <hftl:formField label="#{messages['order.statusMessage']}" field="statusMessage" rendered="#{orderBean.entity.statusMessage!=null}" />
+
+                        <hftl:formField label="#{messages['order.routedTo']}" field="routedTo" rendered="#{orderBean.entity.routedTo!=null}" />
+                        <hftl:formField label="#{messages['order.startDate']}" field="startDate" edit="false" rendered="#{orderBean.entity.startDate!=null}" />
+                        <hftl:formField label="#{messages['order.expectedCompletionDate']}" field="expectedCompletionDate"
+                            rendered="#{orderBean.entity.expectedCompletionDate!=null and orderBean.entity.completionDate==null}" />
+                        <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" rendered="#{orderBean.entity.completionDate!=null}" />
+                    </p:fieldset>
+                </p:tab>
+                <p:tab title="#{messages['order.tab.orderItems']}" id="tabItems">
+
+                    <p:dataTable id="orderItems" var="entity" value="#{orderBean.entity.orderItems}" paginator="false" rows="10" lazy="false" styleClass="custom-grid"
+                        rowIndexVar="rowIndex" resizableColumns="true" sortBy="#{entity.itemId}" sortField="itemId">
+
+                        <hftl:column label="#{messages['order.itemId']}" field="itemId" />
+                        <hftl:column label="#{messages['order.action']}" field="action" isMessage="true" messagePrefix="OrderItemActionEnum" />
+                        <hftl:column label="#{messages['order.userAccount']}" field="userAccount.descriptionOrCode" />
+                        <hftl:column label="#{messages['order.productOfferings']}" field="productOfferings" isList="true" valueLabelField="descriptionOrCode" />
+                        <p:column headerText="#{messages['commons.actions']}">
+                            <p:commandButton icon="ui-icon-document" update=":orderForm:tabView:orderItemDetails">
+                                <f:setPropertyActionListener value="#{entity}" target="#{orderBean.selectedOrderItem}" />
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-trash" update="orderItems :orderForm:tabView:orderItemDetails"
+                                rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}">
+                                <p:collector value="#{entity}" removeFrom="#{orderBean.entity.orderItems}" />
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="#{messages['commons.addNew']}" action="#{orderBean.newOrderItem()}" update=":orderForm:tabView:orderItemDetails"
+                                rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" process="@this" />
+                        </f:facet>
+                    </p:dataTable>
+
+
+                    <h:panelGroup id="orderItemDetails">
+                        <hftl:decorateFormPanel>
+                            <ui:define name="fields">
+                            </ui:define>
+
+                            <ui:define name="buttons">
+                            </ui:define>
+                        </hftl:decorateFormPanel>
+                    </h:panelGroup>
+
+                </p:tab>
+            </p:tabView>
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <p:commandButton value="Send to process" action="#{orderBean.sendToProcess()}" update="@form" rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+            </ui:define>
+
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>
