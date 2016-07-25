@@ -187,8 +187,13 @@
 				<p:menuitem id="offerTemplates" outcome="offerTemplates"
 					value="#{messages['menu.offerTemplates']}" />
 				
-				<p:menuitem id="mmCatalogView" outcome="mmOffers"
-					value="#{messages['menu.marketingManager.catalogView']}" />
+				<p:submenu id="marketingManager" label="#{messages['menu.marketingManager']}">
+					
+					<p:menuitem id="mmCatalogView" outcome="mmOffers" value="#{messages['menu.marketingManager.catalogView']}" />
+					
+					<p:menuitem id="mmOfferCategories" outcome="mmOfferCategories" value="#{messages['menu.marketingManager.offerCategories']}" />
+					
+				</p:submenu>
 
 				<p:menuitem id="mmProductTemplates" outcome="mmProductTemplates"
 					value="#{messages['menu.productTemplates.view']}" />

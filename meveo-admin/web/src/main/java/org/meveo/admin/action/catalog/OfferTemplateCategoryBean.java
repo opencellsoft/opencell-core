@@ -55,7 +55,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 	}
 
 	@Override
-    @ActionMethod
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		if (entity.getOfferTemplateCategory() != null && entity.getOfferTemplateCategory().getLevel() == 3) {
 			throw new BusinessException("Max level for offer template category.");
@@ -111,26 +111,30 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
 	public List<OfferTemplateCategory> getParentHierarchy() {
 		if (offerTemplateCategories == null) {
-			offerTemplateCategories = new ArrayList<OfferTemplateCategory>();
+			initParentHierarchy();
+		}
 
-			List<OfferTemplateCategory> result = offerTemplateCategoryService.listAllRootsExceptId(getEntity().getId());
+		return offerTemplateCategories;
+	}
 
-			for (OfferTemplateCategory a : result) {
-				offerTemplateCategories.add(a);
-				if (a.getChildren() != null && a.getChildren().size() > 0) {
-					for (OfferTemplateCategory b : a.getChildren()) {
-						offerTemplateCategories.add(b);
-						if (b.getChildren() != null && b.getChildren().size() > 0) {
-							for (OfferTemplateCategory c : b.getChildren()) {
-								offerTemplateCategories.add(c);
-							}
+	private void initParentHierarchy() {
+		offerTemplateCategories = new ArrayList<OfferTemplateCategory>();
+
+		List<OfferTemplateCategory> result = offerTemplateCategoryService.listAllRootsExceptId(getEntity().getId());
+
+		for (OfferTemplateCategory a : result) {
+			offerTemplateCategories.add(a);
+			if (a.getChildren() != null && a.getChildren().size() > 0) {
+				for (OfferTemplateCategory b : a.getChildren()) {
+					offerTemplateCategories.add(b);
+					if (b.getChildren() != null && b.getChildren().size() > 0) {
+						for (OfferTemplateCategory c : b.getChildren()) {
+							offerTemplateCategories.add(c);
 						}
 					}
 				}
 			}
 		}
-
-		return offerTemplateCategories;
 	}
 
 	public UploadedFile getUploadedFile() {
@@ -154,6 +158,10 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
 	public void setSubmitActionListener(ActionListener submitActionListener) {
 		this.submitActionListener = submitActionListener;
+	}
+
+	public void updateParentHierarchy() {
+		initParentHierarchy();
 	}
 
 }

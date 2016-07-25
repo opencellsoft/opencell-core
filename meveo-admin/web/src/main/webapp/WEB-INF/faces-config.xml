@@ -1940,6 +1940,12 @@
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>mmOfferCategories</from-outcome>
+			<to-view-id>/marketingManager/offerTemplateCategories.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>mmProductTemplates</from-outcome>
 			<to-view-id>/marketingManager/productTemplates.xhtml
 			</to-view-id>
