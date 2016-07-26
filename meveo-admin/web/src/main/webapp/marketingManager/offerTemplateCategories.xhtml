@@ -24,7 +24,8 @@
 			<p:panel>
 				<h:form id="searchForm" style="border:none;">
 					<span style="float: right;"> <p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
-							update=":mainForm:offerCategoriesTable" /> <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}" placeholder="#{messages['action.search']}" />
+							update=":mainForm:offerCategoriesTable" /> <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}"
+							placeholder="#{messages['action.search']}" />
 					</span>
 					<p:defaultCommand target="searchButton" />
 				</h:form>
@@ -40,7 +41,7 @@
 				<p:panel id="offerCategoriesTable">
 					<p:messages id="messages" />
 					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false">
-						<p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true">
+						<p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true" width="40%">
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{entity.offerTemplateCategory.name}" />
@@ -63,7 +64,7 @@
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
-						<p:column id="name" headerText="#{messages['offer.category.description']}" sortBy="#{entity.name}" exportable="true">
+						<p:column id="name" headerText="#{messages['offer.category.description']}" sortBy="#{entity.name}" exportable="true" width="40%">
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{entity.name}" />
@@ -74,19 +75,20 @@
 							</p:cellEditor>
 						</p:column>
 						<p:column>
-							<p:button id="#{entity.id}editlink" outcome="#{mmOfferTemplateCategoryListBean.getEditViewName()}" icon="fa fa-edit">
+							<p:button id="editlink#{entity.id}" outcome="#{mmOfferTemplateCategoryListBean.getEditViewName()}" icon="fa fa-edit">
 								<f:param name="objectId" value="#{entity.id}" />
 								<f:param name="edit" value="true" />
 								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="backView" value="mmOfferCategories" />
 							</p:button>
-							<p:commandButton id="#{entity.id}deleteButton" icon="fa fa-trash" action="#{mmOfferTemplateCategoryListBean.delete}" update=":mainForm:offerCategoriesTable">
+							<p:commandButton id="deleteButton#{entity.id}" icon="fa fa-trash" oncomplete="doDelete()">
 								<f:setPropertyActionListener target="#{mmOfferTemplateCategoryListBean.entity}" value="#{entity}" />
 								<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 							</p:commandButton>
 						</p:column>
 					</hftl:dataList>
 				</p:panel>
+				<p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}"  update="@form" />
 			</h:form>
 		</div>
 	</ui:define>
