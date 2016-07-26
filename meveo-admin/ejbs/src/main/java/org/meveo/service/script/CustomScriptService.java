@@ -52,12 +52,16 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.BusinessService;
 
 public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
 
     @Inject
     private ResourceBundle resourceMessages;
+    
+    @Inject
+    private UserService userService;
 
     protected final Class<SI> scriptInterfaceClass;
 
@@ -472,7 +476,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             context = new HashMap<String, Object>();
         }
         context.put(Script.CONTEXT_ENTITY, entity);
-
+        currentUser = userService.attach(currentUser);
         Map<String, Object> result = execute(scriptCode, context, currentUser);
         return result;
     }
