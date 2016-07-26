@@ -12,8 +12,7 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{productTemplateBean.preRenderView}" />
-			<f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
-			<f:viewParam name="edit" value="#{productTemplateBean.objectId}" />
+			<f:viewParam name="editMode" value="#{productTemplateBean.editMode}" />
 		</f:metadata>
 	</ui:define>
 
@@ -33,11 +32,21 @@
 			backingBean="#{productTemplateBean}" showEnableDisableButton="true"
 			showBackButton="false">
 			<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
-				<p:graphicImage id="productImage" cache="false"
-					value="#{productTemplateImageStreamer.image}" height="100"
-					width="100" rowspan="5">
-					<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
-				</p:graphicImage>
+				<hftl:decorateFormField fieldId="productImage"
+					rendered="#{not productTemplateBean.entity.transient}"
+					label="#{messages['commons.image']}">
+					<p:outputPanel autoUpdate="true">
+						<p:graphicImage id="productImage" cache="false"
+							value="#{productTemplateImageStreamer.image}" height="150"
+							width="150">
+							<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
+						</p:graphicImage>
+						<p:fileUpload
+							fileUploadListener="#{productTemplateBean.handleFileUpload}"
+							mode="advanced" update=":formId:messages" auto="true"
+							sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+					</p:outputPanel>
+				</hftl:decorateFormField>
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 					<!-- <h:outputText value="#{productTemplateBean.entity.name}" />
 					<h:outputText
@@ -66,6 +75,7 @@
 						<f:convertDateTime
 							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 					</h:outputText>-->
+
 					<p:outputLabel value="#{messages['commons.status']} :"
 						style="padding-top: 5px; margin-right: 10px;"></p:outputLabel>
 					<p:inputSwitch value="#{productTemplateBean.entity.active}"

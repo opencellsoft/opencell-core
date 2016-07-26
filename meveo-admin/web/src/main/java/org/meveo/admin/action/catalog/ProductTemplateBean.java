@@ -59,6 +59,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	private DualListModel<BusinessAccountModel> bamDM;
 	private UploadedFile uploadedFile;
 
+	private String editMode;
+
 	public ProductTemplateBean() {
 		super(ProductTemplate.class);
 	}
@@ -71,9 +73,19 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+		if (editMode != null && editMode.length() > 0 && editMode == "dup") {
+			ProductTemplate pt = new ProductTemplate();
+			pt = entity;
+			entity = new ProductTemplate();
+			entity = pt;
+			entity.setId(null);
+		}
+
 		if (entity.getOfferTemplateCategories() != null) {
 			entity.getOfferTemplateCategories().clear();
-			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+			entity.getOfferTemplateCategories().addAll(
+					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
 		}
 
 		if (entity.getAttachments() != null) {
@@ -223,6 +235,14 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
 		this.bamDM = bamDM;
+	}
+
+	public String getEditMode() {
+		return editMode;
+	}
+
+	public void setEditMode(String editMode) {
+		this.editMode = editMode;
 	}
 
 }
