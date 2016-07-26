@@ -14,6 +14,7 @@
 
     <ui:define name="body">
         <pe:importEnum type="org.meveo.model.order.OrderStatusEnum" var="OrderStatusEnum" />
+        <pe:importEnum type="org.meveo.model.order.OrderItemActionEnum" var="OrderItemActionEnum" />
         <p:panel>
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -80,15 +81,76 @@
 
 
                     <h:panelGroup id="orderItemDetails">
-                        <hftl:decorateFormPanel>
+                        <p:separator rendered="#{orderBean.selectedOrderItem!=null}" />
+
+                        <hftl:decorateFormPanel edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" label="#{messages['order.orderItemHeader']}"
+                            rendered="#{orderBean.selectedOrderItem!=null}">
+
                             <ui:define name="fields">
+                                <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.itemId']}" field="itemId" />
+                                <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.action']}" field="action" />
+                                <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.userAccount']}" field="userAccount"
+                                    valueLabelField="descriptionOrCode" />
+
+
+                                <h:panelGroup rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                    <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.offering']}" field="productOffering[0]" />
+
+
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}">
+
+                                    <h:panelGroup rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
+
+                                        <hftl:decorateFormField label="#{messages['order.offers']}" componentWidth="50">
+
+                                            <p:tree value="#{orderBean.offersTree}" var="node" selectionMode="single" nodeVar="treeNode" style="width: 100%">
+                                                <p:treeNode type="ServiceList">
+                                                    <h:outputText value="#{messages['order.serviceList']}" />
+                                                </p:treeNode>
+                                                <p:treeNode type="ProductList">
+                                                    <h:outputText value="#{messages['order.productList']}" />
+                                                </p:treeNode>
+                                                <p:treeNode type="OfferTemplate">
+                                                    <h:outputText value="#{node.codeAndDescription}" />
+                                                </p:treeNode>
+                                                <p:treeNode type="ServiceTemplate">
+                                                    <h:outputText value="#{node.codeAndDescription}" />
+                                                </p:treeNode>
+                                                <p:treeNode type="ProductTemplate">
+                                                    <h:outputText value="#{node.codeAndDescription}" />
+                                                </p:treeNode>
+                                            </p:tree>
+                                        </hftl:decorateFormField>
+                                        <p:fieldset legend="#{messages['order.entitiesCreated']}" styleClass="clearLeft"
+                                            rendered="#{orderBean.selectedOrderItem.productInstances!=null || orderBean.selectedOrderItem.subscription!=null}">
+                                            <hftl:formField id="subscriptionAdd" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.subscription']}"
+                                                field="subscription" valueLabelField="descriptionOrCode" rendered="#{orderBean.selectedOrderItem.subscription!=null}" />
+                                            <hftl:formField id="productsAdd" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.products']}" field="productInstances"
+                                                valueLabelField="descriptionOrCode"
+                                                rendered="#{orderBean.selectedOrderItem.productInstances!=null and ! orderBean.selectedOrderItem.productInstances.isEmpty()}"
+                                                listType="commaSeparated" componentWidth="50" />
+                                        </p:fieldset>
+                                    </h:panelGroup>
+
+
+                                    <h:panelGroup
+                                        rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}">
+
+                                        <hftl:formField id="subscriptionModify" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.subscription']}"
+                                            field="subscription" valueLabelField="descriptionOrCode" rendered="#{orderBean.selectedOrderItem.subscription!=null}" />
+                                        <hftl:formField id="productsModify" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.products']}" field="productInstances"
+                                            valueLabelField="descriptionOrCode"
+                                            rendered="#{orderBean.selectedOrderItem.productInstances!=null and ! orderBean.selectedOrderItem.productInstances.isEmpty()}"
+                                            listType="commaSeparated" componentWidth="50" />
+                                    </h:panelGroup>
+                                </h:panelGroup>
                             </ui:define>
 
                             <ui:define name="buttons">
                             </ui:define>
                         </hftl:decorateFormPanel>
                     </h:panelGroup>
-
                 </p:tab>
             </p:tabView>
 

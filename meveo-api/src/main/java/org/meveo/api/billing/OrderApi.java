@@ -1,7 +1,5 @@
 package org.meveo.api.billing;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,10 +9,6 @@ import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -96,12 +90,13 @@ public class OrderApi extends BaseApi {
     @Inject
     private OrderItemService orderItemService;
 
-    private static String CHARACTERISTIC_SERVICE_QUANTITY = "quantity";
-    private static String CHARACTERISTIC_SUBSCRIPTION_CODE = "subscriptionCode";
-    private static String CHARACTERISTIC_SERVICE_CODE = "serviceCode";
-    private static String CHARACTERISTIC_SUBSCRIPTION_DATE = "subscriptionDate";
-    private static String CHARACTERISTIC_TERMINATION_DATE = "terminationDate";
-    private static String CHARACTERISTIC_TERMINATION_REASON = "terminationReason";
+    public static String CHARACTERISTIC_SERVICE_QUANTITY = "quantity";
+    public static String CHARACTERISTIC_SUBSCRIPTION_CODE = "subscriptionCode";
+    public static String CHARACTERISTIC_SERVICE_CODE = "serviceCode";
+    public static String CHARACTERISTIC_PRODUCT_INSTANCE_CODE = "productInstanceCode";
+    public static String CHARACTERISTIC_SUBSCRIPTION_DATE = "subscriptionDate";
+    public static String CHARACTERISTIC_TERMINATION_DATE = "terminationDate";
+    public static String CHARACTERISTIC_TERMINATION_REASON = "terminationReason";
 
     /**
      * Register an order from TMForumApi
@@ -194,8 +189,9 @@ public class OrderApi extends BaseApi {
             orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
             orderItem.setOrder(order);
             orderItem.setUserAccount(userAccount);
-            orderItem.setSource(serializeOrderItem(productOrderItem));
+            orderItem.setSource(OrderItem.serializeOrderItem(productOrderItem));
             orderItem.setProductOfferings(productOfferings);
+            orderItem.setProvider(currentUser.getProvider());
 
             if (productOrderItem.getState() != null) {
                 orderItem.setStatus(OrderStatusEnum.valueByApiState(productOrderItem.getState()));
@@ -280,7 +276,7 @@ public class OrderApi extends BaseApi {
 
         orderItem.setStatus(OrderStatusEnum.IN_PROGRESS);
 
-        OrderItem productOrderItem = deserializeOrderItem(orderItem.getSource());
+        OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
 
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
@@ -336,7 +332,7 @@ public class OrderApi extends BaseApi {
             }
 
             // Serialize back the productOrderItem with updated product ids
-            orderItem.setSource(serializeOrderItem(productOrderItem));
+            orderItem.setSource(OrderItem.serializeOrderItem(productOrderItem));
 
         } else if (orderItem.getAction() == OrderItemActionEnum.MODIFY) {
 
@@ -359,14 +355,21 @@ public class OrderApi extends BaseApi {
             } else if (primaryOffering instanceof ProductTemplate) {
                 // TODO modify product
 
+                ProductInstance productInstance = productInstanceService.findByCode(productOrderItem.getProduct().getId(), currentUser.getProvider());
+                if (productInstance == null) {
+                    throw new EntityDoesNotExistsException(ProductInstance.class, productOrderItem.getProduct().getId());
+                }
+                log.debug("will modify product instance {}", productInstance);
+                orderItem.addProductInstance(productInstance);
+
                 // Modifying an existing subscription
             } else if (primaryOffering instanceof OfferTemplate) {
 
                 Subscription subscription = subscriptionService.findByCode(productOrderItem.getProduct().getId(), currentUser.getProvider());
-                log.debug("will modify subscription {}", subscription);
                 if (subscription == null) {
                     throw new EntityDoesNotExistsException(Subscription.class, productOrderItem.getProduct().getId());
                 }
+                log.debug("will modify subscription {}", subscription);
 
                 // Verify that subscription properties match
                 if (!subscription.getUserAccount().equals(orderItem.getUserAccount())) {
@@ -472,7 +475,10 @@ public class OrderApi extends BaseApi {
         BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
         Date chargeDate = ((Date) getProductCharacteristic(product, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
 
-        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, productTemplate.getDescription(), currentUser);
+        String code = (String) getProductCharacteristic(product, CHARACTERISTIC_PRODUCT_INSTANCE_CODE, String.class, UUID.randomUUID().toString());
+
+        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
+            currentUser);
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
 
@@ -516,7 +522,7 @@ public class OrderApi extends BaseApi {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Object getProductCharacteristic(Product product, String code, Class valueClass, Object defaultValue) {
+    public Object getProductCharacteristic(Product product, String code, Class valueClass, Object defaultValue) {
 
         if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {
             return defaultValue;
@@ -673,50 +679,6 @@ public class OrderApi extends BaseApi {
     }
 
     /**
-     * Serialize orderItem DTO into a string
-     * 
-     * @param productOrderItem Order item to serialize
-     * @return String in XML format
-     * 
-     * @throws BusinessException
-     */
-    private String serializeOrderItem(OrderItem productOrderItem) throws BusinessException {
-        try {
-            Marshaller m = JAXBContext.newInstance(OrderItem.class).createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            StringWriter w = new StringWriter();
-            m.marshal(productOrderItem, w);
-
-            return w.toString();
-
-        } catch (JAXBException e) {
-            throw new BusinessException(e);
-        }
-    }
-
-    /**
-     * Deserialize order item from a string
-     * 
-     * @param orderItemSource Serialized orderItem dto
-     * @return Order item object
-     * 
-     * @throws BusinessException
-     */
-    private OrderItem deserializeOrderItem(String orderItemSource) throws BusinessException {
-        // Store orderItem DTO into DB to be retrieved for full information
-        try {
-            Unmarshaller m = JAXBContext.newInstance(OrderItem.class).createUnmarshaller();
-            // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            OrderItem productOrderItem = (OrderItem) m.unmarshal(new StringReader(orderItemSource));
-
-            return productOrderItem;
-
-        } catch (JAXBException e) {
-            throw new BusinessException(e);
-        }
-    }
-
-    /**
      * Convert order stored in DB to order DTO expected by tmForum api.
      * 
      * @param order Order to convert
@@ -760,10 +722,36 @@ public class OrderApi extends BaseApi {
      */
     private OrderItem orderItemToDto(org.meveo.model.order.OrderItem orderItem) throws BusinessException {
 
-        OrderItem productOrderItem = deserializeOrderItem(orderItem.getSource());
+        OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
         //
         productOrderItem.setState(orderItem.getStatus().getApiState());
 
         return productOrderItem;
+    }
+
+    /**
+     * Distinguish bundled products which could be either services or products
+     * 
+     * @param productOrderItem Product order item DTO
+     * @param orderItem Order item entity
+     * @return An array of List<Product> elements, first being list of products, and second - list of services
+     */
+    @SuppressWarnings("unchecked")
+    public List<Product>[] getProductsAndServices(OrderItem productOrderItem, org.meveo.model.order.OrderItem orderItem) {
+
+        List<Product> products = new ArrayList<>();
+        List<Product> services = new ArrayList<>();
+        int index = 1;
+        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+            for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
+                if (index < orderItem.getProductOfferings().size()) {
+                    products.add(productRelationship.getProduct());
+                } else {
+                    services.add(productRelationship.getProduct());
+                }
+                index++;
+            }
+        }
+        return new List[] { products, services };
     }
 }

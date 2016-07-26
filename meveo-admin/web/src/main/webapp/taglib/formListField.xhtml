@@ -76,12 +76,12 @@
         <c:if test="#{listType=='pickUpList'}">
 
             <c:if test="#{edit}">
-<!--                 <c:if test="#{empty dualListModel}"> -->
-<!--                     <c:set var="elements" value="#{backingBean.dualListModel}" /> -->
-<!--                 </c:if> -->
-<!--                 <c:if test="#{!empty dualListModel}"> -->
-                    <c:set var="elements" value="#{dualListModel}" />
-<!--                 </c:if> -->
+                <!--                 <c:if test="#{empty dualListModel}"> -->
+                <!--                     <c:set var="elements" value="#{backingBean.dualListModel}" /> -->
+                <!--                 </c:if> -->
+                <!--                 <c:if test="#{!empty dualListModel}"> -->
+                <c:set var="elements" value="#{dualListModel}" />
+                <!--                 </c:if> -->
                 <c:if test="#{not empty(valueLabelField2)}">
                     <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}">
                         <s:objectConverter />
@@ -104,6 +104,26 @@
                     </c:if>
                 </p:dataList>
             </c:if>
+        </c:if>
+
+        <!--  As a comma separated list of values -->
+        <c:if test="#{listType=='commaSeparated'}">
+
+            <!--  Only read mode supported for now -->
+            <c:if test="#{!edit}">
+                <h:panelGroup id="#{id}" styleClass="field-value">
+                    <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+                        <c:if test="#{not empty(valueLabelField2)}">
+                                #{elem[valueLabelField]} #{elem[valueLabelField2]}
+                    </c:if>
+                        <c:if test="#{empty(valueLabelField2)}">
+                                #{elem[valueLabelField]}
+                    </c:if>
+                        <h:outputText value="#{!loop.last ? ', ' : ''}" />
+                    </ui:repeat>
+                </h:panelGroup>
+            </c:if>
+
         </c:if>
     </hftl:decorateFormField>
 </ui:composition>
