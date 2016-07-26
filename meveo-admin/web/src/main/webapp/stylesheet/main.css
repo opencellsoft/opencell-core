@@ -631,6 +631,9 @@ form.formNoBottomBorder {
 .PadLeftRightZero{padding-left:0px; padding-right:0px;}                     /* NEW */
 .PadTopBottomZero{padding-top:0px; padding-bottom:0px;}  
 .Wid100, table.Wid100 tbody, table.Wid100 tr { width: 100%; }
+.Wid100{ width:100%;}
+.Wid90{ width:90%;}
+.Wid80{ width:80%;}
 .Wid70 { width: 70%; }
 .Wid60 { width: 60%; }
 .Wid55 { width: 55%; }
@@ -641,6 +644,11 @@ form.formNoBottomBorder {
 .Wid20 { width: 20%; }
 .Wid10 { width: 10%; }
 .Wid5 { width: 5%; }
+/* Width Special Values */
+.Wid33{ width:33.3%;}
+.Wid25{ width:25%;}
+.Wid20{ width:20%;}
+.Wid10{ width:10%;}
 .dataGrid .ui-paginator { text-align: right !important; }
 .dataGrid .ui-paginator span { text-align: left !important; }
 .ui-datagrid-blank .ui-datagrid-content { border: none !important; }
@@ -649,6 +657,24 @@ form.formNoBottomBorder {
 .FRight { float: right; }
 .FLeft { float: left; }
 .VAlignTop { vertical-align: top; }
+
+/* Containers */
+.Container100{ width:100%; float:left; padding:12px; box-sizing:border-box; }
+.Container96{ width:96%; float:left; padding:12px; box-sizing:border-box; }
+.Container90{ width:90%; float:left; padding:12px; box-sizing:border-box; }
+.Container85{ width:85%; float:left; padding:12px; box-sizing:border-box; }
+.Container80{ width:80%; float:left; padding:12px; box-sizing:border-box; }
+.Container75{ width:75%; float:left; padding:12px; box-sizing:border-box; }
+.Container70{ width:70%; float:left; padding:12px; box-sizing:border-box; }
+.Container60{ width:60%; float:left; padding:12px; box-sizing:border-box; }
+.Container50{ width:50%; float:left; padding:12px; box-sizing:border-box; }
+.Container40{ width:40%; float:left; padding:12px; box-sizing:border-box; }
+.Container33{ width:33.3%; float:left; padding:12px; box-sizing:border-box; }
+.Container30{ width:30%; float:left; padding:12px; box-sizing:border-box; }
+.Container25{ width:25%; float:left; padding:12px; box-sizing:border-box; }
+.Container20{ width:20%; float:left; padding:12px; box-sizing:border-box; }
+.Container10{ width:10%; float:left; padding:12px; box-sizing:border-box; }
+.Container5{ width:5%; float:left; padding:12px; box-sizing:border-box; }
 
 /* Text Aligns */
 .TexAlCenter{ text-align:center;}
