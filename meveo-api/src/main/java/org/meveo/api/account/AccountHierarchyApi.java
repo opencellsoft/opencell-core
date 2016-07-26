@@ -543,7 +543,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if (!StringUtils.isBlank(customerCodeOrId)) {
-			customerCodeOrId=CUSTOMER_PREFIX+StringUtils.normalizeHierarchyCode(customerCodeOrId);
+			customerCodeOrId=StringUtils.normalizeHierarchyCode(customerCodeOrId);
 			qb.addCriterion("c.code", "=", customerCodeOrId, true);
 		}
 		if (!StringUtils.isBlank(postData.getSellerCode())) {

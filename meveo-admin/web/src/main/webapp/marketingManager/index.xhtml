@@ -13,6 +13,39 @@
 		</ui:include>
 	</ui:define>
 
-	<ui:define name="body">Welcome to Marketing Manager</ui:define>
+	<ui:define name="body">
+		<p:panel>
+			<h:outputText
+				value="#{messages['commons.welcome']} #{identity.user.user.userName} "
+				rendered="#{identity.loggedIn}" />
+		</p:panel>
+
+		<p:panel styleClass="Container">
+			<p:panel styleClass="Container50 TexAlCenter">
+				<div class="">Churn</div>
+				<div class="">10%</div>
+				<div class="">Up</div>
+				<div class="">Last Updated at 11:55 am</div>
+			</p:panel>
+			<p:panel styleClass="Container50 TexAlCenter">
+				<div class="">Churn</div>
+				<div class="">10%</div>
+				<div class="">Up</div>
+				<div class="">Last Updated at 11:55 am</div>
+			</p:panel>
+			<p:panel styleClass="Container50 TexAlCenter">
+				<div class="">Churn</div>
+				<div class="">10%</div>
+				<div class="">Up</div>
+				<div class="">Last Updated at 11:55 am</div>
+			</p:panel>
+			<p:panel styleClass="Container50 TexAlCenter">
+				<div class="">Churn</div>
+				<div class="">10%</div>
+				<div class="">Up</div>
+				<div class="">Last Updated at 11:55 am</div>
+			</p:panel>
+		</p:panel>
+	</ui:define>
 
 </ui:composition>

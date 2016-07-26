@@ -9,6 +9,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,142 +44,141 @@ import org.meveo.model.crm.BusinessAccountModel;
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class ProductOffering extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 6877386866687396135L;
+    private static final long serialVersionUID = 6877386866687396135L;
 
-	@Column(name = "NAME", length = 100)
-	@Size(max = 100)
-	private String name;
+    @Column(name = "NAME", length = 100)
+    @Size(max = 100)
+    private String name;
 
-	@ManyToMany
-	@JoinTable(name = "CAT_PRODUCT_OFFER_TMPL_CAT", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_TEMPLATE_CAT_ID"))
-	@OrderColumn(name = "INDX")
-	private List<OfferTemplateCategory> offerTemplateCategories;
+    @ManyToMany
+    @JoinTable(name = "CAT_PRODUCT_OFFER_TMPL_CAT", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_TEMPLATE_CAT_ID"))
+    @OrderColumn(name = "INDX")
+    private List<OfferTemplateCategory> offerTemplateCategories;
 
-	@Column(name = "VALID_FROM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validFrom;
+    @Column(name = "VALID_FROM")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validFrom;
 
-	@Column(name = "VALID_TO")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validTo;
+    @Column(name = "VALID_TO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validTo;
 
-	@Column(name = "image")
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	private Blob image;
+    @Column(name = "image")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private Blob image;
 
-	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
-	@Size(max = 50)
-	private String imageContentType;
+    @Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+    @Size(max = 50)
+    private String imageContentType;
 
-	@ManyToMany
-	@JoinTable(name = "CAT_PRODUCT_OFFER_DIGITAL_RES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "DIGITAL_RESOURCE_ID"))
-	@OrderColumn(name = "INDX")
-	private List<DigitalResource> attachments;
+    @ManyToMany
+    @JoinTable(name = "CAT_PRODUCT_OFFER_DIGITAL_RES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "DIGITAL_RESOURCE_ID"))
+    @OrderColumn(name = "INDX")
+    private List<DigitalResource> attachments;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "LIFE_CYCLE_STATUS")
-	private LifeCycleStatusEnum lifeCycleStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "LIFE_CYCLE_STATUS")
+    private LifeCycleStatusEnum lifeCycleStatus;
 
-	@ManyToMany
-	@JoinTable(name = "CAT_PRODUCT_OFFER_BAM", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "BAM_ID"))
-	@OrderColumn(name = "INDX")
-	private List<BusinessAccountModel> businessAccountModels;
+    @ManyToMany
+    @JoinTable(name = "CAT_PRODUCT_OFFER_BAM", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "BAM_ID"))
+    @OrderColumn(name = "INDX")
+    private List<BusinessAccountModel> businessAccountModels;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Date getValidFrom() {
-		return validFrom;
-	}
+    public Date getValidFrom() {
+        return validFrom;
+    }
 
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
 
-	public Date getValidTo() {
-		return validTo;
-	}
+    public Date getValidTo() {
+        return validTo;
+    }
 
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
+    }
 
-	public Blob getImage() {
-		return image;
-	}
+    public Blob getImage() {
+        return image;
+    }
 
-	public void setImage(Blob image) {
-		this.image = image;
-	}
+    public void setImage(Blob image) {
+        this.image = image;
+    }
 
-	public byte[] getImageAsByteArr() {
-		if (image != null) {
-			int blobLength;
-			try {
-				blobLength = (int) image.length();
-				byte[] blobAsBytes = image.getBytes(1, blobLength);
+    public byte[] getImageAsByteArr() {
+        if (image != null) {
+            int blobLength;
+            try {
+                blobLength = (int) image.length();
+                byte[] blobAsBytes = image.getBytes(1, blobLength);
 
-				return blobAsBytes;
-			} catch (SQLException e) {
-				return null;
-			}
-		}
+                return blobAsBytes;
+            } catch (SQLException e) {
+                return null;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public LifeCycleStatusEnum getLifeCycleStatus() {
-		return lifeCycleStatus;
-	}
+    public LifeCycleStatusEnum getLifeCycleStatus() {
+        return lifeCycleStatus;
+    }
 
-	public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
-		this.lifeCycleStatus = lifeCycleStatus;
-	}
+    public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
+        this.lifeCycleStatus = lifeCycleStatus;
+    }
 
-	public List<DigitalResource> getAttachments() {
-		return attachments;
-	}
+    public List<DigitalResource> getAttachments() {
+        return attachments;
+    }
 
-	public void setAttachments(List<DigitalResource> attachments) {
-		this.attachments = attachments;
-	}
+    public void setAttachments(List<DigitalResource> attachments) {
+        this.attachments = attachments;
+    }
 
-	public List<OfferTemplateCategory> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public List<OfferTemplateCategory> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
 
-	public void setOfferTemplateCategories(List<OfferTemplateCategory> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
+    public void setOfferTemplateCategories(List<OfferTemplateCategory> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
 
-	public String getImageContentType() {
-		return imageContentType;
-	}
+    public String getImageContentType() {
+        return imageContentType;
+    }
 
-	public void setImageContentType(String imageContentType) {
-		this.imageContentType = imageContentType;
-	}
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
+    }
 
-	public String getNameOrCode() {
-		if (!StringUtils.isBlank(name)) {
-			return name;
-		} else {
-			return code;
-		}
-	}
+    public String getNameOrCode() {
+        if (!StringUtils.isBlank(name)) {
+            return name;
+        } else {
+            return code;
+        }
+    }
 
-	public List<BusinessAccountModel> getBusinessAccountModels() {
-		return businessAccountModels;
-	}
+    public List<BusinessAccountModel> getBusinessAccountModels() {
+        return businessAccountModels;
+    }
 
-	public void setBusinessAccountModels(List<BusinessAccountModel> businessAccountModels) {
-		this.businessAccountModels = businessAccountModels;
-	}
-
+    public void setBusinessAccountModels(List<BusinessAccountModel> businessAccountModels) {
+        this.businessAccountModels = businessAccountModels;
+    }
 }

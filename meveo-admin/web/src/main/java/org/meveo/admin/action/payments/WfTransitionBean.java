@@ -137,7 +137,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             if (wfAction.getId() != null) {
             	WFAction action = wfActionService.findById(wfAction.getId());
             	action.setActionEl(wfAction.getActionEl());
-            	action.setConditionEl(wfAction.getActionEl());
+            	action.setConditionEl(wfAction.getConditionEl());
             	action.setPriority(wfAction.getPriority());
                 wfActionService.update(action, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));

@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.commons.utils.StringUtils;
@@ -95,6 +96,9 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "SUBSCRIPTION_ID")
     private Subscription subscription;
 
+    @Transient
+    private Object orderItemDto;
+
     public Order getOrder() {
         return order;
     }
@@ -172,6 +176,22 @@ public class OrderItem extends BaseEntity {
             this.productInstances = new ArrayList<>();
         }
         this.productInstances.add(productInstance);
+    }
+
+    // public ProductInstance getProductInstance() {
+    // Logger log = LoggerFactory.getLogger(getClass());
+    // if (productInstances != null && productInstances.size() > 0) {
+    // return productInstances.get(0);
+    // }
+    // return null;
+    // }
+
+    public Object getOrderItemDto() {
+        return orderItemDto;
+    }
+
+    public void setOrderItemDto(Object orderItemDto) {
+        this.orderItemDto = orderItemDto;
     }
 
     /**

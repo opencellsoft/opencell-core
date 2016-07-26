@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -101,7 +102,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     		OfferTemplate offerTemplate,String criteria1, String criteria2, String criteria3,
     		User user,boolean persist) throws BusinessException{
     	WalletOperation result = null;
-    	ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, description, user);
+    	ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, UUID.randomUUID().toString(), description, user);
     	if(persist){
     		create(productInstance,user);
     	}

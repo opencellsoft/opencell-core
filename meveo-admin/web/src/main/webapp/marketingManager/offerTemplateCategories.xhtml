@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/marketingManager/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{mmOfferTemplateCategoryListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/marketingManager/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<div>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem value="#{messages['menu.catalog.listOfferCategories']}" />
+				</p:breadCrumb>
+			</h:form>
+
+			<p:panel>
+				<h:form id="searchForm" style="border:none;">
+					<span style="float: right;"> <p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
+							update=":mainForm:offerCategoriesTable" /> <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}"
+							placeholder="#{messages['action.search']}" />
+					</span>
+					<p:defaultCommand target="searchButton" />
+				</h:form>
+			</p:panel>
+			<h:form id="mainForm">
+				<p:panel>
+					<p:button id="buttonNew" icon="fa fa-plus" value=" #{messages['commons.new']}" outcome="#{mmOfferTemplateCategoryListBean.newViewName}">
+						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+						<f:param name="edit" value="true" />
+						<f:param name="backView" value="mmOfferCategories" />
+					</p:button>
+				</p:panel>
+				<p:panel id="offerCategoriesTable">
+					<p:messages id="messages" />
+					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false">
+						<p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true" width="40%">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{entity.offerTemplateCategory.name}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu id="parentCategory" value="#{entity.offerTemplateCategory}" required="false" converter="offerTemplateCategoryConverter" var="parent">
+
+										<f:selectItem itemLabel="" />
+										<f:selectItems value="#{mmOfferTemplateCategoryListBean.parentHierarchy}" var="parentCategory" itemLabel="#{parentCategory.code}" itemValue="#{parentCategory}" />
+
+										<p:column>
+											<h:outputText value="#{parent.codeInLevel}" />
+										</p:column>
+
+										<p:column>
+											<h:outputText value="#{parent.name}" />
+										</p:column>
+
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column id="name" headerText="#{messages['offer.category.description']}" sortBy="#{entity.name}" exportable="true" width="40%">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{entity.name}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{entity.name}" style="width:96%" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column>
+							<p:button id="editlink#{entity.id}" outcome="#{mmOfferTemplateCategoryListBean.getEditViewName()}" icon="fa fa-edit">
+								<f:param name="objectId" value="#{entity.id}" />
+								<f:param name="edit" value="true" />
+								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+								<f:param name="backView" value="mmOfferCategories" />
+							</p:button>
+							<p:commandButton id="deleteButton#{entity.id}" icon="fa fa-trash" oncomplete="doDelete()">
+								<f:setPropertyActionListener target="#{mmOfferTemplateCategoryListBean.entity}" value="#{entity}" />
+								<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+							</p:commandButton>
+						</p:column>
+					</hftl:dataList>
+				</p:panel>
+				<p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}"  update="@form" />
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -54,21 +54,18 @@ import org.meveo.model.catalog.ProductTemplate;
 public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_TEMPLATE_ID")
     private ProductTemplate productTemplate;
-    
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "APPLICATION_DATE")
     private Date applicationDate;
-
 
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
@@ -78,81 +75,65 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    public ProductInstance() {
+        super();
+    }
 
-	public ProductInstance(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate,String description, User user) {
-		this.applicationDate=applicationDate;
-		this.code = productTemplate.getCode();
-		this.description = description;
-		this.productChargeInstances=new ArrayList<>();
-		this.productTemplate=productTemplate;
-		this.quantity=quantity;
-		this.userAccount=userAccount;
+    public ProductInstance(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code, String description, User user) {
+        this.applicationDate = applicationDate;
+        this.code = code;
+        this.description = description;
+        this.productChargeInstances = new ArrayList<>();
+        this.productTemplate = productTemplate;
+        this.quantity = quantity;
+        this.userAccount = userAccount;
         Auditable auditable = new Auditable();
         auditable.setCreated(new Date());
         auditable.setCreator(user);
-		this.setAuditable(auditable);
-	}
+        this.setAuditable(auditable);
+    }
 
+    public ProductTemplate getProductTemplate() {
+        return productTemplate;
+    }
 
+    public void setProductTemplate(ProductTemplate productTemplate) {
+        this.productTemplate = productTemplate;
+    }
 
-	public ProductTemplate getProductTemplate() {
-		return productTemplate;
-	}
+    public List<ProductChargeInstance> getProductChargeInstances() {
+        return productChargeInstances;
+    }
 
+    public void setProductChargeInstances(List<ProductChargeInstance> productChargeInstances) {
+        this.productChargeInstances = productChargeInstances;
+    }
 
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setProductTemplate(ProductTemplate productTemplate) {
-		this.productTemplate = productTemplate;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
 
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public List<ProductChargeInstance> getProductChargeInstances() {
-		return productChargeInstances;
-	}
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
 
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 
-
-	public void setProductChargeInstances(List<ProductChargeInstance> productChargeInstances) {
-		this.productChargeInstances = productChargeInstances;
-	}
-
-
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
-
-
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-
-
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
-
-
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-
-
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
-
-
-
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -170,11 +151,11 @@ public class ProductInstance extends BusinessCFEntity {
         return false;
     }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		// FIXME
-        //return new ICustomFieldEntity[]{productTemplate};
-		return null;
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        // FIXME
+        // return new ICustomFieldEntity[]{productTemplate};
+        return null;
+    }
 
 }
