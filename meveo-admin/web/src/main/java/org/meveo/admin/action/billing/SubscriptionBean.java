@@ -196,6 +196,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		} else {
 			initServiceTemplates();
 			initServiceInstances(entity.getServiceInstances());
+			List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
+			if(oneShotChargeInstances != null && !oneShotChargeInstances.isEmpty()){
+				oneShotChargeInstance = oneShotChargeInstances.get(0);
+				log.debug("oneShotChargeInstance initialized: " + oneShotChargeInstance);
+			}
+				
 		}
 
 		return entity;
@@ -291,7 +297,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
                     oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(), getCurrentUser(), true);
            
-            oneShotChargeInstance = null;
+            List<OneShotChargeInstance> oneShotChargeInstanceList = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
+			if(oneShotChargeInstanceList != null && !oneShotChargeInstanceList.isEmpty()){
+				oneShotChargeInstance = oneShotChargeInstanceList.get(0);
+				log.debug("oneShotChargeInstance initialized: " + oneShotChargeInstance);
+			}
             oneShotChargeInstances = null;
             clearObjectId();
 
@@ -834,6 +844,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (dataTable != null) {
             dataTable.reset();
         }
+    }
+    
+    public boolean hasOneShotChargeInstance(){
+    	boolean instanceExists = oneShotChargeInstance != null && !oneShotChargeInstance.isTransient();
+    	log.debug("instance exists: " + instanceExists);
+    	return instanceExists;
     }
  
 }
