@@ -455,7 +455,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
 			ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
 			HashMap<String, Object> context = new HashMap<String, Object>();
-		    context.put(Script.CONTEXT_ENTITY, ratePrice);
+		    context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
 			script.execute(context, getCurrentUser());
 		}
 	}
