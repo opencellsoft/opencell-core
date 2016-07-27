@@ -53,12 +53,16 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 @Stateless
 public class PricePlanMatrixService extends MultilanguageEntityService<PricePlanMatrix> {
 
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
+	
+	@Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	ParamBean param = ParamBean.getInstance();
 
@@ -713,6 +717,17 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 			return true;
 		}
 		return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
+	}
+	
+	public synchronized void duplicate(PricePlanMatrix entity,User currentUser) throws BusinessException{
+		entity=refreshOrRetrieve(entity);
+		String code=findDuplicateCode(entity, currentUser);
+		detach(entity);
+		entity.setId(null);
+		String sourceAppliesToEntity=entity.clearUuid();
+		entity.setCode(code);
+		create(entity, getCurrentUser());
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 
 }
