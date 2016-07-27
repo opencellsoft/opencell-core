@@ -18,20 +18,24 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * Offer Template service implementation.
@@ -39,6 +43,12 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class OfferTemplateService extends BusinessService<OfferTemplate> {
+	
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
+	
+	@Inject
+	private OfferServiceTemplateService offerServiceTemplateService;
 	
 	@Override
 	public void create(OfferTemplate offerTemplate, User creator) throws BusinessException {
@@ -113,6 +123,43 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		}
 		return result;
+	}
+	
+	public synchronized void duplicate(OfferTemplate entity,User currentUser) throws BusinessException{
+		
+		entity = refreshOrRetrieve(entity);
+		// Lazy load related values first
+		entity.getOfferServiceTemplates().size();
+		String code=findDuplicateCode(entity,currentUser);
+		
+		// Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+		String sourceAppliesToEntity = entity.clearUuid();
+
+		List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
+		entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
+		entity.setCode(code);
+		create(entity, currentUser);
+		if(serviceTemplates!=null){
+			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
+				serviceTemplate.getIncompatibleServices().size();
+				offerServiceTemplateService.detach(serviceTemplate);
+				serviceTemplate.setId(null);
+				List<ServiceTemplate> incompatibleServices=serviceTemplate.getIncompatibleServices();
+				serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
+				if(incompatibleServices!=null){
+					for(ServiceTemplate incompatibleService:incompatibleServices){
+						serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
+					}
+				}
+				serviceTemplate.setOfferTemplate(entity);
+				offerServiceTemplateService.create(serviceTemplate, currentUser);
+				entity.addOfferServiceTemplate(serviceTemplate);
+			}
+		}
+		update(entity,currentUser);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 
 }

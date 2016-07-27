@@ -1,5 +1,6 @@
 package org.meveo.api.communication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
-import org.meveo.api.dto.communication.MeveoInstancesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -153,42 +153,42 @@ public class MeveoInstanceApi extends BaseApi{
         meveoInstanceService.update(meveoInstance, currentUser);
     }
 
-    public MeveoInstanceDto find(String code,Provider provider) throws MeveoApiException {
-        if (StringUtils.isEmpty(code)) {
-            missingParameters.add("code");
+    public MeveoInstanceDto find(String meveoInstanceCode,Provider provider) throws MeveoApiException {
+        if (StringUtils.isEmpty(meveoInstanceCode)) {
+            missingParameters.add("meveoInstanceCode");
         }
         handleMissingParameters();
         
-        MeveoInstance meveoInstance=meveoInstanceService.findByCode(code,provider);
+        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,provider);
 
         if (meveoInstance == null) {
-            throw new EntityDoesNotExistsException(MeveoInstance.class, code);
+            throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
         }
 
         return new MeveoInstanceDto(meveoInstance);
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
-    	if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+    public void remove(String meveoInstanceCode, Provider provider) throws MeveoApiException {
+    	if (StringUtils.isBlank(meveoInstanceCode)) {
+            missingParameters.add("meveoInstanceCode");
         }
         handleMissingParameters();
-        MeveoInstance meveoInstance=meveoInstanceService.findByCode(code,provider);
+        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,provider);
 
         if (meveoInstance == null) {
-            throw new EntityDoesNotExistsException(MeveoInstance.class, code);
+            throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
         }
 
         meveoInstanceService.remove(meveoInstance);
     }
 
-    public MeveoInstancesDto list(Provider provider) throws MeveoApiException {
+    public List<MeveoInstanceDto> list(Provider provider) throws MeveoApiException {
 
-        MeveoInstancesDto result = new MeveoInstancesDto();
+        List<MeveoInstanceDto> result = new ArrayList<MeveoInstanceDto>();
         List<MeveoInstance> meveoInstances = meveoInstanceService.list(provider);
         if (meveoInstances != null) {
             for (MeveoInstance meveoInstance : meveoInstances) {
-                result.getMeveoInstances().add(new MeveoInstanceDto(meveoInstance));
+                result.add(new MeveoInstanceDto(meveoInstance));
             }
         }
 

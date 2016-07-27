@@ -75,6 +75,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+	private TriggeredEDRTemplateService edrTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 
@@ -191,38 +194,13 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return Arrays.asList("provider");
 	}
 	
-	@Inject
-	private TriggeredEDRTemplateService edrTemplateService;
-	
 	@ActionMethod
 	public void duplicate() {
 
         if (entity != null && entity.getId() != null) {
-            
-            entity = oneShotChargeTemplateService.refreshOrRetrieve(entity);
-            
-		    // Lazy load related values first 
-			entity.getEdrTemplates().size();
-
-            // Detach and clear ids of entity and related entities
-			oneShotChargeTemplateService.detach(entity);
-			entity.setId(null);
-			String sourceAppliesToEntity = entity.clearUuid();
-			
-			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
-			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-			if(edrTemplates!=null&edrTemplates.size()!=0){
-				for(TriggeredEDRTemplate edrTemplate:edrTemplates){
-					edrTemplateService.detach(edrTemplate);
-					entity.getEdrTemplates().add(edrTemplate);
-				}
-			}
-			entity.setChargeInstances(null);
-			entity.setCode(entity.getCode()+"_copy");
-			
+           
             try {
-                oneShotChargeTemplateService.create(entity, getCurrentUser());
-                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+                oneShotChargeTemplateService.duplicate(entity, getCurrentUser());
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting one shot charge template entity: #{0}:#{1}", entity.getCode(), e);

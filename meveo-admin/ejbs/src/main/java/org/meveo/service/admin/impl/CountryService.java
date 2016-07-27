@@ -68,11 +68,15 @@ public class CountryService extends PersistenceService<Country> {
 		qb.addCriterion("descriptionEn", "=", description, true);
 		qb.addCriterion("descriptionFr", "=", description, true);
 		qb.endOrClause();
+		qb.addOrderCriterion("id", true);
 		try {
-			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+			List<Country> countries= qb.getQuery(getEntityManager()).getResultList();
+			if(countries!=null){
+				return countries.get(0);
+			}
 		} catch (NoResultException e) {
-			return null;
 		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

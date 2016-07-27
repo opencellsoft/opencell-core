@@ -18,15 +18,18 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Entity;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -105,7 +108,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
         try {
             if (wfTransition.getId() != null) {
-            	wFTransitionService.update(wfTransition, getCurrentUser());
+                WFTransition wfTrs = wFTransitionService.findById(wfTransition.getId());
+                wfTrs.setFromStatus(wfTransition.getFromStatus());
+                wfTrs.setToStatus(wfTransition.getToStatus());
+                wfTrs.setConditionEl(wfTransition.getConditionEl());
+                wFTransitionService.update(wfTrs, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
 
@@ -134,8 +141,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     }
 
     public void deleteWfTransition(WFTransition dunningPlanTransition) {
-    	WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
-    	wFTransitionService.remove(transition);
+        WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
+        wFTransitionService.remove(transition);
         entity.getTransitions().remove(dunningPlanTransition);
         messages.info(new BundleKey("messages", "delete.successful"));
     }
@@ -161,7 +168,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
             return null;
         }
 
-        String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
             if (clazz.isAnnotationPresent(WorkflowTypeClass.class)) {
@@ -195,5 +201,36 @@ public class WorkflowBean extends BaseBean<Workflow> {
     protected List<String> getListFieldsToFetch() {
         return Arrays.asList("provider");
     }
+    
+    @SuppressWarnings({ "unchecked" })
+	public Map<String, String> getTransitionStatusFromWorkflowType() {
+    	try {
+			Class<?> clazz = Class.forName(entity.getWfType());
+			Object obj = clazz.newInstance();
+			Method testMethod = obj.getClass().getMethod("getStatusList");
+			List<String> statusList = (List<String>) testMethod.invoke(obj);
+			Map<String, String> statusMap = new TreeMap<>();
+			for(String s : statusList) {
+				statusMap.put(s, s);
+			}
+			return statusMap;
+		} catch (ClassNotFoundException e) {
+			log.error("unable to get class " + entity.getWfType(), e);
+		} catch (InstantiationException e) {
+			log.error("unable to instantiate class " + entity.getWfType(), e);
+		} catch (IllegalAccessException e) {
+			log.error("can not access constructor of class " + entity.getWfType(), e);
+		} catch (NoSuchMethodException e) {
+			log.error("unable to find getStatusList method on class " + entity.getWfType(), e);
+		} catch (SecurityException e) {
+			log.error(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			log.error("illegal arguments for getStatusList method on class " + entity.getWfType(), e);
+		} catch (InvocationTargetException e) {
+			log.error(e.getMessage(), e);
+		}
+    	return new TreeMap<>();
+    }
+    
 
 }
