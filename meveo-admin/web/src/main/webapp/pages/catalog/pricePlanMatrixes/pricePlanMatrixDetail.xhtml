@@ -36,18 +36,18 @@
 			backingBean="#{chargeTemplateBean}"
 			selection="#{chargeTemplateBean.entity}"
 			searchField1Label="#{messages['charge.code']}" searchField1="code"
-			column1Label="#{messages['charge.description']}" column1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
 			updateField=":formPricePlan:tabView:chargeSelectId :formPricePlan:tabView:chargeSelectId_text :formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 
 	<hftl:entityPopup id="pricePlanMatScriptPopup"
-			header="#{messages['script.popup.header']}"
+			header="#{messages['scriptInstance.popup.header']}"
 			backingBean="#{scriptInstanceBean}"
 			selection="#{scriptInstanceBean.entity}"
-			searchField1Label="#{messages['script.code']}" searchField1="code"
-			column1Label="#{messages['charge.description']}" column1="code"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
 			updateField=":formPricePlan:tabView:scriptSelectId :formPricePlan:tabView:scriptSelectId_text :formPricePlan:tabView:pricePlanCode">
