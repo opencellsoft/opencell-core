@@ -102,7 +102,7 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		}
 	}
 	
-	public void duplicate(ServiceTemplate entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(ServiceTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
         
         // Lazy load related values first 

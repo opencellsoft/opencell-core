@@ -719,15 +719,13 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
 	}
 	
-	public void duplicate(PricePlanMatrix entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(PricePlanMatrix entity,User currentUser) throws BusinessException{
 		entity=refreshOrRetrieve(entity);
-		Long sequence= getLastPricePlanByCharge(entity.getEventCode(), currentUser.getProvider()) + 1;
-		
+		String code=findDuplicateCode(entity, currentUser);
 		detach(entity);
 		entity.setId(null);
 		String sourceAppliesToEntity=entity.clearUuid();
-		entity.setSequence(sequence);
-		entity.setCode(entity.getCode() + " - Copy"+(sequence==1L?"":" "+sequence));
+		entity.setCode(code);
 		create(entity, getCurrentUser());
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}

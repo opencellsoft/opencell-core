@@ -125,7 +125,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		return result;
 	}
 	
-	public void duplicate(OfferTemplate entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(OfferTemplate entity,User currentUser) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);
 		// Lazy load related values first

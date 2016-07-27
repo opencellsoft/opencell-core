@@ -33,7 +33,7 @@ import org.meveo.service.base.BusinessService;
 public class TriggeredEDRTemplateService extends
 		BusinessService<TriggeredEDRTemplate> {
 	
-	public void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
 		String code=findDuplicateCode(entity,currentUser);
 		

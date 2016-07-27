@@ -44,7 +44,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 	@Inject
     private CustomFieldInstanceService customFieldInstanceService;
 	
-	public void duplicate(P entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(P entity,User currentUser) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);
         // Lazy load related values first 
