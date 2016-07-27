@@ -26,9 +26,7 @@
 
 	<ui:insert name="head" />
 
-	<!-- <a:loadScript src="resource://jquery.js" /> -->
-	<script type="text/javascript"
-		src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
+	<h:outputScript name="js/equalHeight.js" library="layout" />
 </h:head>
 <h:body>
 	<h:form>

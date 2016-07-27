@@ -1,0 +1,43 @@
+<ui:composition 
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+
+        <!-- TOPBAR -->
+        <div id="layout-topbar">
+
+            <!-- LOGO -->
+            <a>
+                <h:graphicImage name="MeveoOpenCell.png" library="img" />                
+            </a>
+
+            <!-- MENUBUTTON -->
+            <a id="menu-button"> <i class="icon-chevron-down"></i> </a>
+
+            <!-- SEARCH -->
+
+            <!-- TOPBAR LINKS -->
+            <a id="topmenu-button"> <i class="icon-list2"></i> </a>
+
+            <ul id="topbar-menu">
+                <li><a href="#"><i class="icon-unlock-stroke"></i> Log In/Sign Up</a></li>              
+            </ul>
+
+            <!-- MENU COVER -->
+            <div id="layout-menu-cover">
+                <ui:include src="layoutmenu.xhtml" />
+            </div>
+            
+        </div>
+    
+        <!-- TOPMENU -->
+        <ul id="top-menu">
+            <li><a href="#"><i class="icon-cog2"></i> Offers</a></li>
+            <li><a href="#"><i class="icon-stats2"></i> Products</a></li>  
+        </ul>
+    
+</ui:composition>

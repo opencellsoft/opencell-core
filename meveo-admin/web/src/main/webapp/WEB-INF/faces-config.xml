@@ -30,6 +30,19 @@
 		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
 	</application>
 	
+	<component>
+        <component-type>org.primefaces.component.OpencellMenu</component-type>
+        <component-class>org.meveo.util.view.composite.OpencellMenu</component-class>
+    </component>
+    
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.OpencellMenuRenderer</renderer-type>
+            <renderer-class>org.meveo.util.view.composite.OpencellMenuRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+	
 	<lifecycle>
 		<phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener>
 	</lifecycle>
