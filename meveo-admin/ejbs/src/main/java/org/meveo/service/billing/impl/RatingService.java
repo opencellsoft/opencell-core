@@ -453,6 +453,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountTax(amountTax);
 		
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
+			log.debug("execute prociplan's script " + ratePrice.getScriptInstance().getCode());
 			ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
 			HashMap<String, Object> context = new HashMap<String, Object>();
 		    context.put(Script.CONTEXT_ENTITY, bareWalletOperation);

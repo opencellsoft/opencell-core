@@ -42,6 +42,17 @@
 			updateField=":formPricePlan:tabView:chargeSelectId :formPricePlan:tabView:chargeSelectId_text :formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 
+	<hftl:entityPopup id="pricePlanMatScriptPopup"
+			header="#{messages['script.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{scriptInstanceBean.entity}"
+			searchField1Label="#{messages['script.code']}" searchField1="code"
+			column1Label="#{messages['charge.description']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
+			updateField=":formPricePlan:tabView:scriptSelectId :formPricePlan:tabView:scriptSelectId_text :formPricePlan:tabView:pricePlanCode">
+		</hftl:entityPopup>
+
 		<!-- 		<hftl:entityPopup id="pricPlanMatCurrencyPopup" -->
 		<!-- 			header="#{messages['tradingLanguage.header']}" -->
 		<!-- 			backingBean="#{tradingCurrencyBean}" -->
@@ -200,7 +211,14 @@
 							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
 							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
 							rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" />
+					
+						<hftl:formField id="scriptSelectId"
+    							label="#{messages['pricePlanMatrix.scriptCode']}"
+    							field="scriptInstance" valueLabelField="code" required="false"
+    							popup="true" popupId="pricePlanMatScriptPopup" /> 
+					
 					</p:tab>
+					
 					<hftl:customFields backingBean="#{pricePlanMatrixBean}"
 							messagesId=":formPricePlan:messages" />
 				</p:tabView>
