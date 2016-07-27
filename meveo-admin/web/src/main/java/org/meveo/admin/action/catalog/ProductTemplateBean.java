@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -66,21 +67,50 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	@Override
+	public ProductTemplate initEntity() {
+		super.initEntity();
+		getOfferTemplateCategoriesDM();
+		getAttachmentsDM();
+		getWalletTemplatesDM();
+		getBamDM();
+		return entity;
+	}
+
+	@Override
 	protected IPersistenceService<ProductTemplate> getPersistenceService() {
 		return productTemplateService;
+	}
+
+	@ActionMethod
+	public String duplicate() {
+
+		if (entity != null && entity.getId() != null) {
+
+			// entity = productTemplateService.refreshOrRetrieve(entity);
+
+			// Detach and clear ids of entity and related entities
+			productTemplateService.detach(entity);
+			entity.setId(null);
+			String sourceAppliesToEntity = entity.clearUuid();
+
+			// entity.setCode(entity.getCode() + "_copy");
+
+			try {
+				productTemplateService.create(entity, getCurrentUser());
+				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				messages.info(new BundleKey("messages", "save.successful"));
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
+		}
+
+		return "mmProductTemplates";
 	}
 
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-		if (editMode != null && editMode.length() > 0 && editMode == "dup") {
-			ProductTemplate pt = new ProductTemplate();
-			pt = entity;
-			entity = new ProductTemplate();
-			entity = pt;
-			entity.setId(null);
-		}
 
 		if (entity.getOfferTemplateCategories() != null) {
 			entity.getOfferTemplateCategories().clear();
@@ -105,6 +135,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		String outcome = super.saveOrUpdate(killConversation);
 
+		log.info(outcome);
 		return outcome;
 	}
 

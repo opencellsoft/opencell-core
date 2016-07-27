@@ -12,6 +12,8 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{productTemplateBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{productTemplateBean.initEntity}" />
 			<f:viewParam name="editMode" value="#{productTemplateBean.editMode}" />
 		</f:metadata>
 	</ui:define>
@@ -29,8 +31,10 @@
 			</p:breadCrumb>
 		</p:panel>
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
-			backingBean="#{productTemplateBean}" showEnableDisableButton="true"
-			showBackButton="false">
+			backingBean="#{productTemplateBean}" showEnableDisableButton="false"
+			showBackButton="false"
+			showEditButton="#{productTemplateBean.editMode != 'dup'}"
+			showDeleteButton="#{productTemplateBean.editMode != 'dup'}">
 			<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
 				<hftl:decorateFormField fieldId="productImage"
 					rendered="#{not productTemplateBean.entity.transient}"
@@ -86,6 +90,9 @@
 					field="description" id="description" />
 			</p:panelGrid>
 			<hftl:customFields backingBean="#{productTemplateBean}" />
+			<p:commandButton value="#{messages['action.save']}"
+				action="#{productTemplateBean.duplicate()}"
+				rendered="#{productTemplateBean.editMode == 'dup'}"></p:commandButton>
 		</hftl:formPanel>
 	</ui:define>
 </ui:composition>
