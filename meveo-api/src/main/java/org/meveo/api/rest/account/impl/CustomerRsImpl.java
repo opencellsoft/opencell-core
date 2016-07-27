@@ -114,7 +114,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         CustomersResponseDto result = new CustomersResponseDto();
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));
+            result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

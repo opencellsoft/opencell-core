@@ -15,7 +15,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
-public class AccountDtoFilter extends SecureMethodResultFilter {
+public class AccountDtoListFilter extends SecureMethodResultFilter {
 
 	@Inject
 	private SecuredBusinessEntityService securedBusinessEntityService;
@@ -23,15 +23,13 @@ public class AccountDtoFilter extends SecureMethodResultFilter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object filterResult(Object result, User user) throws MeveoApiException {
-		if (result != null && !AccountDto.class.isAssignableFrom(result.getClass())) {
-			// result is of a different type, log warning and return immediately
-			log.warn("Result is not an AccountDto. Skipping filter...");
+		if (result == null) {
+			// result is empty. no need to filter.
+			log.warn("Result is empty. Skipping filter...");
 			return result;
 		}
 
-		// retrieve the associated CustomerAccountsDto
-		AccountDto accountDto = (AccountDto) result;
-		FilterResults filterResults = accountDto.getClass().getAnnotation(FilterResults.class);
+		FilterResults filterResults = result.getClass().getAnnotation(FilterResults.class);
 
 		if (filterResults == null) {
 			// result is not annotated for filtering, log warning and return
@@ -41,37 +39,39 @@ public class AccountDtoFilter extends SecureMethodResultFilter {
 		}
 
 		BusinessEntity account = null;
-		boolean entityAllowed = false;
 		List<AccountDto> filteredList = new ArrayList<>();
 
-		List<AccountDto> childAccounts;
+		List<AccountDto> accountList = null;
 		try {
-			childAccounts = (List<AccountDto>) getItemsForFiltering(accountDto, filterResults.property());
+			accountList = (List<AccountDto>) getItemsForFiltering(result, filterResults.property());
 		} catch (IllegalAccessException e) {
-			throw new InvalidParameterException(String.format("Failed to retrieve property: %s of account %s.", filterResults.property(), accountDto));
+			throw new InvalidParameterException(String.format("Failed to retrieve property: %s of DTO %s.", filterResults.property(), result));
+		}
+		
+		if(accountList == null) {
+			// no items to filter, log warning and return immediately
+			log.warn("Accounts list is empty. Skipping filter...");
+			return result;
 		}
 
-		for (AccountDto childAccount : childAccounts) {
+		for (AccountDto accountDto : accountList) {
 			try {
 				account = filterResults.entityClass().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new InvalidParameterException(String.format("Failed to create new instance of: %s", filterResults.entityClass()));
 			}
-			account.setCode(childAccount.getCode());
-			entityAllowed = securedBusinessEntityService.isEntityAllowed(account, user, false);
-
-			if (entityAllowed) {
+			account.setCode(accountDto.getCode());
+			if (securedBusinessEntityService.isEntityAllowed(account, user, false)) {
 				log.debug("Adding account {} to filtered list.", account);
-				childAccount = (AccountDto) filterResult(childAccount, user);
-				filteredList.add(childAccount);
+				filteredList.add(accountDto);
 			}
 		}
 
-		childAccounts.clear();
-		childAccounts.addAll(filteredList);
-		log.debug("New account dto: {}", accountDto);
+		accountList.clear();
+		accountList.addAll(filteredList);
+		log.debug("New account DTO: {}", result);
 
-		return accountDto;
+		return result;
 	}
 
 	/**

@@ -19,7 +19,8 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.filter.AccountDtoFilter;
+import org.meveo.api.security.filter.AccountDtoListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -227,7 +228,9 @@ public class CustomerApi extends AccountApi {
 		return customer;
 	}
 
-	@SecuredBusinessEntityMethod(resultFilter = AccountDtoFilter.class, validate = @SecureMethodParameter(entity = Customer.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = Customer.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomerDto find(String customerCode, User user) throws MeveoApiException {
 		if (StringUtils.isBlank(customerCode)) {
 			missingParameters.add("customerCode");
@@ -262,7 +265,12 @@ public class CustomerApi extends AccountApi {
 		}
 	}
 
-	public CustomersDto filterCustomer(CustomerDto postData, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityMethod(
+			resultFilter = AccountDtoListFilter.class, 
+			validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entity = Customer.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	public CustomersDto filterCustomer(CustomerDto postData, User currentUser) throws MeveoApiException {
+		Provider provider = currentUser.getProvider();
 		CustomerCategory customerCategory = null;
 		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
 			customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), provider);

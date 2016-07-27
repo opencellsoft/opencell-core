@@ -72,7 +72,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode, getCurrentUser().getProvider()));
+            result.setSeller(sellerApi.find(sellerCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

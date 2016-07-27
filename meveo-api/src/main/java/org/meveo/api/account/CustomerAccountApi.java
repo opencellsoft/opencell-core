@@ -24,7 +24,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.filter.AccountDtoFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -261,7 +260,9 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
-	@SecuredBusinessEntityMethod(resultFilter = AccountDtoFilter.class, validate = @SecureMethodParameter(entity = CustomerAccount.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {

@@ -229,7 +229,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		SellerDto sellerDto = null;
 		try {
-			sellerDto = sellerApi.find(postData.getSellerCode(), provider);
+			sellerDto = sellerApi.find(postData.getSellerCode(), currentUser);
 		} catch (Exception e) {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
@@ -385,7 +385,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 		SellerDto sellerDto = null;
 		try {
-			sellerDto = sellerApi.find(postData.getSellerCode(), provider);
+			sellerDto = sellerApi.find(postData.getSellerCode(), currentUser);
 		} catch (Exception e) {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
@@ -852,7 +852,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1127,7 +1129,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1428,7 +1432,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
