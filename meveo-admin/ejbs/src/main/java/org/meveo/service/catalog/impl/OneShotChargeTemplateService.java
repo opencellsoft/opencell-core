@@ -29,14 +29,13 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Charge Template service implementation.
  */
 @Stateless
-public class OneShotChargeTemplateService extends MultilanguageEntityService<OneShotChargeTemplate> {
-
+public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
+	
 	/**
 	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()
 	 */

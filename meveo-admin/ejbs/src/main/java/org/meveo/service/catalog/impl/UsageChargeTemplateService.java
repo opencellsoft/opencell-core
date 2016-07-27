@@ -32,14 +32,13 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.MultilanguageEntityService;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class UsageChargeTemplateService extends MultilanguageEntityService<UsageChargeTemplate> {
+public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
 
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;

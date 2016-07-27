@@ -18,17 +18,55 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class ChargeTemplateService<P extends ChargeTemplate> extends
-		BusinessService<P> {
-
+public class ChargeTemplateService<P extends ChargeTemplate> extends MultilanguageEntityService<P> {
+	
+	@Inject
+	private TriggeredEDRTemplateService edrTemplateService;
+	
+	@Inject
+    private CustomFieldInstanceService customFieldInstanceService;
+	
+	public synchronized void duplicate(P entity,User currentUser) throws BusinessException{
+		
+		entity = refreshOrRetrieve(entity);
+        // Lazy load related values first 
+		entity.getEdrTemplates().size();
+		String code=findDuplicateCode(entity,currentUser);
+		
+        // Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+        String sourceAppliesToEntity = entity.clearUuid();
+        
+		List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
+		entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+		if(edrTemplates!=null&edrTemplates.size()!=0){
+			for(TriggeredEDRTemplate edrTemplate:edrTemplates){
+				edrTemplateService.detach(edrTemplate);
+				entity.getEdrTemplates().add(edrTemplate);
+			}
+		}
+		entity.setChargeInstances(null);
+		entity.setCode(code);
+		create(entity, getCurrentUser());
+        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+	}
 }
