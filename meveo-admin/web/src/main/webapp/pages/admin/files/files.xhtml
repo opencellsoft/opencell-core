@@ -89,9 +89,9 @@
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
 				</p:panel>
-				<p:panel rendered="#{userBean.isDownloadUIZip()}" id="downloadUIZipfile">
-					<p:commandButton value="#{messages['commons.download']}" icon="ui-icon-arrowthick-1-s" ajax="false">
-                  		<p:fileDownload value="#{userBean.downloadUIFile}"/>
+				<p:panel id="downloadZipfile" rendered="#{userBean.selectedFileName==null}">
+					<p:commandButton value="#{messages['fileExplore.downloadZipfile']}" icon="ui-icon-arrowthick-1-s" ajax="false">
+                  		<p:fileDownload value="#{userBean.downloadZipFile}"/>
 						<f:param name="cid"
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
@@ -131,9 +131,12 @@
              </h:form>
              
              <h:form rendered="#{userBean.selectedFileName==null and userBean.canUserUpdateEntity()}">
-                 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
+				<p:selectBooleanCheckbox id="autoUnzip" value="#{userBean.autoUnzipped}"  itemLabel="#{messages['fileExplore.unzipAutomately']}" styleClass="Padding10">
+					<p:ajax/>
+				</p:selectBooleanCheckbox>
+                <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
                      multiple="true" mode="advanced" dragDropSupport="true"
-                     fileLimit="5" update=":fileExplorer" />
+                     fileLimit="5" update=":fileExplorer" styleClass="TexAlCenter"/>
              </h:form>
 		</p:panel>
 	</ui:define>

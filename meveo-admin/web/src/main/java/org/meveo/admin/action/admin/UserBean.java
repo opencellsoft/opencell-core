@@ -114,11 +114,10 @@ public class UserBean extends BaseBean<User> {
     private String directoryName;
     private List<File> fileList;
     private UploadedFile file;
-    //folder for newui files
-    private static final String NEWUI="NewUI";
-    private static final String NEWUI_FOLDER=File.separator+NEWUI;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+    
+    private boolean autoUnzipped;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -301,10 +300,9 @@ public class UserBean extends BaseBean<User> {
         String invoicePdfDir = getFilePath() + File.separator + "invoices" + File.separator + "pdf";
         String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + "jasper";
-        String newUI=getFilePath()+File.separator+NEWUI;
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
             accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-            invoiceXmlDir, jasperDir,newUI);
+            invoiceXmlDir, jasperDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -432,12 +430,16 @@ public class UserBean extends BaseBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={}", event.getFile());
+        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(),autoUnzipped);
         // FIXME: use resource bundle
         try {
         	String filename=event.getFile().getFileName();
-        	if((NEWUI_FOLDER).equals(selectedFolder)&&filename.endsWith(".zip")){
-        		copyZippedUIFile(event.getFile().getFileName(),event.getFile().getInputstream());
+        	if(this.isAutoUnzipped()){
+        		if(!filename.endsWith(".zip")){
+        			messages.info(filename+" isn't a valid zip file!");
+        		}else{
+        			copyUnZippedFile(event.getFile().getInputstream());
+        		}
         	}else{
         		copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
         	}
@@ -509,32 +511,11 @@ public class UserBean extends BaseBean<User> {
             }
         }
     }
-    /**
-     * is downloadable for custom UI resource
-     * @return
-     */
-    public boolean isDownloadUIZip(){
-    	log.debug("selected folder {}",selectedFolder);
-    	if(selectedFolder==null){
-    		return false;
-    	}
-    	String[] folders=selectedFolder.split(File.separator);
-    	if(folders.length!=3){
-    		return false;
-    	}
-    	return folders[1].equals(NEWUI);
-    }
-
-    
-
-	public StreamedContent getDownloadUIFile(){
-    	if(!isDownloadUIZip()){
-    		return null;
-    	}
-    	String filename=selectedFolder.split(File.separator)[2];
+	public StreamedContent getDownloadZipFile(){
+    	String filename=selectedFolder==null?"meveo":selectedFolder.substring(selectedFolder.lastIndexOf("/")+1, selectedFolder.length());
     	File tempfile=null;
     	StreamedContent uicontent=null;
-    	String sourceFolder=getFilePath()+selectedFolder;
+    	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
 		try {
 			tempfile = File.createTempFile(System.getProperty("java.io.tmpdir"), ".tmp");
 			FileUtils.createZipFile(sourceFolder,tempfile);
@@ -554,9 +535,9 @@ public class UserBean extends BaseBean<User> {
     	return uicontent;
     }
 	
-    private void copyZippedUIFile(String fileName, InputStream in) {
+    private void copyUnZippedFile(InputStream in) {
     	try{
-    		String folder=getFilePath(fileName.substring(0,fileName.lastIndexOf(".zip")));
+    		String folder=getFilePath("");
     		FileUtils.unzipFile(folder, in);
     		buildFileList();
     	}catch(Exception e){
@@ -606,4 +587,13 @@ public class UserBean extends BaseBean<User> {
     public void onProviderChange() {
         rolesDM = null;
     }
+
+	public boolean isAutoUnzipped() {
+		return autoUnzipped;
+	}
+
+	public void setAutoUnzipped(boolean autoUnzipped) {
+		this.autoUnzipped = autoUnzipped;
+	}
+    
 }
