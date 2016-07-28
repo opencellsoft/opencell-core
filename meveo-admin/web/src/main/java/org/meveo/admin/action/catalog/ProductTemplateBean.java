@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
@@ -27,6 +28,7 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
@@ -81,7 +83,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		return productTemplateService;
 	}
 
-	@ActionMethod
 	public String duplicate() {
 
 		if (entity != null && entity.getId() != null) {
@@ -105,6 +106,20 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			}
 		}
 
+		return "mmProductTemplates";
+	}
+
+	public String activateProduct() throws BusinessException {
+		entity.setActive(true);
+		return saveOrUpdate(false);
+	}
+
+	public String saveAsDraft() throws BusinessException {
+		entity.setActive(false);
+		return saveOrUpdate(true);
+	}
+
+	public String discardChanges() {
 		return "mmProductTemplates";
 	}
 
@@ -135,7 +150,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		String outcome = super.saveOrUpdate(killConversation);
 
-		log.info(outcome);
+		if (editMode != null && editMode.length() > 0) {
+			outcome = "mmProductTemplates";
+		}
+
 		return outcome;
 	}
 

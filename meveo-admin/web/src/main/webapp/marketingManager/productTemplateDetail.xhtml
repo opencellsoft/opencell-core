@@ -24,75 +24,81 @@
 
 	<ui:define name="body">
 		<p:panel>
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="mmProductTemplates"
-					value="#{messages['productTemplates.search']}" />
-			</p:breadCrumb>
+			<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:breadCrumb homeDisplay="text" id="crumbmenu">
+						<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+						<p:menuitem outcome="mmProductTemplates"
+							value="#{messages['productTemplates.search']}" />
+					</p:breadCrumb>
+				</p:panelGrid>
+				<p:panelGrid columns="3" styleClass="ui-panelgrid-blank TexAlRight">
+					<p:commandButton value="#{messages['action.activate']}"
+						action="#{productTemplateBean.activateProduct()}"
+						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}"
+						icon="ui-icon-check" />
+					<p:commandButton value="#{messages['action.saveAsDraft']}"
+						action="#{productTemplateBean.saveAsDraft()}"
+						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
+					<p:commandButton value="#{messages['action.discardChanges']}"
+						action="#{productTemplateBean.discardChanges()}"
+						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
+				</p:panelGrid>
+			</p:panelGrid>
 		</p:panel>
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{productTemplateBean}" showEnableDisableButton="false"
-			showBackButton="false"
-			showEditButton="#{productTemplateBean.editMode != 'dup'}"
-			showDeleteButton="#{productTemplateBean.editMode != 'dup'}">
+			showBackButton="false" showEditButton="false"
+			showDeleteButton="false">
 			<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
-				<hftl:decorateFormField fieldId="productImage"
-					rendered="#{not productTemplateBean.entity.transient}"
-					label="#{messages['commons.image']}">
-					<p:outputPanel autoUpdate="true">
-						<p:graphicImage id="productImage" cache="false"
-							value="#{productTemplateImageStreamer.image}" height="150"
-							width="150">
-							<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
-						</p:graphicImage>
-						<p:fileUpload
-							fileUploadListener="#{productTemplateBean.handleFileUpload}"
-							mode="advanced" update=":formId:messages" auto="true"
-							sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-					</p:outputPanel>
-				</hftl:decorateFormField>
+				<p:panelGrid columns="2">
+					<p:panelGrid columns="1">
+						<hftl:decorateFormField fieldId="productImage"
+							rendered="#{not productTemplateBean.entity.transient}"
+							label="#{messages['commons.image']}">
+							<p:outputPanel autoUpdate="true">
+								<p:graphicImage id="productImage" cache="false"
+									value="#{productTemplateImageStreamer.image}" height="150"
+									width="150">
+									<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
+								</p:graphicImage>
+								<p:fileUpload
+									fileUploadListener="#{productTemplateBean.handleFileUpload}"
+									mode="advanced" update=":formId:messages" auto="true"
+									sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+							</p:outputPanel>
+						</hftl:decorateFormField>
+					</p:panelGrid>
+					<p:panelGrid columns="1">
+						<hftl:formField label="#{messages['businessEntity.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['commons.name']}" field="name"
+							required="true" id="name" />
+					</p:panelGrid>
+				</p:panelGrid>
+
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 					<!-- <h:outputText value="#{productTemplateBean.entity.name}" />
 					<h:outputText
 						value="#{productTemplateBean.entity.businessProductModel.description}" />
 					<h:outputText value="#{productTemplateBean.entity.code}" /> -->
-					<hftl:formField label="#{messages['businessEntity.code']}"
-						field="code" required="true" validateUnique="true" />
 
-					<hftl:formField label="#{messages['commons.name']}" field="name"
-						required="true" id="name" />
+					<hftl:formField label="#{messages['commons.status']}"
+						field="lifeCycleStatus" />
+					<p:panelGrid columns="2">
+						<hftl:formField label="#{messages['commons.validFrom']}"
+							field="validFrom" id="validFrom" />
+						<hftl:formField label="#{messages['commons.validTo']}"
+							field="validTo" id="validTo" />
+					</p:panelGrid>
+
 				</p:panelGrid>
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-
-					<hftl:formField label="#{messages['commons.validFrom']}"
-						field="validFrom" id="validFrom" />
-					<hftl:formField label="#{messages['commons.validTo']}"
-						field="validTo" id="validTo" />
-
-					<!--<h:outputText value="#{messages['commons.validFrom']} : " />
-					<h:outputText value="#{productTemplateBean.entity.validFrom}">
-						<f:convertDateTime
-							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-					</h:outputText>
-					<h:outputText value="#{messages['commons.validTo']} : " />
-					<h:outputText value="#{productTemplateBean.entity.validTo}">
-						<f:convertDateTime
-							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-					</h:outputText>-->
-
-					<p:outputLabel value="#{messages['commons.status']} :"
-						style="padding-top: 5px; margin-right: 10px;"></p:outputLabel>
-					<p:inputSwitch value="#{productTemplateBean.entity.active}"
-						onLabel="#{messages['accountStatusEnum.active']}"
-						offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 				</p:panelGrid>
 				<hftl:formField label="#{messages['businessEntity.description']}"
 					field="description" id="description" />
 			</p:panelGrid>
 			<hftl:customFields backingBean="#{productTemplateBean}" />
-			<p:commandButton value="#{messages['action.save']}"
-				action="#{productTemplateBean.duplicate()}"
-				rendered="#{productTemplateBean.editMode == 'dup'}"></p:commandButton>
 		</hftl:formPanel>
 	</ui:define>
 </ui:composition>

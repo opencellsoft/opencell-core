@@ -30,15 +30,13 @@
 					styleClass="ui-panelgrid-blank" id="headerGrid">
 					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 						<span class="fa fa-plus-circle"> </span>
-						<p:commandLink id="newProduct"
-							value="#{messages['productTemplate.newProduct']}"
-							action="#{productTemplateListBean.newProductTemplate}"
-							ajax="false">
+						<h:link id="newProduct" outcome="mmProductTemplateDetail"
+							value="#{messages['productTemplate.newProduct']}">
 							<f:param name="cid"
 								value="#{javax.enterprise.context.conversation.id}" />
 							<f:param name="edit" value="true" />
 							<f:param name="editMode" value="edit" />
-						</p:commandLink>
+						</h:link>
 						<span class="fa fa-plus-circle"> </span>
 						<p:commandLink id="createBundle"
 							value="#{messages['productTemplate.createBundle']}" />
