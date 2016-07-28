@@ -85,7 +85,7 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
 
-	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT", length = 500)
 	private String longDescription;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {

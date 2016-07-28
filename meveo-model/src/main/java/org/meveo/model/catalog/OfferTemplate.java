@@ -92,7 +92,7 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Size(max = 50)
 	private String imageContentType;
 		
-	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT", length = 500)
 	private String longDescription;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
