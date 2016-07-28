@@ -153,5 +153,5 @@ var Opencell = {
 };
 
 $(function() {
-   Opencell.init();
+	Opencell.init();
 });
