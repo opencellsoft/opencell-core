@@ -91,6 +91,9 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
 	private String imageContentType;
+		
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -198,6 +201,14 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setImageContentType(String imageContentType) {
 		this.imageContentType = imageContentType;
+	}
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
 	}
 
 }
