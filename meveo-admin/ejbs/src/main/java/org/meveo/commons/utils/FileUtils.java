@@ -28,11 +28,15 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -412,5 +416,116 @@ public final class FileUtils {
 		}
 		return fileData.toString();
 
+	}
+	
+	/**
+	 * unzip  files into folder
+	 * @param folder
+	 * @param in
+	 * @throws Exception 
+	 */
+	public static void unzipFile(String folder,InputStream in) throws Exception{
+		ZipInputStream zis=null;
+    	BufferedInputStream bis=null;
+    	OutputStream fos=null;
+    	BufferedOutputStream bos=null;
+		try{
+			zis=new ZipInputStream(in);
+    		bis=new BufferedInputStream(zis);
+    		ZipEntry entry=null;
+    		File fileout=null;
+    		while((entry=zis.getNextEntry())!=null){
+    			fileout=new File(folder+File.separator+entry.getName());
+    			if(entry.isDirectory()){
+    				if(!fileout.exists()){
+    					fileout.mkdirs();
+    				}
+    				continue;
+    			}
+    			if(!fileout.exists()){
+    				(new File(fileout.getParent())).mkdirs();
+    			}
+    			fos=new FileOutputStream(fileout);
+    			bos=new BufferedOutputStream(fos);
+    			int b;
+    			while((b=bis.read())!=-1){
+    				bos.write(b);
+    			}
+    			bos.flush();
+    			fos.flush();
+    		}
+		}catch(Exception e){
+			throw new Exception(e.getMessage());
+		}finally{
+			IOUtils.closeQuietly(bos);
+    		IOUtils.closeQuietly(fos);
+    		IOUtils.closeQuietly(bis);
+    		IOUtils.closeQuietly(zis);
+		}
+	}
+	
+	/**
+	 * compress a folder with sub folders and its files into a zipped file
+	 * @param source
+	 * @param zos
+	 * @param basedir
+	 * @throws IOException
+	 */
+	public static void createZipFile(String sourceFolder,File destination) throws Exception{
+		ZipOutputStream zos=null;
+		try{
+			zos=new ZipOutputStream(new FileOutputStream(destination));
+			File sourceFile=new File(sourceFolder);
+			for(File file:sourceFile.listFiles()){
+				createZipFile(file,zos,File.separator);
+			}
+		}catch(Exception e){
+			throw new Exception(e.getMessage());
+		}finally{
+			IOUtils.closeQuietly(zos);
+		}
+		
+		zos.close();
+	}
+	private static void createZipFile(File source,ZipOutputStream zos,String basedir) throws Exception{
+    	if(!source.exists()){
+    		return;
+    	}
+    	if(source.isDirectory()){
+    		compressZipDirectory(source,zos,basedir+source.getName()+File.separator);
+    	}else{
+    		compressZipFile(source,zos,basedir);
+    	}
+    }
+    private static void compressZipFile(File source, ZipOutputStream zos,String basedir) throws Exception {
+    	if(!source.exists()){
+    		return;
+    	}
+		try{
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
+            ZipEntry entry = new ZipEntry(basedir + source.getName());    
+            zos.putNextEntry(entry);    
+            int count;    
+            byte data[] = new byte[1024];    
+            while ((count = bis.read(data, 0, 1024)) != -1) {    
+                zos.write(data, 0, count);    
+            }
+            zos.flush();
+            bis.close();  
+		}catch(Exception e){
+			throw new Exception(e.getMessage());
+		}
+	}
+
+	private static void compressZipDirectory(File source, ZipOutputStream zos,String basedir) throws Exception{
+		if(!source.exists()){
+			return;
+		}
+		File[] files=source.listFiles();
+		if(files!=null&&files.length!=0){
+			for(File file:files){
+				createZipFile(file,zos,basedir);
+			}
+		}
 	}
 }

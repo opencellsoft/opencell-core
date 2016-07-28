@@ -43,6 +43,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -113,6 +114,9 @@ public class UserBean extends BaseBean<User> {
     private String directoryName;
     private List<File> fileList;
     private UploadedFile file;
+    //folder for newui files
+    private static final String NEWUI="NewUI";
+    private static final String NEWUI_FOLDER=File.separator+NEWUI;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
@@ -297,9 +301,10 @@ public class UserBean extends BaseBean<User> {
         String invoicePdfDir = getFilePath() + File.separator + "invoices" + File.separator + "pdf";
         String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + "jasper";
+        String newUI=getFilePath()+File.separator+NEWUI;
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
             accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-            invoiceXmlDir, jasperDir);
+            invoiceXmlDir, jasperDir,newUI);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -430,7 +435,12 @@ public class UserBean extends BaseBean<User> {
         log.debug("upload file={}", event.getFile());
         // FIXME: use resource bundle
         try {
-            copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	String filename=event.getFile().getFileName();
+        	if((NEWUI_FOLDER).equals(selectedFolder)&&filename.endsWith(".zip")){
+        		copyZippedUIFile(event.getFile().getFileName(),event.getFile().getInputstream());
+        	}else{
+        		copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	}
 
             messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
@@ -499,7 +509,62 @@ public class UserBean extends BaseBean<User> {
             }
         }
     }
+    /**
+     * is downloadable for custom UI resource
+     * @return
+     */
+    public boolean isDownloadUIZip(){
+    	log.debug("selected folder {}",selectedFolder);
+    	if(selectedFolder==null){
+    		return false;
+    	}
+    	String[] folders=selectedFolder.split(File.separator);
+    	if(folders.length!=3){
+    		return false;
+    	}
+    	return folders[1].equals(NEWUI);
+    }
 
+    
+
+	public StreamedContent getDownloadUIFile(){
+    	if(!isDownloadUIZip()){
+    		return null;
+    	}
+    	String filename=selectedFolder.split(File.separator)[2];
+    	File tempfile=null;
+    	StreamedContent uicontent=null;
+    	String sourceFolder=getFilePath()+selectedFolder;
+		try {
+			tempfile = File.createTempFile(System.getProperty("java.io.tmpdir"), ".tmp");
+			FileUtils.createZipFile(sourceFolder,tempfile);
+			InputStream is=new FileInputStream(tempfile);
+			uicontent=new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.debug("error when zipped ui file - {}",e.getMessage());
+		}finally{
+			if(tempfile!=null){
+				try {
+					tempfile.deleteOnExit();
+				} catch (Exception e) {
+				}
+			}
+		}
+    	return uicontent;
+    }
+	
+    private synchronized void copyZippedUIFile(String fileName, InputStream in) {
+    	try{
+    		String folder=getFilePath(fileName.substring(0,fileName.lastIndexOf(".zip")));
+    		//clean the folder before unzip file
+    		org.apache.commons.io.FileUtils.deleteDirectory(new File(folder));
+    		FileUtils.unzipFile(folder, in);
+    		buildFileList();
+    	}catch(Exception e){
+    		log.debug("error when upload zip file for new UI {}",e.getMessage());
+    	}
+    }
     public void copyFile(String fileName, InputStream in) {
         try {
 
