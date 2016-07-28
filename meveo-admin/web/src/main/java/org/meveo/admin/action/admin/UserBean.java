@@ -554,11 +554,9 @@ public class UserBean extends BaseBean<User> {
     	return uicontent;
     }
 	
-    private synchronized void copyZippedUIFile(String fileName, InputStream in) {
+    private void copyZippedUIFile(String fileName, InputStream in) {
     	try{
     		String folder=getFilePath(fileName.substring(0,fileName.lastIndexOf(".zip")));
-    		//clean the folder before unzip file
-    		org.apache.commons.io.FileUtils.deleteDirectory(new File(folder));
     		FileUtils.unzipFile(folder, in);
     		buildFileList();
     	}catch(Exception e){
