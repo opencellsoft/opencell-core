@@ -1,0 +1,158 @@
+/* Helper classes
+====================================== */
+
+.clearfix:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.border-left {
+    border-left: 1px solid #ddd;
+}
+
+.text-bold {
+    font-weight: 700;
+}
+
+.text-red {
+    color: #d13b42;
+}
+
+.pull-left {
+    float: left !important;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.no-border-radius {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Custom Styles
+====================================== */
+
+input[type="text"] {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s !important;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+}
+
+.ui-grid-row {
+    border-bottom: 1px solid #ddd;
+}
+
+.ui-commandlink {
+    text-decoration: none;
+}
+
+.ui-grid-row .ui-commandlink {
+    color: #d13b42;
+}
+
+.ui-grid-row .ui-widget .ui-widget {
+    border-radius: none !important;
+}
+
+.ui-panel-titlebar {
+    color: #d13b42;
+    text-align: center!important;
+}
+
+.ui-separator {
+    display: none;
+}
+
+.ui-paginator {
+    margin: 15px 0;
+}
+
+
+/*--------- */
+
+#layout-topbar-cover {
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    font-size: 15px;
+    /*background: #eb2f2f;*/
+    color: #2F2F2F;
+}
+
+#layout-topbar-cover {
+    font-weight: normal;
+    line-height: 1.5;
+    font-family: "Segoe UI","wf_segoe-ui_normal","Arial",sans-serif;
+    font-size: inherit;
+    font-size: 100%;
+    border: 0;
+    text-rendering: auto;
+}
+
+#layout-topbar {
+    width: 100%;
+    margin: 0 auto;
+}
+
+#layout-topbar li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+
+
+/* Marketting Home
+====================================*/
+.bg-darkgoldenrod {
+    background: #b45f06;
+}
+
+.bg-royalblue {
+    background: #2b78e4;
+}
+
+.bg-goldenrod {
+    background: #f1c232;
+}
+
+.bg-olivedrab {
+    background: #6aa84f;
+}
+
+.box {
+    width: calc(50% - 32px);
+    font-family: "Segoe UI", 'Source Sans Pro', "Arial", sans-serif;
+    margin: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.box-title {
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+.box-percentage {
+    color: #fff;
+    font-size: 4.5em;
+    font-weight: 700;
+    line-height: 1.5em;
+}
+
+.box-direction {
+    color: #fff;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.box-last-update {
+    color: rgba(0, 0, 0, .5);
+    font-size: 1em;
+    padding-top: 15px;
+}

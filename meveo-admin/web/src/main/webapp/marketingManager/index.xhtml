@@ -20,30 +20,37 @@
 				rendered="#{identity.loggedIn}" />
 		</p:panel>
 
-		<p:panel styleClass="Container">
-			<p:panel styleClass="Container50 TexAlCenter">
-				<div class="">Churn</div>
-				<div class="">10%</div>
-				<div class="">Up</div>
-				<div class="">Last Updated at 11:55 am</div>
+		<p:panel styleClass="box-wrapper">
+			<p:panel styleClass="clearfix">
+				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
+					<div class="box-title">Churn</div>
+					<div class="box-percentage">10%</div>
+					<div class="box-direction"><i class="fa fa-arrow-right"></i></div>
+					<div class="box-last-update">Last Updated at 11:55 am</div>
+				</p:panel>
+
+				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
+					<div class="box-title">New Orders</div>
+					<div class="box-percentage">24</div>
+					<div class="box-direction"><i class="fa fa-arrow-up"></i> 6 %</div>
+					<div class="box-last-update">Last Updated at 11:55 am</div>
+				</p:panel>
 			</p:panel>
-			<p:panel styleClass="Container50 TexAlCenter">
-				<div class="">Churn</div>
-				<div class="">10%</div>
-				<div class="">Up</div>
-				<div class="">Last Updated at 11:55 am</div>
-			</p:panel>
-			<p:panel styleClass="Container50 TexAlCenter">
-				<div class="">Churn</div>
-				<div class="">10%</div>
-				<div class="">Up</div>
-				<div class="">Last Updated at 11:55 am</div>
-			</p:panel>
-			<p:panel styleClass="Container50 TexAlCenter">
-				<div class="">Churn</div>
-				<div class="">10%</div>
-				<div class="">Up</div>
-				<div class="">Last Updated at 11:55 am</div>
+
+			<p:panel styleClass="clearfix">
+				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
+					<div class="box-title">MRR</div>
+					<div class="box-percentage">20K</div>
+					<div class="box-direction"><i class="fa fa-arrow-up"></i> 6 %</div>
+					<div class="box-last-update">Last Updated at 11:55 am</div>
+				</p:panel>
+
+				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
+					<div class="box-title">Pending orders</div>
+					<div class="box-percentage">7%</div>
+					<div class="box-direction"><i class="fa fa-arrow-down"></i> 15 %</div>
+					<div class="box-last-update">Last Updated at 11:55 am</div>
+				</p:panel>
 			</p:panel>
 		</p:panel>
 	</ui:define>
