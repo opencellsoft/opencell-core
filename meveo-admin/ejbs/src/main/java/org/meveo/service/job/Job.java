@@ -57,7 +57,7 @@ public abstract class Job {
     
     @Inject
     @Processed
-    private Event<JobInstance> eventJobProcessed;
+    private Event<JobExecutionResultImpl> eventJobProcessed;
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -98,7 +98,8 @@ public abstract class Job {
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
                 jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
                 log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
-                eventJobProcessed.fire(jobInstance); 
+                result.setProvider(currentUser.getProvider());
+                eventJobProcessed.fire(result); 
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
             } finally {            	
@@ -136,7 +137,8 @@ public abstract class Job {
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
                 jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
                 log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
-                eventJobProcessed.fire(jobInstance);
+                result.setProvider(currentUser.getProvider());
+                eventJobProcessed.fire(result);
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
             } finally {
