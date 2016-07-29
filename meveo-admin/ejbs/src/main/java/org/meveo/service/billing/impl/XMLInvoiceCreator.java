@@ -1190,7 +1190,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 				tax.setAttribute("id", ++taxId + "");
 				tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
-
+				addCustomFields(taxInvoiceAgregate.getTax(), invoice, doc, tax);
 				String languageCode = "";
 				try {
 					// log.debug("ba={}, tradingLanguage={}",

@@ -2316,6 +2316,10 @@ $BODY$
 			baseTableName="cat_price_plan_matrix" constraintName="fk_priceplan_script"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-		
 	</changeSet>
+	<changeSet id="#1889_20160729" author="Mbarek">
+	<addColumn tableName="BILLING_TAX">
+            <column name="UUID" type="VARCHAR(50)"/>
+        </addColumn>
+     </changeSet>
 </databaseChangeLog>
