@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -512,27 +513,16 @@ public class UserBean extends BaseBean<User> {
         }
     }
 	public StreamedContent getDownloadZipFile(){
-    	String filename=selectedFolder==null?"meveo":selectedFolder.substring(selectedFolder.lastIndexOf("/")+1, selectedFolder.length());
-    	File tempfile=null;
-    	StreamedContent uicontent=null;
+    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf("/")+1);
     	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
 		try {
-			tempfile = File.createTempFile(System.getProperty("java.io.tmpdir"), ".tmp");
-			FileUtils.createZipFile(sourceFolder,tempfile);
-			InputStream is=new FileInputStream(tempfile);
-			uicontent=new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
+			byte[] filedata=FileUtils.createZipFile(sourceFolder);
+			InputStream is=new ByteArrayInputStream(filedata);
+			return new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.debug("error when zipped ui file - {}",e.getMessage());
-		}finally{
-			if(tempfile!=null){
-				try {
-					tempfile.deleteOnExit();
-				} catch (Exception e) {
-				}
-			}
 		}
-    	return uicontent;
+		return null;
     }
 	
     private void copyUnZippedFile(InputStream in) {

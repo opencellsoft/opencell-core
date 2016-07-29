@@ -21,6 +21,7 @@ package org.meveo.commons.utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -465,27 +466,30 @@ public final class FileUtils {
 	}
 	
 	/**
-	 * compress a folder with sub folders and its files into a zipped file
+	 * compress a folder with sub folders and its files into byte array
 	 * @param source
 	 * @param zos
 	 * @param basedir
 	 * @throws IOException
 	 */
-	public static void createZipFile(String sourceFolder,File destination) throws Exception{
+	public static byte[] createZipFile(String sourceFolder) throws Exception{
 		ZipOutputStream zos=null;
+		ByteArrayOutputStream baos=null;
 		try{
-			zos=new ZipOutputStream(new FileOutputStream(destination));
+			baos=new ByteArrayOutputStream();
+			zos=new ZipOutputStream(baos);
 			File sourceFile=new File(sourceFolder);
 			for(File file:sourceFile.listFiles()){
 				createZipFile(file,zos,File.separator);
 			}
+			zos.flush();
+			zos.close();
+			return baos.toByteArray();
 		}catch(Exception e){
 			throw new Exception(e.getMessage());
 		}finally{
-			IOUtils.closeQuietly(zos);
+			IOUtils.closeQuietly(baos);
 		}
-		
-		zos.close();
 	}
 	private static void createZipFile(File source,ZipOutputStream zos,String basedir) throws Exception{
     	if(!source.exists()){
@@ -526,6 +530,10 @@ public final class FileUtils {
 			for(File file:files){
 				createZipFile(file,zos,basedir);
 			}
+		}else{
+			ZipEntry entry = new ZipEntry(basedir+File.separator);
+            zos.putNextEntry(entry);
+            zos.closeEntry();
 		}
 	}
 }
