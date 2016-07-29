@@ -65,9 +65,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
 
+	private Map<String, Map<String, SI>> allScriptInstances;
+	
     private CharSequenceCompiler<SI> compiler;
 
     private String classpath = "";
+
 
     /**
      * Constructor.
@@ -245,10 +248,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             if (!testCompile) {
                 if (!allScriptInterfaces.containsKey(script.getProvider().getCode())) {
                     allScriptInterfaces.put(script.getProvider().getCode(), new HashMap<String, Class<SI>>());
-                    log.debug("create Map for {}", script.getProvider().getCode());
+                    allScriptInstances.put(script.getCode(),new HashMap<String, SI>());
+                          log.debug("create Map for {}", script.getProvider().getCode());
                 }
                 Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
                 providerScriptInterfaces.put(script.getCode(), compiledScript);
+                Map<String,SI> providerScriptInstances = allScriptInstances.get(script.getProvider().getCode());
+                providerScriptInstances.put(script.getCode(),compiledScript.newInstance());
                 log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
             }
         } catch (CharSequenceCompilerException e) {
@@ -350,6 +356,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
+    public SI getCachedScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    	SI script = null;
+        script = allScriptInstances.get(provider.getCode()).get(scriptCode);
+        return script;
+    }
+    
     /**
      * Add a log line for a script
      * 

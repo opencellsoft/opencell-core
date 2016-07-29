@@ -147,6 +147,9 @@ public class RatingCacheContainerProvider {
             if (pricePlan.getOfferTemplate() != null) {
                 pricePlan.getOfferTemplate().getCode();
             }
+            if (pricePlan.getScriptInstance() != null) {
+                pricePlan.getScriptInstance().getCode();
+            }
             if (pricePlan.getValidityCalendar() != null) {
                 preloadCache(pricePlan.getValidityCalendar());
             }
@@ -205,6 +208,11 @@ public class RatingCacheContainerProvider {
         if (pricePlan.getOfferTemplate() != null) {
             pricePlan.getOfferTemplate().getCode();
         }
+
+        if (pricePlan.getScriptInstance() !=null){
+        	pricePlan.getScriptInstance().getCode();
+        }
+        
         if (pricePlan.getValidityCalendar() != null) {
             preloadCache(pricePlan.getValidityCalendar());
         }

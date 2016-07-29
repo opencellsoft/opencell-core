@@ -1,7 +1,5 @@
 package org.meveo.service.notification;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
@@ -296,7 +293,7 @@ public class DefaultObserver {
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
-    	log.debug("BusinessExceptionEvent handler inactivated");/*
+    	log.debug("BusinessExceptionEvent handler inactivated {}",bee);/*
         log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
         StringWriter errors = new StringWriter();
         bee.getException().printStackTrace(new PrintWriter(errors));

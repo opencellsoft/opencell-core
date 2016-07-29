@@ -2307,5 +2307,15 @@ $BODY$
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_meveo_instance" />
 		
 	</changeSet>
-	    	
+	
+	<changeSet id="#1774_20160725" author="smichea">
+		<addColumn tableName="cat_price_plan_matrix">
+			<column name="script_instance_id" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="cat_price_plan_matrix" constraintName="fk_priceplan_script"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+		
+	</changeSet>
 </databaseChangeLog>
