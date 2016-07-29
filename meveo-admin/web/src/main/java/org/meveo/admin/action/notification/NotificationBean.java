@@ -29,6 +29,7 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.ScriptNotification;
@@ -240,7 +241,8 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class) && clazz.getName().toLowerCase().contains(queryLc)) {
+            if (clazz.isAnnotationPresent(Entity.class) && clazz.getName().toLowerCase().contains(queryLc) 
+            		&& (clazz.isAnnotationPresent(ObservableEntity.class) ||  clazz.isAnnotationPresent(NotifiableEntity.class))) {
                 classNames.add(clazz.getName());
             }
         }
