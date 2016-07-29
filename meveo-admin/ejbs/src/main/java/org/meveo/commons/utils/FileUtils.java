@@ -33,6 +33,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CRC32;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -430,8 +433,10 @@ public final class FileUtils {
     	BufferedInputStream bis=null;
     	OutputStream fos=null;
     	BufferedOutputStream bos=null;
+    	CheckedInputStream cis=null;
 		try{
-			zis=new ZipInputStream(in);
+			cis = new CheckedInputStream(in, new CRC32());
+			zis=new ZipInputStream(cis);
     		bis=new BufferedInputStream(zis);
     		ZipEntry entry=null;
     		File fileout=null;
@@ -448,7 +453,7 @@ public final class FileUtils {
     			}
     			fos=new FileOutputStream(fileout);
     			bos=new BufferedOutputStream(fos);
-    			int b;
+    			int b=-1;
     			while((b=bis.read())!=-1){
     				bos.write(b);
     			}
@@ -462,6 +467,7 @@ public final class FileUtils {
     		IOUtils.closeQuietly(fos);
     		IOUtils.closeQuietly(bis);
     		IOUtils.closeQuietly(zis);
+    		IOUtils.closeQuietly(cis);
 		}
 	}
 	
@@ -475,9 +481,11 @@ public final class FileUtils {
 	public static byte[] createZipFile(String sourceFolder) throws Exception{
 		ZipOutputStream zos=null;
 		ByteArrayOutputStream baos=null;
+		CheckedOutputStream cos=null;
 		try{
 			baos=new ByteArrayOutputStream();
-			zos=new ZipOutputStream(baos);
+			cos = new CheckedOutputStream(baos, new CRC32());
+			zos=new ZipOutputStream(new BufferedOutputStream(cos));
 			File sourceFile=new File(sourceFolder);
 			for(File file:sourceFile.listFiles()){
 				createZipFile(file,zos,File.separator);
@@ -488,6 +496,8 @@ public final class FileUtils {
 		}catch(Exception e){
 			throw new Exception(e.getMessage());
 		}finally{
+			IOUtils.closeQuietly(zos);
+			IOUtils.closeQuietly(cos);
 			IOUtils.closeQuietly(baos);
 		}
 	}
@@ -531,9 +541,10 @@ public final class FileUtils {
 				createZipFile(file,zos,basedir);
 			}
 		}else{
-			ZipEntry entry = new ZipEntry(basedir+File.separator);
+			ZipEntry entry = new ZipEntry(basedir);
             zos.putNextEntry(entry);
             zos.closeEntry();
+            zos.flush();
 		}
 	}
 }
