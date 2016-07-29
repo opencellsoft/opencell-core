@@ -23,81 +23,124 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-					<p:breadCrumb homeDisplay="text" id="crumbmenu">
-						<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-						<p:menuitem outcome="mmProductTemplates"
-							value="#{messages['productTemplates.search']}" />
-					</p:breadCrumb>
-				</p:panelGrid>
-				<p:panelGrid columns="3" styleClass="ui-panelgrid-blank TexAlRight">
-					<p:commandButton value="#{messages['action.activate']}"
-						action="#{productTemplateBean.activateProduct()}"
-						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}"
-						icon="ui-icon-check" />
-					<p:commandButton value="#{messages['action.saveAsDraft']}"
-						action="#{productTemplateBean.saveAsDraft()}"
-						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
-					<p:commandButton value="#{messages['action.discardChanges']}"
-						action="#{productTemplateBean.discardChanges()}"
-						rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
-				</p:panelGrid>
-			</p:panelGrid>
-		</p:panel>
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{productTemplateBean}" showEnableDisableButton="false"
 			showBackButton="false" showEditButton="false"
 			showDeleteButton="false">
-			<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
-				<p:panelGrid columns="2">
-					<p:panelGrid columns="1">
-						<hftl:decorateFormField fieldId="productImage"
-							rendered="#{not productTemplateBean.entity.transient}"
-							label="#{messages['commons.image']}">
-							<p:outputPanel autoUpdate="true">
-								<p:graphicImage id="productImage" cache="false"
-									value="#{productTemplateImageStreamer.image}" height="150"
-									width="150">
-									<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
-								</p:graphicImage>
-								<p:fileUpload
-									fileUploadListener="#{productTemplateBean.handleFileUpload}"
-									mode="advanced" update=":formId:messages" auto="true"
-									sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-							</p:outputPanel>
-						</hftl:decorateFormField>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<p:breadCrumb homeDisplay="text" id="crumbmenu">
+							<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+							<p:menuitem outcome="mmProductTemplates"
+								value="#{messages['productTemplates.search']}" />
+						</p:breadCrumb>
 					</p:panelGrid>
-					<p:panelGrid columns="1">
-						<hftl:formField label="#{messages['businessEntity.code']}"
-							field="code" required="true" validateUnique="true" />
-						<hftl:formField label="#{messages['commons.name']}" field="name"
-							required="true" id="name" />
+					<p:panelGrid columns="3" styleClass="ui-panelgrid-blank TexAlRight">
+						<p:commandButton value="#{messages['action.activate']}"
+							action="#{productTemplateBean.activateProduct()}"
+							rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}"
+							icon="ui-icon-check" />
+						<p:commandButton value="#{messages['action.saveAsDraft']}"
+							action="#{productTemplateBean.saveAsDraft()}"
+							rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
+						<p:commandButton value="#{messages['action.discardChanges']}"
+							action="#{productTemplateBean.discardChanges()}"
+							rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}" />
 					</p:panelGrid>
 				</p:panelGrid>
+			</p:panel>
 
-				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-					<!-- <h:outputText value="#{productTemplateBean.entity.name}" />
-					<h:outputText
-						value="#{productTemplateBean.entity.businessProductModel.description}" />
-					<h:outputText value="#{productTemplateBean.entity.code}" /> -->
-
-					<hftl:formField label="#{messages['commons.status']}"
-						field="lifeCycleStatus" />
+			<p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+				<p:panelGrid columns="1">
 					<p:panelGrid columns="2">
-						<hftl:formField label="#{messages['commons.validFrom']}"
-							field="validFrom" id="validFrom" />
-						<hftl:formField label="#{messages['commons.validTo']}"
-							field="validTo" id="validTo" />
+						<p:panelGrid columns="1">
+							<hftl:decorateFormField fieldId="productImage"
+								rendered="#{not productTemplateBean.entity.transient}"
+								label="#{messages['commons.image']}">
+								<p:outputPanel autoUpdate="true">
+									<p:graphicImage id="productImage" cache="false"
+										value="#{productTemplateImageStreamer.image}" height="150"
+										width="150">
+										<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
+									</p:graphicImage>
+									<p:fileUpload
+										fileUploadListener="#{productTemplateBean.handleFileUpload}"
+										mode="advanced" update=":formId:messages" auto="true"
+										sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+								</p:outputPanel>
+							</hftl:decorateFormField>
+						</p:panelGrid>
+						<p:panelGrid columns="1">
+							<hftl:formField label="#{messages['businessEntity.code']}"
+								field="code" required="true" validateUnique="true" />
+							<hftl:formField label="#{messages['commons.name']}" field="name"
+								required="true" id="name" />
+							<p:panelGrid columns="2">
+								<hftl:formField label="#{messages['commons.status']}"
+									field="lifeCycleStatus" />
+							</p:panelGrid>
+						</p:panelGrid>
 					</p:panelGrid>
+					<p:panelGrid>
+						<p:row>
+							<p:column>
+								<hftl:formField label="#{messages['commons.validFrom']}"
+									field="validFrom" id="validFrom" rowspan="3" />
+							</p:column>
+							<p:column>
+								<hftl:formField label="#{messages['commons.validTo']}"
+									field="validTo" id="validTo" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column></p:column>
+							<p:column>
+								<hftl:formField label="#{messages['productTemplate.family']}"
+									field="businessProductModel" required="true"
+									id="businessProductModel" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column></p:column>
+							<p:column>
+								<hftl:formField
+									label="#{messages['productOffering.offerTemplateCategories']}"
+									field="offerTemplateCategories" required="true"
+									id="offerTemplateCategories" />
 
+							</p:column>
+						</p:row>
+					</p:panelGrid>
 				</p:panelGrid>
-				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+				<p:tabView>
+					<p:tab title="EUR">
+						<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+							<p:outputLabel value="#{messages['productTemplate.salePrice']}" />
+							<h:outputText
+								value="#{productTemplateBean.entityPricePlan.amountWithTax}" />
+							<p:outputLabel
+								value="#{messages['productTemplate.catalogPrice']}" />
+							<h:outputText
+								value="#{productTemplateBean.entityPricePlan.amountWithTax}" />
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="USA"></p:tab>
+					<p:tab title="JPN"></p:tab>
+				</p:tabView>
+				<p:panelGrid columns="1">
 				</p:panelGrid>
-				<hftl:formField label="#{messages['businessEntity.description']}"
-					field="description" id="description" />
 			</p:panelGrid>
+			<p:tabView>
+				<p:tab title="EN">
+					<hftl:formField label="#{messages['businessEntity.description']}"
+						field="description" id="description" />
+				</p:tab>
+				<p:tab title="FR"></p:tab>
+				<p:tab title="DE"></p:tab>
+				<p:tab title="US"></p:tab>
+
+			</p:tabView>
 			<hftl:customFields backingBean="#{productTemplateBean}" />
 		</hftl:formPanel>
 	</ui:define>

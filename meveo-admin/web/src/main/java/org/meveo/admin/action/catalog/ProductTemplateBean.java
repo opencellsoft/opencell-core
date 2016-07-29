@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
@@ -17,6 +16,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -24,11 +24,11 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
@@ -56,6 +56,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
 
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
+
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<WalletTemplate> walletTemplatesDM;
@@ -63,6 +66,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	private UploadedFile uploadedFile;
 
 	private String editMode;
+
+	private PricePlanMatrix entityPricePlan;
 
 	public ProductTemplateBean() {
 		super(ProductTemplate.class);
@@ -75,6 +80,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		getAttachmentsDM();
 		getWalletTemplatesDM();
 		getBamDM();
+		setPricePlan();
 		return entity;
 	}
 
@@ -115,8 +121,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public String saveAsDraft() throws BusinessException {
+		log.debug("Entity Code : " + entity.getCode());
 		entity.setActive(false);
-		return saveOrUpdate(true);
+		return saveOrUpdate(false);
 	}
 
 	public String discardChanges() {
@@ -286,12 +293,26 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		this.bamDM = bamDM;
 	}
 
+	public void setPricePlan() {
+		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
+			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
+		}
+	}
+
 	public String getEditMode() {
 		return editMode;
 	}
 
 	public void setEditMode(String editMode) {
 		this.editMode = editMode;
+	}
+
+	public PricePlanMatrix getEntityPricePlan() {
+		return entityPricePlan;
+	}
+
+	public void setEntityPricePlan(PricePlanMatrix entityPricePlan) {
+		this.entityPricePlan = entityPricePlan;
 	}
 
 }
