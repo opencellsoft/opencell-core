@@ -517,12 +517,13 @@ public final class FileUtils {
     	}
 		try{
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
-            ZipEntry entry = new ZipEntry(basedir + source.getName());    
+            ZipEntry entry = new ZipEntry(basedir + source.getName());
+            entry.setTime(source.lastModified());
             zos.putNextEntry(entry);    
-            int count;    
+            int count;
             byte data[] = new byte[1024];    
             while ((count = bis.read(data, 0, 1024)) != -1) {    
-                zos.write(data, 0, count);    
+                zos.write(data, 0, count);
             }
             zos.flush();
             bis.close();  
@@ -541,10 +542,10 @@ public final class FileUtils {
 				createZipFile(file,zos,basedir);
 			}
 		}else{
-			ZipEntry entry = new ZipEntry(basedir);
+			basedir=basedir.replace(File.separator, "/");
+			ZipEntry entry = new ZipEntry(basedir+"/");
+			entry.setTime(source.lastModified());
             zos.putNextEntry(entry);
-            zos.closeEntry();
-            zos.flush();
 		}
 	}
 }
