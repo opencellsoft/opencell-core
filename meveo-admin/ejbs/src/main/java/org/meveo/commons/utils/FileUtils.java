@@ -517,7 +517,9 @@ public final class FileUtils {
     	}
 		try{
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
-            ZipEntry entry = new ZipEntry(basedir + source.getName());
+			String filename=basedir+source.getName();
+			filename=filename.replaceAll(File.separator, "/");
+            ZipEntry entry = new ZipEntry(filename);
             entry.setTime(source.lastModified());
             zos.putNextEntry(entry);    
             int count;
@@ -542,8 +544,8 @@ public final class FileUtils {
 				createZipFile(file,zos,basedir);
 			}
 		}else{
-			basedir=basedir.replace(File.separator, "/");
-			ZipEntry entry = new ZipEntry(basedir+"/");
+			String filename=basedir.replaceAll(File.separator, "/");
+			ZipEntry entry = new ZipEntry(filename);
 			entry.setTime(source.lastModified());
             zos.putNextEntry(entry);
 		}
