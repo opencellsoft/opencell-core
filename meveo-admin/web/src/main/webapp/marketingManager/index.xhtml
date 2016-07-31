@@ -14,13 +14,13 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panel>
+		<p:panel styleClass="no-border-radius">
 			<h:outputText
 				value="#{messages['commons.welcome']} #{identity.user.user.userName} "
 				rendered="#{identity.loggedIn}" />
 		</p:panel>
 
-		<p:panel styleClass="box-wrapper">
+		<p:panel styleClass="box-wrapper no-border-radius">
 			<p:panel styleClass="clearfix">
 				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
 					<div class="box-title">Churn</div>

@@ -7,37 +7,39 @@
     xmlns:p="http://primefaces.org/ui">
     
 
-        <!-- TOPBAR -->
-        <div id="layout-topbar">
-
-            <!-- LOGO -->
-            <a>
-                <h:graphicImage name="MeveoOpenCell.png" library="img" />                
-            </a>
-
-            <!-- MENUBUTTON -->
-            <a id="menu-button"> <i class="fa fa-angle-down"></i> </a>
-
-            <!-- SEARCH -->
-
-            <!-- TOPBAR LINKS -->
-<!--             <a id="topmenu-button"> <i class="fa fa-align-justify"></i> </a> -->
-
-            <ul id="topbar-menu">
-                <li><a href="#"><i class="icon-unlock-stroke"></i> Log In/Sign Up</a></li>              
-            </ul>
-
-            <!-- MENU COVER -->
-            <div id="layout-menu-cover">
-                <ui:include src="layoutmenu.xhtml" />
+        <div id="topbar-wrapper" class="clearfix">
+            <div id="layout-topbar" class="pull-left">
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" id="logo-wrapper">
+                            <h:graphicImage name="MeveoOpenCell.png" library="img" />                
+                        </a>
+                    </li>
+                    <li>
+                        <a id="menu-button"> <i class="fa fa-angle-down fa-3x"></i> </a>
+                    </li>
+                    <!--<li>-->
+                    <!-- SEARCH -->
+                    <!-- TOPBAR LINKS -->
+                    <!--<a id="topmenu-button"> <i class="fa fa-align-justify"></i> </a> -->
+                    <!--</li>-->
+                </ul>
             </div>
-            
+            <!-- / topbar-wrapper -->
+        
+            <div class="pull-right">
+                <ul id="top-right-menu" class="list-inline">
+                    <li><a href="#">Log In / Sign Up</a></li>
+                    <li><a href="#"><i class="fa fa-2x fa-cog"></i></a></li>
+                    <li><a href="#"><i class="fa fa-2x fa-question"></i></a></li>  
+                </ul>
+                <!-- / top-right-menu -->
+            </div>
         </div>
-    
-        <!-- TOPMENU -->
-        <ul id="top-menu">
-            <li><a href="#"><i class="icon-cog2"></i> Offers</a></li>
-            <li><a href="#"><i class="icon-stats2"></i> Products</a></li>  
-        </ul>
+
+        <!-- MENU COVER -->
+        <div id="layout-menu-cover">
+            <ui:include src="layoutmenu.xhtml" />
+        </div>
     
 </ui:composition>

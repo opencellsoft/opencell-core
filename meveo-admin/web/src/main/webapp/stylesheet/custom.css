@@ -33,6 +33,18 @@
     border-radius: 0 !important;
 }
 
+.list-inline {
+  padding-left: 0;
+  margin-left: -5px;
+  list-style: none;
+}
+
+.list-inline > li {
+  display: inline-block;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
 /* Custom Styles
 ====================================== */
 
@@ -75,11 +87,14 @@ input[type="text"] {
 
 
 /*--------- */
+#topbar-wrapper {
+    padding: 0 30px;
+}
 
 #layout-topbar-cover {
+    background: #fff;
     box-shadow: 0 1px 0 rgba(0,0,0,0.1);
     font-size: 15px;
-    /*background: #eb2f2f;*/
     color: #2F2F2F;
 }
 
@@ -89,12 +104,12 @@ input[type="text"] {
     font-family: "Segoe UI","wf_segoe-ui_normal","Arial",sans-serif;
     font-size: inherit;
     font-size: 100%;
-    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     text-rendering: auto;
 }
 
 #layout-topbar {
-    width: 100%;
+    background: #fff;
     margin: 0 auto;
 }
 
@@ -128,8 +143,23 @@ input[type="text"] {
     font-family: "Segoe UI", 'Source Sans Pro', "Arial", sans-serif;
     margin: 15px;
     padding: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0, 0, 0, .1);
     box-sizing: border-box;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -moz-transition: all .35s ease;
+    -webkit-transition: all .35s ease;
+    transition: all .35s ease;
+}
+
+.box:hover {
+    -moz-transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+    -moz-transition: all .35s ease;
+    -webkit-transition: all .35s ease;
+    transition: all .35s ease;
 }
 
 .box-title {
@@ -155,4 +185,37 @@ input[type="text"] {
     color: rgba(0, 0, 0, .5);
     font-size: 1em;
     padding-top: 15px;
+}
+
+#logo-wrapper {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+#logo-wrapper img {
+    width: 250px;
+}
+
+#menu-button {
+    display: block;
+}
+
+#menu-button i {
+    font-size: 3em;
+    font-weight: 700;
+    line-height: 1em;
+    display: block;
+    background: #d13b42;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 7px;
+}
+
+#top-right-menu a {
+    color: #333;
+    font-size: 16px;
+    line-height: 1;
+    vertical-align: bottom;
+    text-decoration: none;
 }
