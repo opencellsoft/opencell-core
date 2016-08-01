@@ -208,7 +208,8 @@ public class ProviderApi extends BaseApi {
             invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
             invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
             invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
-            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
+            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods()); 
+            invoiceConfiguration.setDisplayBillingCycle(postData.getInvoiceConfiguration().getDisplayBillingCycle());
         }
 
         invoiceConfiguration.setProvider(provider);
@@ -397,6 +398,9 @@ public class ProviderApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayChargesPeriods())) {
             invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
         }
+        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayBillingCycle())) {
+            invoiceConfiguration.setDisplayBillingCycle(postData.getInvoiceConfiguration().getDisplayBillingCycle());
+        }
         invoiceConfiguration.setProvider(provider);
         provider.setInvoiceConfiguration(invoiceConfiguration);
 
@@ -524,7 +528,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list(provider);
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle)));
             }
         }
 

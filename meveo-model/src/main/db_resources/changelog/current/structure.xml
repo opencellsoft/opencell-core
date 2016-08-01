@@ -2318,8 +2318,16 @@ $BODY$
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
 	<changeSet id="#1889_20160729" author="Mbarek">
-	<addColumn tableName="BILLING_TAX">
-            <column name="UUID" type="VARCHAR(50)"/>
+	    <addColumn tableName="BILLING_TAX">
+        <column name="UUID" type="VARCHAR(50)"/>
         </addColumn>
+     </changeSet>
+     <changeSet id="#1890_20160801" author="Mbarek">
+	      <addColumn tableName="BILLING_CYCLE">
+          <column name="UUID" type="VARCHAR(50)"/>
+        </addColumn>
+       	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
+		</addColumn> 
      </changeSet>
 </databaseChangeLog>

@@ -312,11 +312,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// log.debug("creating ba");
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Element billingAccountTag = doc.createElement("billingAccount");
-			if (billingCycle == null) {
-				billingCycle = billingAccount.getBillingCycle();
-			}
-			String billingCycleCode = billingCycle != null ? billingCycle.getCode() + "" : "";
-			billingAccountTag.setAttribute("billingCycleCode", billingCycleCode);
 			String billingAccountId = billingAccount.getId() + "";
 			String billingAccountCode = billingAccount.getCode() + "";
 			billingAccountTag.setAttribute("id", billingAccountId);
@@ -326,6 +321,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2",
 					billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
+			
+			if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplayBillingCycle() != null
+					&& invoice.getProvider().getInvoiceConfiguration().getDisplayBillingCycle() ) {
+					if (billingCycle == null) {
+						billingCycle = billingAccount.getBillingCycle();
+					}
+					addBillingCyle(billingCycle, invoice, doc, billingAccountTag);
+				} 
 			
 			addCustomFields(billingAccount, invoice, doc, billingAccountTag);
 
@@ -577,6 +580,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
 		addCustomFields(offerTemplate, invoice, doc, offerTag);
 		offersTag.appendChild(offerTag);
+	}
+	
+	private void addBillingCyle(BillingCycle billingCycle, Invoice invoice, Document doc, Element parent) { 
+		String id = billingCycle.getId() + "";
+		Element billingCycleTag =  doc.createElement("billingCycle");
+		parent.appendChild(billingCycleTag);
+		billingCycleTag.setAttribute("id", id);
+		billingCycleTag.setAttribute("code", billingCycle.getCode() != null ? billingCycle.getCode() : "");
+		billingCycleTag.setAttribute("description",
+				billingCycle.getDescription() != null ? billingCycle.getDescription() : "");
+		addCustomFields(billingCycle, invoice, doc, billingCycleTag); 
 	}
 
 	private void addServices(Subscription subscription, Invoice invoice, Document doc, Element invoiceTag) {

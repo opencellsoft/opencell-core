@@ -34,8 +34,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.Calendar;
 
 /**
@@ -43,9 +45,10 @@ import org.meveo.model.catalog.Calendar;
  */
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
 @Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
-public class BillingCycle extends BusinessEntity {
+public class BillingCycle extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -176,6 +179,12 @@ public class BillingCycle extends BusinessEntity {
 	 */
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
