@@ -33,6 +33,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
@@ -85,7 +86,8 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
 
-	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT", length = 500)
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
 	private String longDescription;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
