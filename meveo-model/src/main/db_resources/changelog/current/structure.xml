@@ -2330,4 +2330,9 @@ $BODY$
 			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
 		</addColumn> 
      </changeSet>
+     
+      <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
+         <sql>update BILLING_TAX set UUID ='TAX-'|| id </sql>   
+        <sql>update BILLING_CYCLE set UUID ='BillingCycle-'|| id </sql> 
+        </changeSet>    
 </databaseChangeLog>
