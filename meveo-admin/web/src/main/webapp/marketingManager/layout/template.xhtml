@@ -15,6 +15,7 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
 	<title>Opencell | Open Source Billing Platform</title>
 	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
 	<link
@@ -46,6 +47,15 @@
 	</div>
 
 	<ui:include src="footer.xhtml" />
+	
+	<script type="text/javascript">
+		$(function() {
+		  if (window.self != window.top) {
+		    $(document.body).addClass("in-iframe");
+		    $('#layout-menu-cover').addClass('active');
+		  }
+		});
+	</script>
 
 </h:body>
 
