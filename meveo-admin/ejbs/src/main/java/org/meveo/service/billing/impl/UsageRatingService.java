@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.event.Event;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -22,6 +23,7 @@ import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
@@ -94,6 +96,13 @@ public class UsageRatingService {
     
     @Inject
 	private MeveoInstanceService meveoInstanceService;
+    
+    @Inject
+  	private CounterPeriodService counterPeriodService;
+    
+    @Inject
+    @Updated
+    private Event<CounterPeriod> eventCounterPeriodUpdated;
 	
 
 	// @PreDestroy
@@ -289,6 +298,10 @@ public class UsageRatingService {
 				// put back the deduced quantity in charge unit
 
 				log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
+			}
+			if (periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null){
+				CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());
+				eventCounterPeriodUpdated.fire(counterPeriod);
 			}
 		}
 		return deducedQuantityInEDRUnit;
