@@ -12,6 +12,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
@@ -61,6 +62,10 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	public String newProductTemplate() {
 		return "mmProductTemplateDetail";
+	}
+
+	public void updateProductTemplateStatus(ProductTemplate pt) throws BusinessException {
+		productTemplateService.update(pt, getCurrentUser());
 	}
 
 	public void addProductTemplateToExport(ProductTemplate pt) {
