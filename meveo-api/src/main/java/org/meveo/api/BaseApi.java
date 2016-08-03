@@ -212,10 +212,12 @@ public abstract class BaseApi {
                     }
                 }
             }
-        	ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity);
-        	esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));    
-        	elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentUser.getProvider().getCode());  
             
+			if (entity instanceof BusinessEntity) {
+				ElasticDocument esDoc = new ElasticDocument((BusinessEntity) entity);
+				esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));
+				elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentUser.getProvider().getCode());
+			}
         }
 
         // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
