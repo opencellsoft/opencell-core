@@ -565,7 +565,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
 			File sourceFile = new File(sourcePath);
 			if (!sourceFile.exists()) {
-				VirtualFile vfDir = VFS.getChild("/content/"
+				VirtualFile vfDir = VFS.getChild("content/"
 						+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")
 						+ ".war/WEB-INF/classes/jasper");
 				log.info("default jaspers path :"+vfDir.getPathName());
@@ -583,7 +583,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./invoiceAdjustment").getPath();
 			File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
 			if (!sourceFileInvoiceAdjustment.exists()) {
-				VirtualFile vfDir = VFS.getChild("/content/"+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/invoiceAdjustment");
+				VirtualFile vfDir = VFS.getChild("content/"+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/invoiceAdjustment");
 				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
 				sourceFileInvoiceAdjustment = new File(vfPath.getPath());
 				if (!sourceFileInvoiceAdjustment.exists()) {
