@@ -62,20 +62,8 @@
 		
 		<navigation-case>
 			<from-action>#{identity.login}</from-action>
-			<if>#{identity.loggedIn and identity.hasPermission("marketing", "marketingCatalogManager")}</if>
-			<to-view-id>/marketingManager/index.xhtml</to-view-id>
-		</navigation-case>
-	
-		<navigation-case>
-			<from-action>#{identity.login}</from-action>
-			<if>#{identity.loggedIn and not identity.hasPermission("marketing", "marketingCatalogManager")}</if>
-			<to-view-id>/home.xhtml</to-view-id>
-<!-- 			<redirect> -->
-<!-- 				<view-param> -->
-<!-- 					<name>chooseProvider</name> -->
-<!-- 					<value>true</value> -->
-<!-- 				</view-param> -->
-<!-- 			</redirect> -->
+			<if>#{identity.loggedIn}</if>
+			<to-view-id>/loginRedirect.xhtml</to-view-id>
 		</navigation-case>
 
 		<navigation-case>
@@ -1940,6 +1928,12 @@
 	</navigation-rule>
 
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mmOfferTemplates</from-outcome>
+			<to-view-id>/marketingManager/offerTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOffers</from-outcome>
 			<to-view-id>/marketingManager/offers.xhtml

@@ -42,6 +42,8 @@
 				field="offerServiceTemplates" isList="true"
 				valueLabelField="serviceTemplate.code"
 				valueIdField="serviceTemplate.id" entityView="serviceTemplateDetail" />
+			<hftl:column label="#{messages['businessOffer.title']}"
+				field="businessOfferModel.code" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn

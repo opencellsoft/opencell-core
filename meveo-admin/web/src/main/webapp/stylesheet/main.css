@@ -634,6 +634,7 @@ form.formNoBottomBorder {
 .Wid100{ width:100%;}
 .Wid90{ width:90%;}
 .Wid80{ width:80%;}
+.Wid75 { width: 75%; }
 .Wid70 { width: 70%; }
 .Wid60 { width: 60%; }
 .Wid55 { width: 55%; }
@@ -641,6 +642,7 @@ form.formNoBottomBorder {
 .Wid45 { width: 45%; }
 .Wid40 { width: 40%; }
 .Wid30 { width: 30%; }
+.Wid25 { width: 25%; }
 .Wid20 { width: 20%; }
 .Wid10 { width: 10%; }
 .Wid5 { width: 5%; }

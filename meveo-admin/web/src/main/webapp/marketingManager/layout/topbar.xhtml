@@ -1,45 +1,44 @@
-<ui:composition 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
-    
 
-        <div id="topbar-wrapper" class="clearfix">
-            <div id="layout-topbar" class="pull-left">
-                <ul class="list-inline">
-                    <li>
-                        <a id="menu-button"> <i class="fa fa-bars fa-3x"></i> </a>
-                    </li>
-                    <li>
-                        <a href="#" id="logo-wrapper">
-                            <h:graphicImage name="MeveoOpenCell.png" library="img" />                
-                        </a>
-                    </li>
-                    <!--<li>-->
-                    <!-- SEARCH -->
-                    <!-- TOPBAR LINKS -->
-                    <!--<a id="topmenu-button"> <i class="fa fa-align-justify"></i> </a> -->
-                    <!--</li>-->
-                </ul>
-            </div>
-            <!-- / topbar-wrapper -->
-        
-            <div class="pull-right">
-                <ul id="top-right-menu" class="list-inline">
-                    <li><a href="#">Log In / Sign Up</a></li>
-                    <li><a href="#"><i class="fa fa-2x fa-cog"></i></a></li>
-                    <li><a href="#"><i class="fa fa-2x fa-question"></i></a></li>  
-                </ul>
-                <!-- / top-right-menu -->
-            </div>
-        </div>
+	<div id="topbar-wrapper" class="clearfix">
+		<div id="layout-topbar" class="pull-left">
+			<ul class="list-inline">
+				<li><a id="menu-button"> <i class="fa fa-bars fa-3x"></i>
+				</a></li>
+				<li><a href="#" id="logo-wrapper"> <h:graphicImage
+							name="MeveoOpenCell.png" library="img" />
+				</a></li>
+				<!--<li>-->
+				<!-- SEARCH -->
+				<!-- TOPBAR LINKS -->
+				<!--<a id="topmenu-button"> <i class="fa fa-align-justify"></i> </a> -->
+				<!--</li>-->
+			</ul>
+		</div>
+		<!-- / topbar-wrapper -->
 
-        <!-- MENU COVER -->
-        <div id="layout-menu-cover">
-            <ui:include src="layoutmenu.xhtml" />
-        </div>
-    
+		<h:form>
+			<div class="pull-right">
+				<ul id="top-right-menu" class="list-inline">
+					<li><h:commandLink action="#{identity.logout}"
+							value="#{messages['menutop.logout']}"
+							rendered="#{identity.loggedIn}" immediate="true" /></li>
+					<li><a href="#"><i class="fa fa-2x fa-cog"></i></a></li>
+					<li><a href="#"><i class="fa fa-2x fa-question"></i></a></li>
+				</ul>
+				<!-- / top-right-menu -->
+			</div>
+		</h:form>
+	</div>
+
+	<!-- MENU COVER -->
+	<div id="layout-menu-cover">
+		<ui:include src="layoutmenu.xhtml" />
+	</div>
+
 </ui:composition>
