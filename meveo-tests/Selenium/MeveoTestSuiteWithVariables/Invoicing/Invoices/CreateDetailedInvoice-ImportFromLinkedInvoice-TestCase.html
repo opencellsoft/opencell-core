@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;${InvoiceTypeValue}&quot;)</td>
+	<td>css=li:contains(&quot;${InvoiceType2Value}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -183,7 +183,7 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AddLinkedInvoiceBool}==true</td>
+	<td>${AddLinkedInvoiceBool}==false</td>
 	<td></td>
 </tr>
 <tr>
@@ -209,7 +209,7 @@
 <tr>
 	<td>type</td>
 	<td>id=invoicePopuppopupForm:searchField1</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -219,7 +219,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -228,12 +228,12 @@
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 	<td></td>
 </tr>
 <tr>
@@ -244,7 +244,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -259,12 +259,12 @@
 <tr>
 	<td>assertText</td>
 	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber3Value}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -423,8 +423,8 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//a[contains(text(),'${DetailedInvoiceNumber}')]</td>
-	<td>${DetailedInvoiceNumber}</td>
+	<td>//a[contains(text(),'${DetailedInvoiceNumber2}')]</td>
+	<td>${DetailedInvoiceNumber2}</td>
 </tr>
 </tbody></table>
 </body>

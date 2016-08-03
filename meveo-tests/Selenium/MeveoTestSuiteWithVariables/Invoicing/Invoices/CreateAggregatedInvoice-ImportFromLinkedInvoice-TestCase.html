@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${DetailedInvoices}</td>
+	<td>${AggregateInvoices}</td>
 	<td></td>
 </tr>
 <tr>
@@ -24,17 +24,17 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=span.ui-panel-title</td>
-	<td>Detailed invoice</td>
+	<td>Aggregated Invoice</td>
 </tr>
 <tr>
 	<td>assertText</td>
 	<td>css=span.ui-panel-title</td>
-	<td>Detailed invoice</td>
+	<td>Aggregated Invoice</td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>css=span.ui-panel-title</td>
-	<td>Detailed invoice</td>
+	<td>Aggregated Invoice</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;${InvoiceTypeValue}&quot;)</td>
+	<td>css=li:contains(&quot;${InvoiceType2Value}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -183,7 +183,7 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AddLinkedInvoiceBool}==true</td>
+	<td>${AddLinkedInvoiceBool}==false</td>
 	<td></td>
 </tr>
 <tr>
@@ -209,7 +209,7 @@
 <tr>
 	<td>type</td>
 	<td>id=invoicePopuppopupForm:searchField1</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -219,7 +219,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -228,12 +228,12 @@
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 	<td></td>
 </tr>
 <tr>
@@ -244,7 +244,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='invoicePopuppopupForm:invoicePopupdatatable_data']/tr/td[1]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -259,12 +259,12 @@
 <tr>
 	<td>assertText</td>
 	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>//td[2]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>${InvoiceNumber2Value}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -277,53 +277,38 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>//*[contains(@id, 'subCategories_data')]/tr/td</td>
+	<td>${Subcategory2Value}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//*[contains(@id, 'subCategories_data')]/tr/td</td>
+	<td>${Subcategory2Value}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//*[contains(@id, 'subCategories_data')]/tr/td</td>
+	<td>${Subcategory2Value}</td>
+</tr>
+<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectInvoiceCatOrSubCatDetailedInv}</td>
+	<td>${SelectInvoiceCatOrSubCat}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectInvoiceCatOrSubCatDetailedInv}</td>
+	<td>${SelectInvoiceCatOrSubCat}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${InvoiceDetailedCatSubCatValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
-	<td>${descriptionText}</td>
-	<td>${TestData3}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ChargeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectCharges}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCharges}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${DetailedChargeValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
+	<td>${InvoiceCatSubCatValue}</td>
 	<td></td>
 </tr>
 <tr>
@@ -333,33 +318,18 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
+	<td>${DescriptionInvoiceCatOrSubCat}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>${DescriptionInvoiceCatOrSubCat}</td>
+	<td>${TestData1}</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${DescriptionDetailedInvoiceValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${UsageDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${UsageDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${UsageDate}</td>
-	<td>${UsageDateValue}</td>
+	<td>${DescriptionInvoiceCatOrSubCat}</td>
+	<td>${DescriptionAggregatedInvoiceValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -373,33 +343,13 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${UnitAmtWithoutTax}</td>
+	<td>${AmtWithoutTaxes}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UnitAmtWithoutTax}</td>
-	<td>${AmountWithoutTaxes2Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${QuantityBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Quantity}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Quantity}</td>
-	<td>${QuantityValue}</td>
+	<td>${AmtWithoutTaxes}</td>
+	<td>${AmountWithoutTaxes1Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -408,12 +358,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${AddLineDetailedInvoice}</td>
+	<td>${AddLineAgregatedInvoice}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${AddLineDetailedInvoice}</td>
+	<td>${AddLineAgregatedInvoice}</td>
 	<td></td>
 </tr>
 <tr>
@@ -423,8 +373,8 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//a[contains(text(),'${DetailedInvoiceNumber}')]</td>
-	<td>${DetailedInvoiceNumber}</td>
+	<td>//a[contains(text(),'${AggregatedInvoiceNumber3}')]</td>
+	<td>${AggregatedInvoiceNumber3}</td>
 </tr>
 </tbody></table>
 </body>
