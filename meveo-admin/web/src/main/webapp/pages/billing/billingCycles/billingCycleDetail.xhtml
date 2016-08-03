@@ -13,7 +13,7 @@
 	<ui:define name="body">
 		<hftl:entityPopup id="searchInvoiceTypePopup"
 			header="#{messages['invoiceType.panel']}"
-			updateField=":formBillingCycle:invoiceTypeSelectedId :formBillingCycle:invoiceTypeSelectedId_text"
+			updateField=":formBillingCycle:tabView:invoiceTypeSelectedId :formBillingCycle:tabView:invoiceTypeSelectedId_text"
 			selection="#{billingCycleBean.entity.invoiceType}"
 			backingBean="#{invoiceTypeBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
