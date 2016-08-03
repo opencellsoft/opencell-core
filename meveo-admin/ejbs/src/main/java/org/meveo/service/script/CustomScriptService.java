@@ -65,7 +65,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
 
-	private Map<String, Map<String, SI>> allScriptInstances;
+	private Map<String, Map<String, SI>> allScriptInstances=new HashMap<String,Map<String,SI>>();
 	
     private CharSequenceCompiler<SI> compiler;
 
@@ -239,7 +239,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             final String qName = getFullClassname(script.getScript());
             final String codeSource = script.getScript();
 
-            log.trace("Compiling code for {}: {}", qName, codeSource);
+            log.debug("Compiling code for {}: {}", qName, codeSource);
             script.setError(false);
             script.getScriptErrors().clear();
 
@@ -254,6 +254,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                 Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
                 providerScriptInterfaces.put(script.getCode(), compiledScript);
                 Map<String,SI> providerScriptInstances = allScriptInstances.get(script.getProvider().getCode());
+                log.debug("get providerScriptInstances {}",providerScriptInstances);
+                if(providerScriptInstances==null){
+                	providerScriptInstances=new HashMap<String,SI>();
+                	allScriptInstances.put(script.getProvider().getCode(), providerScriptInstances);
+                }
                 providerScriptInstances.put(script.getCode(),compiledScript.newInstance());
                 log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
             }
