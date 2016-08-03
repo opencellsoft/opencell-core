@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.event.Event;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +23,7 @@ import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.RatingCacheContainerProvider;
-import org.meveo.event.qualifier.Updated;
+import org.meveo.event.CounterPeriodEvent;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
@@ -100,9 +100,8 @@ public class UsageRatingService {
     @Inject
   	private CounterPeriodService counterPeriodService;
     
-    @Inject
-    @Updated
-    private Event<CounterPeriod> eventCounterPeriodUpdated;
+    @Inject 
+   	private Event<CounterPeriodEvent> counterPeriodEvent;
 	
 
 	// @PreDestroy
@@ -299,15 +298,23 @@ public class UsageRatingService {
 
 				log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
 			}
-			if (periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null){
+			if(periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null){
 				CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());
-				eventCounterPeriodUpdated.fire(counterPeriod);
+				triggerCounterPeriodEvent(counterPeriod);
 			}
 		}
 		return deducedQuantityInEDRUnit;
 	}
 
-
+	private void triggerCounterPeriodEvent(CounterPeriod counterPeriod) {
+		try {
+			CounterPeriodEvent event = new CounterPeriodEvent();
+			event.setCounterPeriod(counterPeriod);
+			counterPeriodEvent.fire(event); 
+		} catch (Exception e) {
+			log.error("Failed to executing trigger counterPeriodEvent", e);
+		}
+	}
 
 	/**
 	 * this method evaluate the EDR against the charge and its counter it

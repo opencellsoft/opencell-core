@@ -19,6 +19,7 @@ import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
@@ -348,6 +349,11 @@ public class DefaultObserver {
     public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) {
         log.debug("observe a file rename event ");
         checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
+    }
+    
+    public void counterUpdated(@Observes CounterPeriodEvent event) {
+        log.debug("DefaultObserver.counterUpdated " +event);
+        checkEvent(NotificationEventTypeEnum.ZERO_COUNTER, event.getCounterPeriod());
     }
 
 }
