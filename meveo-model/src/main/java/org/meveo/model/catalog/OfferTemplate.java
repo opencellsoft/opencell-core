@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -63,6 +64,9 @@ public class OfferTemplate extends ProductOffering {
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
+	
+	@Transient
+	public String prefix;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -130,6 +134,14 @@ public class OfferTemplate extends ProductOffering {
 			offerProductTemplates = new ArrayList<OfferProductTemplate>();
 		}
 		offerProductTemplates.add(offerProductTemplate);
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 }

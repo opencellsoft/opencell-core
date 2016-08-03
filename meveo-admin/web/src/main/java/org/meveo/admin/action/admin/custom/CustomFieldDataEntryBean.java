@@ -632,7 +632,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         return null;
     }
-
+    
     /**
      * Save custom fields for a given entity
      * 
@@ -641,13 +641,29 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @throws BusinessException
      */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
+    	String uuid = entity.getUuid();
+    	saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
+    }
 
-        String uuid = entity.getUuid();
+    /**
+     * Save custom fields for a given entity
+     * 
+     * @param entity Entity, the fields relate to
+     * @param isNewEntity Is it a new entity
+     * @throws BusinessException
+     */
+    public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
+        
         CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid); 
         GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
         if(groupedCustomFields != null) {
         	for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
         		for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
+        			if(duplicateCFI) {
+        				customFieldInstanceService.detach(cfi);
+        				cfi.setId(null);
+        				cfi.setAppliesToEntity(entity.getUuid());
+        			}
         			// Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
         			// instantiates automatically)
         			// Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false

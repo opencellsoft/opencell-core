@@ -83,5 +83,12 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	public void setSelectedOfferTemplates(List<OfferTemplate> selectedOfferTemplates) {
 		this.selectedOfferTemplates = selectedOfferTemplates;
 	}
+	
+	public LazyDataModel<OfferTemplate> listFromBOM() {
+		filters.clear();
+		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NOT_NULL);
+		
+		return getLazyDataModel();
+	}
 
 }

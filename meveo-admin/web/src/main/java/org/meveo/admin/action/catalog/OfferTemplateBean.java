@@ -36,13 +36,19 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -84,9 +90,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
-	
+
 	@Inject
 	private OfferProductTemplateService offerProductTemplateService;
+
+	@Inject
+	private BusinessOfferModelService businessOfferModelService;
+
+	@Inject
+	private EntityToDtoConverter entityToDtoConverter;
+
+	private Long bomId;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
@@ -99,6 +113,11 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	 */
 	public OfferTemplateBean() {
 		super(OfferTemplate.class);
+	}
+
+	@Override
+	public OfferTemplate initEntity() {
+		return super.initEntity();
 	}
 
 	/**
@@ -123,7 +142,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
@@ -157,29 +176,44 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				offerTemplateService.create(entity, getCurrentUser());
 				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
-            } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
-            }
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
 		}
 	}
 
 	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient()
-				&& (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService
-				.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
+		return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
+				getEntity()).size() > 0) ? true : false;
 	}
-
 
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		boolean newEntity = (entity.getId() == null);
+		if (bomId != null) {
+			BusinessOfferModel bom = businessOfferModelService.findById(bomId);
+			Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldsValuesByUUID(entity.getUuid()).getValues();
+			CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
+			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
 
-		String outcome = super.saveOrUpdate(killConversation);
+			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(bom, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(), entity.getDescription(), servicesConfigurations,
+					currentUser);
+			newOfferTemplate.setName(entity.getName());
+			newOfferTemplate.setValidFrom(entity.getValidFrom());
+			newOfferTemplate.setValidTo(entity.getValidTo());
+			
+			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
+			
+			return back();
+		} else {
+			boolean newEntity = (entity.getId() == null);
 
-		if (outcome != null) {
-			return (newEntity && !outcome.equals("mmOffers")) ? getEditViewName() : outcome;
+			String outcome = super.saveOrUpdate(killConversation);
+
+			if (outcome != null) {
+				return (newEntity && !outcome.equals("mmOffers")) ? getEditViewName() : outcome;
+			}
 		}
 
 		return null;
@@ -192,8 +226,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
-			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices
-					.getTarget()));
+			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 			if (offerServiceTemplate.getId() != null) {
 				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate, getCurrentUser());
 				entity = getPersistenceService().refreshOrRetrieve(entity);
@@ -208,8 +241,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			offerServiceTemplate.getIncompatibleServices().clear();
-			offerServiceTemplate.getIncompatibleServices().addAll(
-					serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+			offerServiceTemplate.getIncompatibleServices().addAll(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 
 		} catch (Exception e) {
 			log.error("exception when saving offer service template !", e.getMessage());
@@ -224,16 +256,16 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		entity = getPersistenceService().update(entity, getCurrentUser());
 		offerServiceTemplateService.remove(offerServiceTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
-		
+
 		newOfferServiceTemplate();
 	}
-	
+
 	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
 		entity.getOfferProductTemplates().remove(offerProductTemplate);
 		entity = getPersistenceService().update(entity, getCurrentUser());
 		offerProductTemplateService.remove(offerProductTemplate.getId());
 		messages.info(new BundleKey("messages", "delete.successful"));
-		
+
 		newOfferProductTemplate();
 	}
 
@@ -241,15 +273,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		this.offerServiceTemplate = offerServiceTemplate;
 		setIncompatibleServices(null);
 	}
-	
+
 	public void newOfferProductTemplate() {
 		this.offerProductTemplate = new OfferProductTemplate();
 	}
-	
+
 	public void editOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		this.offerProductTemplate = offerProductTemplate;
 	}
-	
+
 	public void saveOfferProductTemplate() {
 		log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
 
@@ -257,7 +289,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
-			
+
 			if (offerProductTemplate.getId() != null) {
 				offerProductTemplate = offerProductTemplateService.update(offerProductTemplate, getCurrentUser());
 				entity = getPersistenceService().refreshOrRetrieve(entity);
@@ -299,14 +331,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
 				source = serviceTemplateService.listActive();
 			} else {
-				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(),
-						getCurrentProvider());
+				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
 			}
 
 			List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
 
-			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null
-					&& offerServiceTemplate.getIncompatibleServices().size() > 0) {
+			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
 				target.addAll(offerServiceTemplate.getIncompatibleServices());
 			}
 			source.removeAll(target);
@@ -326,7 +356,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
 	}
-	
+
 	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
 		uploadedFile = event.getFile();
 
@@ -355,5 +385,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		this.offerProductTemplate = offerProductTemplate;
 	}
-	
+
+	public Long getBomId() {
+		return bomId;
+	}
+
+	public void setBomId(Long bomId) {
+		this.bomId = bomId;
+	}
+
 }

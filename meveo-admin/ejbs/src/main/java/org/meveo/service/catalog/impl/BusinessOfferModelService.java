@@ -83,12 +83,12 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 	@Inject
 	private ServiceModelScriptService serviceModelScriptService;
-	
+
 	@Inject
 	private OfferModelScriptService offerModelScriptService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription, List<ServiceConfigurationDto> serviceCodes,
-			User currentUser) throws BusinessException {
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription,
+			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
 		// 1 create offer
@@ -98,7 +98,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		if (offerTemplateService.findByCode(prefix + bomOffer.getCode(), currentUser.getProvider()) != null) {
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 		}
-		
+
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
 			try {
 				offerModelScriptService.beforeCreateOfferFromBOM(customFields, businessOfferModel.getScript().getCode(), currentUser);
@@ -510,15 +510,16 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
-		
+
 		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
-				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(),
-						currentUser);
+				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(), currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
 			}
 		}
+
+		// save the cf
 
 		return newOfferTemplate;
 	}

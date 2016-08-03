@@ -5,10 +5,13 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
 	template="/marketingManager/layout/template.xhtml">
 
 	<ui:define name="metadata">
+		<f:metadata>
+			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
+		</f:metadata>
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -55,6 +58,9 @@
 				</p:panel>
 				<p:panel>
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<hftl:formField label="#{messages['offerTemplate.prefix']}"
+							required="true" field="prefix"
+							rendered="#{offerTemplateBean.bomId ne null}" />
 						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
 						<hftl:formField label="#{messages['offerTemplate.name']}"
@@ -117,10 +123,22 @@
 				</p:panelGrid>
 			</p:panelGrid>
 
-			<!-- custom fields -->
-			<hftl:customFields backingBean="#{offerTemplateBean}"
-				messagesId=":formId:messages" />
+			<p:tabView>
+				<!-- custom fields -->
+				<hftl:customFields backingBean="#{offerTemplateBean}"
+					messagesId=":formId:messages" />
+			</p:tabView>
 
+<!-- 			<p:panel> -->
+<!-- 				<c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" -->
+<!-- 					var="ost"> -->
+<!-- 							#{ost.serviceTemplate.descriptionOrCode} -->
+<!-- 							<p:tabView> -->
+<!-- 						<hftl:customFields backingBean="#{serviceTemplateBean}" -->
+<!-- 							entity="#{ost.serviceTemplate}" messagesId=":formId:messages" /> -->
+<!-- 					</p:tabView> -->
+<!-- 				</c:forEach> -->
+<!-- 			</p:panel> -->
 		</hftl:formPanel>
 
 	</ui:define>

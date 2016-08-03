@@ -35,7 +35,7 @@ public class LoginRedirectBean {
 					redirectUrl = "home.jsf";
 				} else {
 					log.info("user={} has no valid role / permission?", user);
-					redirectUrl = "index.jsf";
+					redirectUrl = "home.jsf";
 				}
 			} catch (NullPointerException e) {
 				log.error("no role?={}", e.getMessage());
