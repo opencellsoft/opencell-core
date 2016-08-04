@@ -11,6 +11,8 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
+			<f:event type="preRenderView"
+				listener="#{offerTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -30,9 +32,9 @@
 		<hftl:formPanel backingBean="#{offerTemplateBean}"
 			showDeleteButton="false" formButtonsTopRight="true">
 
-			<p:panelGrid columns="3"
-				columnClasses="Wid10, Wid40 VAlignTop, Wid50"
-				styleClass="Wid50 ui-panelgrid-blank">
+			<p:panelGrid columns="4"
+				columnClasses="Wid10, Wid20 VAlignTop, Wid35 VAlignTop, Wid35 VAlignTop"
+				styleClass="ui-panelgrid-blank">
 				<p:panel>
 					<hftl:decorateFormField fieldId="offerImageUpload"
 						rendered="#{offerTemplateBean.entity.transient}"
@@ -55,6 +57,32 @@
 								sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 						</p:outputPanel>
 					</hftl:decorateFormField>
+					<p:outputPanel>
+						<p:panel rendered="#{not offerTemplateBean.edit}">
+							<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
+								<li class="Padding5 FLeft"><p:commandLink
+										action="#{offerTemplateBean.duplicate()}" update="@form"
+										styleClass="fa fa-copy">
+										<f:param name="edit" value="false"></f:param>
+										<f:param name="backView" value="mmOffers"></f:param>
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<p:confirm header="#{messages['commons.duplicate']}"
+											message="#{messages['commons.confirmDuplicate']}" />
+									</p:commandLink></li>
+								<li class="Padding5 FLeft"><p:link styleClass="fa fa-edit"
+										outcome="mmOfferDetail">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="objectId"
+											value="#{offerTemplateBean.entity.id}"></f:param>
+										<f:param name="edit" value="true"></f:param>
+										<f:param name="backView" value="mmOffers"></f:param>
+										<f:param name="tab" value="0"></f:param>
+									</p:link></li>
+							</ul>
+						</p:panel>
+					</p:outputPanel>
 				</p:panel>
 				<p:panel>
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
@@ -77,68 +105,79 @@
 						<h:outputText
 							value="#{offerTemplateBean.entity.auditable.creator}"></h:outputText>
 					</p:panel>
-				</p:panel>
-				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 						<hftl:formField label="#{messages['commons.validFrom']}"
 							field="validFrom" />
 						<hftl:formField label="#{messages['commons.validTo']}"
 							field="validTo" />
+						<hftl:formField label="#{messages['commons.status']}"
+							field="lifeCycleStatus" />
+						<hftl:formField label="#{messages['enableEntity.disabled']}"
+							doNotShowOnNew="true" allowEdit="false" field="disabled"
+							isMessage="true" />
 					</p:panelGrid>
-					<p:panel>
-						<div class="FLeft" style="padding-top: 5px; margin-right: 10px;">#{messages['commons.status']}</div>
-						<div class="FLeft">
-							<p:inputSwitch value="#{offerTemplateBean.entity.active}"
-								disabled="#{!offerTemplateBean.edit}"
-								onLabel="#{messages['accountStatusEnum.active']}"
-								offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-						</div>
-					</p:panel>
-					<p:outputPanel>
-						<p:panel rendered="#{not offerTemplateBean.edit}">
-							<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
-								<li class="Padding5 FRight"><p:commandLink
-										action="#{offerTemplateBean.duplicate()}" update="@form"
-										styleClass="fa fa-copy">
-										<f:param name="edit" value="false"></f:param>
-										<f:param name="backView" value="mmOffers"></f:param>
-										<f:param name="cid"
-											value="#{javax.enterprise.context.conversation.id}" />
-										<p:confirm header="#{messages['commons.duplicate']}"
-											message="#{messages['commons.confirmDuplicate']}" />
-									</p:commandLink></li>
-								<li class="Padding5 FRight"><p:link styleClass="fa fa-edit"
-										outcome="mmOfferDetail">
-										<f:param name="cid"
-											value="#{javax.enterprise.context.conversation.id}" />
-										<f:param name="objectId"
-											value="#{offerTemplateBean.entity.id}"></f:param>
-										<f:param name="edit" value="true"></f:param>
-										<f:param name="backView" value="mmOffers"></f:param>
-										<f:param name="tab" value="0"></f:param>
-									</p:link></li>
-							</ul>
-						</p:panel>
-					</p:outputPanel>
+				</p:panel>
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<hftl:formField
+						label="#{messages['marketingManager.catalog.family']}"
+						allowEdit="false" field="businessOfferModel"
+						valueLabelField="code" listBean="#{businessOfferModelBean}" />
+					<hftl:formField id="channels" label="#{messages['channels.title']}"
+						field="channels" listType="pickUpList" valueLabelField="code"
+						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
 				</p:panelGrid>
+				<p:panel>
+					<hftl:formField id="businessAccountModels"
+						label="#{messages['marketingManager.catalog.targetSegment']}"
+						field="businessAccountModels" listType="pickUpList"
+						valueLabelField="code"
+						dualListModel="#{offerTemplateBean.businessAccountModelsDM}"
+						newLine="true" />
+				</p:panel>
 			</p:panelGrid>
 
-			<p:tabView>
-				<!-- custom fields -->
-				<hftl:customFields backingBean="#{offerTemplateBean}"
-					messagesId=":formId:messages" />
-			</p:tabView>
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="#{messages['offerTemplate.customFields']}"
+						styleClass="SubHeader" />
+				</f:facet>
+				<p:tabView
+					rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
+					<!-- custom fields -->
+					<hftl:customFields backingBean="#{offerTemplateBean}"
+						messagesId=":formId:messages" />
+				</p:tabView>
+			</p:panel>
 
-<!-- 			<p:panel> -->
-<!-- 				<c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" -->
-<!-- 					var="ost"> -->
-<!-- 							#{ost.serviceTemplate.descriptionOrCode} -->
-<!-- 							<p:tabView> -->
-<!-- 						<hftl:customFields backingBean="#{serviceTemplateBean}" -->
-<!-- 							entity="#{ost.serviceTemplate}" messagesId=":formId:messages" /> -->
-<!-- 					</p:tabView> -->
-<!-- 				</c:forEach> -->
-<!-- 			</p:panel> -->
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="#{messages['serviceTemplate.customFields']}"
+						styleClass="SubHeader" />
+				</f:facet>
+				<p:panel>
+					<c:forEach
+						items="#{offerTemplateBean.entity.offerServiceTemplates}"
+						var="ost">
+						<c:set var="index" value="1"></c:set>
+
+						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
+							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+							<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
+						</p:selectBooleanCheckbox>
+						<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+
+						<p:outputPanel id="serviceCf_panel_#{index}">
+							<p:tabView
+								rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
+								<hftl:customFields backingBean="#{serviceTemplateBean}"
+									entity="#{ost.serviceTemplate}" messagesId=":formId:messages" />
+							</p:tabView>
+						</p:outputPanel>
+
+						<c:set var="index" value="${index + 1}"></c:set>
+					</c:forEach>
+				</p:panel>
+			</p:panel>
 		</hftl:formPanel>
 
 	</ui:define>

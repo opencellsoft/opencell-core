@@ -173,31 +173,8 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
 	public void duplicate() {
 		
         if (entity != null && entity.getId() != null) {
-            
-            entity = recurringChargeTemplateService.refreshOrRetrieve(entity);
-            
-            // Lazy load related values first 
-			entity.getEdrTemplates().size();
-			
-			// Detach and clear ids of entity and related entities
-			recurringChargeTemplateService.detach(entity);
-			entity.setId(null);
-            String sourceAppliesToEntity = entity.clearUuid();
-            
-			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
-			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-			if(edrTemplates!=null&edrTemplates.size()!=0){
-				for(TriggeredEDRTemplate edrTemplate:edrTemplates){
-					edrTemplateService.detach(edrTemplate);
-					entity.getEdrTemplates().add(edrTemplate);
-				}
-			}
-			entity.setChargeInstances(null);
-			entity.setCode(entity.getCode()+"_copy");
-			
             try {
-                recurringChargeTemplateService.create(entity, getCurrentUser());
-                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+            	recurringChargeTemplateService.duplicate(entity,getCurrentUser());
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting recurring charge template entity: #{0}:#{1}", entity.getCode(), e);

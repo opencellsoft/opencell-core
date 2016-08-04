@@ -23,37 +23,64 @@
 
 		<p:panel styleClass="box-wrapper no-border-radius">
 			<p:panel styleClass="clearfix">
-				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
+				<p:panelGrid columns="2" layout="grid">
+					<c:forEach items="#{chartBean.chartEntityModels}" var="chart"
+						varStatus="i">
+						<hf:chartComponent model="#{chart}" chartBean="#{chartBean}"
+							index="#{i.index}" />
+						<p:panel
+							styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
+							<div class="box-title">#{chart.getModel.getTitle()}</div>
+							<div class="box-percentage">10%</div>
+							<!-- <div class="box-direction">
+								<i class="fa fa-arrow-right"></i>
+							</div> -->
+							<div class="box-last-update">Last Updated at 11:55 am</div>
+						</p:panel>
+					</c:forEach>
+				</p:panelGrid>
+				<p:panel
+					styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
 					<div class="box-title">Churn</div>
 					<div class="box-percentage">10%</div>
-					<div class="box-direction"><i class="fa fa-arrow-right"></i></div>
+					<div class="box-direction">
+						<i class="fa fa-arrow-right"></i>
+					</div>
 					<div class="box-last-update">Last Updated at 11:55 am</div>
 				</p:panel>
 
-				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
+				<p:panel
+					styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
 					<div class="box-title">New Orders</div>
 					<div class="box-percentage">24</div>
-					<div class="box-direction"><i class="fa fa-arrow-up"></i> 6 %</div>
+					<div class="box-direction">
+						<i class="fa fa-arrow-up"></i> 6 %
+					</div>
 					<div class="box-last-update">Last Updated at 11:55 am</div>
 				</p:panel>
 			</p:panel>
 
 			<p:panel styleClass="clearfix">
-				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
+				<p:panel
+					styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
 					<div class="box-title">MRR</div>
 					<div class="box-percentage">20K</div>
-					<div class="box-direction"><i class="fa fa-arrow-up"></i> 6 %</div>
+					<div class="box-direction">
+						<i class="fa fa-arrow-up"></i> 6 %
+					</div>
 					<div class="box-last-update">Last Updated at 11:55 am</div>
 				</p:panel>
 
-				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
+				<p:panel
+					styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
 					<div class="box-title">Pending orders</div>
 					<div class="box-percentage">7%</div>
-					<div class="box-direction"><i class="fa fa-arrow-down"></i> 15 %</div>
+					<div class="box-direction">
+						<i class="fa fa-arrow-down"></i> 15 %
+					</div>
 					<div class="box-last-update">Last Updated at 11:55 am</div>
 				</p:panel>
 			</p:panel>
 		</p:panel>
 	</ui:define>
-
 </ui:composition>

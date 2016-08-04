@@ -39,20 +39,24 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
@@ -100,9 +104,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	@Inject
 	private EntityToDtoConverter entityToDtoConverter;
 
+	@Inject
+	private ChannelService channelService;
+
+	@Inject
+	private BusinessAccountModelService businessAccountModelService;
+
 	private Long bomId;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
+	private DualListModel<BusinessAccountModel> businessAccountModelsDM;
+	private DualListModel<Channel> channelsDM;
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
 	private UploadedFile uploadedFile;
@@ -152,29 +164,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void duplicate() {
 
 		if (entity != null && entity.getId() != null) {
-
-			entity = offerTemplateService.refreshOrRetrieve(entity);
-
-			// Lazy load related values first
-			entity.getOfferServiceTemplates().size();
-
-			// Detach and clear ids of entity and related entities
-			offerTemplateService.detach(entity);
-			entity.setId(null);
-			String sourceAppliesToEntity = entity.clearUuid();
-
-			List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
-			entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
-			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
-				// FIXME
-				// serviceTemplateService.detach(serviceTemplate);
-				entity.getOfferServiceTemplates().add(serviceTemplate);
-			}
-			entity.setCode(entity.getCode() + "_copy");
-
 			try {
-				offerTemplateService.create(entity, getCurrentUser());
-				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
 				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
@@ -195,19 +186,65 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			BusinessOfferModel bom = businessOfferModelService.findById(bomId);
 			Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldsValuesByUUID(entity.getUuid()).getValues();
 			CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
-			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
 
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(bom, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(), entity.getDescription(), servicesConfigurations,
-					currentUser);
+			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
+			// process the services
+			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+				ServiceTemplate st = ost.getServiceTemplate();
+				if (st.isSelected()) {
+					Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldsValuesByUUID(st.getUuid()).getValues();
+					CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
+
+					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+					serviceConfigurationDto.setCode(st.getCode());
+					serviceConfigurationDto.setDescription(st.getDescription());
+					serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
+					servicesConfigurations.add(serviceConfigurationDto);
+				}
+			}
+
+			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(bom, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
+					entity.getDescription(), servicesConfigurations, currentUser);
 			newOfferTemplate.setName(entity.getName());
 			newOfferTemplate.setValidFrom(entity.getValidFrom());
 			newOfferTemplate.setValidTo(entity.getValidTo());
-			
+			newOfferTemplate.getChannels().addAll(channelService.refreshOrRetrieve(channelsDM.getTarget()));
+			newOfferTemplate.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
+
+			// populate service custom fields
+			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+				ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+				if (serviceTemplate.isSelected()) {
+					for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
+						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
+						String serviceTemplateCode = entity.getPrefix() + "_" + serviceTemplate.getCode();
+						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
+							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldsValuesByUUID(serviceTemplate.getUuid()).getValues();
+							if (stCustomFieldInstances != null) {
+								// populate offer cf
+								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false);
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			// populate offer cf
 			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
-			
+
 			return back();
 		} else {
 			boolean newEntity = (entity.getId() == null);
+
+			if (channelsDM.getSource() != null || channelsDM.getTarget() != null) {
+				entity.getChannels().clear();
+				entity.getChannels().addAll(channelService.refreshOrRetrieve(channelsDM.getTarget()));
+			}
+			if (businessAccountModelsDM.getSource() != null || businessAccountModelsDM.getTarget() != null) {
+				entity.getBusinessAccountModels().clear();
+				entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
+			}
 
 			String outcome = super.saveOrUpdate(killConversation);
 
@@ -392,6 +429,56 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setBomId(Long bomId) {
 		this.bomId = bomId;
+	}
+
+	public DualListModel<BusinessAccountModel> getBusinessAccountModelsDM() {
+		if (businessAccountModelsDM == null) {
+			List<BusinessAccountModel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = businessAccountModelService.list(entity.getProvider());
+			} else {
+				perksSource = businessAccountModelService.list();
+			}
+
+			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
+			if (getEntity().getBusinessAccountModels() != null) {
+				perksTarget.addAll(getEntity().getBusinessAccountModels());
+			}
+
+			perksSource.removeAll(perksTarget);
+			businessAccountModelsDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
+		}
+
+		return businessAccountModelsDM;
+	}
+
+	public void setBusinessAccountModelsDM(DualListModel<BusinessAccountModel> businessAccountModelsDM) {
+		this.businessAccountModelsDM = businessAccountModelsDM;
+	}
+
+	public DualListModel<Channel> getChannelsDM() {
+		if (channelsDM == null) {
+			List<Channel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = channelService.list(entity.getProvider());
+			} else {
+				perksSource = channelService.list();
+			}
+
+			List<Channel> perksTarget = new ArrayList<Channel>();
+			if (getEntity().getChannels() != null) {
+				perksTarget.addAll(getEntity().getChannels());
+			}
+
+			perksSource.removeAll(perksTarget);
+			channelsDM = new DualListModel<Channel>(perksSource, perksTarget);
+		}
+
+		return channelsDM;
+	}
+
+	public void setChannelsDM(DualListModel<Channel> channelsDM) {
+		this.channelsDM = channelsDM;
 	}
 
 }

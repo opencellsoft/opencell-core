@@ -1,5 +1,6 @@
 package org.meveo.admin.action.catalog;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
@@ -27,6 +29,7 @@ import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
@@ -59,6 +62,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
 
+	@Inject
+	CustomFieldInstanceService customFieldInstanceService;;
+
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<WalletTemplate> walletTemplatesDM;
@@ -68,6 +74,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	private String editMode;
 
 	private PricePlanMatrix entityPricePlan;
+	private BigDecimal catalogPrice;
+	private BigDecimal discountedAmount;
+	private CustomFieldInstance catalogPriceCF;
 
 	public ProductTemplateBean() {
 		super(ProductTemplate.class);
@@ -116,14 +125,39 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public String activateProduct() throws BusinessException {
-		entity.setActive(true);
-		return saveOrUpdate(false);
+		if (entity.getValidFrom().before(entity.getValidTo())) {
+			entity.setActive(true);
+			savePricePlanMatrix();
+			return saveOrUpdate(false);
+		} else {
+			FacesContext.getCurrentInstance().addMessage(
+					null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.",
+							"Valid From cannot be greater than Valid To."));
+		}
+		return "";
 	}
 
 	public String saveAsDraft() throws BusinessException {
-		log.debug("Entity Code : " + entity.getCode());
-		entity.setActive(false);
-		return saveOrUpdate(false);
+		if (entity.getValidFrom().before(entity.getValidTo())) {
+			entity.setActive(false);
+			savePricePlanMatrix();
+			return saveOrUpdate(false);
+		} else {
+			FacesContext.getCurrentInstance().addMessage(
+					null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.",
+							"Valid From cannot be greater than Valid To."));
+		}
+		return "";
+	}
+
+	private void savePricePlanMatrix() throws BusinessException {
+		if (entityPricePlan.isTransient()) {
+			pricePlanMatrixService.create(entityPricePlan, getCurrentUser());
+		} else {
+			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());
+		}
 	}
 
 	public String discardChanges() {
@@ -296,6 +330,19 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	public void setPricePlan() {
 		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
 			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
+			if (entityPricePlan == null) {
+				entityPricePlan = new PricePlanMatrix();
+			}
+
+			String catalogPriceCode = "CATALOG_PRICE";
+			List<CustomFieldInstance> cfInstances = customFieldInstanceService.findByCodeLike(catalogPriceCode,
+					getCurrentProvider());
+			if (cfInstances != null && cfInstances.size() > 0) {
+				catalogPriceCF = cfInstances.get(0);
+			} else {
+				catalogPriceCF = new CustomFieldInstance();
+				catalogPriceCF.setCode(catalogPriceCode);
+			}
 		}
 	}
 
@@ -313,6 +360,30 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	public void setEntityPricePlan(PricePlanMatrix entityPricePlan) {
 		this.entityPricePlan = entityPricePlan;
+	}
+
+	public BigDecimal getCatalogPrice() {
+		return catalogPrice;
+	}
+
+	public void setCatalogPrice(BigDecimal catalogPrice) {
+		this.catalogPrice = catalogPrice;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public CustomFieldInstance getCatalogPriceCF() {
+		return catalogPriceCF;
+	}
+
+	public void setCatalogPriceCF(CustomFieldInstance catalogPriceCF) {
+		this.catalogPriceCF = catalogPriceCF;
 	}
 
 }

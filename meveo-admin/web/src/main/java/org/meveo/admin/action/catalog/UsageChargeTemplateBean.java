@@ -158,31 +158,8 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	public void duplicate() {
         
         if (entity != null && entity.getId() != null) {
-                        
-            entity = usageChargeTemplateService.refreshOrRetrieve(entity);
-            
-            // Lazy load related values first 
-			entity.getEdrTemplates().size();
-
-            // Detach and clear ids of entity and related entities
-			usageChargeTemplateService.detach(entity);
-			entity.setId(null);
-            String sourceAppliesToEntity = entity.clearUuid();
-            
-			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
-			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-			if(edrTemplates!=null&edrTemplates.size()!=0){
-				for(TriggeredEDRTemplate edrTemplate:edrTemplates){
-					edrTemplateService.detach(edrTemplate);
-					entity.getEdrTemplates().add(edrTemplate);
-				}
-			}
-			entity.setChargeInstances(null);
-			entity.setCode(entity.getCode()+"_copy");
-			
-            try {
-                usageChargeTemplateService.create(entity, getCurrentUser());
-                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+        	try {
+                usageChargeTemplateService.duplicate(entity,getCurrentUser());
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting usage charge template entity: #{0}:#{1}", entity.getCode(), e);

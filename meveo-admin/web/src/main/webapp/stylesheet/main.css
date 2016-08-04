@@ -651,7 +651,7 @@ form.formNoBottomBorder {
 .Wid25{ width:25%;}
 .Wid20{ width:20%;}
 .Wid10{ width:10%;}
-.dataGrid .ui-paginator { text-align: right !important; }
+.custom-grid .ui-paginator, .dataGrid .ui-paginator { text-align: right !important; }
 .dataGrid .ui-paginator span { text-align: left !important; }
 .ui-datagrid-blank .ui-datagrid-content { border: none !important; }
 .dataList .ui-datalist-content { border: none; background: transparent; background-image: none; }

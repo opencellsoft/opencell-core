@@ -2640,6 +2640,25 @@ $BODY$
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />      
 		<addForeignKeyConstraint baseColumnNames="bam_id" baseTableName="cat_product_offer_bam" constraintName="fk_cat_prod_offer_bam_r" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_business_account_model" />
+            
+        <createTable tableName="cat_product_offer_channels">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="channel_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addPrimaryKey columnNames="product_id, channel_id"
+			constraintName="cat_prod_off_channels_pkey" tableName="cat_product_offer_channels" />
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_channels" constraintName="fk_cat_prod_offer_chan_l" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />      
+		<addForeignKeyConstraint baseColumnNames="channel_id" baseTableName="cat_product_offer_channels" constraintName="fk_cat_prod_offer_chan_r" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_channel" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_digital_resource" author="EdwardLegaspi">
