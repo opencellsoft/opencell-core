@@ -21,7 +21,7 @@
                     <h:panelGroup>
                         <p:tree value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel"
                                 selectionMode="single">
-                            <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update=":userGroupHierarchyDetail"/>
+                            <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update=":userGroupHierarchyDetail buttons"/>
                             <p:treeNode>
                                 <h:outputText value="#{userGroupLevel.description}"/>
                             </p:treeNode>
@@ -31,25 +31,25 @@
             </h:panelGroup>
             <h:panelGroup styleClass="col2" >
                 <p:fieldset legend="#{messages['userGroupHierarchy.userGroupLevel']}" styleClass="clearLeft">
-                    <p:outputPanel styleClass="clearLeft" style="margin-left: 1em;">
+                    <p:outputPanel styleClass="clearLeft" style="margin-left: 1em;" id="buttons">
                         <p:tooltip for="addUserHierarchyRootBtn" value="#{messages['userGroupHierarchy.addUserGroupRoot']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="addUserHierarchyRootBtn" icon="fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}" update=":userGroupHierarchyDetail">
                         </p:commandButton>
 
                         <p:tooltip for="addUserHierarchyLevelBtn" value="#{messages['userGroupHierarchy.addUserGroupLevel']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}" update=":userGroupHierarchyDetail">
+                        <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}" update=":userGroupHierarchyDetail" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                         </p:commandButton>
 
                         <p:tooltip for="deleteUserHierarchyLevellink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}" update="userGroupPanel">
+                        <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}" update=":userGroupHierarchyDetail userGroupPanel" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['userGroupHierarchy.confirmDelete']}" icon="ui-icon-alert" />
                         </p:commandButton>
 
                         <p:tooltip for="moveUpUserHierarchyLevelBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}" update="userGroupPanel"/>
+                        <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}" update=":userGroupHierarchyDetail userGroupPanel" rendered="#{userHierarchyLevelBean.selectedNode != null}"/>
 
                         <p:tooltip for="moveDownUserHierarchyLevelBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide"/>
-                        <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}" update="userGroupPanel"/>
+                        <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}" update=":userGroupHierarchyDetail userGroupPanel" rendered="#{userHierarchyLevelBean.selectedNode != null}"/>
                     <p:separator />
                     </p:outputPanel>
                     <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false">

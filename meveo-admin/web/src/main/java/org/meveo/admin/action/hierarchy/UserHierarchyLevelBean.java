@@ -137,13 +137,16 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void onNodeSelect(NodeSelectEvent event) {
         TreeNode treeNode = event.getTreeNode();
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
-        setEntity(userHierarchyLevel);
+        setEntity(userHierarchyLevelService.findById(userHierarchyLevel.getId()));
         selectedNode = treeNode;
     }
 
     public void newUserHierarchyLevel() {
-        UserHierarchyLevel userHierarchyLevelParent = (UserHierarchyLevel) selectedNode.getData();
         UserHierarchyLevel userHierarchyLevel = initEntity();
+        UserHierarchyLevel userHierarchyLevelParent = null;
+        if (selectedNode != null) {
+            userHierarchyLevelParent = (UserHierarchyLevel) selectedNode.getData();
+        }
         userHierarchyLevel.setParentLevel(userHierarchyLevelParent);
         setEntity(userHierarchyLevel);
     }
@@ -158,6 +161,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
         userHierarchyLevelService.remove(userHierarchyLevel.getId());
         selectedNode.getParent().getChildren().remove(selectedNode);
+        userHierarchyLevel = initEntity();
+        userHierarchyLevel.setParentLevel(null);
+        setEntity(userHierarchyLevel);
     }
 
     public void moveUp() {
