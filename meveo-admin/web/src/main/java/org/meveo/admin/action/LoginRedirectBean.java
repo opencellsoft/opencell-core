@@ -29,9 +29,9 @@ public class LoginRedirectBean {
 		if (identity.isLoggedIn()) {
 			try {
 				User user = ((MeveoUser) identity.getUser()).getUser();
-				if (user.hasPermission("marketing", "marketingCatalogManager")) {
+				if (user.hasRole("MARKETING_MANAGER")) {
 					redirectUrl = "marketingManager/index.jsf";
-				} else if (!user.hasPermission("marketing", "marketingCatalogManager")) {
+				} else if (!user.hasRole("MARKETING_MANAGER")) {
 					redirectUrl = "home.jsf";
 				} else {
 					log.info("user={} has no valid role / permission?", user);

@@ -11,7 +11,9 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -36,6 +38,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
 
     public CustomFieldBean() {
     }
@@ -62,6 +67,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     
     public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
     	return customFieldInstanceService.getCustomFieldInstances(entity);
+    }
+    
+    public Map<String, CustomFieldTemplate> getCustomFieldTemplates(ICustomFieldEntity entity) {
+    	return customFieldTemplateService.findByAppliesTo(entity, getCurrentProvider());
     }
     
 }

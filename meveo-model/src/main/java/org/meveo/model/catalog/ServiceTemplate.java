@@ -31,6 +31,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessCFEntity;
@@ -83,7 +84,9 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
-
+	
+	@Transient
+	private boolean selected;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -195,6 +198,14 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
 		this.businessServiceModel = businessServiceModel;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
     
