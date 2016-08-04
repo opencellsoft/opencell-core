@@ -34,6 +34,20 @@
                 </h:panelGroup>
             </p:outputPanel>
 
+            <p:outputPanel id="userGroupLevelPanel" styleClass="clearLeft">
+                <h:panelGroup>
+                    <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']} *">
+                        <p:tree id="userGroupLevel" value="#{userBean.rootNode}" var="groupLevel" required="true" propagateSelectionUp="false" propagateSelectionDown="false"
+                                selectionMode="single"
+                                selection="#{userBean.selectedNode}">
+                            <p:treeNode>
+                                <h:outputText value="#{groupLevel.description}"/>
+                            </p:treeNode>
+                        </p:tree>
+                    </hftl:decorateFormField>
+                </h:panelGroup>
+            </p:outputPanel>
+
             <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
                 rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles" actionListenerBean="#{userBean}"
                 actionListenerMethod="onProviderChange" />

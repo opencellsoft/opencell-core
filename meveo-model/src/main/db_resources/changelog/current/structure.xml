@@ -2522,6 +2522,62 @@ $BODY$
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>	  
+    </changeSet>
+
+    <changeSet author="pbach (generated)" id="#1863_04082016-165">
+        <createTable tableName="hierarchy_entity">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(100)"/>
+            <column name="hierarchy_type" type="VARCHAR(10)"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="order_level" type="BIGINT"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+        </createTable>
+        <addPrimaryKey columnNames="id" constraintName="hierarchy_entity_pkey"
+                       tableName="hierarchy_entity" />
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_2fst31l74tr4ih5ac4qnrm2xv"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_s8hf74ys6bf2fcm9lwm34bqsj"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_ckgoq33eobj7djb82t0rtgvfa"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        <addForeignKeyConstraint baseColumnNames="parent_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_soewjre57yt046kiv2ip334ga"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+        <addUniqueConstraint columnNames="code, hierarchy_type, provider_id" constraintName="uk_npsjgsau11bwi8ntkambw5ne3" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="hierarchy_entity" />
+
+        <addColumn tableName="adm_user">
+            <column name="hierarchy_level_id" type="BIGINT" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="hierarchy_level_id"
+                                 baseTableName="adm_user" constraintName="fk_8cha6ppbnvi86u44g27dn30eq"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+    </changeSet>
     	
 </databaseChangeLog>

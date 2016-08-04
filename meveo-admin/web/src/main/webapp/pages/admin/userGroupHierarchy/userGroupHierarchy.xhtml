@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+                xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+
+        <h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
+                <p:outputPanel id="userGroupPanel" styleClass="clearLeft">
+                    <h:panelGroup>
+                        <p:tree value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel"
+                                selectionMode="single">
+                            <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update=":userGroupHierarchyDetail"/>
+                            <p:treeNode>
+                                <h:outputText value="#{userGroupLevel.description}"/>
+                            </p:treeNode>
+                        </p:tree>
+                    </h:panelGroup>
+                </p:outputPanel>
+            </h:panelGroup>
+            <h:panelGroup styleClass="col2" >
+                <p:fieldset legend="#{messages['userGroupHierarchy.userGroupLevel']}" styleClass="clearLeft">
+                    <p:outputPanel styleClass="clearLeft" style="margin-left: 1em;">
+                        <p:tooltip for="addUserHierarchyRootBtn" value="#{messages['userGroupHierarchy.addUserGroupRoot']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="addUserHierarchyRootBtn" icon="fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}" update=":userGroupHierarchyDetail">
+                        </p:commandButton>
+
+                        <p:tooltip for="addUserHierarchyLevelBtn" value="#{messages['userGroupHierarchy.addUserGroupLevel']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}" update=":userGroupHierarchyDetail">
+                        </p:commandButton>
+
+                        <p:tooltip for="deleteUserHierarchyLevellink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}" update="userGroupPanel">
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['userGroupHierarchy.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                        <p:tooltip for="moveUpUserHierarchyLevelBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}" update="userGroupPanel"/>
+
+                        <p:tooltip for="moveDownUserHierarchyLevelBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide"/>
+                        <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}" update="userGroupPanel"/>
+                    <p:separator />
+                    </p:outputPanel>
+                    <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false">
+                        <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" displayOneLine="true" useConverter="false" />
+                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" useConverter="false"  newLine="true"/>
+                    </hftl:formPanel>
+                </p:fieldset>
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+
+</ui:composition>

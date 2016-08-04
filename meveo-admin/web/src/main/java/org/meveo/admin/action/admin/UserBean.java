@@ -18,25 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -47,20 +28,28 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.hierarchy.HierarchyLevel;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.DualListModel;
-import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
@@ -83,6 +72,9 @@ public class UserBean extends BaseBean<User> {
     private ProviderService providerService;
 
     @Inject
+    private UserHierarchyLevelService userHierarchyLevelService;
+
+    @Inject
     private Messages messages;
 
     private static final Logger log = LoggerFactory.getLogger(UserBean.class);
@@ -98,6 +90,12 @@ public class UserBean extends BaseBean<User> {
     private boolean show = false;
 
     private DualListModel<Role> rolesDM;
+
+    private TreeNode rootNode;
+
+    private TreeNode selectedNode;
+
+    private List<UserHierarchyLevel> roots;
 
     /**
      * Repeated password to check if it matches another entered password and user did not make a mistake.
@@ -132,11 +130,35 @@ public class UserBean extends BaseBean<User> {
         }
     }
 
+    public TreeNode getRootNode() {
+        if (rootNode == null) {
+            rootNode = new DefaultTreeNode("Root", null);
+            roots = userHierarchyLevelService.findRoots();
+            UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
+            for (UserHierarchyLevel userGroupTree : roots) {
+                createTree(userGroupTree, rootNode, userHierarchyLevel);
+            }
+        }
+        return rootNode;
+    }
+
+    public void setRootNode(TreeNode rootNode) {
+        this.rootNode = rootNode;
+    }
+
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+         */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -163,6 +185,9 @@ public class UserBean extends BaseBean<User> {
             entity.setNewPassword(password);
             entity.setPassword(password);
         }
+
+        UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getSelectedNode().getData();
+        getEntity().setUserLevel(userHierarchyLevel);
 
         getEntity().getRoles().clear();
         getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
@@ -542,5 +567,20 @@ public class UserBean extends BaseBean<User> {
 
     public void onProviderChange() {
         rolesDM = null;
+    }
+
+    // Recursive function to create tree with node checked if selected
+    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, HierarchyLevel selectedHierarchyLevel) {
+        TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
+        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
+        newNode.setExpanded(true);
+        if (selectedHierarchyLevel != null && selectedHierarchyLevel.getId().equals(hierarchyLevel.getId())) {
+            newNode.setSelected(true);
+        }
+
+        for (UserHierarchyLevel userGroupTree : subTree) {
+            createTree(userGroupTree, newNode, selectedHierarchyLevel);
+        }
+        return newNode;
     }
 }
