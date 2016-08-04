@@ -164,29 +164,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void duplicate() {
 
 		if (entity != null && entity.getId() != null) {
-
-			entity = offerTemplateService.refreshOrRetrieve(entity);
-
-			// Lazy load related values first
-			entity.getOfferServiceTemplates().size();
-
-			// Detach and clear ids of entity and related entities
-			offerTemplateService.detach(entity);
-			entity.setId(null);
-			String sourceAppliesToEntity = entity.clearUuid();
-
-			List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
-			entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
-			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
-				// FIXME
-				// serviceTemplateService.detach(serviceTemplate);
-				entity.getOfferServiceTemplates().add(serviceTemplate);
-			}
-			entity.setCode(entity.getCode() + "_copy");
-
 			try {
-				offerTemplateService.create(entity, getCurrentUser());
-				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
 				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);

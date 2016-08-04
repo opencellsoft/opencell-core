@@ -68,4 +68,10 @@ public class ServiceChargeTemplateRecurringService extends PersistenceService<Se
 		return qb.find(getEntityManager());
 	}
 
+	@Override
+	public void remove(ServiceChargeTemplateRecurring e){
+		refreshOrRetrieve(e);
+		super.remove(e);
+	}
+
 }
