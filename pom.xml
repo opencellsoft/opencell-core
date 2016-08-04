@@ -15,20 +15,14 @@
         <module>meveo-admin</module>
         <module>meveo-api</module>
         <module>meveo-client</module>
-  </modules>
+    </modules>
 
     <properties>
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <manaty.jsf.version>2.1.19</manaty.jsf.version>
-        <manaty.hibernate.version>4.1.7.Final</manaty.hibernate.version>
-        <manaty.hibernateValidator.version>4.3.0.Final</manaty.hibernateValidator.version>
         <!-- Define the version of JBoss' Java EE 6 APIs and Tools we want to import. -->
-        <jboss.bom.version>1.0.0.Final</jboss.bom.version>
-        <manaty.seam.version>3.1.0.Final</manaty.seam.version>
-
         <version.org.infinispan>5.1.7.Final</version.org.infinispan>
         <version.jboss.bom>1.0.7.Final</version.jboss.bom>
         <version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
@@ -419,12 +413,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.sun.faces</groupId>
                 <artifactId>jsf-api</artifactId>
                 <version>2.1.7</version>
@@ -454,6 +442,25 @@
                 <artifactId>export-source-primefaces</artifactId>
                 <version>1.0.2.Final</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.6.6</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.6.6</version>
+            </dependency>
+
 
             <!-- For testing -->
             <dependency>

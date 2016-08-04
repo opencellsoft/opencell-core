@@ -50,6 +50,7 @@ import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
@@ -63,10 +64,10 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
-import org.meveo.model.index.ElasticClient;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 
@@ -342,6 +343,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         // getEntityManager().flush();
 
+        // Remove entity from Elastic Search
+        if (BusinessEntity.class.isAssignableFrom(e.getClass())) {
+            // elasticClient.remove((BusinessEntity)e, creator);
+        }
+        
         // Remove custom field values from cache if applicable
         if (e instanceof ICustomFieldEntity) {
             customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
@@ -388,10 +394,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         checkProvider(e);
 
         e = getEntityManager().merge(e);
-        log.debug("updated class {}, is BusinessEntity :",e.getClass(),BusinessEntity.class.isAssignableFrom(e.getClass()));
-        if(BusinessEntity.class.isAssignableFrom(e.getClass())){
-        	elasticClient.createOrUpdate((BusinessEntity)e, updater);
+
+        log.debug("updated class {}, is BusinessEntity :", e.getClass(), BusinessEntity.class.isAssignableFrom(e.getClass()));
+        
+        // Update entity in Elastic Search
+        if (e instanceof BusinessCFEntity) {
+            elasticClient.partialUpdate((BusinessEntity) e, updater);
+
+        } else if (e instanceof BusinessEntity) {
+            elasticClient.createOrFullUpdate((BusinessEntity) e, updater);
         }
+
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityUpdatedEventProducer.fire(e);
         }
@@ -421,9 +434,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         getEntityManager().persist(e);
+        
+        // Add entity to Elastic Search
         if(BusinessEntity.class.isAssignableFrom(e.getClass())){
-        	elasticClient.createOrUpdate((BusinessEntity)e, creator);
+        	elasticClient.createOrFullUpdate((BusinessEntity)e, creator);
         }
+        
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire(e);
         }

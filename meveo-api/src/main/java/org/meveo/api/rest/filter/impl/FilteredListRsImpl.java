@@ -1,10 +1,18 @@
 package org.meveo.api.rest.filter.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -13,7 +21,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.filter.FilteredListRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.slf4j.Logger;
-
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -35,9 +42,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
             result.getActionStatus().setMessage(response);
             responseBuilder = Response.ok();
             responseBuilder.entity(result);
-        } catch (MeveoApiException e) {
-            log.debug("RESPONSE={}", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+
         } catch (Exception e) {
             log.debug("RESPONSE={}", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -56,9 +61,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
             result.getActionStatus().setMessage(response);
             responseBuilder = Response.ok();
             responseBuilder.entity(result);
-        } catch (MeveoApiException e) {
-            log.debug("RESPONSE={}", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+
         } catch (Exception e) {
             log.debug("RESPONSE={}", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -66,24 +69,60 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 
         return responseBuilder.build();
     }
-    
-    public Response search(String[] classnames, String query){ 
-	    Response.ResponseBuilder responseBuilder = null;
-	    FilteredListResponseDto result = new FilteredListResponseDto();
-	
-	    try {
-	        String response = filteredListApi.search(classnames, query, getCurrentUser());
-	        result.getActionStatus().setMessage(response);
-	        responseBuilder = Response.ok();
-	        responseBuilder.entity(result);
-	    } catch (MeveoApiException e) {
-	        log.debug("RESPONSE={}", e);
-	        responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-	    } catch (Exception e) {
-	        log.debug("RESPONSE={}", e);
-	        responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-	    }
-	
-	    return responseBuilder.build();
+
+    public Response search(String[] classnames, String query, Integer from, Integer size) {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            FilteredListResponseDto result = new FilteredListResponseDto();
+            result.getActionStatus().setMessage(response);
+            result.setSearchResults(response);
+            responseBuilder = Response.status(Response.Status.OK).entity(result);
+
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    public Response searchByField(String[] classnames, Integer from, Integer size, UriInfo info) {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+
+            // Construct query values from query parameters
+            Map<String, String> queryValues = new HashMap<>();
+            MultivaluedMap<String, String> params = info.getQueryParameters();
+            for (String paramKey : params.keySet()) {
+                if (!paramKey.equals("classnames") && !paramKey.equals("from") && !paramKey.equals("size") && !paramKey.equals("pretty")) {
+                    queryValues.put(paramKey, params.getFirst(paramKey));
+                }
+            }
+
+            String response = filteredListApi.search(classnames, queryValues, from, size, getCurrentUser());
+            FilteredListResponseDto result = new FilteredListResponseDto();
+            result.getActionStatus().setMessage(response);
+            result.setSearchResults(response);
+            responseBuilder = Response.status(Response.Status.OK).entity(result);
+
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
     }
 }

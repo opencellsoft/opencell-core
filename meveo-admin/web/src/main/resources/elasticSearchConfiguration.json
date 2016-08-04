@@ -1,0 +1,33 @@
+{
+	"entityMapping": 
+	{
+		"AccountEntity": 
+		{
+			"index": "accounts",
+			"type": "account",
+			"upsert": true
+		},
+
+		"OfferTemplate": 
+		{
+			"index": "catalog"
+		}
+	},
+
+	"entityFieldMapping": 
+	{
+		"default": 
+		{
+			"code": "code",
+			"description": "description"
+		},
+
+		"AccountEntity": 
+		{
+			"address": "address",
+			"name.firstName": "name.firstName",
+			"name.lastName": "name.lastName",
+			"name.title": "name.title.code"
+		}
+	}
+}

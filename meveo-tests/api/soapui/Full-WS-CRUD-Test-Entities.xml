@@ -513,6 +513,12 @@
     <con:operation id="80c3446b-50ec-4fab-8f48-c42a05e65e31" isOneWay="false" action="" name="listByXmlInput" bindingOperationName="listByXmlInput" type="Request-Response" outputName="listByXmlInputResponse" inputName="listByXmlInput" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
+    <con:operation id="5c64098c-e8fe-42f3-b099-eea8f122256c" isOneWay="false" action="" name="searchByField" bindingOperationName="searchByField" type="Request-Response" outputName="searchByFieldResponse" inputName="searchByField" receivesAttachments="false" sendsAttachments="false">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="2f9f6714-a034-441f-911e-b7e420fec9d5" isOneWay="false" action="" name="search" bindingOperationName="search" type="Request-Response" outputName="searchResponse" inputName="search" receivesAttachments="false" sendsAttachments="false">
+      <con:settings/>
+    </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="c76e9651-0016-44a7-a365-2d2b24de2cf0" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1468,6 +1474,78 @@
     <con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:RestService" id="7bf31d37-dd0b-4792-a1c9-c37a6c092b36" wadlVersion="http://wadl.dev.java.net/2009/02" name="Elastic search" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="demo_accounts" path="/demo_accounts/account/{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>pretty</con:name>
+          <con:value>true</con:value>
+          <con:style>QUERY</con:style>
+          <con:default>true</con:default>
+        </con:parameter>
+        <con:parameter>
+          <con:name>id</con:name>
+          <con:value/>
+          <con:style>TEMPLATE</con:style>
+          <con:default/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="" id="e4bfe487-098b-40b8-ae3e-6a0f2af66850" method="GET">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json; charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element xmlns:ws="http://localhost/demo_accounts/account/WS_FULL_4_CA_ES">ws:Response</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json; charset=UTF-8</con:mediaType>
+          <con:status>404</con:status>
+          <con:params/>
+          <con:element xmlns:ws="http://localhost/demo_accounts/account/WS_FULL_4_CA_ES">ws:Fault</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="demo_catalog" path="/demo_catalog/OfferTemplate/{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>pretty</con:name>
+          <con:value>true</con:value>
+          <con:style>QUERY</con:style>
+          <con:default>true</con:default>
+        </con:parameter>
+        <con:parameter>
+          <con:name>id</con:name>
+          <con:value/>
+          <con:style>TEMPLATE</con:style>
+          <con:default/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="" id="e4bfe487-098b-40b8-ae3e-6a0f2af66850" method="GET">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json; charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element xmlns:ws="http://localhost/demo_accounts/account/WS_FULL_4_CA_ES">ws:Response</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json; charset=UTF-8</con:mediaType>
+          <con:status>404</con:status>
+          <con:params/>
+          <con:element xmlns:ws="http://localhost/demo_accounts/account/WS_FULL_4_CA_ES">ws:Fault</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
   </con:interface>
   <con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
     <con:settings/>
@@ -23596,7 +23674,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23623,7 +23702,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23813,7 +23895,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23840,7 +23923,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23988,7 +24074,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstances>
+              <con:configuration>
+                <token><![CDATA[<meveoInstances>
                <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                   <url>http://localhost:8080/meveo</url>
                </meveoInstance>
@@ -24020,7 +24107,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <user>MEVEO.ADMIN</user>
                   <customer>WS_BASE_CUST</customer>
                </meveoInstance>
-            </meveoInstances>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstances>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -40828,7 +40918,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f13fc821-8fc1-4cdf-a59c-4bba21c85808" name="Assert Customer Part">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>1</externalRef1>
                <externalRef2>1</externalRef2>
                <name>
@@ -40854,7 +40945,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <phone>1234</phone>
                   <mobile>092152154716</mobile>
                   <fax>1234</fax>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4fe4bad5-9bff-4034-b661-77af9d9d2c2a" name="Assert CA Part1">
               <con:configuration>
@@ -57739,8 +57833,6 @@ and paste that invoice number in the next step.
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
       <con:testStep type="request" name="Activate services with service not in Offer" id="152d7dac-1976-43ba-bd91-3725d8804b45">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -57770,9 +57862,13 @@ and paste that invoice number in the next step.
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
             <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
-              <con:configuration><token><![CDATA[<status>FAIL</status>
+              <con:configuration>
+                <token><![CDATA[<status>FAIL</status>
             <errorCode>BUSINESS_API_EXCEPTION</errorCode>
-            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -57784,7 +57880,8 @@ and paste that invoice number in the next step.
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="Instanticate services with service not in Offer" id="706624d0-947b-4914-8907-e7ae2c4b258d">
+      </con:testStep>
+      <con:testStep type="request" name="Instanticate services with service not in Offer" id="706624d0-947b-4914-8907-e7ae2c4b258d">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SubscriptionWsSoapBinding</con:interface>
@@ -57813,9 +57910,13 @@ and paste that invoice number in the next step.
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
             <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
-              <con:configuration><token><![CDATA[<status>FAIL</status>
+              <con:configuration>
+                <token><![CDATA[<status>FAIL</status>
             <errorCode>BUSINESS_API_EXCEPTION</errorCode>
-            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -57827,7 +57928,8 @@ and paste that invoice number in the next step.
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties>
+      </con:testStep>
+      <con:properties>
         <con:property>
           <con:name>index</con:name>
           <con:value>825</con:value>
@@ -57837,7 +57939,8 @@ and paste that invoice number in the next step.
           <con:value>825</con:value>
         </con:property>
       </con:properties>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>84</con:value>
@@ -60078,6 +60181,1734 @@ and paste that invoice number in the next step.
         <con:value>1026</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
+  </con:testSuite>
+  <con:testSuite id="36cca331-3845-477a-97dc-33f00979ae2d" name="Elastic search">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="99ae2d3e-1a89-43b8-ae1a-c05568d63144" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create and document lookup" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create customer account" id="cb5bbcbe-04ee-476c-b029-5ab07b91ad71">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer account" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" description="Andrius account one">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstname</firstName>
+               <lastName>lastname</lastName>
+            </name>
+            <address>
+               <address1>adress1</address1>
+               <address2>address2</address2>
+               <address3>adress3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <contactInformation>
+            	<email>${#Project#entityPrefix}@manaty.net</email>
+            	<phone>00123456789</phone>
+            	<mobile>092152154716</mobile>
+         	  </contactInformation>
+            <mandateIdentification>1234569548</mandateIdentification>
+            <mandateDate>2016-03-10</mandateDate>
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>
+            <currency>EUR</currency>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <status>ACTIVE</status>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="fd0ab5d7-df9e-46e6-8562-3c49c5a2594b">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Dijon"},"description":"Andrius account one","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update customer account" id="e84e5482-1e1c-439f-bbd0-a2481419ec6b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Update customer account" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomerAccount>
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" description="Andrius account one updated">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>COLL</title>
+               <firstName>firstname</firstName>
+               <lastName>lastname</lastName>
+            </name>
+            <address>
+               <address1>adress10</address1>
+               <address2>address20</address2>
+               <address3>adress30</address3>
+               <zipCode>210000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <contactInformation>
+            	<email>${#Project#entityPrefix}@manaty.net</email>
+            	<phone>00123456789</phone>
+            	<mobile>092152154716</mobile>
+         	  </contactInformation>
+            <mandateIdentification>1234569548</mandateIdentification>
+            <mandateDate>2016-03-10</mandateDate>
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>
+            <currency>EUR</currency>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <status>ACTIVE</status>
+         </customerAccount>
+      </ws:updateCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search after update" id="309db6b4-8234-4a1a-8a47-899a4e093fa6">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search after update" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="ed6cd462-7f35-4849-a476-edb6a3e8badc" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="2d65b463-0322-4dc2-8cc7-c496545f2ef2" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="20431bec-ddd3-48cf-a33b-0fb06801b6f6" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"210000","state":null,"address1":"adress10","address2":"address20","address3":"adress30","country":"FR","city":"Dijon"},"description":"Andrius account one updated","name":{"lastName":"lastname","title":"COLL","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CF 1" id="8c697a6f-dd8b-4026-afcd-dab7a6c1b397">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CF 1" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createOrUpdateField> 
+         <customField code="${#Project#baseEntityPrefix}_CA_STRING" description="String CF field"> 
+            <fieldType>STRING</fieldType>
+            <appliesTo>CA</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/>
+            <con:assertion type="Simple Contains" name="Contains" id="c5bb1cc3-cc99-460a-bc2d-8855c5fc3e30">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CF 2" id="63c67825-456f-4eb8-9efb-9a6a9bb3416b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CF 2" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createOrUpdateField> 
+         <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE" description="Double CF field"> 
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>CA</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/>
+            <con:assertion type="Simple Contains" name="Contains" id="c5bb1cc3-cc99-460a-bc2d-8855c5fc3e30">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update customer account with CF" id="933196f6-f403-4e5e-94b5-fa844f8725fd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Update customer account with CF" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCustomerAccount>\r
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" description="Andrius account one updated">\r
+            <externalRef1>EXTREF1</externalRef1>\r
+            <externalRef2>EXTREF2</externalRef2>\r
+            <name>\r
+               <title>COLL</title>\r
+               <firstName>firstname</firstName>\r
+               <lastName>lastname</lastName>\r
+            </name>\r
+            <address>\r
+               <address1>adress10</address1>\r
+               <address2>address20</address2>\r
+               <address3>adress30</address3>\r
+               <zipCode>210000</zipCode>\r
+               <city>Dijon</city>\r
+               <country>FR</country>\r
+            </address>\r
+            <contactInformation>\r
+               <email>${#Project#entityPrefix}@manaty.net</email>\r
+               <phone>00123456789</phone>\r
+               <mobile>092152154716</mobile>\r
+            </contactInformation>\r
+            <mandateIdentification>1234569548</mandateIdentification>\r
+            <mandateDate>2016-03-10</mandateDate>\r
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>\r
+            <currency>EUR</currency>\r
+            <language>FRA</language>\r
+            <paymentMethod>CHECK</paymentMethod>\r
+            <creditCategory>Pro</creditCategory>\r
+            <status>ACTIVE</status>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CA_STRING">\r
+                  <stringValue>CA_STRING_VALUE_0</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE">\r
+                  <doubleValue>16.17</doubleValue>\r
+               </customField>\r
+            </customFields>\r
+         </customerAccount>\r
+      </ws:updateCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search after update with CF" id="bf872073-dabd-480b-990b-0f1691969fe4">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search after update with CF" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="ed6cd462-7f35-4849-a476-edb6a3e8badc" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="2d65b463-0322-4dc2-8cc7-c496545f2ef2" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="20431bec-ddd3-48cf-a33b-0fb06801b6f6" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"210000","state":null,"address1":"adress10","address2":"address20","address3":"adress30","country":"FR","city":"Dijon"},"description":"Andrius account one updated","name":{"lastName":"lastname","title":"COLL","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA_ES","${#Project#baseEntityPrefix}_CA_DOUBLE":16.17,"${#Project#baseEntityPrefix}_CA_STRING":"CA_STRING_VALUE_0"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update customer account no CF" id="6ea27026-5919-4264-81a7-67d9291de779">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Update customer account no CF" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomerAccount>
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" description="Andrius account one updated 2">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>COLL</title>
+               <firstName>firstname</firstName>
+               <lastName>lastname</lastName>
+            </name>
+            <address>
+               <address1>adress10</address1>
+               <address2>address20</address2>
+               <address3>adress30</address3>
+               <zipCode>210000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <contactInformation>
+            	<email>${#Project#entityPrefix}@manaty.net</email>
+            	<phone>00123456789</phone>
+            	<mobile>092152154716</mobile>
+         	  </contactInformation>
+            <mandateIdentification>1234569548</mandateIdentification>
+            <mandateDate>2016-03-10</mandateDate>
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>
+            <currency>EUR</currency>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <status>ACTIVE</status>
+         </customerAccount>
+      </ws:updateCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search after update no CF" id="0f58e9f6-70ef-43a4-a6ed-5b7b15eb99ac">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search after update no CF" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="ed6cd462-7f35-4849-a476-edb6a3e8badc" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="2d65b463-0322-4dc2-8cc7-c496545f2ef2" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>4</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="20431bec-ddd3-48cf-a33b-0fb06801b6f6" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"210000","state":null,"address1":"adress10","address2":"address20","address3":"adress30","country":"FR","city":"Dijon"},"description":"Andrius account one updated 2","name":{"lastName":"lastname","title":"COLL","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA_ES","${#Project#baseEntityPrefix}_CA_DOUBLE":16.17,"${#Project#baseEntityPrefix}_CA_STRING":"CA_STRING_VALUE_0"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create billing account with same code as CA" id="1a6b5277-aa60-40ff-8f55-c8fb9422b56c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create billing account with same code as CA" id="1957439a-4ce5-4ed4-a8df-6ca966fcc088">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" description="Andrius Argentina account">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstname</firstName>
+               <lastName>lastname</lastName>
+            </name>
+            <address>
+               <address1>adress1</address1>
+               <address2>address2</address2>
+               <address3>adress3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2016-04-01</nextInvoiceDate>
+            <subscriptionDate>2016-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <status>ACTIVE</status>
+            <email>${#Project#entityPrefix}@manaty.net</email>
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
+            <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search after BA creation" id="f18defb1-1a4e-4981-94e0-6bd6f0f4a9cb">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search after BA creation" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="ed6cd462-7f35-4849-a476-edb6a3e8badc" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="2d65b463-0322-4dc2-8cc7-c496545f2ef2" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>5</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="20431bec-ddd3-48cf-a33b-0fb06801b6f6" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Dijon"},"description":"Andrius Argentina account","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA_ES","${#Project#baseEntityPrefix}_CA_DOUBLE":16.17,"${#Project#baseEntityPrefix}_CA_STRING":"CA_STRING_VALUE_0"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer account 2" id="2f7238de-ae22-490a-803e-0ae782c3d319">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer account 2" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES" description="Andrius account two">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstname</firstName>
+               <lastName>lastname</lastName>
+            </name>
+            <address>
+               <address1>adress1</address1>
+               <address2>address2</address2>
+               <address3>adress3</address3>
+               <zipCode>21000</zipCode>
+               <city>Vilnius</city>
+               <country>FR</country>
+            </address>
+            
+            <contactInformation>
+            	<email>${#Project#entityPrefix}@manaty.net</email>
+            	<phone>00123456789</phone>
+            	<mobile>092152154716</mobile>
+         	  </contactInformation>
+            <mandateIdentification>1234569548</mandateIdentification>
+            <mandateDate>2016-03-10</mandateDate>
+            <customer>${#Project#baseEntityPrefix}_CUST</customer>
+            <currency>EUR</currency>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <status>ACTIVE</status>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="51bd94af-3374-47ad-a9d3-5d497f02e24b">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Vilnius"},"description":"Andrius account two","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create offer 1" id="f8e7a359-9df1-4f1f-a711-f385e610c062">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Create offer 1" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplate>\r
+         <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES" description="Offer one">\r
+            <disabled>false</disabled>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
+                  	<mandatory>false</mandatory>
+                  </serviceTemplate>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
+         </offerTemplate>\r
+      </ws:createOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="82cca236-9f2b-42e1-bc6c-3347ec30652f">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"description":"Offer one","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create offer 2" id="4bcca97e-4b28-4724-ac48-d3ebcfb59bbd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Create offer 2" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplate>\r
+         <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES" description="Offer two">\r
+            <disabled>false</disabled>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
+                  	<mandatory>false</mandatory>
+                  </serviceTemplate>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
+         </offerTemplate>\r
+      </ws:createOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="f1d077c7-b114-4182-899c-519791be286b">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Offer2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"description":"Offer two","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="d142b2bc-412d-49d7-b3cb-8b33cb952b1a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Search" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Search Account no query" id="b4e489be-5ec5-4d5f-9f78-a6149fc1e083">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>search</con:operation>
+          <con:request name="Search Account no query" id="e6c80489-9966-45e7-8ad8-9252b59f4304">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:search>\r
+         <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
+         <size>50</size>
+      </ws:search>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad23994f-b230-46e6-b817-fbea3ed84c3c"/>
+            <con:assertion type="Simple Contains" id="95af13c9-ac81-405b-b271-740df88fa7c0" name="Contains">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="5c7e8f68-8e35-48e2-b187-839915be8ef0" name="Contains 1">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Search Account full text" id="ed3e7cf1-6917-4022-8796-98f053671b2f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>search</con:operation>
+          <con:request name="Search Account full text" id="e6c80489-9966-45e7-8ad8-9252b59f4304">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:search>\r
+         <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
+         <query>two</query>
+      </ws:search>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad23994f-b230-46e6-b817-fbea3ed84c3c"/>
+            <con:assertion type="Simple Contains" id="5c7e8f68-8e35-48e2-b187-839915be8ef0" name="Contains 1">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ff627eee-b0df-4680-9903-ce1131b18d5f" name="Not Contains">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Search Account by city" id="e9ddba23-ba97-4671-9a28-27c9180d0112">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>search</con:operation>
+          <con:request name="Search Account by city" id="e6c80489-9966-45e7-8ad8-9252b59f4304">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:searchByField>\r
+         <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
+         <query>\r
+            <entry>\r
+               <key>address.city</key>\r
+               <value>Vilnius</value>\r
+            </entry>\r
+         </query>\r
+      </ws:searchByField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad23994f-b230-46e6-b817-fbea3ed84c3c"/>
+            <con:assertion type="Simple Contains" id="5c7e8f68-8e35-48e2-b187-839915be8ef0" name="Contains 1">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ff627eee-b0df-4680-9903-ce1131b18d5f" name="Not Contains">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Search Account by city or description - match city" id="64a10128-e8da-4677-8ea5-717788ddef73">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>search</con:operation>
+          <con:request name="Search Account by city or description - match city" id="e6c80489-9966-45e7-8ad8-9252b59f4304">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:searchByField>\r
+         <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
+         <query>\r
+            <entry>\r
+               <key>address.city, code</key>\r
+               <value>Vilnius</value>\r
+            </entry>\r
+         </query>\r
+      </ws:searchByField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad23994f-b230-46e6-b817-fbea3ed84c3c"/>
+            <con:assertion type="Simple Contains" id="5c7e8f68-8e35-48e2-b187-839915be8ef0" name="Contains 1">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ff627eee-b0df-4680-9903-ce1131b18d5f" name="Not Contains">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Search Account by city or description - match description" id="544b48f0-7b88-4cc9-b51d-f17c9730cdaf">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>search</con:operation>
+          <con:request name="Search Account by city or description - match description" id="e6c80489-9966-45e7-8ad8-9252b59f4304">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:searchByField>\r
+         <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
+         <query>\r
+            <entry>\r
+               <key>address.city, description</key>\r
+               <value>argentina</value>\r
+            </entry>\r
+         </query>\r
+      </ws:searchByField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad23994f-b230-46e6-b817-fbea3ed84c3c"/>
+            <con:assertion type="Simple Contains" id="5c7e8f68-8e35-48e2-b187-839915be8ef0" name="Contains 1">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ff627eee-b0df-4680-9903-ce1131b18d5f" name="Not Contains">
+              <con:configuration>
+                <token>"_id" : "${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="62e7f379-3175-4d3d-a21e-bab6c054b4d1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Cleanup" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Delete CF 1" id="5f160a33-91e1-4d0b-a5f2-e0b18f39b321">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Delete CF 1" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_CA_STRING</customFieldTemplateCode>
+         <appliesTo>CA</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/>
+            <con:assertion type="Simple Contains" name="Contains" id="c5bb1cc3-cc99-460a-bc2d-8855c5fc3e30">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CF 2" id="fd0f7a29-9b65-4113-ba5c-99fce311df95">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Delete CF 2" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_CA_DOUBLE</customFieldTemplateCode>
+         <appliesTo>CA</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/>
+            <con:assertion type="Simple Contains" name="Contains" id="c5bb1cc3-cc99-460a-bc2d-8855c5fc3e30">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Billing Account" id="0a744df2-d4d0-4de0-893d-ff567fcc2f85">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeBillingAccount</con:operation>
+          <con:request name="Delete Billing Account" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeBillingAccount>\r
+         <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA_ES</billingAccountCode>\r
+      </ws:removeBillingAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Customer Account" id="31cb8962-9642-4119-b312-53ef8670c32a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomerAccount</con:operation>
+          <con:request name="Delete Customer Account" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA_ES</customerAccountCode>\r
+      </ws:removeCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Customer Account 2" id="f1c6854c-2a59-48a2-9349-03f45648135b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomerAccount</con:operation>
+          <con:request name="Delete Customer Account 2" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES</customerAccountCode>\r
+      </ws:removeCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="2121a04d-4932-447a-a04b-1cb64efa8a79" disabled="true">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Vilnius"},"description":"Andrius account two","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="856050cf-5293-4bc2-ac84-9342266a95be" disabled="true">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CA2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Vilnius"},"description":"Andrius account two","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete offer 1" id="7e6f7036-55da-406b-b050-71e89ef9d03b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Delete offer 1" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeOfferTemplate>\r
+         <offerTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES</offerTemplateCode>\r
+      </ws:removeOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete offer 2" id="b79db75c-e3a7-4d23-8f5e-9cd24b0d624e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Delete offer 2" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeOfferTemplate>\r
+         <offerTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES</offerTemplateCode>\r
+      </ws:removeOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="960b3897-1e08-4f5c-aa73-c1fdf510492f" disabled="true">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Copy of Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"description":"Offer one","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="b373095f-fbfa-43ff-87d5-8b9265a60631" disabled="true">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Offer2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source</path>
+                <content>{"description":"Offer two","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>11</con:value>
+      </con:property>
+    </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="33560d18-e1e9-451a-a2f2-d543a800b70f" name="Remove base data">
     <con:settings/>
@@ -62161,6 +63992,10 @@ and paste that invoice number in the next step.
     <con:property>
       <con:name>timezone2</con:name>
       <con:value>+08</con:value>
+    </con:property>
+    <con:property>
+      <con:name>elasticSearchUrl</con:name>
+      <con:value>http://localhost:9200</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

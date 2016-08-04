@@ -1,5 +1,7 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -31,6 +33,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
         try {
             String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
             result.getActionStatus().setMessage(response);
+            result.setSearchResults(response);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -51,6 +54,28 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
         try {
             String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
             result.getActionStatus().setMessage(response);
+            result.setSearchResults(response);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public FilteredListResponseDto search(String[] classnames, String query, Integer from, Integer size) {
+
+        FilteredListResponseDto result = new FilteredListResponseDto();
+        try {
+            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            result.setSearchResults(response);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -65,23 +90,25 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
         return result;
     }
     
-    public FilteredListResponseDto search(String[] classnames,String query){
-    	 FilteredListResponseDto result = new FilteredListResponseDto();
-         try {
-             String response = filteredListApi.search(classnames, query, getCurrentUser());
-             result.getActionStatus().setMessage(response);
-         } catch (MeveoApiException e) {
-             result.getActionStatus().setErrorCode(e.getErrorCode());
-             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-             result.getActionStatus().setMessage(e.getMessage());
-         } catch (Exception e) {
-             log.error("Failed to execute API", e);
-             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-             result.getActionStatus().setMessage(e.getMessage());
-         }
+    @Override
+    public FilteredListResponseDto searchByField(String[] classnames, Map<String, String> query, Integer from, Integer size) {
 
-         return result;
+        FilteredListResponseDto result = new FilteredListResponseDto();
+        try {
+            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            result.setSearchResults(response);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
     }
 
 }

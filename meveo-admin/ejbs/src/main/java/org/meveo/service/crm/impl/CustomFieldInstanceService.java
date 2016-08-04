@@ -46,6 +46,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.index.ElasticClient;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @Resource
     private TimerService timerService;
 
+    @Inject
+    private ElasticClient elasticClient;
+
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
@@ -78,6 +82,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public void create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator) throws BusinessException {
         super.create(cfi, creator);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
+
+        elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue(), creator);
 
         triggerEndPeriodEvent(cfi);
     }
@@ -91,6 +97,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public CustomFieldInstance update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) throws BusinessException {
         cfi = super.update(cfi, updater);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
+
+        elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue(), updater);
 
         triggerEndPeriodEvent(cfi);
 
