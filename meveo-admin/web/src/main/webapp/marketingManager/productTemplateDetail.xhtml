@@ -24,8 +24,9 @@
 
 	<ui:define name="body">
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
-			backingBean="#{productTemplateBean}" showFormButtons="false">
-			<p:panel styleClass="TexAlRight">
+			backingBean="#{productTemplateBean}" showFormButtons="true"
+			formButtonsTopRight="true" >
+			<!-- <p:panel styleClass="TexAlRight">
 
 				<p:commandButton value="#{messages['action.activate']}"
 					action="#{productTemplateBean.activateProduct()}"
@@ -39,7 +40,7 @@
 					action="#{productTemplateBean.discardChanges()}"
 					rendered="#{productTemplateBean.editMode != null and productTemplateBean.editMode.length() > 0}"
 					update="@form" />
-			</p:panel>
+			</p:panel> -->
 
 			<p:panel styleClass="ui-panel-blank">
 
