@@ -64707,10 +64707,16 @@
       <ws:createBusinessAccountModel>
          <!--Optional:-->
          <businessAccountModelDto code="SelfcareBAM_${#TestSuite#ticket}" license="GPL" description="BAM for selfcare accounts">
-            <script code="org.meveo.service.script.SelfcareBAMScript_${#TestSuite#ticket}" description="Script BAM for selfcare user">
-               <!--Optional:-->
-               <type>JAVA</type>
-               <script>
+           <moduleItems>
+		<customFieldTemplate code="password" description="password">
+		<fieldType>STRING</fieldType>
+		<appliesTo>CUST</appliesTo>
+		<storageType>SINGLE</storageType>
+		</customFieldTemplate>
+		</moduleItems>
+           <script code="org.meveo.service.script.SelfcareAccountScript" description="Script BAM for selfcare accounts">
+          <type>JAVA</type>
+          <script>
              <![CDATA[
 		package org.meveo.service.script;
 		import java.math.BigDecimal;
@@ -64738,9 +64744,9 @@
 		import org.meveo.service.crm.impl.CustomFieldInstanceService;
 		import org.meveo.api.UserApi;
 
-		public class SelfcareBAMScript_${#TestSuite#ticket} extends AccountScript {
+		public class SelfcareAccountScript extends AccountScript {
 		
-		private static final Logger log = LoggerFactory.getLogger(SelfcareBAMScript_${#TestSuite#ticket}.class);
+		private static final Logger log = LoggerFactory.getLogger(SelfcareAccountScript.class);
 		private Map<String, Object> initContext = null;
 		
 		static MessageDigest messageDigest = null;
@@ -64757,23 +64763,24 @@
 		@Override
 		public void createAccount(Map<String, Object> methodContext , User currentUser) throws BusinessException { 
 		AccountEntity account = (AccountEntity) methodContext.get(Script.CONTEXT_ENTITY);
-		log.debug("SelfcareBAMScriptcreateAccount {}", account.getCode());
 		UserDto user = new UserDto();
 		CRMAccountHierarchyDto accountDto = (CRMAccountHierarchyDto) methodContext.get(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO);
 		Customer customer = customerService.findByCode(accountDto.getCode(), currentUser.getProvider());
 		String password =(String) customFieldInstanceService.getCFValue(customer, "password", currentUser);
-		
+          log.debug("accountCode : "+accountDto.getCode(), " crmAccountType :"+accountDto.getCrmAccountType());
+          
 		String email = accountDto.getContactInformation().getEmail(); 
 		user.setEmail(email);
 		if(accountDto.getName()!=null){
 		user.setFirstName(accountDto.getName().getFirstName());
-		user.setFirstName(accountDto.getName().getLastName());
+		user.setLastName(accountDto.getName().getLastName());
 		}
 		user.setUsername(accountDto.getCode());
 		user.setPassword(password);  
 		List<String> roles = new ArrayList<String>();
 		roles.add("administrateur");
 		user.setRoles(roles);
+         log.debug("lastName :"+user.getLastName() + " firstName : "+user.getFirstName() + " email : "+user.getEmail() + " password : "+user.getPassword());
 		try{
 		userApi.create(user, currentUser);
 		}catch(MeveoApiException e){
@@ -64782,11 +64789,10 @@
 		}
 		}
 		}]]]]>><![CDATA[
-		</script>  
-                
-            </script> 
+		</script> 
+		</script> 
             <hierarchyType>C_UA</hierarchyType>
          </businessAccountModelDto>
       </ws:createBusinessAccountModel>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>100</con:value></con:property><con:property><con:name>invoiceId</con:name><con:value>128</con:value></con:property><con:property><con:name>invoiceNumber</con:name><con:value>Fact_000000010</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://i.meveo.info/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/><con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>105</con:value></con:property><con:property><con:name>invoiceId</con:name><con:value>128</con:value></con:property><con:property><con:name>invoiceNumber</con:name><con:value>Fact_000000010</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://i.meveo.info/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>provider</con:name><con:value>DEMO</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
