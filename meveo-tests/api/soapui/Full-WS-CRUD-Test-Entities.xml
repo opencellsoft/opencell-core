@@ -4755,7 +4755,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Find with languageCode">
-              <con:configuration><token>&lt;language code="ENG"/>
+              <con:configuration><token>&lt;language code="ENG">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
@@ -5003,7 +5003,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Find LanguageCode">
-              <con:configuration><token>&lt;language code="ENG"/>
+              <con:configuration><token>&lt;language code="ENG">
 </token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
@@ -5708,11 +5708,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
               <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content> &lt;languages>
-               &lt;language code="ENG"/>
-               &lt;language code="FRA"/>
-            &lt;/languages>
-</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+               <language code="ENG">
+                  <description>English</description>
+               </language>
+               <language code="FRA">
+                  <description>French</description>
+               </language>
+            </languages>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -5794,11 +5798,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
               <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content>&lt;languages>
-               &lt;language code="ENG"/>
-               &lt;language code="FRA"/>
-            &lt;/languages>
-</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+               <language code="ENG">
+                  <description>English</description>
+               </language>
+               <language code="FRA">
+                  <description>French</description>
+               </language>
+            </languages>
+]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24299,7 +24307,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>29</con:value>
+        <con:value>33</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -35669,7 +35677,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>123</con:value>
+        <con:value>127</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -44921,7 +44929,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>42</con:value>
+        <con:value>47</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46614,7 +46622,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>82</con:value>
+        <con:value>83</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46777,7 +46785,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>83</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -48969,7 +48977,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>85</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57269,7 +57277,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>103</con:value>
+        <con:value>104</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57934,7 +57942,7 @@ and paste that invoice number in the next step.
     </con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>90</con:value>
+        <con:value>91</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58559,7 +58567,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>90</con:value>
+        <con:value>91</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -59075,7 +59083,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>81</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
