@@ -2548,6 +2548,8 @@ $BODY$
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
         </createTable>
+        
+        <createSequence sequenceName="hierarchy_entity_seq" />
         <addPrimaryKey columnNames="id" constraintName="hierarchy_entity_pkey"
                        tableName="hierarchy_entity" />
         <addForeignKeyConstraint baseColumnNames="provider_id"
