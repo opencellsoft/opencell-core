@@ -3454,7 +3454,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateFilter>\r         
-         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter1" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter1_DESCP">\r            
+         <filter code="${#Project#baseEntityPrefix}_Filter1" description="${#Project#baseEntityPrefix}_Filter1_DESCP">\r            
             <shared>false</shared>\r            
             <inputXml><![CDATA[<filter>
 			  <disabled>false</disabled>

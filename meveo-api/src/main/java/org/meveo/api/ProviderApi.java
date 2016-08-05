@@ -156,6 +156,7 @@ public class ProviderApi extends BaseApi {
         provider.setMultilanguageFlag(postData.isMultiLanguage());
 
         provider.setEntreprise(postData.isEnterprise());
+        provider.setLevelDuplication(postData.isLevelDuplication());
         if(postData.getInvoiceConfiguration()!=null){
         	provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
 		}
@@ -329,6 +330,7 @@ public class ProviderApi extends BaseApi {
 
         provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
         provider.setEntreprise(postData.isEnterprise());
+        provider.setLevelDuplication(postData.isLevelDuplication());
 
         BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
