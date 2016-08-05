@@ -237,11 +237,11 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		} else {
 			boolean newEntity = (entity.getId() == null);
 
-			if (channelsDM.getSource() != null || channelsDM.getTarget() != null) {
+			if (channelsDM != null && (channelsDM.getSource() != null || channelsDM.getTarget() != null)) {
 				entity.getChannels().clear();
 				entity.getChannels().addAll(channelService.refreshOrRetrieve(channelsDM.getTarget()));
 			}
-			if (businessAccountModelsDM.getSource() != null || businessAccountModelsDM.getTarget() != null) {
+			if (businessAccountModelsDM != null && (businessAccountModelsDM.getSource() != null || businessAccountModelsDM.getTarget() != null)) {
 				entity.getBusinessAccountModels().clear();
 				entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
 			}
