@@ -14,15 +14,16 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
+import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
+import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -42,13 +43,16 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	@Inject
 	protected MeasuredValueService mvService;
-	
+
+	@Inject
+	protected MeasurableQuantityService mqService;
+
 	protected EM chartEntityModel;
 
 	protected List<EM> chartEntityModels = new ArrayList<EM>();
 
 	private static final long serialVersionUID = 5241132812597358412L;
-	
+
 	public ChartEntityBean() {
 		super();
 	}
@@ -362,4 +366,42 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		chartModel.setLegendRows(pieChart.getLegendRows());
 	}
 
+	public List<StatModel> getStats() {
+		List<StatModel> result = new ArrayList<StatModel>();
+		List<MeasurableQuantity> mqList = mqService.list();
+
+		if (mqList.size() > 0) {
+			for (MeasurableQuantity mq : mqList) {
+				StatModel sm = new StatModel();
+				Calendar currentCal = Calendar.getInstance();
+				Date currentDate = currentCal.getTime();
+				currentCal.add(Calendar.DATE, -1);
+				Date beforeDate = currentCal.getTime();
+				List<MeasuredValue> mvCurrentPeriod = mvService.getByDateAndPeriod(null, beforeDate, currentDate,
+						MeasurementPeriodEnum.DAILY, mq, true);
+
+				if (mvCurrentPeriod.size() > 0) {
+					MeasuredValue mv1 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 1);
+
+					MeasuredValue mv2 = null;
+
+					if (mvCurrentPeriod.size() > 1) {
+						mv2 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 2);
+					} else {
+						mv2 = new MeasuredValue();
+						mv2.setValue(new BigDecimal("0.00"));
+					}
+
+					sm.setDescription(mq.getDescription() != null && mq.getDescription().length() > 0 ? mq
+							.getDescription() : mq.getCode());
+					sm.setDifference(mv1.getValue().subtract(mv2.getValue()).divide(mv2.getValue())
+							.multiply(new BigDecimal("100")).doubleValue());
+					sm.setLastUpdated(mv1.getDate());
+					sm.setValue(mv1.getValue().doubleValue());
+					result.add(sm);
+				}
+			}
+		}
+		return result;
+	}
 }
