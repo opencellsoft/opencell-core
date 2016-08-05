@@ -24,18 +24,17 @@
 		<p:panel styleClass="box-wrapper no-border-radius">
 			<p:panel styleClass="clearfix">
 				<p:panelGrid columns="2" layout="grid">
-					<c:forEach items="#{chartBean.chartEntityModels}" var="chart"
-						varStatus="i">
-						<hf:chartComponent model="#{chart}" chartBean="#{chartBean}"
-							index="#{i.index}" />
+					<c:forEach items="#{chartBean.stats}" var="stat" varStatus="i">
 						<p:panel
 							styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
-							<div class="box-title">#{chart.getModel.getTitle()}</div>
-							<div class="box-percentage">10%</div>
-							<!-- <div class="box-direction">
-								<i class="fa fa-arrow-right"></i>
-							</div> -->
-							<div class="box-last-update">Last Updated at 11:55 am</div>
+							<div class="box-title">#{stat.description}</div>
+							<div class="box-percentage">#{stat.value}</div>
+							<div class="box-direction">
+								<!-- <i class="fa fa-arrow-right"></i> -->
+								#{stat.difference}%
+							</div>
+							<div class="box-last-update">#{messages['report.lastUpdated']}
+								at #{stat.lastUpdateFormatted}</div>
 						</p:panel>
 					</c:forEach>
 				</p:panelGrid>
