@@ -1473,4 +1473,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return false;
     }
+
+    /**
+     * Get a list of custom fields instances corresponding to entities, identified by uuid
+     * 
+     * @param uuids A list of uuid values
+     * @return A list of custom fields instances
+     */
+    public List<CustomFieldInstance> getCustomFieldInstances(List<String> uuids) {
+        return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityList", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids).getResultList();
+    }
 }

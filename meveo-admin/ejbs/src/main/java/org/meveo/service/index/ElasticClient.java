@@ -1,26 +1,28 @@
 package org.meveo.service.index;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.Embeddable;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -33,11 +35,16 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
 
@@ -55,7 +62,8 @@ public class ElasticClient {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-    public static int DEFAULT_PAGE_SIZE = 10;
+    public static int DEFAULT_SEARCH_PAGE_SIZE = 10;
+    public static int INDEX_POPULATE_PAGE_SIZE = 100;
 
     @Inject
     private Logger log;
@@ -67,7 +75,14 @@ public class ElasticClient {
 
     private TransportClient client = null;
 
-    private ElasticSearchConfiguration esConfiguration = new ElasticSearchConfiguration();
+    @Inject
+    private ElasticSearchConfiguration esConfiguration;
+
+    @EJB
+    private ProviderService providerService;
+
+    @Inject
+    private ElasticSearchIndexPopulationService elasticSearchIndexPopulationService;
 
     /**
      * Initialize Elastic Search client
@@ -82,7 +97,7 @@ public class ElasticClient {
         try {
             clusterName = paramBean.getProperty("elasticsearch.cluster.name", "");
             hosts = paramBean.getProperty("elasticsearch.hosts", "localhost").split(";");
-            portStr = paramBean.getProperty("elasticsearch.port", "9200");
+            portStr = paramBean.getProperty("elasticsearch.port", "9300");
             String sniffingStr = paramBean.getProperty("elasticsearch.client.transport.sniff", "false").toLowerCase();
             if (!StringUtils.isBlank(portStr) && StringUtils.isNumeric(portStr) && (sniffingStr.equals("true") || sniffingStr.equals("false")) && !StringUtils.isBlank(clusterName)
                     && hosts.length > 0) {
@@ -178,7 +193,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(entity.getCode());
+            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, index, type, id, entity.getClass(), fieldsToUpdate);
             queuedChanges.addChange(change);
@@ -215,12 +230,12 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(entity.getCode());
+            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
             boolean upsert = esConfiguration.isDoUpsert(entity);
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
 
-            Map<String, Object> jsonValueMap = convertEntityToJson(entity);
+            Map<String, Object> jsonValueMap = elasticSearchIndexPopulationService.convertEntityToJson(entity);
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(action, index, type, id, entity.getClass(), jsonValueMap);
             queuedChanges.addChange(change);
@@ -256,7 +271,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(entity.getCode());
+            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entity.getClass(), null);
             queuedChanges.addChange(change);
@@ -320,79 +335,6 @@ public class ElasticClient {
     }
 
     /**
-     * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed
-     * 
-     * @param entity Entity to store in Elastic Search
-     * @return A map of values
-     */
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> convertEntityToJson(BusinessEntity entity) {
-
-        Map<String, Object> jsonValueMap = new HashMap<String, Object>();
-
-        // Maps fields between entity and json.
-        Map<String, String> fields = esConfiguration.getFields(entity);
-        String fieldNameTo = null;
-        String fieldNameFrom = null;
-
-        for (Entry<String, String> fieldInfo : fields.entrySet()) {
-
-            fieldNameTo = fieldInfo.getKey();
-            fieldNameFrom = fieldInfo.getValue();
-
-            Object value = null;
-            try {
-                // Obtain field value from entity
-                if (!fieldNameFrom.contains(".")) {
-                    value = FieldUtils.readField(entity, fieldNameFrom, true);
-
-                } else {
-                    String fieldNames[] = fieldNameFrom.split("\\.");
-
-                    Object fieldValue = entity;
-                    for (String fieldName : fieldNames) {
-                        fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
-                        if (fieldValue == null) {
-                            break;
-                        }
-                    }
-                    value = fieldValue;
-                }
-
-                if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
-                    value = convertObjectToFieldMap(value);
-                }
-
-                // Set value to json
-                if (!fieldNameTo.contains(".")) {
-                    jsonValueMap.put(fieldNameTo, value);
-
-                } else {
-                    String fieldNames[] = fieldNameTo.split("\\.");
-                    String fieldName = null;
-                    Map<String, Object> mapEntry = jsonValueMap;
-                    int length = fieldNames.length;
-                    for (int i = 0; i < length; i++) {
-                        fieldName = fieldNames[i];
-                        if (i < length - 1) {
-                            if (!mapEntry.containsKey(fieldName)) {
-                                mapEntry.put(fieldName, new HashMap<String, Object>());
-                            }
-                            mapEntry = (Map<String, Object>) mapEntry.get(fieldName);
-                        } else {
-                            mapEntry.put(fieldName, value);
-                        }
-                    }
-                }
-
-            } catch (IllegalAccessException e) {
-                log.error("Failed to access field {} of {}", fieldInfo.getValue(), ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()));
-            }
-        }
-        return jsonValueMap;
-    }
-
-    /**
      * Execute a search on all fields (_all field)
      * 
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
@@ -420,7 +362,7 @@ public class ElasticClient {
             from = 0;
         }
         if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
+            size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
         log.debug("Execute Elastic Search search for {} records {}-{} on {}, {}", query, from, from + size, indexes, types);
@@ -469,7 +411,7 @@ public class ElasticClient {
             from = 0;
         }
         if (size == null) {
-            size = DEFAULT_PAGE_SIZE;
+            size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
         log.debug("Execute Elastic Search search for {} records {}-{} on {}, {}", queryValues, from, from + size, indexes, types);
@@ -524,41 +466,6 @@ public class ElasticClient {
         }
     }
 
-    private String cleanUpCode(String code) {
-
-        code = code.replace(' ', '_');
-        return code;
-    }
-
-    /**
-     * Convert object to a map of fields (recursively)
-     * 
-     * @param valueToConvert Object to convert
-     * @return A map of fieldnames and values
-     * @throws IllegalAccessException
-     */
-    private Map<String, Object> convertObjectToFieldMap(Object valueToConvert) throws IllegalAccessException {
-        Map<String, Object> fieldValueMap = new HashMap<>();
-
-        List<Field> fields = new ArrayList<Field>();
-        ReflectionUtils.getAllFields(fields, valueToConvert.getClass());
-
-        for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            Object value = FieldUtils.readField(field, valueToConvert, true);
-
-            if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
-                fieldValueMap.put(field.getName(), convertObjectToFieldMap(value));
-            } else {
-                fieldValueMap.put(field.getName(), value);
-            }
-        }
-        return fieldValueMap;
-    }
-
     /**
      * Get a list of entity classes that is managed by Elastic Search
      * 
@@ -573,9 +480,95 @@ public class ElasticClient {
     }
 
     @Asynchronous
-    public void clearAndReindex() {
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Future<ReindexingStatistics> cleanAndReindex() throws BusinessException {
 
-        
-        
+        log.info("Start to repopulate Elastic Search");
+
+        ReindexingStatistics statistics = new ReindexingStatistics();
+
+        try {
+            // Drop all indexes
+            dropIndexes();
+
+            // Recreate all indexes
+            recreateIndexes();
+
+            // Repopulate index from DB
+
+            // Process each class
+            for (String classname : esConfiguration.getEntityClassesManaged()) {
+
+                log.info("Start to populate Elastic Search with data from {} entity", classname);
+
+                int from = 0;
+                int totalProcessed = 0;
+                boolean hasMore = true;
+
+                while (hasMore) {
+                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics, client);
+
+                    from = from + INDEX_POPULATE_PAGE_SIZE;
+                    totalProcessed = totalProcessed + found;
+                    hasMore = found == INDEX_POPULATE_PAGE_SIZE;
+                }
+
+                log.info("Finished populating Elastic Search with data from {} entity. Processed {} records.", classname, totalProcessed);
+            }
+
+            log.info("Finished repopulating Elastic Search");
+
+        } catch (Exception e) {
+            log.error("Failed to repopulate Elastic Search", e);
+            statistics.setException(e);
+        }
+
+        return new AsyncResult<ReindexingStatistics>(statistics);
+    }
+
+    /**
+     * Make a REST call to drop all indexes
+     * 
+     * @throws BusinessException
+     */
+    private void dropIndexes() throws BusinessException {
+
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        log.error("Url is {}", uri + "/*/");
+        ResteasyWebTarget target = client.target(uri + "/*/");
+
+        Response response = target.request().delete();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            throw new BusinessException("Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        }
+    }
+
+    /**
+     * Recreate indexes for all providers
+     */
+    private void recreateIndexes() {
+
+        // Recreate all indexes
+        List<Provider> providers = providerService.list();
+
+        for (Provider provider : providers) {
+            recreateIndexes(provider);
+        }
+    }
+
+    /**
+     * Recreate index for a given provider
+     * 
+     * @param provider Provider
+     */
+    private void recreateIndexes(Provider provider) {
+
+    }
+
+    protected TransportClient getClient() {
+        return client;
     }
 }

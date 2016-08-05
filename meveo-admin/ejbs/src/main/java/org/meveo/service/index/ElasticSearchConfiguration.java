@@ -1,6 +1,7 @@
 package org.meveo.service.index;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,17 +9,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.ejb.Singleton;
+
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ElasticSearchConfiguration {
+@Singleton
+public class ElasticSearchConfiguration implements Serializable {
+
+    private static final long serialVersionUID = 7200163625956435849L;
 
     private static String DEFAULT = "default";
 
@@ -31,8 +35,6 @@ public class ElasticSearchConfiguration {
     private Map<String, Map<String, String>> fieldMap = new HashMap<>();
 
     private Map<Long, String> providerCodes = new HashMap<>();
-
-    // private Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Load configuration from elasticSearchConfiguration.json file
@@ -81,11 +83,6 @@ public class ElasticSearchConfiguration {
                 fieldMaps.put(fieldMappingInfo.getKey(), fieldMappingInfo.getValue().textValue());
             }
         }
-
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK index is {}", indexMap);
-        log.error("AKK type is {}", typeMap);
-        log.error("AKK fields is {}", fieldMap);
     }
 
     /**
@@ -94,7 +91,7 @@ public class ElasticSearchConfiguration {
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Index property name
      */
-    protected String getIndex(BusinessEntity entity) {
+    public String getIndex(BusinessEntity entity) {
         return getIndex(entity.getClass(), entity.getProvider());
     }
 
@@ -106,7 +103,7 @@ public class ElasticSearchConfiguration {
      * @return Index property name
      */
     @SuppressWarnings("rawtypes")
-    protected String getIndex(Class<? extends BusinessEntity> clazzToConvert, Provider provider) {
+    public String getIndex(Class<? extends BusinessEntity> clazzToConvert, Provider provider) {
 
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
@@ -131,7 +128,7 @@ public class ElasticSearchConfiguration {
      * @return A set of index property names
      */
     @SuppressWarnings("unchecked")
-    protected Set<String> getIndexes(Provider provider, Class<? extends BusinessEntity>... clazzes) {
+    public Set<String> getIndexes(Provider provider, Class<? extends BusinessEntity>... clazzes) {
 
         Set<String> indexes = new HashSet<>();
 
@@ -148,7 +145,7 @@ public class ElasticSearchConfiguration {
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Type property name
      */
-    protected String getType(BusinessEntity entity) {
+    public String getType(BusinessEntity entity) {
         return getType(entity.getClass());
     }
 
@@ -159,7 +156,7 @@ public class ElasticSearchConfiguration {
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")
-    protected String getType(Class<? extends BusinessEntity> clazzToConvert) {
+    public String getType(Class<? extends BusinessEntity> clazzToConvert) {
 
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
@@ -179,7 +176,7 @@ public class ElasticSearchConfiguration {
      * @return A set of Type property names
      */
     @SuppressWarnings("unchecked")
-    protected Set<String> getTypes(Class<? extends BusinessEntity>... clazzes) {
+    public Set<String> getTypes(Class<? extends BusinessEntity>... clazzes) {
 
         Set<String> types = new HashSet<>();
 
@@ -198,7 +195,7 @@ public class ElasticSearchConfiguration {
      * @return True if upsrt should be used
      */
     @SuppressWarnings("rawtypes")
-    protected boolean isDoUpsert(BusinessEntity entity) {
+    public boolean isDoUpsert(BusinessEntity entity) {
 
         Class clazz = entity.getClass();
 
@@ -220,7 +217,7 @@ public class ElasticSearchConfiguration {
      *         "company.address.street"
      */
     @SuppressWarnings("rawtypes")
-    protected Map<String, String> getFields(BusinessEntity entity) {
+    public Map<String, String> getFields(BusinessEntity entity) {
 
         Class clazz = entity.getClass();
 
@@ -245,7 +242,7 @@ public class ElasticSearchConfiguration {
      * 
      * @return A list of entity simple classnames
      */
-    protected Set<String> getEntityClassesManaged() {
+    public Set<String> getEntityClassesManaged() {
         return indexMap.keySet();
     }
 }
