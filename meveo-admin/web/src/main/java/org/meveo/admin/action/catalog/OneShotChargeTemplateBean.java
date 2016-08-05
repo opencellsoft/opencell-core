@@ -150,7 +150,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		}
 
         getEntity().getEdrTemplates().clear();
-        getEntity().getEdrTemplates().addAll(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+        getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
 
         String outcome = super.saveOrUpdate(killConversation);
 
