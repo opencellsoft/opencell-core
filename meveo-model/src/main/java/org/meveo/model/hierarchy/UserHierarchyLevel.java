@@ -18,16 +18,16 @@
  */
 package org.meveo.model.hierarchy;
 
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.admin.User;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.OneToMany;
 
-import javax.persistence.*;
+import org.meveo.model.admin.User;
 import java.util.Set;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "USER_TYPE")
-@Table(name = "HIERARCHY_ENTITY")
 public class UserHierarchyLevel extends HierarchyLevel<User> {
 
 	private static final long serialVersionUID = 1L;
@@ -35,7 +35,8 @@ public class UserHierarchyLevel extends HierarchyLevel<User> {
     @OneToMany(mappedBy = "userLevel", fetch = FetchType.LAZY)
 	private Set<User> users;
 
-	public UserHierarchyLevel() {}
+	public UserHierarchyLevel() {
+    }
 
     public Set<User> getUsers() {
         return users;

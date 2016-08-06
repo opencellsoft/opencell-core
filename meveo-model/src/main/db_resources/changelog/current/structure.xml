@@ -2571,6 +2571,8 @@ $BODY$
         <addUniqueConstraint columnNames="code, hierarchy_type, provider_id" constraintName="uk_code_hierarchy_provider" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="hierarchy_entity" />
 
+        <createSequence sequenceName="hierarchy_entity_seq" />
+
         <addColumn tableName="adm_user">
             <column name="hierarchy_level_id" type="BIGINT" />
         </addColumn>

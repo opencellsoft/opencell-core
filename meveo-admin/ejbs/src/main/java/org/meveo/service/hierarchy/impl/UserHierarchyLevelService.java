@@ -18,12 +18,17 @@
  */
 package org.meveo.service.hierarchy.impl;
 
+import java.util.List;
+
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.List;
 
 /**
  * User Hierarchy Level service implementation.
@@ -55,5 +60,52 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         }
 
         return query.getResultList();
+    }
+
+    public List<UserHierarchyLevel> findRoots(Provider provider) {
+        Query query = getEntityManager()
+                .createQuery(
+                        "from " + UserHierarchyLevel.class.getSimpleName()
+                                + " where parentLevel.id IS NULL and provider=:provider");
+        query.setParameter("provider", provider);
+        if (query.getResultList().size() == 0) {
+            return null;
+        }
+
+        return query.getResultList();
+    }
+
+    public UserHierarchyLevel findByCode(String code, Provider provider) {
+        UserHierarchyLevel userHierarchyLevel = null;
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        try {
+            Query query = getEntityManager()
+                    .createQuery(
+                            "from " + UserHierarchyLevel.class.getSimpleName()
+                                    + " uhl where uhl.code =:code and uhl.provider=:provider");
+            query.setParameter("code", code);
+            query.setParameter("provider", provider);
+            userHierarchyLevel = (UserHierarchyLevel) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+        return userHierarchyLevel;
+    }
+
+    public UserHierarchyLevel findByCode(String code, Provider provider,
+                             List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(UserHierarchyLevel.class, "u", fetchFields,
+                provider);
+
+        qb.addCriterion("u.code", "=", code, true);
+        qb.addCriterionEntity("u.provider", provider);
+
+        try {
+            return (UserHierarchyLevel) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

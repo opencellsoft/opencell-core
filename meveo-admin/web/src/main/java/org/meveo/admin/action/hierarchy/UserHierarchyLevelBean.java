@@ -18,11 +18,17 @@
  */
 package org.meveo.admin.action.hierarchy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
@@ -38,8 +44,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Standard backing bean for {@link org.meveo.model.hierarchy.UserHierarchyLevel} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
@@ -50,6 +54,7 @@ import java.util.List;
 public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     private static final long serialVersionUID = 1L;
+    private static final String ROOT = "Root";
 
     /** Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}. */
     @Inject
@@ -65,7 +70,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     private TreeNode selectedNode;
 
-    private List<UserHierarchyLevel> roots;
+    private Boolean showUserGroupDetail = Boolean.FALSE;
 
     private static final Logger log = LoggerFactory.getLogger(UserHierarchyLevelBean.class);
 
@@ -83,16 +88,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    @ActionMethod
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        log.debug("saving new user={}", entity.getCode());
-        return super.saveOrUpdate(killConversation);
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider", "users", "childLevels");
     }
 
     @Override
@@ -123,9 +120,20 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     public TreeNode getRootNode() {
         if (rootNode == null) {
-            rootNode = new SortedTreeNode("Root", null);
-            roots = userHierarchyLevelService.findRoots();
+            rootNode = new SortedTreeNode(ROOT, null);
+            List<UserHierarchyLevel> roots;
+            if (entity != null && entity.getProvider() != null) {
+                roots = userHierarchyLevelService.findRoots(entity.getProvider());
+            } else {
+                roots = userHierarchyLevelService.findRoots();
+            }
             if (CollectionUtils.isNotEmpty(roots)) {
+                Collections.sort(roots, new Comparator<HierarchyLevel>() {
+                    @Override
+                    public int compare(HierarchyLevel o1, HierarchyLevel o2) {
+                        return o1.getOrderLevel().compareTo(o2.getOrderLevel());
+                    }
+                });
                 for (UserHierarchyLevel tree : roots) {
                     createTree(tree, rootNode);
                 }
@@ -134,54 +142,186 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         return rootNode;
     }
 
+    public Boolean getShowUserGroupDetail() {
+        return showUserGroupDetail;
+    }
+
+    public void setShowUserGroupDetail(Boolean showUserGroupDetail) {
+        this.showUserGroupDetail = showUserGroupDetail;
+    }
+
     public void onNodeSelect(NodeSelectEvent event) {
         TreeNode treeNode = event.getTreeNode();
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
-        setEntity(userHierarchyLevelService.findById(userHierarchyLevel.getId()));
+        userHierarchyLevel = userHierarchyLevelService.refreshOrRetrieve(userHierarchyLevel);
+        setEntity(userHierarchyLevel);
         selectedNode = treeNode;
+        showUserGroupDetail = true;
     }
 
     public void newUserHierarchyLevel() {
+        showUserGroupDetail = true;
         UserHierarchyLevel userHierarchyLevel = initEntity();
         UserHierarchyLevel userHierarchyLevelParent = null;
         if (selectedNode != null) {
             userHierarchyLevelParent = (UserHierarchyLevel) selectedNode.getData();
+            userHierarchyLevel.setParentLevel(userHierarchyLevelParent);
+            if (CollectionUtils.isNotEmpty(selectedNode.getChildren())) {
+                UserHierarchyLevel userHierarchyLast = (UserHierarchyLevel) selectedNode.getChildren().get(selectedNode.getChildCount() - 1).getData();
+                userHierarchyLevel.setOrderLevel(userHierarchyLast.getOrderLevel() + 1);
+            } else {
+                userHierarchyLevel.setOrderLevel(1L);
+            }
         }
-        userHierarchyLevel.setParentLevel(userHierarchyLevelParent);
-        setEntity(userHierarchyLevel);
     }
 
     public void newUserHierarchyRoot() {
+        showUserGroupDetail = true;
+        selectedNode = null;
         UserHierarchyLevel userHierarchyLevel = initEntity();
         userHierarchyLevel.setParentLevel(null);
-        setEntity(userHierarchyLevel);
+        if (CollectionUtils.isNotEmpty(rootNode.getChildren())) {
+            UserHierarchyLevel userHierarchyLast = (UserHierarchyLevel) rootNode.getChildren().get(rootNode.getChildCount() - 1).getData();
+            userHierarchyLevel.setOrderLevel(userHierarchyLast.getOrderLevel() + 1);
+        } else {
+            userHierarchyLevel.setOrderLevel(1L);
+        }
     }
 
     public void removeUserHierarchyLevel() {
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
-        userHierarchyLevelService.remove(userHierarchyLevel.getId());
-        selectedNode.getParent().getChildren().remove(selectedNode);
-        userHierarchyLevel = initEntity();
-        userHierarchyLevel.setParentLevel(null);
-        setEntity(userHierarchyLevel);
+        if (userHierarchyLevel != null) {
+            userHierarchyLevel = userHierarchyLevelService.findById(userHierarchyLevel.getId(), getFormFieldsToFetch());
+            if (userHierarchyLevel != null && (CollectionUtils.isNotEmpty(userHierarchyLevel.getUsers())
+                    || CollectionUtils.isNotEmpty(userHierarchyLevel.getChildLevels()))) {
+                messages.error(new BundleKey("messages", "userGroupHierarchy.errorDelete"));
+                return;
+            }
+            userHierarchyLevelService.remove(userHierarchyLevel.getId());
+            selectedNode.getParent().getChildren().remove(selectedNode);
+            userHierarchyLevel.setParentLevel(null);
+            setEntity(userHierarchyLevel);
+            selectedNode = null;
+            showUserGroupDetail = false;
+        }
     }
 
     public void moveUp() {
+        SortedTreeNode node= (SortedTreeNode) selectedNode;
+        int currentIndex = node.getIndexInParent();
 
+        // Move a position up within the same branch
+        if (currentIndex > 0) {
+            TreeNode parent = node.getParent();
+            parent.getChildren().remove(currentIndex);
+            parent.getChildren().add(currentIndex - 1, node);
+
+            // Move a position up outside the branch
+        } else if (currentIndex == 0 && node.canMoveUp()) {
+            TreeNode parentSibling = node.getParentSiblingUp();
+            if (parentSibling != null) {
+                node.getParent().getChildren().remove(currentIndex);
+                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) node.getData();
+                UserHierarchyLevel parent = (UserHierarchyLevel) parentSibling.getData();
+                userHierarchyLevel.setParentLevel(parent);
+                node.setData(userHierarchyLevel);
+                parentSibling.getChildren().add(node);
+            }
+        }
+
+        try {
+            updatePositionValue((SortedTreeNode) node.getParent());
+
+        } catch (BusinessException e) {
+            log.error("Failed to move up {}", node, e);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
     }
 
     public void moveDown() {
+        SortedTreeNode node= (SortedTreeNode) selectedNode;
+        int currentIndex = node.getIndexInParent();
+        boolean isLast = node.isLast();
 
+        // Move a position down within the same branch
+        if (!isLast) {
+            TreeNode parent = node.getParent();
+
+            parent.getChildren().remove(currentIndex);
+            parent.getChildren().add(currentIndex + 1, node);
+
+            // Move a position down outside the branch
+        } else if (isLast && node.canMoveDown()) {
+            SortedTreeNode parentSibling = node.getParentSiblingDown();
+            if (parentSibling != null) {
+                node.getParent().getChildren().remove(currentIndex);
+
+                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel)node.getData();
+                UserHierarchyLevel parent = (UserHierarchyLevel)parentSibling.getData();
+                userHierarchyLevel.setParentLevel(parent);
+                node.setData(userHierarchyLevel);
+                parentSibling.getChildren().add(0, node);
+            }
+        }
+
+        try {
+            updatePositionValue((SortedTreeNode) node.getParent());
+
+        } catch (BusinessException e) {
+            log.error("Failed to move down {}", node, e);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
+    }
+
+    /**
+     * Reset values to the last state.
+     */
+    @Override
+    public void resetFormEntity() {
+        entity.setCode(null);
+        entity.setDescription(null);
+    }
+
+    private void updatePositionValue(SortedTreeNode nodeToUpdate) throws BusinessException {
+
+        // Re-position current and child nodes
+        List<TreeNode> nodes = nodeToUpdate.getChildren();
+        UserHierarchyLevel parent = null;
+        if (!ROOT.equals(nodeToUpdate.getData())) {
+           parent = (UserHierarchyLevel) nodeToUpdate.getData();
+        }
+
+        if (CollectionUtils.isNotEmpty(nodes)) {
+            for (TreeNode treeNode : nodes) {
+                SortedTreeNode sortedNode = (SortedTreeNode) treeNode;
+                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) sortedNode.getData();
+                userHierarchyLevel = userHierarchyLevelService.refreshOrRetrieve(userHierarchyLevel);
+                Long order = Long.valueOf(sortedNode.getIndexInParent());
+
+                userHierarchyLevel.setParentLevel(parent);
+                userHierarchyLevel.setOrderLevel(order + 1);
+                userHierarchyLevelService.update(userHierarchyLevel, getCurrentUser());
+            }
+        }
+        selectedNode = null;
+        showUserGroupDetail = false;
     }
 
     // Recursive function to create tree
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
         TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
-        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
-
-        for (HierarchyLevel child : subTree) {
-            createTree(child, newNode);
+        List<HierarchyLevel> subTree = new ArrayList<HierarchyLevel>(userHierarchyLevel.getChildLevels());
+        if (CollectionUtils.isNotEmpty(subTree)) {
+            Collections.sort(subTree, new Comparator<HierarchyLevel>() {
+                @Override
+                public int compare(HierarchyLevel o1, HierarchyLevel o2) {
+                    return o1.getOrderLevel().compareTo(o2.getOrderLevel());
+                }
+            });
+            for (HierarchyLevel child : subTree) {
+                createTree(child, newNode);
+            }
         }
         return newNode;
     }
@@ -200,11 +340,11 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
         public boolean canMoveUp() {
             // Can not move if its is a first item in a tree and nowhere to move
-            return !(getIndexInParent() == 0);
+            return !(getIndexInParent() == 0 && this.getParent() == null);
         }
 
         public boolean canMoveDown() {
-            return !(isLast());
+            return !(isLast() && this.getParent() == null);
         }
 
         protected int getIndexInParent() {
@@ -225,15 +365,6 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                     return sibling;
                 }
                 parent = (SortedTreeNode) parent.getParent();
-            }
-
-            return null;
-        }
-
-        public SortedTreeNode getSiblingDown() {
-            int currentIndex = this.getIndexInParent();
-            if (getParent().getChildCount() > currentIndex + 1) {
-                return (SortedTreeNode) getParent().getChildren().get(currentIndex + 1);
             }
 
             return null;

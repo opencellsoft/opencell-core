@@ -18,6 +18,28 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
+
+import javax.annotation.PostConstruct;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -39,17 +61,14 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.*;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
+import org.primefaces.model.TreeNode;
+import org.primefaces.model.DefaultTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
-import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
@@ -95,8 +114,6 @@ public class UserBean extends BaseBean<User> {
 
     private TreeNode selectedNode;
 
-    private List<UserHierarchyLevel> roots;
-
     /**
      * Repeated password to check if it matches another entered password and user did not make a mistake.
      */
@@ -133,10 +150,23 @@ public class UserBean extends BaseBean<User> {
     public TreeNode getRootNode() {
         if (rootNode == null) {
             rootNode = new DefaultTreeNode("Root", null);
-            roots = userHierarchyLevelService.findRoots();
+            List<UserHierarchyLevel> roots;
+            if (entity != null && entity.getProvider() != null) {
+                roots = userHierarchyLevelService.findRoots(entity.getProvider());
+            } else {
+                roots = userHierarchyLevelService.findRoots();
+            }
             UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
-            for (UserHierarchyLevel userGroupTree : roots) {
-                createTree(userGroupTree, rootNode, userHierarchyLevel);
+            if (CollectionUtils.isNotEmpty(roots)) {
+                Collections.sort(roots, new Comparator<HierarchyLevel>() {
+                    @Override
+                    public int compare(HierarchyLevel o1, HierarchyLevel o2) {
+                        return o1.getOrderLevel().compareTo(o2.getOrderLevel());
+                    }
+                });
+                for (HierarchyLevel userGroupTree : roots) {
+                    createTree(userGroupTree, rootNode, userHierarchyLevel);
+                }
             }
         }
         return rootNode;
@@ -186,8 +216,10 @@ public class UserBean extends BaseBean<User> {
             entity.setPassword(password);
         }
 
-        UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getSelectedNode().getData();
-        getEntity().setUserLevel(userHierarchyLevel);
+        if (this.getSelectedNode() != null) {
+            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getSelectedNode().getData();
+            getEntity().setUserLevel(userHierarchyLevel);
+        }
 
         getEntity().getRoles().clear();
         getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
@@ -207,7 +239,7 @@ public class UserBean extends BaseBean<User> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "roles");
+        return Arrays.asList("provider", "roles", "userLevel");
     }
 
     /**
@@ -570,16 +602,23 @@ public class UserBean extends BaseBean<User> {
     }
 
     // Recursive function to create tree with node checked if selected
-    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, HierarchyLevel selectedHierarchyLevel) {
+    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, UserHierarchyLevel selectedHierarchyLevel) {
         TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
         List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
         newNode.setExpanded(true);
         if (selectedHierarchyLevel != null && selectedHierarchyLevel.getId().equals(hierarchyLevel.getId())) {
             newNode.setSelected(true);
         }
-
-        for (UserHierarchyLevel userGroupTree : subTree) {
-            createTree(userGroupTree, newNode, selectedHierarchyLevel);
+        if (CollectionUtils.isNotEmpty(subTree)) {
+            Collections.sort(subTree, new Comparator<HierarchyLevel>() {
+                @Override
+                public int compare(HierarchyLevel o1, HierarchyLevel o2) {
+                    return o1.getOrderLevel().compareTo(o2.getOrderLevel());
+                }
+            });
+            for (HierarchyLevel userGroupTree : subTree) {
+                createTree(userGroupTree, newNode, selectedHierarchyLevel);
+            }
         }
         return newNode;
     }

@@ -36,8 +36,8 @@
 
             <p:outputPanel id="userGroupLevelPanel" styleClass="clearLeft">
                 <h:panelGroup>
-                    <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']} *">
-                        <p:tree id="userGroupLevel" value="#{userBean.rootNode}" var="groupLevel" required="true" propagateSelectionUp="false" propagateSelectionDown="false"
+                    <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']}">
+                        <p:tree id="userGroupLevel" value="#{userBean.rootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false"
                                 selectionMode="single"
                                 selection="#{userBean.selectedNode}">
                             <p:treeNode>
