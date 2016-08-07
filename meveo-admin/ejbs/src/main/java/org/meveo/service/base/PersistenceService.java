@@ -345,7 +345,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         // Remove entity from Elastic Search
         if (BusinessEntity.class.isAssignableFrom(e.getClass())) {
-            // elasticClient.remove((BusinessEntity)e, creator);
+             elasticClient.remove((BusinessEntity)e);
         }
         
         // Remove custom field values from cache if applicable
@@ -396,13 +396,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         e = getEntityManager().merge(e);
 
         log.debug("updated class {}, is BusinessEntity :", e.getClass(), BusinessEntity.class.isAssignableFrom(e.getClass()));
-        
-        // Update entity in Elastic Search
+
+        // Update entity in Elastic Search. ICustomFieldEntity is updated partially, as entity itself does not have Custom field values
         if (e instanceof BusinessCFEntity) {
-            elasticClient.partialUpdate((BusinessEntity) e, updater);
+            elasticClient.partialUpdate((BusinessEntity) e);
 
         } else if (e instanceof BusinessEntity) {
-            elasticClient.createOrFullUpdate((BusinessEntity) e, updater);
+            elasticClient.createOrFullUpdate((BusinessEntity) e);
         }
 
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -436,8 +436,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().persist(e);
         
         // Add entity to Elastic Search
-        if(BusinessEntity.class.isAssignableFrom(e.getClass())){
-        	elasticClient.createOrFullUpdate((BusinessEntity)e, creator);
+        if (BusinessEntity.class.isAssignableFrom(e.getClass())) {
+            elasticClient.createOrFullUpdate((BusinessEntity) e);
         }
         
         if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {

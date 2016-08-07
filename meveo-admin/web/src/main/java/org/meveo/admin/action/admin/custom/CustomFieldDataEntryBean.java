@@ -655,9 +655,9 @@ public class CustomFieldDataEntryBean implements Serializable {
                     } else {
                         serializeFromGUI(entity, cfi.getCfValue(), cft);
                         if (cfi.isTransient()) {
-                            customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity, currentUser);
                         } else {
-                            customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity, currentUser);
                         }
                         saveChildEntities(entity, cfi.getCfValue(), cft);
                     }

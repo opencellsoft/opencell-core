@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.model.BaseEntity;
@@ -38,6 +39,7 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -79,12 +81,18 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             "CustomFieldInstanceService.create(CustomFieldInstance cfi, User creator) method not supported. Should use CustomFieldInstanceService.create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator) method instead");
     }
 
-    public void create(CustomFieldInstance cfi, ICustomFieldEntity entity, User creator) throws BusinessException {
+    public void create(CustomFieldInstance cfi, CustomFieldTemplate cft, ICustomFieldEntity entity, User creator) throws BusinessException {
         super.create(cfi, creator);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
-        elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue(), creator);
-
+        // Update Elastic Search index - update custom field value. Maps are stored as Json encoded strings
+        if (cft.getIndexType() != null) {
+            Object value = cfi.getValue();
+            if (value instanceof Map || value instanceof EntityReferenceWrapper) {
+                value = JsonUtils.toJson(value, false);
+            }
+            elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue());
+        }
         triggerEndPeriodEvent(cfi);
     }
 
@@ -94,12 +102,18 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             "CustomFieldInstanceService.update(CustomFieldInstance cfi, User updater) method not supported. Should use CustomFieldInstanceService.update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) method instead");
     }
 
-    public CustomFieldInstance update(CustomFieldInstance cfi, ICustomFieldEntity entity, User updater) throws BusinessException {
+    public CustomFieldInstance update(CustomFieldInstance cfi, CustomFieldTemplate cft, ICustomFieldEntity entity, User updater) throws BusinessException {
         cfi = super.update(cfi, updater);
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
-        elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue(), updater);
-
+        // Update Elastic Search index - update custom field value. Maps are stored as Json encoded strings
+        if (cft.getIndexType() != null) {
+            Object value = cfi.getValue();
+            if (value instanceof Map || value instanceof EntityReferenceWrapper) {
+                value = JsonUtils.toJson(value, false);
+            }
+            elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), value);
+        }
         triggerEndPeriodEvent(cfi);
 
         return cfi;
@@ -204,7 +218,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             log.info("currentUser:" + currentUser);
             log.info("currentUser.getProvider():" + currentUser.getProvider());
 
-            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, currentUser.getProvider());
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
             if (cft == null) {
                 cft = new CustomFieldTemplate();
                 cft.setCode(code);
@@ -220,7 +234,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
 
             if (saveInCFIfNotExist) {
-                create(cfi, entity, currentUser);
+                create(cfi, cft, entity, currentUser);
             }
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield", entity.getClass().getSimpleName());
@@ -239,7 +253,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
 
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -298,7 +312,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
 
         // If field is not versionable - get the value without the date
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -391,7 +405,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         log.debug("Setting CF value. Code: {}, entity {} value {}", code, entity, value);
 
         // Can not set the value if field is versionable without a date
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
         }
@@ -409,12 +423,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity);
             cfi.setValue(value);
-            create(cfi, entity, currentUser);
+            create(cfi, cft, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
             cfi.setValue(value);
-            cfi = update(cfi, entity, currentUser);
+            cfi = update(cfi, cft, entity, currentUser);
         }
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
         return cfi;
@@ -425,7 +439,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         log.debug("Setting CF value. Code: {}, entity {} value {} valueDate {}", code, entity, value, valueDate);
 
         // If field is not versionable - set the value without the date
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
         }
@@ -449,12 +463,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate);
             cfi.setValue(value);
-            create(cfi, entity, currentUser);
+            create(cfi, cft, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
             cfi.setValue(value);
-            cfi = update(cfi, entity, currentUser);
+            cfi = update(cfi, cft, entity, currentUser);
         }
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
         return cfi;
@@ -466,7 +480,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         log.debug("Setting CF value. Code: {}, entity {} value {} valueDateFrom {} valueDateTo {}", code, entity, value, valueDateFrom, valueDateTo);
 
         // If field is not versionable - set the value without the date
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
         }
@@ -491,12 +505,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDateFrom, valueDateTo, valuePriority);
             cfi.setValue(value);
-            create(cfi, entity, currentUser);
+            create(cfi, cft, entity, currentUser);
 
         } else {
             cfi = cfis.get(0);
             cfi.setValue(value);
-            cfi = update(cfi, entity, currentUser);
+            cfi = update(cfi, cft, entity, currentUser);
         }
         customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
@@ -1067,12 +1081,18 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         List<CustomFieldInstance> cfis = query.getResultList();
 
         for (CustomFieldInstance cfi : cfis) {
+
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfi.getCode(), entity);
+            if (cft == null) {
+                continue;
+            }
+
             getEntityManager().detach(cfi);
             cfi.setId(null);
             cfi.setVersion(0);
             cfi.setAppliesToEntity(entity.getUuid());
             cfi.setAuditable(null);
-            create(cfi, entity, currentUser);
+            create(cfi, cft, entity, currentUser);
         }
     }
 
@@ -1200,7 +1220,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @SuppressWarnings("unchecked")
     public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
 
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -1234,7 +1254,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -1266,7 +1286,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @SuppressWarnings("unchecked")
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
 
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -1298,7 +1318,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
             log.trace("No CFT found {}/{}", entity, code);
             return null;
@@ -1481,6 +1501,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return A list of custom fields instances
      */
     public List<CustomFieldInstance> getCustomFieldInstances(List<String> uuids) {
-        return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityList", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids).getResultList();
+        return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityListForIndex", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids)
+            .getResultList();
     }
 }

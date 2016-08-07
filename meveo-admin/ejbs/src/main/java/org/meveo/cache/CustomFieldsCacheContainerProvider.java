@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IProvider;
+import org.meveo.model.IEntity;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
@@ -34,6 +34,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -506,7 +507,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     private Date calculateCutoffDate(String code, ICustomFieldEntity entity) {
 
-        Long providerId = getProvider(entity).getId();
+        Long providerId = ProviderService.getProvider((IEntity) entity).getId();
 
         Date cutoffDate = null;
         Integer cutoffPeriod = cfValueCacheTime.get(providerId + "_" + code);
@@ -671,10 +672,10 @@ public class CustomFieldsCacheContainerProvider {
      */
     public CustomFieldTemplate getCustomFieldTemplate(String code, ICustomFieldEntity entity) {
         try {
-            return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity), getProvider(entity));
+            return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity), ProviderService.getProvider((IEntity) entity));
 
         } catch (CustomFieldException e) {
-            log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield", entity.getClass().getSimpleName());
+            log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
         }
         return null;
     }
@@ -695,22 +696,6 @@ public class CustomFieldsCacheContainerProvider {
 
         } else {
             return null;
-        }
-    }
-
-    /**
-     * Get provider of and entity. Handles cases when entity itself is a provider
-     * 
-     * @param entity Entity
-     * @return Provider
-     */
-    private Provider getProvider(ICustomFieldEntity entity) {
-
-        if (entity instanceof Provider) {
-            return (Provider) entity;
-
-        } else {
-            return ((IProvider) entity).getProvider();
         }
     }
 }

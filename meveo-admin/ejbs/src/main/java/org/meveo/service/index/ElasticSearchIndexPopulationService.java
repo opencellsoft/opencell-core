@@ -5,9 +5,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -25,12 +27,16 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.transport.TransportClient;
+import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
@@ -57,12 +63,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @EJB
+    private CustomFieldTemplateService customFieldTemplateService;
     @Inject
     private Logger log;
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndex(String classname, int from, ReindexingStatistics statistics, TransportClient client) {
+
+        Set<String> cftIndexable = new HashSet<>();
+        Set<String> cftNotIndexable = new HashSet<>();
 
         Query query = getEntityManager().createQuery("select e from " + classname + " e");
         query.setFirstResult(from);
@@ -99,7 +110,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 if (!uuidCFMap.containsKey(customFieldInstance.getAppliesToEntity())) {
                     uuidCFMap.put(customFieldInstance.getAppliesToEntity(), new HashMap<String, Object>());
                 }
-                uuidCFMap.get(customFieldInstance.getAppliesToEntity()).put(customFieldInstance.getCode(), customFieldInstance.getValue());
+
+                // Maps are stored as Json encoded strings
+                Object value = customFieldInstance.getValue();
+                if (value instanceof Map || value instanceof EntityReferenceWrapper) {
+                    value = JsonUtils.toJson(value, false);
+                }
+
+                uuidCFMap.get(customFieldInstance.getAppliesToEntity()).put(customFieldInstance.getCode(), value);
             }
         }
 
@@ -110,14 +128,32 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         for (BusinessEntity entity : entities) {
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(entity.getCode());
+            id = ElasticClient.cleanUpCode(entity.getCode());
 
             Map<String, Object> valueMap = convertEntityToJson(entity);
 
             // Set custom field values if applicable
             if (entity instanceof ICustomFieldEntity) {
                 if (uuidCFMap.containsKey(((ICustomFieldEntity) entity).getUuid())) {
-                    valueMap.putAll(uuidCFMap.get(((ICustomFieldEntity) entity).getUuid()));
+
+                    for (Entry<String, Object> cfValueInfo : uuidCFMap.get(((ICustomFieldEntity) entity).getUuid()).entrySet()) {
+
+                        if (cftIndexable.contains(entity.getClass().getName() + "_" + cfValueInfo.getKey())) {
+                            valueMap.put(cfValueInfo.getKey(), cfValueInfo.getValue());
+
+                        } else if (cftNotIndexable.contains(entity.getClass().getName() + "_" + cfValueInfo.getKey())) {
+                            continue;
+
+                        } else {
+                            CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(cfValueInfo.getKey(), (ICustomFieldEntity) entity);
+                            if (cft != null && cft.getIndexType() != null) {
+                                cftIndexable.add(entity.getClass().getName() + "_" + cfValueInfo.getKey());
+                                valueMap.put(cfValueInfo.getKey(), cfValueInfo.getValue());
+                            } else {
+                                cftNotIndexable.add(entity.getClass().getName() + "_" + cfValueInfo.getKey());
+                            }
+                        }
+                    }
                 }
             }
 
@@ -153,12 +189,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return result;
     }
 
-    protected String cleanUpCode(String code) {
-
-        code = code.replace(' ', '_');
-        return code;
-    }
-
     /**
      * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed
      * 
@@ -166,7 +196,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return A map of values
      */
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> convertEntityToJson(BusinessEntity entity) {
+    public Map<String, Object> convertEntityToJson(BusinessEntity entity) {
 
         Map<String, Object> jsonValueMap = new HashMap<String, Object>();
 

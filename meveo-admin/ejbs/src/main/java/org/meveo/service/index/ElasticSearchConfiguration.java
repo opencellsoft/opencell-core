@@ -13,7 +13,9 @@ import javax.ejb.Singleton;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,6 +38,13 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private Map<Long, String> providerCodes = new HashMap<>();
 
+    private Map<String, String> dataModels = new HashMap<>();
+
+    private Map<String, String> fieldTemplates = new HashMap<>();
+
+    // @Inject
+    // private Logger log;
+
     /**
      * Load configuration from elasticSearchConfiguration.json file
      * 
@@ -48,6 +57,7 @@ public class ElasticSearchConfiguration implements Serializable {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
 
+        // Load entity mapping to index, type and update type
         Iterator<Entry<String, JsonNode>> entityMappings = node.get("entityMapping").fields();
 
         while (entityMappings.hasNext()) {
@@ -65,6 +75,7 @@ public class ElasticSearchConfiguration implements Serializable {
             }
         }
 
+        // Load entity field mapping to JSON
         Iterator<Entry<String, JsonNode>> entityFieldMappings = node.get("entityFieldMapping").fields();
 
         while (entityFieldMappings.hasNext()) {
@@ -82,6 +93,22 @@ public class ElasticSearchConfiguration implements Serializable {
                 Entry<String, JsonNode> fieldMappingInfo = fieldMappings.next();
                 fieldMaps.put(fieldMappingInfo.getKey(), fieldMappingInfo.getValue().textValue());
             }
+        }
+
+        // Load index data model: settings, mappings and aliases
+        Iterator<Entry<String, JsonNode>> dataModelInfos = node.get("dataModel").fields();
+
+        while (dataModelInfos.hasNext()) {
+            Entry<String, JsonNode> dataModelInfo = dataModelInfos.next();
+            dataModels.put(dataModelInfo.getKey(), dataModelInfo.getValue().toString());
+        }
+
+        // Load field templates
+        Iterator<Entry<String, JsonNode>> fieldTemplateInfos = node.get("fieldTemplates").fields();
+
+        while (fieldTemplateInfos.hasNext()) {
+            Entry<String, JsonNode> fieldTemplateInfo = fieldTemplateInfos.next();
+            fieldTemplates.put(fieldTemplateInfo.getKey(), fieldTemplateInfo.getValue().toString());
         }
     }
 
@@ -110,7 +137,7 @@ public class ElasticSearchConfiguration implements Serializable {
             if (indexMap.containsKey(clazz.getSimpleName())) {
 
                 if (!providerCodes.containsKey(provider.getId())) {
-                    providerCodes.put(provider.getId(), provider.getCode().replace(' ', '_').toLowerCase());
+                    providerCodes.put(provider.getId(), ElasticClient.cleanUpCode(provider.getCode()).toLowerCase());
                 }
                 return providerCodes.get(provider.getId()) + "_" + indexMap.get(clazz.getSimpleName());
             }
@@ -244,5 +271,31 @@ public class ElasticSearchConfiguration implements Serializable {
      */
     public Set<String> getEntityClassesManaged() {
         return indexMap.keySet();
+    }
+
+    public Map<String, String> getDataModel() {
+        return dataModels;
+    }
+
+    /**
+     * Get a field mapping configuration for a given custom field template
+     * 
+     * @param cft Custom field template
+     * @return Field mapping JSON string
+     */
+    public String getFieldMapping(CustomFieldTemplate cft) {
+
+        for (Entry<String, String> fieldTemplate : fieldTemplates.entrySet()) {
+            if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
+
+                // Change index property to "no" from "analyzed" or "not_analyzed"
+                if (cft.getIndexType().isStoreOnly()) {
+                    return fieldTemplate.getValue().replace("not_analyzed", "no").replace("analyzed", "no").replace("<fieldName>", cft.getCode());
+                } else {
+                    return fieldTemplate.getValue().replace("<fieldName>", cft.getCode());
+                }
+            }
+        }
+        return null;
     }
 }

@@ -36,7 +36,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="12eea81f-4c2a-4ab4-a6ca-023996713d59" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://carbuncle:8080/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
@@ -269,7 +269,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="851c5e5b-0df9-4e9c-9774-e39fa8f93d3f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://carbuncle:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
@@ -487,130 +487,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="cae91dcb-66de-4c55-b3c0-611ee17f70af" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/FilterWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/FilterWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FilterWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://carbuncle:8080/meveo/FilterWs?wsdl=FilterWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
-  <wsdl:binding name="FilterWsSoapBinding" type="ns1:FilterWs">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="index">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="index">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="indexResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateFilter">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateFilter">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateFilterResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:service name="FilterWs">
-    <wsdl:port binding="tns:FilterWsSoapBinding" name="FilterWsImplPort">
-      <soap:address location="http://carbuncle:8080/meveo/FilterWs"/>
-    </wsdl:port>
-  </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://carbuncle:8080/meveo/FilterWs?wsdl=FilterWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FilterWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:types>
-    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
-      <xs:element name="Filter" type="tns:filterDto"/>
-      <xs:element name="createOrUpdateFilter" type="tns:createOrUpdateFilter"/>
-      <xs:element name="createOrUpdateFilterResponse" type="tns:createOrUpdateFilterResponse"/>
-      <xs:element name="index" type="tns:index"/>
-      <xs:element name="indexResponse" type="tns:indexResponse"/>
-      <xs:complexType name="index">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="indexResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="ActionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateFilter">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="filter" type="tns:filterDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="filterDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="shared" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="inputXml" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateFilterResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:simpleType name="actionStatusEnum">
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="SUCCESS"/>
-          <xs:enumeration value="FAIL"/>
-        </xs:restriction>
-      </xs:simpleType>
-      <xs:simpleType name="meveoApiErrorCodeEnum">
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
-          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
-          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
-          <xs:enumeration value="MISSING_PARAMETER"/>
-          <xs:enumeration value="INVALID_PARAMETER"/>
-          <xs:enumeration value="INVALID_ENUM_VALUE"/>
-          <xs:enumeration value="DUPLICATE_ACCESS"/>
-          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
-          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
-          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
-          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
-          <xs:enumeration value="ACTION_FORBIDDEN"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:schema>
-  </wsdl:types>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateFilter">
-    <wsdl:part element="ns1:createOrUpdateFilter" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateFilterResponse">
-    <wsdl:part element="ns1:createOrUpdateFilterResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:portType name="FilterWs">
-    <wsdl:operation name="index">
-      <wsdl:input message="ns1:index" name="index"></wsdl:input>
-      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateFilter">
-      <wsdl:input message="ns1:createOrUpdateFilter" name="createOrUpdateFilter"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateFilterResponse" name="createOrUpdateFilterResponse"></wsdl:output>
-    </wsdl:operation>
-  </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/FilterWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/FilterWs</con:endpoint>
     </con:endpoints>
@@ -623,7 +500,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0a39cdb7-1de6-46e4-bbe7-8f6e82a4e738" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/FilteredListWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/FilteredListWs</con:endpoint>
     </con:endpoints>
@@ -645,7 +522,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="c76e9651-0016-44a7-a365-2d2b24de2cf0" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
     </con:endpoints>
@@ -676,7 +553,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="964885f6-3c18-4bdd-9190-ba1b37081771" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
@@ -707,7 +584,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="fb1e7ec9-17cb-42ea-8169-80915f4380e1" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint>
     </con:endpoints>
@@ -753,7 +630,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0bbc4cb4-e58a-4fa6-960d-2270c4e24d2e" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint>
     </con:endpoints>
@@ -778,7 +655,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="88d80ccf-833d-497e-9e09-52ab7f1f29ff" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ModuleWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
     </con:endpoints>
@@ -818,7 +695,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="83b8bdb2-b7b7-4061-aa19-665da2e16394" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/NotificationWs</con:endpoint>
     </con:endpoints>
@@ -879,7 +756,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="92f38b6b-9f1c-4078-b177-a5f77e3adeb8" wsaVersion="NONE" name="PaymentWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}PaymentWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/PaymentWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/PaymentWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/PaymentWs</con:endpoint>
     </con:endpoints>
@@ -901,7 +778,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="63f2a050-79b9-4e44-8be3-6bb29b160b4d" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ScriptInstanceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
@@ -926,7 +803,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0e0ff08e-67e7-43b3-b03e-dd4e12d77cc7" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://carbuncle:8080/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
@@ -1303,7 +1180,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
     </con:endpoints>
@@ -1343,7 +1220,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46feb4ff-ba6f-4554-a95b-e943a466084d" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/WalletWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint>
     </con:endpoints>
@@ -1395,7 +1272,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="cb986e97-8b56-4aa7-876e-d5d68f9876fb" wsaVersion="NONE" name="ReportingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ReportingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ReportingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ReportingWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ReportingWs</con:endpoint>
     </con:endpoints>
@@ -1456,7 +1333,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="405f4de6-2366-460c-88cd-c0e25de8ef4c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b924835f-f5bc-4eee-a684-a8b4439b1a87" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1531,7 +1408,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="c43cbf05-c104-49b2-9b98-52dc0ce80a23" wsaVersion="NONE" name="WorkflowWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WorkflowWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WorkflowWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
     </con:endpoints>
     <con:operation id="613cae81-2eba-4a5c-9844-f478ddec3b7c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1558,7 +1435,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1582,7 +1459,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1666,6 +1543,34 @@
           <con:status>404</con:status>
           <con:params/>
           <con:element xmlns:ws="http://localhost/demo_accounts/account/WS_FULL_4_CA_ES">ws:Fault</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="demo_accounts_mapping" path="/demo_accounts/_mapping/{type}" id="1850bf0f-52e5-4e6a-b825-28745cd3960e">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>type</con:name>
+          <con:value/>
+          <con:style>TEMPLATE</con:style>
+          <con:default/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="" id="a5fe7ea0-11e1-44f0-86ce-f373aaff0131" method="GET">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json; charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element xmlns:acc="http://localhost/demo_accounts/_mapping/account">acc:Response</con:element>
         </con:representation>
       </con:method>
     </con:resource>
@@ -4833,8 +4738,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Find with languageCode">
-              <con:configuration><token>&lt;language code="ENG">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;language code="ENG"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -5081,8 +4989,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="80cb8501-6812-4458-96da-8fd1b88fb332" name="Find LanguageCode">
-              <con:configuration><token>&lt;language code="ENG">
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;language code="ENG"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -5785,16 +5696,21 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
-              <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
+                <content><![CDATA[<languages>
                <language code="ENG">
                   <description>English</description>
                </language>
                <language code="FRA">
                   <description>French</description>
                </language>
-            </languages>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </languages>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -5875,16 +5791,21 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
-              <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
+                <content><![CDATA[<languages>
                <language code="ENG">
                   <description>English</description>
                </language>
                <language code="FRA">
                   <description>French</description>
                </language>
-            </languages>
-]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </languages>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24397,7 +24318,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>34</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -35767,7 +35688,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>127</con:value>
+        <con:value>128</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -45023,7 +44944,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>47</con:value>
+        <con:value>48</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46716,7 +46637,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>83</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46838,7 +46759,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<ddrequestLotOp>
+              <con:configuration>
+                <token><![CDATA[<ddrequestLotOp>
                   <fromDueDate>2016-07-01T00:00:00+08:00</fromDueDate>
                   <toDueDate>2016-07-10T00:00:00+08:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
@@ -46851,8 +46773,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>PAYNUM</fileFormat>
-               </ddrequestLotOp>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </ddrequestLotOp>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match">
               <con:configuration>
@@ -46879,7 +46803,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>85</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49071,7 +48995,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>85</con:value>
+        <con:value>86</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57371,7 +57295,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>104</con:value>
+        <con:value>105</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58045,7 +57969,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>91</con:value>
+        <con:value>92</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58670,7 +58594,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>91</con:value>
+        <con:value>92</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -59186,7 +59110,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>82</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -60280,7 +60204,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>1026</con:value>
+        <con:value>1027</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -60288,7 +60212,7 @@ and paste that invoice number in the next step.
   <con:testSuite id="36cca331-3845-477a-97dc-33f00979ae2d" name="Elastic search">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="99ae2d3e-1a89-43b8-ae1a-c05568d63144" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create and document lookup" searchProperties="true">
+    <con:testCase id="99ae2d3e-1a89-43b8-ae1a-c05568d63144" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Document create and document lookup" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Create customer account" id="cb5bbcbe-04ee-476c-b029-5ab07b91ad71">
         <con:settings/>
@@ -60544,6 +60468,7 @@ and paste that invoice number in the next step.
             <fieldType>STRING</fieldType>
             <appliesTo>CA</appliesTo>
             <storageType>SINGLE</storageType>
+            <indexType>INDEX</indexType>
          </customField>
       </ws:createOrUpdateField>
    </soapenv:Body> 
@@ -60587,6 +60512,7 @@ and paste that invoice number in the next step.
             <fieldType>DOUBLE</fieldType>
             <appliesTo>CA</appliesTo>
             <storageType>SINGLE</storageType>
+            <indexType>STORE_ONLY</indexType>
          </customField>
       </ws:createOrUpdateField>
    </soapenv:Body> 
@@ -60608,6 +60534,85 @@ and paste that invoice number in the next step.
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CF 3 - not indexed" id="abe4e814-30e4-4ad0-b986-865473d413c8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CF 3 - not indexed" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE-NI" description="Double CF field not indexed">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>CA</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/>
+            <con:assertion type="Simple Contains" name="Contains" id="c5bb1cc3-cc99-460a-bc2d-8855c5fc3e30">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Check Accounts mapping" id="0898cc2d-9418-4fbd-b3de-56c35889a36c">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/_mapping/{type}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Check Accounts mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
+            <con:assertion type="Simple Contains" id="72ca5c77-5144-46e1-9393-47ac49b23c2a" name="Contains">
+              <con:configuration>
+                <token>"WS_BASE_CA_STRING":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e2b60dc0-adfe-451b-8d87-097198c573dd" name="Contains 1">
+              <con:configuration>
+                <token>"WS_BASE_CA_DOUBLE":{"type":"double","index":"no"},</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="type" value="account" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+          </con:restRequest>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Update customer account with CF" id="933196f6-f403-4e5e-94b5-fa844f8725fd">
@@ -60660,6 +60665,9 @@ and paste that invoice number in the next step.
                </customField>\r
                <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE">\r
                   <doubleValue>16.17</doubleValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE-NI">\r
+                  <doubleValue>17889.17</doubleValue>\r
                </customField>\r
             </customFields>\r
          </customerAccount>\r
@@ -60717,6 +60725,13 @@ and paste that invoice number in the next step.
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="fd874e09-139a-4c7f-890f-6498e2cca03b" name="Not Contains">
+              <con:configuration>
+                <token>"WS_BASE_CA_DOUBLE-NI"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -61531,6 +61546,564 @@ and paste that invoice number in the next step.
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="1da35eec-59f5-4182-8b0c-43adeb83217a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data model" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Customize Customer" id="4e38033d-fdf2-4425-8fbc-576e0ac8192d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Customize Customer" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.crm.Customer">\r
+            <fields>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_STRING" description="Entity field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE" description="Entity field2">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG" description="Entity field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LIST" description="Entity field2">\r
+                  <fieldType>LIST</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY" description="Entity field2">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA" description="Entity field2">\r
+                  <fieldType>TEXT_AREA</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_LIST" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MAP" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MATRIX" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MAP" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MATRIX" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_LIST" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MAP" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MATRIX" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_STRING-NI" description="Entity field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE-NI" description="Entity field2">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE-NI" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG-NI" description="Entity field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LIST-NI" description="Entity field2">\r
+                  <fieldType>LIST</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY-NI" description="Entity field2">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA-NI" description="Entity field2">\r
+                  <fieldType>TEXT_AREA</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_LIST-NI" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MAP-NI" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MATRIX-NI" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST-NI" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MAP-NI" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MATRIX-NI" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_LIST-NI" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>LIST</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MAP-NI" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MAP</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MATRIX-NI" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_STRING-NOT" description="Entity field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE-NOT" description="Entity field2">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE-NOT" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG-NOT" description="Entity field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LIST-NOT" description="Entity field2">\r
+                  <fieldType>LIST</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY-NOT" description="Entity field2">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA-NOT" description="Entity field2">\r
+                  <fieldType>TEXT_AREA</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_LIST-NOT" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MAP-NOT" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MATRIX-NOT" description="Entity field1">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST-NOT" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>LIST</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MAP-NOT" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MAP</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MATRIX-NOT" description="Entity field1">\r
+                  <fieldType>DATE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_LIST-NOT" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>LIST</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MAP-NOT" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MAP</storageType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MATRIX-NOT" description="Entity field1">\r
+                  <fieldType>LONG</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+            </fields>\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Check Accounts mapping" id="b1745619-5c9e-410a-a876-7b1231fee660">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/_mapping/{type}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Check Accounts mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="0b0d06d6-159c-4370-811e-708d2b77d01e" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="72ca5c77-5144-46e1-9393-47ac49b23c2a" name="Contains">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE":{"type":"date","format":"strict_date_optional_time"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e2b60dc0-adfe-451b-8d87-097198c573dd" name="Contains 1">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE-NI":{"type":"date","index":"no","format":"strict_date_optional_time"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4a4b3692-7979-4167-9803-98dfd51decf5" name="Contains 2">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE":{"type":"double"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="3753a871-54b9-4751-a643-8b2239062c32" name="Contains 3">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE-NI":{"type":"double","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e7028256-59d9-4948-a84b-09b67e52fc4c" name="Contains 4">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_LIST":{"type":"double"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b7758200-baed-4629-a13f-893432972624" name="Contains 5">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_LIST-NI":{"type":"double","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="49f3e510-0b25-4630-957a-b3ef7ffe263f" name="Contains 6">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MAP":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="eeaea038-426b-4b21-8de2-d9f462291ef5" name="Contains 7">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MAP-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="8362d618-146f-4def-8658-aa7f61fea51c" name="Contains 8">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MATRIX":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="2d93d274-eb9b-4b90-8878-0e38de3b9d4e" name="Contains 9">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DOUBLE_MATRIX-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a4aa6e5-7848-4811-9567-9d39987bf2ea" name="Contains 10">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6d1520aa-0773-4874-b315-8b02437e3e10" name="Contains 11">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b93ebdb9-88fe-463e-bda4-a5d47b4cbac9" name="Contains 12">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LIST":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="0e42648c-1d7f-40ee-93ec-bcdc5ce209ae" name="Contains 13">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LIST-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="5f889e4a-eb00-46ae-9089-8a096768f23c" name="Contains 14">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG":{"type":"long"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="c89e2950-1683-4c9a-8c39-3cf42d9d4967" name="Contains 15">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG-NI":{"type":"long","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="1985292b-6c15-46cd-a090-e60b00358a2d" name="Contains 16">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_STRING":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b29b1e99-173b-4fde-831d-30214d862d6f" name="Contains 17">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_STRING-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ddd66033-9bde-488c-80ad-a1cb19a6fae4" name="Contains 18">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="04bfcd2c-731d-4de6-accb-4b0c7952cc89" name="Contains 19">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="506223c6-f729-4b6b-a77f-c0e6f75b9a15" name="Contains 20">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST":{"type":"date","format":"strict_date_optional_time"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="17993ffa-cc48-421f-b477-7f95bc76b5b2" name="Contains 21">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST-NI":{"type":"date","index":"no","format":"strict_date_optional_time"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="933fafae-760e-444a-8618-e64dd7397f9c" name="Contains 22">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MAP":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="9c1be8e7-dfaf-40a9-bbae-dff2228ac291" name="Contains 23">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MAP-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="3ff3e3f5-c8f5-40a0-885e-070c30e6b986" name="Contains 24">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MATRIX":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fe1b5a8e-27a0-430b-b850-00765b0df9cc" name="Contains 25">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_MATRIX-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="07b3614a-4af5-42d6-b7ed-0af01d716f45" name="Contains 26">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_LIST":{"type":"long"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e545788d-0afe-4922-8af3-b30719a6486c" name="Contains 27">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_LIST-NI":{"type":"long","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="c0d4c26b-a2fe-4c43-9041-205c3505ecc7" name="Contains 28">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MAP":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ecfdfb55-c43f-4882-91c3-90221235292d" name="Contains 29">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MAP-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b2597c50-12b8-4ea6-95bd-f7a6dfda9f95" name="Contains 30">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MATRIX":{"type":"string"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="f763a8f1-23e2-458b-b707-6d3175e85835" name="Contains 31">
+              <con:configuration>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_LONG_MATRIX-NI":{"type":"string","index":"no"}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="type" value="account" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:testCase id="62e7f379-3175-4d3d-a21e-bab6c054b4d1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Cleanup" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Delete CF 1" id="5f160a33-91e1-4d0b-a5f2-e0b18f39b321">
@@ -61724,7 +62297,7 @@ and paste that invoice number in the next step.
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="2121a04d-4932-447a-a04b-1cb64efa8a79" disabled="true">
+      <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="2121a04d-4932-447a-a04b-1cb64efa8a79">
         <con:settings/>
         <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
@@ -61737,22 +62310,13 @@ and paste that invoice number in the next step.
             <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
               <con:configuration>
-                <codes>200</codes>
+                <codes>404</codes>
               </con:configuration>
             </con:assertion>
             <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
               <con:configuration>
-                <path>_version</path>
-                <content>1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
-              <con:configuration>
-                <path>_source</path>
-                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Vilnius"},"description":"Andrius account two","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"}</content>
+                <path>found</path>
+                <content>false</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -61773,7 +62337,7 @@ and paste that invoice number in the next step.
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="856050cf-5293-4bc2-ac84-9342266a95be" disabled="true">
+      <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="856050cf-5293-4bc2-ac84-9342266a95be">
         <con:settings/>
         <con:config service="Elastic search" methodName="" resourcePath="/demo_accounts/account/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
@@ -61786,22 +62350,13 @@ and paste that invoice number in the next step.
             <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
               <con:configuration>
-                <codes>200</codes>
+                <codes>404</codes>
               </con:configuration>
             </con:assertion>
             <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
               <con:configuration>
-                <path>_version</path>
-                <content>1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
-              <con:configuration>
-                <path>_source</path>
-                <content>{"address":{"zipCode":"21000","state":null,"address1":"adress1","address2":"address2","address3":"adress3","country":"FR","city":"Vilnius"},"description":"Andrius account two","name":{"lastName":"lastname","title":"M","firstName":"firstname"},"code":"${#Project#entityPrefix}_${#TestSuite#index}_CA2_ES"}</content>
+                <path>found</path>
+                <content>false</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -61906,10 +62461,10 @@ and paste that invoice number in the next step.
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="960b3897-1e08-4f5c-aa73-c1fdf510492f" disabled="true">
+      <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="960b3897-1e08-4f5c-aa73-c1fdf510492f">
         <con:settings/>
         <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Copy of Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+          <con:restRequest name="Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
             </con:settings>
@@ -61919,22 +62474,13 @@ and paste that invoice number in the next step.
             <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
               <con:configuration>
-                <codes>200</codes>
+                <codes>404</codes>
               </con:configuration>
             </con:assertion>
             <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
               <con:configuration>
-                <path>_version</path>
-                <content>1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
-              <con:configuration>
-                <path>_source</path>
-                <content>{"description":"Offer one","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER1_ES"}</content>
+                <path>found</path>
+                <content>false</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -61954,7 +62500,7 @@ and paste that invoice number in the next step.
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="b373095f-fbfa-43ff-87d5-8b9265a60631" disabled="true">
+      <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="b373095f-fbfa-43ff-87d5-8b9265a60631">
         <con:settings/>
         <con:config service="Elastic search" methodName="" resourcePath="/demo_catalog/OfferTemplate/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Offer2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
@@ -61967,22 +62513,13 @@ and paste that invoice number in the next step.
             <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
               <con:configuration>
-                <codes>200</codes>
+                <codes>404</codes>
               </con:configuration>
             </con:assertion>
             <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
               <con:configuration>
-                <path>_version</path>
-                <content>1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
-              <con:configuration>
-                <path>_source</path>
-                <content>{"description":"Offer two","code":"${#Project#entityPrefix}_${#TestSuite#index}_OFFER2_ES"}</content>
+                <path>found</path>
+                <content>false</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -62002,12 +62539,55 @@ and paste that invoice number in the next step.
           </con:restRequest>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Clear Customer CFTs" id="b603ae86-bb43-4e30-ad50-0f884f210861">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Customer CFTs" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.crm.Customer">\r
+            <fields>\r
+            </fields>\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>11</con:value>
+        <con:value>21</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -64089,11 +64669,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+08</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+08</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>elasticSearchUrl</con:name>

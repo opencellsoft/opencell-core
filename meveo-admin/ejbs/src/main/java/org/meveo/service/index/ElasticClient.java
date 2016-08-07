@@ -20,6 +20,7 @@ import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,8 +43,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
@@ -64,6 +68,7 @@ public class ElasticClient {
 
     public static int DEFAULT_SEARCH_PAGE_SIZE = 10;
     public static int INDEX_POPULATE_PAGE_SIZE = 100;
+    private static String INDEX_PROVIDER_PREFIX = "<provider>";
 
     @Inject
     private Logger log;
@@ -80,6 +85,9 @@ public class ElasticClient {
 
     @EJB
     private ProviderService providerService;
+
+    @EJB
+    private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
     private ElasticSearchIndexPopulationService elasticSearchIndexPopulationService;
@@ -137,21 +145,19 @@ public class ElasticClient {
      * Store and index entity in Elastic Search
      * 
      * @param entity Entity to store in Elastic Search
-     * @param currentUser Current user
      */
-    public void createOrFullUpdate(BusinessEntity entity, User currentUser) {
+    public void createOrFullUpdate(BusinessEntity entity) {
 
-        createOrUpdate(entity, false, currentUser);
+        createOrUpdate(entity, false);
     }
 
     /**
      * Apply a partial update to the entity in Elastic Search
      * 
      * @param entity Entity to store in Elastic Search via partial update
-     * @param currentUser Current user
      */
-    public void partialUpdate(BusinessEntity entity, User currentUser) {
-        createOrUpdate(entity, true, currentUser);
+    public void partialUpdate(BusinessEntity entity) {
+        createOrUpdate(entity, true);
     }
 
     /**
@@ -159,13 +165,12 @@ public class ElasticClient {
      * 
      * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
      * @param valuesToUpdate A map of fieldname and values to update in entity
-     * @param currentUser Current user
      */
-    public void partialUpdate(BusinessEntity entity, String fieldName, Object fieldValue, User currentUser) {
+    public void partialUpdate(BusinessEntity entity, String fieldName, Object fieldValue) {
 
         Map<String, Object> fieldsToUpdate = new HashMap<>();
         fieldsToUpdate.put(fieldName, fieldValue);
-        partialUpdate(entity, fieldsToUpdate, currentUser);
+        partialUpdate(entity, fieldsToUpdate);
     }
 
     /**
@@ -173,9 +178,8 @@ public class ElasticClient {
      * 
      * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
      * @param fieldsToUpdate A map of fieldname and values to update in entity
-     * @param currentUser Current user
      */
-    public void partialUpdate(BusinessEntity entity, Map<String, Object> fieldsToUpdate, User currentUser) {
+    public void partialUpdate(BusinessEntity entity, Map<String, Object> fieldsToUpdate) {
 
         if (client == null) {
             return;
@@ -193,7 +197,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
+            id = ElasticClient.cleanUpCode(entity.getCode());
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, index, type, id, entity.getClass(), fieldsToUpdate);
             queuedChanges.addChange(change);
@@ -210,9 +214,8 @@ public class ElasticClient {
      * 
      * @param entity Entity to store in Elastic Search
      * @param partialUpdate Should it be treated as partial update instead of replace if document exists
-     * @param currentUser Current user
      */
-    private void createOrUpdate(BusinessEntity entity, boolean partialUpdate, User currentUser) {
+    private void createOrUpdate(BusinessEntity entity, boolean partialUpdate) {
 
         if (client == null) {
             return;
@@ -230,7 +233,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
+            id = ElasticClient.cleanUpCode(entity.getCode());
             boolean upsert = esConfiguration.isDoUpsert(entity);
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
@@ -251,9 +254,8 @@ public class ElasticClient {
      * Remove entity from Elastic Search
      * 
      * @param entity Entity to remove from Elastic Search
-     * @param currentUser Current user
      */
-    public void remove(BusinessEntity entity, User currentUser) {
+    public void remove(BusinessEntity entity) {
 
         if (client == null) {
             return;
@@ -271,7 +273,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = elasticSearchIndexPopulationService.cleanUpCode(entity.getCode());
+            id = ElasticClient.cleanUpCode(entity.getCode());
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entity.getClass(), null);
             queuedChanges.addChange(change);
@@ -492,7 +494,7 @@ public class ElasticClient {
             dropIndexes();
 
             // Recreate all indexes
-            recreateIndexes();
+            createIndexes();
 
             // Repopulate index from DB
 
@@ -533,10 +535,10 @@ public class ElasticClient {
      */
     private void dropIndexes() throws BusinessException {
 
+        log.debug("Dropping all Elastic Search indexes");
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
-        log.error("Url is {}", uri + "/*/");
         ResteasyWebTarget target = client.target(uri + "/*/");
 
         Response response = target.request().delete();
@@ -548,14 +550,16 @@ public class ElasticClient {
 
     /**
      * Recreate indexes for all providers
+     * 
+     * @throws BusinessException
      */
-    private void recreateIndexes() {
+    private void createIndexes() throws BusinessException {
 
         // Recreate all indexes
         List<Provider> providers = providerService.list();
 
         for (Provider provider : providers) {
-            recreateIndexes(provider);
+            createIndexes(provider);
         }
     }
 
@@ -563,12 +567,109 @@ public class ElasticClient {
      * Recreate index for a given provider
      * 
      * @param provider Provider
+     * @throws BusinessException
      */
-    private void recreateIndexes(Provider provider) {
+    public void createIndexes(Provider provider) throws BusinessException {
+
+        log.debug("Creating Elastic Search indexes for provider {}", provider.getCode());
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+
+        String providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
+
+        for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
+            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, providerCode);
+            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, providerCode);
+
+            String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+            ResteasyWebTarget target = client.target(uri + "/" + indexName);
+
+            Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
+            response.close();
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                throw new BusinessException("Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " "
+                        + response.getStatusInfo().getReasonPhrase());
+            }
+        }
+
+        // Update model mapping with custom fields
+        List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex(provider);
+        for (CustomFieldTemplate cft : cfts) {
+            updateCFMapping(cft);
+        }
+
+    }
+
+    /**
+     * Update Elastic Search model with custom field definition
+     * 
+     * @param cft Custom field template
+     * @throws BusinessException
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
+
+        // Not interested in indexing
+        if (cft.getIndexType() == null) {
+            return;
+        }
+
+        String fieldMappingJson = esConfiguration.getFieldMapping(cft);
+        if (fieldMappingJson == null) {
+            log.warn("No matching field mapping found for CFT {}", cft);
+            return;
+        }
+
+        Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+        Class entityClass = null;
+        for (Class<?> clazz : cfClasses) {
+            if (cft.getAppliesTo().startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+                entityClass = clazz;
+            }
+        }
+
+        if (entityClass == null) {
+            log.error("Could not find a matching entity class for {}", cft);
+            return;
+
+        } else if (!BusinessEntity.class.isAssignableFrom(entityClass)) {
+            log.trace("Entity class {} matched for {} is not BusinessEntity and is not tracked by Elastic Search", entityClass, cft);
+            return;
+        }
+
+        String index = esConfiguration.getIndex(entityClass, cft.getProvider());
+        // Not interested in storing and indexing this entity in Elastic Search
+        if (index == null) {
+            return;
+        }
+
+        String type = esConfiguration.getType(entityClass);
+
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
+
+        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
+        response.close();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        } else {
+            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+        }
 
     }
 
     protected TransportClient getClient() {
         return client;
+    }
+
+    protected static String cleanUpCode(String code) {
+
+        code = code.replace(' ', '_');
+        return code;
     }
 }

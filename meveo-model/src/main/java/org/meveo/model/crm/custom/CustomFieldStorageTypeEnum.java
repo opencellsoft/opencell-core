@@ -5,30 +5,24 @@ public enum CustomFieldStorageTypeEnum {
     /**
      * Single value
      */
-    SINGLE("customFieldStorageTypeEnum.SINGLE"),
+    SINGLE,
 
     /**
      * A list of values
      */
-    LIST("customFieldStorageTypeEnum.LIST"),
+    LIST,
 
     /**
      * A map of values
      */
-    MAP("customFieldStorageTypeEnum.MAP"),
+    MAP,
 
     /**
      * A matrix of values
      */
-    MATRIX("customFieldStorageTypeEnum.MATRIX");
-
-    private String label;
-
-    CustomFieldStorageTypeEnum(String label) {
-        this.label = label;
-    }
+    MATRIX;
 
     public String getLabel() {
-        return this.label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 }
