@@ -13,6 +13,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -159,7 +160,11 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(levelCode, currentUser.getProvider());
         if (userHierarchyLevel != null) {
+            if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
+                throw new DeleteReferencedEntityException(UserHierarchyLevel.class, levelCode);
+            }
             userHierarchyLevelService.remove(userHierarchyLevel);
+
         } else {
             throw new EntityDoesNotExistsException(UserHierarchyLevel.class, levelCode);
         }

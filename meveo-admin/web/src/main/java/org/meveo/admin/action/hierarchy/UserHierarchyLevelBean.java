@@ -21,8 +21,10 @@ package org.meveo.admin.action.hierarchy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.Messages;
@@ -34,6 +36,7 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.util.ActionsUtil;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -41,9 +44,6 @@ import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Standard backing bean for {@link org.meveo.model.hierarchy.UserHierarchyLevel} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
@@ -128,12 +128,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                 roots = userHierarchyLevelService.findRoots();
             }
             if (CollectionUtils.isNotEmpty(roots)) {
-                Collections.sort(roots, new Comparator<HierarchyLevel>() {
-                    @Override
-                    public int compare(HierarchyLevel o1, HierarchyLevel o2) {
-                        return o1.getOrderLevel().compareTo(o2.getOrderLevel());
-                    }
-                });
+                ActionsUtil.sortByOrderLevel(roots);
                 for (UserHierarchyLevel tree : roots) {
                     createTree(tree, rootNode);
                 }
@@ -191,9 +186,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void removeUserHierarchyLevel() {
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
         if (userHierarchyLevel != null) {
-            userHierarchyLevel = userHierarchyLevelService.findById(userHierarchyLevel.getId(), getFormFieldsToFetch());
-            if (userHierarchyLevel != null && (CollectionUtils.isNotEmpty(userHierarchyLevel.getUsers())
-                    || CollectionUtils.isNotEmpty(userHierarchyLevel.getChildLevels()))) {
+            if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
                 messages.error(new BundleKey("messages", "userGroupHierarchy.errorDelete"));
                 return;
             }
@@ -311,14 +304,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
         TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
-        List<HierarchyLevel> subTree = new ArrayList<HierarchyLevel>(userHierarchyLevel.getChildLevels());
+        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
         if (CollectionUtils.isNotEmpty(subTree)) {
-            Collections.sort(subTree, new Comparator<HierarchyLevel>() {
-                @Override
-                public int compare(HierarchyLevel o1, HierarchyLevel o2) {
-                    return o1.getOrderLevel().compareTo(o2.getOrderLevel());
-                }
-            });
+            ActionsUtil.sortByOrderLevel(subTree);
             for (HierarchyLevel child : subTree) {
                 createTree(child, newNode);
             }

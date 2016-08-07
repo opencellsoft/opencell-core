@@ -1,5 +1,9 @@
 package org.meveo.api.rest.hierarchy.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
@@ -11,10 +15,6 @@ import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.hierarchy.UserHierarchyLevelRs;
 import org.meveo.api.rest.impl.BaseRs;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 /**
  * @author Phu Bach

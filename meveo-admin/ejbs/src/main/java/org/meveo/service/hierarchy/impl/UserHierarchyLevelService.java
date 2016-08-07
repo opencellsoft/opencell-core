@@ -18,17 +18,21 @@
  */
 package org.meveo.service.hierarchy.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
-import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.hierarchy.HierarchyLevel;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * User Hierarchy Level service implementation.
@@ -106,6 +110,32 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
             return (UserHierarchyLevel) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             return null;
+        }
+    }
+
+    public Boolean canDeleteUserHierarchyLevel(Long id) {
+        List<Boolean> hasUsersInSubNodes = new ArrayList<>();
+        userGroupLevelInSubNode(id, hasUsersInSubNodes);
+        if (hasUsersInSubNodes.contains(Boolean.TRUE)) {
+            return false;
+        }
+        return true;
+    }
+
+    private void userGroupLevelInSubNode(Long id, List<Boolean> booleanList) {
+        List<String> fieldsFetch = Arrays.asList("childLevels", "users");
+
+        UserHierarchyLevel userHierarchyLevel = findById(id, fieldsFetch);
+        if (userHierarchyLevel != null && CollectionUtils.isNotEmpty(userHierarchyLevel.getUsers())) {
+            booleanList.add(Boolean.TRUE);
+        } else {
+            booleanList.add(Boolean.FALSE);
+        }
+
+        if (userHierarchyLevel != null && CollectionUtils.isNotEmpty(userHierarchyLevel.getChildLevels())){
+            for (HierarchyLevel child: userHierarchyLevel.getChildLevels()) {
+                userGroupLevelInSubNode(child.getId(), booleanList);
+            }
         }
     }
 }

@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
-import java.util.Comparator;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -59,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.util.ActionsUtil;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -158,12 +157,7 @@ public class UserBean extends BaseBean<User> {
             }
             UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
             if (CollectionUtils.isNotEmpty(roots)) {
-                Collections.sort(roots, new Comparator<HierarchyLevel>() {
-                    @Override
-                    public int compare(HierarchyLevel o1, HierarchyLevel o2) {
-                        return o1.getOrderLevel().compareTo(o2.getOrderLevel());
-                    }
-                });
+                ActionsUtil.sortByOrderLevel(roots);
                 for (HierarchyLevel userGroupTree : roots) {
                     createTree(userGroupTree, rootNode, userHierarchyLevel);
                 }
@@ -246,7 +240,7 @@ public class UserBean extends BaseBean<User> {
      * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
      */
     protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("roles", "provider");
+        return Arrays.asList("roles", "provider", "userLevel");
     }
 
     /**
@@ -610,12 +604,7 @@ public class UserBean extends BaseBean<User> {
             newNode.setSelected(true);
         }
         if (CollectionUtils.isNotEmpty(subTree)) {
-            Collections.sort(subTree, new Comparator<HierarchyLevel>() {
-                @Override
-                public int compare(HierarchyLevel o1, HierarchyLevel o2) {
-                    return o1.getOrderLevel().compareTo(o2.getOrderLevel());
-                }
-            });
+            ActionsUtil.sortByOrderLevel(subTree);
             for (HierarchyLevel userGroupTree : subTree) {
                 createTree(userGroupTree, newNode, selectedHierarchyLevel);
             }
