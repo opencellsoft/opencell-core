@@ -67,6 +67,46 @@
 	<td>${Description}</td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${ValidFromBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ValidFromOffer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ValidFromOffer}</td>
+	<td>${ValidFromValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ValidToBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ValidToOffer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ValidToOffer}</td>
+	<td>${ValidToValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreateAjax}</td>
 	<td></td>
@@ -235,6 +275,46 @@
 	<td>pause</td>
 	<td>1000</td>
 	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ValidFromBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ValidFromService}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ValidFromService}</td>
+	<td>${ValidFromValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ValidToBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ValidToService}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ValidToService}</td>
+	<td>${ValidToValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
