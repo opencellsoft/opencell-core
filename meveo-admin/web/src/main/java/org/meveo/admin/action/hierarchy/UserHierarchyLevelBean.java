@@ -20,6 +20,7 @@ package org.meveo.admin.action.hierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -36,7 +37,6 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
-import org.meveo.util.ActionsUtil;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -69,6 +69,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private TreeNode rootNode;
 
     private TreeNode selectedNode;
+
+    private Boolean isEdit = Boolean.FALSE;
 
     private Boolean showUserGroupDetail = Boolean.FALSE;
 
@@ -128,7 +130,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                 roots = userHierarchyLevelService.findRoots();
             }
             if (CollectionUtils.isNotEmpty(roots)) {
-                ActionsUtil.sortByOrderLevel(roots);
+                Collections.sort(roots);
                 for (UserHierarchyLevel tree : roots) {
                     createTree(tree, rootNode);
                 }
@@ -145,6 +147,14 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         this.showUserGroupDetail = showUserGroupDetail;
     }
 
+    public Boolean getIsEdit() {
+        return isEdit;
+    }
+
+    public void setIsEdit(Boolean isEdit) {
+        this.isEdit = isEdit;
+    }
+
     public void onNodeSelect(NodeSelectEvent event) {
         TreeNode treeNode = event.getTreeNode();
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
@@ -152,10 +162,12 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         setEntity(userHierarchyLevel);
         selectedNode = treeNode;
         showUserGroupDetail = true;
+        isEdit = true;
     }
 
     public void newUserHierarchyLevel() {
         showUserGroupDetail = true;
+        isEdit = false;
         UserHierarchyLevel userHierarchyLevel = initEntity();
         UserHierarchyLevel userHierarchyLevelParent = null;
         if (selectedNode != null) {
@@ -173,6 +185,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void newUserHierarchyRoot() {
         showUserGroupDetail = true;
         selectedNode = null;
+        isEdit = false;
         UserHierarchyLevel userHierarchyLevel = initEntity();
         userHierarchyLevel.setParentLevel(null);
         if (CollectionUtils.isNotEmpty(rootNode.getChildren())) {
@@ -192,8 +205,6 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             }
             userHierarchyLevelService.remove(userHierarchyLevel.getId());
             selectedNode.getParent().getChildren().remove(selectedNode);
-            userHierarchyLevel.setParentLevel(null);
-            setEntity(userHierarchyLevel);
             selectedNode = null;
             showUserGroupDetail = false;
         }
@@ -271,8 +282,13 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
      */
     @Override
     public void resetFormEntity() {
-        entity.setCode(null);
-        entity.setDescription(null);
+        if (isEdit && selectedNode != null) {
+            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
+            setEntity(userHierarchyLevel);
+        } else {
+            entity.setCode(null);
+            entity.setDescription(null);
+        }
     }
 
     private void updatePositionValue(SortedTreeNode nodeToUpdate) throws BusinessException {
@@ -306,7 +322,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         newNode.setExpanded(true);
         List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
         if (CollectionUtils.isNotEmpty(subTree)) {
-            ActionsUtil.sortByOrderLevel(subTree);
+            Collections.sort(subTree);
             for (HierarchyLevel child : subTree) {
                 createTree(child, newNode);
             }

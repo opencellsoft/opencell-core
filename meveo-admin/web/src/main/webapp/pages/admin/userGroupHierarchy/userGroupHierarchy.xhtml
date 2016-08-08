@@ -23,7 +23,7 @@
                                 selectionMode="single">
                             <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update="buttons userGroupLevelDetailPanel"/>
                             <p:treeNode>
-                                <h:outputText value="#{userGroupLevel.description}"/>
+                                <h:outputText value="#{userGroupLevel.descriptionOrCode}"/>
                             </p:treeNode>
                         </p:tree>
                     </h:panelGroup>
@@ -56,7 +56,7 @@
                         <p:outputPanel styleClass="clearLeft" rendered="#{userHierarchyLevelBean.showUserGroupDetail}">
                             <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false">
                                 <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" displayOneLine="true" useConverter="false" />
-                                <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" useConverter="false"  newLine="true"/>
+                                <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false"  newLine="true"/>
                             </hftl:formPanel>
                         </p:outputPanel>
                     </p:outputPanel>

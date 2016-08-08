@@ -18,6 +18,10 @@
  */
 package org.meveo.model.hierarchy;
 
+import java.util.Set;
+
+import javax.validation.constraints.Size;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,9 +40,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
-import javax.validation.constraints.Size;
-import java.util.Set;
-
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "hierarchyType", "provider" })
@@ -46,7 +47,7 @@ import java.util.Set;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "HIERARCHY_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "HIERARCHY_TYPE")
-public abstract class HierarchyLevel<T> extends BusinessEntity {
+public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel>{
 
 	private static final long serialVersionUID = 1L;
 
@@ -94,5 +95,10 @@ public abstract class HierarchyLevel<T> extends BusinessEntity {
 
     public void setOrderLevel(Long orderLevel) {
         this.orderLevel = orderLevel;
+    }
+
+    @Override
+    public int compareTo(HierarchyLevel hierarchyLevel) {
+        return Long.compare(this.orderLevel, hierarchyLevel.orderLevel);
     }
 }

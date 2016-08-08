@@ -18,13 +18,14 @@
  */
 package org.meveo.model.hierarchy;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.OneToMany;
 
 import org.meveo.model.admin.User;
-import java.util.Set;
 
 @Entity
 @DiscriminatorValue(value = "USER_TYPE")

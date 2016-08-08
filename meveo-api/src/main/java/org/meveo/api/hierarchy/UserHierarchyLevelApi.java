@@ -36,39 +36,30 @@ public class UserHierarchyLevelApi extends BaseApi {
      */
     public void create(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
-        String levelCode = postData.getCode();
+        String hierarchyLevelCode = postData.getCode();
         String parentLevelCode = postData.getParentLevel();
 
-        if (StringUtils.isBlank(levelCode)) {
-            missingParameters.add("levelCode");
-        }
-
-        if (StringUtils.isBlank(postData.getDescription())) {
-            missingParameters.add("description");
+        if (StringUtils.isBlank(hierarchyLevelCode)) {
+            missingParameters.add("hierarchyLevelCode");
         }
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(levelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
 
         if (userHierarchyLevel != null) {
-            throw new EntityAlreadyExistsException(UserHierarchyLevel.class, levelCode);
+            throw new EntityAlreadyExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
         }
 
+        UserHierarchyLevel parentLevel = null;
         if (!StringUtils.isBlank(postData.getParentLevel())) {
-            UserHierarchyLevel parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
+            parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
             if (parentLevel == null) {
-                throw new EntityAlreadyExistsException(UserHierarchyLevel.class, parentLevelCode);
+                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, parentLevelCode);
             }
-            userHierarchyLevel.setParentLevel(parentLevel);
-        } else {
-            userHierarchyLevel.setParentLevel(null);
         }
 
-        userHierarchyLevel = new UserHierarchyLevel();
-        userHierarchyLevel.setCode(levelCode);
-        userHierarchyLevel.setDescription(postData.getDescription());
-        userHierarchyLevel.setOrderLevel(postData.getOrderLevel());
+        userHierarchyLevel = fromDto(postData, parentLevel, null);
 
         userHierarchyLevelService.create(userHierarchyLevel, currentUser);
 
@@ -83,90 +74,80 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.admin.exception.BusinessException
      */
     public void update(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        String levelCode = postData.getCode();
+        String hierarchyLevelCode = postData.getCode();
         String parentLevelCode = postData.getParentLevel();
 
-        if (StringUtils.isBlank(levelCode)) {
-            missingParameters.add("levelCode");
-        }
-
-        if (StringUtils.isBlank(postData.getDescription())) {
-            missingParameters.add("description");
+        if (StringUtils.isBlank(hierarchyLevelCode)) {
+            missingParameters.add("hierarchyLevelCode");
         }
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(levelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
         if (userHierarchyLevel != null) {
             if (!StringUtils.isBlank(postData.getParentLevel())) {
                 UserHierarchyLevel parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
                 if (parentLevel == null) {
-                    throw new EntityAlreadyExistsException(UserHierarchyLevel.class, parentLevelCode);
+                    throw new EntityDoesNotExistsException(UserHierarchyLevel.class, parentLevelCode);
                 }
-                userHierarchyLevel.setParentLevel(parentLevel);
-            } else {
-                userHierarchyLevel.setParentLevel(null);
             }
-            userHierarchyLevel.setDescription(postData.getDescription());
-            userHierarchyLevel.setOrderLevel(postData.getOrderLevel());
+            UserHierarchyLevel parentLevel = null;
+            userHierarchyLevel = fromDto(postData, parentLevel, null);
             userHierarchyLevelService.update(userHierarchyLevel, currentUser);
         } else {
-            throw new EntityDoesNotExistsException(UserHierarchyLevel.class, levelCode);
+            throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
         }
     }
 
     /**
-     * Returns UserHierarchyLevelDto based on user group level code.
+     * Returns UserHierarchyLevelDto based on hierarchy Level Code.
      *
-     * @param levelCode
+     * @param hierarchyLevelCode
      * @param provider
      * @return
      * @throws org.meveo.api.exception.MeveoApiException
      */
-    public UserHierarchyLevelDto find(String levelCode, Provider provider) throws MeveoApiException {
-        if (StringUtils.isBlank(levelCode)) {
-            missingParameters.add("levelCode");
+    public UserHierarchyLevelDto find(String hierarchyLevelCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(hierarchyLevelCode)) {
+            missingParameters.add("hierarchyLevelCode");
         }
         handleMissingParameters();
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(levelCode, provider, Arrays.asList("parentLevel", "childLevels"));
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, provider, Arrays.asList("parentLevel", "childLevels"));
         if (userHierarchyLevel != null) {
-            UserHierarchyLevelDto userHierarchyLevelDto = new UserHierarchyLevelDto();
-            userHierarchyLevelDto.setCode(userHierarchyLevel.getCode());
-            userHierarchyLevelDto.setDescription(userHierarchyLevel.getDescription());
-            userHierarchyLevelDto.setOrderLevel(userHierarchyLevel.getOrderLevel());
+            UserHierarchyLevelDto userHierarchyLevelDto = new UserHierarchyLevelDto(userHierarchyLevel);
             if (userHierarchyLevel.getParentLevel() != null) {
                 userHierarchyLevelDto.setParentLevel(userHierarchyLevel.getParentLevel().getCode());
             }
             userHierarchyLevelDto.setChildLevels(convertToUserHierarchyLevelDto(userHierarchyLevel.getChildLevels()));
             return userHierarchyLevelDto;
         }
-        throw new EntityDoesNotExistsException(UserHierarchyLevel.class, levelCode);
+        throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
     }
 
     /**
      * Removes a User Hierarchy Level based on user hierarchy level code.
      *
-     * @param levelCode
+     * @param hierarchyLevelCode
      * @param currentUser
      * @throws org.meveo.api.exception.MeveoApiException
      */
-    public void remove(String levelCode, User currentUser) throws MeveoApiException {
+    public void remove(String hierarchyLevelCode, User currentUser) throws MeveoApiException {
 
-        if (StringUtils.isBlank(levelCode)) {
-            missingParameters.add("levelCode");
+        if (StringUtils.isBlank(hierarchyLevelCode)) {
+            missingParameters.add("hierarchyLevelCode");
         }
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(levelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
         if (userHierarchyLevel != null) {
             if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
-                throw new DeleteReferencedEntityException(UserHierarchyLevel.class, levelCode);
+                throw new DeleteReferencedEntityException(UserHierarchyLevel.class, hierarchyLevelCode);
             }
             userHierarchyLevelService.remove(userHierarchyLevel);
 
         } else {
-            throw new EntityDoesNotExistsException(UserHierarchyLevel.class, levelCode);
+            throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
         }
     }
 
@@ -174,13 +155,22 @@ public class UserHierarchyLevelApi extends BaseApi {
         List<UserHierarchyLevelDto> userHierarchyLevelDtos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(userHierarchyLevels)) {
             for (HierarchyLevel userHierarchyLevel : userHierarchyLevels) {
-                UserHierarchyLevelDto userHierarchyLevelDto = new UserHierarchyLevelDto();
-                userHierarchyLevelDto.setCode(userHierarchyLevel.getCode());
-                userHierarchyLevelDto.setDescription(userHierarchyLevel.getDescription());
-                userHierarchyLevelDto.setOrderLevel(userHierarchyLevel.getOrderLevel());
+                UserHierarchyLevelDto userHierarchyLevelDto = new UserHierarchyLevelDto(userHierarchyLevel);
                 userHierarchyLevelDtos.add(userHierarchyLevelDto);
             }
         }
         return userHierarchyLevelDtos;
+    }
+
+    protected UserHierarchyLevel fromDto(UserHierarchyLevelDto userHierarchyLevelDto, UserHierarchyLevel parentLevel, UserHierarchyLevel hierarchyLevelUpdate) {
+        UserHierarchyLevel userHierarchyLevel = new UserHierarchyLevel();
+        if (hierarchyLevelUpdate != null) {
+            userHierarchyLevel = hierarchyLevelUpdate;
+        }
+        userHierarchyLevel.setCode(userHierarchyLevelDto.getCode());
+        userHierarchyLevel.setDescription(userHierarchyLevelDto.getDescription());
+        userHierarchyLevel.setOrderLevel(userHierarchyLevelDto.getOrderLevel());
+        userHierarchyLevel.setParentLevel(parentLevel);
+        return userHierarchyLevel;
     }
 }

@@ -1,10 +1,14 @@
 package org.meveo.api.dto.hierarchy;
 
-import org.meveo.model.hierarchy.UserHierarchyLevel;
-
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.model.hierarchy.HierarchyLevel;
 
 /**
  * @author Phu Bach
@@ -18,7 +22,7 @@ public class UserHierarchyLevelDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String code;
 
-    @XmlElement(required = true)
+    @XmlAttribute(required = false)
 	private String description;
 
     private String parentLevel;
@@ -31,7 +35,7 @@ public class UserHierarchyLevelDto implements Serializable {
 
 	}
 
-	public UserHierarchyLevelDto(UserHierarchyLevel e) {
+	public UserHierarchyLevelDto(HierarchyLevel e) {
 		code = e.getCode();
 		description = e.getDescription();
         orderLevel = e.getOrderLevel();

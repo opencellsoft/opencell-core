@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -57,7 +58,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
-import org.meveo.util.ActionsUtil;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -157,7 +157,7 @@ public class UserBean extends BaseBean<User> {
             }
             UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
             if (CollectionUtils.isNotEmpty(roots)) {
-                ActionsUtil.sortByOrderLevel(roots);
+                Collections.sort(roots);
                 for (HierarchyLevel userGroupTree : roots) {
                     createTree(userGroupTree, rootNode, userHierarchyLevel);
                 }
@@ -604,7 +604,7 @@ public class UserBean extends BaseBean<User> {
             newNode.setSelected(true);
         }
         if (CollectionUtils.isNotEmpty(subTree)) {
-            ActionsUtil.sortByOrderLevel(subTree);
+            Collections.sort(subTree);
             for (HierarchyLevel userGroupTree : subTree) {
                 createTree(userGroupTree, newNode, selectedHierarchyLevel);
             }
