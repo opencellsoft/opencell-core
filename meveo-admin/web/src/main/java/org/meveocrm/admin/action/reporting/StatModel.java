@@ -44,9 +44,19 @@ public class StatModel {
 
 	public String getLastUpdateFormatted() {
 		if (lastUpdated != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm a");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
 			return sdf.format(lastUpdated).toString();
 		}
 		return "";
+	}
+
+	public Double computeDifference(Double oldValue) {
+		this.difference = ((value - oldValue) / ((oldValue == null || oldValue == 0) ? 1 : oldValue) * 100);
+		return difference;
+		/*
+		 * mv1.getValue().subtract(mv2.getValue()).divide(mv2.getValue().equals(new
+		 * BigDecimal("0.00")) ? ) .multiply(new
+		 * BigDecimal("100")).doubleValue()
+		 */
 	}
 }

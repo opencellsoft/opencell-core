@@ -382,7 +382,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 				if (mvCurrentPeriod.size() > 0) {
 					MeasuredValue mv1 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 1);
-
+					sm.setValue(mv1.getValue().doubleValue());
 					MeasuredValue mv2 = null;
 
 					if (mvCurrentPeriod.size() > 1) {
@@ -394,8 +394,8 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 					sm.setDescription(mq.getDescription() != null && mq.getDescription().length() > 0 ? mq
 							.getDescription() : mq.getCode());
-					sm.setDifference(mv1.getValue().subtract(mv2.getValue()).divide(mv2.getValue())
-							.multiply(new BigDecimal("100")).doubleValue());
+					sm.computeDifference(mv2.getValue().doubleValue());
+
 					sm.setLastUpdated(mv1.getDate());
 					sm.setValue(mv1.getValue().doubleValue());
 					result.add(sm);
