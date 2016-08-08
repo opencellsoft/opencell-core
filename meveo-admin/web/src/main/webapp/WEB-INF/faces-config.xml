@@ -1964,7 +1964,13 @@
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
-			<navigation-case>
+		<navigation-case>
+			<from-outcome>mmBundleTemplateDetail</from-outcome>
+			<to-view-id>/marketingManager/bundleTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>productTemplates</from-outcome>
 			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>

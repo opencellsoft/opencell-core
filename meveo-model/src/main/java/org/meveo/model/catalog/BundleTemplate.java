@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /**
@@ -13,6 +15,10 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @DiscriminatorValue("BUNDLE")
+@NamedQueries({
+		@NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
+		@NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),
+		@NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
 public class BundleTemplate extends ProductTemplate {
 
 	private static final long serialVersionUID = -4295608354238684804L;

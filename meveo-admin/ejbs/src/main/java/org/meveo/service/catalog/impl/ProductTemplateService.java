@@ -1,6 +1,5 @@
 package org.meveo.service.catalog.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.ejb.Stateless;
