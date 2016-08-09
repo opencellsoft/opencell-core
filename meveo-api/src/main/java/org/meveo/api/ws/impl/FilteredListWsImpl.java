@@ -70,11 +70,11 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     }
 
     @Override
-    public FilteredListResponseDto search(String[] classnames, String query, Integer from, Integer size) {
+    public FilteredListResponseDto search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             result.setSearchResults(response);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -91,11 +91,11 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     }
     
     @Override
-    public FilteredListResponseDto searchByField(String[] classnames, Map<String, String> query, Integer from, Integer size) {
+    public FilteredListResponseDto searchByField(String[] classnamesOrCetCodes, Map<String, String> query, Integer from, Integer size) {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             result.setSearchResults(response);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

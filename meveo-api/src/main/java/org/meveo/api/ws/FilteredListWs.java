@@ -22,26 +22,26 @@ public interface FilteredListWs extends IBaseWs {
     /**
      * Execute a search in Elastic Search on all fields (_all field)
      * 
-     * @param classnames Entity classes to match - full class name
+     * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @return
      */
     @WebMethod
-    public FilteredListResponseDto search(@WebParam(name = "classnames") String[] classnames, @WebParam(name = "query") String query,
+    public FilteredListResponseDto search(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") String query,
             @WebParam(name = "from") Integer from, @WebParam(name = "size") Integer size);
 
     /**
      * Execute a search in Elastic Search on given fields for given values
      * 
-     * @param classnames Entity classes to match - full class name
+     * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param query Fields and values to match in a form of a map
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @return
      */
     @WebMethod
-    public FilteredListResponseDto searchByField(@WebParam(name = "classnames") String[] classnames, @WebParam(name = "query") Map<String, String> query,
+    public FilteredListResponseDto searchByField(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") Map<String, String> query,
             @WebParam(name = "from") Integer from, @WebParam(name = "size") Integer size);
 }

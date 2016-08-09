@@ -70,11 +70,11 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         return responseBuilder.build();
     }
 
-    public Response search(String[] classnames, String query, Integer from, Integer size) {
+    public Response search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String response = filteredListApi.search(classnames, query, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
@@ -93,7 +93,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         return response;
     }
 
-    public Response searchByField(String[] classnames, Integer from, Integer size, UriInfo info) {
+    public Response searchByField(String[] classnamesOrCetCodes, Integer from, Integer size, UriInfo info) {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
@@ -107,7 +107,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
                 }
             }
 
-            String response = filteredListApi.search(classnames, queryValues, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, queryValues, from, size, getCurrentUser());
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);

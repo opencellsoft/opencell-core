@@ -1,5 +1,7 @@
 package org.meveo.api.filter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -11,10 +13,15 @@ import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.service.index.ElasticSearchClassInfo;
 
 /**
  * @author Edward P. Legaspi
@@ -27,6 +34,9 @@ public class FilteredListApi extends BaseApi {
 
     @Inject
     private ElasticClient elasticClient;
+
+    @Inject
+    private CustomFieldsCacheContainerProvider cfCache;
 
     public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException {
         String result = "";
@@ -75,47 +85,61 @@ public class FilteredListApi extends BaseApi {
         return result;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public String search(String[] classnames, String query, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
+    @SuppressWarnings({ "unchecked" })
+    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
 
-        if (classnames == null || classnames.length == 0) {
-            missingParameters.add("classnames");
+        if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
+            missingParameters.add("classnamesOrCetCodes");
         }
 
         handleMissingParameters();
 
-        Class[] clazzes = new Class[classnames.length];
+        List<ElasticSearchClassInfo> classInfo = new ArrayList<>();
 
-        for (int i = 0; i < classnames.length; i++) {
+        for (String classnameOrCetCode : classnamesOrCetCodes) {
             try {
-                clazzes[i] = Class.forName(classnames[i]);
+                classInfo.add(new ElasticSearchClassInfo((Class<? extends BusinessEntity>) Class.forName(classnameOrCetCode), null));
+
+                // If not a real class, then might be a Custom Entity Instance. Check if CustomEntityTemplate exists with such name
             } catch (ClassNotFoundException e) {
-                throw new BusinessException("Class by name " + classnames[i] + " not found");
+                CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode, currentUser.getProvider());
+                if (cet != null) {
+                    classInfo.add(new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode));
+                } else {
+                    throw new BusinessException("Class or custom entity template by name " + classnameOrCetCode + " not found");
+                }
             }
         }
 
-        return elasticClient.search(query, from, size, currentUser, clazzes);
+        return elasticClient.search(query, from, size, currentUser, classInfo);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public String search(String[] classnames, Map<String, String> queryValues, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
+    @SuppressWarnings({ "unchecked" })
+    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
 
-        if (classnames == null || classnames.length == 0) {
-            missingParameters.add("classnames");
+        if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
+            missingParameters.add("classnamesOrCetCodes");
         }
 
         handleMissingParameters();
 
-        Class[] clazzes = new Class[classnames.length];
+        List<ElasticSearchClassInfo> classInfo = new ArrayList<>();
 
-        for (int i = 0; i < classnames.length; i++) {
+        for (String classnameOrCetCode : classnamesOrCetCodes) {
             try {
-                clazzes[i] = Class.forName(classnames[i]);
+                classInfo.add(new ElasticSearchClassInfo((Class<? extends BusinessEntity>) Class.forName(classnameOrCetCode), null));
+
+                // If not a real class, then might be a Custom Entity Instance. Check if CustomEntityTemplate exists with such name
             } catch (ClassNotFoundException e) {
-                throw new BusinessException("Class by name " + classnames[i] + " not found");
+                CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode, currentUser.getProvider());
+                if (cet != null) {
+                    classInfo.add(new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode));
+                } else {
+                    throw new BusinessException("Class or custom entity template by name " + classnameOrCetCode + " not found");
+                }
             }
         }
 
-        return elasticClient.search(queryValues, from, size, currentUser, clazzes);
+        return elasticClient.search(queryValues, from, size, currentUser, classInfo);
     }
 }

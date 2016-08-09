@@ -2,6 +2,7 @@ package org.meveo.service.index;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -214,14 +216,22 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             try {
                 // Obtain field value from entity
                 if (!fieldNameFrom.contains(".")) {
-                    value = FieldUtils.readField(entity, fieldNameFrom, true);
+                    if (fieldNameFrom.endsWith("()")) {
+                        value = MethodUtils.invokeMethod(value, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
+                    } else {
+                        value = FieldUtils.readField(entity, fieldNameFrom, true);
+                    }
 
                 } else {
                     String fieldNames[] = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
-                        fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
+                        if (fieldName.endsWith("()")) {
+                            fieldValue = MethodUtils.invokeMethod(fieldValue, fieldName.substring(0, fieldName.length() - 2));
+                        } else {
+                            fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
+                        }
                         if (fieldValue == null) {
                             break;
                         }
@@ -255,7 +265,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                     }
                 }
 
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 log.error("Failed to access field {} of {}", fieldInfo.getValue(), ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()));
             }
         }

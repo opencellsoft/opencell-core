@@ -47,9 +47,13 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
+import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 
 /**
@@ -88,6 +92,9 @@ public class ElasticClient {
 
     @EJB
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @EJB
+    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     private ElasticSearchIndexPopulationService elasticSearchIndexPopulationService;
@@ -343,22 +350,22 @@ public class ElasticClient {
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @param currentUser Current user
-     * @param clazzes Entity classes to match
+     * @param classInfo Entity classes to match
      * @return Json result
      */
-    @SuppressWarnings("unchecked")
-    public String search(String query, Integer from, Integer size, User currentUser, Class<? extends BusinessEntity>... clazzes) {
+    public String search(String query, Integer from, Integer size, User currentUser, List<ElasticSearchClassInfo> classInfo) {
 
         // Not clear where to look, return empty json
-        if (clazzes.length == 0) {
+        if (classInfo.isEmpty()) {
             return "{}";
         }
-        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), clazzes);
+        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
+
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
             return "{}";
         }
-        Set<String> types = esConfiguration.getTypes(clazzes);
+        Set<String> types = esConfiguration.getTypes(classInfo);
 
         if (from == null) {
             from = 0;
@@ -392,22 +399,21 @@ public class ElasticClient {
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @param currentUser Current user
-     * @param clazzes Entity classes to match
+     * @param classInfo Entity classes to match
      * @return Json result
      */
-    @SuppressWarnings("unchecked")
-    public String search(Map<String, String> queryValues, Integer from, Integer size, User currentUser, Class<? extends BusinessEntity>... clazzes) {
+    public String search(Map<String, String> queryValues, Integer from, Integer size, User currentUser, List<ElasticSearchClassInfo> classInfo) {
 
         // Not clear where to look, return empty json
-        if (clazzes.length == 0) {
+        if (classInfo.isEmpty()) {
             return "{}";
         }
-        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), clazzes);
+        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
             return "{}";
         }
-        Set<String> types = esConfiguration.getTypes(clazzes);
+        Set<String> types = esConfiguration.getTypes(classInfo);
 
         if (from == null) {
             from = 0;
@@ -577,6 +583,7 @@ public class ElasticClient {
 
         String providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
 
+        // Create indexes
         for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
             String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, providerCode);
             String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, providerCode);
@@ -593,10 +600,55 @@ public class ElasticClient {
             }
         }
 
+        // Create mappings for custom entity templates
+        List<CustomEntityTemplate> cets = customEntityTemplateService.list(provider);
+        for (CustomEntityTemplate cet : cets) {
+            createCETMapping(cet);
+        }
+
         // Update model mapping with custom fields
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex(provider);
         for (CustomFieldTemplate cft : cfts) {
             updateCFMapping(cft);
+        }
+
+    }
+
+    /**
+     * Update Elastic Search model with custom entity template definition
+     * 
+     * @param cet Custom entity template
+     * @throws BusinessException
+     */
+    public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
+
+        String index = esConfiguration.getIndex(CustomEntityInstance.class, cet.getProvider());
+        // Not interested in storing and indexing this entity in Elastic Search
+        if (index == null) {
+            return;
+        }
+
+        String type = esConfiguration.getType(CustomEntityInstance.class, cet.getCode());
+
+        String fieldMappingJson = esConfiguration.getCetMapping(cet);
+        if (fieldMappingJson == null) {
+            log.warn("No matching field mapping found for CET {}", cet);
+            return;
+        }
+
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
+
+        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
+        response.close();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        } else {
+            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
         }
 
     }
@@ -615,7 +667,7 @@ public class ElasticClient {
             return;
         }
 
-        String fieldMappingJson = esConfiguration.getFieldMapping(cft);
+        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft);
         if (fieldMappingJson == null) {
             log.warn("No matching field mapping found for CFT {}", cft);
             return;
@@ -623,9 +675,11 @@ public class ElasticClient {
 
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
         Class entityClass = null;
+        String entityCode = null;
         for (Class<?> clazz : cfClasses) {
             if (cft.getAppliesTo().startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
                 entityClass = clazz;
+                entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
             }
         }
 
@@ -644,7 +698,7 @@ public class ElasticClient {
             return;
         }
 
-        String type = esConfiguration.getType(entityClass);
+        String type = esConfiguration.getType(entityClass, entityCode);
 
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 

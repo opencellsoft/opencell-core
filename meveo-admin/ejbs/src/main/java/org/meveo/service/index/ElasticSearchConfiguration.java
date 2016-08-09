@@ -5,16 +5,20 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +44,9 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private Map<String, String> dataModels = new HashMap<>();
 
-    private Map<String, String> fieldTemplates = new HashMap<>();
+    private Map<String, String> customFieldTemplates = new HashMap<>();
+
+    private String customEntityTemplate = null;
 
     // @Inject
     // private Logger log;
@@ -64,14 +70,21 @@ public class ElasticSearchConfiguration implements Serializable {
 
             Entry<String, JsonNode> entityMappingInfo = entityMappings.next();
 
-            JsonNode entityMapping = entityMappingInfo.getValue();
+            String[] classnames = StringUtils.stripAll(entityMappingInfo.getKey().split(","));
 
-            indexMap.put(entityMappingInfo.getKey(), entityMapping.get("index").textValue());
-            if (entityMapping.has("type")) {
-                typeMap.put(entityMappingInfo.getKey(), entityMapping.get("type").textValue());
-            }
-            if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
-                upsertMap.add(entityMappingInfo.getKey());
+            for (String classname : classnames) {
+
+                JsonNode entityMapping = entityMappingInfo.getValue();
+
+                indexMap.put(classname, entityMapping.get("index").textValue());
+                if (entityMapping.has("type")) {
+                    typeMap.put(classname, entityMapping.get("type").textValue());
+                } else {
+                    typeMap.put(classname, classname);
+                }
+                if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
+                    upsertMap.add(classname);
+                }
             }
         }
 
@@ -103,12 +116,18 @@ public class ElasticSearchConfiguration implements Serializable {
             dataModels.put(dataModelInfo.getKey(), dataModelInfo.getValue().toString());
         }
 
-        // Load field templates
-        Iterator<Entry<String, JsonNode>> fieldTemplateInfos = node.get("fieldTemplates").fields();
+        // Load customField templates
+        Iterator<Entry<String, JsonNode>> fieldTemplateInfos = node.get("customFieldTemplates").fields();
 
         while (fieldTemplateInfos.hasNext()) {
             Entry<String, JsonNode> fieldTemplateInfo = fieldTemplateInfos.next();
-            fieldTemplates.put(fieldTemplateInfo.getKey(), fieldTemplateInfo.getValue().toString());
+            customFieldTemplates.put(fieldTemplateInfo.getKey(), fieldTemplateInfo.getValue().toString());
+        }
+
+        // Load customEntity mapping template
+        Iterator<Entry<String, JsonNode>> cetTemplateInfos = node.get("cetTemplates").fields();
+        if (cetTemplateInfos.hasNext()) {
+            customEntityTemplate = cetTemplateInfos.next().getValue().toString();
         }
     }
 
@@ -151,16 +170,15 @@ public class ElasticSearchConfiguration implements Serializable {
      * Get a unique list of indexes for given entity classes
      * 
      * @param provider Provider
-     * @param clazzes A list of entity classes
+     * @param classesInfo A list of entity class information
      * @return A set of index property names
      */
-    @SuppressWarnings("unchecked")
-    public Set<String> getIndexes(Provider provider, Class<? extends BusinessEntity>... clazzes) {
+    public Set<String> getIndexes(Provider provider, List<ElasticSearchClassInfo> classesInfo) {
 
         Set<String> indexes = new HashSet<>();
 
-        for (Class<? extends BusinessEntity> clazz : clazzes) {
-            indexes.add(getIndex(clazz, provider));
+        for (ElasticSearchClassInfo classInfo : classesInfo) {
+            indexes.add(getIndex(classInfo.getClazz(), provider));
         }
 
         return indexes;
@@ -173,7 +191,11 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Type property name
      */
     public String getType(BusinessEntity entity) {
-        return getType(entity.getClass());
+        String cetCode = null;
+        if (entity instanceof CustomEntityInstance) {
+            cetCode = ((CustomEntityInstance) entity).getCetCode();
+        }
+        return getType(entity.getClass(), cetCode);
     }
 
     /**
@@ -183,12 +205,19 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")
-    public String getType(Class<? extends BusinessEntity> clazzToConvert) {
+    public String getType(Class<? extends BusinessEntity> clazzToConvert, String cetCode) {
 
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
             if (typeMap.containsKey(clazz.getSimpleName())) {
-                return typeMap.get(clazz.getSimpleName());
+                String type = typeMap.get(clazz.getSimpleName());
+
+                if (type.startsWith("#")) {
+                    return ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", ElasticClient.cleanUpCode(cetCode));
+
+                } else {
+                    return type;
+                }
             }
             clazz = clazz.getSuperclass();
         }
@@ -199,16 +228,15 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Get a unique list of types for given entity classes
      * 
-     * @param clazzes A list of entity classes
+     * @param classesInfo A list of entity class information
      * @return A set of Type property names
      */
-    @SuppressWarnings("unchecked")
-    public Set<String> getTypes(Class<? extends BusinessEntity>... clazzes) {
+    public Set<String> getTypes(List<ElasticSearchClassInfo> classesInfo) {
 
         Set<String> types = new HashSet<>();
 
-        for (Class<? extends BusinessEntity> clazz : clazzes) {
-            types.add(getType(clazz));
+        for (ElasticSearchClassInfo classInfo : classesInfo) {
+            types.add(getType(classInfo.getClazz(), classInfo.getCetCode()));
         }
 
         return types;
@@ -219,7 +247,7 @@ public class ElasticSearchConfiguration implements Serializable {
      * configuration.
      * 
      * @param entity Business entity to be stored/indexed in Elastic Search
-     * @return True if upsrt should be used
+     * @return True if upsert should be used
      */
     @SuppressWarnings("rawtypes")
     public boolean isDoUpsert(BusinessEntity entity) {
@@ -283,9 +311,9 @@ public class ElasticSearchConfiguration implements Serializable {
      * @param cft Custom field template
      * @return Field mapping JSON string
      */
-    public String getFieldMapping(CustomFieldTemplate cft) {
+    public String getCustomFieldMapping(CustomFieldTemplate cft) {
 
-        for (Entry<String, String> fieldTemplate : fieldTemplates.entrySet()) {
+        for (Entry<String, String> fieldTemplate : customFieldTemplates.entrySet()) {
             if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
 
                 // Change index property to "no" from "analyzed" or "not_analyzed"
@@ -297,5 +325,15 @@ public class ElasticSearchConfiguration implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Get a field mapping configuration for a given custom entity template
+     * 
+     * @param cet Custom entity template
+     * @return Field mapping JSON string
+     */
+    public String getCetMapping(CustomEntityTemplate cet) {
+        return customEntityTemplate;
     }
 }

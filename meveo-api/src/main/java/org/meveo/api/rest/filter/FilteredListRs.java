@@ -32,7 +32,7 @@ public interface FilteredListRs extends IBaseRs {
     /**
      * Execute a search in Elastic Search on all fields (_all field)
      * 
-     * @param classnames Entity classes to match - full class name
+     * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
@@ -40,17 +40,17 @@ public interface FilteredListRs extends IBaseRs {
      */
     @Path("/search")
     @GET
-    public Response search(@QueryParam("classnames") String[] classnames, @QueryParam("query") String query, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
+    public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
     /**
      * Execute a search in Elastic Search on given fields for given values. Query values by field are passed in extra query parameters in a form of fieldName=valueToMatch
      * 
-     * @param classnames Entity classes to match - full class name
+     * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @return
      */
     @Path("/searchByField")
     @GET
-    public Response searchByField(@QueryParam("classnames") String[] classnames, @QueryParam("from") Integer from, @QueryParam("size") Integer size, @Context UriInfo info);
+    public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size, @Context UriInfo info);
 }

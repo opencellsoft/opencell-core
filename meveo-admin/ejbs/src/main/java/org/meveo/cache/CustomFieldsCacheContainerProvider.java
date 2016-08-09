@@ -664,6 +664,23 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
+     * Get custom entity template by code for a given provider
+     * 
+     * @param code Custom entity template code
+     * @param provider Provider
+     * @return A list of custom entity templates
+     */
+    public CustomEntityTemplate getCustomEntityTemplate(String code, Provider provider) {
+
+        if (cetsByProvider.containsKey(provider.getId().toString())) {
+            return cetsByProvider.get(provider.getId().toString()).get(code);
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get custom field template of a given code, applicable to a given entity
      * 
      * @param code Custom field template code

@@ -2,11 +2,25 @@
 	"entityMapping": {
 		"AccountEntity": {
 			"index": "accounts",
-			"type": "account",
+			"type": "AccountEntity",
 			"upsert": true
 		},
-		"OfferTemplate": {
+		"Seller": {
+			"index": "accounts"
+		},
+		"OfferTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
 			"index": "catalog"
+		},
+		"ChargeTemplate": {
+			"index": "catalog",
+			"type": "ChargeTemplate"
+		},
+		"Subscription": {
+			"index": "billing"
+		},
+		"CustomEntityInstance": {
+			"index": "custom",
+			"type": "#{cetCode}"
 		}
 	},
 	"entityFieldMapping": {
@@ -19,9 +33,12 @@
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
+		},
+		"ChargeTemplate": {
+			"chargeType": "getClass().getSimpleName()"
 		}
 	},
-	"fieldTemplates": {
+	"customFieldTemplates": {
 		"#{cft.fieldType == 'DATE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
 			"properties": {
 				"<fieldName>": {
@@ -65,6 +82,32 @@
 		}
 	},
 	"dataModel": {
+		"<provider>_billing_v1": {
+			"settings": {
+				"index": {
+					"number_of_shards": "5",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_billing": {
+					
+				}
+			},
+			"mappings": {
+				"Subscription": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
 		"<provider>_catalog_v1": {
 			"settings": {
 				"index": {
@@ -88,6 +131,76 @@
 							"type": "string"
 						}
 					}
+				},
+				"ServiceTemplate": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				},
+				"PricePlanMatrix": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				},
+				"OfferTemplateCategory": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				},
+				"InvoiceCategory": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				},
+				"InvoiceSubCategory": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				},
+				"ChargeTemplate": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						},
+						"chargeType": {
+							"type": "string",
+							"index": "not_analyzed"
+						}
+					}
 				}
 			}
 		},
@@ -104,7 +217,7 @@
 				}
 			},
 			"mappings": {
-				"account": {
+				"AccountEntity": {
 					"properties": {
 						"code": {
 							"type": "string",
@@ -150,6 +263,43 @@
 							}
 						}
 					}
+				},
+				"Seller": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"<provider>_custom_v1": {
+			"settings": {
+				"index": {
+					"number_of_shards": "3",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_custom": {
+					
+				}
+			}
+		}
+	},
+	"cetTemplates": {
+		"<cetCode>": {
+			"properties": {
+				"code": {
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"description": {
+					"type": "string"
 				}
 			}
 		}
