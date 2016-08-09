@@ -11,7 +11,7 @@ public interface ServiceScriptInterface extends ScriptInterface {
 	/**
      * Called at the beginning of BusinessOfferModelService.createOfferFromBOM method at the beginning of service template creation for each service to duplicate.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
+     * @param methodContext Method variables in a form of a map where CONTEXT_PARAMETERS=List<CustomFieldDto>
      * @param user Current user
      * @throws BusinessException
      */
@@ -20,7 +20,7 @@ public interface ServiceScriptInterface extends ScriptInterface {
 	/**
      * Called at the end of BusinessOfferModelService.createOfferFromBOM method at the end of service template creation for each service to duplicate.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate, CONTEXT_PARAMETERS=List<CustomFieldDto>
      * @param user Current user
      * @throws BusinessException
      */
