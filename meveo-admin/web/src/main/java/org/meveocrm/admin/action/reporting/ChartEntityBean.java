@@ -373,12 +373,8 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		if (mqList.size() > 0) {
 			for (MeasurableQuantity mq : mqList) {
 				StatModel sm = new StatModel();
-				Calendar currentCal = Calendar.getInstance();
-				Date currentDate = currentCal.getTime();
-				currentCal.add(Calendar.DATE, -1);
-				Date beforeDate = currentCal.getTime();
-				List<MeasuredValue> mvCurrentPeriod = mvService.getByDateAndPeriod(null, beforeDate, currentDate,
-						MeasurementPeriodEnum.DAILY, mq, true);
+				List<MeasuredValue> mvCurrentPeriod = mvService.getByDateAndPeriod(null, null, null,
+						mq.getMeasurementPeriod(), mq, true);
 
 				if (mvCurrentPeriod.size() > 0) {
 					MeasuredValue mv1 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 1);

@@ -187,8 +187,6 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	}
 
 	public List<MeasuredValue> getMainMVModel() {
-		log.info("mainMVModel:"
-				+ (mainMVModel == null ? "null" : mainMVModel.size()));
 		return mainMVModel;
 	}
 
