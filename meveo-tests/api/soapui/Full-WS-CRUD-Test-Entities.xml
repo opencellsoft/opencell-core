@@ -46652,7 +46652,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46695,7 +46695,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46823,7 +46823,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46870,7 +46870,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46914,7 +46914,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
       </ws:removeDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46951,7 +46951,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46995,7 +46995,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCocde>
+      	<discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
       </ws:removeDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -47032,7 +47032,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlanItem>
-         <discountPlanItemCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCocde>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
       </ws:findDiscountPlanItem>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>

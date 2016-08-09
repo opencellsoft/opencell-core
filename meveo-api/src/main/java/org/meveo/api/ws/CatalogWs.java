@@ -283,10 +283,10 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus createOrUpdateDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
 
     @WebMethod
-    DiscountPlanItemResponseDto findDiscountPlanItem(@WebParam(name = "discountPlanItemCocde") String discountPlanItemCode);
+    DiscountPlanItemResponseDto findDiscountPlanItem(@WebParam(name = "discountPlanItemCode") String discountPlanItemCode);
 
     @WebMethod
-    ActionStatus removeDiscountPlanItem(@WebParam(name = "discountPlanItemCocde") String discountPlanItemCode);
+    ActionStatus removeDiscountPlanItem(@WebParam(name = "discountPlanItemCode") String discountPlanItemCode);
 
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
