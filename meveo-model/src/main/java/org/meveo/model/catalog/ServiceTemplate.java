@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -33,6 +34,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
@@ -84,10 +86,14 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
-	
+
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
+
 	@Transient
 	private boolean selected;
-	
+
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
 		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
@@ -200,6 +206,14 @@ public class ServiceTemplate extends BusinessCFEntity {
 		this.businessServiceModel = businessServiceModel;
 	}
 
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
+
 	public boolean isSelected() {
 		return selected;
 	}
@@ -208,5 +222,5 @@ public class ServiceTemplate extends BusinessCFEntity {
 		this.selected = selected;
 	}
 
-    
+
 }

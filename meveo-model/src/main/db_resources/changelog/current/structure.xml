@@ -2522,7 +2522,16 @@ $BODY$
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>	  
+    </changeSet>	
+    
+    <changeSet id="#1886_20160728_offer_service" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_offer_template">
+    		<column name="long_description" type="TEXT"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_service_template">
+    		<column name="long_description" type="TEXT"></column>
+    	</addColumn>
+    </changeSet>     
     	
 	<changeSet id="#1839_20160713_channel" author="EdwardLegaspi">
 		<createTable tableName="cat_channel">

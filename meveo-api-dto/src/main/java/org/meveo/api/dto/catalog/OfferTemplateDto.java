@@ -32,6 +32,8 @@ public class OfferTemplateDto implements Serializable {
     @XmlAttribute()
     private String description;
 
+    private String longDescription;
+
     private boolean disabled = false;
     private String bomCode;
     private String offerTemplateCategoryCode;
@@ -39,7 +41,7 @@ public class OfferTemplateDto implements Serializable {
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
     private List<OfferServiceTemplateDto> offerServiceTemplates;
-    
+
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
@@ -53,6 +55,7 @@ public class OfferTemplateDto implements Serializable {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldInstances) {
         code = offerTemplate.getCode();
         description = offerTemplate.getDescription();
+        longDescription = offerTemplate.getLongDescription();
         disabled = offerTemplate.isDisabled();
         if (offerTemplate.getBusinessOfferModel() != null) {
             bomCode = offerTemplate.getBusinessOfferModel().getCode();
@@ -96,10 +99,10 @@ public class OfferTemplateDto implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled + ", bomCode=" + bomCode + ", offerTemplateCategoryCode="
-                + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
-    }
+	public String toString() {
+		return "OfferTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
+				+ ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
+	}
 
     public CustomFieldsDto getCustomFields() {
         return customFields;
@@ -132,11 +135,11 @@ public class OfferTemplateDto implements Serializable {
     public void setOfferServiceTemplates(List<OfferServiceTemplateDto> offerServiceTemplates) {
         this.offerServiceTemplates = offerServiceTemplates;
     }
-    
+
     public List<OfferProductTemplateDto> getOfferProductTemplates() {
 		return offerProductTemplates;
 	}
-    
+
     public void setOfferProductTemplates(List<OfferProductTemplateDto> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
@@ -145,4 +148,12 @@ public class OfferTemplateDto implements Serializable {
         return StringUtils.isBlank(description) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
                 && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,6 +32,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -64,7 +66,11 @@ public class OfferTemplate extends ProductOffering {
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
-	
+
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
+
 	@Transient
 	public String prefix;
 
@@ -106,7 +112,7 @@ public class OfferTemplate extends ProductOffering {
 
 	/**
 	 * Check if offer contains a given service template
-	 * 
+	 *
 	 * @param serviceTemplate
 	 *            Service template to match
 	 * @return True if offer contains a given service template
@@ -128,7 +134,7 @@ public class OfferTemplate extends ProductOffering {
 	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
-	
+
 	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		if (getOfferProductTemplates() == null) {
 			offerProductTemplates = new ArrayList<OfferProductTemplate>();
@@ -142,6 +148,14 @@ public class OfferTemplate extends ProductOffering {
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
 	}
 
 }
