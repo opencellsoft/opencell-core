@@ -61319,7 +61319,7 @@ and paste that invoice number in the next step.
    <soapenv:Body>\r
       <ws:search>\r
          <classnames>org.meveo.model.payments.CustomerAccount</classnames>\r
-         <size>50</size>
+         <size>200</size>
       </ws:search>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
