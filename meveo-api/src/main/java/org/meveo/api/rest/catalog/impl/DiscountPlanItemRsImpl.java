@@ -65,11 +65,11 @@ public class DiscountPlanItemRsImpl extends BaseRs implements DiscountPlanItemRs
     }
 
     @Override
-    public DiscountPlanItemResponseDto find(String code) {
+    public DiscountPlanItemResponseDto find(String discountPlanItemCode) {
         DiscountPlanItemResponseDto result = new DiscountPlanItemResponseDto();
 
         try {
-            result.setDiscountPlanItem(discountPlanItemApi.find(code, getCurrentUser().getProvider()));
+            result.setDiscountPlanItem(discountPlanItemApi.find(discountPlanItemCode, getCurrentUser().getProvider()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -84,11 +84,11 @@ public class DiscountPlanItemRsImpl extends BaseRs implements DiscountPlanItemRs
     }
 
     @Override
-    public ActionStatus remove(String code) {
+    public ActionStatus remove(String discountPlanItemCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanItemApi.remove(code, getCurrentUser().getProvider());
+            discountPlanItemApi.remove(discountPlanItemCode, getCurrentUser().getProvider());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

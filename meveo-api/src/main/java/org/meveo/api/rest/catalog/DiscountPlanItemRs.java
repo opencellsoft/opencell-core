@@ -55,16 +55,16 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @Path("/")
     @GET
-    DiscountPlanItemResponseDto find(@QueryParam("code") String code);
+    DiscountPlanItemResponseDto find(@QueryParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
      * remove a discount plan item by code
      * @param discountPlanItemCode
      * @return
      */
-    @Path("/{code}")
+    @Path("/{discountPlanItemCode}")
     @DELETE
-    ActionStatus remove(@PathParam("code") String code);
+    ActionStatus remove(@PathParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
      * create/update a discount plan item

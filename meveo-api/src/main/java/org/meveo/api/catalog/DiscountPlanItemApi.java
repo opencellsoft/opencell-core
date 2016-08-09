@@ -56,7 +56,7 @@ public class DiscountPlanItemApi extends BaseApi {
     public void create(DiscountPlanItemDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add("discountPlanItemCode");
         }
         if(StringUtils.isBlank(postData.getDiscountPlanCode())){
         	missingParameters.add("discountPlanCode");
@@ -71,30 +71,11 @@ public class DiscountPlanItemApi extends BaseApi {
         handleMissingParameters();
         
         Provider currentProvider=currentUser.getProvider();
-        if (discountPlanItemService.findByCode(postData.getCode(), currentProvider) != null) {
+        DiscountPlanItem discountPlanItem=discountPlanItemService.findByCode(postData.getCode(), currentProvider);
+        if(discountPlanItem!=null){
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
-        DiscountPlanItem discountPlanItem=new DiscountPlanItem();
-        discountPlanItem.setCode(postData.getCode());
-        
-        DiscountPlan discountPlan=discountPlanService.findByCode(postData.getDiscountPlanCode(), currentProvider);
-        if(discountPlan==null){
-        	throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlanCode());
-        }
-        discountPlanItem.setDiscountPlan(discountPlan);
-        InvoiceCategory invoiceCategory=invoiceCategoryService.findByCode(postData.getInvoiceCategoryCode(), currentProvider);
-    	if(invoiceCategory==null){
-    		throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getInvoiceCategoryCode());
-    	}
-    	discountPlanItem.setInvoiceCategory(invoiceCategory);
-        
-    	if(!StringUtils.isBlank(postData.getInvoiceSubCategoryCode())){
-    		InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategoryCode(),currentProvider);
-    		discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
-    	}
-    	discountPlanItem.setPercent(postData.getPercent());
-    	discountPlanItem.setAccountingCode(postData.getAccountingCode());
-    	discountPlanItem.setExpressionEl(postData.getExpressionEl());
+        discountPlanItem=fromDto(postData,currentProvider,null);
         discountPlanItemService.create(discountPlanItem, currentUser);
     }
 
@@ -109,43 +90,18 @@ public class DiscountPlanItemApi extends BaseApi {
     public void update(DiscountPlanItemDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add("discountPlanItemCode");
         }
         handleMissingParameters();
+        
         Provider currentProvider=currentUser.getProvider();
-        DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(postData.getCode(), currentProvider);
-        if (discountPlanItem == null) {
+        
+        DiscountPlanItem discountPlanItem=discountPlanItemService.findByCode(postData.getCode(), currentUser.getProvider());
+        
+        if(discountPlanItem==null){
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
-        
-        if(!StringUtils.isBlank(postData.getDiscountPlanCode())){
-        	String discountPlan=discountPlanItem.getDiscountPlan().getCode();
-        	if(!discountPlan.equalsIgnoreCase(postData.getDiscountPlanCode())){
-        		throw new MeveoApiException("Parent discountPlan "+discountPlan+" of item "+postData.getCode()+" NOT match with DTO discountPlan "+postData.getDiscountPlanCode());
-        	}
-        }
-        
-        if(!StringUtils.isBlank(postData.getInvoiceCategoryCode())){
-        	InvoiceCategory invoiceCategory=invoiceCategoryService.findByCode(postData.getInvoiceCategoryCode(), currentProvider);
-        	if(invoiceCategory==null){
-        		throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getInvoiceCategoryCode());
-        	}
-        	discountPlanItem.setInvoiceCategory(invoiceCategory);
-        }
-        
-        if(!StringUtils.isBlank(postData.getInvoiceSubCategoryCode())){
-    		InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategoryCode(),currentProvider);
-    		discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
-    	}
-        if(postData.getPercent()!=null){
-        	discountPlanItem.setPercent(postData.getPercent());
-        }
-        if(postData.getAccountingCode()!=null){
-        	discountPlanItem.setAccountingCode(postData.getAccountingCode());
-        }
-        if(postData.getExpressionEl()!=null){
-        	discountPlanItem.setExpressionEl(postData.getExpressionEl());
-        }
+        discountPlanItem=fromDto(postData,currentProvider,discountPlanItem);
 
         discountPlanItemService.update(discountPlanItem, currentUser);
     }
@@ -195,7 +151,7 @@ public class DiscountPlanItemApi extends BaseApi {
     }
 
     /**
-     * create if the the discount plan item code is not existing, updates if exists
+     * create if the the discount plan item is not existed, updates if exists
      * 
      * @param postData
      * @param currentUser
@@ -205,7 +161,7 @@ public class DiscountPlanItemApi extends BaseApi {
     public void createOrUpdate(DiscountPlanItemDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add("discountPlanItemCode");
             handleMissingParameters();
         }
         if (discountPlanItemService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
@@ -233,5 +189,48 @@ public class DiscountPlanItemApi extends BaseApi {
             }
         }
         return discountPlanItemDtos;
+    }
+    public DiscountPlanItem fromDto(DiscountPlanItemDto dto,Provider currentProvider, DiscountPlanItem entity)throws MeveoApiException{
+    	DiscountPlanItem discountPlanItem=null;
+    	if(entity==null){
+    		discountPlanItem=new DiscountPlanItem();
+    		discountPlanItem.setCode(dto.getCode());
+    	}else{
+    		discountPlanItem=entity;
+    	}
+        
+        if(!StringUtils.isBlank(dto.getDiscountPlanCode())){
+        	DiscountPlan discountPlan=discountPlanService.findByCode(dto.getDiscountPlanCode(), currentProvider);
+        	if(discountPlan==null){
+        		throw new EntityDoesNotExistsException(DiscountPlan.class, dto.getDiscountPlanCode());
+        	}
+        	if(discountPlanItem.getDiscountPlan()!=null&&discountPlan!=discountPlanItem.getDiscountPlan()){
+        		throw new MeveoApiException("Parent discountPlan "+discountPlanItem.getDiscountPlan().getCode()+" of item "+dto.getCode()+" NOT match with DTO discountPlan "+dto.getDiscountPlanCode());
+        	}
+        	discountPlanItem.setDiscountPlan(discountPlan);
+        }
+        
+        if(!StringUtils.isBlank(dto.getInvoiceCategoryCode())){
+        	InvoiceCategory invoiceCategory=invoiceCategoryService.findByCode(dto.getInvoiceCategoryCode(), currentProvider);
+        	if(invoiceCategory==null){
+        		throw new EntityDoesNotExistsException(InvoiceCategory.class, dto.getInvoiceCategoryCode());
+        	}
+        	discountPlanItem.setInvoiceCategory(invoiceCategory);
+        }
+        
+        if(!StringUtils.isBlank(dto.getInvoiceSubCategoryCode())){
+    		InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(dto.getInvoiceSubCategoryCode(),currentProvider);
+    		discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
+    	}
+        if(dto.getPercent()!=null){
+        	discountPlanItem.setPercent(dto.getPercent());
+        }
+        if(dto.getAccountingCode()!=null){
+        	discountPlanItem.setAccountingCode(dto.getAccountingCode());
+        }
+        if(dto.getExpressionEl()!=null){
+        	discountPlanItem.setExpressionEl(dto.getExpressionEl());
+        }
+    	return discountPlanItem;
     }
 }
