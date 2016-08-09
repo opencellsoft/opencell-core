@@ -74,12 +74,12 @@ public class MeveoMinaFTPListener {
 	@PreDestroy
 	private void stopServer() {
 		try {
-			if (server != null) {
+			if (server != null&&!server.isStopped()) {
 				server.stop();
 				log.debug("ftp server stoped");
 			}
 		} catch (Exception e) {
-			log.error("Error stoping ftp server", e);
+			log.error("Error stoping ftp server {}", e.getMessage());
 		}
 	}
 	

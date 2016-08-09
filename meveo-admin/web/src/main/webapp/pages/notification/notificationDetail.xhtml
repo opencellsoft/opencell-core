@@ -36,11 +36,11 @@
 				required="true" maxlength="60" />
 			<hftl:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="60" maxlength="255" 
+				field="classNameFilter" required="true" size="60" maxlength="255" listenerUpdate="eventTypeFilter"
                 autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
-			<hftl:formField
+			<hftl:formField id="eventTypeFilter" 
 				label="#{messages['entity.notification.eventTypeFilter']}"
-				field="eventTypeFilter" required="true" />
+				field="eventTypeFilter" required="true" listValues="#{notificationBean.getEventTypeFilters()}"/>
 			<hftl:formField label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
 			

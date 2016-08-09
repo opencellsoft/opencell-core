@@ -1,5 +1,21 @@
 package org.meveo.model.notification;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.persistence.Entity;
+
+import org.meveo.model.NotifiableEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.mediation.MeveoFtpFile;
+import org.meveo.model.rating.EDR;
+
 public enum NotificationEventTypeEnum {
 CREATED (1,"enum.notificationEventTypeEnum.CREATED"),
 UPDATED(2,"enum.notificationEventTypeEnum.UPDATED"),
@@ -46,4 +62,37 @@ public static NotificationEventTypeEnum getValue(Integer id) {
     }
     return null;
 }
+
+	public static List<NotificationEventTypeEnum> getNotificableEntity(Class<?> clazz){
+		List<NotificationEventTypeEnum> events=new ArrayList<NotificationEventTypeEnum>();
+		if(hasObservableEntity(clazz)){
+    		events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED,NotificationEventTypeEnum.UPDATED,NotificationEventTypeEnum.REMOVED,
+    				NotificationEventTypeEnum.DISABLED,NotificationEventTypeEnum.ENABLED));
+    		if(clazz.equals(WalletInstance.class)){
+    			events.add(NotificationEventTypeEnum.LOW_BALANCE);
+    		}else if(clazz.equals(org.meveo.model.admin.User.class)){
+    			events.add(NotificationEventTypeEnum.LOGGED_IN);
+    		}else if(clazz.equals(InboundRequest.class)){
+    			events.add(NotificationEventTypeEnum.INBOUND_REQ);
+    		}else if(clazz.equals(WalletOperation.class)||clazz.equals(EDR.class)||clazz.equals(RecurringChargeTemplate.class)){
+    			events.add(NotificationEventTypeEnum.REJECTED);
+    		}else if(clazz.equals(Access.class)){
+    			events.add(NotificationEventTypeEnum.REJECTED_CDR);
+    		}else if(clazz.equals(CounterPeriod.class)){
+    			events.add(NotificationEventTypeEnum.COUNTER_UPDATED);
+    		}
+    	}else if(hasNotificableEntity(clazz)){
+    		if(clazz.equals(MeveoFtpFile.class)){
+    			events=Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD,NotificationEventTypeEnum.FILE_DOWNLOAD,NotificationEventTypeEnum.FILE_DELETE,NotificationEventTypeEnum.FILE_RENAME);
+    		}
+    	}
+		return events;
+	}
+	
+	private static boolean hasObservableEntity(Class<?> clazz){
+    	return clazz.isAnnotationPresent(Entity.class)&&clazz.isAnnotationPresent(ObservableEntity.class);
+    }
+	private static boolean hasNotificableEntity(Class<?> clazz){
+    	return clazz.isAnnotationPresent(NotifiableEntity.class);
+    }
 }

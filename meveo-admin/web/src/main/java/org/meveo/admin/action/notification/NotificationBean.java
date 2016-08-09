@@ -29,6 +29,7 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.ScriptNotification;
@@ -240,7 +241,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class) && clazz.getName().toLowerCase().contains(queryLc)) {
+            if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class))||clazz.isAnnotationPresent(NotifiableEntity.class)) && clazz.getName().toLowerCase().contains(queryLc)) {
                 classNames.add(clazz.getName());
             }
         }
@@ -326,4 +327,21 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 	protected String getListViewName() {
 		return "notifications";
 	}
+    /**
+     * filter the event type of the notification by class
+     */
+    public List<NotificationEventTypeEnum> getEventTypeFilters(){
+    	String clazzStr=getEntity().getClassNameFilter();
+    	if(StringUtils.isBlank(clazzStr)){
+    		clazzStr=(String)filters.get("classNameFilter");
+    	}
+    	if(StringUtils.isBlank(clazzStr)){
+    		return null;
+    	}
+    	Class<?> clazz=null;
+    	try{
+    		clazz=Class.forName(clazzStr);
+    	}catch(Exception e){ e.printStackTrace();return null;}
+    	return NotificationEventTypeEnum.getNotificableEntity(clazz);
+    }
 }
