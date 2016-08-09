@@ -33,11 +33,15 @@
 			<p:panel style="width: 50%">
 			</p:panel>
 			<p:panel style="width: 50%" styleClass="TexAlRight">
-				<p:panel>
-					<p:inputText placeholder="#{messages['action.search']}"
-						syle="float:right;" />
-					<i class="fa fa-search"></i>
-				</p:panel>
+				<h:form>
+					<p:panel>
+						<p:inputText placeholder="#{messages['action.search']}"
+							syle="float:right;"
+							value="#{businessOfferModelListBean.filters['FIELD1_OR_FIELD2 offerTemplate.name offerTemplate.description']}" />
+						<p:commandLink styleClass="Padding3 fa fa-search"
+							update=":mainForm:dataGrid"></p:commandLink>
+					</p:panel>
+				</h:form>
 			</p:panel>
 
 			<h:form id="mainForm">
@@ -109,7 +113,8 @@
 								</p:panel>
 								<p:panel styleClass="Wid25 VAlignTop"
 									header="#{messages['action.startWithThisTemplate']}">
-									<p:link styleClass="fa fa-play" outcome="mmOfferDetail" value="">
+									<p:link styleClass="fa fa-play" outcome="mmOfferDetail"
+										value="">
 										<f:param name="bomId" value="#{entity.id}"></f:param>
 										<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
 										<f:param name="edit" value="true"></f:param>

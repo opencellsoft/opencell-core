@@ -82,6 +82,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
+    public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
 
     @Inject
     @MeveoJpa
@@ -619,10 +620,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key) || SEARCH_CURRENT_PROVIDER.equals(key) || SEARCH_CURRENT_USER.equals(key)) {
                         continue;
                     }
-
+                                        
+                    // condition field1 field2
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                    String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
 
                     Object filter = filters.get(key);
                     if (filter != null) {
@@ -732,6 +735,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.endOrClause();
 
                             // if not ranged search
+                        } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
+                        	queryBuilder.startOrClause();
+                            queryBuilder.addSql("a." + fieldName + " like '%" + filter + "%'");
+                            queryBuilder.addSql("a." + fieldName2 + " like '%" + filter + "%'");
+                            queryBuilder.endOrClause();
                         } else {
                             if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
                                 queryBuilder.addSql("a." + fieldName + " is null ");

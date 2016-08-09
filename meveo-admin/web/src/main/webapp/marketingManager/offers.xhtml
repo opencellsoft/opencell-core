@@ -62,9 +62,13 @@
 			<p:panel style="width: 50%">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
-						<p:inputText placeholder="#{messages['action.search']}"
-							syle="float:right;" />
-						<i class="fa fa-search"></i>
+						<h:form>
+							<p:inputText placeholder="#{messages['action.search']}"
+								syle="float:right;"
+								value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
+							<p:commandLink styleClass="Padding3 fa fa-search"
+								update=":tabView"></p:commandLink>
+						</h:form>
 					</p:panel>
 					<p:panelGrid columns="1">
 						<p:panel style="border: 1px solid #000" id="offerForExportPanel">

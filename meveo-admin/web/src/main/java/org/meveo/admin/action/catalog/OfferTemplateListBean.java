@@ -85,7 +85,6 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	}
 	
 	public LazyDataModel<OfferTemplate> listFromBOM() {
-		filters.clear();
 		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NOT_NULL);
 		
 		return getLazyDataModel();
