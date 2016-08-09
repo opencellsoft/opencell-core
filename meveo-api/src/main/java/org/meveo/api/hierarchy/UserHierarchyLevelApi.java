@@ -84,15 +84,15 @@ public class UserHierarchyLevelApi extends BaseApi {
         handleMissingParameters();
 
         UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        UserHierarchyLevel parentLevel = null;
         if (userHierarchyLevel != null) {
             if (!StringUtils.isBlank(postData.getParentLevel())) {
-                UserHierarchyLevel parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
+                parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
                 if (parentLevel == null) {
                     throw new EntityDoesNotExistsException(UserHierarchyLevel.class, parentLevelCode);
                 }
             }
-            UserHierarchyLevel parentLevel = null;
-            userHierarchyLevel = fromDto(postData, parentLevel, null);
+            userHierarchyLevel = fromDto(postData, parentLevel, userHierarchyLevel);
             userHierarchyLevelService.update(userHierarchyLevel, currentUser);
         } else {
             throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
