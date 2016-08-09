@@ -24,7 +24,7 @@
 	<ui:define name="body">
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{bundleTemplateBean}" showFormButtons="true"
-			formButtonsTopRight="true" >
+			formButtonsTopRight="true">
 			<!-- <p:panel styleClass="TexAlRight">
 
 				<p:commandButton value="#{messages['action.activate']}"
@@ -46,7 +46,7 @@
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
 					<p:menuitem outcome="mmProductTemplates"
-						value="#{messages['productTemplates.search']}" />
+						value="#{messages['bundleTemplates.title']}" />
 				</p:breadCrumb>
 
 
@@ -177,6 +177,47 @@
 					</p:column>
 				</p:row>
 			</p:panelGrid>
+			<p:panel header="#{messages['menu.productTemplates']}"
+				rendered="#{bundleTemplateBean.entity.id != null}">
+				<h:link value="#{messages['bundleTemplate.addProduct']}"
+					outcome="mmBundleTemplateSelectProduct">
+					<f:param name="entityId" value="entity.id"></f:param>
+				</h:link>
+				<p:dataGrid id="productTemplateList" var="prod"
+					value="#{bundleTemplateBean.entity.bundleProducts}"
+					paginator="true" rows="5" columns="1" paginatorPosition="top"
+					paginatorAlwaysVisible="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+					<p:panelGrid>
+						<p:row>
+							<p:column rowspan="2">
+								<p:graphicImage id="productImageForBundle" cache="false"
+									value="#{productTemplateImageStreamer.image}" height="150"
+									width="150">
+									<f:param name="id" value="#{prod.id}"></f:param>
+								</p:graphicImage>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{prod.name}" />
+							</p:column>
+							<p:column>
+								<p:outputLabel
+									value="#{messages['productTemplate.catalogPrice']}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="#{prod.description}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="0.00" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:dataGrid>
+
+			</p:panel>
 			<p:tabView>
 				<p:tab title="EN">
 					<hftl:formField label="#{messages['businessEntity.description']}"

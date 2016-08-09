@@ -26,167 +26,69 @@
 					<p:menuitem outcome="mmProductTemplates"
 						value="#{messages['productTemplates.search']}" />
 				</p:breadCrumb>
-				<p:panelGrid columns="3" layout="grid"
-					styleClass="ui-panelgrid-blank" id="headerGrid">
-					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-						<span class="fa fa-plus-circle"> </span>
-						<h:link id="newProduct" outcome="mmProductTemplateDetail"
-							value="#{messages['productTemplate.newProduct']}">
-							<f:param name="cid"
-								value="#{javax.enterprise.context.conversation.id}" />
-							<f:param name="edit" value="true" />
-							<f:param name="editMode" value="edit" />
-						</h:link>
-						<span class="fa fa-plus-circle"> </span>
-						<h:link id="createBundle" outcome="mmProductTemplateDetail"
-							value="#{messages['productTemplate.createBundle']}">
-							<f:param name="cid"
-								value="#{javax.enterprise.context.conversation.id}" />
-							<f:param name="edit" value="true" />
-							<f:param name="editMode" value="edit" />
-						</h:link>
-					</p:panelGrid>
-					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-						<span class="fa fa-check-square-o"></span>
-						<p:panelGrid columns="2">
-							<h:outputText
-								value="#{productTemplateListBean.activeProductCount}" />
-							<p:outputLabel
-								value="#{messages['productTemplate.activeProductsNum']}" />
+				<p:panel styleClass="TexAlRight">
+
+					<p:selectOneMenu></p:selectOneMenu>
+					<p:selectOneMenu></p:selectOneMenu>
+					<p:selectOneMenu></p:selectOneMenu>
+				</p:panel>
+				<p:dataGrid id="productTemplateList" var="prod"
+					value="#{productTemplateListBean.productTemplates}"
+					paginator="true" rows="5" columns="1" paginatorPosition="top"
+					paginatorAlwaysVisible="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+
+					<p:panel>
+						<p:panelGrid styleClass="ui-panelgrid-blank">
+							<p:row>
+								<p:column rowspan="2">
+									<p:graphicImage id="productImage" cache="false"
+										value="#{productTemplateImageStreamer.image}" height="100">
+										<f:param name="id" value="#{prod.id}"></f:param>
+									</p:graphicImage>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{prod.name}"></h:outputText>
+								</p:column>
+								<p:column rowspan="2">
+									<h:outputText value="#{prod.businessProductModel.description}"></h:outputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="#{messages['commons.validFrom']}"></p:outputLabel>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="#{messages['commons.validTo']}"></p:outputLabel>
+								</p:column>
+								<p:column>
+									<p:outputLabel
+										value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
+								</p:column>
+								<p:column rowspan="2">
+									<h:link value="#{messages['bundleTemplate.addProduct']}">
+
+									</h:link>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="#{prod.description}"></h:outputText>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{prod.validFrom}"></h:outputText>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{prod.validTo}"></h:outputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="0.00"></p:outputLabel>
+								</p:column>
+							</p:row>
 						</p:panelGrid>
-						<span class="fa fa-close"></span>
-						<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-							<h:outputText
-								value="#{productTemplateListBean.inactiveProductCount}" />
-							<p:outputLabel
-								value="#{messages['productTemplate.deactivatedProductsNum']}" />
-						</p:panelGrid>
-						<span class="fa fa-exclamation-circle"></span>
-						<p:panelGrid columns="2">
-							<h:outputText
-								value="#{productTemplateListBean.almostExpiredCount}" />
-							<p:outputLabel
-								value="#{messages['productTemplate.expiringProductsNum']}" />
-						</p:panelGrid>
-					</p:panelGrid>
-					<p:panelGrid columns="1">
-						<p:panelGrid columns="2">
-							<span class="fa fa-share-square-o"></span>
-							<h:outputText id="ptToExportSize"
-								value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
-						</p:panelGrid>
-						<p:panelGrid columns="1">
-							<p:panelGrid columns="2">
-								<h:outputText id="exportSize"
-									value="#{messages['productTemplate.exportTo']}" />
-								<p:selectOneMenu id="exportToList"
-									value="#{productTemplateListBean.meveoInstanceToExport}">
-									<f:selectItem itemLabel="" />
-									<f:selectItems
-										value="#{productTemplateListBean.meveoInstances}" var="mi"
-										itemValue="#{mi}" itemLabel="#{mi.code}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-						</p:panelGrid>
-					</p:panelGrid>
-				</p:panelGrid>
+					</p:panel>
+				</p:dataGrid>
 			</p:panel>
-			<p:dataGrid id="productTemplateList" var="prod"
-				value="#{productTemplateListBean.productTemplates}" paginator="true"
-				rows="5" columns="1" paginatorPosition="top"
-				paginatorAlwaysVisible="true"
-				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
 
-				<p:panelGrid columns="3" style="width: 100%"
-					styleClass="ui-panelgrid-blank" id="productTemplateRow">
-					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-						<p:graphicImage id="productImage" cache="false"
-							value="#{productTemplateImageStreamer.image}" height="100">
-							<f:param name="id" value="#{prod.id}"></f:param>
-						</p:graphicImage>
-						<p:panelGrid columns="2">
-							<h:outputText value="#{messages['commons.name']} : " />
-							<h:outputText value="#{prod.name}" />
-							<h:outputText value="#{messages['commons.validFrom']} : " />
-							<h:outputText value="#{prod.validFrom}">
-								<f:convertDateTime
-									pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-							</h:outputText>
-							<h:outputText value="#{messages['commons.validTo']} : " />
-							<h:outputText value="#{prod.validTo}">
-								<f:convertDateTime
-									pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-							</h:outputText>
-						</p:panelGrid>
-					</p:panelGrid>
-					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-						<p:panel styleClass="TexAlRight">
-							<div class="FRight">
-								<p:inputSwitch value="#{prod.active}"
-									onLabel="#{messages['accountStatusEnum.active']}"
-									offLabel="#{messages['accountStatusEnum.inactive']}">
-									<p:ajax
-										listener="#{productTemplateListBean.updateProductTemplateStatus(prod)}" />
-								</p:inputSwitch>
-							</div>
-							<div class="FRight" style="padding-top: 5px; margin-right: 10px;">#{messages['commons.status']}</div>
-						</p:panel>
-						<p:panelGrid columns="1">
-							<p:outputLabel value="#{messages['commons.status']}" />
-							<o:importConstants
-								type="org.meveo.model.catalog.LifeCycleStatusEnum" />
-							<p:selectOneMenu value="#{prod.lifeCycleStatus}">
-								<p:ajax
-									listener="#{productTemplateListBean.updateProductTemplateStatus(prod)}" />
-								<f:selectItems value="#{LifeCycleStatusEnum}" var="lcStatus"
-									itemLabel="#{messages[lcStatus.label]}" itemValue="#{lcStatus.value}" />
-							</p:selectOneMenu>
-						</p:panelGrid>
-						<p:panel>
-							<h:outputText value="#{messages['productTemplate.family']} : " />
-							<h:outputText value="#{prod.businessProductModel.description}" />
-						</p:panel>
-						<p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
-							<!-- <h:link styleClass="fa fa-edit">
-								<f:param name="objectId" value="#{prod.id}"></f:param>
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
-								<f:param name="edit" value="true" />
-							</h:link> -->
-
-							<h:link styleClass="fa fa-copy" outcome="mmProductTemplateDetail">
-								<f:param name="objectId" value="#{prod.id}"></f:param>
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
-								<f:param name="edit" value="true" />
-								<f:param name="editMode" value="dup" />
-							</h:link>
-							<h:link styleClass="fa fa-edit" outcome="mmProductTemplateDetail">
-								<f:param name="objectId" value="#{prod.id}"></f:param>
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
-								<f:param name="edit" value="true" />
-								<f:param name="editMode" value="edit" />
-							</h:link>
-							<p:commandLink styleClass="fa fa-share-square-o"
-								action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
-								update=":productTemplateForm:headerGrid">
-
-							</p:commandLink>
-						</p:panelGrid>
-					</p:panelGrid>
-					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-						<h:outputText
-							value="#{messages['productTemplate.bundledProducts']}" />
-						<p:dataGrid columns="4"
-							value="#{productTemplateListBean.bundledProducts}" var="bp">
-							<span class="fa fa-circle" />
-							<h:outputText value="#{bp}" />
-						</p:dataGrid>
-					</p:panelGrid>
-				</p:panelGrid>
-			</p:dataGrid>
 		</h:form>
 	</ui:define>
 

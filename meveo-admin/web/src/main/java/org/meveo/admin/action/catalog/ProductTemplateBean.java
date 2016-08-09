@@ -15,6 +15,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -344,6 +345,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 				catalogPriceCF.setCode(catalogPriceCode);
 			}
 		}
+	}
+
+	public boolean isBundleTemplate(ProductTemplate pt) {
+		return pt instanceof BundleTemplate;
 	}
 
 	public String getEditMode() {
