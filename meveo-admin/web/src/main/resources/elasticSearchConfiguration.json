@@ -292,7 +292,7 @@
 		}
 	},
 	"cetTemplates": {
-		"<cetCode>": {
+		"cet": {
 			"properties": {
 				"code": {
 					"type": "string",

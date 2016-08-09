@@ -116,7 +116,7 @@ public class ElasticSearchConfiguration implements Serializable {
             dataModels.put(dataModelInfo.getKey(), dataModelInfo.getValue().toString());
         }
 
-        // Load customField templates
+        // Load customField field mapping templates
         Iterator<Entry<String, JsonNode>> fieldTemplateInfos = node.get("customFieldTemplates").fields();
 
         while (fieldTemplateInfos.hasNext()) {
@@ -124,7 +124,7 @@ public class ElasticSearchConfiguration implements Serializable {
             customFieldTemplates.put(fieldTemplateInfo.getKey(), fieldTemplateInfo.getValue().toString());
         }
 
-        // Load customEntity mapping template
+        // Load customEntity field mapping template - only the first one is used.
         Iterator<Entry<String, JsonNode>> cetTemplateInfos = node.get("cetTemplates").fields();
         if (cetTemplateInfos.hasNext()) {
             customEntityTemplate = cetTemplateInfos.next().getValue().toString();
