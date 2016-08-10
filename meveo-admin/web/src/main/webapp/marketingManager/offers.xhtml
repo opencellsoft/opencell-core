@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
-	xmlns:o="http://omnifaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
 	template="/marketingManager/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -68,6 +68,15 @@
 									value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
 								<p:commandLink styleClass="Padding3 fa fa-search"
 									update=":tabView"></p:commandLink>
+<!-- 								<p:selectManyMenu id="searchOfferTemplateCat" -->
+<!-- 									value="#{offerTemplateListBean.selOfferTemplateCategories}"> -->
+<!-- 									<f:selectItem itemLabel="" itemValue="" -->
+<!-- 										noSelectionOption="true" /> -->
+<!-- 									<f:selectItems -->
+<!-- 										value="#{offerTemplateCategoryBean.listActive()}" var="e" -->
+<!-- 										itemLabel="#{e.descriptionOrCode}" itemValue="#{e}"></f:selectItems> -->
+<!-- 									<s:objectConverter /> -->
+<!-- 								</p:selectManyMenu> -->
 							</div>
 						</h:form>
 					</p:panel>

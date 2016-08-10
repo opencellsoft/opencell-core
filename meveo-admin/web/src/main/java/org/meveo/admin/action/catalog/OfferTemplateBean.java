@@ -123,7 +123,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
-	private UploadedFile uploadedFile;
+	private UploadedFile uploadedFile;	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

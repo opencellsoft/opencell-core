@@ -19,6 +19,7 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.service.base.PersistenceService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -38,6 +40,12 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	private static final long serialVersionUID = -3037867704912788024L;
 
 	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
+	private List<OfferTemplateCategory> selOfferTemplateCategories;
+	
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("offerTemplateCategories");
+	}
 
 	public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
 		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
@@ -49,7 +57,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 			selectedOfferTemplates.add(offerTemplate);
 		}
 	}
-	
+
 	public void deleteForExport(OfferTemplate offerTemplate) {
 		if (selectedOfferTemplates.contains(offerTemplate)) {
 			selectedOfferTemplates.remove(offerTemplate);
@@ -76,6 +84,19 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 		return offerTemplateService.countExpiring();
 	}
 
+	public LazyDataModel<OfferTemplate> listFromBOM() {
+		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NOT_NULL);
+		if (selOfferTemplateCategories != null && selOfferTemplateCategories.size() > 0) {
+			List<Long> offerTemplateCatIds = new ArrayList<>();
+			for (OfferTemplateCategory otc : selOfferTemplateCategories) {
+				offerTemplateCatIds.add(otc.getId());
+			}
+			filters.put("inList-offerTemplateCategories.id", offerTemplateCatIds);
+		}
+
+		return getLazyDataModel();
+	}
+
 	public List<OfferTemplate> getSelectedOfferTemplates() {
 		return selectedOfferTemplates;
 	}
@@ -83,11 +104,13 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	public void setSelectedOfferTemplates(List<OfferTemplate> selectedOfferTemplates) {
 		this.selectedOfferTemplates = selectedOfferTemplates;
 	}
-	
-	public LazyDataModel<OfferTemplate> listFromBOM() {
-		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NOT_NULL);
-		
-		return getLazyDataModel();
+
+	public List<OfferTemplateCategory> getSelOfferTemplateCategories() {
+		return selOfferTemplateCategories;
+	}
+
+	public void setSelOfferTemplateCategories(List<OfferTemplateCategory> selOfferTemplateCategories) {
+		this.selOfferTemplateCategories = selOfferTemplateCategories;
 	}
 
 }
