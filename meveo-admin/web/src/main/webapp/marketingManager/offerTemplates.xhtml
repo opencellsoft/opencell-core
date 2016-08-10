@@ -64,8 +64,15 @@
 							<p:panel>
 								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 									<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
-									<h:outputText
-										value="#{entity.offerTemplate.offerTemplateCategory.descriptionOrCode}"></h:outputText>
+									<ui:repeat
+										value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
+										var="c" varStatus="status">
+										<c:set var="valueLabel" value="#{c}" />
+										<c:set var="valueLabel"
+											value="#{valueLabel['descriptionOrCode']}" />
+										<h:outputText value="#{valueLabel}" />
+										<h:outputText value=", " rendered="#{not status.last}" />
+									</ui:repeat>
 									<h:outputText
 										value="#{messages['offerTemplate.bom']}: #{entity.offerTemplate.businessOfferModel.code}"
 										rendered="#{entity.offerTemplate.businessOfferModel != null}"></h:outputText>

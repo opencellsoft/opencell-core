@@ -123,7 +123,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
-	private UploadedFile uploadedFile;	
+	private UploadedFile uploadedFile;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -201,11 +201,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldsValuesByUUID(st.getUuid()).getValues();
 					CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
 
-					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-					serviceConfigurationDto.setCode(st.getCode());
-					serviceConfigurationDto.setDescription(st.getDescription());
-					serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
-					servicesConfigurations.add(serviceConfigurationDto);
+					if (stCfsDto != null) {
+						ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+						serviceConfigurationDto.setCode(st.getCode());
+						serviceConfigurationDto.setDescription(st.getDescription());
+						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
+						servicesConfigurations.add(serviceConfigurationDto);
+					}
 				}
 			}
 
