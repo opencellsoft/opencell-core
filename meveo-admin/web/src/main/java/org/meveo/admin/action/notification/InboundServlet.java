@@ -22,6 +22,7 @@ import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.service.admin.impl.UserService;
@@ -99,7 +100,7 @@ public class InboundServlet extends HttpServlet {
 	}
 
 	private void doService(HttpServletRequest req, HttpServletResponse res) {
-		
+		log.debug("doService.....");
         User user = authenticateRequest(req);
         if(user == null){
             res.addHeader("WWW-Authenticate",  "Basic");
@@ -111,6 +112,7 @@ public class InboundServlet extends HttpServlet {
         log.debug("received request for method {} , path={}", req.getMethod(),path);
 
 		InboundRequest inReq = new InboundRequest();
+		inReq.setAuditable(new Auditable(user));
 		inReq.setProvider(user.getProvider());
 		inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
 
@@ -201,7 +203,7 @@ public class InboundServlet extends HttpServlet {
 		}
 
 		try {
-			inboundRequestService.create(inReq, null);
+			inboundRequestService.create(inReq, user);
             res.setStatus(200);
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ", e1);
