@@ -19,6 +19,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -135,6 +136,8 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		if (bams != null) {
 			newOfferTemplate.getBusinessAccountModels().addAll(bams);
 		}
+		newOfferTemplate.setActive(false);
+		newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
 

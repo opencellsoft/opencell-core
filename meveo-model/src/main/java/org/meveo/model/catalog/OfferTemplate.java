@@ -94,14 +94,6 @@ public class OfferTemplate extends ProductOffering {
 		offerServiceTemplates.add(serviceTemplate);
 	}
 
-//	public OfferTemplateCategory getOfferTemplateCategory() {
-//		return offerTemplateCategory;
-//	}
-//
-//	public void setOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
-//		this.offerTemplateCategory = offerTemplateCategory;
-//	}
-
 	public BusinessOfferModel getBusinessOfferModel() {
 		return businessOfferModel;
 	}

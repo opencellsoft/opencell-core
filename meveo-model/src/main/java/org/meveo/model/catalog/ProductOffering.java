@@ -91,6 +91,34 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	@OrderColumn(name = "INDX")
 	private List<Channel> channels = new ArrayList<Channel>();;
 
+	public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
+		if (getOfferTemplateCategories() == null) {
+			offerTemplateCategories = new ArrayList<>();
+		}
+		offerTemplateCategories.add(offerTemplateCategory);
+	}
+
+	public void addAttachment(DigitalResource attachment) {
+		if (getAttachments() == null) {
+			attachments = new ArrayList<>();
+		}
+		attachments.add(attachment);
+	}
+
+	public void addBusinessAccountModel(BusinessAccountModel businessAccountModel) {
+		if (getBusinessAccountModels() == null) {
+			businessAccountModels = new ArrayList<>();
+		}
+		businessAccountModels.add(businessAccountModel);
+	}
+
+	public void addChannel(Channel channel) {
+		if (getChannels() == null) {
+			channels = new ArrayList<>();
+		}
+		channels.add(channel);
+	}
+
 	public String getName() {
 		return name;
 	}

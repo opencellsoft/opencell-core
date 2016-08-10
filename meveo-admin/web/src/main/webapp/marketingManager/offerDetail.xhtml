@@ -24,8 +24,8 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem value="#{messages['menu.catalog.newOffer']}" />
-				<p:menuitem value="#{messages['menu.catalog.viewOffer']}" />
+				<p:menuitem value="#{messages['menu.catalog.templates']}"
+					outcome="mmOfferTemplates" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -64,7 +64,7 @@
 										action="#{offerTemplateBean.duplicate()}" update="@form"
 										styleClass="fa fa-copy">
 										<f:param name="edit" value="false"></f:param>
-										<f:param name="backView" value="mmOffers"></f:param>
+										<f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 										<p:confirm header="#{messages['commons.duplicate']}"
@@ -77,7 +77,7 @@
 										<f:param name="objectId"
 											value="#{offerTemplateBean.entity.id}"></f:param>
 										<f:param name="edit" value="true"></f:param>
-										<f:param name="backView" value="mmOffers"></f:param>
+										<f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
 										<f:param name="tab" value="0"></f:param>
 									</p:link></li>
 							</ul>
@@ -114,7 +114,7 @@
 						<hftl:formField label="#{messages['commons.status']}"
 							field="lifeCycleStatus" />
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
-							doNotShowOnNew="true" allowEdit="false" field="disabled"
+							doNotShowOnNew="true" allowEdit="true" field="disabled"
 							isMessage="true" />
 					</p:panelGrid>
 				</p:panel>

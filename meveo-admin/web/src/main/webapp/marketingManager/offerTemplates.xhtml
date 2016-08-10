@@ -25,7 +25,8 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem value="#{messages['menu.catalog.templates']}" />
+				<p:menuitem value="#{messages['menu.catalog.listOffers']}"
+					outcome="mmOffers" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -78,6 +79,29 @@
 										rendered="#{entity.offerTemplate.businessOfferModel != null}"></h:outputText>
 									<p:separator></p:separator>
 									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
+
+									<p:panel>
+										<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
+											<li class="Padding5 FRight"><p:link
+													styleClass="fa fa-edit" outcome="mmOfferDetail">
+													<f:param name="cid"
+														value="#{javax.enterprise.context.conversation.id}" />
+													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+													<f:param name="edit" value="true"></f:param>
+													<f:param name="backView" value="mmOfferTemplates"></f:param>
+													<f:param name="tab" value="0"></f:param>
+												</p:link></li>
+											<li class="Padding5 FRight"><p:link
+													outcome="mmOfferDetail" styleClass="fa fa-search-plus">
+													<f:param name="cid"
+														value="#{javax.enterprise.context.conversation.id}" />
+													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+													<f:param name="edit" value="false"></f:param>
+													<f:param name="backView" value="mmOfferTemplates"></f:param>
+													<f:param name="tab" value="0"></f:param>
+												</p:link></li>
+										</ul>
+									</p:panel>
 								</p:panelGrid>
 							</p:panel>
 						</p:panelGrid>
