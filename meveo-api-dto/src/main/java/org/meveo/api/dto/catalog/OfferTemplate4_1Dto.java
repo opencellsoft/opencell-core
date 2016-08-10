@@ -46,9 +46,9 @@ public class OfferTemplate4_1Dto implements Serializable {
 		if (e.getBusinessOfferModel() != null) {
 			bomCode = e.getBusinessOfferModel().getCode();
 		}
-
-		if (e.getOfferTemplateCategory() != null) {
-			offerTemplateCategoryCode = e.getOfferTemplateCategory().getCode();
+		
+		if (e.getOfferTemplateCategories() != null) {
+			offerTemplateCategoryCode = e.getOfferTemplateCategories().get(0).getCode();
 		}
 
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
