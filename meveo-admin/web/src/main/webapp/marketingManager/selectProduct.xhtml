@@ -65,9 +65,12 @@
 										value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
 								</p:column>
 								<p:column rowspan="2">
-									<h:link value="#{messages['bundleTemplate.addProduct']}">
-
-									</h:link>
+									<p:commandLink value="#{messages['bundleTemplate.addProduct']}"
+										action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}">
+										<f:param name="entityId" value="#{bundleTemplateBean.entity.id}"></f:param>
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</p:commandLink>
 								</p:column>
 							</p:row>
 							<p:row>
