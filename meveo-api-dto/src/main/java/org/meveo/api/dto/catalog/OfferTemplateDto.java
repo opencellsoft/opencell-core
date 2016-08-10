@@ -13,9 +13,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
  * @author Edward P. Legaspi
@@ -36,7 +36,13 @@ public class OfferTemplateDto implements Serializable {
 
     private boolean disabled = false;
     private String bomCode;
+    
+    @Deprecated
     private String offerTemplateCategoryCode;
+    
+    @XmlElementWrapper(name = "offerTemplateCategories")
+    @XmlElement(name = "code")
+    private List<String> offerTemplateCategories;
 
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
@@ -61,9 +67,12 @@ public class OfferTemplateDto implements Serializable {
             bomCode = offerTemplate.getBusinessOfferModel().getCode();
         }
 
-        if (offerTemplate.getOfferTemplateCategory() != null) {
-            offerTemplateCategoryCode = offerTemplate.getOfferTemplateCategory().getCode();
-        }
+		if (offerTemplate.getOfferTemplateCategories() != null) {
+			for (OfferTemplateCategory oc : offerTemplate.getOfferTemplateCategories()) {
+				offerTemplateCategories = new ArrayList<>();
+				offerTemplateCategories.add(oc.getCode());
+			}
+		}
 
         if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
             offerServiceTemplates = new ArrayList<>();
@@ -155,5 +164,13 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setLongDescription(String longDescription) {
 		this.longDescription = longDescription;
+	}
+
+	public List<String> getOfferTemplateCategories() {
+		return offerTemplateCategories;
+	}
+
+	public void setOfferTemplateCategories(List<String> offerTemplateCategories) {
+		this.offerTemplateCategories = offerTemplateCategories;
 	}
 }

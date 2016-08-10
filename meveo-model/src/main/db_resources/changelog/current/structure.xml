@@ -3077,5 +3077,11 @@ $BODY$
         <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_ID" baseTableName="ORD_ORDER" constraintName="fk_ord_order_rt_user"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
         
-    </changeSet> 
+    </changeSet>
+    
+	<changeSet id="#1839_20160810_offer_template_category" author="EdwardLegaspi">
+		<sql>INSERT INTO CAT_PRODUCT_OFFER_TMPL_CAT (product_id, offer_template_cat_id, indx) SELECT id, cat_offer_template_cat_id, 0 FROM cat_offer_template WHERE cat_offer_template_cat_id IS NOT NULL;</sql>
+		<dropColumn tableName="cat_offer_template" columnName="cat_offer_template_cat_id"/>
+	</changeSet>
+	     
 </databaseChangeLog>

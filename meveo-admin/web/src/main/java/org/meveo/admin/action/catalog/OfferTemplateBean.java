@@ -43,6 +43,7 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -54,6 +55,7 @@ import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -110,11 +112,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
 
+	@Inject
+	private OfferTemplateCategoryService offerTemplateCategoryService;
+
 	private Long bomId;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
 	private DualListModel<BusinessAccountModel> businessAccountModelsDM;
 	private DualListModel<Channel> channelsDM;
+	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
 	private UploadedFile uploadedFile;
@@ -204,12 +210,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(bom, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
-					entity.getDescription(), servicesConfigurations, currentUser);
-			newOfferTemplate.setName(entity.getName());
-			newOfferTemplate.setValidFrom(entity.getValidFrom());
-			newOfferTemplate.setValidTo(entity.getValidTo());
-			newOfferTemplate.getChannels().addAll(channelService.refreshOrRetrieve(channelsDM.getTarget()));
-			newOfferTemplate.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
+					entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
+					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
+					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
 
 			// populate service custom fields
 			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -244,6 +247,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (businessAccountModelsDM != null && (businessAccountModelsDM.getSource() != null || businessAccountModelsDM.getTarget() != null)) {
 				entity.getBusinessAccountModels().clear();
 				entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
+			}
+			if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
+				entity.getOfferTemplateCategories().clear();
+				entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
 			}
 
 			String outcome = super.saveOrUpdate(killConversation);
@@ -479,6 +486,31 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setChannelsDM(DualListModel<Channel> channelsDM) {
 		this.channelsDM = channelsDM;
+	}
+
+	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
+		if (offerTemplateCategoriesDM == null) {
+			List<OfferTemplateCategory> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = offerTemplateCategoryService.list(entity.getProvider());
+			} else {
+				perksSource = offerTemplateCategoryService.list();
+			}
+
+			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
+			if (getEntity().getOfferTemplateCategories() != null) {
+				perksTarget.addAll(getEntity().getOfferTemplateCategories());
+			}
+
+			perksSource.removeAll(perksTarget);
+			offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
+		}
+
+		return offerTemplateCategoriesDM;
+	}
+
+	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
+		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
 	}
 
 }

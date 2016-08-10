@@ -63,11 +63,12 @@
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
 						<h:form>
-							<p:inputText placeholder="#{messages['action.search']}"
-								syle="float:right;"
-								value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
-							<p:commandLink styleClass="Padding3 fa fa-search"
-								update=":tabView"></p:commandLink>
+							<div>
+								<p:inputText placeholder="#{messages['action.search']}"
+									value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
+								<p:commandLink styleClass="Padding3 fa fa-search"
+									update=":tabView"></p:commandLink>
+							</div>
 						</h:form>
 					</p:panel>
 					<p:panelGrid columns="1">
@@ -110,8 +111,15 @@
 									<p:panel>
 										<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 											<h:outputText value="#{entity.nameOrCode}"></h:outputText>
-											<h:outputText
-												value="#{messages['commons.category']}: #{entity.offerTemplateCategory.descriptionOrCode}"></h:outputText>
+											<ui:repeat
+												value="#{entity.offerTemplateCategories.toArray()}" var="c"
+												varStatus="status">
+												<c:set var="valueLabel" value="#{c}" />
+												<c:set var="valueLabel"
+													value="#{valueLabel['descriptionOrCode']}" />
+												<h:outputText value="#{valueLabel}" />
+												<h:outputText value=", " rendered="#{not status.last}" />
+											</ui:repeat>
 											<h:outputText
 												value="#{messages['offerTemplate.bom']}: #{entity.businessOfferModel.code}"
 												rendered="#{entity.businessOfferModel != null}"></h:outputText>
@@ -240,7 +248,8 @@
 							field="nameOrCode">
 						</hftl:column>
 						<hftl:column label="#{messages['commons.category']}"
-							field="offerTemplateCategory.descriptionOrCode">
+							field="offerTemplateCategories" isList="true"
+							valueLabelField="descriptionOrCode">
 						</hftl:column>
 						<hftl:column label="#{messages['commons.validFrom']}"
 							field="validFrom" isDate="true">

@@ -53,9 +53,9 @@ import org.meveo.model.ObservableEntity;
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
-	private OfferTemplateCategory offerTemplateCategory;
+//	@ManyToOne
+//	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
+//	private OfferTemplateCategory offerTemplateCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
@@ -94,13 +94,13 @@ public class OfferTemplate extends ProductOffering {
 		offerServiceTemplates.add(serviceTemplate);
 	}
 
-	public OfferTemplateCategory getOfferTemplateCategory() {
-		return offerTemplateCategory;
-	}
-
-	public void setOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
-		this.offerTemplateCategory = offerTemplateCategory;
-	}
+//	public OfferTemplateCategory getOfferTemplateCategory() {
+//		return offerTemplateCategory;
+//	}
+//
+//	public void setOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
+//		this.offerTemplateCategory = offerTemplateCategory;
+//	}
 
 	public BusinessOfferModel getBusinessOfferModel() {
 		return businessOfferModel;

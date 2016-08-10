@@ -53,7 +53,7 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	@ManyToMany
 	@JoinTable(name = "CAT_PRODUCT_OFFER_TMPL_CAT", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_TEMPLATE_CAT_ID"))
 	@OrderColumn(name = "INDX")
-	private List<OfferTemplateCategory> offerTemplateCategories;
+	private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
 
 	@Column(name = "VALID_FROM")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -75,7 +75,7 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	@ManyToMany
 	@JoinTable(name = "CAT_PRODUCT_OFFER_DIGITAL_RES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "DIGITAL_RESOURCE_ID"))
 	@OrderColumn(name = "INDX")
-	private List<DigitalResource> attachments;
+	private List<DigitalResource> attachments = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "LIFE_CYCLE_STATUS")

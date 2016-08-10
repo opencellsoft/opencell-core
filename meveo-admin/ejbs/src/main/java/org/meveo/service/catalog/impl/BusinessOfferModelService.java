@@ -16,10 +16,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -31,6 +33,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.offer.OfferModelScriptService;
@@ -89,6 +92,12 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
+		return createOfferFromBOM(businessOfferModel, customFields, prefix, offerDescription, serviceCodes, null, null, null, currentUser);
+	}
+
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription,
+			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
+			User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 
 		// 1 create offer
@@ -109,8 +118,23 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 		newOfferTemplate.setCode(prefix);
 		newOfferTemplate.setDescription(offerDescription);
-
+		newOfferTemplate.setName(bomOffer.getName());
+		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
+		newOfferTemplate.setValidTo(bomOffer.getValidTo());
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
+		newOfferTemplate.setImage(bomOffer.getImage());
+		if (bomOffer.getAttachments() != null) {
+			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
+		}
+		if (offerTemplateCategories != null) {
+			newOfferTemplate.getOfferTemplateCategories().addAll(offerTemplateCategories);
+		}
+		if (channels != null) {
+			newOfferTemplate.getChannels().addAll(channels);
+		}
+		if (bams != null) {
+			newOfferTemplate.getBusinessAccountModels().addAll(bams);
+		}
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
 

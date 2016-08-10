@@ -93,10 +93,11 @@
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
 						<hftl:formField label="#{messages['offerTemplate.name']}"
 							field="name" rendered="#{offerTemplateBean.edit}" />
-						<hftl:formField id="offerTemplateCategoryId"
+						<hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
-							field="offerTemplateCategory" valueLabelField="code"
-							listElements="#{offerTemplateCategoryBean.listActive}" />
+							field="offerTemplateCategories" listType="pickUpList"
+							valueLabelField="code"
+							dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
 						<hftl:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
 					</p:panelGrid>
@@ -125,15 +126,13 @@
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
 						field="channels" listType="pickUpList" valueLabelField="code"
 						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
-				</p:panelGrid>
-				<p:panel>
 					<hftl:formField id="businessAccountModels"
 						label="#{messages['marketingManager.catalog.targetSegment']}"
 						field="businessAccountModels" listType="pickUpList"
 						valueLabelField="code"
 						dualListModel="#{offerTemplateBean.businessAccountModelsDM}"
 						newLine="true" />
-				</p:panel>
+				</p:panelGrid>
 			</p:panelGrid>
 
 			<p:panel>
