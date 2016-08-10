@@ -67,15 +67,15 @@
 									value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
 								<p:commandLink styleClass="Padding3 fa fa-search"
 									update=":tabView"></p:commandLink>
-<!-- 								<p:selectManyMenu id="searchOfferTemplateCat" -->
-<!-- 									value="#{offerTemplateListBean.selOfferTemplateCategories}"> -->
-<!-- 									<f:selectItem itemLabel="" itemValue="" -->
-<!-- 										noSelectionOption="true" /> -->
-<!-- 									<f:selectItems -->
-<!-- 										value="#{offerTemplateCategoryBean.listActive()}" var="e" -->
-<!-- 										itemLabel="#{e.descriptionOrCode}" itemValue="#{e}"></f:selectItems> -->
-<!-- 									<s:objectConverter /> -->
-<!-- 								</p:selectManyMenu> -->
+								<!-- 								<p:selectManyMenu id="searchOfferTemplateCat" -->
+								<!-- 									value="#{offerTemplateListBean.selOfferTemplateCategories}"> -->
+								<!-- 									<f:selectItem itemLabel="" itemValue="" -->
+								<!-- 										noSelectionOption="true" /> -->
+								<!-- 									<f:selectItems -->
+								<!-- 										value="#{offerTemplateCategoryBean.listActive()}" var="e" -->
+								<!-- 										itemLabel="#{e.descriptionOrCode}" itemValue="#{e}"></f:selectItems> -->
+								<!-- 									<s:objectConverter /> -->
+								<!-- 								</p:selectManyMenu> -->
 							</div>
 						</h:form>
 					</p:panel>
@@ -86,15 +86,35 @@
 									<p:commandLink onclick="PF('exportableOffers').show();"
 										value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
 									</p:commandLink></li>
-								<li class="Padding5"><span class="fa fa-play"></span>
-									#{messages['page.catalog.exportTo']} <p:selectOneMenu>
-										<f:selectItem itemLabel="Production" itemValue="PROD" />
-									</p:selectOneMenu></li>
+								<li class="Padding5">
+									<div class="FLeft">
+										<p:commandLink styleClass="fa fa-play"
+											value=" #{messages['page.catalog.exportTo']}"
+											update=":#{p:component('exportParametersDialog')}"
+											oncomplete="PF('exportParametersDialog').show()">
+											<f:setPropertyActionListener
+												target="#{entityExportImportBean.selectedExportTemplate}"
+												value="#{null}" />
+											<f:setPropertyActionListener
+												target="#{entityExportImportBean.dataModelToExport}"
+												value="#{offerTemplateListBean.listFromBOM()}" />
+											<f:setPropertyActionListener
+												target="#{entityExportImportBean.selectedEntitiesToExport}"
+												value="#{offerTemplateListBean.selectedOfferTemplates}" />
+										</p:commandLink>
+									</div>									
+									<div class="Fright">
+										<p:selectOneMenu>
+											<f:selectItem itemLabel="Production" itemValue="PROD" />
+										</p:selectOneMenu>
+									</div>
+								</li>
 							</ul>
 						</p:panel>
 					</p:panelGrid>
 				</p:panelGrid>
 			</p:panel>
+			<p:messages id="main_messages"></p:messages>
 			<p:tabView id="tabView"
 				activeIndex="#{offerTemplateListBean.activeTab}">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
@@ -251,7 +271,8 @@
 
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
 						dataModel="#{offerTemplateListBean.listFromBOM()}"
-						checkMany="false">
+						checkMany="false" exportToCsv="false" exportToXml="false"
+						exportXlsxButton="false">
 						<hftl:column label="#{messages['commons.nameOrCode']}"
 							field="nameOrCode">
 						</hftl:column>
@@ -307,6 +328,9 @@
 					</hftl:dataList>
 				</p:tab>
 			</p:tabView>
+
+			<hftl:exportToXmlDialogs
+				messagesId=":#{p:component('main_messages')}" />
 		</p:panel>
 
 		<p:dialog header="#{messages['offerTemplates']}"

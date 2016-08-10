@@ -160,6 +160,7 @@
 	
 	<page view-id=".+\/catalog\/.+">
 		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('marketing','marketingCatalogManager')</constraint>
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
 	</page>
 	
