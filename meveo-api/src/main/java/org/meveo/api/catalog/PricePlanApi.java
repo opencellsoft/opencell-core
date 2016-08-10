@@ -158,13 +158,13 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrixService.create(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
             throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
         }
-        pricePlanMatrixService.create(pricePlanMatrix, currentUser);
     }
 
     public void update(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -263,14 +263,13 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
             throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
         }
-        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
-
     }
 
     public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
