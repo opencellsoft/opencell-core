@@ -14,6 +14,7 @@
 				listener="#{bundleTemplateBean.preRenderView}" />
 			<f:event type="preRenderView"
 				listener="#{bundleTemplateBean.initEntity}" />
+			<f:viewParam name="editMode" value="#{bundleTemplateBean.editMode}" />
 		</f:metadata>
 	</ui:define>
 
@@ -181,7 +182,9 @@
 				rendered="#{bundleTemplateBean.entity.id != null}">
 				<h:link value="#{messages['bundleTemplate.addProduct']}"
 					outcome="mmBundleTemplateSelectProduct">
-					<f:param name="entityId" value="entity.id"></f:param>
+					<f:param name="objectId" value="#{entity.id}"></f:param>
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
 				</h:link>
 				<p:dataGrid id="productTemplateList" var="prod"
 					value="#{bundleTemplateBean.entity.bundleProducts}"
