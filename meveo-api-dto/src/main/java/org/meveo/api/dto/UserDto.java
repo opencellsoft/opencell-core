@@ -62,6 +62,9 @@ public class UserDto extends BaseDto {
 	@Deprecated//use roles field
 	private String role;
 
+    @XmlElement()
+    private String userLevel;
+
 	public String getEmail() {
 		return email;
 	}
@@ -90,6 +93,11 @@ public class UserDto extends BaseDto {
 				role=r.getName();
 			}
 		}
+
+        if (user.getUserLevel() != null) {
+            userLevel = user.getUserLevel().getCode();
+        }
+
 	}
 
 	public String getFirstName() {
@@ -156,9 +164,17 @@ public class UserDto extends BaseDto {
 		this.role = role;
 	}
 
-	@Override
+    public String getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(String userLevel) {
+        this.userLevel = userLevel;
+    }
+
+    @Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + "]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel + " ]";
 	}
 
 
