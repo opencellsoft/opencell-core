@@ -513,7 +513,7 @@ public class UserBean extends BaseBean<User> {
         }
     }
 	public StreamedContent getDownloadZipFile(){
-    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf("/")+1);
+    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf(File.separator)+1);
     	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
 		try {
 			byte[] filedata=FileUtils.createZipFile(sourceFolder);
