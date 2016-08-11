@@ -94,7 +94,7 @@
 											oncomplete="PF('exportParametersDialog').show()">
 											<f:setPropertyActionListener
 												target="#{entityExportImportBean.selectedExportTemplate}"
-												value="#{null}" />
+												value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
 											<f:setPropertyActionListener
 												target="#{entityExportImportBean.dataModelToExport}"
 												value="#{offerTemplateListBean.listFromBOM()}" />

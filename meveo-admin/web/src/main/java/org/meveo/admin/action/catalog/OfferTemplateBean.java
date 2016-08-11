@@ -38,6 +38,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.export.EntityExportImportService;
+import org.meveo.export.ExportTemplate;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -114,6 +116,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
+	
+	@Inject
+	private EntityExportImportService entityExportImportService;
 
 	private Long bomId;
 
@@ -513,6 +518,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
 		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
+	}
+	
+	public ExportTemplate getMarketingCatalogExportTemplate() {
+		return entityExportImportService.getExportImportTemplate("MMOfferTemplate");
 	}
 
 }

@@ -125,8 +125,8 @@ public class EntityExportImportBean implements Serializable {
         this.dataModelToExport = dataModelToExport;
 
         // Determine applicable template by matching a class name
-        if (dataModelToExport.getRowCount() > 0) {
-            selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
+        if (dataModelToExport.getRowCount() > 0 && selectedExportTemplate == null) {
+        	selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
             // } else { Now that dataModelToExport or selectedEntitiesToExport can be set, dont reset selectedExportTemplate value
             // selectedExportTemplate = null;
         }
@@ -141,7 +141,7 @@ public class EntityExportImportBean implements Serializable {
         this.selectedEntitiesToExport = selectedEntitiesToExport;
 
         // Determine applicable template by matching a class name
-        if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()) {
+        if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty() && selectedExportTemplate == null) {
             selectedExportTemplate = getExportImportTemplateForClass(selectedEntitiesToExport.get(0).getClass());
             // } else {
             // selectedExportTemplate = null;
