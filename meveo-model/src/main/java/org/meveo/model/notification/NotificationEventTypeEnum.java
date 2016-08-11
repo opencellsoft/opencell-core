@@ -63,7 +63,12 @@ public static NotificationEventTypeEnum getValue(Integer id) {
     return null;
 }
 
-	public static List<NotificationEventTypeEnum> getNotificableEntity(Class<?> clazz){
+	public static List<NotificationEventTypeEnum> getEventTypesByClazz(String clazzStr){
+		Class<?> clazz=null;
+    	try{
+    		clazz=Class.forName(clazzStr);
+    	}catch(Exception e){return null;}
+    	
 		List<NotificationEventTypeEnum> events=new ArrayList<NotificationEventTypeEnum>();
 		if(hasObservableEntity(clazz)){
     		events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED,NotificationEventTypeEnum.UPDATED,NotificationEventTypeEnum.REMOVED,
