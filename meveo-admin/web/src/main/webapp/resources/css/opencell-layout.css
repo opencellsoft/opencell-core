@@ -62,8 +62,9 @@
 	max-height: 470px;
 	overflow-y: auto;
 	padding: 0 15px 10px 15px;
-	border-top: solid 1px rgba(0, 0, 0, 0.1);
+	border-top: 1px solid #d13b42;
 	background-color: #eb2f2f;
+	border-bottom: 1px solid #d13b42;
 }
 
 /*Layout Menu */
