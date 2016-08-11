@@ -10,7 +10,9 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{productTemplateListBean.preRenderView}" />
+				listener="#{bundleTemplateBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{bundleTemplateBean.initEntity}" />
 		</f:metadata>
 	</ui:define>
 
@@ -65,12 +67,11 @@
 										value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
 								</p:column>
 								<p:column rowspan="2">
-									<p:commandLink value="#{messages['bundleTemplate.addProduct']}"
-										action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}">
-										<f:param name="entityId" value="#{bundleTemplateBean.entity.id}"></f:param>
-										<f:param name="cid"
-											value="#{javax.enterprise.context.conversation.id}" />
-									</p:commandLink>
+									<p:commandButton
+										value="#{messages['bundleTemplate.addProduct']}"
+										action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}"
+										ajax="false">
+									</p:commandButton>
 								</p:column>
 							</p:row>
 							<p:row>

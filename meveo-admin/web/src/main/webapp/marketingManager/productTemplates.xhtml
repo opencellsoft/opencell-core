@@ -26,7 +26,73 @@
 					<p:menuitem outcome="mmProductTemplates"
 						value="#{messages['productTemplates.search']}" />
 				</p:breadCrumb>
-				<p:panelGrid columns="3" layout="grid"
+				<p:panel style="width: 50%">
+					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+						<p:panel>
+							<ul class="ListNoStyle">
+								<li class="Padding5"><p:link styleClass="fa fa-plus-circle"
+										outcome="mmProductTemplateDetail"
+										value="#{messages['productTemplate.newProduct']}">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="edit" value="true" />
+										<f:param name="editMode" value="edit" />
+									</p:link></li>
+							</ul>
+							<ul class="ListNoStyle">
+								<li class="Padding5"><p:link styleClass="fa fa-plus-circle"
+										outcome="mmBundleTemplateDetail"
+										value="#{messages['productTemplate.createBundle']}">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="edit" value="true" />
+										<f:param name="editMode" value="edit" />
+									</p:link></li>
+							</ul>
+						</p:panel>
+
+						<p:panel>
+							<ul class="ListNoStyle">
+								<li class="Padding5"><span class="fa fa-check-square-o"></span>
+									#{productTemplateListBean.activeProductCount}
+									#{messages['productTemplate.activeProductsNum']}</li>
+								<li class="Padding5"><span class="fa fa-close"></span>
+									#{productTemplateListBean.inactiveProductCount}
+									#{messages['productTemplate.deactivatedProductsNum']}</li>
+								<li class="Padding5"><span class="fa fa-exclamation-circle"></span>
+									#{productTemplateListBean.almostExpiredCount}
+									#{messages['productTemplate.expiringProductsNum']}</li>
+							</ul>
+						</p:panel>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel id="ptToExport" style="width: 50%">
+					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+						<p:panel>
+							<p:inputText placeholder="#{messages['action.search']}"
+								syle="float:right;"
+								value="#{productTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
+							<p:commandLink styleClass="Padding3 fa fa-search"
+								update=":productTemplateForm:productTemplateList"></p:commandLink>
+						</p:panel>
+						<p:panelGrid columns="1">
+							<p:panel style="border: 1px solid #000" id="offerForExportPanel">
+								<p:panelGrid columns="2">
+									<h:outputText id="exportSize"
+										value="#{messages['productTemplate.exportTo']}" />
+									<p:selectOneMenu id="exportToList"
+										value="#{productTemplateListBean.meveoInstanceToExport}">
+										<f:selectItem itemLabel="" />
+										<f:selectItems
+											value="#{productTemplateListBean.meveoInstances}" var="mi"
+											itemValue="#{mi}" itemLabel="#{mi.code}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panel>
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:panel>
+				<!-- <p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank" id="headerGrid">
 					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 						<span class="fa fa-plus-circle"> </span>
@@ -89,7 +155,7 @@
 							</p:panelGrid>
 						</p:panelGrid>
 					</p:panelGrid>
-				</p:panelGrid>
+				</p:panelGrid> -->
 			</p:panel>
 			<p:dataGrid id="productTemplateList" var="prod"
 				value="#{productTemplateListBean.productTemplates}" paginator="true"
@@ -183,7 +249,7 @@
 							</h:link>
 							<p:commandLink styleClass="fa fa-share-square-o"
 								action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
-								update=":productTemplateForm:headerGrid">
+								update=":productTemplateForm:ptToExport">
 
 							</p:commandLink>
 						</p:panelGrid>

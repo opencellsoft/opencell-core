@@ -23,7 +23,8 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<hftl:formPanel label="#{messages['menu.productTemplates']}"
+		<hftl:formPanel formId="bundleForm"
+			label="#{messages['menu.productTemplates']}"
 			backingBean="#{bundleTemplateBean}" showFormButtons="true"
 			formButtonsTopRight="true">
 			<!-- <p:panel styleClass="TexAlRight">
@@ -77,7 +78,7 @@
 											</p:graphicImage>
 											<p:fileUpload
 												fileUploadListener="#{bundleTemplateBean.handleFileUpload}"
-												mode="advanced" update=":formId:messages" auto="true"
+												mode="advanced" update=":bundleForm:messages" auto="true"
 												sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 										</p:outputPanel>
 									</hftl:decorateFormField>
@@ -178,16 +179,18 @@
 					</p:column>
 				</p:row>
 			</p:panelGrid>
-			<p:panel header="#{messages['menu.productTemplates']}"
+			<p:panel id="bundeList" header="#{messages['menu.productTemplates']}"
 				rendered="#{bundleTemplateBean.entity.id != null}">
-				<h:link value="#{messages['bundleTemplate.addProduct']}"
+				<!-- <h:link value="#{messages['bundleTemplate.addProduct']}"
 					outcome="mmBundleTemplateSelectProduct">
-					<f:param name="objectId" value="#{entity.id}"></f:param>
+					<f:param name="objectId" value="#{bundleTemplateBean.entity.id}"></f:param>
 					<f:param name="cid"
 						value="#{javax.enterprise.context.conversation.id}" />
-				</h:link>
+				</h:link> -->
+				<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
+					type="button" onclick="PF('selectProduct').show();" />
 				<p:dataGrid id="productTemplateList" var="prod"
-					value="#{bundleTemplateBean.entity.bundleProducts}"
+					value="#{bundleTemplateBean.bundleProductTemplatesToAdd}"
 					paginator="true" rows="5" columns="1" paginatorPosition="top"
 					paginatorAlwaysVisible="true"
 					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -235,7 +238,76 @@
 				header="#{messages['productTemplate.attributes']}">
 				<hftl:customFields backingBean="#{bundleTemplateBean}" />
 			</p:panel>
-
 		</hftl:formPanel>
+		<p:dialog id="selectProduct" widgetVar="selectProduct">
+			<h:form>
+				<p:panel id="headerPanel">
+					<p:panel styleClass="TexAlRight">
+
+						<p:selectOneMenu></p:selectOneMenu>
+						<p:selectOneMenu></p:selectOneMenu>
+						<p:selectOneMenu></p:selectOneMenu>
+					</p:panel>
+					<p:dataGrid id="productTemplatesTable" var="prod"
+						value="#{productTemplateListBean.productTemplates}"
+						paginator="true" rows="5" columns="1" paginatorPosition="top"
+						paginatorAlwaysVisible="true"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+
+						<p:panel>
+							<p:panelGrid styleClass="ui-panelgrid-blank">
+								<p:row>
+									<p:column rowspan="2">
+										<p:graphicImage id="productImage" cache="false"
+											value="#{productTemplateImageStreamer.image}" height="100">
+											<f:param name="id" value="#{prod.id}"></f:param>
+										</p:graphicImage>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{prod.name}"></h:outputText>
+									</p:column>
+									<p:column rowspan="2">
+										<h:outputText value="#{prod.businessProductModel.description}"></h:outputText>
+									</p:column>
+									<p:column>
+										<p:outputLabel value="#{messages['commons.validFrom']}"></p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:outputLabel value="#{messages['commons.validTo']}"></p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:outputLabel
+											value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
+									</p:column>
+									<p:column rowspan="2">
+										<p:commandButton
+											value="#{messages['bundleTemplate.addProduct']}"
+											action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}"
+											update=":bundleForm:bundeList"
+											oncomplete="PF('selectProduct').hide()">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="#{prod.description}"></h:outputText>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{prod.validFrom}"></h:outputText>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{prod.validTo}"></h:outputText>
+									</p:column>
+									<p:column>
+										<p:outputLabel value="0.00"></p:outputLabel>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+					</p:dataGrid>
+				</p:panel>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

@@ -1,11 +1,15 @@
 package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.sql.rowset.serial.SerialBlob;
 
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -16,8 +20,11 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
@@ -31,14 +38,21 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Inject
 	protected BundleTemplateService bundleTemplateService;
 
+	@Inject
+	protected BundleProductTemplateService bundleProductTemplateService;
+
 	private PricePlanMatrix entityPricePlan;
 	private BigDecimal catalogPrice;
 	private BigDecimal discountedAmount;
 	private CustomFieldInstance catalogPriceCF;
 
+	private List<BundleProductTemplate> bundleProductTemplatesToAdd;
+
 	private String editMode;
 
 	private List<ProductTemplate> productTemplatesToAdd;
+
+	private UploadedFile uploadedFile;
 
 	public BundleTemplateBean() {
 		super(BundleTemplate.class);
@@ -50,11 +64,24 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	}
 
 	@Override
+	public BundleTemplate initEntity() {
+		super.initEntity();
+		bundleProductTemplatesToAdd = new ArrayList<BundleProductTemplate>();
+		bundleProductTemplatesToAdd.addAll(getEntity().getBundleProducts());
+		return this.entity;
+	}
+
+	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
 		String outcome = super.saveOrUpdate(killConversation);
 
+		if (entity.getBundleProducts() != null) {
+			entity.getBundleProducts().clear();
+			entity.getBundleProducts().addAll(
+					bundleProductTemplateService.refreshOrRetrieve(bundleProductTemplatesToAdd));
+		}
 		if (editMode != null && editMode.length() > 0) {
 			outcome = "mmProductTemplates";
 		}
@@ -62,17 +89,31 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		return outcome;
 	}
 
-	public String addProductTemplateToBundle(ProductTemplate prod) {
-		if (entity != null) {
-			BundleProductTemplate bpt = new BundleProductTemplate();
-			bpt.setProductTemplate(prod);
-			bpt.setQuantity(1);
-			if (entity.getBundleProducts() == null) {
-				entity.setBundleProducts(new ArrayList<BundleProductTemplate>());
+	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
+		uploadedFile = event.getFile();
+
+		if (uploadedFile != null) {
+			byte[] contents = uploadedFile.getContents();
+			try {
+				entity.setImage(new SerialBlob(contents));
+			} catch (SQLException e) {
+				entity.setImage(null);
 			}
-			entity.getBundleProducts().add(bpt);
+			entity.setImageContentType(uploadedFile.getContentType());
+
+			saveOrUpdate(entity);
+
+			initEntity();
+
+			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
-		return "mmBundleTemplateDetail";
+	}
+
+	public void addProductTemplateToBundle(ProductTemplate prod) {
+		BundleProductTemplate bpt = new BundleProductTemplate();
+		bpt.setProductTemplate(prod);
+		bundleProductTemplatesToAdd.add(bpt);
 	}
 
 	public PricePlanMatrix getEntityPricePlan() {
@@ -121,6 +162,14 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public void setProductTemplatesToAdd(List<ProductTemplate> productTemplatesToAdd) {
 		this.productTemplatesToAdd = productTemplatesToAdd;
+	}
+
+	public List<BundleProductTemplate> getBundleProductTemplatesToAdd() {
+		return bundleProductTemplatesToAdd;
+	}
+
+	public void setBundleProductTemplatesToAdd(List<BundleProductTemplate> bundleProductTemplatesToAdd) {
+		this.bundleProductTemplatesToAdd = bundleProductTemplatesToAdd;
 	}
 
 }
