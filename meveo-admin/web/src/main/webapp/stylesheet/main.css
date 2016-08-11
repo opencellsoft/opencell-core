@@ -659,6 +659,7 @@ form.formNoBottomBorder {
 .FRight { float: right; }
 .FLeft { float: left; }
 .VAlignTop { vertical-align: top; }
+.VAlignMiddle { vertical-align: middle; }
 
 /* Containers */
 .Container100{ width:100%; float:left; padding:12px; box-sizing:border-box; }

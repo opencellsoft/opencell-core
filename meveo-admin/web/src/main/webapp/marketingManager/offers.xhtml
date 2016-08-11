@@ -25,20 +25,20 @@
 	<ui:define name="body">
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" styleClass="no-text-decoration" />
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
+					styleClass="no-text-decoration" />
 			</p:breadCrumb>
 		</h:form>
 
-		<p:panel header="#{messages['menu.marketingManager.catalogView']}" styleClass="no-border-radius">
-			<p:panel style="width: 50%">
+		<p:panel header="#{messages['menu.marketingManager.catalogView']}"
+			styleClass="no-border-radius">
+			<p:panel styleClass="Wid50">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
 					<p:panel>
 						<h:form>
 							<ul class="ListNoStyle">
-								<li class="Padding5">
-									<i class="fa fa-plus text-red"></i>
-									<p:link styleClass="no-text-decoration"
-										outcome="mmOfferTemplates"
+								<li class="Padding5"><i class="fa fa-plus text-red"></i> <p:link
+										styleClass="no-text-decoration" outcome="mmOfferTemplates"
 										value=" #{messages['action.offer.create']}">
 									</p:link></li>
 							</ul>
@@ -47,22 +47,24 @@
 
 					<p:panel>
 						<ul class="ListNoStyle">
-							<li class="Padding5"><i class="fa fa-check-square-o text-red"></i>
+							<li class="Padding5"><i
+								class="fa fa-check-square-o text-red"></i>
 								#{offerTemplateListBean.countActive()}
 								#{messages['page.catalog.offersAreActive']}</li>
 							<li class="Padding5"><i class="fa fa-close text-red"></i>
 								#{offerTemplateListBean.countDisabled()}
 								#{messages['page.catalog.offersAreDeactivated']}</li>
-							<li class="Padding5"><i class="fa fa-exclamation-circle text-red"></i>
+							<li class="Padding5"><i
+								class="fa fa-exclamation-circle text-red"></i>
 								#{offerTemplateListBean.countExpiring()}
 								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
 					</p:panel>
 				</p:panelGrid>
 			</p:panel>
-			<p:panel style="width: 50%">
-				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-					<p:panel>
+			<p:panel styleClass="Wid50 TexAlRight">
+				<div class="Container">
+					<p:panel styleClass="Container60 VAlignTop">
 						<h:form>
 							<div>
 								<p:inputText placeholder="#{messages['action.search']}"
@@ -81,44 +83,48 @@
 							</div>
 						</h:form>
 					</p:panel>
-					<p:panelGrid columns="1">
-						<p:panel style="border: 1px solid #ddd" id="offerForExportPanel" styleClass="no-border-radius">
-							<ul class="list-unstyled">
-								<li class="Padding5"><i class="fa fa-share-square-o" style="margin-right: 5px;"></i>
-									<p:commandLink onclick="PF('exportableOffers').show();"
-										value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
-									</p:commandLink></li>
-								<li class="Padding5">
-									<div class="FLeft">
-										<p:commandLink styleClass="fa fa-play" style="margin-right: 5px;"
-											value=" #{messages['page.catalog.exportTo']}"
-											update=":#{p:component('exportParametersDialog')}"
-											oncomplete="PF('exportParametersDialog').show()">
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedExportTemplate}"
-												value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.dataModelToExport}"
-												value="#{offerTemplateListBean.listFromBOM()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedEntitiesToExport}"
-												value="#{offerTemplateListBean.selectedOfferTemplates}" />
-										</p:commandLink>
-									</div>									
-									<div class="Fright">
-										<p:selectOneMenu styleClass="no-border-radius">
-											<f:selectItem itemLabel="Production" itemValue="PROD" styleClass="no-border-radius" />
-										</p:selectOneMenu>
-									</div>
-								</li>
-							</ul>
-						</p:panel>
-					</p:panelGrid>
-				</p:panelGrid>
+					<p:panel columns="1" styleClass="Container40 no-border-radius"
+						style="border: 1px solid #ddd" id="offerForExportPanel">
+						<ul class="list-unstyled">
+							<li class="Padding5"><i class="fa fa-share-square-o"
+								style="margin-right: 5px;"></i> <p:commandLink
+									onclick="PF('exportableOffers').show();"
+									value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
+								</p:commandLink></li>
+							<li class="Padding5">
+								<div class="FRight">
+									<p:selectOneMenu styleClass="no-border-radius">
+										<f:selectItem itemLabel="Production" itemValue="PROD"
+											styleClass="no-border-radius" />
+									</p:selectOneMenu>
+								</div>
+								<div class="FRight">
+									<p:commandLink styleClass="fa fa-play"
+										style="margin-right: 5px;"
+										value=" #{messages['page.catalog.exportTo']}"
+										update=":#{p:component('exportParametersDialog')}"
+										oncomplete="PF('exportParametersDialog').show()">
+										<f:setPropertyActionListener
+											target="#{entityExportImportBean.selectedExportTemplate}"
+											value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
+										<f:setPropertyActionListener
+											target="#{entityExportImportBean.dataModelToExport}"
+											value="#{offerTemplateListBean.listFromBOM()}" />
+										<f:setPropertyActionListener
+											target="#{entityExportImportBean.selectedEntitiesToExport}"
+											value="#{offerTemplateListBean.selectedOfferTemplates}" />
+									</p:commandLink>
+								</div>
+							</li>
+						</ul>
+					</p:panel>
+				</div>
 			</p:panel>
+
 			<p:messages id="main_messages"></p:messages>
 			<p:tabView id="tabView"
-				activeIndex="#{offerTemplateListBean.activeTab}" styleClass="no-border-radius offer-wrapper">
+				activeIndex="#{offerTemplateListBean.activeTab}"
+				styleClass="no-border-radius offer-wrapper">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
 					<h:form id="mainForm">
 						<p:dataGrid id="dataGrid"
@@ -185,7 +191,8 @@
 													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:commandLink
 														action="#{offerTemplateListBean.duplicate()}"
-														update=":tabView" styleClass="fa fa-copy no-text-decoration">
+														update=":tabView"
+														styleClass="fa fa-copy no-text-decoration">
 														<f:setPropertyActionListener
 															target="#{offerTemplateListBean.entity}"
 															value="#{entity}" />
@@ -196,7 +203,8 @@
 															message="#{messages['commons.confirmDuplicate']}" />
 													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:link
-														styleClass="fa fa-edit no-text-decoration text-red" outcome="mmOfferDetail">
+														styleClass="fa fa-edit no-text-decoration text-red"
+														outcome="mmOfferDetail">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
 														<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -205,7 +213,8 @@
 														<f:param name="tab" value="0"></f:param>
 													</p:link></li>
 												<li class="Padding5 FRight"><p:link
-														outcome="mmOfferDetail" styleClass="fa fa-search-plus no-text-decoration text-red">
+														outcome="mmOfferDetail"
+														styleClass="fa fa-search-plus no-text-decoration text-red">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
 														<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -233,7 +242,8 @@
 											value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 									</p:panel>
 									<p:panel>
-										<p:panel styleClass="Wid30 VAlignTop border-left no-border-radius"
+										<p:panel
+											styleClass="Wid30 VAlignTop border-left no-border-radius"
 											header="#{messages['marketingManager.catalog.OneTimeFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
@@ -243,7 +253,8 @@
 													#{charge.chargeTemplate.descriptionOrCode}
 												</p:dataList>
 										</p:panel>
-										<p:panel styleClass="Wid30 VAlignTop border-left no-border-radius"
+										<p:panel
+											styleClass="Wid30 VAlignTop border-left no-border-radius"
 											header="#{messages['marketingManager.catalog.recurringFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
@@ -253,7 +264,8 @@
 													#{charge.chargeTemplate.descriptionOrCode}
 											</p:dataList>
 										</p:panel>
-										<p:panel styleClass="Wid30 VAlignTop border-left no-border-radius"
+										<p:panel
+											styleClass="Wid30 VAlignTop border-left no-border-radius"
 											header="#{messages['marketingManager.catalog.usageFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
@@ -304,7 +316,9 @@
 								<f:param name="backView" value="mmOffers"></f:param>
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
-							<p:link styleClass="Padding5 fa fa-edit no-text-decoration text-red" outcome="mmOfferDetail">
+							<p:link
+								styleClass="Padding5 fa fa-edit no-text-decoration text-red"
+								outcome="mmOfferDetail">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -322,7 +336,8 @@
 								<p:confirm header="#{messages['commons.duplicate']}"
 									message="#{messages['commons.confirmDuplicate']}" />
 							</p:commandLink>
-							<p:commandLink styleClass="Padding5 fa fa-share-square-o no-text-decoration text-red"
+							<p:commandLink
+								styleClass="Padding5 fa fa-share-square-o no-text-decoration text-red"
 								update=":offerForExportPanel :dlgOfferExport"
 								action="#{offerTemplateListBean.addForExport(entity)}">
 							</p:commandLink>
