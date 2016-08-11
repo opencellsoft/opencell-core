@@ -37,25 +37,29 @@
 					<p:panel>
 						<h:form>
 							<ul class="ListNoStyle">
-								<li class="Padding5"><i class="fa fa-plus text-red"></i> <p:link
-										styleClass="no-text-decoration" outcome="mmOfferTemplates"
-										value=" #{messages['action.offer.create']}">
-									</p:link></li>
+								<li class="Padding5">
+									<div class="btn-wrapper">
+										<i class="fa fa-plus text-red"></i>
+										<p:link styleClass="no-text-decoration"
+											outcome="mmOfferTemplates"
+											value=" #{messages['action.offer.create']}">
+										</p:link>
+									</div>
+									<!-- / btn-wrapper -->
+								</li>
 							</ul>
 						</h:form>
 					</p:panel>
 
 					<p:panel>
 						<ul class="ListNoStyle">
-							<li class="Padding5"><i
-								class="fa fa-check-square-o text-red"></i>
+							<li class="Padding5"><i class="fa fa-check-square-o text-red"></i>
 								#{offerTemplateListBean.countActive()}
 								#{messages['page.catalog.offersAreActive']}</li>
 							<li class="Padding5"><i class="fa fa-close text-red"></i>
 								#{offerTemplateListBean.countDisabled()}
 								#{messages['page.catalog.offersAreDeactivated']}</li>
-							<li class="Padding5"><i
-								class="fa fa-exclamation-circle text-red"></i>
+							<li class="Padding5"><i class="fa fa-exclamation-circle text-red"></i>
 								#{offerTemplateListBean.countExpiring()}
 								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
@@ -66,7 +70,7 @@
 				<div class="Container">
 					<p:panel styleClass="Container60 VAlignTop">
 						<h:form>
-							<div>
+							<div class="search-wrapper">
 								<p:inputText placeholder="#{messages['action.search']}"
 									value="#{offerTemplateListBean.filters['FIELD1_OR_FIELD2 name description']}" />
 								<p:commandLink styleClass="Padding3 fa fa-search"
@@ -81,6 +85,7 @@
 								<!-- 									<s:objectConverter /> -->
 								<!-- 								</p:selectManyMenu> -->
 							</div>
+							<!-- / search-wrapper -->
 						</h:form>
 					</p:panel>
 					<p:panel columns="1" styleClass="Container40 no-border-radius"
@@ -123,8 +128,7 @@
 
 			<p:messages id="main_messages"></p:messages>
 			<p:tabView id="tabView"
-				activeIndex="#{offerTemplateListBean.activeTab}"
-				styleClass="no-border-radius offer-wrapper">
+				activeIndex="#{offerTemplateListBean.activeTab}" styleClass="no-border-radius offer-wrapper">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
 					<h:form id="mainForm">
 						<p:dataGrid id="dataGrid"
@@ -327,7 +331,7 @@
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:commandLink action="#{offerTemplateListBean.duplicate()}"
-								update=":tabView" styleClass="Padding5 fa fa-copy">
+								update=":tabView" styleClass="Padding5 fa fa-copy no-text-decoration text-red">
 								<f:setPropertyActionListener
 									target="#{offerTemplateListBean.entity}" value="#{entity}" />
 								<f:param name="cid"

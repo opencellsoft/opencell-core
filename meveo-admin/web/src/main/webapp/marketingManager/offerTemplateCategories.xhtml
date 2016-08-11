@@ -22,12 +22,14 @@
 			</h:form>
 
 			<p:panel>
-				<h:form id="searchForm" style="border:none;">
-					<span style="float: right;"> <p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
-							update=":mainForm:offerCategoriesTable" /> <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}"
+				<h:form id="searchForm" >
+					<span style="float: right;" class="search-wrapper">
+						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
+							update=":mainForm:offerCategoriesTable" /> 
+							<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}"
 							placeholder="#{messages['action.search']}" />
+						<p:defaultCommand target="searchButton" />
 					</span>
-					<p:defaultCommand target="searchButton" />
 				</h:form>
 			</p:panel>
 			<h:form id="mainForm">
