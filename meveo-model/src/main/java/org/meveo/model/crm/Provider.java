@@ -20,23 +20,18 @@ package org.meveo.model.crm;
 
 import java.sql.Blob;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -57,9 +52,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -202,13 +195,18 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
-    @OneToOne(mappedBy = "provider", cascade= CascadeType.ALL)
-    private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+    @OneToOne(cascade= CascadeType.ALL)
+    @JoinColumn(name="BILLING_INVOICE_CONFIG_ID")
+    private InvoiceConfiguration invoiceConfiguration;
 	
 	
 	@Column(name = "RECOGNIZE_REVENUE")
 	private boolean recognizeRevenue;
 	
+	public Provider(){
+		this.invoiceConfiguration=new InvoiceConfiguration();
+		this.bankCoordinates=new BankCoordinates();
+	}
 
     public String getCode() {
         return code;

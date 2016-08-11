@@ -1,24 +1,41 @@
 package org.meveo.model.billing;
 
+import java.io.Serializable;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
-import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IEntity;
+import org.meveo.model.IVersionedEntity;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
 @ExportIdentifier({ "provider" })
-@Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID" }))
+@Table(name = "BILLING_INVOICE_CONFIGURATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
-public class InvoiceConfiguration extends BaseEntity {
+public class InvoiceConfiguration implements IVersionedEntity,IEntity,Serializable{
 
     private static final long serialVersionUID = -735961368678724497L;
+
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
+    @Access(AccessType.PROPERTY)
+    protected Long id;
+
+    @Version
+    @Column(name = "VERSION")
+    private Integer version;
 
     @Column(name = "DISPLAY_SUBSCRIPTIONS")
     private Boolean displaySubscriptions = false;
@@ -123,7 +140,30 @@ public class InvoiceConfiguration extends BaseEntity {
 	public String toString() {
 		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]";
 	}
-	
-	
+
+	@Override
+	public Serializable getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id=id;
+	}
+
+	@Override
+	public boolean isTransient() {
+		return id==null;
+	}
+
+	@Override
+	public Integer getVersion() {
+		return this.version;
+	}
+
+	@Override
+	public void setVersion(Integer version) {
+		this.version=version;
+	}
 
 }

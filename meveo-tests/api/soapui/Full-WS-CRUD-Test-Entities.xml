@@ -3648,16 +3648,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac3a571b-413a-4b63-91ea-abd3a84f104a" name="Find with Code provider">
-              <con:configuration>
-                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="e8e1fe3f-33f3-4f30-a9c3-18e76a4bffb2" name="XPath Match">
-              <con:configuration>
-                <path>//provider</path>
-                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
+              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1">
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</description>
                <currency>EUR</currency>
                <country>FR</country>
@@ -3668,6 +3662,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <enterprise>true</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates>
                   <iban>1234</iban>
                   <bic>1234</bic>
@@ -3686,11 +3681,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -3731,32 +3722,32 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="46dc195e-51fe-4c83-a3fe-9ea3322fa1d0" name="Find with code">
-              <con:configuration>
-                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="eb7cf511-4361-4b9c-9ae9-b31c53e376c2" name="XPath Match">
-              <con:configuration>
-                <path>//provider</path>
-                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
+              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
                <enterprise>false</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates/>
                <recognizeRevenue>false</recognizeRevenue>
                <invoiceConfiguration>
+                  <displaySubscriptions>false</displaySubscriptions>
+                  <displayServices>false</displayServices>
+                  <displayOffers>false</displayOffers>
+                  <displayEdrs>false</displayEdrs>
+                  <displayProvider>false</displayProvider>
+                  <displayCfAsXML>false</displayCfAsXML>
+                  <displayPricePlans>false</displayPricePlans>
+                  <displayDetail>false</displayDetail>
+                  <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
