@@ -101,6 +101,14 @@
   box-shadow: none;
 }
 
+.fa-2x {
+  font-size: 2em !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
 /* Override Default Styles
 ===================================== */
 body {

@@ -81,9 +81,9 @@
 									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
 
 									<p:panel>
-										<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
-											<li class="Padding5 FRight"><p:link
-													styleClass="fa fa-edit" outcome="mmOfferDetail">
+										<ul class="list-inline text-center">
+											<li><p:link
+													styleClass="fa fa-2x fa-edit no-text-decoration text-red" outcome="mmOfferDetail">
 													<f:param name="cid"
 														value="#{javax.enterprise.context.conversation.id}" />
 													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
@@ -91,8 +91,8 @@
 													<f:param name="backView" value="mmOfferTemplates"></f:param>
 													<f:param name="tab" value="0"></f:param>
 												</p:link></li>
-											<li class="Padding5 FRight"><p:link
-													outcome="mmOfferDetail" styleClass="fa fa-search-plus">
+											<li><p:link
+													outcome="mmOfferDetail" styleClass="fa fa-2x fa-search-plus no-text-decoration text-red">
 													<f:param name="cid"
 														value="#{javax.enterprise.context.conversation.id}" />
 													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
@@ -142,9 +142,9 @@
 										value="#{ost.serviceTemplate.serviceUsageCharges}"
 										var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
 								</p:panel>
-								<p:panel styleClass="Wid25 VAlignTop"
+								<p:panel styleClass="Wid25 VAlignTop text-center"
 									header="#{messages['action.startWithThisTemplate']}">
-									<p:link styleClass="fa fa-play" outcome="mmOfferDetail"
+									<p:link styleClass="fa fa-2x fa-play no-text-decoration text-red" outcome="mmOfferDetail"
 										value="">
 										<f:param name="bomId" value="#{entity.id}"></f:param>
 										<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
