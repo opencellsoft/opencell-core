@@ -6755,7 +6755,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </userHierarchyLevel>\r
       </ws:createUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6b74a54c-b351-4f19-a57f-792835388924"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="3bdb56ab-504f-4e84-a1fa-42270e2eb7ed" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep>
+      <con:testStep type="request" name="prepare UserHierarchyLevel Update for User" id="4e95c077-e74e-4cad-bd3f-4cf49529268d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUserHierarchyLevel</con:operation><con:request name="prepare UserHierarchyLevel Update for User" id="1d1547c4-07f7-4f65-bef8-a3271473a5f9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">\r           
+         </userHierarchyLevel>\r
+      </ws:createUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="130d360c-93be-4b58-a01a-e5a72e5904ab" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep>
       <con:testStep type="request" name="create User with All Vals" id="d77ccf0f-17a9-43c6-b490-38ea856a9bb7">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -6879,8 +6888,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="c3f4f6b9-5c77-4013-85a9-774621a52216" name="Find1: All Values">
-              <con:configuration>
-                <token><![CDATA[<user>
+              <con:configuration><token><![CDATA[<user>
                <username>${#Project#entityPrefix}_${#TestSuite#index}_USERNAME.TEST1</username>
                <email>${#Project#entityPrefix}_${#TestSuite#index}@test.com</email>
                <provider>DEMO</provider>
@@ -6891,10 +6899,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <role>superAdministrateur</role>
                </roles>
                <role>superAdministrateur</role>
-            </user>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</userLevel>
+            </user>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="eb283a1e-8913-454b-a5f6-bd4fd608f354" name="Find2: Username">
               <con:configuration>
@@ -6993,17 +6999,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <provider>DEMO</provider>            
             <firstName>firstName</firstName>
             <lastName>lastName</lastName>
-            <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</userLevel>
+            <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</userLevel>
          </user>
       </ws:updateUser>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="8522c47e-d7b2-41b8-822b-438d4b9ff8d6" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -7089,8 +7091,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="a1504b80-fe1e-41aa-8d6a-6751d31df297" name="Find1: All values">
-              <con:configuration>
-                <token><![CDATA[<user>
+              <con:configuration><token><![CDATA[<user>
                <username>${#Project#entityPrefix}_${#TestSuite#index}_USERNAME.TEST1</username>
                <email>${#Project#entityPrefix}_${#TestSuite#index}@test1.com</email>
                <provider>DEMO</provider>
@@ -7100,10 +7101,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <role>administrateur</role>
                </roles>
                <role>administrateur</role>
-            </user>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</userLevel>
+            </user>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="78586db6-4b8b-4951-837c-b6f5a7254400" name="Find2: Username ">
               <con:configuration>
@@ -7193,7 +7192,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7263,8 +7262,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="delete User2" id="fa1287cb-3248-4278-87a5-ccc21814265b">
+      </con:testStep><con:testStep type="request" name="delete User2" id="fa1287cb-3248-4278-87a5-ccc21814265b">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -7274,7 +7272,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7310,7 +7308,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>      
@@ -7320,18 +7318,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Fail Status">
-              <con:configuration>
-                <token>FAIL</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="fca54be2-0f7f-4452-b07b-29c5d9aaac4f" name="ERROR Code">
-              <con:configuration>
-                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -7350,7 +7340,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</hierarchyLevelCode>\r
       </ws:removeUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b47ea66a-87cc-4b74-98c0-47a19caac026"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="5ee60074-f50f-440d-ba93-a9b201b4069b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove UserHierarchyLevel for Update" id="2be21e1b-c544-4840-9927-65b47fabd047"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUserHierarchyLevel</con:operation><con:request name="remove UserHierarchyLevel for Update" id="1ff35835-e2c0-457f-b664-c6da8cd8f2ab"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserHierarchyLevel>\r
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</hierarchyLevelCode>\r
+      </ws:removeUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="08e01e90-e72c-4f37-a94b-e3800ea00eb8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/>
     </con:testCase>
     <con:testCase id="f0fe3711-a075-4ddc-822e-ef11117c8c0f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD User Role" searchProperties="true">
       <con:settings/>
@@ -24230,7 +24227,45 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       	</userHierarchyLevel>
    	</ws:createUserHierarchyLevel> 
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="6f614111-c0c5-4774-a47b-8508624ec1de" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create UserHierarchyLevel without parent All Vals" id="bc5e1a1c-4ceb-43f8-b065-1eed71dcfba8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUserHierarchyLevel</con:operation><con:request name="create UserHierarchyLevel without parent All Vals" id="b0f57055-458a-4cf3-b4ee-cf0aa8acc705"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="6f614111-c0c5-4774-a47b-8508624ec1de" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find UserHierarchyLevel min Req Vals" id="82e9f17b-2df8-446a-b31d-98f8504d2d2d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find UserHierarchyLevel min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration><token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE2">
+               &lt;orderLevel>0&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="create UserHierarchyLevel with All Vals" id="bc5e1a1c-4ceb-43f8-b065-1eed71dcfba8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createUserHierarchyLevel</con:operation><con:request name="create UserHierarchyLevel with All Vals" id="b0f57055-458a-4cf3-b4ee-cf0aa8acc705"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createUserHierarchyLevel>\r
@@ -24240,7 +24275,50 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
          </userHierarchyLevel>\r
       </ws:createUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="a3aa747e-ce19-48c9-a7df-438c2fdf0b31" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update UserHierarchyLevel with all fields" id="bd9bafe7-73db-4219-a65f-b45b2ca27801"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateUserHierarchyLevel</con:operation><con:request name="update UserHierarchyLevel with all fields" id="d6a19392-add4-4fc3-97a8-f925f4d814bd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="a3aa747e-ce19-48c9-a7df-438c2fdf0b31" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find UserHierarchyLevel with All Req Vals" id="88e56960-8d07-4d6f-9233-13ebfc09157e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find UserHierarchyLevel with All Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration><token><![CDATA[<userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">
+               <parentLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</parentLevel>
+               <orderLevel>1</orderLevel>
+            </userHierarchyLevel>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="update UserHierarchyLevel with all fields" id="bd9bafe7-73db-4219-a65f-b45b2ca27801"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateUserHierarchyLevel</con:operation><con:request name="update UserHierarchyLevel with all fields" id="d6a19392-add4-4fc3-97a8-f925f4d814bd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateUserHierarchyLevel>\r
@@ -24250,7 +24328,49 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
          </userHierarchyLevel>\r
       </ws:updateUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="36aca5fa-c579-4b62-8f7d-b5a5dc77e530"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update UserHierarchyLevel with required field" id="1ba172b6-6696-4cff-bfcd-52c0e87fccc4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateUserHierarchyLevel</con:operation><con:request name="update UserHierarchyLevel with required field" id="04665e39-35b4-487d-9bb6-38776acfb2b6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="8a6d2ad6-d7c3-44ed-8f64-172ab792c2d8" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update UserHierarchyLevel with All Req Vals" id="dc6309b8-4eb6-4dac-b7ae-2c89381b51d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find update UserHierarchyLevel with All Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration><token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_DescriptionUpdate">
+               &lt;orderLevel>2&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="update UserHierarchyLevel with required field" id="1ba172b6-6696-4cff-bfcd-52c0e87fccc4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateUserHierarchyLevel</con:operation><con:request name="update UserHierarchyLevel with required field" id="04665e39-35b4-487d-9bb6-38776acfb2b6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateUserHierarchyLevel>\r
@@ -24258,36 +24378,129 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
          </userHierarchyLevel>\r
       </ws:updateUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="22d4e430-c437-4d1b-9e40-1ab8bb2b65ef"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find UserHierarchyLevel" id="fbe96fc3-98bf-4e6b-b838-04507bcc2e84"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findUserHierarchyLevel</con:operation><con:request name="find UserHierarchyLevel" id="7d0fdcb8-42ca-4bf9-85be-a29c0d682f6c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:findUserHierarchyLevel>\r
-         <!--Optional:-->\r
-         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>\r
-      </ws:findUserHierarchyLevel>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c530dbc4-c107-42d4-bc95-c595bdadfc84"/><con:assertion type="Schema Compliance" id="5eeec666-31e1-4b59-82b3-c7e0e2ad1c4a" disabled="true"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="3d429e73-0cec-41db-afa9-1ab8d9daf305"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove UserHierarchyLevel" id="2ee4797d-6b70-4ce8-ace2-6e2067174029"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUserHierarchyLevel</con:operation><con:request name="remove UserHierarchyLevel" id="99e457b8-9dfa-45e5-9f69-d23021b8db09"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="9d9ab379-4354-4bc3-8b83-f1c9816fc149" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find update UserHierarchyLevel with required Vals" id="90227867-a2b0-4a9d-ac08-0827bc423ef1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find update UserHierarchyLevel with required Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration><token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1">
+               &lt;orderLevel>0&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="remove UserHierarchyLevel" id="2ee4797d-6b70-4ce8-ace2-6e2067174029"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUserHierarchyLevel</con:operation><con:request name="remove UserHierarchyLevel" id="99e457b8-9dfa-45e5-9f69-d23021b8db09"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeUserHierarchyLevel>\r
          <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>\r
       </ws:removeUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="b88b022f-f2fc-4648-8c22-28dc37bff9ba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove UserHierarchyLevel2" id="36e0988d-2e29-4615-a4b1-02c129a6e034"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUserHierarchyLevel</con:operation><con:request name="remove UserHierarchyLevel2" id="18ebb217-2c21-4b63-ac8c-345fa1fe7166"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="b88b022f-f2fc-4648-8c22-28dc37bff9ba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find removed UserHierarchyLevel1" id="e48a6743-9931-45ed-8a71-be67a8392b29">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findRole</con:operation>
+          <con:request name="find removed UserHierarchyLevel1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Fail Status">
+              <con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fca54be2-0f7f-4452-b07b-29c5d9aaac4f" name="ERROR Code">
+              <con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:testStep type="request" name="remove UserHierarchyLevel2" id="36e0988d-2e29-4615-a4b1-02c129a6e034"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeUserHierarchyLevel</con:operation><con:request name="remove UserHierarchyLevel2" id="18ebb217-2c21-4b63-ac8c-345fa1fe7166"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeUserHierarchyLevel>\r
          <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>\r
       </ws:removeUserHierarchyLevel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7ef65793-aab1-49e7-89c5-f47fb1e91941"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find removeUserHierarchyLevel" id="e38ac4e3-6b5e-4f23-961f-b5edc20b8915"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findUserHierarchyLevel</con:operation><con:request name="find removeUserHierarchyLevel" id="e4359a55-a29e-468d-9890-669899a14f67"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:findUserHierarchyLevel>\r
-         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>\r
-      </ws:findUserHierarchyLevel>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Fault Assertion" id="de7fdaaa-e0b6-4bbc-b6b4-4c8f06666b8f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties>
+</soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="8eb6e2ac-90d2-4d37-82c2-b043a182327e" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find removed UserHierarchyLevel2" id="b22288a0-a268-44b6-9d49-dcb0b1985364">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findRole</con:operation>
+          <con:request name="find removed UserHierarchyLevel2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Fail Status">
+              <con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fca54be2-0f7f-4452-b07b-29c5d9aaac4f" name="ERROR Code">
+              <con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep><con:properties/></con:testCase><con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>33</con:value>
