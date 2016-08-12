@@ -160,9 +160,9 @@
 			<p:dataGrid id="productTemplateList" var="prod"
 				value="#{productTemplateListBean.productTemplates}" paginator="true"
 				rows="5" columns="1" paginatorPosition="top"
-				paginatorAlwaysVisible="true"
+				paginatorAlwaysVisible="true" 
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+				lazy="true" styleClass="dataGrid custom-grid ui-panelgrid-blank ui-datagrid-blank" rowKey="#{prod.id}">
 
 				<p:panelGrid columns="3" style="width: 100%"
 					styleClass="ui-panelgrid-blank" id="productTemplateRow">
