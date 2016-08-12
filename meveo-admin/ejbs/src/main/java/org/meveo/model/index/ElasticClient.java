@@ -107,9 +107,14 @@ public class ElasticClient {
 	 * @param e
 	 * @param creator
 	 */
-	public void createOrUpdate(BusinessEntity e,User creator){		
-		ElasticDocument esDoc = new ElasticDocument(e);		
-		createOrUpdate(esDoc, e.getClass().getName(), creator.getProvider().getCode());		
+	public void createOrUpdate(BusinessEntity e, User creator) {
+		try {
+
+			ElasticDocument esDoc = new ElasticDocument(e);
+			createOrUpdate(esDoc, e.getClass().getName(), creator.getProvider().getCode());
+		} catch (Exception ex) {
+			log.warn("ES Client createOrUpdate", ex);
+		}
 	}
 	
 	public String search(String[] classnames,String query,User user){
