@@ -20,7 +20,7 @@
 			column1Label="#{messages['country.countryCode']}"
 			column1="countryCode"
 			column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn" eventBackingBean="#{tradingCountryBean}">
+			column2="descriptionEn" selectionListenerBean="#{tradingCountryBean}" selectionListenerMethod="onCountrySelect">
 		</hftl:entityPopup>
 		<p:panel>
 			<h:form id="crumbmenuForm">

@@ -23,7 +23,7 @@
 				column1Label="#{messages['language.languageCode']}"
 				column1="languageCode"
 				column2Label="#{messages['tradingLanguage.prDescription']}"
-				column2="descriptionEn" eventBackingBean="#{tradingLanguageBean}">
+				column2="descriptionEn" selectionListenerBean="#{tradingLanguageBean}" selectionListenerMethod="onLanguageSelect">
 			</hftl:entityPopup>
 		</c:if>
 		<p:panel>

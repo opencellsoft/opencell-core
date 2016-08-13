@@ -24,6 +24,7 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -89,14 +90,6 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private OrderItemService orderItemService;
-
-    public static String CHARACTERISTIC_SERVICE_QUANTITY = "quantity";
-    public static String CHARACTERISTIC_SUBSCRIPTION_CODE = "subscriptionCode";
-    public static String CHARACTERISTIC_SERVICE_CODE = "serviceCode";
-    public static String CHARACTERISTIC_PRODUCT_INSTANCE_CODE = "productInstanceCode";
-    public static String CHARACTERISTIC_SUBSCRIPTION_DATE = "subscriptionDate";
-    public static String CHARACTERISTIC_TERMINATION_DATE = "terminationDate";
-    public static String CHARACTERISTIC_TERMINATION_REASON = "terminationReason";
 
     /**
      * Register an order from TMForumApi
@@ -443,11 +436,12 @@ public class OrderApi extends BaseApi {
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
         Subscription subscription = new Subscription();
-        subscription.setCode((String) getProductCharacteristic(productOrderItem.getProduct(), CHARACTERISTIC_SUBSCRIPTION_CODE, String.class, UUID.randomUUID().toString()));
+        subscription.setCode((String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(),
+            String.class, UUID.randomUUID().toString()));
         subscription.setUserAccount(orderItem.getUserAccount());
         subscription.setOffer(offerTemplate);
-        subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class,
-            DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+        subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+            Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
 
         subscriptionService.create(subscription, currentUser);
 
@@ -472,10 +466,13 @@ public class OrderApi extends BaseApi {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
-        BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
-        Date chargeDate = ((Date) getProductCharacteristic(product, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
+        BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class,
+            new BigDecimal(1)));
+        Date chargeDate = ((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+            DateUtils.setTimeToZero(new Date())));
 
-        String code = (String) getProductCharacteristic(product, CHARACTERISTIC_PRODUCT_INSTANCE_CODE, String.class, UUID.randomUUID().toString());
+        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
+            .toString());
 
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
             currentUser);
@@ -605,19 +602,21 @@ public class OrderApi extends BaseApi {
             // // If ID is represent - product represents a service and product characteristics define custom fields and other service attributes
             // } else if (!StringUtils.isBlank(serviceProduct.getId())) {
 
-            String serviceCode = (String) getProductCharacteristic(serviceProduct, CHARACTERISTIC_SERVICE_CODE, String.class, null);
+            String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
             log.error("AKK service code is {}", serviceCode);
             if (StringUtils.isBlank(serviceCode)) {
                 throw new MissingParameterException("serviceCode");
             }
 
             // Service will be activated
-            if (getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_DATE, Date.class, null) == null) {
+            if (getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null) == null) {
 
                 ServiceToActivateDto service = new ServiceToActivateDto();
                 service.setCode(serviceCode);
-                service.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct, CHARACTERISTIC_SERVICE_QUANTITY, BigDecimal.class, new BigDecimal(1)));
-                service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, CHARACTERISTIC_SUBSCRIPTION_DATE, Date.class, DateUtils.setTimeToZero(new Date())));
+                service.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(),
+                    BigDecimal.class, new BigDecimal(1)));
+                service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+                    DateUtils.setTimeToZero(new Date())));
                 service.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class, currentUser.getProvider()));
 
                 activateServicesRequestDto.getServicesToActivateDto().addService(service);
@@ -627,8 +626,10 @@ public class OrderApi extends BaseApi {
 
                 TerminateSubscriptionServicesRequestDto terminationDto = new TerminateSubscriptionServicesRequestDto();
                 terminationDto.setSubscriptionCode(subscription.getCode());
-                terminationDto.setTerminationDate((Date) getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_DATE, Date.class, null));
-                terminationDto.setTerminationReason((String) getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_REASON, String.class, null));
+                terminationDto.setTerminationDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(),
+                    Date.class, null));
+                terminationDto.setTerminationReason((String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
+                    String.class, null));
                 terminationDto.getServices().add(serviceCode);
                 servicesToTerminate.add(terminationDto);
             }
@@ -741,15 +742,17 @@ public class OrderApi extends BaseApi {
 
         List<Product> products = new ArrayList<>();
         List<Product> services = new ArrayList<>();
-        int index = 1;
-        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
-            for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                if (index < orderItem.getProductOfferings().size()) {
-                    products.add(productRelationship.getProduct());
-                } else {
-                    services.add(productRelationship.getProduct());
+        if (productOrderItem != null) {
+            int index = 1;
+            if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+                for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
+                    if (index < orderItem.getProductOfferings().size()) {
+                        products.add(productRelationship.getProduct());
+                    } else {
+                        services.add(productRelationship.getProduct());
+                    }
+                    index++;
                 }
-                index++;
             }
         }
         return new List[] { products, services };

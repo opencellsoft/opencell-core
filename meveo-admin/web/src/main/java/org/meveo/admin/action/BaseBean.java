@@ -76,7 +76,6 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.util.view.PagePermission;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -932,10 +931,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected void clearObjectId() {
         objectIdFromParam = null;
         objectIdFromSet = null;
-    }
-
-    public void onRowSelect(SelectEvent event) {
-
     }
 
     protected User getCurrentUser() {

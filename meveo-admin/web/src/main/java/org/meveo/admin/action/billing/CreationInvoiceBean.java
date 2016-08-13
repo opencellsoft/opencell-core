@@ -209,7 +209,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		return invoiceService;
 	}
 
-	public void onRowSelect(SelectEvent event) {
+	public void onInvoiceSelect(SelectEvent event) {
 		invoiceToAdd = (Invoice) event.getObject();
 		if (invoiceToAdd != null && !entity.getLinkedInvoices().contains(invoiceToAdd)) {
 			entity.getLinkedInvoices().add(invoiceToAdd);

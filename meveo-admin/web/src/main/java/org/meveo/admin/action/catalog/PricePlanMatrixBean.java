@@ -170,7 +170,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	}
 
 	
-	public void onRowSelect(SelectEvent event) {
+	public void onChargeSelect(SelectEvent event) {
 		if (event.getObject() instanceof ChargeTemplate) {
 			ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
 			if (chargeTemplate != null) {

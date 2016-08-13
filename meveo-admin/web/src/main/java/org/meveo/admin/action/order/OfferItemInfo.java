@@ -1,57 +1,79 @@
 package org.meveo.admin.action.order;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 
 public class OfferItemInfo implements Serializable {
 
     private static final long serialVersionUID = 2813002300477029504L;
 
-    private String code;
+    private BusinessEntity template;
 
-    private String description;
+    private Map<String, Object> characteristics;
 
-    private List<ProductCharacteristic> characteristics;
+    private boolean main = false;
+    private boolean selected = false;
 
-    public OfferItemInfo(String code, String description, List<ProductCharacteristic> characteristicsList) {
+    public OfferItemInfo(BusinessEntity template, Map<String, Object> characteristics, boolean main, boolean selected) {
         super();
-        this.code = code;
-        this.description = description;
-        this.characteristics = characteristicsList;
+        this.main = main;
+        this.template = template;
+        this.characteristics = characteristics;
+        this.selected = selected;
     }
 
-    public String getCode() {
-        return code;
+    public BusinessEntity getTemplate() {
+        return template;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTemplate(BusinessEntity template) {
+        this.template = template;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<ProductCharacteristic> getCharacteristics() {
+    public Map<String, Object> getCharacteristics() {
         return characteristics;
     }
 
-    public void setCharacteristics(List<ProductCharacteristic> characteristics) {
+    public void setCharacteristics(Map<String, Object> characteristics) {
         this.characteristics = characteristics;
     }
 
     public String getCodeAndDescription() {
-        if (StringUtils.isBlank(description)) {
-            return code;
+        if (StringUtils.isBlank(template.getDescription())) {
+            return template.getCode();
         } else {
-            return code + " - " + description;
+            return template.getCode() + " - " + template.getDescription();
         }
     }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isMain() {
+        return main;
+    }
+
+    public boolean isOffer() {
+        return template instanceof OfferTemplate;
+    }
+
+    public boolean isService() {
+        return template instanceof ServiceTemplate;
+    }
+
+    public boolean isProduct() {
+        return template instanceof ProductTemplate;
+    }
+
 }

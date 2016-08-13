@@ -54,7 +54,7 @@
 	<cc:attribute name="updateConfirmationMessage" default="" />
     <cc:attribute name="ajaxSubmit" required="true" />
     <cc:attribute name="submitPartialProcess" />
-    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
+    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute, but issue is with calendars or other input components that are not of input type:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
     <cc:attribute name="submitUpdate" default="@all"/>
     <cc:attribute name="execute" default="false" />
     <cc:attribute name="formId" default="formId" />

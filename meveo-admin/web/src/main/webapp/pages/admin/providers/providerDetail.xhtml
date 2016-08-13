@@ -14,13 +14,13 @@
 
     <ui:define name="body">
 
-        <c:if test="#{providerBean.edit}">
-            <hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}" updateField=":providerFormId:languageSelectedId:languageSelectedId"
-                selection="#{providerBean.entity.language}" backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
-                column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}" column2="descriptionEn"
-                eventBackingBean="#{providerBean}">
-            </hftl:entityPopup>
-        </c:if>
+<!--         <c:if test="#{providerBean.edit}"> -->
+<!--             <hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}" updateField=":providerFormId:languageSelectedId:languageSelectedId" -->
+<!--                 selection="#{providerBean.entity.language}" backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode" -->
+<!--                 column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}" column2="descriptionEn" -->
+<!--                 > -->
+<!--             </hftl:entityPopup> -->
+<!--         </c:if> -->
         <p:panel>
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">

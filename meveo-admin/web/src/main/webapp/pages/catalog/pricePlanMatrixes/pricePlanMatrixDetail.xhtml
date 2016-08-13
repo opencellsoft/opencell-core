@@ -18,7 +18,6 @@
 		<!-- 	   <hftl:entityPopup id="offerPopup" -->
 		<!-- 			header="#{messages['offer.popup.header']}" -->
 		<!-- 			backingBean="#{offerTemplateBean}" -->
-		<!-- 			eventBackingBean="#{pricePlanMatrixBean}" -->
 		<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
 		<!-- 			searchField1="code" -->
 		<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
@@ -38,7 +37,7 @@
 			searchField1Label="#{messages['charge.code']}" searchField1="code"
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
-			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
+			column2="description" selectionListenerBean="#{pricePlanMatrixBean}" selectionListenerMethod="onChargeSelect"
 			updateField=":formPricePlan:tabView:chargeSelectId :formPricePlan:tabView:chargeSelectId_text :formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 

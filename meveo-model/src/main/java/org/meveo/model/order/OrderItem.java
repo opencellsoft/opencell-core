@@ -99,6 +99,9 @@ public class OrderItem extends BaseEntity {
     @Transient
     private Object orderItemDto;
 
+    @Transient
+    private ProductOffering mainOffering;
+
     public Order getOrder() {
         return order;
     }
@@ -192,6 +195,27 @@ public class OrderItem extends BaseEntity {
 
     public void setOrderItemDto(Object orderItemDto) {
         this.orderItemDto = orderItemDto;
+    }
+
+    public ProductOffering getMainOffering() {
+
+        if (mainOffering == null && !productOfferings.isEmpty()) {
+            mainOffering = productOfferings.get(0);
+        }
+
+        return mainOffering;
+    }
+
+    public void setMainOffering(ProductOffering mainOffering) {
+        this.mainOffering = mainOffering;
+    }
+
+    public void resetMainOffering(ProductOffering newMainOffer) {
+        this.mainOffering = newMainOffer;
+        productOfferings.clear();
+        productOfferings.add(newMainOffer);
+        orderItemDto = null;
+        source = null;
     }
 
     /**

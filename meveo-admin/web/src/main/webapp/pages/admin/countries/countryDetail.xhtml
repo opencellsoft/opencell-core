@@ -22,7 +22,7 @@
             column1Label="#{messages['currency.currencyCode']}"
             column1="currencyCode"
             column2Label="#{messages['tradingLanguage.prDescription']}"
-            column2="descriptionEn" eventBackingBean="#{countryBean}">
+            column2="descriptionEn">
         </hftl:entityPopup>
         
         <hftl:entityPopup id="popupForLanguage" header="#{messages['language.popup.header']}"
@@ -34,7 +34,7 @@
             column1Label="#{messages['language.languageCode']}"
             column1="languageCode"
             column2Label="#{messages['tradingLanguage.prDescription']}"
-            column2="descriptionEn" eventBackingBean="#{countryBean}" >
+            column2="descriptionEn">
         </hftl:entityPopup>
 
 		<hftl:formPanel formId="formCountry"  label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">

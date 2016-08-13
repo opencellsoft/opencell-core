@@ -26,7 +26,7 @@
 				column1Label="#{messages['currency.currencyCode']}"
 				column1="currencyCode"
 				column2Label="#{messages['tradingCurrency.prDescription']}"
-				column2="descriptionEn" eventBackingBean="#{tradingCurrencyBean}">
+				column2="descriptionEn" selectionListenerBean="#{tradingCurrencyBean}" selectionListenerMethod="onCurrencySelect">
 			</hftl:entityPopup>
 		</c:if>
 		<p:panel>
