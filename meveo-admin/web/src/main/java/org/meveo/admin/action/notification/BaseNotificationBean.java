@@ -39,7 +39,7 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
 	}
 
 	/**
-     * Autocomplete method for class filter field - search entity type classes with @ObservableEntity annotation
+     * Autocomplete method for class filter field - search entity type classes with {@link ObservableEntity} or {@link NotifiableEntity} annotation
      * 
      * @param query A partial class name (including a package)
      * @return A list of classnames
@@ -72,12 +72,15 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
      */
     public List<NotificationEventTypeEnum> getNotificationEventTypeFilters(){
     	String clazzStr=getEntity().getClassNameFilter();
-    	if(StringUtils.isBlank(clazzStr)){
-    		clazzStr=(String)filters.get("clazzNameFilter");
-    	}
+    	if(StringUtils.isBlank(clazzStr)){return null;}
     	return getEventTypesByClazz(clazzStr);
     }
 
+    /**
+     * get notification eventType by class name filter, refer for {@link NotificationEventTypeEnum} and {@link DefaultObserver} 
+     * @param clazzStr
+     * @return
+     */
 	private List<NotificationEventTypeEnum> getEventTypesByClazz(String clazzStr){
 		Class<?> clazz=null;
     	try{
