@@ -426,5 +426,8 @@
             <column name="permission_id" valueNumeric="17" />
         </insert>   
 	</changeSet> 
-        
+	
+	<changeSet id="#1747_20160810" author="TyshanShi">
+		<sql>delete from BILLING_INVOICE_CONFIGURATION where PROVIDER_ID is null</sql>
+	</changeSet>
 </databaseChangeLog>

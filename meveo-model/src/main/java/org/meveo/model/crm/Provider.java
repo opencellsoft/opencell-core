@@ -161,7 +161,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     private boolean automaticInvoicing = false;
 
     @Embedded
-    private InterBankTitle interBankTitle;
+    private InterBankTitle interBankTitle=new InterBankTitle();
 
     @Column(name = "AMOUNT_VALIDATION")
     private boolean amountValidation = false;
@@ -195,18 +195,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
-    @OneToOne(cascade= CascadeType.ALL)
-    @JoinColumn(name="BILLING_INVOICE_CONFIG_ID")
-    private InvoiceConfiguration invoiceConfiguration;
+    @OneToOne(mappedBy="provider",cascade= CascadeType.ALL,orphanRemoval=true)
+    private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
 	
 	@Column(name = "RECOGNIZE_REVENUE")
 	private boolean recognizeRevenue;
 	
-	public Provider(){
-		this.invoiceConfiguration=new InvoiceConfiguration();
-		this.bankCoordinates=new BankCoordinates();
-	}
 
     public String getCode() {
         return code;

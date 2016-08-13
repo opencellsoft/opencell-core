@@ -607,8 +607,9 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayChargesPeriods()!=null) {
                 invoiceConfiguration.setDisplayChargesPeriods(invoiceConfigurationDto.getDisplayChargesPeriods());
             }
-            if(provider.getInvoiceConfiguration()==null){
+            if(provider.getInvoiceConfiguration()==null||provider.getInvoiceConfiguration().isTransient()){
             	provider.setInvoiceConfiguration(invoiceConfiguration);
+            	provider.getInvoiceConfiguration().setProvider(provider);
             }
             if(invoiceConfigurationDto.isDisplayFreeTransacInInvoice()!=null){
             	provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.isDisplayFreeTransacInInvoice());

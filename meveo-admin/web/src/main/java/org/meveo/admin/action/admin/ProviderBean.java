@@ -25,8 +25,11 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.InterBankTitle;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
@@ -63,6 +66,23 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         return "code";
     }
 
+    @Override
+    public Provider initEntity() {
+        super.initEntity();
+        if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
+            InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+            invoiceConfiguration.setProvider(entity);
+            entity.setInvoiceConfiguration(invoiceConfiguration);
+        }
+        if (entity.getBankCoordinates() == null) {
+            entity.setBankCoordinates(new BankCoordinates());
+        }
+        if(entity.getInterBankTitle()==null){
+        	entity.setInterBankTitle(new InterBankTitle());
+        }
+        return entity;
+    }
+
     public void onRowSelect(SelectEvent event) {
         if (event.getObject() instanceof Language) {
             Language language = (Language) event.getObject();
@@ -72,6 +92,22 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             }
         }
 
+    }
+
+    /**
+     * Save or update provider.
+     * 
+     * @param entity Provider to save.
+     * @throws BusinessException
+     */
+    @Override
+    protected Provider saveOrUpdate(Provider entity) throws BusinessException {
+        boolean isNew = entity.isTransient();
+        if (isNew) {
+            entity.getInvoiceConfiguration().setProvider(entity);
+        }
+        entity = super.saveOrUpdate(entity);
+        return entity;
     }
 
     @Override
