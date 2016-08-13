@@ -44927,7 +44927,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -44979,7 +44979,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45109,7 +45109,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45161,7 +45161,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45190,12 +45190,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="remove DiscountPlan1" id="43d1af6f-ab27-494b-8278-83c19f60c2ef">
+      <con:testStep type="request" name="remove DiscountPlan 1" id="43d1af6f-ab27-494b-8278-83c19f60c2ef">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>CatalogWsSoapBinding</con:interface>
           <con:operation>updateDiscountPlan</con:operation>
-          <con:request name="remove DiscountPlan1" id="a6d75cdb-904d-424f-89f8-724019664426">
+          <con:request name="remove DiscountPlan 1" id="a6d75cdb-904d-424f-89f8-724019664426">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -45205,7 +45205,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:removeDiscountPlan>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45227,12 +45227,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="find removed DiscountPlan1" id="02d1fae0-799f-4d4f-8ac5-d9cb12191ba9">
+      <con:testStep type="request" name="find removed DiscountPlan 1" id="02d1fae0-799f-4d4f-8ac5-d9cb12191ba9">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>CatalogWsSoapBinding</con:interface>
           <con:operation>findDiscountPlan</con:operation>
-          <con:request name="find removed DiscountPlan1" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+          <con:request name="find removed DiscountPlan 1" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -45242,7 +45242,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45286,7 +45286,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:removeDiscountPlan>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45323,7 +45323,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -47075,7 +47075,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeDiscountPlan>
-         <discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCocde>
+         <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
       </ws:removeDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
