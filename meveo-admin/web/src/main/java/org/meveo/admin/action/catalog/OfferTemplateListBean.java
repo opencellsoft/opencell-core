@@ -41,7 +41,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 
 	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
 	private List<OfferTemplateCategory> selOfferTemplateCategories;
-	
+
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("offerTemplateCategories");
@@ -85,7 +85,8 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	}
 
 	public LazyDataModel<OfferTemplate> listFromBOM() {
-		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NOT_NULL);
+		// filters.put("businessOfferModel",
+		// PersistenceService.SEARCH_IS_NOT_NULL);
 		if (selOfferTemplateCategories != null && selOfferTemplateCategories.size() > 0) {
 			List<Long> offerTemplateCatIds = new ArrayList<>();
 			for (OfferTemplateCategory otc : selOfferTemplateCategories) {
