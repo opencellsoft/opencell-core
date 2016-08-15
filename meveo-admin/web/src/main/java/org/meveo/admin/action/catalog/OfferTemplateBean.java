@@ -29,6 +29,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -269,6 +270,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			saveOrUpdate(entity);
 
 			initEntity();
+
+			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
+			FacesContext.getCurrentInstance().addMessage(null, message);
+		}
+	}
+	
+	public void submitActionListener() throws SerialException, SQLException {
+		log.debug("save image");
+
+		if (uploadedFile != null) {
+			byte[] contents = uploadedFile.getContents();
+			try {
+				entity.setImage(new SerialBlob(contents));
+			} catch (SQLException e) {
+				log.error(e.getMessage());
+			}
+			entity.setImageContentType(uploadedFile.getContentType());
 
 			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 			FacesContext.getCurrentInstance().addMessage(null, message);

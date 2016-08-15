@@ -8,6 +8,8 @@
 
     <ui:define name="metadata">
         <f:metadata>
+        	<f:event type="preRenderView"
+				listener="#{serviceTemplateBean.preRenderView}" />
             <f:viewParam name="objectId" value="#{serviceTemplateBean.objectId}" />
             <f:viewParam name="mainTab" value="#{serviceTemplateBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{serviceTemplateBean.activeTab}" />
@@ -93,23 +95,45 @@
 		<p:panel header="#{messages['menu.serviceTemplates']}" >
 			<p:tabView id="tabView" activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
-					<hftl:formPanel backingBean="#{serviceTemplateBean}" 
-						showEnableDisableButton="true" 
-						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}" 
-						ajaxSubmit="true" 
-						submitPartialProcess=":tabView:formId">
+					<hftl:formPanel backingBean="#{serviceTemplateBean}"
+						showEnableDisableButton="true"
+						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
+						ajaxSubmit="false" submitPartialProcess=":tabView:formId"
+						enctype="multipart/form-data" submitActionListener="true">
 						<hftl:formField label="#{messages['serviceTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
-						<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-							field="disabled" isMessage="true" />
+						<hftl:decorateFormField fieldId="serviceImageUpload"
+							rendered="#{serviceTemplateBean.entity.transient}"
+							label="#{messages['commons.image']}">
+							<p:fileUpload id="serviceImageUpload" auto="false"
+								skinSimple="true" mode="simple"
+								value="#{serviceTemplateBean.uploadedImage}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="serviceImage"
+							rendered="#{not serviceTemplateBean.entity.transient}"
+							label="#{messages['commons.image']}">
+							<p:outputPanel autoUpdate="true">
+								<p:graphicImage id="serviceImage" cache="false"
+									value="#{serviceTemplateImageStreamer.image}" height="150"
+									width="150">
+									<f:param name="id" value="#{serviceTemplateBean.entity.id}"></f:param>
+								</p:graphicImage>
+								<p:fileUpload
+									fileUploadListener="#{serviceTemplateBean.handleFileUpload}"
+									mode="advanced" update=":tabView:formId:messages" auto="true"
+									sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+							</p:outputPanel>
+						</hftl:decorateFormField>
+						<hftl:formField label="#{messages['enableEntity.disabled']}"
+							doNotShowOnNew="true" allowEdit="false" field="disabled"
+							isMessage="true" />
 						<hftl:formField label="#{messages['serviceTemplate.description']}"
-							field="description" useConverter="false"
-							size="50" maxlength="50" />
-						<hftl:formField
-							label="#{messages['serviceTemplate.calendar']}"
-							field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
-							listBean="#{calendarBean}" />
-						<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
+							field="description" useConverter="false" size="50" maxlength="50" />
+						<hftl:formField label="#{messages['serviceTemplate.calendar']}"
+							field="invoicingCalendar" valueLabelField="code" required="false"
+							popup="false" listBean="#{calendarBean}" />
+						<hftl:customFields backingBean="#{serviceTemplateBean}"
+							messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 				
