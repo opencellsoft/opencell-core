@@ -117,8 +117,8 @@
 								<p:column></p:column>
 								<p:column>
 									<hftl:formField label="#{messages['productTemplate.family']}"
-										field="businessProductModel" required="true"
-										id="businessProductModel" valueLabelField="code"
+										field="businessProductModel" id="businessProductModel"
+										valueLabelField="code"
 										listElements="#{businessProductModelBean.listAll()}" />
 								</p:column>
 							</p:row>
@@ -160,8 +160,8 @@
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
 								</p:panelGrid>
 							</p:tab>
-							<p:tab title="USA"></p:tab>
-							<p:tab title="JPN"></p:tab>
+							<!-- <p:tab title="USA"></p:tab>
+							<p:tab title="JPN"></p:tab> -->
 						</p:tabView>
 					</p:column>
 					<p:column style="width : 33%">
@@ -201,11 +201,11 @@
 								<p:graphicImage id="productImageForBundle" cache="false"
 									value="#{productTemplateImageStreamer.image}" height="150"
 									width="150">
-									<f:param name="id" value="#{prod.id}"></f:param>
+									<f:param name="id" value="#{prod.productTemplate.id}"></f:param>
 								</p:graphicImage>
 							</p:column>
 							<p:column>
-								<h:outputText value="#{prod.name}" />
+								<h:outputText value="#{prod.productTemplate.name}" />
 							</p:column>
 							<p:column>
 								<p:outputLabel
@@ -214,7 +214,7 @@
 						</p:row>
 						<p:row>
 							<p:column>
-								<h:outputText value="#{prod.description}" />
+								<h:outputText value="#{prod.productTemplate.description}" />
 							</p:column>
 							<p:column>
 								<h:outputText value="0.00" />
@@ -229,9 +229,9 @@
 					<hftl:formField label="#{messages['businessEntity.description']}"
 						field="description" id="description" />
 				</p:tab>
-				<p:tab title="FR"></p:tab>
+				<!-- <p:tab title="FR"></p:tab>
 				<p:tab title="DE"></p:tab>
-				<p:tab title="US"></p:tab>
+				<p:tab title="US"></p:tab> -->
 
 			</p:tabView>
 			<p:panel styleClass="ui-panel-blank"
@@ -239,8 +239,9 @@
 				<hftl:customFields backingBean="#{bundleTemplateBean}" />
 			</p:panel>
 		</hftl:formPanel>
-		<p:dialog id="selectProduct" widgetVar="selectProduct">
-			<h:form>
+		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
+			modal="true" appendTo="@(body)">
+			<h:form id="dlgBundle">
 				<p:panel id="headerPanel">
 					<p:panel styleClass="TexAlRight">
 
@@ -284,7 +285,7 @@
 										<p:commandButton
 											value="#{messages['bundleTemplate.addProduct']}"
 											action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}"
-											update=":bundleForm:bundeList"
+											update="dlgBundle :bundleForm:bundeList :bundleForm:productTemplateList"
 											oncomplete="PF('selectProduct').hide()">
 										</p:commandButton>
 									</p:column>

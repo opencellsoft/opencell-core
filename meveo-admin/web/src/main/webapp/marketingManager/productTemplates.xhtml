@@ -78,6 +78,11 @@
 						<p:panelGrid columns="1">
 							<p:panel style="border: 1px solid #000" id="offerForExportPanel">
 								<p:panelGrid columns="2">
+									<span class="fa fa-share-square-o"></span>
+									<h:outputText id="ptToExportSize"
+										value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
+								</p:panelGrid>
+								<p:panelGrid columns="2">
 									<h:outputText id="exportSize"
 										value="#{messages['productTemplate.exportTo']}" />
 									<p:selectOneMenu id="exportToList"
@@ -160,9 +165,11 @@
 			<p:dataGrid id="productTemplateList" var="prod"
 				value="#{productTemplateListBean.productTemplates}" paginator="true"
 				rows="5" columns="1" paginatorPosition="top"
-				paginatorAlwaysVisible="true" 
+				paginatorAlwaysVisible="true"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				lazy="true" styleClass="dataGrid custom-grid ui-panelgrid-blank ui-datagrid-blank" rowKey="#{prod.id}">
+				lazy="true"
+				styleClass="dataGrid custom-grid ui-panelgrid-blank ui-datagrid-blank"
+				rowKey="#{prod.id}">
 
 				<p:panelGrid columns="3" style="width: 100%"
 					styleClass="ui-panelgrid-blank" id="productTemplateRow">
@@ -214,7 +221,7 @@
 							<h:outputText value="#{messages['productTemplate.family']} : " />
 							<h:outputText value="#{prod.businessProductModel.description}" />
 						</p:panel>
-						<p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+						<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
 							<!-- <h:link styleClass="fa fa-edit">
 								<f:param name="objectId" value="#{prod.id}"></f:param>
 								<f:param name="cid"
@@ -228,6 +235,7 @@
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="edit" value="true" />
 								<f:param name="editMode" value="dup" />
+								<f:param name="backView" value="mmProductTemplates"></f:param>
 							</h:link>
 							<h:link styleClass="fa fa-edit" outcome="mmProductTemplateDetail"
 								rendered="#{not productTemplateBean.isBundleTemplate(prod)}">
@@ -238,14 +246,16 @@
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="edit" value="true" />
 								<f:param name="editMode" value="edit" />
+								<f:param name="backView" value="mmProductTemplates"></f:param>
 							</h:link>
-							<h:link styleClass="fa fa-edit" outcome="mmBundleTemplateDetail">
-								<f:param name="objectId" value="#{prod.id}"
-									rendered="#{productTemplateBean.isBundleTemplate(prod)}"></f:param>
+							<h:link styleClass="fa fa-edit" outcome="mmBundleTemplateDetail"
+								rendered="#{productTemplateBean.isBundleTemplate(prod)}">
+								<f:param name="objectId" value="#{prod.id}"></f:param>
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="edit" value="true" />
 								<f:param name="editMode" value="edit" />
+								<f:param name="backView" value="mmProductTemplates"></f:param>
 							</h:link>
 							<p:commandLink styleClass="fa fa-share-square-o"
 								action="#{productTemplateListBean.addProductTemplateToExport(prod)}"

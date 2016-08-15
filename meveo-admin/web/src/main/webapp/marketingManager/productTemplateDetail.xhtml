@@ -25,7 +25,7 @@
 	<ui:define name="body">
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{productTemplateBean}" showFormButtons="true"
-			formButtonsTopRight="true" >
+			formButtonsTopRight="true" backView="mmProductTemplates">
 			<!-- <p:panel styleClass="TexAlRight">
 
 				<p:commandButton value="#{messages['action.activate']}"
@@ -116,8 +116,8 @@
 								<p:column></p:column>
 								<p:column>
 									<hftl:formField label="#{messages['productTemplate.family']}"
-										field="businessProductModel" required="true"
-										id="businessProductModel" valueLabelField="code"
+										field="businessProductModel" id="businessProductModel"
+										valueLabelField="code"
 										listElements="#{businessProductModelBean.listAll()}" />
 								</p:column>
 							</p:row>
@@ -159,8 +159,8 @@
 										rendered="#{productTemplateBean.entityPricePlan == null}" />
 								</p:panelGrid>
 							</p:tab>
-							<p:tab title="USA"></p:tab>
-							<p:tab title="JPN"></p:tab>
+							<!-- <p:tab title="USA"></p:tab>
+							<p:tab title="JPN"></p:tab> -->
 						</p:tabView>
 					</p:column>
 					<p:column style="width : 33%">
@@ -183,9 +183,9 @@
 					<hftl:formField label="#{messages['businessEntity.description']}"
 						field="description" id="description" />
 				</p:tab>
-				<p:tab title="FR"></p:tab>
+				<!-- <p:tab title="FR"></p:tab>
 				<p:tab title="DE"></p:tab>
-				<p:tab title="US"></p:tab>
+				<p:tab title="US"></p:tab> -->
 
 			</p:tabView>
 			<p:panel styleClass="ui-panel-blank"

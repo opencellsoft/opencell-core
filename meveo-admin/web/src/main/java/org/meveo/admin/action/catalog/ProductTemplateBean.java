@@ -25,6 +25,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -49,6 +50,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	protected ProductTemplateService productTemplateService;
 
 	@Inject
+	private BundleTemplateService bundleTemplateService;
+
+	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
 
 	@Inject
@@ -64,7 +68,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	private PricePlanMatrixService pricePlanMatrixService;
 
 	@Inject
-	CustomFieldInstanceService customFieldInstanceService;;
+	CustomFieldInstanceService customFieldInstanceService;
 
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
@@ -348,6 +352,11 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public boolean isBundleTemplate(ProductTemplate pt) {
+
+		/*
+		 * if (bundleTemplateService.findById(pt.getId()) != null) { return
+		 * true; } return false;
+		 */
 		return pt instanceof BundleTemplate;
 	}
 
