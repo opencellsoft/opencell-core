@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ProductInstance;
@@ -19,7 +20,7 @@ public class OfferItemInfo implements Serializable {
 
     private BusinessEntity template;
 
-    private Map<String, Object> characteristics;
+    private Map<OrderProductCharacteristicEnum, Object> characteristics;
 
     private boolean main = false;
     private boolean selected = false;
@@ -38,7 +39,7 @@ public class OfferItemInfo implements Serializable {
      * @param entityForCFValues An entity corresponding to what offering template will translate to. OfferTemplate>Subscription, serviceTemplate>serviceInstance,
      *        productTemplate>productInstance
      */
-    public OfferItemInfo(BusinessEntity template, Map<String, Object> characteristics, boolean main, boolean selected, boolean mandatory, BusinessCFEntity entityForCFValues) {
+    public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory, BusinessCFEntity entityForCFValues) {
         super();
         this.main = main;
         this.template = template;
@@ -67,11 +68,11 @@ public class OfferItemInfo implements Serializable {
         this.template = template;
     }
 
-    public Map<String, Object> getCharacteristics() {
+    public Map<OrderProductCharacteristicEnum, Object> getCharacteristics() {
         return characteristics;
     }
 
-    public void setCharacteristics(Map<String, Object> characteristics) {
+    public void setCharacteristics(Map<OrderProductCharacteristicEnum, Object> characteristics) {
         this.characteristics = characteristics;
     }
 

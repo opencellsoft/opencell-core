@@ -319,7 +319,7 @@ public class OrderBean extends BaseBean<Order> {
      * @return A tree
      */
     private TreeNode constructOfferItemsTreeAndConfiguration(boolean showAvailableServices, boolean showAvailableProducts,
-            Map<String, Map<String, Object>> subscriptionConfiguration) {
+            Map<String, Map<OrderProductCharacteristicEnum, Object>> subscriptionConfiguration) {
 
         offerConfigurations = new ArrayList<>();
 
@@ -331,7 +331,7 @@ public class OrderBean extends BaseBean<Order> {
         ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedOrderItem.getMainOffering());
 
         // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering order item)
-        Map<String, Object> mainOfferCharacteristics = new HashMap<>();
+        Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
         if (orderItemDto != null && orderItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(orderItemDto.getProduct().getProductCharacteristic());
         } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(mainOffering.getCode())) {
@@ -371,7 +371,7 @@ public class OrderBean extends BaseBean<Order> {
 
                         // Take service characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering
                         // order item)
-                        Map<String, Object> serviceCharacteristics = new HashMap<>();
+                        Map<OrderProductCharacteristicEnum, Object> serviceCharacteristics = new HashMap<>();
                         if (serviceProductMatched != null) {
                             serviceCharacteristics = productCharacteristicsToMap(serviceProductMatched.getProductCharacteristic());
                         } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode())) {
@@ -413,7 +413,7 @@ public class OrderBean extends BaseBean<Order> {
 
                     if (showAvailableProducts || productProductMatched != null) {
 
-                        Map<String, Object> productCharacteristics = new HashMap<>();
+                        Map<OrderProductCharacteristicEnum, Object> productCharacteristics = new HashMap<>();
                         if (productProductMatched != null) {
                             productCharacteristics = productCharacteristicsToMap(productProductMatched.getProductCharacteristic());
                         }
@@ -445,25 +445,25 @@ public class OrderBean extends BaseBean<Order> {
             selectedOrderItem.resetMainOffering(((Subscription) event.getObject()).getOffer());
             offerConfigurations = null;
 
-            Map<String, Map<String, Object>> subscriptionConfiguration = null;
+            Map<String, Map<OrderProductCharacteristicEnum, Object>> subscriptionConfiguration = null;
             // Gather information about instantiated/active services
             if (selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY || selectedOrderItem.getAction() == OrderItemActionEnum.DELETE) {
 
                 subscriptionConfiguration = new HashMap<>();
-                Map<String, Object> offerConfiguration = new HashMap<>();
+                Map<OrderProductCharacteristicEnum, Object> offerConfiguration = new HashMap<>();
 
                 Subscription subscription = selectedOrderItem.getSubscription();
-                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), subscription.getSubscriptionDate());
-                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), subscription.getEndAgreementDate());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE, subscription.getSubscriptionDate());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE, subscription.getEndAgreementDate());
                 subscriptionConfiguration.put(subscription.getOffer().getCode(), offerConfiguration);
 
                 if (selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY) {
                     for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
 
                         offerConfiguration = new HashMap<>();
-                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), serviceInstance.getSubscriptionDate());
-                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), serviceInstance.getEndAgreementDate());
-                        offerConfiguration.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), serviceInstance.getQuantity());
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE, serviceInstance.getSubscriptionDate());
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE, serviceInstance.getEndAgreementDate());
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, serviceInstance.getQuantity());
                         subscriptionConfiguration.put(serviceInstance.getCode(), offerConfiguration);
                     }
                 }
@@ -500,14 +500,16 @@ public class OrderBean extends BaseBean<Order> {
         }
 
         for (OfferItemInfo offerItemInfo : offerConfigurations) {
-            if (offerItemInfo.getCharacteristics().get((String) event.getComponent().getAttributes().get("characteristic")) == null) {
-                offerItemInfo.getCharacteristics().put((String) event.getComponent().getAttributes().get("characteristic"), event.getObject());
+            OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum.getByCharacteristicName((String) event.getComponent().getAttributes()
+                .get("characteristic"));
+            if (offerItemInfo.getCharacteristics().get(characteristicEnum) == null) {
+                offerItemInfo.getCharacteristics().put(characteristicEnum, event.getObject());
             }
         }
     }
 
-    private Map<String, Object> productCharacteristicsToMap(List<ProductCharacteristic> characteristics) {
-        Map<String, Object> values = new HashMap<>();
+    private Map<OrderProductCharacteristicEnum, Object> productCharacteristicsToMap(List<ProductCharacteristic> characteristics) {
+        Map<OrderProductCharacteristicEnum, Object> values = new HashMap<>();
 
         for (ProductCharacteristic productCharacteristic : characteristics) {
 
@@ -518,29 +520,29 @@ public class OrderBean extends BaseBean<Order> {
             }
             Class valueClazz = characteristicEnum.getClazz();
             if (valueClazz == String.class) {
-                values.put(productCharacteristic.getName(), productCharacteristic.getValue());
+                values.put(characteristicEnum, productCharacteristic.getValue());
             } else if (valueClazz == BigDecimal.class) {
-                values.put(productCharacteristic.getName(), new BigDecimal(productCharacteristic.getValue()));
+                values.put(characteristicEnum, new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
-                values.put(productCharacteristic.getName(),
-                    DateUtils.parseDateWithPattern(productCharacteristic.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+                values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
             }
         }
         return values;
     }
 
     @SuppressWarnings("rawtypes")
-    private List<ProductCharacteristic> mapToProductCharacteristics(Map<String, Object> values) {
+    private List<ProductCharacteristic> mapToProductCharacteristics(Map<OrderProductCharacteristicEnum, Object> values) {
 
+        log.error("AKK value are {}", values);
         List<ProductCharacteristic> characteristics = new ArrayList<>();
 
-        for (Entry<String, Object> valueInfo : values.entrySet()) {
+        for (Entry<OrderProductCharacteristicEnum, Object> valueInfo : values.entrySet()) {
             if (valueInfo.getValue() != null) {
                 ProductCharacteristic productCharacteristic = new ProductCharacteristic();
-                productCharacteristic.setName(valueInfo.getKey());
+                productCharacteristic.setName(valueInfo.getKey().getCharacteristicName());
                 characteristics.add(productCharacteristic);
 
-                Class valueClazz = OrderProductCharacteristicEnum.getByCharacteristicName(productCharacteristic.getName()).getClazz();
+                Class valueClazz = valueInfo.getKey().getClazz();
                 if (valueClazz == String.class || valueClazz == BigDecimal.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
