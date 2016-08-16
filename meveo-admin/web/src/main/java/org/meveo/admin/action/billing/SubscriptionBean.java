@@ -40,6 +40,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -57,6 +58,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -122,6 +124,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
+	
+	@Inject
+	private ProductChargeInstanceService productChargeInstanceService;
 
 	private ServiceInstance selectedServiceInstance;
 
@@ -165,6 +170,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<RecurringChargeInstance> recurringChargeInstances = null;
 
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
+    
+    private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
 
 	public SubscriptionBean() {
 		super(Subscription.class);
@@ -805,6 +812,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         oneShotChargeInstances = null;
         recurringChargeInstances = null;
         usageChargeInstances = null;
+        productChargeInstances = null;
     }
      
     public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException { 
@@ -834,6 +842,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (dataTable != null) {
             dataTable.reset();
         }
+    }
+    
+    public EntityListDataModelPF<ProductChargeInstance> getProductChargeInstances() {
+
+        if (productChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return productChargeInstances;
+        }
+
+        productChargeInstances = new EntityListDataModelPF<ProductChargeInstance>(new ArrayList<ProductChargeInstance>());
+        productChargeInstances.addAll(productChargeInstanceService.findBySubscriptionId(entity.getId()));
+        return productChargeInstances;
     }
  
 }

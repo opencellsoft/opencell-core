@@ -189,7 +189,35 @@
                         </hftl:formPanel>
                     </p:tab>
 
-                    <c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
+					<p:tab title="#{messages['userAccount.tab.productInstances']}">
+						<p:outputPanel id="productInstancePanel">
+							<h:form id="productInstanceResultsForm" prependId="false">
+								<p:dataTable resizableColumns="true"
+									value="#{userAccountBean.productChargeInstances}" var="entity">
+									<hftl:column label="#{messages['chargeInstance.code']}"
+										field="code" />
+									<hftl:column label="#{messages['chargeInstance.description']}"
+										field="description" />
+									<hftl:column label="#{messages['chargeApplication.status']}"
+										field="status" />
+									<hftl:column
+										label="#{messages['oneShotChargeInstance.chargeDate']}"
+										field="chargeDate" />
+									<hftl:column
+										label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+										field="amountWithoutTax" isMessage="false" />
+									<p:column
+										headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+										rendered="#{!subscriptionBean.entity.provider.entreprise}">
+										<h:outputText value="#{entity.amountWithTax}"
+											converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+									</p:column>
+								</p:dataTable>
+							</h:form>
+						</p:outputPanel>
+					</p:tab>
+
+					<c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
                         <p:tab title="Wallet #{wallet.key}" id="tab#{wallet.key}">
                             <p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
                                 <hftl:decorateFormField label="#{messages['chargeInstance.code']}">

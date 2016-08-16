@@ -125,4 +125,18 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		productChargeInstance.setWalletOperations(walletOperations);
 		return walletOperation;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 }

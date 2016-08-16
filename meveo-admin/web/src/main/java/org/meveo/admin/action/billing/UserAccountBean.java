@@ -39,11 +39,13 @@ import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
@@ -54,6 +56,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -103,6 +106,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     @Inject 
     private CounterInstanceService counterInstanceService;
+    
+    @Inject
+	private ProductChargeInstanceService productChargeInstanceService;
 	   
 	private CounterInstance selectedCounterInstance;
 
@@ -112,6 +118,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	// Retrieved wallet operations to improve GUI performance for Ajax request
     private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+    
+    private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
 	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -469,4 +477,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             this.selectedCounterInstance = null;
         }
     }
+    
+    public EntityListDataModelPF<ProductChargeInstance> getProductChargeInstances() {
+
+        if (productChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return productChargeInstances;
+        }
+
+        productChargeInstances = new EntityListDataModelPF<ProductChargeInstance>(new ArrayList<ProductChargeInstance>());
+        productChargeInstances.addAll(productChargeInstanceService.findByUserAccountId(entity.getId()));
+        return productChargeInstances;
+    }
+    
 }
