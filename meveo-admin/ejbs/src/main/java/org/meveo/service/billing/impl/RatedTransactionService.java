@@ -847,9 +847,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 	}
 	
-
-	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ) {
+		return openRTbySubCat(walletInstance, invoiceSubCategory, null, null);
+	}
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ,Date from, Date to) {
 		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt", null,walletInstance.getProvider());
 		if(invoiceSubCategory != null){
 			qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
@@ -857,6 +859,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		qb.addCriterionEntity("rt.wallet", walletInstance);
 		qb.addSql("rt.invoice is null");
 		qb.addCriterionEnum("rt.status", RatedTransactionStatusEnum.OPEN);
+		if(from != null){
+			qb.addCriterion("usageDate", ">=", from, false);	
+		}
+		if(to != null){
+			qb.addCriterion("usageDate", "<=", to, false);	
+		}
+				
 		try {
 			return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {

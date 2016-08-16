@@ -656,12 +656,12 @@ public class AccountHierarchyApi extends BaseApi {
 			CountryDto countryDto = new CountryDto();
 			countryDto.setCountryCode(sellerDto.getCountryCode());
 			countryDto.setCurrencyCode(sellerDto.getCurrencyCode());
-			countryApi.createOrUpdate(countryDto, currentUser);
+		//	countryApi.createOrUpdate(countryDto, currentUser);
 
 			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
 				LanguageDto languageDto = new LanguageDto();
 				languageDto.setCode(sellerDto.getLanguageCode());
-				languageApi.createOrUpdate(languageDto, currentUser);
+				//languageApi.createOrUpdate(languageDto, currentUser);
 			}
 
 			sellerApi.createOrUpdate(sellerDto, currentUser);
