@@ -19,14 +19,18 @@
 package org.meveo.model.wf;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -57,16 +61,19 @@ public class WFTransition extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WORKFLOW_ID")
 	private Workflow workflow;
-	
-	@OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
-	@OrderBy("priority ASC")
-	private List<WFAction> wfActions = new ArrayList<WFAction>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
+    @JoinTable(name = "WF_TRANSITION_TRANSITION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "TRANSITION_RULE_ID"))
+    @OrderBy("priority ASC")
+    private Set<WFTransitionRule> wfTransitionRules = new HashSet<>();
+
+    @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
+    @OrderBy("priority ASC")
+    private List<WFAction> wfActions = new ArrayList<WFAction>();
 	
 	@Column(name = "CONDITION_EL", length = 2000)
 	@Size(max = 2000)
 	private String conditionEl;
-
-	
 
 	/**
 	 * @return the fromStatus
@@ -138,7 +145,37 @@ public class WFTransition extends AuditableEntity {
 		this.conditionEl = conditionEl;
 	}
 
-	@Override
+    public String getCombinedEl() {
+
+        if (wfTransitionRules == null) {
+            return conditionEl;
+        }
+
+        StringBuffer combinedEl = new StringBuffer();
+        final String AND = " AND ";
+        String firstJoin = null;
+        if (wfTransitionRules != null) {
+            for (WFTransitionRule wfTransitionRule: wfTransitionRules) {
+                if (wfTransitionRule.getConditionEl() != null) {
+                    combinedEl.append(conditionEl).append(AND).append(wfTransitionRule.getConditionEl());
+                }
+            }
+        }
+        if (combinedEl.toString().startsWith(AND)) {
+            return combinedEl.toString().substring(4);
+        }
+        return combinedEl.toString();
+    }
+
+    public Set<WFTransitionRule> getWfTransitionRules() {
+        return wfTransitionRules;
+    }
+
+    public void setWfTransitionRules(Set<WFTransitionRule> wfTransitionRules) {
+        this.wfTransitionRules = wfTransitionRules;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

@@ -5,7 +5,8 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:e="http://primefaces.org/extension">
+	xmlns:e="http://primefaces.org/extension"
+    xmlns:o="http://omnifaces.org/ui">
 
 	<ui:define name="navigation">
 		<f:metadata>
@@ -13,7 +14,7 @@
 		</f:metadata>
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-
+    <o:importConstants type="org.meveo.model.wf.TransitionRuleTypeEnum" />
 	<ui:define name="body">
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -100,6 +101,70 @@
 								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" rows="1" maxlength="2000"
 									edit="#{workflowBean.edit}" />
+
+                                <p:fieldset legend="#{messages['dunningPlan.transitionRules']}" styleClass="clearLeft">
+                                    <p:outputPanel id="transitionRulesPanel" styleClass="clearLeft">
+                                        <c:forEach items="#{workflowBean.indexRules}" var="indexRule">
+                                            <p:outputPanel id="transitionRulePanel#{indexRule}" styleClass="clearLeft">
+                                                <hftl:decorateFormField fieldId="transitionRuleName#{indexRule}" label="#{messages['transitionRuleName.rule']}">
+                                                    <p:selectOneMenu id="transitionRuleName#{indexRule}" value="#{workflowBean.selectedRules[indexRule].name}">
+                                                        <p:ajax listener="#{workflowBean.changedRuleName(indexRule)}" update=":tabView:formDunningPlanTransition:transitionRulePanel#{indexRule}" />
+                                                        <f:selectItem itemLabel="Select Rule" itemValue="" noSelectionOption="true" />
+                                                        <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
+                                                    </p:selectOneMenu>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleValue#{indexRule}" label="#{messages['transitionRuleValue.value']}" required="true" rendered="#{workflowBean.selectedRules[indexRule].name != null}">
+                                                    <p:selectOneListbox id="transitionRuleValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].value}" converter="wfTransitionRuleConverter">
+                                                        <f:selectItems value="#{workflowBean.wfTransitionRulesByName[indexRule]}" var="transitionRule" itemLabel="#{transitionRule.value}" itemValue="#{transitionRule}" />
+                                                        <p:ajax event="change" update=":tabView:formDunningPlanTransition:transitionRulePanel#{indexRule}"
+                                                                listener="#{workflowBean.addWFTransitionRule(indexRule)}" />
+                                                    </p:selectOneListbox>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleTextValue#{indexRule}" label="#{messages['transitionRuleNewValue.value']}"
+                                                                        rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'STRING'}">
+                                                    <p:inputText id="transitionRuleTextValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newValue}"
+                                                                 rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'STRING'}">
+                                                    </p:inputText>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleDateValue#{indexRule}" label="#{messages['transitionRuleNewValue.value']}"
+                                                                        rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'DATE'}">
+                                                    <p:calendar id="transitionRuleDateValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newValue}">
+                                                    </p:calendar>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleNumberValue#{indexRule}" label="#{messages['transitionRuleNewValue.value']}"
+                                                                        rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'NUMBER'}">
+                                                    <p:spinner id="transitionRuleNumberValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newValue}">
+                                                    </p:spinner>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleFromValue#{indexRule}" label="#{messages['transitionRuleFromValue.value']}"
+                                                                        rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'RANGE'}">
+                                                    <p:inputText id="transitionRuleFromValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newValue}">
+                                                    </p:inputText>
+                                                </hftl:decorateFormField>
+
+                                                <hftl:decorateFormField fieldId="transitionRuleToValue#{indexRule}" label="#{messages['transitionRuleToValue.value']}"
+                                                                        rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'RANGE'}">
+                                                    <p:inputText id="transitionRuleToValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].anotherValue}">
+                                                    </p:inputText>
+                                                </hftl:decorateFormField>
+
+                                            </p:outputPanel>
+                                        </c:forEach>
+                                    </p:outputPanel>
+                                    <p:outputPanel styleClass="clearLeft">
+                                        <p:tooltip for="addCriteriaBtn" value="#{messages['transitionRule.add']}" showEffect="slide" hideEffect="slide" />
+                                        <p:commandButton id="addCriteriaBtn"
+                                                         action="#{workflowBean.addNewRule()}" process="@this"
+                                                         value="#{messages['transitionRule.add']}" ajaxSubmit="true"
+                                                         icon="fa fa-plus" update=":tabView:formDunningPlanTransition:transitionRulesPanel" />
+                                    </p:outputPanel>
+                                </p:fieldset>
+
 								<ui:param name="buttons" value="true" />
 			                    <ui:define name="buttons">
 									<p:commandButton rendered="#{wfTransition.id==null}"
@@ -153,7 +218,7 @@
 										value="#{messages['commons.edit']}" showEffect="slide"
 										hideEffect="slide" />
 									<p:commandButton id="editDunningPlanTransitionLink"
-										update=":tabView:formDunningPlanTransition"
+										update=":tabView:formDunningPlanTransition,:tabView:formDunningPlanTransition:transitionRulesPanel"
 										action="#{workflowBean.editWfTransition(entity)}"
 										icon="ui-icon-document" />
 									<p:tooltip for="editDunningPlanTransitionDeleteLink"
@@ -162,7 +227,7 @@
 									<p:commandButton id="editDunningPlanTransitionDeleteLink"
 										action="#{workflowBean.deleteWfTransition(entity)}"
 										icon="ui-icon-trash"
-										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition,:tabView:formDunningPlanTransition:transitionRulesPanel" />
 								</p:column>
 
 							</hftl:dataList>

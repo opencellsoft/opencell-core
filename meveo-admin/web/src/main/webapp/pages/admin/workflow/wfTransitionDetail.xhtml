@@ -41,6 +41,18 @@
 										value="#{wfTransitionBean.entity.conditionEl}"
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
+
+                                <hftl:dataList backingBean="#{wfTransitionRuleBean}"
+                                               dataModel="#{wfTransitionBean.entity.wfTransitionRules}"
+                                               resultsId="dunningTransitionRules_results">
+                                    <hftl:column label="#{messages['transitionRule.name ']}"
+                                                 field="name" />
+                                    <hftl:column label="#{messages['transitionRule.value']}"
+                                                 field="value" />
+                                    <hftl:column label="#{messages['transitionRule.conditionEL']}"
+                                                 field="conditionEl" />
+
+                                </hftl:dataList>
 						    </p:panel>
 							
 							<hftl:formPanel

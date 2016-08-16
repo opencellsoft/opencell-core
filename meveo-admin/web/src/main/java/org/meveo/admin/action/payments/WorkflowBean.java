@@ -33,16 +33,20 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.custom.GroupedTransitionRule;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.wf.TransitionRuleTypeEnum;
 import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.WFTransitionRule;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -65,10 +69,22 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @Inject
     private WFTransitionService wFTransitionService;
 
+    @Inject
+    private WFTransitionRuleService wFTransitionServiceRule;
+
+    private List<String> wfTransitionRulesName;
+
+    private List<List<WFTransitionRule>> wfTransitionRulesByName = new ArrayList<>();
+
+    private List<GroupedTransitionRule> selectedRules;
+
+    private List<Integer> indexRules;
 
     // @Produces
     // @Named
     private transient WFTransition wfTransition = new WFTransition();
+
+    private transient WFTransitionRule newWFTransitionRule = new WFTransitionRule();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -96,7 +112,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
         this.wfTransition = new WFTransition();
     }
 
-
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -107,11 +122,39 @@ public class WorkflowBean extends BaseBean<Workflow> {
     public void saveWfTransition() {
 
         try {
+            List<WFTransitionRule> wfTransitionRules = new ArrayList<>();
+            for (GroupedTransitionRule groupedTransitionRule : selectedRules) {
+                if (groupedTransitionRule.getValue() != null && groupedTransitionRule.getValue().getModel()) {
+                    WFTransitionRule wfTransitionRule = groupedTransitionRule.getValue();
+                    newWFTransitionRule.setModel(Boolean.FALSE);
+                    newWFTransitionRule.setConditionEl(wfTransitionRule.getConditionEl());
+                    newWFTransitionRule.setPriority(wfTransitionRule.getPriority());
+                    newWFTransitionRule.setName(wfTransitionRule.getName());
+                    newWFTransitionRule.setType(wfTransitionRule.getType());
+                    newWFTransitionRule.setProvider(entity.getProvider());
+                    newWFTransitionRule.setDisabled(Boolean.FALSE);
+
+                    if (wfTransitionRule.getType() == TransitionRuleTypeEnum.RANGE) {
+                        String value = groupedTransitionRule.getNewValue().concat("|").concat(groupedTransitionRule.getAnotherValue());
+                        newWFTransitionRule.setValue(value);
+                    } else {
+                        newWFTransitionRule.setValue(groupedTransitionRule.getNewValue());
+                    }
+                    wFTransitionServiceRule.create(newWFTransitionRule, getCurrentUser());
+                    wfTransitionRules.add(newWFTransitionRule);
+                    newWFTransitionRule = new WFTransitionRule();
+                } else {
+                    wfTransitionRules.add(groupedTransitionRule.getValue());
+                }
+            }
             if (wfTransition.getId() != null) {
                 WFTransition wfTrs = wFTransitionService.findById(wfTransition.getId());
                 wfTrs.setFromStatus(wfTransition.getFromStatus());
                 wfTrs.setToStatus(wfTransition.getToStatus());
                 wfTrs.setConditionEl(wfTransition.getConditionEl());
+
+                wfTrs.getWfTransitionRules().clear();
+                wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
                 wFTransitionService.update(wfTrs, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
@@ -123,6 +166,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
                         throw new BusinessEntityException();
                     }
                 }
+                wfTransition.getWfTransitionRules().clear();
+                wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
                 wfTransition.setWorkflow(entity);
                 wFTransitionService.create(wfTransition, getCurrentUser());
                 entity.getTransitions().add(wfTransition);
@@ -137,6 +182,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
             messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
         }
 
+        indexRules.clear();
+        indexRules.add(0);
+        wfTransitionRulesByName.clear();
+        selectedRules.clear();
+
         wfTransition = new WFTransition();
     }
 
@@ -144,11 +194,32 @@ public class WorkflowBean extends BaseBean<Workflow> {
         WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
         wFTransitionService.remove(transition);
         entity.getTransitions().remove(dunningPlanTransition);
+        indexRules.clear();
+        indexRules.add(0);
+        wfTransitionRulesByName.clear();
+        selectedRules.clear();
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
     public void editWfTransition(WFTransition dunningPlanTransition) {
         this.wfTransition = dunningPlanTransition;
+        WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfTransitionRules"));
+        if (wfTransition1 != null && wfTransition1.getWfTransitionRules() != null) {
+            Integer index = 0;
+            indexRules.clear();
+            wfTransitionRulesByName.clear();
+            selectedRules.clear();
+            for (WFTransitionRule wfTransitionRule : wfTransition1.getWfTransitionRules()) {
+                indexRules.add(index);
+                GroupedTransitionRule groupedTransitionRule = new GroupedTransitionRule();
+                groupedTransitionRule.setName(wfTransitionRule.getName());
+                groupedTransitionRule.setValue(wfTransitionRule);
+                List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(wfTransitionRule.getName(), entity.getProvider());
+                wfTransitionRulesByName.add(list);
+                selectedRules.add(groupedTransitionRule);
+                index++;
+            }
+        }
     }
     
     /**
@@ -231,6 +302,79 @@ public class WorkflowBean extends BaseBean<Workflow> {
 		}
     	return new TreeMap<>();
     }
-    
 
+    public List<String> getWfTransitionRulesName() {
+        if (wfTransitionRulesName == null) {
+            List<WFTransitionRule> perksSource = null;
+            if (entity != null && entity.getProvider() != null) {
+                wfTransitionRulesName = wFTransitionServiceRule.getDistinctNameWFTransitionRules(entity.getProvider());
+            } else {
+                wfTransitionRulesName = wFTransitionServiceRule.getDistinctNameWFTransitionRules();
+            }
+        }
+        return wfTransitionRulesName;
+    }
+
+    public void setWfTransitionRulesName(List<String> wfTransitionRulesName) {
+        this.wfTransitionRulesName = wfTransitionRulesName;
+    }
+
+    public List<List<WFTransitionRule>> getWfTransitionRulesByName() {
+        return wfTransitionRulesByName;
+    }
+
+    public void setWfTransitionRulesByName(List<List<WFTransitionRule>> wfTransitionRulesByName) {
+        this.wfTransitionRulesByName = wfTransitionRulesByName;
+    }
+
+    public List<Integer> getIndexRules() {
+        if (indexRules == null) {
+            indexRules = new ArrayList<>();
+            indexRules.add(0);
+        }
+        return indexRules;
+    }
+
+    public void setIndexRules(List<Integer> indexRules) {
+        this.indexRules = indexRules;
+    }
+
+    public void changedRuleName(Integer indexRule) {
+        List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
+        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
+            wfTransitionRulesByName.remove(indexRule);
+            wfTransitionRulesByName.add(indexRule, list);
+        } else {
+            wfTransitionRulesByName.add(indexRule, list);
+        }
+    }
+
+    public void addNewRule() {
+        selectedRules.add(new GroupedTransitionRule());
+        indexRules.add(indexRules.size());
+    }
+
+    public void addWFTransitionRule(Integer indexRule) {
+
+    }
+
+    public List<GroupedTransitionRule> getSelectedRules() {
+        if (selectedRules == null) {
+            selectedRules = new ArrayList<>();
+            selectedRules.add(new GroupedTransitionRule());
+        }
+        return selectedRules;
+    }
+
+    public void setSelectedRules(List<GroupedTransitionRule> selectedRules) {
+        this.selectedRules = selectedRules;
+    }
+
+    public WFTransitionRule getNewWFTransitionRule() {
+        return newWFTransitionRule;
+    }
+
+    public void setNewWFTransitionRule(WFTransitionRule newWFTransitionRule) {
+        this.newWFTransitionRule = newWFTransitionRule;
+    }
 }
