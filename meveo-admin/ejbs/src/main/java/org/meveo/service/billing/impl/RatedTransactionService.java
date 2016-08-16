@@ -815,6 +815,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				walletOperation.getOfferCode(),walletOperation.getEdr());
 		ratedTransaction.setDescription(walletOperation.getDescription());
 		ratedTransaction.setCode(walletOperation.getCode());
+		ratedTransaction.setUnityDescription(walletOperation.getChargeInstance().getChargeTemplate().getInputUnitDescription());
 		
 		create(ratedTransaction, currentUser);
 
