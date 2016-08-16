@@ -213,7 +213,9 @@ public class OrderItem extends BaseEntity {
     public void resetMainOffering(ProductOffering newMainOffer) {
         this.mainOffering = newMainOffer;
         productOfferings.clear();
-        productOfferings.add(newMainOffer);
+        if (newMainOffer != null) {
+            productOfferings.add(newMainOffer);
+        }
         orderItemDto = null;
         source = null;
     }

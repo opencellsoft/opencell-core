@@ -1,12 +1,13 @@
 package org.meveo.api.order;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public enum OrderProductCharacteristicEnum {
 
-    SERVICE_PRODUCT_QUANTITY("quantity", Integer.class), SUBSCRIPTION_CODE("subscriptionCode", String.class), SERVICE_CODE("serviceCode", String.class), PRODUCT_INSTANCE_CODE(
-            "productInstanceCode", String.class), SUBSCRIPTION_DATE("subscriptionDate", Date.class), TERMINATION_DATE("terminationDate", Date.class), TERMINATION_REASON(
-            "terminationReason", String.class);
+    SERVICE_PRODUCT_QUANTITY("quantity", BigDecimal.class), SUBSCRIPTION_CODE("subscriptionCode", String.class), SERVICE_CODE("serviceCode", String.class), PRODUCT_INSTANCE_CODE(
+            "productInstanceCode", String.class), SUBSCRIPTION_DATE("subscriptionDate", Date.class), SUBSCRIPTION_END_DATE("subscriptionEndDate", Date.class), TERMINATION_DATE(
+            "terminationDate", Date.class), TERMINATION_REASON("terminationReason", String.class);
 
     protected String characteristicName;
 
@@ -23,6 +24,7 @@ public enum OrderProductCharacteristicEnum {
         return characteristicName;
     }
 
+    @SuppressWarnings("rawtypes")
     public Class getClazz() {
         return clazz;
     }

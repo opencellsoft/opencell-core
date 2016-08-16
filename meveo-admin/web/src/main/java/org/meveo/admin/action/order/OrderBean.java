@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.order;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -43,10 +46,13 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
+import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
@@ -83,6 +89,12 @@ public class OrderBean extends BaseBean<Order> {
 
     @Inject
     private OrderApi orderApi;
+
+    @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
+    private ProductOfferingService productOfferingService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -125,7 +137,6 @@ public class OrderBean extends BaseBean<Order> {
 
     public void editOrderItem(OrderItem orderItemToEdit) {
 
-        log.error("AKK editing {}", orderItemToEdit.getItemId());
         if (orderItemToEdit.isTransient()) {
             this.selectedOrderItem = orderItemToEdit;
 
@@ -141,7 +152,9 @@ public class OrderBean extends BaseBean<Order> {
         }
 
         if (this.selectedOrderItem.getOrderItemDto() != null) {
-            offersTree = getOrderedItemsAsTree(this.entity.getStatus() == OrderStatusEnum.IN_CREATION);
+            offersTree = constructOfferItemsTreeAndConfiguration(this.entity.getStatus() == OrderStatusEnum.IN_CREATION
+                    && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE, this.entity.getStatus() == OrderStatusEnum.IN_CREATION
+                    && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE, null);
         }
 
     }
@@ -263,19 +276,14 @@ public class OrderBean extends BaseBean<Order> {
             } else {
 
                 orderItemDto.getProductOffering().setId(selectedOrderItem.getMainOffering().getCode());
-
-                ProductCharacteristic characteristic = new ProductCharacteristic();
-                characteristic.setName(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName());
-                characteristic.setValue("5");
-
-                orderItemDto.getProduct().getProductCharacteristic().add(characteristic);
+                orderItemDto.getProduct().setProductCharacteristic(mapToProductCharacteristics(offerConfigurations.get(0).getCharacteristics()));
 
             }
             selectedOrderItem.setOrderItemDto(orderItemDto);
             selectedOrderItem.setSource(org.tmf.dsmapi.catalog.resource.order.OrderItem.serializeOrderItem(orderItemDto));
             log.error("AKK orderitem source is {}", selectedOrderItem.getSource());
             if (selectedOrderItem.getUserAccount() == null && selectedOrderItem.getSubscription() != null) {
-                selectedOrderItem.setUserAccount(selectedOrderItem.getSubscription().getUserAccount());
+                selectedOrderItem.setUserAccount(userAccountService.refreshOrRetrieve(selectedOrderItem.getSubscription().getUserAccount()));
             }
 
             if (entity.getOrderItems() == null) {
@@ -283,6 +291,7 @@ public class OrderBean extends BaseBean<Order> {
             }
             if (!entity.getOrderItems().contains(selectedOrderItem)) {
                 selectedOrderItem.setOrder(getEntity());
+                selectedOrderItem.setProvider(getCurrentProvider());
                 entity.getOrderItems().add(selectedOrderItem);
             }
 
@@ -304,14 +313,13 @@ public class OrderBean extends BaseBean<Order> {
     }
 
     /**
-     * Construct a tree of what can/was be ordered for an offer and their properties
+     * Construct a tree of what can/was be ordered for an offer and their configuration properties/characteristics
      * 
      * @param showAvailable Should checkboxes be shown for tree item selection
      * @return A tree
      */
-    private TreeNode getOrderedItemsAsTree(boolean showAvailable) {
-
-        log.error("AKK get getOrderedItemsAsTree");
+    private TreeNode constructOfferItemsTreeAndConfiguration(boolean showAvailableServices, boolean showAvailableProducts,
+            Map<String, Map<String, Object>> subscriptionConfiguration) {
 
         offerConfigurations = new ArrayList<>();
 
@@ -320,14 +328,17 @@ public class OrderBean extends BaseBean<Order> {
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);
 
-        ProductOffering mainOffering = this.selectedOrderItem.getProductOfferings().get(0);
+        ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedOrderItem.getMainOffering());
 
+        // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering order item)
         Map<String, Object> mainOfferCharacteristics = new HashMap<>();
         if (orderItemDto != null && orderItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(orderItemDto.getProduct().getProductCharacteristic());
+        } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(mainOffering.getCode())) {
+            mainOfferCharacteristics = subscriptionConfiguration.get(mainOffering.getCode());
         }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true);
+        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, null);
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -338,13 +349,13 @@ public class OrderBean extends BaseBean<Order> {
             List<Product>[] productsAndServices = orderApi.getProductsAndServices(orderItemDto, this.selectedOrderItem);
 
             // Show services - all or only the ones ordered
-            if (showAvailable || !productsAndServices[1].isEmpty()) {
+            if (showAvailableServices || !productsAndServices[1].isEmpty()) {
                 TreeNode servicesNode = new DefaultTreeNode("ServiceList", "Service", mainOfferingNode);
                 servicesNode.setExpanded(true);
 
                 for (OfferServiceTemplate offerServiceTemplate : ((OfferTemplate) mainOffering).getOfferServiceTemplates()) {
 
-                    // Find a matching ordered service product by comparing product characteristic "serviceCode"
+                    // Find a matching ordered service product from DTO by comparing product characteristic "serviceCode"
                     Product serviceProductMatched = null;
                     for (Product serviceProduct : productsAndServices[1]) {
                         String serviceCode = (String) orderApi.getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(),
@@ -355,15 +366,22 @@ public class OrderBean extends BaseBean<Order> {
                         }
                     }
 
-                    if (showAvailable || serviceProductMatched != null) {
+                    if (showAvailableServices || serviceProductMatched != null
+                            || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()))) {
 
+                        // Take service characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering
+                        // order item)
                         Map<String, Object> serviceCharacteristics = new HashMap<>();
                         if (serviceProductMatched != null) {
                             serviceCharacteristics = productCharacteristicsToMap(serviceProductMatched.getProductCharacteristic());
+                        } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode())) {
+                            serviceCharacteristics = subscriptionConfiguration.get(offerServiceTemplate.getServiceTemplate().getCode());
                         }
+                        boolean isMandatory = offerServiceTemplate.isMandatory()
+                                || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()));
+                        boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, serviceProductMatched != null
-                                || offerServiceTemplate.isMandatory());
+                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, null);
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -374,7 +392,7 @@ public class OrderBean extends BaseBean<Order> {
             }
 
             // Show products - all or only the ones ordered
-            if ((showAvailable || this.selectedOrderItem.getProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
+            if ((showAvailableProducts || this.selectedOrderItem.getProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
                 TreeNode productsNode = null;
                 productsNode = new DefaultTreeNode("ProductList", "Product", mainOfferingNode);
                 productsNode.setSelectable(false);
@@ -393,7 +411,7 @@ public class OrderBean extends BaseBean<Order> {
                         index++;
                     }
 
-                    if (showAvailable || productProductMatched != null) {
+                    if (showAvailableProducts || productProductMatched != null) {
 
                         Map<String, Object> productCharacteristics = new HashMap<>();
                         if (productProductMatched != null) {
@@ -401,7 +419,7 @@ public class OrderBean extends BaseBean<Order> {
                         }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false, productProductMatched != null
-                                || offerProductTemplate.isMandatory());
+                                || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), null);
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
@@ -416,16 +434,75 @@ public class OrderBean extends BaseBean<Order> {
     }
 
     /**
+     * Subscription selected. Update offer information if necessary.
+     * 
+     * @param event
+     */
+    public void onSubscriptionSet(SelectEvent event) {
+
+        if (selectedOrderItem.getSubscription() == null || !selectedOrderItem.getSubscription().equals(event.getObject())) {
+            selectedOrderItem.setSubscription((Subscription) event.getObject());
+            selectedOrderItem.resetMainOffering(((Subscription) event.getObject()).getOffer());
+            offerConfigurations = null;
+
+            Map<String, Map<String, Object>> subscriptionConfiguration = null;
+            // Gather information about instantiated/active services
+            if (selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY || selectedOrderItem.getAction() == OrderItemActionEnum.DELETE) {
+
+                subscriptionConfiguration = new HashMap<>();
+                Map<String, Object> offerConfiguration = new HashMap<>();
+
+                Subscription subscription = selectedOrderItem.getSubscription();
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), subscription.getSubscriptionDate());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), subscription.getEndAgreementDate());
+                subscriptionConfiguration.put(subscription.getOffer().getCode(), offerConfiguration);
+
+                if (selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY) {
+                    for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+
+                        offerConfiguration = new HashMap<>();
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), serviceInstance.getSubscriptionDate());
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), serviceInstance.getEndAgreementDate());
+                        offerConfiguration.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), serviceInstance.getQuantity());
+                        subscriptionConfiguration.put(serviceInstance.getCode(), offerConfiguration);
+                    }
+                }
+            }
+
+            offersTree = constructOfferItemsTreeAndConfiguration(selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY, false, subscriptionConfiguration);
+        }
+
+    }
+
+    /**
      * New product offering is selected - need to reset orderItem values and the offer tree
      * 
      * @param event
      */
-    public void setMainProductOffering(SelectEvent event) {
+    public void onMainProductOfferingSet(SelectEvent event) {
 
-        if (selectedOrderItem.getProductOfferings().isEmpty() || !selectedOrderItem.getProductOfferings().get(0).equals(event.getObject())) {
+        if (selectedOrderItem.getMainOffering() == null || !selectedOrderItem.getMainOffering().equals(event.getObject())) {
             selectedOrderItem.resetMainOffering((ProductOffering) event.getObject());
+            offerConfigurations = null;
 
-            offersTree = getOrderedItemsAsTree(this.entity.getStatus() == OrderStatusEnum.IN_CREATION);
+            offersTree = constructOfferItemsTreeAndConfiguration(true, true, null);
+        }
+    }
+
+    /**
+     * Propagate main offer item properties to services and products where it was not set yet
+     * 
+     * @param event
+     */
+    public void onMainCharacteristicsSet(SelectEvent event) {
+        if (!(boolean) event.getComponent().getAttributes().get("isMain")) {
+            return;
+        }
+
+        for (OfferItemInfo offerItemInfo : offerConfigurations) {
+            if (offerItemInfo.getCharacteristics().get((String) event.getComponent().getAttributes().get("characteristic")) == null) {
+                offerItemInfo.getCharacteristics().put((String) event.getComponent().getAttributes().get("characteristic"), event.getObject());
+            }
         }
     }
 
@@ -442,8 +519,8 @@ public class OrderBean extends BaseBean<Order> {
             Class valueClazz = characteristicEnum.getClazz();
             if (valueClazz == String.class) {
                 values.put(productCharacteristic.getName(), productCharacteristic.getValue());
-            } else if (valueClazz == Integer.class) {
-                values.put(productCharacteristic.getName(), Integer.parseInt(productCharacteristic.getValue()));
+            } else if (valueClazz == BigDecimal.class) {
+                values.put(productCharacteristic.getName(), new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
                 values.put(productCharacteristic.getName(),
                     DateUtils.parseDateWithPattern(productCharacteristic.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
@@ -452,6 +529,7 @@ public class OrderBean extends BaseBean<Order> {
         return values;
     }
 
+    @SuppressWarnings("rawtypes")
     private List<ProductCharacteristic> mapToProductCharacteristics(Map<String, Object> values) {
 
         List<ProductCharacteristic> characteristics = new ArrayList<>();
@@ -463,7 +541,7 @@ public class OrderBean extends BaseBean<Order> {
                 characteristics.add(productCharacteristic);
 
                 Class valueClazz = OrderProductCharacteristicEnum.getByCharacteristicName(productCharacteristic.getName()).getClazz();
-                if (valueClazz == String.class || valueClazz == Integer.class) {
+                if (valueClazz == String.class || valueClazz == BigDecimal.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
                     productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
@@ -474,9 +552,11 @@ public class OrderBean extends BaseBean<Order> {
         return characteristics;
     }
 
+    /**
+     * Tree node is selected or unselected via checkbox, show appropriate service and product configuration
+     */
     public void onTreeNodeSelection() {
 
-        log.error("AKK onTreeNodeSelection");
         offerConfigurations = new ArrayList<>();
 
         if (selectedOrderItem.getMainOffering() instanceof OfferTemplate) {
@@ -489,15 +569,22 @@ public class OrderBean extends BaseBean<Order> {
                 for (TreeNode serviceOrProduct : groupingNode.getChildren()) {
 
                     if (serviceOrProduct.getData() instanceof OfferItemInfo && ((OfferItemInfo) serviceOrProduct.getData()).isSelected()) {
-                        log.error("AKK add serviceAndProductConfigurations {} {}", ((OfferItemInfo) serviceOrProduct.getData()).getTemplate().getCode(),
-                            ((OfferItemInfo) serviceOrProduct.getData()).isMain());
                         offerConfigurations.add((OfferItemInfo) serviceOrProduct.getData());
                     }
                 }
             }
         }
+    }
 
-        log.error("AKK onTreeNodeSelection {}", offerConfigurations.size());
+    /**
+     * Action type changed - clear the rest of information
+     */
+    public void onActionTypeChange() {
+
+        selectedOrderItem.resetMainOffering(null);
+        selectedOrderItem.setSubscription(null);
+        offerConfigurations = null;
+
     }
 
     public List<OfferItemInfo> getOfferConfigurations() {
