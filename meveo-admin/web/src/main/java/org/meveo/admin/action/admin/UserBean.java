@@ -92,9 +92,6 @@ public class UserBean extends BaseBean<User> {
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
-    @Inject
-    private Messages messages;
-
     private static final Logger log = LoggerFactory.getLogger(UserBean.class);
 
     /**
