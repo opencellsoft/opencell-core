@@ -31,7 +31,7 @@
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
     <h:outputText value="#{''}" />
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <c:set var="fieldPrefix" value="#{prefix}_#{cft.code.replace(' ','_')}_" />
 
     <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">

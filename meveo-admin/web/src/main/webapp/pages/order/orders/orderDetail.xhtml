@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:s="http://jboss.org/seam/faces" template="/layout/template.xhtml">
+    xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -85,10 +85,20 @@
                         <hftl:column label="#{messages['order.itemId']}" field="itemId" />
                         <hftl:column label="#{messages['order.action']}" field="action" isMessage="true" messagePrefix="OrderItemActionEnum" />
                         <hftl:column label="#{messages['order.userAccount']}" field="userAccount.descriptionOrCode" />
-                        <hftl:column label="#{messages['order.productOfferings']}" field="productOfferings" isList="true" valueLabelField="descriptionOrCode" />
+                        <p:column headerText="#{messages['order.productOfferings']}">
+                            <h:outputText value="#{entity.subscription.code}" rendered="#{entity.action != OrderItemActionEnum.ADD}" />
+
+                            <h:panelGroup rendered="#{entity.action == OrderItemActionEnum.ADD}">
+                                <ui:repeat value="#{entity.productOfferings.toArray()}" var="c">
+                                    <h:outputText value="#{c.code}" />
+                                    <br />
+                                </ui:repeat>
+                            </h:panelGroup>
+                        </p:column>
+
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton icon="ui-icon-document" action="#{orderBean.editOrderItem(entity)}"
-                                update=":orderForm:tabView:orderItemMessages :orderForm:tabView:orderItemDetails" process="@this">
+                                update=":orderForm:messages :orderForm:tabView:orderItemMessages :orderForm:tabView:orderItemDetails" process="@this">
                             </p:commandButton>
                             <p:commandButton icon="ui-icon-trash" update="orderItems :orderForm:tabView:orderItemMessages :orderForm:tabView:orderItemDetails"
                                 rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" process="@this">
@@ -119,18 +129,22 @@
                                 <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.itemId']}" field="itemId" edit="false" componentWidth="10" />
                                 <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.action']}" field="action" required="true" componentWidth="25"
                                     listenerUpdate="orderItemDetails" actionListenerBean="#{orderBean}" actionListenerMethod="onActionTypeChange" />
-                                <hftl:formField id="userAccount" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.userAccount']}" field="userAccount"
-                                    valueLabelField="code" required="true" popup="true" popupId="userAccountPopup"
-                                    rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                <h:panelGroup>
+                                    <hftl:formField id="userAccount" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.userAccount']}" field="userAccount"
+                                        valueLabelField="code" required="true" popup="true" popupId="userAccountPopup"
+                                        rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                </h:panelGroup>
 
-                                <hftl:formField id="subscription" entity="#{orderBean.selectedOrderItem}" label="#{messages['access.subscription']}" field="subscription"
-                                    valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true"
-                                    rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE)}" />
-
-                                <hftl:formField id="offer" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.mainOffering']}" field="mainOffering"
-                                    valueLabelField="code" popup="true" popupId="offerPopup" required="true"
-                                    rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}" />
-
+                                <h:panelGroup>
+                                    <hftl:formField id="subscription" entity="#{orderBean.selectedOrderItem}" label="#{messages['access.subscription']}" field="subscription"
+                                        valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true"
+                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE)}" />
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <hftl:formField id="offer" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.mainOffering']}" field="mainOffering"
+                                        valueLabelField="code" popup="true" popupId="offerPopup" required="true"
+                                        rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}" />
+                                </h:panelGroup>
                                 <h:panelGroup
                                     rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE)}">
 
@@ -181,118 +195,130 @@
                                     <p:panel header="#{messages[orderBean.offerConfigurations.get(0).isOffer()?'order.offerCharacteristics':'order.productCharacteristics']}"
                                         rendered="#{orderBean.offerConfigurations!=null}">
 
-                                        <p:tabView value="#{orderBean.offerConfigurations}" var="itemConfiguration">
+                                        <p:tabView id="configTab">
 
-                                            <p:tab title="#{itemConfiguration.isOffer()?messages['order.subscriptionTab']:itemConfiguration.codeAndDescription}">
+                                            <c:forEach items="#{orderBean.offerConfigurations}" var="itemConfiguration" varStatus="itemStatus">
 
-                                                <hftl:decorateFormField fieldId="subscriptionDate"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName)]}"
-                                                    pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-                                                    <p:calendar id="subscriptionDate" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
-                                                        required="#{itemConfiguration.isMain()}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
-                                                        <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                            update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                            process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
-                                                        <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
-                                                        <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
-                                                    </p:calendar>
+                                                <p:tab title="#{itemConfiguration.isOffer()?messages['order.subscriptionTab']:itemConfiguration.codeAndDescription}">
 
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}" styleClass="field-value"
-                                                        rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION or orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD}">
-                                                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-                                                    </h:outputText>
-                                                </hftl:decorateFormField>
+                                                    <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
+                                                        pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
+                                                        <p:calendar id="subscriptionDate_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
+                                                            required="#{itemConfiguration.isMain()}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
+                                                            <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                            <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
+                                                            <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
+                                                        </p:calendar>
 
-                                                <hftl:decorateFormField fieldId="subscriptionEndDate"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}"
-                                                    pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-                                                    <p:calendar id="subscriptionEndDate" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
-                                                        <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                            update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                            process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
-                                                        <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
-                                                        <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
-                                                    </p:calendar>
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}" styleClass="field-value"
+                                                            rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION or orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD}">
+                                                            <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+                                                        </h:outputText>
+                                                    </hftl:decorateFormField>
 
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}" styleClass="field-value"
-                                                        rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY))}">
-                                                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-                                                    </h:outputText>
-                                                </hftl:decorateFormField>
+                                                    <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}"
+                                                        pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
+                                                        <p:calendar id="subscriptionEndDate_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
+                                                            <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                            <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
+                                                            <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
+                                                        </p:calendar>
 
-                                                <hftl:decorateFormField fieldId="subscriptionCode"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_CODE.characteristicName)]}"
-                                                    rendered="#{itemConfiguration.isOffer() and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
-                                                    <p:inputText id="subscriptionCode" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}" styleClass="field-value"
-                                                        rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
-                                                </hftl:decorateFormField>
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
+                                                            styleClass="field-value"
+                                                            rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY))}">
+                                                            <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+                                                        </h:outputText>
+                                                    </hftl:decorateFormField>
 
-                                                <hftl:decorateFormField fieldId="productInstanceCode"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.PRODUCT_INSTANCE_CODE.characteristicName)]}"
-                                                    rendered="#{itemConfiguration.isProduct()}">
-                                                    <p:inputText id="productInstanceCode" value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}" styleClass="field-value"
-                                                        rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
-                                                </hftl:decorateFormField>
+                                                    <hftl:decorateFormField fieldId="subscriptionCode_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_CODE.characteristicName)]}"
+                                                        rendered="#{itemConfiguration.isOffer() and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
+                                                        <p:inputText id="subscriptionCode_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}" styleClass="field-value"
+                                                            rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                                    </hftl:decorateFormField>
 
-                                                <hftl:decorateFormField fieldId="quantity"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY.characteristicName)]}"
-                                                    rendered="#{!itemConfiguration.isOffer()}">
-                                                    <p:inputText id="quantity" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}"
-                                                        converter="javax.faces.BigDecimal" required="true" rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}"
-                                                        converter="javax.faces.BigDecimal" styleClass="field-value"
-                                                        rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
-                                                </hftl:decorateFormField>
+                                                    <hftl:decorateFormField fieldId="productInstanceCode_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.PRODUCT_INSTANCE_CODE.characteristicName)]}"
+                                                        rendered="#{itemConfiguration.isProduct()}">
+                                                        <p:inputText id="productInstanceCode_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
+                                                            styleClass="field-value" rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                                    </hftl:decorateFormField>
 
-                                                <hftl:decorateFormField fieldId="terminationDate"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_DATE.characteristicName)]}"
-                                                    pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" newLine="true"
-                                                    rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
-                                                    <p:calendar id="terminationDate" value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}"
-                                                        required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                        <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                            update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                            process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
-                                                        <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
-                                                        <f:attribute name="characteristic" value="#{CharacteristicsEnum.TERMINATION_DATE.characteristicName}" />
-                                                    </p:calendar>
+                                                    <hftl:decorateFormField fieldId="quantity_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY.characteristicName)]}"
+                                                        rendered="#{!itemConfiguration.isOffer()}">
+                                                        <p:inputText id="quantity_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}"
+                                                            converter="javax.faces.BigDecimal" required="true" rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}" />
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}"
+                                                            converter="javax.faces.BigDecimal" styleClass="field-value"
+                                                            rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                                    </hftl:decorateFormField>
 
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}" styleClass="field-value"
-                                                        rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}">
-                                                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-                                                    </h:outputText>
-                                                </hftl:decorateFormField>
+                                                    <hftl:decorateFormField fieldId="terminationDate_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
+                                                        pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" newLine="true"
+                                                        rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
+                                                        <p:calendar id="terminationDate_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}"
+                                                            required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                            <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                            <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
+                                                            <f:attribute name="characteristic" value="#{CharacteristicsEnum.TERMINATION_DATE.characteristicName}" />
+                                                        </p:calendar>
 
-                                                <hftl:decorateFormField fieldId="terminationReason"
-                                                    label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_REASON.characteristicName)]}"
-                                                    rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}" styleClass="field-value"
+                                                            rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}">
+                                                            <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+                                                        </h:outputText>
+                                                    </hftl:decorateFormField>
 
-                                                    <p:selectOneMenu id="terminationReason" value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON]}"
-                                                        required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
-                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                        <s:objectConverter />
-                                                        <f:selectItem itemLabel="" itemValue="" />
-                                                        <f:selectItems value="#{subscriptionTerminationReasonService.listReasons()}" var="elem"
-                                                            itemLabel="#{elem['descriptionOrCode']}" itemValue="#{elem['code']}" />
+                                                    <hftl:decorateFormField fieldId="terminationReason_#{itemStatus.index}"
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_REASON.characteristicName)]}"
+                                                        rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
 
-                                                    </p:selectOneMenu>
+                                                        <p:selectOneMenu id="terminationReason_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON]}"
+                                                            required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
+                                                            rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                            <s:objectConverter />
+                                                            <f:selectItem itemLabel="" itemValue="" />
+                                                            <f:selectItems value="#{subscriptionTerminationReasonService.listReasons()}" var="elem"
+                                                                itemLabel="#{elem['descriptionOrCode']}" itemValue="#{elem['code']}" />
 
-                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON].descriptionOrCode}"
-                                                        styleClass="field-value" rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
-                                                </hftl:decorateFormField>
+                                                        </p:selectOneMenu>
+
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON]}" styleClass="field-value"
+                                                            rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
+                                                    </hftl:decorateFormField>
 
 
-                                                <!--                                                 <hftl:customFields prefix="" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}" -->
-                                                <!--                                                     messagesId="orderItemMessages" /> -->
+                                                    <div class="clearLeft"></div>
+                                                    <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                        messagesId=":orderForm:tabView:orderItemMessages" />
 
-                                            </p:tab>
+                                                </p:tab>
+                                            </c:forEach>
                                         </p:tabView>
                                     </p:panel>
                                 </h:panelGroup>
@@ -316,7 +342,7 @@
 
 
                             <h:panelGroup layout="block" styleClass="form-panel-actions">
-                                <p:commandButton value="#{messages['action.save']}" action="#{orderBean.saveOrderItem()}"
+                                <p:commandButton value="#{messages['order.saveOrderItem']}" action="#{orderBean.saveOrderItem()}"
                                     update="orderItemMessages :orderForm:tabView:orderItems :orderForm:tabView:orderItemDetails"
                                     rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" process="orderItemDetails" />
                                 <p:commandButton value="#{messages['action.cancel']}" action="#{orderBean.cancelOrderItemEdit}"
@@ -332,7 +358,7 @@
             <ui:define name="buttons">
 
 
-                <p:commandButton value="Send to process" action="#{orderBean.sendToProcess()}" update="@form"
+                <p:commandButton value="Send to process" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
                     rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION and !orderBean.entity.transient}" />
             </ui:define>
 

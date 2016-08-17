@@ -26,7 +26,7 @@
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
         </hftl:searchPanel>
 
-        <hftl:dataList label="#{messages['orders.title']}" sortBy="orderDate" backingBean="#{orderListBean}">
+        <hftl:dataList label="#{messages['orders.title']}" sortBy="orderDate" sortOrder="DESCENDING" backingBean="#{orderListBean}">
             <hftl:column label="#{messages['order.orderDate']}" field="orderDate" />
             <hftl:column label="#{messages['order.userAccount']}" field="userAccounts" isList="true" valueLabelField="descriptionOrCode" />
             <hftl:column label="#{messages['businessEntity.code']}" field="code" />

@@ -19,12 +19,14 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -37,6 +39,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderStatusEnum;
@@ -90,6 +93,8 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private OrderItemService orderItemService;
+
+    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Register an order from TMForumApi
@@ -245,7 +250,7 @@ public class OrderApi extends BaseApi {
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    private void processOrder(Order order, User currentUser) throws BusinessException, MeveoApiException {
+    public void processOrder(Order order, User currentUser) throws BusinessException, MeveoApiException {
 
         log.info("Processing order {}", order.getCode());
 
@@ -422,6 +427,16 @@ public class OrderApi extends BaseApi {
                     throw new EntityDoesNotExistsException(Subscription.class, productOrderItem.getProduct().getId());
                 }
             }
+
+            TerminateSubscriptionRequestDto terminateSubscription = new TerminateSubscriptionRequestDto();
+            terminateSubscription.setSubscriptionCode(productOrderItem.getProduct().getId());
+            terminateSubscription.setTerminationDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
+                OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+            terminateSubscription.setTerminationReason((String) getProductCharacteristic(productOrderItem.getProduct(),
+                OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
+
+            subscriptionApi.terminateSubscription(terminateSubscription, currentUser);
+
         }
 
         orderItem.setStatus(OrderStatusEnum.COMPLETED);
@@ -476,6 +491,8 @@ public class OrderApi extends BaseApi {
 
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
             currentUser);
+        productInstance.setProvider(currentUser.getProvider());
+
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
 
@@ -509,7 +526,7 @@ public class OrderApi extends BaseApi {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
-                CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), cft.parseValue(characteristic.getValue()),
+                CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
                     cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, provider);
                 customFieldsDto.getCustomField().add(cftDto);
             }
@@ -543,7 +560,7 @@ public class OrderApi extends BaseApi {
 
                 }
                 if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, "yyyy-MM-dd");
+                    value = DateUtils.parseDateWithPattern((String) value, paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
                 }
             }
 
@@ -603,7 +620,7 @@ public class OrderApi extends BaseApi {
             // } else if (!StringUtils.isBlank(serviceProduct.getId())) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
-            log.error("AKK service code is {}", serviceCode);
+
             if (StringUtils.isBlank(serviceCode)) {
                 throw new MissingParameterException("serviceCode");
             }

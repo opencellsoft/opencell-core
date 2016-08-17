@@ -24,7 +24,7 @@
 
 <ui:composition>
 
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
 
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />

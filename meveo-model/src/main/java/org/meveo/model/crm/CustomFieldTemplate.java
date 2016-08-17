@@ -35,11 +35,8 @@ import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ModuleItem
@@ -322,45 +319,6 @@ public class CustomFieldTemplate extends BusinessEntity {
                 return DateUtils.parseDateWithPattern(defaultValue, DateUtils.DATE_TIME_PATTERN);
             }
         } catch (Exception e) {
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
-     * 
-     * @param valueToConvert Value to convert
-     * @return A value corresponding to custom field data type definition
-     */
-    public Object parseValue(String valueToConvert) {
-
-        if (valueToConvert == null) {
-            return null;
-        }
-
-        try {
-
-            if (storageType == CustomFieldStorageTypeEnum.SINGLE && !fieldType.isStoredSerialized()) {
-                if (fieldType == CustomFieldTypeEnum.DOUBLE) {
-                    return Double.parseDouble(valueToConvert);
-                } else if (fieldType == CustomFieldTypeEnum.LONG) {
-                    return Long.parseLong(valueToConvert);
-                } else if (fieldType == CustomFieldTypeEnum.STRING || fieldType == CustomFieldTypeEnum.LIST || fieldType == CustomFieldTypeEnum.TEXT_AREA) {
-                    return valueToConvert;
-                } else if (fieldType == CustomFieldTypeEnum.DATE) {
-                    return DateUtils.parseDateWithPattern(valueToConvert, DateUtils.DATE_TIME_PATTERN);
-                }
-            } else {
-
-                List<String> matrixColumnNames = getMatrixColumnCodes();
-                return CustomFieldValue.deserializeValue(valueToConvert, fieldType, storageType, matrixColumnNames);
-
-            }
-
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to parse {} for CFT {}", valueToConvert, this, e);
             return null;
         }
         return null;
