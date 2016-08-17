@@ -35,7 +35,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
@@ -44,10 +43,9 @@ import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Standard backing bean for {@link org.meveo.model.hierarchy.UserHierarchyLevel} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
- * view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link org.meveo.model.hierarchy.UserHierarchyLevel} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle
+ * entities filtering/sorting in datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
@@ -61,12 +59,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject
-    private ProviderService providerService;
-
-    @Inject
     private Messages messages;
 
-    private TreeNode rootNode;
+    private SortedTreeNode rootNode;
 
     private TreeNode selectedNode;
 
@@ -156,11 +151,15 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     public void onNodeSelect(NodeSelectEvent event) {
+        if (selectedNode != null) {
+            selectedNode.setSelected(false);
+        }
         TreeNode treeNode = event.getTreeNode();
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
         userHierarchyLevel = userHierarchyLevelService.refreshOrRetrieve(userHierarchyLevel);
         setEntity(userHierarchyLevel);
         selectedNode = treeNode;
+        selectedNode.setSelected(true);
         showUserGroupDetail = true;
         isEdit = true;
     }
@@ -168,6 +167,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void newUserHierarchyLevel() {
         showUserGroupDetail = true;
         isEdit = false;
+        setObjectIdFromSet(null);
         UserHierarchyLevel userHierarchyLevel = initEntity();
         UserHierarchyLevel userHierarchyLevelParent = null;
         if (selectedNode != null) {
@@ -186,6 +186,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         showUserGroupDetail = true;
         selectedNode = null;
         isEdit = false;
+        setObjectIdFromSet(null);
         UserHierarchyLevel userHierarchyLevel = initEntity();
         userHierarchyLevel.setParentLevel(null);
         if (CollectionUtils.isNotEmpty(rootNode.getChildren())) {
@@ -207,11 +208,14 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             selectedNode.getParent().getChildren().remove(selectedNode);
             selectedNode = null;
             showUserGroupDetail = false;
+            initEntity();
+
+            messages.info(new BundleKey("messages", "delete.successful"));
         }
     }
 
     public void moveUp() {
-        SortedTreeNode node= (SortedTreeNode) selectedNode;
+        SortedTreeNode node = (SortedTreeNode) selectedNode;
         int currentIndex = node.getIndexInParent();
 
         // Move a position up within the same branch
@@ -235,6 +239,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
         try {
             updatePositionValue((SortedTreeNode) node.getParent());
+            node.setSelected(true);
+            setEntity(userHierarchyLevelService.refreshOrRetrieve((UserHierarchyLevel) node.getData()));
 
         } catch (BusinessException e) {
             log.error("Failed to move up {}", node, e);
@@ -243,7 +249,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     public void moveDown() {
-        SortedTreeNode node= (SortedTreeNode) selectedNode;
+        SortedTreeNode node = (SortedTreeNode) selectedNode;
         int currentIndex = node.getIndexInParent();
         boolean isLast = node.isLast();
 
@@ -260,8 +266,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             if (parentSibling != null) {
                 node.getParent().getChildren().remove(currentIndex);
 
-                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel)node.getData();
-                UserHierarchyLevel parent = (UserHierarchyLevel)parentSibling.getData();
+                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) node.getData();
+                UserHierarchyLevel parent = (UserHierarchyLevel) parentSibling.getData();
                 userHierarchyLevel.setParentLevel(parent);
                 node.setData(userHierarchyLevel);
                 parentSibling.getChildren().add(0, node);
@@ -270,6 +276,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
         try {
             updatePositionValue((SortedTreeNode) node.getParent());
+            node.setSelected(true);
+            setEntity(userHierarchyLevelService.refreshOrRetrieve((UserHierarchyLevel) node.getData()));
 
         } catch (BusinessException e) {
             log.error("Failed to move down {}", node, e);
@@ -291,13 +299,14 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private void updatePositionValue(SortedTreeNode nodeToUpdate) throws BusinessException {
 
         // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
-        UserHierarchyLevel parent = null;
+        HierarchyLevel parent = null;
         if (!ROOT.equals(nodeToUpdate.getData())) {
-           parent = (UserHierarchyLevel) nodeToUpdate.getData();
+            parent = (HierarchyLevel) nodeToUpdate.getData();
         }
 
         if (CollectionUtils.isNotEmpty(nodes)) {
@@ -312,19 +321,23 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                 userHierarchyLevelService.update(userHierarchyLevel, getCurrentUser());
             }
         }
-        selectedNode = null;
-        showUserGroupDetail = false;
+        // selectedNode = null;
+        // showUserGroupDetail = false;
     }
 
     // Recursive function to create tree
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
         TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
-        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
-        if (CollectionUtils.isNotEmpty(subTree)) {
-            Collections.sort(subTree);
-            for (HierarchyLevel child : subTree) {
-                createTree(child, newNode);
+        if (userHierarchyLevel.getChildLevels() != null) {
+
+            List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
+            if (CollectionUtils.isNotEmpty(subTree)) {
+                Collections.sort(subTree);
+                for (HierarchyLevel child : subTree) {
+                    createTree(child, newNode);
+                }
             }
         }
         return newNode;
@@ -388,5 +401,42 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
             return null;
         }
+
+        public TreeNode findNodeByData(Object dataToFind) {
+            if (this.getData().equals(dataToFind)) {
+                return this;
+            }
+
+            if (this.getChildCount() > 0) {
+                for (TreeNode childNode : this.getChildren()) {
+                    TreeNode nodeMatched = ((SortedTreeNode) childNode).findNodeByData(dataToFind);
+                    if (nodeMatched != null) {
+                        return nodeMatched;
+                    }
+                }
+            }
+            return null;
+        }
     }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        super.saveOrUpdate(killConversation);
+
+        rootNode = null;
+        getRootNode();
+
+        if (selectedNode != null) {
+            selectedNode.setSelected(false);
+        }
+        selectedNode = rootNode.findNodeByData(entity);
+        if (selectedNode != null) {
+            selectedNode.setSelected(true);
+        }
+        showUserGroupDetail = true;
+        isEdit = true;
+
+        return null;
+    }
+
 }
