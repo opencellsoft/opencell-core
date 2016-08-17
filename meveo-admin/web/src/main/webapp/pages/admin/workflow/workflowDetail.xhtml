@@ -131,7 +131,7 @@
 
                                                 <hftl:decorateFormField fieldId="transitionRuleDateValue#{indexRule}" label="#{messages['transitionRuleNewValue.value']}"
                                                                         rendered="#{workflowBean.selectedRules[indexRule].value.model == true and workflowBean.selectedRules[indexRule].value.type == 'DATE'}">
-                                                    <p:calendar id="transitionRuleDateValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newValue}">
+                                                    <p:calendar id="transitionRuleDateValue#{indexRule}" value="#{workflowBean.selectedRules[indexRule].newDate}" pattern="dd/MM/yyyy">
                                                     </p:calendar>
                                                 </hftl:decorateFormField>
 

@@ -20,9 +20,11 @@ package org.meveo.admin.action.payments;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -137,13 +139,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     if (wfTransitionRule.getType() == TransitionRuleTypeEnum.RANGE) {
                         String value = groupedTransitionRule.getNewValue().concat("|").concat(groupedTransitionRule.getAnotherValue());
                         newWFTransitionRule.setValue(value);
+                    } else if (wfTransitionRule.getType() == TransitionRuleTypeEnum.DATE) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        Date value = groupedTransitionRule.getNewDate();
+                        newWFTransitionRule.setValue(sdf.format(value));
                     } else {
                         newWFTransitionRule.setValue(groupedTransitionRule.getNewValue());
                     }
                     wFTransitionServiceRule.create(newWFTransitionRule, getCurrentUser());
                     wfTransitionRules.add(newWFTransitionRule);
                     newWFTransitionRule = new WFTransitionRule();
-                } else {
+                } else if (groupedTransitionRule.getValue() != null){
                     wfTransitionRules.add(groupedTransitionRule.getValue());
                 }
             }
@@ -153,8 +159,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 wfTrs.setToStatus(wfTransition.getToStatus());
                 wfTrs.setConditionEl(wfTransition.getConditionEl());
 
-                wfTrs.getWfTransitionRules().clear();
-                wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
+                if (wfTransitionRules.size() > 0) {
+                    wfTrs.getWfTransitionRules().clear();
+                    wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
+                }
                 wFTransitionService.update(wfTrs, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
@@ -166,8 +174,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
                         throw new BusinessEntityException();
                     }
                 }
-                wfTransition.getWfTransitionRules().clear();
-                wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
+                if (wfTransitionRules.size() > 0) {
+                    wfTransition.getWfTransitionRules().clear();
+                    wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
+                }
                 wfTransition.setWorkflow(entity);
                 wFTransitionService.create(wfTransition, getCurrentUser());
                 entity.getTransitions().add(wfTransition);

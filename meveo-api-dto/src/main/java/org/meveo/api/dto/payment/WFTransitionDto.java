@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.WFTransitionRule;
 
 
 @XmlType(name = "WFTransition")
@@ -53,8 +54,11 @@ public class WFTransitionDto extends BaseDto {
 	@XmlElementWrapper
     @XmlElement(name="wfActionDto")
 	private List<WFActionDto>  listWFActionDto = new ArrayList<WFActionDto>();
-	
-	
+
+    @XmlElementWrapper
+    @XmlElement(name="wfTransitionRuleDto")
+    private List<WFTransitionRuleDto> listWFTransitionRuleDto = new ArrayList<>();
+
 	public WFTransitionDto(){
 	}
 		
@@ -68,6 +72,11 @@ public class WFTransitionDto extends BaseDto {
 			wfadto.setWfTransitionDto(this);
 			listWFActionDto.add(wfadto);
 		}
+
+        for(WFTransitionRule wfTransitionRule : wfTransition.getWfTransitionRules() ){
+            WFTransitionRuleDto wfTransitionRuleDto = new WFTransitionRuleDto(wfTransitionRule);
+            listWFTransitionRuleDto.add(wfTransitionRuleDto);
+        }
 	}
 	
 	public WFTransition fromDto(WFTransition wfTransition){
@@ -132,7 +141,7 @@ public class WFTransitionDto extends BaseDto {
 	}
 
 	/**
-	 * @param workflowDto the workflowDto to set
+	 * @param workflowCode the workflowDto to set
 	 */
 	public void setWorkflowCode(String workflowCode) {
 		this.workflowCode = workflowCode;
@@ -145,7 +154,15 @@ public class WFTransitionDto extends BaseDto {
 		return listWFActionDto;
 	}
 
-	/**
+    public List<WFTransitionRuleDto> getListWFTransitionRuleDto() {
+        return listWFTransitionRuleDto;
+    }
+
+    public void setListWFTransitionRuleDto(List<WFTransitionRuleDto> listWFTransitionRuleDto) {
+        this.listWFTransitionRuleDto = listWFTransitionRuleDto;
+    }
+
+    /**
 	 * @param listWFActionDto the listWFActionDto to set
 	 */
 	public void setListWFActionDto(List<WFActionDto> listWFActionDto) {

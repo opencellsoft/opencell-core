@@ -21,7 +21,6 @@ package org.meveo.model.wf;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -66,7 +65,7 @@ public class WFTransitionRule extends AuditableEntity {
     @Column(name = "MODEL")
     private Boolean model = Boolean.FALSE;
 
-    @ManyToMany(mappedBy="wfTransitionRules", cascade=CascadeType.REMOVE)
+    @ManyToMany(mappedBy="wfTransitionRules")
     private Set<WFTransition> wfTransitions = new HashSet<>();
 
     public String getName() {

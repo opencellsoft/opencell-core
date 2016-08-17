@@ -1,6 +1,7 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.meveo.model.wf.WFTransitionRule;
 
@@ -13,6 +14,8 @@ public class GroupedTransitionRule implements Serializable {
     private WFTransitionRule value;
 
     private String newValue;
+
+    private Date newDate;
 
     private String anotherValue;
 
@@ -46,5 +49,13 @@ public class GroupedTransitionRule implements Serializable {
 
     public void setAnotherValue(String anotherValue) {
         this.anotherValue = anotherValue;
+    }
+
+    public Date getNewDate() {
+        return newDate;
+    }
+
+    public void setNewDate(Date newDate) {
+        this.newDate = newDate;
     }
 }

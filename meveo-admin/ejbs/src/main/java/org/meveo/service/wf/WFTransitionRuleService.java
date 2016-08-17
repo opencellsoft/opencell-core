@@ -18,12 +18,14 @@
  */
 package org.meveo.service.wf;
 
-import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.WFTransitionRule;
-import org.meveo.service.base.PersistenceService;
+import java.util.List;
 
 import javax.ejb.Stateless;
-import java.util.List;
+
+import org.meveo.model.crm.Provider;
+import org.meveo.model.wf.TransitionRuleTypeEnum;
+import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WFTransitionRuleService extends PersistenceService<WFTransitionRule> {
@@ -67,5 +69,25 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                 .setParameter("name", name)
                 .setParameter("provider", provider)
                 .getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public WFTransitionRule getWFTransitionRule(String name, String value, Integer priority, TransitionRuleTypeEnum type, Provider provider) {
+        WFTransitionRule wfTransitionRule = null;
+        try {
+            wfTransitionRule = (WFTransitionRule) getEntityManager()
+                    .createQuery(
+                            "from " + WFTransitionRule.class.getSimpleName()
+                                    + " where name=:name and value=:value and priority=:priority and type=:type and provider=:provider")
+
+                    .setParameter("name", name)
+                    .setParameter("provider", provider)
+                    .setParameter("priority", priority)
+                    .setParameter("type", type)
+                    .setParameter("provider", provider)
+                    .getSingleResult();
+        } catch (Exception e) {
+        }
+        return wfTransitionRule;
     }
 }

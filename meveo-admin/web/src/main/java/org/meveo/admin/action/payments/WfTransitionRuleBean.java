@@ -26,13 +26,11 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.wf.WFTransitionRule;
-import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link org.meveo.model.wf.Workflow} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -59,9 +57,7 @@ public class WfTransitionRuleBean extends BaseBean<WFTransitionRule> {
 
     // @Produces
     // @Named
-    private transient WFTransitionRule wfTransition = new WFTransitionRule();
-
-    private DualListModel<Workflow> workflowsDM;
+    private transient WFTransitionRule wfTransitionRule = new WFTransitionRule();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link org.meveo.admin.action.BaseBean}.
@@ -75,15 +71,6 @@ public class WfTransitionRuleBean extends BaseBean<WFTransitionRule> {
         super.initEntity();
      //   PersistenceUtils.initializeAndUnproxy(entity.getActions());
         return entity;
-    }
-
-    /**
-     * Standard method for custom component with listType="pickList".
-     */
-    public DualListModel<Workflow> getDualListModel() {
-        if (workflowsDM == null) {
-        }
-        return workflowsDM;
     }
 
     @Override

@@ -62,7 +62,7 @@ public class WFTransition extends AuditableEntity {
 	@JoinColumn(name = "WORKFLOW_ID")
 	private Workflow workflow;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "WF_TRANSITION_TRANSITION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "TRANSITION_RULE_ID"))
     @OrderBy("priority ASC")
     private Set<WFTransitionRule> wfTransitionRules = new HashSet<>();
@@ -152,8 +152,7 @@ public class WFTransition extends AuditableEntity {
         }
 
         StringBuffer combinedEl = new StringBuffer();
-        final String AND = " AND ";
-        String firstJoin = null;
+        final String AND = "AND";
         if (wfTransitionRules != null) {
             for (WFTransitionRule wfTransitionRule: wfTransitionRules) {
                 if (wfTransitionRule.getConditionEl() != null) {
@@ -162,7 +161,7 @@ public class WFTransition extends AuditableEntity {
             }
         }
         if (combinedEl.toString().startsWith(AND)) {
-            return combinedEl.toString().substring(4);
+            return combinedEl.toString().substring(3);
         }
         return combinedEl.toString();
     }

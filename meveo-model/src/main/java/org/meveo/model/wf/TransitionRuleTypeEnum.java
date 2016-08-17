@@ -20,11 +20,10 @@ package org.meveo.model.wf;
 
 public enum TransitionRuleTypeEnum {
 
-    EMPTY(1, "TransitionRuleTypeEnum.empty"),
-    STRING(2, "TransitionRuleTypeEnum.string"),
-    DATE(3, "TransitionRuleTypeEnum.date"),
-    NUMBER(4, "TransitionRuleTypeEnum.number"),
-    RANGE(5, "TransitionRuleTypeEnum.range");
+    STRING(1, "TransitionRuleTypeEnum.string"),
+    DATE(2, "TransitionRuleTypeEnum.date"),
+    NUMBER(3, "TransitionRuleTypeEnum.number"),
+    RANGE(4, "TransitionRuleTypeEnum.range");
 
     private Integer id;
     private String label;

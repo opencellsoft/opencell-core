@@ -20,21 +20,21 @@
 	
 						<p:panel id="actionPlanItemsdiv"
 							rendered="#{workflowBean.edit}">
-							
+
 							<p:panel id="transitionSummarypanel" header="#{messages['dunningPlan.transition']}" >
 								<hftl:decorateFormField fieldId="fromStatus"
 								label="#{messages['dunningPlanTransition.fromStatus']}">
 								<h:outputText id="fromStatus" value="#{wfTransitionBean.entity.fromStatus}"
 									disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
-		
+
 								<hftl:decorateFormField fieldId="toStatus"
 									label="#{messages['dunningPlanTransition.toStatus']}">
 									<h:outputText id="toStatus"
 										value="#{wfTransitionBean.entity.toStatus}"
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
-								
+
 								<hftl:decorateFormField fieldId="conditionEl"
 									label="#{messages['dunningPlanTransition.conditionEl']}">
 									<h:outputText id="conditionEl"
@@ -42,19 +42,21 @@
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
 
-                                <hftl:dataList backingBean="#{wfTransitionRuleBean}"
-                                               dataModel="#{wfTransitionBean.entity.wfTransitionRules}"
-                                               resultsId="dunningTransitionRules_results">
-                                    <hftl:column label="#{messages['transitionRule.name ']}"
-                                                 field="name" />
-                                    <hftl:column label="#{messages['transitionRule.value']}"
-                                                 field="value" />
-                                    <hftl:column label="#{messages['transitionRule.conditionEL']}"
-                                                 field="conditionEl" />
+                                <p:fieldset legend="#{messages['dunningPlan.transitionRules']}" styleClass="clearLeft" style="width: 500px;">
+                                    <p:dataTable id="transitionRulesId" var="rule" value="#{wfTransitionBean.entity.wfTransitionRules}" style="width: 500px;">
 
-                                </hftl:dataList>
+                                        <p:column headerText="#{messages['transitionRule.name']}">
+                                            <h:outputText value="#{rule.name}" />
+                                        </p:column>
+
+                                        <p:column headerText="#{messages['transitionRule.value']}">
+                                            <h:outputText value="#{rule.value}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:fieldset>
 						    </p:panel>
-							
+
 							<hftl:formPanel
 								formId="formActionPlanItems" edit="#{workflowBean.edit}"
 								label="#{messages['dunningPlan.actions']}"
@@ -70,7 +72,7 @@
 								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" rows="1" maxlength="2000" isMessage="true"
 									edit="#{workflowBean.edit}" />
-									
+
 								<ui:param name="buttons" value="true" />
 			                    <ui:define name="buttons">
 									<p:commandButton rendered="#{wfAction.id==null}"
@@ -96,7 +98,7 @@
 							</hftl:formPanel>
 
 						</p:panel>
-						
+
 						<p:panel id="actionPlanItems_panel">
 							<h:form id="actionItems_form">
 								<hftl:dataList backingBean="#{actionPlanItemBean}"
