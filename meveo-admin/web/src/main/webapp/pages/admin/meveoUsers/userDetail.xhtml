@@ -34,26 +34,21 @@
                 </h:panelGroup>
             </p:outputPanel>
 
-            <p:outputPanel id="userGroupLevelPanel" styleClass="clearLeft">
-                <h:panelGroup>
-                    <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']}">
-                        <p:tree id="userGroupLevel" value="#{userBean.rootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false"
-                                selectionMode="single"
-                                selection="#{userBean.selectedNode}">
-                            <p:treeNode>
-                                <h:outputText value="#{groupLevel.descriptionOrCode}"/>
-                            </p:treeNode>
-                        </p:tree>
-                    </hftl:decorateFormField>
-                </h:panelGroup>
-            </p:outputPanel>
-
             <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
-                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles" actionListenerBean="#{userBean}"
+                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userGroupLevel userRoles" actionListenerBean="#{userBean}"
                 actionListenerMethod="onProviderChange" />
 
+            <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">
+                <p:tree id="userGroupLevel" value="#{userBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
+                    selection="#{userBean.userGroupSelectedNode}">
+                    <p:treeNode>
+                        <h:outputText value="#{groupLevel.descriptionOrCode}" />
+                    </p:treeNode>
+                </p:tree>
+            </hftl:decorateFormField>
+
             <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles" listType="pickUpList" valueLabelField="name" required="true"
-                dualListModel="#{userBean.dualListModel}" newLine="true" />
+                dualListModel="#{userBean.dualListModel}" />
 
         </hftl:formPanel>
 

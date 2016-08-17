@@ -20,21 +20,20 @@ package org.meveo.model.hierarchy;
 
 import java.util.Set;
 
-import javax.validation.constraints.Size;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.CascadeType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -47,16 +46,16 @@ import org.meveo.model.ObservableEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "HIERARCHY_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "HIERARCHY_TYPE")
-public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel>{
+public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel<T>>{
 
 	private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
-    private HierarchyLevel parentLevel;
+    private HierarchyLevel<T> parentLevel;
 
     @OneToMany(mappedBy = "parentLevel", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<HierarchyLevel> childLevels;
+    private Set<HierarchyLevel<T>> childLevels;
 
     @Column(name = "HIERARCHY_TYPE", insertable = false, updatable = false, length = 10)
     @Size(max = 10)
@@ -65,19 +64,19 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
     @Column(name = "ORDER_LEVEL")
     protected Long orderLevel = 0L;
 
-    public HierarchyLevel getParentLevel() {
+    public HierarchyLevel<T> getParentLevel() {
         return parentLevel;
     }
 
-    public void setParentLevel(HierarchyLevel parentLevel) {
+    public void setParentLevel(HierarchyLevel<T> parentLevel) {
         this.parentLevel = parentLevel;
     }
 
-    public Set<HierarchyLevel> getChildLevels() {
+    public Set<HierarchyLevel<T>> getChildLevels() {
         return childLevels;
     }
 
-    public void setChildLevels(Set<HierarchyLevel> childLevels) {
+    public void setChildLevels(Set<HierarchyLevel<T>> childLevels) {
         this.childLevels = childLevels;
     }
 
@@ -98,7 +97,7 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
     }
 
     @Override
-    public int compareTo(HierarchyLevel hierarchyLevel) {
+    public int compareTo(HierarchyLevel<T> hierarchyLevel) {
         return Long.compare(this.orderLevel, hierarchyLevel.orderLevel);
     }
 }

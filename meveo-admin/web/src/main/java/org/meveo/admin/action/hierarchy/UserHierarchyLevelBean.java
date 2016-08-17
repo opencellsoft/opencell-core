@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -57,9 +56,6 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     /** Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}. */
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
-
-    @Inject
-    private Messages messages;
 
     private SortedTreeNode rootNode;
 

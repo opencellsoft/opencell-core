@@ -54,6 +54,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<UserHierarchyLevel> findRoots() {
         Query query = getEntityManager()
                 .createQuery(
@@ -66,6 +67,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     public List<UserHierarchyLevel> findRoots(Provider provider) {
         Query query = getEntityManager()
                 .createQuery(
@@ -122,6 +124,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         return true;
     }
 
+    @SuppressWarnings("rawtypes")
     private void userGroupLevelInSubNode(Long id, List<Boolean> booleanList) {
         List<String> fieldsFetch = Arrays.asList("childLevels", "users");
 

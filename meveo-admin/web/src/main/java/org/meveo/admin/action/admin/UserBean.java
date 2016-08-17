@@ -28,10 +28,10 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -40,7 +40,6 @@ import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -61,11 +60,11 @@ import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,9 +105,9 @@ public class UserBean extends BaseBean<User> {
 
     private DualListModel<Role> rolesDM;
 
-    private TreeNode rootNode;
+    private TreeNode userGroupRootNode;
 
-    private TreeNode selectedNode;
+    private TreeNode userGroupSelectedNode;
 
     /**
      * Repeated password to check if it matches another entered password and user did not make a mistake.
@@ -143,9 +142,9 @@ public class UserBean extends BaseBean<User> {
         }
     }
 
-    public TreeNode getRootNode() {
-        if (rootNode == null) {
-            rootNode = new DefaultTreeNode("Root", null);
+    public TreeNode getUserGroupRootNode() {
+        if (userGroupRootNode == null) {
+            userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
             if (entity != null && entity.getProvider() != null) {
                 roots = userHierarchyLevelService.findRoots(entity.getProvider());
@@ -155,24 +154,24 @@ public class UserBean extends BaseBean<User> {
             UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
             if (CollectionUtils.isNotEmpty(roots)) {
                 Collections.sort(roots);
-                for (HierarchyLevel userGroupTree : roots) {
-                    createTree(userGroupTree, rootNode, userHierarchyLevel);
+                for (UserHierarchyLevel userGroupTree : roots) {
+                    createTree(userGroupTree, userGroupRootNode, userHierarchyLevel);
                 }
             }
         }
-        return rootNode;
+        return userGroupRootNode;
     }
 
-    public void setRootNode(TreeNode rootNode) {
-        this.rootNode = rootNode;
+    public void setUserGroupRootNode(TreeNode rootNode) {
+        this.userGroupRootNode = rootNode;
     }
 
-    public TreeNode getSelectedNode() {
-        return selectedNode;
+    public TreeNode getUserGroupSelectedNode() {
+        return userGroupSelectedNode;
     }
 
-    public void setSelectedNode(TreeNode selectedNode) {
-        this.selectedNode = selectedNode;
+    public void setUserGroupSelectedNode(TreeNode selectedNode) {
+        this.userGroupSelectedNode = selectedNode;
     }
 
     /*
@@ -207,8 +206,8 @@ public class UserBean extends BaseBean<User> {
             entity.setPassword(password);
         }
 
-        if (this.getSelectedNode() != null) {
-            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getSelectedNode().getData();
+        if (this.getUserGroupSelectedNode() != null) {
+            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getUserGroupSelectedNode().getData();
             getEntity().setUserLevel(userHierarchyLevel);
         }
 
@@ -590,9 +589,11 @@ public class UserBean extends BaseBean<User> {
 
     public void onProviderChange() {
         rolesDM = null;
+        userGroupRootNode = null;
     }
 
     // Recursive function to create tree with node checked if selected
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, UserHierarchyLevel selectedHierarchyLevel) {
         TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
         List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
