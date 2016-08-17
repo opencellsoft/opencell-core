@@ -158,7 +158,7 @@
 					<c:forEach
 						items="#{offerTemplateBean.entity.offerServiceTemplates}"
 						var="ost">						
-
+						
 						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
 							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
 							<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
