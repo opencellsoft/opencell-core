@@ -154,10 +154,10 @@
 						styleClass="SubHeader" />
 				</f:facet>
 				<p:panel>
+					<c:set var="index" value="${0}"></c:set>
 					<c:forEach
 						items="#{offerTemplateBean.entity.offerServiceTemplates}"
-						var="ost">
-						<c:set var="index" value="1"></c:set>
+						var="ost">						
 
 						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
 							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
