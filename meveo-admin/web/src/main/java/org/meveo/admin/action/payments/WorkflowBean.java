@@ -139,7 +139,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     if (wfTransitionRule.getType() == TransitionRuleTypeEnum.RANGE) {
                         String value = groupedTransitionRule.getNewValue().concat("|").concat(groupedTransitionRule.getAnotherValue());
                         newWFTransitionRule.setValue(value);
-                    } else if (wfTransitionRule.getType() == TransitionRuleTypeEnum.DATE) {
+                    } else if (wfTransitionRule.getType() == TransitionRuleTypeEnum.DATE && groupedTransitionRule.getNewDate() != null) {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         Date value = groupedTransitionRule.getNewDate();
                         newWFTransitionRule.setValue(sdf.format(value));
@@ -151,6 +151,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     newWFTransitionRule = new WFTransitionRule();
                 } else if (groupedTransitionRule.getValue() != null){
                     wfTransitionRules.add(groupedTransitionRule.getValue());
+
                 }
             }
             if (wfTransition.getId() != null) {
