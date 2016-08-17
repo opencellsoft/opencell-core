@@ -35,6 +35,11 @@
             selection="#{userAccountBean.entity.billingAccount}" 
             updateField=":parentTab:userAccountFormId:userAccountTab:billingAccountSelectId :parentTab:userAccountFormId:userAccountTab:billingAccountSelectId_text">
         </hftl:entityPopup>
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{userAccountBean.productInstance.productTemplate}" 
+            updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text">
+        </hftl:entityPopup>
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
         <!-- 			dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}" -->
@@ -189,7 +194,7 @@
                         </hftl:formPanel>
                     </p:tab>
 
-					<p:tab title="#{messages['userAccount.tab.productInstances']}">
+					<p:tab id="productInstancesTab" title="#{messages['userAccount.tab.productInstances']}">
 						<p:outputPanel id="productInstancePanel">
 							<h:form id="productInstanceResultsForm" prependId="false">
 								<p:dataTable resizableColumns="true"
@@ -213,7 +218,44 @@
 											converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 									</p:column>
 								</p:dataTable>
+
+								<p:commandButton value="#{messages['action.applyProduct']}"
+									actionListener="#{userAccountBean.initProductInstance}"
+									 update=":parentTab:applyProductPanel" oncomplete="PF('applyProductPanel').toggle()" />
 							</h:form>
+
+							<p:panel widgetVar="applyProductPanel" id="applyProductPanel"
+								update=":parentTab:applyProductPanel" toggleable="true"
+								collapsed="true">
+								<hftl:formPanel edit="true" backingBean="#{userAccountBean}"
+									entity="#{userAccountBean.productInstance}"
+									styleClass="formPanel" formId="applyProductForm"
+									showFormButtons="false">
+									<hftl:formField label="#{messages['BusinessEntity.code']}"
+										field="code" required="true" validateUnique="true" />
+									<hftl:formField label="#{messages['commons.quantity']}"
+										field="quantity" required="true" />
+									<hftl:formField
+										label="#{messages['chargeApplication.applicationDate']}"
+										field="applicationDate" />
+									<hftl:formField id="productTemplateSelectedId"
+										label="#{messages['productTemplate.title']}"
+										field="productTemplate" popup="true" required="true"
+										popupId="productTemplatePopup" valueLabelField="code" />
+									<hftl:formField label="#{messages['offerTemplate.title']}"
+										field="offerTemplate" listBean="#{offerTemplateBean}"
+										entity="#{userAccountBean.productChargeInstance}"
+										valueLabelField="code" required="true" />
+
+									<h:panelGroup layout="block" styleClass="form-panel-actions">
+										<p:commandButton value="#{messages['action.save']}"
+											action="#{userAccountBean.applyProduct()}"
+											oncomplete="PF('applyProductPanel').toggle()"
+											update=":parentTab:productInstanceResultsForm :parentTab:applyProductForm:messages"></p:commandButton>
+									</h:panelGroup>
+								</hftl:formPanel>
+							</p:panel>
+
 						</p:outputPanel>
 					</p:tab>
 
@@ -388,7 +430,7 @@
 
             </h:panelGroup>
         </h:panelGroup>
-
+       
         <p:dialog id="userAccountTerminationPopup" header="#{messages['userAccount.accountTermination']}" widgetVar="dlg_userAccountTerminationPopup" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="700">
             <hftl:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}" styleClass="formPanel" formId="termFrm" showFormButtons="false" useCustomIdParam="true">
@@ -407,6 +449,6 @@
             </hftl:formPanel>
         </p:dialog>
 
-    </ui:define>
+	</ui:define>
 
 </ui:composition>

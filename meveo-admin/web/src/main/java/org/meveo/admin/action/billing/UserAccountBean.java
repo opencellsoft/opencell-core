@@ -42,10 +42,12 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
@@ -57,10 +59,12 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
@@ -109,8 +113,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     
     @Inject
 	private ProductChargeInstanceService productChargeInstanceService;
+    
+    @Inject
+    private ProductInstanceService productInstanceService;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
 	   
 	private CounterInstance selectedCounterInstance;
+	private ProductInstance productInstance;
+	private ProductChargeInstance productChargeInstance = new ProductChargeInstance();
 
 	private Long billingAccountId;
 	private WalletOperation reloadOperation;
@@ -488,5 +500,57 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         productChargeInstances.addAll(productChargeInstanceService.findByUserAccountId(entity.getId()));
         return productChargeInstances;
     }
-    
+
+	public ProductInstance getProductInstance() {
+		return productInstance;
+	}
+
+	public void setProductInstance(ProductInstance productInstance) {
+		this.productInstance = productInstance;
+	}
+	
+	public void initProductInstance() {
+		productInstance = new ProductInstance();
+		productChargeInstance = new ProductChargeInstance();
+	}
+
+	public void applyProduct() {
+		if (productInstance != null) {
+			productInstance.setDescription(productInstance.getProductTemplate().getDescription());
+			if (productInstance.getApplicationDate() == null) {
+				productInstance.setApplicationDate(new Date());
+			}
+			Auditable auditable = new Auditable();
+			auditable.setCreated(new Date());
+			auditable.setCreator(currentUser);
+			productInstance.setAuditable(auditable);
+		}
+		
+		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
+		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+
+		ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, currentUser);
+		List<ProductChargeInstance> list = new ArrayList<>();
+		list.add(pcInstance);
+		productInstance.setProductChargeInstances(list);
+		
+		try {
+			productInstanceService.create(productInstance, currentUser);
+			productChargeInstanceService.apply(pcInstance, null, productChargeInstance.getOfferTemplate(), productInstance.getApplicationDate(), null, null, null, null, null,
+					currentUser, true);
+		} catch (BusinessException e) {
+			messages.error("Error appling product=" + e.getMessage());
+		}
+		
+		productChargeInstances = null;
+	}
+
+	public ProductChargeInstance getProductChargeInstance() {
+		return productChargeInstance;
+	}
+
+	public void setProductChargeInstance(ProductChargeInstance productChargeInstance) {
+		this.productChargeInstance = productChargeInstance;
+	}
+
 }
