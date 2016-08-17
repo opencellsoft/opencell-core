@@ -93,6 +93,7 @@
 		<p:panel header="#{messages['menu.serviceTemplates']}" >
 			<p:tabView id="tabView" activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
+				<p:outputPanel autoUpdate="true">
 					<hftl:formPanel backingBean="#{serviceTemplateBean}" 
 						showEnableDisableButton="true" 
 						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}" 
@@ -111,6 +112,7 @@
 							listBean="#{calendarBean}" />
 						<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
+				</p:outputPanel>
 				</p:tab>
 				
 				<p:tab title="#{messages['serviceTemplate.recurringCharges']}"
@@ -135,7 +137,8 @@
                     </p:panel>
                     
 					<h:panelGroup id="serviceRecurringChargeTempalte_panel">
-						<hftl:dataList id="serviceRecurringChargeTempalte_table"
+						<p:outputPanel autoUpdate="true">
+						<hftl:dataList
 							backingBean="#{serviceChargeTemplateRecurringBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceRecurringCharges}"
 							resultsId="serviceRecurringCharges_results" exportToXml="false">
@@ -154,18 +157,14 @@
 									action="#{serviceTemplateBean.editServiceRecurringChargeTemplate(entity)}"
 									icon="ui-icon-document" />
 								<p:commandButton
-									action="#{serviceTemplateBean.deleteServiceRecurringChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.deleteServiceRecurringChargeTemplate(entity.getId())}"
 									icon="ui-icon-trash"
-									update=":tabView:serviceRecurringChargeTempalte_panel,:tabView:formRecurringCharge" />
-
+									update=":tabView:formRecurringCharge" />
 							</p:column>
 						</hftl:dataList>
-
+						</p:outputPanel>
 					</h:panelGroup>
-
-
-						<p:panel id="serviceRecurringChargediv"
-							rendered="#{serviceTemplateBean.edit}">
+						<p:panel id="serviceRecurringChargediv" rendered="#{serviceTemplateBean.edit}">
 								<hftl:formPanel
 									formId="formRecurringCharge" edit="#{serviceTemplateBean.edit}"
 									backingBean="#{serviceTemplateBean}"
@@ -180,19 +179,18 @@
 										listType="pickUpList" field="walletTemplates"
 										valueLabelField="code"
 										dualListModel="#{serviceTemplateBean.recurringDualListModel}" />
-									
                                     <ui:param name="buttons" value="true"/>
                                     <ui:define name="buttons">
 										<p:commandButton
 											rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 											value="#{messages['action.addSave']}"
-											update=":tabView:serviceRecurringChargeTempalte_panel, :tabView:serviceRecurringChargediv" />
+											update=":tabView:serviceRecurringChargediv" />
 										<p:commandButton
 											rendered="#{serviceRecurringChargeTemplate.id!=null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 											value="#{messages['serviceRecurringChargeTemplate.modifyServiceRecurringCharge']}"
-											update=":tabView:serviceRecurringChargeTempalte_panel,:tabView:formRecurringCharge ,:tabView:serviceRecurringChargediv" />
+											update=":tabView:serviceRecurringChargediv"/>
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{serviceTemplateBean.newServiceChargeTemplateRecurring}"
 											update=":tabView:serviceRecurringChargediv" />
@@ -207,15 +205,13 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['serviceTemplate.subscriptionCharges']}"
-					id="tab3" rendered="#{serviceTemplateBean.entity.id!=null}">
+				<p:tab title="#{messages['serviceTemplate.subscriptionCharges']}" id="tab3" rendered="#{serviceTemplateBean.entity.id!=null}">
 					<p:outputPanel id="invoiceSubscriptionCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
 							rendered="#{validation.failed}" />
 						<h:outputText value="#{messages['validation.validationFailure']}"
 							rendered="#{validation.failed}" styleClass="errorMessage" />
 					</p:outputPanel>
-                    
                     <p:panel styleClass="form-panel">
                         <hftl:decorateFormField fieldId="subsServiceTemplateCode" label="#{messages['access.serviceInstance']}">
                             <h:outputText id="subsServiceTemplateCode" value="#{serviceTemplateBean.entity.code}"
@@ -230,7 +226,8 @@
                     </p:panel>
 
 					<h:panelGroup id="serviceSubscriptionChargeTempalte_panel">
-						<hftl:dataList id="serviceSubscriptionChargeTempalte_table"
+						<p:outputPanel autoUpdate="true">
+						<hftl:dataList
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
 							resultsId="serviceSubscriptionCharges_results" exportToXml="false">
@@ -249,14 +246,13 @@
 									action="#{serviceTemplateBean.editServiceSubscriptionChargeTemplate(entity)}"
 									icon="ui-icon-document" />
 								<p:commandButton
-									action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity.getId())}"
 									icon="ui-icon-trash"
-									update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formSubscriptionCharge" />
-
+									update=":tabView:formSubscriptionCharge" />
 							</p:column>
 						</hftl:dataList>
+						</p:outputPanel>
 					</h:panelGroup>
-
 						<p:panel id="serviceSubscriptionChargediv" rendered="#{serviceTemplateBean.edit}">
 								<hftl:formPanel
 									formId="formSubscriptionCharge"
@@ -279,12 +275,12 @@
 											rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 											value="#{messages['action.addSave']}"
-											update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formSubscriptionCharge ,:tabView:serviceSubscriptionChargediv" />
+											update=":tabView:serviceSubscriptionChargediv" />
 										<p:commandButton
 											rendered="#{serviceSubscriptionChargeTemplate.id!=null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 											value="#{messages['serviceSubscriptionChargeTemplate.modifyServiceSubscriptionCharge']}"
-											update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formSubscriptionCharge ,:tabView:serviceSubscriptionChargediv" />
+											update=":tabView:serviceSubscriptionChargediv"/>
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{serviceTemplateBean.newServiceChargeTemplateSubscription}"
 											update=":tabView:serviceSubscriptionChargediv" />
@@ -296,9 +292,7 @@
 									</ui:define>
 								</hftl:formPanel>
 						</p:panel>
-
 				</p:tab>
-
 				<p:tab title="#{messages['serviceTemplate.terminationCharges']}"
 					id="tab4" rendered="#{serviceTemplateBean.entity.id!=null}">
 					<p:outputPanel id="invoiceTerminationCountries_MSG_panel">
@@ -319,9 +313,9 @@
                             <h:inputHidden rendered="#{serviceTemplateBean.edit}" />
                         </hftl:decorateFormField>
                     </p:panel>
-
 					<h:panelGroup id="serviceTerminationChargeTempalte_panel">
-						<hftl:dataList id="serviceTerminationChargeTempalte_table"
+						<p:outputPanel autoUpdate="true">
+						<hftl:dataList
 							backingBean="#{serviceChargeTemplateTerminationBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
 							resultsId="serviceTerminationCharges_results" exportToXml="false">
@@ -340,14 +334,13 @@
 									action="#{serviceTemplateBean.editServiceTerminationChargeTemplate(entity)}"
 									icon="ui-icon-document" />
 								<p:commandButton
-									action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity.getId())}"
 									icon="ui-icon-trash"
-									update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formTerminationCharge" />
-
+									update=":tabView:formTerminationCharge" />
 							</p:column>
 						</hftl:dataList>
+						</p:outputPanel>
                     </h:panelGroup>
-
 						<p:panel id="serviceTerminationChargediv" rendered="#{serviceTemplateBean.edit}">
 								<hftl:formPanel
 									formId="formTerminationCharge"
@@ -370,12 +363,12 @@
 											rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 											value="#{messages['action.addSave']}"
-											update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formTerminationCharge ,:tabView:serviceTerminationChargediv" />
+											update=":tabView:serviceTerminationChargediv" />
 										<p:commandButton
 											rendered="#{serviceTerminationChargeTemplate.id!=null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 											value="#{messages['serviceTerminationChargeTemplate.modifyServiceTerminationCharge']}"
-											update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formTerminationCharge ,:tabView:serviceTerminationChargediv" />
+											update=":tabView:serviceTerminationChargediv"/>
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{serviceTemplateBean.newServiceChargeTemplateTermination}"
 											update=":tabView:serviceTerminationChargediv" />
@@ -410,8 +403,8 @@
                             <h:inputHidden rendered="#{serviceTemplateBean.edit}" />
                         </hftl:decorateFormField>
                     </p:panel>
-					
                     <h:panelGroup id="serviceUsageChargeTempalte_panel">
+                    	<p:outputPanel autoUpdate="true">
 						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
 							resultsId="serviceUsageCharges_results" exportToXml="false">
@@ -432,13 +425,13 @@
 									action="#{serviceTemplateBean.editServiceUsageChargeTemplate(entity)}"
 									icon="ui-icon-document" />
 								<p:commandButton
-									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity.getId())}"
 									icon="ui-icon-trash"
 									update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge" />
 							</p:column>
 						</hftl:dataList>
+						</p:outputPanel>
 					</h:panelGroup>
-
 						<p:panel id="serviceUsageChargediv" rendered="#{serviceTemplateBean.edit}">
 								<hftl:formPanel formId="formUsageCharge"
 									edit="#{serviceTemplateBean.edit}"
@@ -465,12 +458,12 @@
 											rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['action.addSave']}"
-											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge ,:tabView:serviceUsageChargediv" />
+											update=":tabView:serviceUsageChargediv"/>
 										<p:commandButton
 											rendered="#{serviceUsageChargeTemplate.id!=null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
-											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge ,:tabView:serviceUsageChargediv" />
+											update=":tabView:serviceUsageChargediv"/>
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{serviceTemplateBean.newServiceChargeTemplateUsage}"
 											update=":tabView:serviceUsageChargediv" />

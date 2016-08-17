@@ -286,10 +286,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateSubscription();
 	}
 
-	public void deleteServiceSubscriptionChargeTemplate(
-			ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
-		serviceChargeTemplateSubscriptionService.remove(serviceSubscriptionChargeTemplate);
-		entity.getServiceSubscriptionCharges().remove(serviceSubscriptionChargeTemplate);
+	public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateSubscription subscription=serviceChargeTemplateSubscriptionService.findById(id);
+		entity.getServiceSubscriptionCharges().remove(subscription);
+		entity=getPersistenceService().update(entity,getCurrentUser());
+		serviceChargeTemplateSubscriptionService.remove(subscription);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -336,9 +337,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateTermination();
 	}
 
-	public void deleteServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
-		serviceChargeTemplateTerminationService.remove(serviceTerminationChargeTemplate);
-		entity.getServiceTerminationCharges().remove(serviceTerminationChargeTemplate);
+	public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateTermination termination=serviceChargeTemplateTerminationService.findById(id);
+		entity.getServiceTerminationCharges().remove(termination);
+		entity=getPersistenceService().update(entity,getCurrentUser());
+		serviceChargeTemplateTerminationService.remove(termination);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -385,9 +388,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateRecurring();
 	}
 
-	public void deleteServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
-		serviceChargeTemplateRecurringService.remove(serviceRecurringChargeTemplate);
-		entity.getServiceRecurringCharges().remove(serviceRecurringChargeTemplate);
+	public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateRecurring recurring=serviceChargeTemplateRecurringService.findById(id);
+		entity.getServiceRecurringCharges().remove(recurring);
+		entity=getPersistenceService().update(entity, getCurrentUser());
+		serviceChargeTemplateRecurringService.remove(recurring);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -441,11 +446,14 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
+	 * @throws BusinessException 
 	 */
 
-	public void deleteServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
-		serviceChargeTemplateUsageService.remove(serviceUsageChargeTemplate.getId());
-		entity.getServiceUsageCharges().remove(serviceUsageChargeTemplate);
+	public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateUsage usage=serviceChargeTemplateUsageService.findById(id);
+		entity.getServiceUsageCharges().remove(usage);
+		entity=getPersistenceService().update(entity, getCurrentUser());
+		serviceChargeTemplateUsageService.remove(usage);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
