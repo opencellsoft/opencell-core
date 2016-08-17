@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/marketingManager/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/marketingManager/layout/template.xhtml" xmlns:l="http://www.lapis.com/jsf/exporter">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -22,14 +22,12 @@
 			</h:form>
 
 			<p:panel>
-				<h:form id="searchForm" >
-					<span style="float: right;" class="search-wrapper">
-						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
-							update=":mainForm:offerCategoriesTable" /> 
-							<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}"
-							placeholder="#{messages['action.search']}" />
+				<h:form id="searchForm">
+					<div style="float: right;" class="search-wrapper">
+						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}" update=":mainForm:offerCategoriesTable" />
+						<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}" placeholder="#{messages['action.search']}" />
 						<p:defaultCommand target="searchButton" />
-					</span>
+					</div>
 				</h:form>
 			</p:panel>
 			<h:form id="mainForm">
@@ -41,8 +39,21 @@
 					</p:button>
 				</p:panel>
 				<p:panel id="offerCategoriesTable">
+					<c:set var="hasData" value="#{mmOfferTemplateCategoryListBean.lazyDataModel and mmOfferTemplateCategoryListBean.lazyDataModel.getRowCount>0}" />
 					<p:messages id="messages" />
-					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false">
+					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false" prePaginatorControls="{Controls}" paginatorPosition="top" exportXlsxButton="false" exportToXml="false">
+						<f:facet name="{Controls}" render="#{hasData}">
+							<p:commandButton id="#{formId}buttonExportTop" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false">
+								<p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
+							</p:commandButton>
+							<p:commandButton id="#{formId}exportToXmlTop" value="#{messages['export.exportToXml']}" update=":#{p:component('exportParametersDialog')}"
+								oncomplete="PF('exportParametersDialog').show()">
+								<f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
+								<f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{mmOfferTemplateCategoryListBean.lazyDataModel}" />
+								<f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{mmOfferTemplateCategoryListBean.selectedEntities}" />
+							</p:commandButton>
+						</f:facet>
+
 						<p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true" width="40%">
 							<p:cellEditor>
 								<f:facet name="output">
@@ -50,18 +61,14 @@
 								</f:facet>
 								<f:facet name="input">
 									<p:selectOneMenu id="parentCategory" value="#{entity.offerTemplateCategory}" required="false" converter="offerTemplateCategoryConverter" var="parent">
-
 										<f:selectItem itemLabel="" />
 										<f:selectItems value="#{mmOfferTemplateCategoryListBean.parentHierarchy}" var="parentCategory" itemLabel="#{parentCategory.code}" itemValue="#{parentCategory}" />
-
 										<p:column>
 											<h:outputText value="#{parent.codeInLevel}" />
 										</p:column>
-
 										<p:column>
 											<h:outputText value="#{parent.name}" />
 										</p:column>
-
 									</p:selectOneMenu>
 								</f:facet>
 							</p:cellEditor>
@@ -90,7 +97,8 @@
 						</p:column>
 					</hftl:dataList>
 				</p:panel>
-				<p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}"  update="@form" />
+				<hftl:exportToXmlDialogs messagesId=":#{p:component('search_messages')}" />
+				<p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}" update="@form" />
 			</h:form>
 		</div>
 	</ui:define>
