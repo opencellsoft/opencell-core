@@ -50,12 +50,14 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
 
 	private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
-    private HierarchyLevel<T> parentLevel;
+    private HierarchyLevel parentLevel;
 
+    @SuppressWarnings("rawtypes")
     @OneToMany(mappedBy = "parentLevel", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<HierarchyLevel<T>> childLevels;
+    private Set<HierarchyLevel> childLevels;
 
     @Column(name = "HIERARCHY_TYPE", insertable = false, updatable = false, length = 10)
     @Size(max = 10)
@@ -64,19 +66,23 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
     @Column(name = "ORDER_LEVEL")
     protected Long orderLevel = 0L;
 
-    public HierarchyLevel<T> getParentLevel() {
+    @SuppressWarnings("rawtypes")
+    public HierarchyLevel getParentLevel() {
         return parentLevel;
     }
 
-    public void setParentLevel(HierarchyLevel<T> parentLevel) {
+    @SuppressWarnings("rawtypes")
+    public void setParentLevel(HierarchyLevel parentLevel) {
         this.parentLevel = parentLevel;
     }
 
-    public Set<HierarchyLevel<T>> getChildLevels() {
+    @SuppressWarnings("rawtypes")
+    public Set<HierarchyLevel> getChildLevels() {
         return childLevels;
     }
 
-    public void setChildLevels(Set<HierarchyLevel<T>> childLevels) {
+    @SuppressWarnings("rawtypes")
+    public void setChildLevels(Set<HierarchyLevel> childLevels) {
         this.childLevels = childLevels;
     }
 
@@ -96,8 +102,9 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
         this.orderLevel = orderLevel;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public int compareTo(HierarchyLevel<T> hierarchyLevel) {
+    public int compareTo(HierarchyLevel hierarchyLevel) {
         return Long.compare(this.orderLevel, hierarchyLevel.orderLevel);
     }
 }

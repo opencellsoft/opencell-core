@@ -151,6 +151,7 @@ public class UserHierarchyLevelApi extends BaseApi {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private List<UserHierarchyLevelDto> convertToUserHierarchyLevelDto(Set<HierarchyLevel> userHierarchyLevels) {
         List<UserHierarchyLevelDto> userHierarchyLevelDtos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(userHierarchyLevels)) {
