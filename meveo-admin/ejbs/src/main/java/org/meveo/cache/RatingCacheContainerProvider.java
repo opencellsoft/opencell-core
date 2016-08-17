@@ -169,7 +169,7 @@ public class RatingCacheContainerProvider {
 
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
-        	calendar = calendarService.attach(calendar);
+        	calendar = calendarService.refreshOrRetrieve(calendar);
 			calendar.nextCalendarDate(new Date());
         }
     }

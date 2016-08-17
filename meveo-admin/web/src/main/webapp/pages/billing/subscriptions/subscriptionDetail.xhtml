@@ -577,68 +577,40 @@
 
 																	<hftl:decorateFormField fieldId="quantity"
 																		label="#{messages['serviceInstance.quantity']}">
-																		<h:inputText id="quantity"
+																		<p:inputText id="quantity"
 																			rendered="#{subscriptionBean.edit}"
 																			value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 																			size="5" maxlength="3">
-																		</h:inputText>
+																		</p:inputText>
 																		<!-- 														<h:outputText rendered="#{!subscriptionBean.edit}" -->
 																		<!-- 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"> -->
 																		<!-- 														</h:outputText> -->
 																	</hftl:decorateFormField>
-																	<p:outputPanel id="oneShotWalletOperationsPanel"
-																		rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
+																	<p:panel id="oneShotWalletOperationsPanel" rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
 																		<span style="height: 1px" />
-																		<h:outputText value="#{messages['commons.noItems']}"
-																			rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
-																		<h:panelGroup
-																			rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-																			<h:outputText
-																				value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
-																			<p:dataTable id="oneShotWalletOperationTable"
-																				resizableColumns="true"
-																				value="#{subscriptionBean.oneShotWalletOperations}"
-																				var="oneShotWalletOp" rows="10"
-																				styleClass="custom-grid">
-																				<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
-																				<p:column>
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['chargeApplication.applicationDate']}" />
-																					</f:facet>
-																					<h:outputText
-																						value="#{oneShotWalletOp.operationDate}">
-																						<f:convertDateTime
-																							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-																					</h:outputText>
-																				</p:column>
-
-																				<hftl:column
-																					label="#{messages['chargeApplication.description']}"
-																					field="description" />
-																				<p:column>
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['chargeApplication.amountWithoutTax']}" />
-																					</f:facet>
-																	#{oneShotWalletOp.amountWithoutTax}
-																</p:column>
-
-																				<p:column
-																					rendered="#{!subscriptionBean.entity.provider.entreprise}">
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['walletOperation.amountWithTax']}" />
-																					</f:facet>
-																	#{oneShotWalletOp.amountWithTax}
-																</p:column>
-
-																				<hftl:column
-																					label="#{messages['chargeApplication.status']}"
-																					field="status" />
-																			</p:dataTable>
+																		<h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
+																		<h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
+<!-- 																			<h:outputText value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" /> -->
+																			<hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value" >
+																					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+																				</h:outputText>
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.description']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.amountWithoutTax']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField rendered="#{!subscriptionBean.entity.provider.entreprise}" 
+																				label="#{messages['walletOperation.amountWithTax']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithTax}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.status']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].status}" styleClass="field-value" />
+																			</hftl:decorateFormField>
 																		</h:panelGroup>
-																	</p:outputPanel>
+																	</p:panel>
 																    <ui:param name="buttons" value="true"/>
                                                                     <ui:define name="buttons">    
 
