@@ -66,10 +66,12 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	public BundleTemplate initEntity() {
 		super.initEntity();
-		if (bundleProductTemplatesToAdd == null) {
+
+		if (entity != null) {
 			bundleProductTemplatesToAdd = new ArrayList<BundleProductTemplate>();
+			bundleProductTemplatesToAdd.addAll(entity.getBundleProducts());
 		}
-		bundleProductTemplatesToAdd.addAll(entity.getBundleProducts());
+
 		return entity;
 	}
 
@@ -77,8 +79,10 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		entity.getBundleProducts().clear();
-		entity.getBundleProducts().addAll(bundleProductTemplatesToAdd);
+		if (entity.getBundleProducts() != null) {
+			entity.getBundleProducts().clear();
+			entity.getBundleProducts().addAll(bundleProductTemplatesToAdd);
+		}
 
 		String outcome = super.saveOrUpdate(killConversation);
 
@@ -114,10 +118,13 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		BundleProductTemplate bpt = new BundleProductTemplate();
 		bpt.setProductTemplate(prod);
 
-		if (bundleProductTemplatesToAdd == null) {
+		if (bundleProductTemplatesToAdd != null) {
+			bundleProductTemplatesToAdd.add(bpt);
+		} else {
 			bundleProductTemplatesToAdd = new ArrayList<BundleProductTemplate>();
+			bundleProductTemplatesToAdd.add(bpt);
 		}
-		bundleProductTemplatesToAdd.add(bpt);
+
 	}
 
 	public PricePlanMatrix getEntityPricePlan() {
