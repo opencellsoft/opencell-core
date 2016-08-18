@@ -134,12 +134,14 @@ public class UserApi extends BaseApi {
 
 		// find roles
 		Set<Role> roles = new HashSet<Role>();
-		for (String rl : postData.getRoles()) {
-			Role role = roleService.findByName(rl, user.getProvider());
-			if (role == null) {
-				throw new EntityDoesNotExistsException(Role.class, rl);
+		if(postData.getRoles() != null){
+			for (String rl : postData.getRoles()) {
+				Role role = roleService.findByName(rl, user.getProvider());
+				if (role == null) {
+					throw new EntityDoesNotExistsException(Role.class, rl);
+				}
+				roles.add(role);
 			}
-			roles.add(role);
 		}
 
 		user.setUserName(postData.getUsername());
