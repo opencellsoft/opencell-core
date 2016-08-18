@@ -23,7 +23,7 @@ import org.meveo.model.crm.Provider;
  * @author Edward P. Legaspi
  **/
 @Entity
-@ExportIdentifier({ "provider" })
+@ExportIdentifier({ "id","provider" })
 @Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
 public class InvoiceConfiguration implements Serializable, IEntity {
