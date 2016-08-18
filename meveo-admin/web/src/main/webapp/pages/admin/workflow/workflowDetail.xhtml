@@ -105,7 +105,7 @@
                                 <p:fieldset legend="#{messages['dunningPlan.transitionRules']}" styleClass="clearLeft">
                                     <p:outputPanel id="transitionRulesPanel" styleClass="clearLeft">
                                         <c:forEach items="#{workflowBean.indexRules}" var="indexRule">
-                                            <p:outputPanel id="transitionRulePanel#{indexRule}" styleClass="clearLeft">
+                                            <p:panel id="transitionRulePanel#{indexRule}" styleClass="clearLeft">
                                                 <hftl:decorateFormField fieldId="transitionRuleName#{indexRule}" label="#{messages['transitionRuleName.rule']}">
                                                     <p:selectOneMenu id="transitionRuleName#{indexRule}" value="#{workflowBean.selectedRules[indexRule].name}">
                                                         <p:ajax listener="#{workflowBean.changedRuleName(indexRule)}" update=":tabView:formDunningPlanTransition:transitionRulePanel#{indexRule}" />
@@ -153,7 +153,7 @@
                                                     </p:inputText>
                                                 </hftl:decorateFormField>
 
-                                            </p:outputPanel>
+                                            </p:panel>
                                         </c:forEach>
                                     </p:outputPanel>
                                     <p:outputPanel styleClass="clearLeft">

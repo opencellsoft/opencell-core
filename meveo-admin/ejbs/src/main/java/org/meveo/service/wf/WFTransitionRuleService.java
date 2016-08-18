@@ -40,7 +40,7 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                 .getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public List<String> getDistinctNameWFTransitionRules(Provider provider) {
         return (List<String>) getEntityManager()
                 .createQuery(
@@ -50,7 +50,7 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                 .getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public List<String> getDistinctNameWFTransitionRules() {
         return (List<String>) getEntityManager()
                 .createQuery(
@@ -81,7 +81,7 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                                     + " where name=:name and value=:value and priority=:priority and type=:type and provider=:provider")
 
                     .setParameter("name", name)
-                    .setParameter("provider", provider)
+                    .setParameter("value", value)
                     .setParameter("priority", priority)
                     .setParameter("type", type)
                     .setParameter("provider", provider)

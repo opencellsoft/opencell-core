@@ -41,20 +41,6 @@
 										value="#{wfTransitionBean.entity.conditionEl}"
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
-
-                                <p:fieldset legend="#{messages['dunningPlan.transitionRules']}" styleClass="clearLeft" style="width: 500px;">
-                                    <p:dataTable id="transitionRulesId" var="rule" value="#{wfTransitionBean.entity.wfTransitionRules}" style="width: 500px;">
-
-                                        <p:column headerText="#{messages['transitionRule.name']}">
-                                            <h:outputText value="#{rule.name}" />
-                                        </p:column>
-
-                                        <p:column headerText="#{messages['transitionRule.value']}">
-                                            <h:outputText value="#{rule.value}" />
-                                        </p:column>
-
-                                    </p:dataTable>
-                                </p:fieldset>
 						    </p:panel>
 
 							<hftl:formPanel
