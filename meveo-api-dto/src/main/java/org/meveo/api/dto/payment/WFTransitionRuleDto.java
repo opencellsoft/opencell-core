@@ -54,6 +54,7 @@ public class WFTransitionRuleDto extends BaseDto {
 		this.name = wfTransitionRule.getName();
         this.value = wfTransitionRule.getValue();
 		this.priority = wfTransitionRule.getPriority();
+        this.type = wfTransitionRule.getType();
 		this.conditionEl = wfTransitionRule.getConditionEl();
 	}
 	
@@ -63,6 +64,7 @@ public class WFTransitionRuleDto extends BaseDto {
         wfTransitionRule.setName(getName());
         wfTransitionRule.setValue(getValue());
         wfTransitionRule.setPriority(getPriority());
+        wfTransitionRule.setType(getType());
         wfTransitionRule.setConditionEl(getConditionEl());
 		return wfTransitionRule;
 	}

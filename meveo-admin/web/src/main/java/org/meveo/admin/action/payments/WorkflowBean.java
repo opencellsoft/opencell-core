@@ -130,15 +130,22 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     WFTransitionRule wfTransitionRule = groupedTransitionRule.getValue();
                     newWFTransitionRule.setModel(Boolean.FALSE);
                     newWFTransitionRule.setConditionEl(wfTransitionRule.getConditionEl());
-                    newWFTransitionRule.setPriority(wfTransitionRule.getPriority());
                     newWFTransitionRule.setName(wfTransitionRule.getName());
                     newWFTransitionRule.setType(wfTransitionRule.getType());
                     newWFTransitionRule.setProvider(entity.getProvider());
                     newWFTransitionRule.setDisabled(Boolean.FALSE);
 
                     if (wfTransitionRule.getType() == TransitionRuleTypeEnum.RANGE) {
-                        String value = groupedTransitionRule.getNewValue().concat("|").concat(groupedTransitionRule.getAnotherValue());
-                        newWFTransitionRule.setValue(value);
+                        StringBuffer value = new StringBuffer();
+                        if (groupedTransitionRule.getNewValue() != null) {
+                            value.append(groupedTransitionRule.getNewValue()).append("|");
+                        } else {
+                            value.append("|");
+                        }
+                        if (groupedTransitionRule.getAnotherValue() != null) {
+                            value.append(groupedTransitionRule.getAnotherValue());
+                        }
+                        newWFTransitionRule.setValue(value.toString());
                     } else if (wfTransitionRule.getType() == TransitionRuleTypeEnum.DATE && groupedTransitionRule.getNewDate() != null) {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         Date value = groupedTransitionRule.getNewDate();
@@ -146,12 +153,19 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     } else {
                         newWFTransitionRule.setValue(groupedTransitionRule.getNewValue());
                     }
+                    WFTransitionRule existedTransitionRule = wFTransitionServiceRule.getWFTransitionRuleByNameTypeValue(newWFTransitionRule.getName(),
+                            newWFTransitionRule.getValue(), newWFTransitionRule.getType(), entity.getProvider());
+                    if (existedTransitionRule != null) {
+                        messages.error(new BundleKey("messages", "transitionRule.uniqueNameValueType"), new Object[]{newWFTransitionRule.getName(), newWFTransitionRule.getValue(), newWFTransitionRule.getType()});
+                        return;
+                    }
+                    int currentPriority = wFTransitionServiceRule.getMaxPriority(groupedTransitionRule.getName(), newWFTransitionRule.getType(), entity.getProvider());
+                    newWFTransitionRule.setPriority(currentPriority + 1);
                     wFTransitionServiceRule.create(newWFTransitionRule, getCurrentUser());
                     wfTransitionRules.add(newWFTransitionRule);
                     newWFTransitionRule = new WFTransitionRule();
                 } else if (groupedTransitionRule.getValue() != null){
                     wfTransitionRules.add(groupedTransitionRule.getValue());
-
                 }
             }
             if (wfTransition.getId() != null) {

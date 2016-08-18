@@ -53902,7 +53902,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -53925,6 +53925,16 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <fromStatus>FRM_STATUS_1</fromStatus>\r
                   <toStatus>TO_STATUS_1</toStatus>\r
                   <conditionEl>CND_EL_T</conditionEl>\r
+                  <listWFTransitionRuleDto>
+                     <!--Zero or more repetitions:-->
+                     <wfTransitionRuleDto>
+                        <name>Territory</name>
+                        <value>north</value>
+                        <priority>1</priority>
+                        <type>STRING</type>
+                        <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                     </wfTransitionRuleDto>
+                  </listWFTransitionRuleDto>
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -53969,7 +53979,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -54011,7 +54021,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54051,6 +54061,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
+                     <listWFTransitionRuleDto>
+                        <wfTransitionRuleDto>
+                           <name>Territory</name>
+                           <priority>1</priority>
+                           <value>north</value>
+                           <type>STRING</type>
+                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                        </wfTransitionRuleDto>
+                     </listWFTransitionRuleDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
             </workflowDto>]]></token>
@@ -54079,7 +54098,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54132,7 +54151,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54155,6 +54174,16 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <fromStatus>FRM_STATUS_2</fromStatus>
                   <toStatus>TO_STATUS_2</toStatus>
                   <conditionEl>CND_EL_T2</conditionEl>
+                  <listWFTransitionRuleDto>
+                     <!--Zero or more repetitions:-->
+                     <wfTransitionRuleDto>
+                        <name>Territory</name>
+                        <value>south</value>
+                        <priority>2</priority>
+                        <type>STRING</type>
+                        <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                     </wfTransitionRuleDto>
+                  </listWFTransitionRuleDto>
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -54247,7 +54276,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54287,6 +54316,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
+                     <listWFTransitionRuleDto>
+                        <wfTransitionRuleDto>
+                           <name>Territory</name>
+                           <priority>1</priority>
+                           <value>north</value>
+                           <type>STRING</type>
+                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                        </wfTransitionRuleDto>
+                     </listWFTransitionRuleDto>
                   </wfTransitionDto>
                   <wfTransitionDto>
                      <fromStatus>FRM_STATUS_2</fromStatus>
@@ -54305,6 +54343,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A3</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
+                     <listWFTransitionRuleDto>
+                        <wfTransitionRuleDto>
+                           <name>Territory</name>
+                           <priority>2</priority>
+                           <value>south</value>
+                           <type>STRING</type>
+                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                        </wfTransitionRuleDto>
+                     </listWFTransitionRuleDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
             </workflowDto>]]></token>
@@ -54386,7 +54433,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54422,7 +54469,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -54507,7 +54554,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r

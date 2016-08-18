@@ -30,14 +30,20 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WFTransitionRuleService extends PersistenceService<WFTransitionRule> {
 
-    @SuppressWarnings("unchecked")
-    public List<WFTransitionRule> getWFTransitionRules(Provider provider) {
-        return (List<WFTransitionRule>) getEntityManager()
+    @SuppressWarnings("rawtypes")
+    public Integer getMaxPriority(String ruleName, TransitionRuleTypeEnum type, Provider provider) {
+        try {
+            return (Integer) getEntityManager()
                 .createQuery(
-                        "from " + WFTransitionRule.class.getSimpleName()
-                                + " where provider=:provider")
+                        "select MAX(wfr.priority) from " + WFTransitionRule.class.getSimpleName()
+                                + " wfr where wfr.name=:name and wfr.type=:type and wfr.provider=:provider")
+                .setParameter("name", ruleName)
+                .setParameter("type", type)
                 .setParameter("provider", provider)
-                .getResultList();
+                .getSingleResult();
+        } catch (Exception e) {
+        }
+        return 0;
     }
 
     @SuppressWarnings("rawtypes")
@@ -58,7 +64,6 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                                 + " wfr")
                 .getResultList();
     }
-
 
     @SuppressWarnings("unchecked")
     public List<WFTransitionRule> getWFTransitionRules(String name, Provider provider) {
@@ -83,6 +88,25 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                     .setParameter("name", name)
                     .setParameter("value", value)
                     .setParameter("priority", priority)
+                    .setParameter("type", type)
+                    .setParameter("provider", provider)
+                    .getSingleResult();
+        } catch (Exception e) {
+        }
+        return wfTransitionRule;
+    }
+
+    @SuppressWarnings("unchecked")
+    public WFTransitionRule getWFTransitionRuleByNameTypeValue(String name, String value, TransitionRuleTypeEnum type, Provider provider) {
+        WFTransitionRule wfTransitionRule = null;
+        try {
+            wfTransitionRule = (WFTransitionRule) getEntityManager()
+                    .createQuery(
+                            "from " + WFTransitionRule.class.getSimpleName()
+                                    + " where name=:name and value=:value and type=:type and provider=:provider")
+
+                    .setParameter("name", name)
+                    .setParameter("value", value)
                     .setParameter("type", type)
                     .setParameter("provider", provider)
                     .getSingleResult();

@@ -103,7 +103,7 @@
 									edit="#{workflowBean.edit}" />
 
                                 <p:fieldset legend="#{messages['dunningPlan.transitionRules']}" styleClass="clearLeft">
-                                    <p:outputPanel id="transitionRulesPanel" styleClass="clearLeft">
+                                    <p:panel id="transitionRulesPanel" styleClass="clearLeft">
                                         <c:forEach items="#{workflowBean.indexRules}" var="indexRule">
                                             <p:panel id="transitionRulePanel#{indexRule}" styleClass="clearLeft">
                                                 <hftl:decorateFormField fieldId="transitionRuleName#{indexRule}" label="#{messages['transitionRuleName.rule']}">
@@ -155,14 +155,14 @@
 
                                             </p:panel>
                                         </c:forEach>
-                                    </p:outputPanel>
-                                    <p:outputPanel styleClass="clearLeft">
+                                    </p:panel>
+                                    <p:panel styleClass="clearLeft">
                                         <p:tooltip for="addCriteriaBtn" value="#{messages['transitionRule.add']}" showEffect="slide" hideEffect="slide" />
                                         <p:commandButton id="addCriteriaBtn"
                                                          action="#{workflowBean.addNewRule()}" process="@this"
                                                          value="#{messages['transitionRule.add']}" ajaxSubmit="true"
                                                          icon="fa fa-plus" update=":tabView:formDunningPlanTransition:transitionRulesPanel" />
-                                    </p:outputPanel>
+                                    </p:panel>
                                 </p:fieldset>
 
 								<ui:param name="buttons" value="true" />
