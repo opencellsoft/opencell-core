@@ -24,12 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -87,7 +84,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private DualListModel<ServiceTemplate> incompatibleServices;
 
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-	
+
 	private UploadedFile uploadedFile;
 
 	/**
@@ -120,7 +117,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
@@ -133,19 +130,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			try {
 				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
-            } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
-            }
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
 		}
 	}
 
 	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient()
-				&& (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService
-				.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
+		return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
+				getEntity()).size() > 0) ? true : false;
 	}
-
 
 	@Override
 	@ActionMethod
@@ -168,8 +163,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
-			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices
-					.getTarget()));
+			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 			if (offerServiceTemplate.getId() != null) {
 				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate, getCurrentUser());
 				entity = getPersistenceService().refreshOrRetrieve(entity);
@@ -184,8 +178,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			offerServiceTemplate.getIncompatibleServices().clear();
-			offerServiceTemplate.getIncompatibleServices().addAll(
-					serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+			offerServiceTemplate.getIncompatibleServices().addAll(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 
 		} catch (Exception e) {
 			log.error("exception when saving offer service template !", e.getMessage());
@@ -227,14 +220,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
 				source = serviceTemplateService.listActive();
 			} else {
-				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(),
-						getCurrentProvider());
+				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
 			}
 
 			List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
 
-			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null
-					&& offerServiceTemplate.getIncompatibleServices().size() > 0) {
+			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
 				target.addAll(offerServiceTemplate.getIncompatibleServices());
 			}
 			source.removeAll(target);
@@ -254,7 +245,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
 	}
-	
+
 	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
 		uploadedFile = event.getFile();
 
@@ -271,38 +262,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
-	
-	public void submitActionListener() throws SerialException, SQLException {
-		log.debug("save image");
 
-		if (uploadedFile != null) {
-			byte[] contents = uploadedFile.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				log.error(e.getMessage());
-			}
-			entity.setImageContentType(uploadedFile.getContentType());
-
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
-	}
-	
 	public long countActive() {
 		return offerTemplateService.countActive();
 	}
-	
+
 	public long countDisabled() {
 		return offerTemplateService.countDisabled();
 	}
-	
+
 	public long countExpiring() {
 		return offerTemplateService.countExpiring();
 	}
-	
+
 }

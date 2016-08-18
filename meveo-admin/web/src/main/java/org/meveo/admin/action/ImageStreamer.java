@@ -16,6 +16,9 @@ import org.primefaces.model.StreamedContent;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ *         http://stackoverflow.com/questions/8207325/display-dynamic-image-from
+ *         -database-with-pgraphicimage-and-streamedcontent
  **/
 public abstract class ImageStreamer<T extends BaseEntity> {
 

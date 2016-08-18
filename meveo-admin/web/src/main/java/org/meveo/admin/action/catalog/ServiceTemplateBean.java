@@ -23,12 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -528,25 +525,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedImage.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
-	}
-	
-	public void submitActionListener() throws SerialException, SQLException {
-		log.debug("save image");
-
-		if (uploadedImage != null) {
-			byte[] contents = uploadedImage.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				log.error(e.getMessage());
-			}
-			entity.setImageContentType(uploadedImage.getContentType());
-
-			FacesMessage message = new FacesMessage("Succesful", uploadedImage.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
 	
