@@ -23,6 +23,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 
 @Startup
@@ -107,9 +108,10 @@ public class ElasticClient {
 	 * @param e
 	 * @param creator
 	 */
-	public void createOrUpdate(BusinessEntity e,User creator){		
-		ElasticDocument esDoc = new ElasticDocument(e);		
-		createOrUpdate(esDoc, e.getClass().getName(), creator.getProvider().getCode());		
+	public void createOrUpdate(BusinessEntity e,User creator){	
+		Provider provider = (((BusinessEntity)e).getProvider());
+		ElasticDocument esDoc = new ElasticDocument(e);	
+		createOrUpdate(esDoc, e.getClass().getName(), provider.getCode());		
 	}
 	
 	public String search(String[] classnames,String query,User user){

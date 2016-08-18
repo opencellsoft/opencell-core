@@ -3648,10 +3648,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac3a571b-413a-4b63-91ea-abd3a84f104a" name="Find with Code provider">
-              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="e8e1fe3f-33f3-4f30-a9c3-18e76a4bffb2" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1">
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</description>
                <currency>EUR</currency>
                <country>FR</country>
@@ -3681,7 +3687,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -3722,10 +3732,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="46dc195e-51fe-4c83-a3fe-9ea3322fa1d0" name="Find with code">
-              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="eb7cf511-4361-4b9c-9ae9-b31c53e376c2" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
@@ -3747,7 +3763,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23587,7 +23607,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23614,7 +23635,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23804,7 +23828,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23831,7 +23856,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23979,11 +24007,17 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstances>
-               <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
-                  <url>http://localhost:8080/meveo</url>
-               </meveoInstance>
-               <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 createOrUpdate">
+              <con:configuration>
+                <token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
+                  &lt;url>http://localhost:8080/meveo&lt;/url>
+               &lt;/meveoInstance></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="1464225b-6117-4189-9e0a-7d8c4f9ba0e5" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 createOrUpdate">
                   <productName>productname</productName>
                   <productVersion>productversion</productVersion>
                   <owner>owner</owner>
@@ -24010,8 +24044,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <authPassword>meveo.admin</authPassword>
                   <user>MEVEO.ADMIN</user>
                   <customer>WS_BASE_CUST</customer>
-               </meveoInstance>
-            </meveoInstances>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24191,7 +24227,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>23</con:value>
+        <con:value>39</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -34019,6 +34055,48 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBOM_Script_Test e
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create CFT Service" id="a891e384-f207-4749-b84b-44a2cf148530">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="Create CFT Service" id="f84b907f-fec9-4c9d-8134-aced4e4eb9b4">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createOrUpdateField> 
+         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/>
+            <con:assertion type="Simple Contains" id="368b9338-6d7b-40c1-a09d-7bc8673aa087" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Install BOM test create offer script" id="8c3a0601-9581-407c-b9e2-38af4d360bf8">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -34203,7 +34281,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             </parameters>\r
             <prefix>${#Project#entityPrefix}_${#TestSuite#index}</prefix>\r
             <servicesToActivate>\r
-               <serviceToActivate code="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND" description="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND"/>\r
+               <serviceToActivate code="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND" description="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND">\r
+				<parameters>
+		               <parameter code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+		                  <doubleValue>15</doubleValue>
+		               </parameter>
+		          </parameters>               
+            	</serviceToActivate>
             </servicesToActivate>\r
          </bomOffer>\r
       </ws:createOfferFromBOM>\r
@@ -34252,7 +34336,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             <prefix>${#Project#entityPrefix}_${#TestSuite#index}_CO_OFFER</prefix>\r
             <servicesToActivate>\r
                <!--<serviceCode code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#baseEntityPrefix}_SERVICE1"/>-->\r
-               <serviceToActivate code="${#Project#baseEntityPrefix}_SERVICE2" description="${#Project#baseEntityPrefix}_SERVICE2"/>\r
+               <serviceToActivate code="${#Project#baseEntityPrefix}_SERVICE2" description="${#Project#baseEntityPrefix}_SERVICE2">\r
+               	<parameters>
+		               <parameter code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+		                  <doubleValue>15</doubleValue>
+		               </parameter>
+		          </parameters>               
+            	</serviceToActivate>
             </servicesToActivate>\r
          </bomOffer>\r
       </ws:createOfferFromBOM>\r
@@ -35561,7 +35651,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>117</con:value>
+        <con:value>130</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -40819,7 +40909,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f13fc821-8fc1-4cdf-a59c-4bba21c85808" name="Assert Customer Part">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>1</externalRef1>
                <externalRef2>1</externalRef2>
                <name>
@@ -40845,7 +40936,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <phone>1234</phone>
                   <mobile>092152154716</mobile>
                   <fax>1234</fax>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4fe4bad5-9bff-4034-b661-77af9d9d2c2a" name="Assert CA Part1">
               <con:configuration>
@@ -44813,7 +44907,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>36</con:value>
+        <con:value>50</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46506,7 +46600,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>76</con:value>
+        <con:value>86</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46629,22 +46723,20 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
               <con:configuration>
-                <token><![CDATA[<ddrequestLotOps>
-               <ddrequestLotOp>
-                  <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
-                  <toDueDate>2016-07-10T00:00:00${#Project#timezone2}:00</toDueDate>
+                <token><![CDATA[<ddrequestLotOp>
+                  <fromDueDate>2016-07-01T00:00:00${#Project#timezone}:00</fromDueDate>
+                  <toDueDate>2016-07-10T00:00:00${#Project#timezone}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>SEPA</fileFormat>
                </ddrequestLotOp>
                <ddrequestLotOp>
-                  <fromDueDate>2016-08-01T00:00:00${#Project#timezone2}:00</fromDueDate>
-                  <toDueDate>2016-08-31T00:00:00${#Project#timezone2}:00</toDueDate>
+                  <fromDueDate>2016-08-01T00:00:00${#Project#timezone}:00</fromDueDate>
+                  <toDueDate>2016-08-31T00:00:00${#Project#timezone}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>PAYNUM</fileFormat>
-               </ddrequestLotOp>
-            </ddrequestLotOps>]]></token>
+               </ddrequestLotOp>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -46674,7 +46766,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>77</con:value>
+        <con:value>87</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -48866,7 +48958,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>78</con:value>
+        <con:value>88</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57166,7 +57258,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>97</con:value>
+        <con:value>107</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57730,8 +57822,6 @@ and paste that invoice number in the next step.
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
       <con:testStep type="request" name="Activate services with service not in Offer" id="152d7dac-1976-43ba-bd91-3725d8804b45">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -57761,9 +57851,13 @@ and paste that invoice number in the next step.
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
             <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
-              <con:configuration><token><![CDATA[<status>FAIL</status>
+              <con:configuration>
+                <token><![CDATA[<status>FAIL</status>
             <errorCode>BUSINESS_API_EXCEPTION</errorCode>
-            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -57775,7 +57869,8 @@ and paste that invoice number in the next step.
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="Instanticate services with service not in Offer" id="706624d0-947b-4914-8907-e7ae2c4b258d">
+      </con:testStep>
+      <con:testStep type="request" name="Instanticate services with service not in Offer" id="706624d0-947b-4914-8907-e7ae2c4b258d">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SubscriptionWsSoapBinding</con:interface>
@@ -57804,9 +57899,13 @@ and paste that invoice number in the next step.
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
             <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
-              <con:configuration><token><![CDATA[<status>FAIL</status>
+              <con:configuration>
+                <token><![CDATA[<status>FAIL</status>
             <errorCode>BUSINESS_API_EXCEPTION</errorCode>
-            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            <message>Service ${#Project#entityPrefix}_${#TestSuite#index}_SERVICE is not associated with Offer</message>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -57818,7 +57917,8 @@ and paste that invoice number in the next step.
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties>
+      </con:testStep>
+      <con:properties>
         <con:property>
           <con:name>index</con:name>
           <con:value>825</con:value>
@@ -57828,10 +57928,11 @@ and paste that invoice number in the next step.
           <con:value>825</con:value>
         </con:property>
       </con:properties>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>94</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58456,7 +58557,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>94</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58972,7 +59073,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -62147,11 +62248,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+08</con:value>
+      <con:value>+01</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+08</con:value>
+      <con:value>+02</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
