@@ -23,6 +23,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 
 @Startup
@@ -107,14 +108,10 @@ public class ElasticClient {
 	 * @param e
 	 * @param creator
 	 */
-	public void createOrUpdate(BusinessEntity e, User creator) {
-		try {
-
-			ElasticDocument esDoc = new ElasticDocument(e);
-			createOrUpdate(esDoc, e.getClass().getName(), creator.getProvider().getCode());
-		} catch (Exception ex) {
-			log.warn("ES Client createOrUpdate", ex);
-		}
+	public void createOrUpdate(BusinessEntity e,User creator){	
+		Provider provider = (((BusinessEntity)e).getProvider());
+		ElasticDocument esDoc = new ElasticDocument(e);	
+		createOrUpdate(esDoc, e.getClass().getName(), provider.getCode());		
 	}
 	
 	public String search(String[] classnames,String query,User user){
@@ -122,7 +119,7 @@ public class ElasticClient {
 		String index = user.getProvider().getCode().toLowerCase();
 		log.debug("Execute search query {} on index {}",query,index);
 		SearchRequestBuilder reqBuilder = client.prepareSearch(index);
-		if(classnames!=null && classnames.length>0){
+		if(classnames.length>0){
 			String[] classNameLc = new String[classnames.length];
 			for(int i=0;i<classnames.length;i++){
 				classNameLc[i]=classnames[i].toLowerCase();
