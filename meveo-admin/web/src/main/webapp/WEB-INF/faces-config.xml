@@ -1916,7 +1916,12 @@
 			</to-view-id>
 			<redirect include-view-params="true"/>
 		</navigation-case>
-		
+		<navigation-case>
+            <from-outcome>indexing</from-outcome>
+            <to-view-id>/pages/index/index.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>
 		
 	</navigation-rule>
 

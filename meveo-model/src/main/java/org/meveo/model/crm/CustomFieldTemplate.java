@@ -31,6 +31,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -46,7 +47,9 @@ import org.slf4j.LoggerFactory;
 @ExportIdentifier({ "code", "appliesTo", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
-@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false  ") })
+@NamedQueries({
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false  "),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft join fetch cft.provider where cft.disabled=false and cft.indexType is not null and cft.provider=:provider") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -155,6 +158,10 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "CHE_FIELDS", length = 500)
     @Size(max = 500)
     private String childEntityFields;
+
+    @Column(name = "INDEX_TYPE", length = 10)
+    @Enumerated(EnumType.STRING)
+    private CustomFieldIndexTypeEnum indexType;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -535,6 +542,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setChildEntityFieldsAsList(List<String> cheFields) {
         this.childEntityFields = StringUtils.concatenate("|", cheFields);
+    }
+
+    public CustomFieldIndexTypeEnum getIndexType() {
+        return indexType;
+    }
+
+    public void setIndexType(CustomFieldIndexTypeEnum indexType) {
+        this.indexType = indexType;
     }
 
     @Override

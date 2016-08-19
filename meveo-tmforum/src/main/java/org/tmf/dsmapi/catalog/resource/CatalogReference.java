@@ -1,18 +1,22 @@
 package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonUnwrapped;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 //import org.tmf.dsmapi.catalog.client.CatalogClient;
 import org.tmf.dsmapi.commons.AbstractEntityReference;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.VersionProperty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
  *
@@ -28,7 +32,7 @@ import org.tmf.dsmapi.commons.annotation.VersionProperty;
  * than it needs to be.
  *
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 @Embeddable
 public class CatalogReference extends AbstractEntityReference implements Serializable {
     public final static long serialVersionUID = 1L;

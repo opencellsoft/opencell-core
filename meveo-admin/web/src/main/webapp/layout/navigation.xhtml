@@ -43,7 +43,10 @@
 	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
 	<p:tooltip for="crmAccounts">#{help['menu.crmAccounts']}</p:tooltip>
 	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
-    <p:tooltip for="importedFiles">#{help['menu.importedFiles']}</p:tooltip>
+    <p:tooltip for="importedFiles">#{help['menu.importedFiles']}</p:tooltip>    
+    <p:tooltip for="cache">#{help['menu.cacheInfo']}</p:tooltip>
+    <p:tooltip for="indexing">#{help['menu.indexing']}</p:tooltip>
+    
     <c:set var="cetIndex" value="0"/>
     <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
         <c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
@@ -442,6 +445,9 @@
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				outcome="caches" value="#{messages['menu.cacheInfo']}" />
 
+            <p:menuitem id="indexing"
+                rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+                outcome="indexing" value="#{messages['menu.indexing']}" />
 		</p:submenu>
 	</p:menubar>
 </h:form>
