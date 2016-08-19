@@ -7,8 +7,31 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom" contentType="text/html">
 
-	<div class="footer">Opencell @VERSION_NUMBER@ @BUILD_NUMBER@</div>
 	<div class="footer">
+		<div class="TexAlCenter">
+			<ul class="ListNoStyle Navigation"
+				style="display: inline-block; margin: 0; padding: 0; /* For IE, the outcast */ zoom: 1; *display: inline;">
+				<li><a href="https://opencellsoft.com/about/">About
+						Opencell</a></li>
+				<li><a href="https://app.assembla.com/spaces/meveo/messages">Community
+				</a></li>
+				<li><a href="https://opencellsoft.com/privacy/">Privacy</a></li>
+				<li><a href="https://opencellsoft.com/contact_us/">Contact
+						Us</a></li>
+			</ul>
+		</div>
+		<div>
+			<ul class="ListNoStyle Navigation"
+				style="display: inline-block; margin: 0; padding: 0; /* For IE, the outcast */ zoom: 1; *display: inline;">
+				<li><a
+					href="https://www.youtube.com/c/Opencellsoftwares/videos"><i class="fa fa-youtube-square fa-fw FAText"></i></a></li>
+				<li><a href="https://www.facebook.com/opencellsoftware"><i class="fa fa-facebook-square fa-fw FAText"></i></a></li>
+				<li><a href="https://twitter.com/opencellsoft"><i class="fa fa-twitter-square fa-fw FAText"></i></a></li>
+				<li><a href="https://www.linkedin.com/company/opencell"><i class="fa fa-linkedin-square fa-fw FAText"></i></a></li>
+			</ul>
+		</div>
+
+		<div>Opencell @VERSION_NUMBER@ @BUILD_NUMBER@</div>
 		<h:outputText value="#{monitoringBean.getLastVersion()}"
 			escape="false" />
 	</div>
