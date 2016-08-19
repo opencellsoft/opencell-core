@@ -22,9 +22,9 @@ public interface UsageRs extends IBaseRs {
     
 
     /**
-     * Search for billingCycle with a given code.
+     * Search for all opened ratedTransactions with a given userAccountCode,fromDate and toDate .
      * 
-     * @param billingCycleCode
+     * @param userAccountCode,fromDate,toDate
      * @return
      */
     @Path("/")
