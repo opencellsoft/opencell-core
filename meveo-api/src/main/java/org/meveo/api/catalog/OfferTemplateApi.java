@@ -87,6 +87,7 @@ public class OfferTemplateApi extends BaseApi {
 		offerTemplate.setProvider(provider);
 		offerTemplate.setCode(postData.getCode());
 		offerTemplate.setDescription(postData.getDescription());
+		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
 		 
@@ -189,6 +190,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		offerTemplate.setBusinessOfferModel(businessOffer);
 		offerTemplate.setDescription(postData.getDescription());
+		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
 
