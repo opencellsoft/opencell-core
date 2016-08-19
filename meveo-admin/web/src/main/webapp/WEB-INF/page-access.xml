@@ -84,6 +84,14 @@
 		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
 	
+	<page view-id=".+\/admin\/meveoUsers\/.*">
+		<constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+		<constraint>currentUser.hasPermission('marketing','marketingCatalogManager')</constraint>
+		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
+	</page>
+	
 	<!-- PAGE RULES FOR BILLING PAGES -->
 	<page view-id=".+\/billing\/invoicing\/billingRuns">
 		<constraint>currentUser.hasPermission('account','accountManagement')</constraint>
