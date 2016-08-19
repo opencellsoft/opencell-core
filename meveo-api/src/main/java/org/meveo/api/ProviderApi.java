@@ -472,7 +472,7 @@ public class ProviderApi extends BaseApi {
     	Provider provider=null;
     	if(entity==null){
     		provider=new Provider();
-    		provider.setCode(postData.getCode());
+    		provider.setCode(postData.getCode().toUpperCase());
     	}else{
     		provider=entity;
     	}
