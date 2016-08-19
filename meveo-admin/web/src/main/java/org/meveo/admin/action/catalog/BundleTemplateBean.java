@@ -16,14 +16,21 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
+import org.meveo.service.catalog.impl.ChannelService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -41,6 +48,15 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Inject
 	protected BundleProductTemplateService bundleProductTemplateService;
 
+	@Inject
+	private BusinessAccountModelService businessAccountModelService;
+
+	@Inject
+	private OfferTemplateCategoryService offerTemplateCategoryService;
+
+	@Inject
+	private ChannelService channelService;
+
 	private PricePlanMatrix entityPricePlan;
 	private BigDecimal catalogPrice;
 	private BigDecimal discountedAmount;
@@ -51,6 +67,10 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	private String editMode;
 
 	private List<ProductTemplate> productTemplatesToAdd;
+
+	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
+	private DualListModel<BusinessAccountModel> bamDM;
+	private DualListModel<Channel> channelDM;
 
 	private UploadedFile uploadedFile;
 
@@ -181,6 +201,80 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public void setBundleProductTemplatesToAdd(List<BundleProductTemplate> bundleProductTemplatesToAdd) {
 		this.bundleProductTemplatesToAdd = bundleProductTemplatesToAdd;
+	}
+
+	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
+		if (offerTemplateCategoriesDM == null) {
+			List<OfferTemplateCategory> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = offerTemplateCategoryService.list(entity.getProvider(), true);
+			} else {
+				perksSource = offerTemplateCategoryService.listActive();
+			}
+
+			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
+			if (getEntity().getOfferTemplateCategories() != null) {
+				perksTarget.addAll(getEntity().getOfferTemplateCategories());
+			}
+			perksSource.removeAll(perksTarget);
+
+			offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
+		}
+
+		return offerTemplateCategoriesDM;
+	}
+
+	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
+		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
+	}
+
+	public DualListModel<BusinessAccountModel> getBamDM() {
+		if (bamDM == null) {
+			List<BusinessAccountModel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = businessAccountModelService.list(entity.getProvider(), true);
+			} else {
+				perksSource = businessAccountModelService.listActive();
+			}
+
+			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
+			if (getEntity().getBusinessAccountModels() != null) {
+				perksTarget.addAll(getEntity().getBusinessAccountModels());
+			}
+			perksSource.removeAll(perksTarget);
+
+			bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
+		}
+
+		return bamDM;
+	}
+
+	public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
+		this.bamDM = bamDM;
+	}
+
+	public DualListModel<Channel> getChannelDM() {
+		if (channelDM == null) {
+			List<Channel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = channelService.list(entity.getProvider(), true);
+			} else {
+				perksSource = channelService.listActive();
+			}
+
+			List<Channel> perksTarget = new ArrayList<Channel>();
+			if (getEntity().getChannels() != null) {
+				perksTarget.addAll(getEntity().getChannels());
+			}
+			perksSource.removeAll(perksTarget);
+
+			channelDM = new DualListModel<Channel>(perksSource, perksTarget);
+		}
+		return channelDM;
+	}
+
+	public void setChannelDM(DualListModel<Channel> channelDM) {
+		this.channelDM = channelDM;
 	}
 
 }
