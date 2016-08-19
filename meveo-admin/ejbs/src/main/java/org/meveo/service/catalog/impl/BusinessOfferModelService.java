@@ -136,7 +136,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		if (bams != null) {
 			newOfferTemplate.getBusinessAccountModels().addAll(bams);
 		}
-		newOfferTemplate.setActive(false);
+		newOfferTemplate.setActive(true);
 		newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
