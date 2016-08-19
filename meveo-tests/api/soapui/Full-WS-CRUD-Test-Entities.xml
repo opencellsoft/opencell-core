@@ -3532,7 +3532,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
-         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1">\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">\r
             <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</description>\r
             <currency>EUR</currency>\r
             <country>FR</country>\r
@@ -3597,7 +3597,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
-         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2">\r</provider>\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">\r</provider>\r
       </ws:createProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -3649,7 +3649,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac3a571b-413a-4b63-91ea-abd3a84f104a" name="Find with Code provider">
               <con:configuration>
-                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1"></token>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -3657,7 +3657,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="e8e1fe3f-33f3-4f30-a9c3-18e76a4bffb2" name="XPath Match">
               <con:configuration>
                 <path>//provider</path>
-                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1">
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</description>
                <currency>EUR</currency>
                <country>FR</country>
@@ -3719,7 +3719,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findProvider>\r
-         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider2</providerCode>\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2</providerCode>\r
       </ws:findProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -3733,7 +3733,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="46dc195e-51fe-4c83-a3fe-9ea3322fa1d0" name="Find with code">
               <con:configuration>
-                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2"></token>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -3741,7 +3741,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="eb7cf511-4361-4b9c-9ae9-b31c53e376c2" name="XPath Match">
               <con:configuration>
                 <path>//provider</path>
-                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2">
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
@@ -3759,7 +3759,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayProvider>false</displayProvider>
                   <displayCfAsXML>false</displayCfAsXML>
                   <displayPricePlans>false</displayPricePlans>
-                  <displayDetail>false</displayDetail>
+                  <displayDetail>true</displayDetail>
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
@@ -4019,6 +4019,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <enterprise>true</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates>
                   <iban>1234</iban>
                   <bic>1234</bic>
@@ -4098,9 +4099,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <enterprise>false</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates/>
                <recognizeRevenue>false</recognizeRevenue>
                <invoiceConfiguration>
+                  <displaySubscriptions>false</displaySubscriptions>
+                  <displayServices>false</displayServices>
+                  <displayOffers>false</displayOffers>
+                  <displayEdrs>false</displayEdrs>
+                  <displayProvider>false</displayProvider>
+                  <displayCfAsXML>false</displayCfAsXML>
+                  <displayPricePlans>false</displayPricePlans>
+                  <displayDetail>true</displayDetail>
+                  <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
             </provider>]]></content>
@@ -5120,7 +5131,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
-         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider3">\r</provider>\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">\r</provider>\r
       </ws:createProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -5162,7 +5173,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
-         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider3">\r</provider>\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">\r</provider>\r
       </ws:createProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -5200,7 +5211,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findProvider>\r
-         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_Provider3</providerCode>\r
+         <providerCode>${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3</providerCode>\r
       </ws:findProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -5403,9 +5414,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <enterprise>false</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates/>
                <recognizeRevenue>false</recognizeRevenue>
                <invoiceConfiguration>
+                  <displaySubscriptions>false</displaySubscriptions>
+                  <displayServices>false</displayServices>
+                  <displayOffers>false</displayOffers>
+                  <displayEdrs>false</displayEdrs>
+                  <displayProvider>false</displayProvider>
+                  <displayCfAsXML>false</displayCfAsXML>
+                  <displayPricePlans>false</displayPricePlans>
+                  <displayDetail>true</displayDetail>
+                  <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
             </provider>]]></token>
@@ -5508,9 +5529,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <enterprise>false</enterprise>
                <levelDuplication>false</levelDuplication>
                <rounding>2</rounding>
+               <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
                <bankCoordinates/>
                <recognizeRevenue>false</recognizeRevenue>
                <invoiceConfiguration>
+                  <displaySubscriptions>false</displaySubscriptions>
+                  <displayServices>false</displayServices>
+                  <displayOffers>false</displayOffers>
+                  <displayEdrs>false</displayEdrs>
+                  <displayProvider>false</displayProvider>
+                  <displayCfAsXML>false</displayCfAsXML>
+                  <displayPricePlans>false</displayPricePlans>
+                  <displayDetail>true</displayDetail>
+                  <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
             </provider>]]></token>
@@ -7899,7 +7930,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createProvider>\r
-         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_Provider_UR"></provider>\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER_UR"></provider>\r
       </ws:createProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -7943,7 +7974,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>
                <permission permission="apiAccess" name="API User" resource="user"/>
             </permissions>\r
-            <provider>${#Project#entityPrefix}_${#TestSuite#index}_Provider_UR</provider>\r
+            <provider>${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER_UR</provider>\r
          </role>\r
       </ws:createRole>\r
    </soapenv:Body>\r
@@ -8040,7 +8071,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <permissions>\r
                <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
             </permissions>\r
-            <provider>${#Project#entityPrefix}_${#TestSuite#index}_Provider_UR</provider>\r
+            <provider>${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER_UR</provider>\r
          </role>\r
       </ws:createRole>\r
    </soapenv:Body>\r
@@ -8101,7 +8132,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <permissions>\r
                <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
             </permissions>\r
-            <provider>${#Project#entityPrefix}_${#TestSuite#index}_Provider_UR</provider>\r
+            <provider>${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER_UR</provider>\r
          </role>\r
       </ws:createRole>\r
    </soapenv:Body>\r
@@ -24227,7 +24258,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>39</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -35651,7 +35682,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>130</con:value>
+        <con:value>133</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -44907,7 +44938,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>50</con:value>
+        <con:value>53</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46600,7 +46631,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>86</con:value>
+        <con:value>89</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46766,7 +46797,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>87</con:value>
+        <con:value>90</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -48958,7 +48989,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>88</con:value>
+        <con:value>91</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57258,7 +57289,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>107</con:value>
+        <con:value>110</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57932,7 +57963,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>94</con:value>
+        <con:value>97</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58557,7 +58588,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>94</con:value>
+        <con:value>97</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -59073,7 +59104,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>87</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
