@@ -2590,5 +2590,9 @@ $BODY$
 
         <createSequence sequenceName="wf_transition_rule_seq" />
     </changeSet>
-    	
+    <changeSet author="pbach (generated)" id="#1861_20082016-166">
+        <dropForeignKeyConstraint baseTableName="wf_transition_rule" constraintName="uk_name_value_type_priority_provider_id"/>
+        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_transition_rule" />
+    </changeSet>
 </databaseChangeLog>

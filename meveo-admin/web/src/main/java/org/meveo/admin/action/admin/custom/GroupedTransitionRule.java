@@ -19,6 +19,8 @@ public class GroupedTransitionRule implements Serializable {
 
     private String anotherValue;
 
+    private Date anotherDate;
+
     public String getName() {
         return name;
     }
@@ -57,5 +59,13 @@ public class GroupedTransitionRule implements Serializable {
 
     public void setNewDate(Date newDate) {
         this.newDate = newDate;
+    }
+
+    public Date getAnotherDate() {
+        return anotherDate;
+    }
+
+    public void setAnotherDate(Date anotherDate) {
+        this.anotherDate = anotherDate;
     }
 }

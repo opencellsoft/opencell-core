@@ -23,7 +23,9 @@ public enum TransitionRuleTypeEnum {
     STRING(1, "TransitionRuleTypeEnum.string"),
     DATE(2, "TransitionRuleTypeEnum.date"),
     NUMBER(3, "TransitionRuleTypeEnum.number"),
-    RANGE(4, "TransitionRuleTypeEnum.range");
+    RANGE_STRING(4, "TransitionRuleTypeEnum.range.string"),
+    RANGE_DATE(5, "TransitionRuleTypeEnum.range.date"),
+    RANGE_NUMBER(6, "TransitionRuleTypeEnum.range.number");
 
     private Integer id;
     private String label;

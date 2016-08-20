@@ -30,7 +30,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WFTransitionRuleService extends PersistenceService<WFTransitionRule> {
 
-    @SuppressWarnings("rawtypes")
     public Integer getMaxPriority(String ruleName, TransitionRuleTypeEnum type, Provider provider) {
         try {
             return (Integer) getEntityManager()
@@ -46,7 +45,7 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
         return 0;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
     public List<String> getDistinctNameWFTransitionRules(Provider provider) {
         return (List<String>) getEntityManager()
                 .createQuery(
@@ -56,7 +55,7 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                 .getResultList();
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
     public List<String> getDistinctNameWFTransitionRules() {
         return (List<String>) getEntityManager()
                 .createQuery(
@@ -76,7 +75,6 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                 .getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public WFTransitionRule getWFTransitionRule(String name, String value, Integer priority, TransitionRuleTypeEnum type, Provider provider) {
         WFTransitionRule wfTransitionRule = null;
         try {
@@ -96,18 +94,16 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
         return wfTransitionRule;
     }
 
-    @SuppressWarnings("unchecked")
-    public WFTransitionRule getWFTransitionRuleByNameTypeValue(String name, String value, TransitionRuleTypeEnum type, Provider provider) {
+    public WFTransitionRule getWFTransitionRuleByNameValue(String name, String value, Provider provider) {
         WFTransitionRule wfTransitionRule = null;
         try {
             wfTransitionRule = (WFTransitionRule) getEntityManager()
                     .createQuery(
                             "from " + WFTransitionRule.class.getSimpleName()
-                                    + " where name=:name and value=:value and type=:type and provider=:provider")
+                                    + " where name=:name and value=:value and provider=:provider")
 
                     .setParameter("name", name)
                     .setParameter("value", value)
-                    .setParameter("type", type)
                     .setParameter("provider", provider)
                     .getSingleResult();
         } catch (Exception e) {

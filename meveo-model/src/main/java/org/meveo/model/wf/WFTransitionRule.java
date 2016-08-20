@@ -36,7 +36,7 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "WF_TRANSITION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"NAME", "VALUE", "TYPE", "PRIORITY", "PROVIDER_ID"}))
+		"NAME", "VALUE", "PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_RULE_SEQ")
 public class WFTransitionRule extends AuditableEntity {
 
@@ -49,21 +49,25 @@ public class WFTransitionRule extends AuditableEntity {
 
     @Size(max = 255)
 	@Column(name = "VALUE")
+    @NotNull
 	private String value;
 
     @Column(name = "PRIORITY")
+    @NotNull
     private int priority;
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
+    @NotNull
     private TransitionRuleTypeEnum type;
 	
 	@Column(name = "CONDITION_EL", length = 2000)
 	@Size(max = 2000)
+    @NotNull
 	private String conditionEl;
 
     @Column(name = "MODEL")
-    private Boolean model = Boolean.FALSE;
+    private boolean model = false;
 
     @ManyToMany(mappedBy="wfTransitionRules")
     private Set<WFTransition> wfTransitions = new HashSet<>();
@@ -114,11 +118,11 @@ public class WFTransitionRule extends AuditableEntity {
 		this.conditionEl = conditionEl;
 	}
 
-    public Boolean getModel() {
+    public boolean getModel() {
         return model;
     }
 
-    public void setModel(Boolean model) {
+    public void setModel(boolean model) {
         this.model = model;
     }
 
