@@ -42,7 +42,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.IAuditable;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.wf.TransitionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;

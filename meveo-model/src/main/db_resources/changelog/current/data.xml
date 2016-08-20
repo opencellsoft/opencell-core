@@ -444,6 +444,7 @@
 
     <changeSet id="#1861_20160820" author="pbach">
         <sql>
+            DELETE FROM wf_transition_transition_rule;
             DELETE FROM wf_transition_rule;
             ALTER SEQUENCE wf_transition_rule_seq RESTART WITH 0;
             INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mvn.getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 1, 'STRING', 'other', 1, 1, NULL, true);
