@@ -131,7 +131,7 @@
                                                                 </p:selectOneMenu>
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="transitionRuleValue#{loopStatus.index}" label="#{messages['transitionRuleValue.value']}" rendered="#{workflowBean.selectedRules[loopStatus.index].name != null}">
+                                                            <hftl:decorateFormField fieldId="transitionRuleValue#{loopStatus.index}" label="#{messages['transitionRuleValue.value']}" rendered="#{rule.name != null}">
                                                                 <p:selectOneListbox id="transitionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true" validateUnique="true" converter="wfTransitionRuleConverter">
                                                                     <f:selectItems value="#{workflowBean.wfTransitionRulesByName[loopStatus.index]}" var="transitionRule" itemLabel="#{transitionRule.value}" itemValue="#{transitionRule}" />
                                                                     <p:ajax listener="#{workflowBean.addWFTransitionRule(loopStatus.index)}" event="change" update=":tabView:formDunningPlanTransition:tabDetail:transitionRulePanel#{loopStatus.index}"
@@ -140,7 +140,7 @@
                                                             </hftl:decorateFormField>
 
                                                             <hftl:decorateFormField fieldId="transitionRuleTextValue#{loopStatus.index}" label="#{messages['transitionRuleNewValue.value']}"
-                                                                                    rendered="#{workflowBean.selectedRules[loopStatus.index].value.model == true and workflowBean.selectedRules[loopStatus.index].value.type == 'STRING'}">
+                                                                                    rendered="#{rule.value.model == true and rule.value.type == 'STRING'}">
                                                                 <p:inputText id="transitionRuleTextValue#{loopStatus.index}" value="#{rule.newValue}" required="true" size="20" maxlength="100"/>
                                                             </hftl:decorateFormField>
 
