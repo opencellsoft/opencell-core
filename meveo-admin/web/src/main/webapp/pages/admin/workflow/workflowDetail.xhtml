@@ -118,13 +118,14 @@
                                                                            hideEffect="slide" />
                                                                 <p:commandButton id="transitionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
                                                                                  action="#{workflowBean.deleteWfTransitionRule(loopStatus.index)}"
-                                                                                 icon="ui-icon-trash" process="transitionRulesPanel"
+                                                                                 icon="ui-icon-trash" process="@this,transitionRulesPanel" ajaxSubmit="true" partialSubmit="true"
                                                                                  update=":tabView:formDunningPlanTransition:tabDetail:transitionRulesPanel" />
 
                                                             </hftl:decorateFormField>
                                                             <hftl:decorateFormField fieldId="transitionRuleName#{loopStatus.index}" label="#{messages['transitionRuleName.rule']}">
-                                                                <p:selectOneMenu id="transitionRuleName#{loopStatus.index}" value="#{rule.name}">
-                                                                    <p:ajax listener="#{workflowBean.changedRuleName(loopStatus.index)}" update=":tabView:formDunningPlanTransition:tabDetail:transitionRulePanel#{loopStatus.index}" />
+                                                                <p:selectOneMenu id="transitionRuleName#{loopStatus.index}" value="#{rule.name}" required="true">
+                                                                    <p:ajax listener="#{workflowBean.changedRuleName(loopStatus.index)}" process="@this,transitionRulePanel#{loopStatus.index}"
+                                                                            update=":tabView:formDunningPlanTransition:tabDetail:transitionRulePanel#{loopStatus.index}" />
                                                                     <f:selectItem itemLabel="Select Rule" itemValue="" noSelectionOption="true" />
                                                                     <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
                                                                 </p:selectOneMenu>
@@ -210,7 +211,7 @@
                                                                            hideEffect="slide" />
                                                                 <p:commandButton id="transitionActionOperationPanel#{actionIndex.index}" style="margin-top: 15px;"
                                                                                  action="#{workflowBean.deleteWfAction(actionIndex.index)}"
-                                                                                 icon="ui-icon-trash" process="transitionActionsPanel"
+                                                                                 icon="ui-icon-trash" process="@this,transitionActionsPanel" ajaxSubmit="true" partialSubmit="true"
                                                                                  update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
 
                                                             </hftl:decorateFormField>
@@ -220,7 +221,7 @@
                                                             </hftl:decorateFormField>
                                                             <hftl:decorateFormField fieldId="priority#{actionIndex.index}"
                                                                                     label="#{messages['dunningPlan.priority']}">
-                                                                <p:spinner id="priority#{actionIndex.index}" value="#{action.priority}" size="10" min="0"/>
+                                                                <p:spinner id="priority#{actionIndex.index}" value="#{action.priority}" required="true" size="10" min="0"/>
                                                             </hftl:decorateFormField>
                                                             <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}"
                                                                                     label="#{messages['dunningPlan.conditionEl']}">
