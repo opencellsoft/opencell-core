@@ -163,16 +163,12 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 wfTrs.setToStatus(wfTransition.getToStatus());
                 wfTrs.setConditionEl(wfTransition.getConditionEl());
 
-                if (wfTransitionRules.size() > 0) {
-                    wfTrs.getWfTransitionRules().clear();
-                    wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
-                }
+                wfTrs.getWfTransitionRules().clear();
+                wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
 
                 wFTransitionService.update(wfTrs, getCurrentUser());
 
-                if (wfActions.size() > 0) {
-                    addOrUpdateOrDeleteActions(wfTrs, wfActions, true);
-                }
+                addOrUpdateOrDeleteActions(wfTrs, wfActions, true);
 
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
@@ -184,17 +180,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
                         throw new BusinessEntityException();
                     }
                 }
-                if (wfTransitionRules.size() > 0) {
-                    wfTransition.getWfTransitionRules().clear();
-                    wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
-                }
+                wfTransition.getWfTransitionRules().clear();
+                wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
 
                 wfTransition.setWorkflow(entity);
                 wFTransitionService.create(wfTransition, getCurrentUser());
 
-                if (wfActions.size() > 0) {
-                    addOrUpdateOrDeleteActions(wfTransition, wfActions, false);
-                }
+                addOrUpdateOrDeleteActions(wfTransition, wfActions, false);
 
                 entity.getTransitions().add(wfTransition);
                 messages.info(new BundleKey("messages", "save.successful"));
@@ -357,7 +349,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     public void changedRuleName(Integer indexRule) {
         List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
         if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
-            wfTransitionRulesByName.remove(indexRule);
+            wfTransitionRulesByName.remove(wfTransitionRulesByName.get(indexRule));
             wfTransitionRulesByName.add(indexRule, list);
         } else {
             wfTransitionRulesByName.add(indexRule, list);
@@ -373,16 +365,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
         wfActions.add(newInstance);
     }
 
-    private WFAction getInstanceAction() {
-        WFAction newInstance = new WFAction();
-        if (newInstance instanceof IAuditable) {
-            ((IAuditable) newInstance).updateAudit(getCurrentUser());
-        }
-        newInstance.setWfTransition(wfTransition);
-        return newInstance;
-    }
-
     public void deleteWfTransitionRule(Integer indexRule) {
+        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
+            wfTransitionRulesByName.remove(wfTransitionRulesByName.get(indexRule));
+        }
         selectedRules.remove(selectedRules.get(indexRule));
     }
 
