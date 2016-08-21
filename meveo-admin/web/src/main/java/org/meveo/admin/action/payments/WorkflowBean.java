@@ -323,7 +323,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     public List<String> getWfTransitionRulesName() {
         if (wfTransitionRulesName == null) {
-            List<WFTransitionRule> perksSource = null;
             if (entity != null && entity.getProvider() != null) {
                 wfTransitionRulesName = wFTransitionServiceRule.getDistinctNameWFTransitionRules(entity.getProvider());
             } else {
@@ -345,10 +344,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
         this.wfTransitionRulesByName = wfTransitionRulesByName;
     }
 
-    public void changedRuleName(Integer indexRule) {
+    public void changedRuleName(int indexRule) {
         List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
         if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
-            wfTransitionRulesByName.remove(wfTransitionRulesByName.get(indexRule));
+            wfTransitionRulesByName.remove(indexRule);
             wfTransitionRulesByName.add(indexRule, list);
         } else {
             wfTransitionRulesByName.add(indexRule, list);
@@ -364,18 +363,20 @@ public class WorkflowBean extends BaseBean<Workflow> {
         wfActions.add(newInstance);
     }
 
-    public void deleteWfTransitionRule(Integer indexRule) {
+    public void deleteWfTransitionRule(int indexRule) {
         if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
-            wfTransitionRulesByName.remove(wfTransitionRulesByName.get(indexRule));
+            wfTransitionRulesByName.remove(indexRule);
         }
-        selectedRules.remove(selectedRules.get(indexRule));
+        selectedRules.remove(indexRule);
     }
 
-    public void deleteWfAction(Integer indexAction) {
-        wfActions.remove(wfActions.get(indexAction));
+    public void deleteWfAction(int indexAction) {
+        if (wfActions.size() > indexAction && wfActions.get(indexAction) != null) {
+            wfActions.remove(indexAction);
+        }
     }
 
-    public void addWFTransitionRule(Integer indexRule) {
+    public void addWFTransitionRule(int indexRule) {
 
     }
 
@@ -407,6 +408,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         showDetailPage = true;
         selectedRules.clear();
         wfActions.clear();
+        wfTransitionRulesByName.clear();
     }
 
     public List<WFAction> getWfActions() {

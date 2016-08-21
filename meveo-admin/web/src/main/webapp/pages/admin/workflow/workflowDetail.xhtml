@@ -125,7 +125,7 @@
                                                             <hftl:decorateFormField fieldId="transitionRuleName#{loopStatus.index}" label="#{messages['transitionRuleName.rule']}">
                                                                 <p:selectOneMenu id="transitionRuleName#{loopStatus.index}" value="#{rule.name}" required="true">
                                                                     <p:ajax listener="#{workflowBean.changedRuleName(loopStatus.index)}" process="@this,transitionRulePanel#{loopStatus.index}"
-                                                                            update=":tabView:formDunningPlanTransition:tabDetail:transitionRulePanel#{loopStatus.index}" />
+                                                                            update=":tabView:formDunningPlanTransition:tabDetail:transitionRulesPanel" />
                                                                     <f:selectItem itemLabel="Select Rule" itemValue="" noSelectionOption="true" />
                                                                     <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
                                                                 </p:selectOneMenu>
@@ -134,7 +134,7 @@
                                                             <hftl:decorateFormField fieldId="transitionRuleValue#{loopStatus.index}" label="#{messages['transitionRuleValue.value']}" rendered="#{rule.name != null}">
                                                                 <p:selectOneListbox id="transitionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true" validateUnique="true" converter="wfTransitionRuleConverter">
                                                                     <f:selectItems value="#{workflowBean.wfTransitionRulesByName[loopStatus.index]}" var="transitionRule" itemLabel="#{transitionRule.value}" itemValue="#{transitionRule}" />
-                                                                    <p:ajax listener="#{workflowBean.addWFTransitionRule(loopStatus.index)}" event="change" update=":tabView:formDunningPlanTransition:tabDetail:transitionRulePanel#{loopStatus.index}"
+                                                                    <p:ajax listener="#{workflowBean.addWFTransitionRule(loopStatus.index)}" event="change" update=":tabView:formDunningPlanTransition:tabDetail:transitionRulesPanel"
                                                                             process="@this,transitionRulePanel#{loopStatus.index}"/>
                                                                 </p:selectOneListbox>
                                                             </hftl:decorateFormField>
