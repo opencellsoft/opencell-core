@@ -282,7 +282,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
 		QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
 		qb.addCriterionEntity("customerAccount", customerAccount);
-
+		qb.addOrderCriterion("c.id", true);
 		try {
 			return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
