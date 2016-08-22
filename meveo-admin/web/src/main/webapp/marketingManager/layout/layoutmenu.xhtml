@@ -18,7 +18,10 @@
 					value="#{messages['menu.marketingManager.productList']}" />
 			</p:submenu>
 
-			<p:submenu label="#{messages['menu.customers']}"></p:submenu>
+			<p:submenu label="#{messages['menu.customers']}">
+				<p:menuitem id="workflows" value="#{messages['menu.marketingManager.workflowList']}"
+					outcome="mmWorkflows" />
+			</p:submenu>
 
 			<p:submenu label="#{messages['menu.myCompany']}">
 				<p:menuitem id="users" value="#{messages['menu.users']}"

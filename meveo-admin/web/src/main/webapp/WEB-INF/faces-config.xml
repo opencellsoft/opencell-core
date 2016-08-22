@@ -1977,6 +1977,12 @@
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>mmWorkflows</from-outcome>
+			<to-view-id>/marketingManager/workflows/workflows.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>		
+		<navigation-case>
 			<from-outcome>productTemplates</from-outcome>
 			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>
