@@ -1930,49 +1930,49 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>mmOfferTemplates</from-outcome>
-			<to-view-id>/marketingManager/offerTemplates.xhtml
+			<to-view-id>/marketingManager/offers/offerTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOffers</from-outcome>
-			<to-view-id>/marketingManager/offers.xhtml
+			<to-view-id>/marketingManager/offers/offers.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOfferDetail</from-outcome>
-			<to-view-id>/marketingManager/offerDetail.xhtml
+			<to-view-id>/marketingManager/offers/offerDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmOfferCategories</from-outcome>
-			<to-view-id>/marketingManager/offerTemplateCategories.xhtml
+			<to-view-id>/marketingManager/offers/offerTemplateCategories.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmProductTemplates</from-outcome>
-			<to-view-id>/marketingManager/productTemplates.xhtml
+			<to-view-id>/marketingManager/products/productTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmProductTemplateDetail</from-outcome>
-			<to-view-id>/marketingManager/productTemplateDetail.xhtml
+			<to-view-id>/marketingManager/products/productTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmBundleTemplateDetail</from-outcome>
-			<to-view-id>/marketingManager/bundleTemplateDetail.xhtml
+			<to-view-id>/marketingManager/products/bundleTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mmBundleTemplateSelectProduct</from-outcome>
-			<to-view-id>/marketingManager/selectProduct.xhtml
+			<to-view-id>/marketingManager/products/selectProduct.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
