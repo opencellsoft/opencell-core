@@ -98,9 +98,8 @@ public class DunningLotBuilder {
                 if (actionDunning.getCustomerAccount().getName().getTitle() != null) {
                     Title title = actionDunning.getCustomerAccount().getName().getTitle();
                     String languageCode = actionDunning.getCustomerAccount().getTradingLanguage().getLanguageCode();
-                    String messageCode=catMessagesService.getMessageCode(title);
                     if(languageCode!=null){
-                    descTitle = catMessagesService.getMessageDescription(messageCode, languageCode, title.getDescription());	
+                    descTitle = catMessagesService.getMessageDescription(title.getCode(),Title.class.getSimpleName(), languageCode, title.getDescription());	
                     }else{
                      descTitle = actionDunning.getCustomerAccount().getName().getTitle().getDescription();	
                       }

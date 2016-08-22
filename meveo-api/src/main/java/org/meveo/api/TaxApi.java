@@ -87,7 +87,7 @@ public class TaxApi extends BaseApi {
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMsg, currentUser);
             }
@@ -142,13 +142,13 @@ public class TaxApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode());
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
                         catMessagesService.update(catMsg, currentUser);
                     } else {
-                        CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
+                        CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
                         catMessagesService.create(catMessages, currentUser);
                     }
                 }
@@ -177,7 +177,7 @@ public class TaxApi extends BaseApi {
         result = new TaxDto(tax);
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() + "_" + tax.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -201,7 +201,7 @@ public class TaxApi extends BaseApi {
         }
 
         // remove cat messages
-        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getId(), provider);
+        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getCode());
 
         taxService.remove(tax);
         return result;

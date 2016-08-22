@@ -2522,6 +2522,21 @@ $BODY$
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>	  
+    </changeSet>
+    <changeSet id="#1637_20160819" author="TyshanShi">
+    	<addColumn tableName="ADM_MESSAGES">
+    		<column name="ENTITY_CLASS" type="varchar(100)"/>
+    		<column name="ENTITY_CODE" type="varchar(60)"/>
+    	</addColumn>
+    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_rsmkrbsglxfyarsk0gtbxuydg"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="disabled"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="created"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="updated"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="creator_id"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="updater_id"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="provider_id"/>
+    </changeSet>  
     	
 </databaseChangeLog>
