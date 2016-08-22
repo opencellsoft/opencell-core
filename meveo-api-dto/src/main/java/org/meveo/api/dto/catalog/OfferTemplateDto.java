@@ -32,14 +32,16 @@ public class OfferTemplateDto implements Serializable {
     @XmlAttribute()
     private String description;
 
+    private String name;
+
     private String longDescription;
 
     private boolean disabled = false;
     private String bomCode;
-    
+
     @Deprecated
     private String offerTemplateCategoryCode;
-    
+
     @XmlElementWrapper(name = "offerTemplateCategories")
     @XmlElement(name = "code")
     private List<String> offerTemplateCategories;
@@ -61,18 +63,19 @@ public class OfferTemplateDto implements Serializable {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldInstances) {
         code = offerTemplate.getCode();
         description = offerTemplate.getDescription();
+        name = offerTemplate.getName();
         longDescription = offerTemplate.getLongDescription();
         disabled = offerTemplate.isDisabled();
         if (offerTemplate.getBusinessOfferModel() != null) {
             bomCode = offerTemplate.getBusinessOfferModel().getCode();
         }
 
-		if (offerTemplate.getOfferTemplateCategories() != null) {
-			for (OfferTemplateCategory oc : offerTemplate.getOfferTemplateCategories()) {
-				offerTemplateCategories = new ArrayList<>();
-				offerTemplateCategories.add(oc.getCode());
-			}
-		}
+        if (offerTemplate.getOfferTemplateCategories() != null) {
+            for (OfferTemplateCategory oc : offerTemplate.getOfferTemplateCategories()) {
+                offerTemplateCategories = new ArrayList<>();
+                offerTemplateCategories.add(oc.getCode());
+            }
+        }
 
         if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
             offerServiceTemplates = new ArrayList<>();
@@ -108,10 +111,10 @@ public class OfferTemplateDto implements Serializable {
     }
 
     @Override
-	public String toString() {
-		return "OfferTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
-				+ ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
-	}
+    public String toString() {
+        return "OfferTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
+                + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
+    }
 
     public CustomFieldsDto getCustomFields() {
         return customFields;
@@ -146,31 +149,39 @@ public class OfferTemplateDto implements Serializable {
     }
 
     public List<OfferProductTemplateDto> getOfferProductTemplates() {
-		return offerProductTemplates;
-	}
+        return offerProductTemplates;
+    }
 
     public void setOfferProductTemplates(List<OfferProductTemplateDto> offerProductTemplates) {
-		this.offerProductTemplates = offerProductTemplates;
-	}
+        this.offerProductTemplates = offerProductTemplates;
+    }
 
     public boolean isCodeOnly() {
         return StringUtils.isBlank(description) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
                 && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }
 
-	public String getLongDescription() {
-		return longDescription;
-	}
+    public String getLongDescription() {
+        return longDescription;
+    }
 
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
 
-	public List<String> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public List<String> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
 
-	public void setOfferTemplateCategories(List<String> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
+    public void setOfferTemplateCategories(List<String> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

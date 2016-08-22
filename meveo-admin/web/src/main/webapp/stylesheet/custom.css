@@ -287,6 +287,10 @@ body {
   border: 1px solid #ddd !important;
 }
 
+.position-relative {
+  position: relative;
+}
+
 /* Custom Styles
 ====================================== */
 
@@ -384,6 +388,23 @@ input[type="text"] {
   text-decoration: none;
 }
 
+#cog-submenu {
+  position: absolute;
+  top: 61px;
+  right: 28px;
+  border: 1px solid #ddd;
+}
+
+#cog-submenu li a {
+  background: #eee;
+  display: block;
+  padding: 7px 15px;
+}
+
+#cog-submenu li a:hover {
+  background: #eb2f2f;
+  color: #fff;
+}
 
 /* Marketing Home
 ====================================*/

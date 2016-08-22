@@ -189,14 +189,14 @@
 										<p:panel>
 											<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
 												<li class="Padding5 FRight"><p:commandLink
-														styleClass="fa fa-share-square-o text-red"
+														styleClass="fa fa-share-square-o text-red fa-2x"
 														update=":offerForExportPanel :dlgOfferExport"
 														action="#{offerTemplateListBean.addForExport(entity)}">
 													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:commandLink
 														action="#{offerTemplateListBean.duplicate()}"
 														update=":tabView"
-														styleClass="fa fa-copy no-text-decoration">
+														styleClass="fa fa-copy no-text-decoration fa-2x">
 														<f:setPropertyActionListener
 															target="#{offerTemplateListBean.entity}"
 															value="#{entity}" />
@@ -207,7 +207,7 @@
 															message="#{messages['commons.confirmDuplicate']}" />
 													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:link
-														styleClass="fa fa-edit no-text-decoration text-red"
+														styleClass="fa fa-edit no-text-decoration text-red fa-2x"
 														outcome="mmOfferDetail">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
@@ -218,7 +218,7 @@
 													</p:link></li>
 												<li class="Padding5 FRight"><p:link
 														outcome="mmOfferDetail"
-														styleClass="fa fa-search-plus no-text-decoration text-red">
+														styleClass="fa fa-search-plus no-text-decoration text-red fa-2x">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
 														<f:param name="objectId" value="#{entity.id}"></f:param>

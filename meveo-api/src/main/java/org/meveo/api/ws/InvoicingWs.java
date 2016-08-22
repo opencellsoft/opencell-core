@@ -10,6 +10,8 @@ import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
+import org.meveo.api.dto.usage.UsageRequestDto;
+import org.meveo.api.dto.usage.UsageResponseDto;
 
 /**
  * @author anasseh
@@ -42,5 +44,8 @@ public interface InvoicingWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus cancelBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+ 
+	@WebMethod
+	UsageResponseDto findUsage(@WebParam(name = "usageRequestDto") UsageRequestDto usageRequestDto);  
 		
 }

@@ -24,14 +24,38 @@
 
 		<h:form>
 			<div class="pull-right">
-				<ul id="top-right-menu" class="list-inline">
-					<li><h:commandLink action="#{identity.logout}"
-							value="#{messages['menutop.logout']}"
-							rendered="#{identity.loggedIn}" immediate="true" /></li>
-					<li><a href="#"><i class="fa fa-2x fa-cog"></i></a></li>
+				<ul id="top-right-menu" class="list-inline position-relative">
+					<li>
+						<a href="#" id="cog-menu"><i class="fa fa-2x fa-cog"></i></a>
+						<ul id="cog-submenu" class="list-unstyled" style="display: none;">
+							<li>
+								<h:commandLink action="#{identity.logout}"
+								value="#{messages['menutop.logout']}"
+								rendered="#{identity.loggedIn}" immediate="true" />
+							</li>
+						</ul>
+					</li>
 					<li><a href="#"><i class="fa fa-2x fa-question"></i></a></li>
 				</ul>
 				<!-- / top-right-menu -->
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#top-right-menu li a').click(function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						$(this).parent().parent().find('ul').slideToggle();
+					});
+					
+				})
+			</script>
+			<div class="pull-right" style="margin-right: 40px; margin-top: 10px;">
+				<div>#{identity.user.user.userName}</div>
+				<div>#{identity.user.currentProvider.code}</div>
+			</div>
+			<div class="pull-right" style="margin-right: 40px; margin-top: 20px;">
+				<p:inputText placeholder="#{messages['commons.search']}"></p:inputText>
+				<p:commandLink styleClass="Padding5 fa fa-search"></p:commandLink>
 			</div>
 		</h:form>
 	</div>
