@@ -27,6 +27,7 @@ import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
@@ -53,6 +54,9 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
+
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
 
 	@Inject
 	private ChannelService channelService;
@@ -92,6 +96,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			bundleProductTemplatesToAdd.addAll(entity.getBundleProducts());
 		}
 
+		setPricePlan();
+
 		return entity;
 	}
 
@@ -105,6 +111,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		}
 
 		String outcome = super.saveOrUpdate(killConversation);
+
+		savePricePlanMatrix();
 
 		if (editMode != null && editMode.length() > 0) {
 			outcome = "mmProductTemplates";
@@ -145,6 +153,34 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			bundleProductTemplatesToAdd.add(bpt);
 		}
 
+	}
+
+	private void savePricePlanMatrix() throws BusinessException {
+		entityPricePlan.setCode(entity.getCode());
+		entityPricePlan.setEventCode(entity.getCode());
+		if (entityPricePlan.isTransient()) {
+			pricePlanMatrixService.create(entityPricePlan, getCurrentUser());
+		} else {
+			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());
+		}
+	}
+
+	public void setPricePlan() {
+		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
+			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
+		}
+		if (entityPricePlan == null) {
+			entityPricePlan = new PricePlanMatrix();
+		}
+		String catalogPriceCode = "CATALOG_PRICE";
+		List<CustomFieldInstance> cfInstances = customFieldInstanceService.findByCodeLike(catalogPriceCode,
+				getCurrentProvider());
+		if (cfInstances != null && cfInstances.size() > 0) {
+			catalogPriceCF = cfInstances.get(0);
+		} else {
+			catalogPriceCF = new CustomFieldInstance();
+			catalogPriceCF.setCode(catalogPriceCode);
+		}
 	}
 
 	public PricePlanMatrix getEntityPricePlan() {
