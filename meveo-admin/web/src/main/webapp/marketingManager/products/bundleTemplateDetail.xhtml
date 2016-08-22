@@ -155,10 +155,11 @@
 								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 									<p:outputLabel value="#{messages['productTemplate.salePrice']}" />
 									<h:outputText
-										value="#{bundleTemplateBean.entityPricePlan.amountWithTax}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
-									<!-- <p:inputText
-										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"></p:inputText> -->
+										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"
+										rendered="#{bundleTemplateBean.entityPricePlan != null and (not bundleTemplateBean.edit)}" />
+									<p:inputText
+										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"
+										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit)}" />
 									<p:outputLabel value="0.00"
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
@@ -166,6 +167,9 @@
 									<h:outputText
 										value="#{bundleTemplateBean.catalogPriceCF.cfValue.doubleValue}"
 										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
+									<p:inputText
+										value="#{bundleTemplateBean.catalogPriceCF.cfValue.doubleValue}"
+										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit) and (bundleTemplateBean.catalogPriceCF != null)}" />
 									<p:outputLabel value="0.00"
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
@@ -192,9 +196,8 @@
 								label="#{messages['productTemplate.targetSegment']}"
 								field="businessAccountModels" /> -->
 							<hftl:formField id="channels"
-								label="#{messages['channels.title']}"
-								field="channels" listType="pickUpList"
-								valueLabelField="code"
+								label="#{messages['channels.title']}" field="channels"
+								listType="pickUpList" valueLabelField="code"
 								dualListModel="#{bundleTemplateBean.channelDM}" />
 							<hftl:formField id="businessAccountModels"
 								label="#{messages['businessAccountModels.title']}"

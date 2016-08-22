@@ -8,16 +8,20 @@
 
 		<hftl:menu styleClass="marketingManagerNavigation"
 			rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
-			<p:submenu label="#{messages['menu.catalog']}">
-				<p:menuitem id="mmOfferCategories" outcome="mmOfferCategories"
-					value="#{messages['menu.marketingManager.offerCategories']}" />
+			<p:submenu label="#{messages['menu.offers']}">
 				<p:menuitem id="mmOffers" outcome="mmOffers"
-					value="#{messages['menu.marketingManager.catalogView']}" />
-				<p:menuitem id="mmProductTemplates" outcome="mmProductTemplates"
-					value="#{messages['menu.productTemplates.view']}" />
+					value="#{messages['menu.marketingManager.catalogList']}" />
 			</p:submenu>
 
-			<p:submenu label="#{messages['menu.customers']}"></p:submenu>
+			<p:submenu label="#{messages['menu.marketingManager.products']}">
+				<p:menuitem id="mmProductTemplates" outcome="mmProductTemplates"
+					value="#{messages['menu.marketingManager.productList']}" />
+			</p:submenu>
+
+			<p:submenu label="#{messages['menu.customers']}">
+				<p:menuitem id="workflows" value="#{messages['menu.marketingManager.workflowList']}"
+					outcome="mmWorkflows" />
+			</p:submenu>
 
 			<p:submenu label="#{messages['menu.myCompany']}">
 				<p:menuitem id="users" value="#{messages['menu.users']}"
@@ -25,34 +29,8 @@
 			</p:submenu>
 
 			<p:submenu id="settings" label="#{messages['menu.settings']}">
-				<p:menuitem id="invoiceCategories" outcome="invoiceCategories"
-					value="#{messages['menu.invoiceCategories']}" />
-				<p:menuitem id="invoiceSubCategories" outcome="invoiceSubCategories"
-					value="#{messages['menu.invoiceSubCategories']}" />
-				<p:menuitem id="invoiceTypes" outcome="invoiceTypes"
-					value="#{messages['menu.invoiceTypes']}" />
-				<p:menuitem id="titles" outcome="titles"
-					value="#{messages['menu.titles']}" />
-
-				<p:submenu id="referenceData"
-					label="#{messages['menu.referenceData']}">
-					<p:menuitem outcome="calendars" id="calendars"
-						value="#{messages['menu.calendars']}" />
-					<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies"
-						value="#{messages['menu.tradingCurrencies']}" />
-					<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
-						value="#{messages['menu.comLanguages']}" />
-					<p:menuitem id="tradingCountries" outcome="tradingCountries"
-						value="#{messages['menu.tradingCountries']}" />
-					<p:menuitem id="taxes" outcome="taxes"
-						value="#{messages['menu.taxes']}" />
-					<p:menuitem id="terminationReasons" outcome="terminationReasons"
-						value="#{messages['menu.terminationReason']}" />
-					<p:menuitem id="creditCategories" outcome="creditCategories"
-						value="#{messages['menu.creditCategories']}" />
-					<p:menuitem id="meveoProperties" outcome="meveoProperties"
-						value="#{messages['menu.properties']}" />
-				</p:submenu>
+				<p:menuitem id="mmOfferCategories" outcome="mmOfferCategories"
+					value="#{messages['menu.marketingManager.manageCategories']}" />
 			</p:submenu>
 		</hftl:menu>
 
