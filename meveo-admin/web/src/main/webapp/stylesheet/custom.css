@@ -726,7 +726,7 @@ input[type="text"] {
 
 #primary_nav_wrap {
 	margin-top: 15px;
-	margin-right: 50px;
+	margin-right: 70px;
 }
 
 #primary_nav_wrap ul {
@@ -739,8 +739,12 @@ input[type="text"] {
 
 #primary_nav_wrap ul a {
 	display: block;
-	text-decoration: none;;
+	text-decoration: none;
 	padding: 0 15px;
+}
+
+#primary_nav_wrap ul a:hover {
+	text-decoration: underline;
 }
 
 #primary_nav_wrap ul li {
@@ -763,7 +767,7 @@ input[type="text"] {
 	position: absolute;
 	top: 120%;
 	left: 0;
-	background: #fff;
+	background: #f6f6f6;
 	padding: 0
 }
 
@@ -783,5 +787,5 @@ input[type="text"] {
 }
 
 #primary_nav_wrap ul li:hover>ul {
-	display: block
+	/*display: block*/
 }
