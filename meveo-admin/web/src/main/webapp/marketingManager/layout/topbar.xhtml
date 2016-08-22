@@ -23,28 +23,30 @@
 		<!-- / topbar-wrapper -->
 
 		<h:form>
-			<div class="pull-right">
-				<ul id="top-right-menu" class="list-inline position-relative">
-					<li>
-						<a href="#" id="cog-menu"><i class="fa fa-2x fa-cog"></i></a>
-						<ul id="cog-submenu" class="list-unstyled" style="display: none;">
-							<li>
-								<h:commandLink action="#{identity.logout}"
-								value="#{messages['menutop.logout']}"
-								rendered="#{identity.loggedIn}" immediate="true" />
-							</li>
-						</ul>
-					</li>
-					<li><a href="#"><i class="fa fa-2x fa-question"></i></a></li>
+			<div class="pull-right" id="primary_nav_wrap">
+				<ul id="top-right-menu">
+					<li><a href="#" id=""><i class="fa fa-2x fa-cog"></i></a>
+						<ul style="display: none;">
+							<li><h:commandLink action="#{identity.logout}"
+									value="#{messages['menutop.logout']}"
+									rendered="#{identity.loggedIn}" immediate="true" /></li>
+						</ul></li>
+					<li><a href="#"><i class="fa fa-2x fa-question"></i></a>
+						<ul style="display: none;">
+							<li><a href="https://opencellsoft.com/">#{messages['menu.aboutUs']}</a></li>
+							<li><a href="https://app.assembla.com/spaces/meveo/wiki">#{messages['menu.documentation']}</a></li>
+						</ul></li>
+
 				</ul>
 				<!-- / top-right-menu -->
 			</div>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$('#top-right-menu li a').click(function(e) {
+						//alert(JSON.stringify($(this).parent().parent(), null, 4));
 						e.preventDefault();
 						e.stopPropagation();
-						$(this).parent().parent().find('ul').slideToggle();
+						$(this).parent().find('ul').slideToggle();
 					});
 					
 				})
