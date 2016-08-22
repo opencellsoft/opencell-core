@@ -16,6 +16,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -25,13 +26,14 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.BundleTemplateService;
+import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
@@ -48,9 +50,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	@Inject
 	protected ProductTemplateService productTemplateService;
-
-	@Inject
-	private BundleTemplateService bundleTemplateService;
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
@@ -70,10 +69,17 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Inject
 	CustomFieldInstanceService customFieldInstanceService;
 
+	@Inject
+	CustomFieldTemplateService cfTemplateService;
+
+	@Inject
+	private ChannelService channelService;
+
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<WalletTemplate> walletTemplatesDM;
 	private DualListModel<BusinessAccountModel> bamDM;
+	private DualListModel<Channel> channelDM;
 	private UploadedFile uploadedFile;
 
 	private String editMode;
@@ -158,11 +164,19 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	private void savePricePlanMatrix() throws BusinessException {
+		entityPricePlan.setCode(entity.getCode());
+		entityPricePlan.setEventCode(entity.getCode());
 		if (entityPricePlan.isTransient()) {
 			pricePlanMatrixService.create(entityPricePlan, getCurrentUser());
 		} else {
 			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());
 		}
+
+		/*if (catalogPriceCF.isTransient()) {
+			customFieldInstanceService.create(catalogPriceCF, entity, getCurrentUser());
+		} else {
+			customFieldInstanceService.update(catalogPriceCF, entity, getCurrentUser());
+		}*/
 	}
 
 	public String discardChanges() {
@@ -195,7 +209,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		}
 
 		String outcome = super.saveOrUpdate(killConversation);
-
+		savePricePlanMatrix();
 		if (editMode != null && editMode.length() > 0) {
 			outcome = "mmProductTemplates";
 		}
@@ -332,22 +346,56 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		this.bamDM = bamDM;
 	}
 
+	public DualListModel<Channel> getChannelDM() {
+		if (channelDM == null) {
+			List<Channel> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = channelService.list(entity.getProvider(), true);
+			} else {
+				perksSource = channelService.listActive();
+			}
+
+			List<Channel> perksTarget = new ArrayList<Channel>();
+			if (getEntity().getBusinessAccountModels() != null) {
+				perksTarget.addAll(getEntity().getChannels());
+			}
+			perksSource.removeAll(perksTarget);
+
+			channelDM = new DualListModel<Channel>(perksSource, perksTarget);
+		}
+
+		return channelDM;
+	}
+
+	public void setChannelDM(DualListModel<Channel> channelDM) {
+		this.channelDM = channelDM;
+	}
+
 	public void setPricePlan() {
 		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
 			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
-			if (entityPricePlan == null) {
-				entityPricePlan = new PricePlanMatrix();
-			}
+		}
 
-			String catalogPriceCode = "CATALOG_PRICE";
-			List<CustomFieldInstance> cfInstances = customFieldInstanceService.findByCodeLike(catalogPriceCode,
-					getCurrentProvider());
-			if (cfInstances != null && cfInstances.size() > 0) {
-				catalogPriceCF = cfInstances.get(0);
-			} else {
-				catalogPriceCF = new CustomFieldInstance();
-				catalogPriceCF.setCode(catalogPriceCode);
-			}
+		if (entityPricePlan == null) {
+			entityPricePlan = new PricePlanMatrix();
+		}
+
+		String catalogPriceCode = "CATALOG_PRICE";
+
+		/*
+		 * CustomFieldTemplate cft =
+		 * cfTemplateService.findByCodeAndAppliesTo(catalogPriceCode, entity,
+		 * getCurrentProvider());
+		 */
+
+		CustomFieldInstance cfInstance = (CustomFieldInstance) customFieldInstanceService.getCFValue(entity,
+				catalogPriceCode, getCurrentUser());
+		if (cfInstance != null) {
+			catalogPriceCF = cfInstance;
+
+		} else {
+			catalogPriceCF = new CustomFieldInstance();
+			catalogPriceCF.setCode(catalogPriceCode);
 		}
 	}
 

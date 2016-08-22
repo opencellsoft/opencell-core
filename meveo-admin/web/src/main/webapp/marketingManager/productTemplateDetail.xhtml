@@ -124,10 +124,16 @@
 							<p:row>
 								<p:column></p:column>
 								<p:column>
-									<hftl:formField
+									<!-- <hftl:formField
 										label="#{messages['productOffering.offerTemplateCategories']}"
 										field="offerTemplateCategories" required="true"
-										id="offerTemplateCategories" />
+										id="offerTemplateCategories" /> -->
+
+									<hftl:formField id="offerTemplateCategories"
+										label="#{messages['productOffering.offerTemplateCategories']}"
+										field="offerTemplateCategories" listType="pickUpList"
+										valueLabelField="code"
+										dualListModel="#{productTemplateBean.offerTemplateCategoriesDM}" />
 								</p:column>
 							</p:row>
 						</p:panelGrid>
@@ -138,17 +144,21 @@
 								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 									<p:outputLabel value="#{messages['productTemplate.salePrice']}" />
 									<h:outputText
-										value="#{productTemplateBean.entityPricePlan.amountWithTax}"
-										rendered="#{productTemplateBean.entityPricePlan != null}" />
-									<!-- <p:inputText
-										value="#{productTemplateBean.entityPricePlan.amountWithoutTax}"></p:inputText> -->
+										value="#{productTemplateBean.entityPricePlan.amountWithoutTax}"
+										rendered="#{productTemplateBean.entityPricePlan != null  and (not productTemplateBean.edit)}" />
+									<p:inputText
+										value="#{productTemplateBean.entityPricePlan.amountWithoutTax}"
+										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit)}"></p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{productTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
 										value="#{messages['productTemplate.catalogPrice']}" />
 									<h:outputText
 										value="#{productTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{productTemplateBean.entityPricePlan != null}" />
+										rendered="#{productTemplateBean.entityPricePlan != null and (not productTemplateBean.edit)}" />
+									<p:inputText
+										value="#{productTemplateBean.catalogPriceCF.cfValue.doubleValue}"
+										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit)}"></p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{productTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
@@ -171,9 +181,19 @@
 								<f:selectItem itemLabel="Channel 2" itemValue="2" />
 								<f:selectItem itemLabel="Channel 3" itemValue="3" />
 							</p:selectOneListbox> -->
-							<hftl:formField
+							<!-- <hftl:formField
 								label="#{messages['productTemplate.targetSegment']}"
-								field="businessAccountModels" />
+								field="businessAccountModels" /> -->
+
+							<hftl:formField id="channels"
+								label="#{messages['channels.title']}" field="channels"
+								listType="pickUpList" valueLabelField="code"
+								dualListModel="#{productTemplateBean.channelDM}" />
+							<hftl:formField id="businessAccountModels"
+								label="#{messages['businessAccountModels.title']}"
+								field="businessAccountModels" listType="pickUpList"
+								valueLabelField="code"
+								dualListModel="#{productTemplateBean.bamDM}" />
 						</p:panelGrid>
 					</p:column>
 				</p:row>
