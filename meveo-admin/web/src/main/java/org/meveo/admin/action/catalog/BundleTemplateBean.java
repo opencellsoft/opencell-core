@@ -22,6 +22,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
@@ -163,23 +164,51 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		} else {
 			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());
 		}
+
+		if (catalogPriceCF != null) {
+			if (catalogPriceCF.isTransient()) {
+				customFieldInstanceService.create(catalogPriceCF, entity, getCurrentUser());
+			} else {
+				customFieldInstanceService.update(catalogPriceCF, entity, getCurrentUser());
+			}
+		}
 	}
 
 	public void setPricePlan() {
 		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
 			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
 		}
+
 		if (entityPricePlan == null) {
 			entityPricePlan = new PricePlanMatrix();
 		}
+
 		String catalogPriceCode = "CATALOG_PRICE";
-		List<CustomFieldInstance> cfInstances = customFieldInstanceService.findByCodeLike(catalogPriceCode,
-				getCurrentProvider());
+
+		List<CustomFieldInstance> cfInstances = getCustomFieldInstances(entity).get(catalogPriceCode);
+
+		CustomFieldInstance cfInstance = null;
 		if (cfInstances != null && cfInstances.size() > 0) {
-			catalogPriceCF = cfInstances.get(0);
-		} else {
-			catalogPriceCF = new CustomFieldInstance();
+			cfInstance = cfInstances.get(0);
+			if (cfInstance != null) {
+				catalogPriceCF = cfInstance;
+			}
+		}
+
+		CustomFieldTemplate cft = getCustomFieldTemplates(entity).get(catalogPriceCode);
+
+		if (cft != null && cfInstance == null) {
+			catalogPriceCF = CustomFieldInstance.fromTemplate(cft, entity);
 			catalogPriceCF.setCode(catalogPriceCode);
+		}
+	}
+
+	public void computePricePlan() {
+
+		if (catalogPriceCF.getCfValue().getDoubleValue() != null && entityPricePlan.getAmountWithoutTax() != null) {
+			catalogPrice = new BigDecimal(catalogPriceCF.getCfValue().getDoubleValue().toString());
+			discountedAmount = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice).multiply(new BigDecimal(
+					"100"))).divide(catalogPrice);
 		}
 	}
 
