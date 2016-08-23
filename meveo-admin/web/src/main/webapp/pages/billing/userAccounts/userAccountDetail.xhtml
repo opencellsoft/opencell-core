@@ -232,8 +232,6 @@
 									entity="#{userAccountBean.productInstance}"
 									styleClass="formPanel" formId="applyProductForm"
 									showFormButtons="false">
-									<hftl:formField label="#{messages['BusinessEntity.code']}"
-										field="code" required="true" validateUnique="true" />
 									<hftl:formField label="#{messages['commons.quantity']}"
 										field="quantity" required="true" />
 									<hftl:formField
@@ -246,7 +244,7 @@
 									<hftl:formField label="#{messages['offerTemplate.title']}"
 										field="offerTemplate" listBean="#{offerTemplateBean}"
 										entity="#{userAccountBean.productChargeInstance}"
-										valueLabelField="code" required="true" />
+										valueLabelField="code" />
 
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton value="#{messages['action.save']}"

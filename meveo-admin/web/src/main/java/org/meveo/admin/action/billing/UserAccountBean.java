@@ -516,6 +516,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public void applyProduct() {
 		if (productInstance != null) {
+			productInstance.setCode(productInstance.getProductTemplate().getCode());
 			productInstance.setDescription(productInstance.getProductTemplate().getDescription());
 			if (productInstance.getApplicationDate() == null) {
 				productInstance.setApplicationDate(new Date());
@@ -541,7 +542,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		} catch (Exception e) {
-			log.error("unexpected exception when applying a product!", e);
+			log.error("unexpected exception when applying a product! {}", e.getMessage());
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		}
 		
