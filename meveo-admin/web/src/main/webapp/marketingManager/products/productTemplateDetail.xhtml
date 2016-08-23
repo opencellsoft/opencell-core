@@ -12,8 +12,6 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{productTemplateBean.preRenderView}" />
-			<f:event type="preRenderView"
-				listener="#{productTemplateBean.initEntity}" />
 			<f:viewParam name="editMode" value="#{productTemplateBean.editMode}" />
 		</f:metadata>
 	</ui:define>
@@ -145,25 +143,34 @@
 									<p:outputLabel value="#{messages['productTemplate.salePrice']}" />
 									<h:outputText
 										value="#{productTemplateBean.entityPricePlan.amountWithoutTax}"
-										rendered="#{productTemplateBean.entityPricePlan != null  and (not productTemplateBean.edit)}" />
+										rendered="#{productTemplateBean.entityPricePlan != null  and (not productTemplateBean.edit) and productTemplateBean.catalogPriceCF != null}" />
 									<p:inputText
 										value="#{productTemplateBean.entityPricePlan.amountWithoutTax}"
-										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit)}"></p:inputText>
+										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit)  and productTemplateBean.catalogPriceCF != null}">
+										<p:ajax event="keyup"
+											listener="#{productTemplateBean.computePricePlan}"
+											update="discountedAmount" />
+									</p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{productTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
 										value="#{messages['productTemplate.catalogPrice']}" />
 									<h:outputText
 										value="#{productTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{productTemplateBean.entityPricePlan != null and (not productTemplateBean.edit)}" />
+										rendered="#{productTemplateBean.entityPricePlan != null and (not productTemplateBean.edit) and productTemplateBean.catalogPriceCF != null}" />
 									<p:inputText
 										value="#{productTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit)}"></p:inputText>
+										rendered="#{productTemplateBean.entityPricePlan != null  and (productTemplateBean.edit) and productTemplateBean.catalogPriceCF != null}">
+										<p:ajax event="keyup"
+											listener="#{productTemplateBean.computePricePlan}"
+											update="discountedAmount" />
+									</p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{productTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
 										value="#{messages['productTemplate.discountedAmount']}" />
-									<h:outputText value="#{productTemplateBean.discountedAmount}"
+									<h:outputText id="discountedAmount"
+										value="#{productTemplateBean.discountedAmount}"
 										rendered="#{productTemplateBean.entityPricePlan != null}" />
 									<p:outputLabel value="0.00"
 										rendered="#{productTemplateBean.entityPricePlan == null}" />

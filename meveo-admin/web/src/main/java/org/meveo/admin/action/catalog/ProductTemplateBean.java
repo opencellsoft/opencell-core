@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -24,6 +25,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
@@ -172,11 +174,55 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());
 		}
 
-		/*if (catalogPriceCF.isTransient()) {
-			customFieldInstanceService.create(catalogPriceCF, entity, getCurrentUser());
-		} else {
-			customFieldInstanceService.update(catalogPriceCF, entity, getCurrentUser());
-		}*/
+		if (catalogPriceCF != null) {
+			if (catalogPriceCF.isTransient()) {
+				customFieldInstanceService.create(catalogPriceCF, entity, getCurrentUser());
+			} else {
+				customFieldInstanceService.update(catalogPriceCF, entity, getCurrentUser());
+			}
+		}
+	}
+
+	public void setPricePlan() {
+		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
+			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
+		}
+
+		if (entityPricePlan == null) {
+			entityPricePlan = new PricePlanMatrix();
+		}
+
+		String catalogPriceCode = "CATALOG_PRICE";
+
+		List<CustomFieldInstance> cfInstances = getCustomFieldInstances(entity).get(catalogPriceCode);
+
+		CustomFieldInstance cfInstance = null;
+		if (cfInstances != null && cfInstances.size() > 0) {
+			cfInstance = cfInstances.get(0);
+			if (cfInstance != null) {
+				catalogPriceCF = cfInstance;
+			}
+		}
+
+		Map<String, CustomFieldTemplate> entityCFTs = getCustomFieldTemplates(entity);
+		CustomFieldTemplate cft = entityCFTs.get(catalogPriceCode);
+
+		
+		if (cft != null && cfInstance == null) {
+			catalogPriceCF = CustomFieldInstance.fromTemplate(cft, entity);
+			catalogPriceCF.setCode(catalogPriceCode);
+		}
+	}
+
+	public void computePricePlan() {
+
+		if (catalogPriceCF != null && catalogPriceCF.getCfValue() != null && entityPricePlan != null) {
+			if (catalogPriceCF.getCfValue().getDoubleValue() != null && entityPricePlan.getAmountWithoutTax() != null) {
+				catalogPrice = new BigDecimal(catalogPriceCF.getCfValue().getDoubleValue().toString());
+				discountedAmount = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice)
+						.multiply(new BigDecimal("100"))).divide(catalogPrice);
+			}
+		}
 	}
 
 	public String discardChanges() {
@@ -371,40 +417,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		this.channelDM = channelDM;
 	}
 
-	public void setPricePlan() {
-		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
-			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
-		}
-
-		if (entityPricePlan == null) {
-			entityPricePlan = new PricePlanMatrix();
-		}
-
-		String catalogPriceCode = "CATALOG_PRICE";
-
-		/*
-		 * CustomFieldTemplate cft =
-		 * cfTemplateService.findByCodeAndAppliesTo(catalogPriceCode, entity,
-		 * getCurrentProvider());
-		 */
-
-		CustomFieldInstance cfInstance = (CustomFieldInstance) customFieldInstanceService.getCFValue(entity,
-				catalogPriceCode, getCurrentUser());
-		if (cfInstance != null) {
-			catalogPriceCF = cfInstance;
-
-		} else {
-			catalogPriceCF = new CustomFieldInstance();
-			catalogPriceCF.setCode(catalogPriceCode);
-		}
-	}
-
 	public boolean isBundleTemplate(ProductTemplate pt) {
-
-		/*
-		 * if (bundleTemplateService.findById(pt.getId()) != null) { return
-		 * true; } return false;
-		 */
 		return pt instanceof BundleTemplate;
 	}
 
