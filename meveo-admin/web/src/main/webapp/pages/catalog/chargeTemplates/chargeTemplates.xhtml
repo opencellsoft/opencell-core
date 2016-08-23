@@ -29,7 +29,7 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['chargeTemplate.title']}"
-		     backingBean="#{chargeTemplateListBean}" sortBy="code">
+		     backingBean="#{chargeTemplateListBean}" sortBy="code" dataModel="#{chargeTemplateListBean.getChargeTemplates()}">
 			
 			<p:column width="25%">
 			<f:facet name="header">
