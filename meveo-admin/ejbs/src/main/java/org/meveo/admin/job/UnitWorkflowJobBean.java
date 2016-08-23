@@ -58,7 +58,7 @@ public class UnitWorkflowJobBean{
             log.debug("listByFromStatus.size:"+(listByFromStatus == null ? null : listByFromStatus.size()));
             for(WFTransition wfTransition :listByFromStatus ){
             	 log.debug("processing transition:"+wfTransition);
-            	if(matchExpression(wfTransition.getConditionEl(), entity)){
+            	if(matchExpression(wfTransition.getCombinedEl(), entity)){
             		 log.debug("conditionEl is true");
             		 log.debug("listWfActions.size:"+(wfTransition.getWfActions() == null ? null : wfTransition.getWfActions().size()));
             		for(WFAction wfAction : wfTransition.getWfActions()){
