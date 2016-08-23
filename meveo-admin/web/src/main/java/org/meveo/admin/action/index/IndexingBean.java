@@ -31,6 +31,7 @@ public class IndexingBean implements Serializable {
     private Future<ReindexingStatistics> reindexingFuture;
 
     public void cleanAndReindex() {
+        reindexingFuture = null;
 
         if (!elasticClient.isEnabled()) {
             messages.error(new BundleKey("messages", "indexing.notEnabled"));
@@ -39,7 +40,7 @@ public class IndexingBean implements Serializable {
 
         try {
             reindexingFuture = elasticClient.cleanAndReindex();
-            // messages.info(new BundleKey("messages", "indexing.started"));
+            messages.info(new BundleKey("messages", "indexing.started"));
 
         } catch (Exception e) {
             log.error("Failed to initiate Elastic Search cleanup and population", e);

@@ -31,6 +31,11 @@ public class PaginationConfiguration implements Serializable {
     private Integer firstRow;
     private Integer numberOfRows;
 
+    /**
+     * Full text search filter. Mutually exclusive with filters attribute. fullTextFilter has priority
+     */
+    private String fullTextFilter;
+
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
     private Map<String, String> sortOrdering;
@@ -49,7 +54,7 @@ public class PaginationConfiguration implements Serializable {
      * @param sortOrder Sort order
      */
     public PaginationConfiguration(String sortField, SortOrder sortOrder) {
-        this(null, null, null, null, sortField, sortOrder, null);
+        this(null, null, null, null, null, sortField, sortOrder, null);
     }
 
     /**
@@ -60,8 +65,9 @@ public class PaginationConfiguration implements Serializable {
      * @param sortField Field to sort by
      * @param sortOrder Sort order
      */
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder) {
-        this(firstRow, numberOfRows, filters, fetchFields, sortField, sortOrder, null);
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, String sortField,
+            SortOrder sortOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, sortField, sortOrder, null);
     }
 
     /**
@@ -72,13 +78,13 @@ public class PaginationConfiguration implements Serializable {
      * @param sortField Field to sort by
      * @param sortOrder Sort order
      * @param sortOrdering
-     * @param filterByProvider Should filtering by provider be applied
      */
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder,
-            Map<String, String> sortOrdering) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, String sortField,
+            SortOrder sortOrder, Map<String, String> sortOrdering) {
         this.firstRow = firstRow;
         this.numberOfRows = numberOfRows;
         this.filters = filters;
+        this.fullTextFilter = fullTextFilter;
         this.fetchFields = fetchFields;
         this.sortField = sortField;
         this.ordering = sortOrder;
@@ -116,6 +122,10 @@ public class PaginationConfiguration implements Serializable {
         return filters;
     }
 
+    public String getFullTextFilter() {
+        return fullTextFilter;
+    }
+
     public List<String> getFetchFields() {
         return fetchFields;
     }
@@ -130,5 +140,11 @@ public class PaginationConfiguration implements Serializable {
 
     public boolean isAscendingSorting() {
         return ordering != null && ordering == SortOrder.ASCENDING;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, sortOrdering=%s, fetchFields=%s, sortField=%s, ordering=%s]",
+            firstRow, numberOfRows, fullTextFilter, filters, sortOrdering, fetchFields, sortField, ordering);
     }
 }

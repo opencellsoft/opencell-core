@@ -534,7 +534,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomersDto result = new CustomersDto();
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null, postData.getSortField(), null);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null, null, postData.getSortField(), null);
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
 		String customerCodeOrId = postData.getCustomerCode();
