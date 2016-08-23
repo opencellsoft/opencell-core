@@ -41,10 +41,10 @@ public class CatMessages extends BaseProviderlessEntity {
 
 	private static final long serialVersionUID = -2933410380534805846L;
 
-	@Column(name="ENTITY_CODE",length=60)
+	@Column(name="ENTITY_CODE",length=60,nullable=false)
 	private String entityCode;
 
-	@Column(name = "LANGUAGE_CODE", length = 3)
+	@Column(name = "LANGUAGE_CODE", length = 3,nullable=false)
 	@Size(max = 3)
 	private String languageCode;
 
@@ -55,7 +55,7 @@ public class CatMessages extends BaseProviderlessEntity {
 	@Transient
 	private String entityDescription;
 	
-	@Column(name="ENTITY_CLASS",length=100)
+	@Column(name="ENTITY_CLASS",length=60,nullable=false)
 	private String entityClass;
 	
 	@Transient

@@ -82,13 +82,13 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     @SuppressWarnings("unchecked")
     public String getMessageDescription(String entityCode,String entityClass, String languageCode, String defaultDescription) {
         long startDate = System.currentTimeMillis();
-        if (entityCode == null||entityClass==null) {
-            return null;
+        if (entityCode == null||entityClass==null||languageCode==null) {
+            return defaultDescription;
         }
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
         qb.addCriterion("c.entityCode","=", entityCode,true);
-        qb.addCriterion("c.entityClass", "=", entityClass, false);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterion("c.languageCode","=", languageCode, true);
         List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
 
         String description = (catMessages.size() > 0 && !StringUtils.isBlank(catMessages.get(0).getDescription())) ? catMessages.get(0).getDescription() : defaultDescription;
@@ -110,8 +110,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     private CatMessages getCatMessages(EntityManager em, String entityCode,String entityClass, String languageCode) {
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
         qb.addCriterion("c.entityCode","=", entityCode, true);
-        qb.addCriterion("c.entityClass", "=", entityClass, false);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterion("c.languageCode","=", languageCode, true);
         List<CatMessages> cats = (List<CatMessages>) qb.getQuery(em).getResultList();
         return cats != null && cats.size() > 0 ? cats.get(0) : null;
     }
@@ -139,8 +139,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<CatMessages> getCatMessagesList(Class clazz, String languageCode) {
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-        qb.addCriterion("c.entityClass", "=",getEntityClass(clazz), false);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        qb.addCriterion("c.entityClass", "=",getEntityClass(clazz), true);
+        qb.addCriterion("c.languageCode","=", languageCode, true);
         List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
         return cats;
     }
@@ -172,7 +172,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     public CatMessages findByCodeClassAndLanguage(String entityCode,String entityClass, String languageCode) {
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
         qb.addCriterion("c.entityCode","=", entityCode, true);
-        qb.addCriterion("c.entityClass", "=", entityClass, false);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
         qb.addCriterion("c.languageCode","=", languageCode, true);
         try {
             return (CatMessages) qb.getQuery(getEntityManager()).getSingleResult();
@@ -185,7 +185,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	public List<CatMessages> findByCodeAndClass(String entityCode,String entityClass) {
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
         qb.addCriterion("c.entityCode","=", entityCode, true);
-        qb.addCriterion("c.entityClass", "=", entityClass, false);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
         try {
             return (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {

@@ -430,29 +430,29 @@
 	<changeSet id="#1637_20160819" author="TyshanShi">
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
 				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				ADM_MESSAGES b  where (a.code like 'RecurringChargeTemplate_%' or a.code like
-				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%') and a.id=b.id))</sql>
-		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				ADM_MESSAGES b  where a.code like 'RecurringChargeTemplate_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
+				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
 				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				BILLING_INVOICE_CAT b  where a.code like 'InvoiceCategory_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
 				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				BILLING_INVOICE_SUB_CAT b  where a.code like 'InvoiceSubCategory_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
 				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				BILLING_TAX b  where a.code like 'Tax_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
 				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				CAT_PRICE_PLAN_MATRIX b  where a.code like 'PricePlanMatrix_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
 				(select cast(substring(code, position('_' in code)+1) as bigint) from 
-				ADM_TITLE b  where a.code like 'Tax_%' and a.id=b.id))</sql>
+				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
-				ADM_MESSAGES b where a.code like '%_%' and a.id=b.id)</sql>
+				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
 		<sql>alter table ADM_MESSAGES drop column code</sql>
+		<sql>ALTER TABLE adm_messages ALTER COLUMN entity_code SET NOT NULL</sql>
+		<sql>ALTER TABLE adm_messages ALTER COLUMN entity_class SET NOT NULL</sql>
+		<sql>ALTER TABLE adm_messages ALTER COLUMN language_code SET NOT NULL</sql>
 	</changeSet>
         
 </databaseChangeLog>

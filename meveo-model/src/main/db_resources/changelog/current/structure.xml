@@ -2525,7 +2525,7 @@ $BODY$
     </changeSet>
     <changeSet id="#1637_20160819" author="TyshanShi">
     	<addColumn tableName="ADM_MESSAGES">
-    		<column name="ENTITY_CLASS" type="varchar(100)"/>
+    		<column name="ENTITY_CLASS" type="varchar(60)"/>
     		<column name="ENTITY_CODE" type="varchar(60)"/>
     	</addColumn>
     	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
@@ -2537,6 +2537,13 @@ $BODY$
     	<dropColumn tableName="ADM_MESSAGES" columnName="creator_id"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="updater_id"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="provider_id"/>
+    	<addUniqueConstraint columnNames="entity_code,entity_class,language_code" tableName="ADM_MESSAGES" constraintName="uk_l689uisf7wdaes80cdcx4yl74"
+    		deferrable="false" disabled="false" initiallyDeferred="false"/>
+    	<createIndex tableName="ADM_MESSAGES" indexName="idx_code_class_languagecode" unique="true">
+    		<column name="lower(entity_code)"/>
+    		<column name="lower(entity_class)"/>
+    		<column name="lower(language_code)"/>
+    	</createIndex>
     </changeSet>  
     	
 </databaseChangeLog>
