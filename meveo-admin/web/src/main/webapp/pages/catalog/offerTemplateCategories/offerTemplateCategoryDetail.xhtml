@@ -31,47 +31,37 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel ajaxSubmit="false"
+		<hftl:formPanel ajaxSubmit="true"
 			submitPartialProcess=":formId:tabView"
 			label="#{messages['offerTemplateCategory.offerTemplatePanel']}"
 			backingBean="#{offerTemplateCategoryBean}"
-			showEnableDisableButton="true" enctype="multipart/form-data"
-			submitActionListener="true">
+			showEnableDisableButton="true" enctype="multipart/form-data">
 
 			<p:tabView id="tabView"
 				activeIndex="#{offerTemplateCategoryBean.activeTab}">
-				<p:tab title="#{messages['customer.tab.information']}">
+				<p:tab tab="information" title="#{messages['customer.tab.information']}">
 					<hftl:formField label="#{messages['BusinessEntity.code']}"
 						field="code" required="true" validateUnique="true" />
 					<hftl:formField label="#{messages['commons.name']}" field="name"
 						required="true" />
 					<hftl:formField label="#{messages['BusinessEntity.description']}"
-						field="description" useConverter="false"
-						id="description" />
-
+						field="description" useConverter="false" id="description" />
 					<hftl:decorateFormField fieldId="offerImageUpload"
-						rendered="#{offerTemplateCategoryBean.entity.transient}"
-						label="#{messages['commons.image']}">
-						<p:fileUpload id="offerImageUpload" auto="false" skinSimple="true"
-							mode="simple" value="#{offerTemplateCategoryBean.uploadedFile}" />
-					</hftl:decorateFormField>
-					<hftl:decorateFormField fieldId="offerImage"
-						rendered="#{not offerTemplateCategoryBean.entity.transient}"
-						label="#{messages['commons.image']}">
-						<p:outputPanel autoUpdate="true">
-							<p:graphicImage id="offerImage" cache="false"
-								value="#{offerTemplateCategoryImageStreamer.image}" height="150"
-								width="150">
-								<f:param name="id"
-									value="#{offerTemplateCategoryBean.entity.id}"></f:param>
-							</p:graphicImage>
-							<p:fileUpload
-								fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}"
-								mode="advanced" update=":formId:messages" auto="true"
-								sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-						</p:outputPanel>
-					</hftl:decorateFormField>
+						label="#{messages['commons.image']}"
+						rendered="#{not offerTemplateCategoryBean.entity.transient}">
+						<p:graphicImage cache="false" id="offerImageUpload"
+							value="#{offerTemplateCategoryImageStreamer.image}" height="150"
+							width="150">
+							<f:param name="id" value="#{offerTemplateCategoryBean.entity.id}"></f:param>
+						</p:graphicImage>
 
+						<p:fileUpload
+							fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}"
+							mode="advanced"
+							update=":formId:tabView:offerImageUpload :formId:messages"
+							immediate="false" auto="true" sizeLimit="1000000"
+							allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileLimit="1" />
+					</hftl:decorateFormField>
 					<hftl:formField label="#{messages['offerTemplateCategory.title']}"
 						field="offerTemplateCategory" valueLabelField="codeInLevel"
 						listElements="#{offerTemplateCategoryBean.getParentHierarchy()}" />
