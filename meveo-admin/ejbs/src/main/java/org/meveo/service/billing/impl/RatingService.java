@@ -452,12 +452,29 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
 		
+	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
-			log.debug("execute prociplan's script " + ratePrice.getScriptInstance().getCode());
-			ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
-			HashMap<String, Object> context = new HashMap<String, Object>();
-		    context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
-			script.execute(context, getCurrentUser());
+			log.debug("start to execute script instance for ratePrice {}",ratePrice); 
+			User currentUser=null;
+			try {
+				log.debug("execute priceplan script " + ratePrice.getScriptInstance().getCode());
+				ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
+				HashMap<String, Object> context = new HashMap<String, Object>();
+				context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+				if(bareWalletOperation.getAuditable()!=null){
+					currentUser=bareWalletOperation.getAuditable().getCreator();
+				}
+				if(currentUser==null){
+					currentUser=getCurrentUser();
+				}
+				if(currentUser==null){
+					throw new BusinessException("CurrentUser is null");
+				}
+				script.execute(context, currentUser);
+			} catch (Exception e) {
+				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode(),currentUser);
+				throw new BusinessException("failed when run script "+ratePrice.getScriptInstance().getCode()+" ,info "+e.getMessage());
+			}
 		}
 	}
 	
