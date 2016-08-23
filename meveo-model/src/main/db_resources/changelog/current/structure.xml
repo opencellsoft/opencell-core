@@ -2531,4 +2531,13 @@ $BODY$
     	</addColumn>
     </changeSet>  
     	
+    <changeSet id="#1886_20160728_offer_service" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_offer_template">
+    		<column name="long_description" type="TEXT"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_service_template">
+    		<column name="long_description" type="TEXT"></column>
+    	</addColumn>
+    </changeSet>     
+    	
 </databaseChangeLog>

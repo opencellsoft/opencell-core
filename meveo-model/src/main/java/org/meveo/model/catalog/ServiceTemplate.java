@@ -94,6 +94,10 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;
+
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
 	
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
@@ -215,6 +219,10 @@ public class ServiceTemplate extends BusinessCFEntity {
 		return image;
 	}
 
+	public String getLongDescription() {
+		return longDescription;
+	}
+
 	public void setImage(Blob image) {
 		this.image = image;
 	}
@@ -242,5 +250,10 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 		return null;
 	}
+    
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
+
     
 }
