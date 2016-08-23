@@ -159,7 +159,11 @@
 										rendered="#{bundleTemplateBean.entityPricePlan != null and (not bundleTemplateBean.edit)}" />
 									<p:inputText
 										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit)}" />
+										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit)}">
+										<p:ajax event="keyup"
+											listener="#{bundleTemplateBean.computePricePlan}"
+											update="discountedAmount" />
+									</p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
@@ -169,12 +173,17 @@
 										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
 									<p:inputText
 										value="#{bundleTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit) and (bundleTemplateBean.catalogPriceCF != null)}" />
+										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit) and (bundleTemplateBean.catalogPriceCF != null)}">
+										<p:ajax event="keyup"
+											listener="#{bundleTemplateBean.computePricePlan}"
+											update="discountedAmount" />
+									</p:inputText>
 									<p:outputLabel value="0.00"
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
 									<p:outputLabel
 										value="#{messages['productTemplate.discountedAmount']}" />
-									<h:outputText value="#{bundleTemplateBean.discountedAmount}"
+									<h:outputText id="discountedAmount"
+										value="#{bundleTemplateBean.discountedAmount}"
 										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
 									<p:outputLabel value="0.00"
 										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
