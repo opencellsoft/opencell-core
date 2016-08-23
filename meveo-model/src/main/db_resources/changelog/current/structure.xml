@@ -2522,7 +2522,14 @@ $BODY$
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>	  
+    </changeSet>	
+    
+    <changeSet id="#1885_20160815_service_entity" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_service_template">
+    		<column name="image" type="oid" />
+			<column name="image_content_type" type="VARCHAR(50)" />
+    	</addColumn>
+    </changeSet>  
     	
     <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
         <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
