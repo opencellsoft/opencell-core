@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -29,16 +32,28 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.transport.TransportClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
@@ -47,6 +62,8 @@ import org.slf4j.Logger;
 public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;
+
+    private static String INDEX_PROVIDER_PREFIX = "<provider>";
 
     @Inject
     @MeveoJpa
@@ -67,8 +84,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     @EJB
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @EJB
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @EJB
+    private ProviderService providerService;
+
     @Inject
     private Logger log;
+
+    private ParamBean paramBean = ParamBean.getInstance();
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -299,5 +325,193 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
         return fieldValueMap;
+    }
+
+    /**
+     * Make a REST call to drop all indexes
+     * 
+     * @throws BusinessException
+     */
+    public void dropIndexes() throws BusinessException {
+
+        log.debug("Dropping all Elastic Search indexes");
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(uri + "/*/");
+
+        Response response = target.request().delete();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            throw new BusinessException("Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        }
+    }
+
+    /**
+     * Recreate indexes for all providers
+     * 
+     * @throws BusinessException
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createIndexes() throws BusinessException {
+
+        // Recreate all indexes
+        List<Provider> providers = providerService.list();
+
+        for (Provider provider : providers) {
+            createIndexes(provider);
+        }
+    }
+
+    /**
+     * Recreate index for a given provider
+     * 
+     * @param provider Provider
+     * @throws BusinessException
+     */
+    public void createIndexes(Provider provider) throws BusinessException {
+
+        log.debug("Creating Elastic Search indexes for provider {}", provider.getCode());
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+
+        String providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
+
+        // Create indexes
+        for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
+            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, providerCode);
+            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, providerCode);
+
+            String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+            ResteasyWebTarget target = client.target(uri + "/" + indexName);
+
+            Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
+            response.close();
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                throw new BusinessException("Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " "
+                        + response.getStatusInfo().getReasonPhrase());
+            }
+        }
+
+        log.trace("Creating Elastic Search mappings for CETs for provider {}", provider.getCode());
+
+        // Create mappings for custom entity templates
+        List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache(provider);
+        for (CustomEntityTemplate cet : cets) {
+            createCETMapping(cet);
+        }
+
+        log.trace("Updating Elastic Search mappings for CFTs for provider {}", provider.getCode());
+
+        // Update model mapping with custom fields
+        List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex(provider);
+        for (CustomFieldTemplate cft : cfts) {
+            updateCFMapping(cft);
+        }
+
+    }
+
+    /**
+     * Update Elastic Search model with custom entity template definition
+     * 
+     * @param cet Custom entity template
+     * @throws BusinessException
+     */
+    public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
+
+        String index = esConfiguration.getIndex(CustomEntityInstance.class, cet.getProvider());
+        // Not interested in storing and indexing this entity in Elastic Search
+        if (index == null) {
+            log.warn("No matching index found for CET {}", cet);
+            return;
+        }
+
+        String type = esConfiguration.getType(CustomEntityInstance.class, cet.getCode());
+
+        String fieldMappingJson = esConfiguration.getCetMapping(cet);
+        if (fieldMappingJson == null) {
+            log.warn("No matching field mapping found for CET {}", cet);
+            return;
+        }
+
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
+
+        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
+        response.close();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        } else {
+            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+        }
+
+    }
+
+    /**
+     * Update Elastic Search model with custom field definition
+     * 
+     * @param cft Custom field template
+     * @throws BusinessException
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
+
+        // Not interested in indexing
+        if (cft.getIndexType() == null) {
+            return;
+        }
+
+        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft);
+        if (fieldMappingJson == null) {
+            log.warn("No matching field mapping found for CFT {}", cft);
+            return;
+        }
+
+        Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+        Class entityClass = null;
+        String entityCode = null;
+        for (Class<?> clazz : cfClasses) {
+            if (cft.getAppliesTo().startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+                entityClass = clazz;
+                entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
+            }
+        }
+
+        if (entityClass == null) {
+            log.error("Could not find a matching entity class for {}", cft);
+            return;
+
+        } else if (!BusinessEntity.class.isAssignableFrom(entityClass)) {
+            log.trace("Entity class {} matched for {} is not BusinessEntity and is not tracked by Elastic Search", entityClass, cft);
+            return;
+        }
+
+        String index = esConfiguration.getIndex(entityClass, cft.getProvider());
+        // Not interested in storing and indexing this entity in Elastic Search
+        if (index == null) {
+            return;
+        }
+
+        String type = esConfiguration.getType(entityClass, entityCode);
+
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
+
+        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
+        response.close();
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase());
+        } else {
+            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+        }
     }
 }

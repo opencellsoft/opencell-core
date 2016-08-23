@@ -86,7 +86,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-
+    
     @Inject
     private ResourceBundle resourceMessages;
 
@@ -109,9 +109,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-
+    
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());    
 
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
@@ -630,41 +630,41 @@ public class CustomFieldDataEntryBean implements Serializable {
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
 
         String uuid = entity.getUuid();
-        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
+        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid); 
         GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
-        if (groupedCustomFields != null) {
-            for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
-                for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
-                    // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
-                    // instantiates automatically)
-                    // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                    if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
-                        if (!cfi.isTransient()) {
-                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
-                            log.trace("Remove empty cfi value {}", cfi);
-                        } else {
-                            log.trace("Will ommit from saving cfi {}", cfi);
-                        }
-
-                        // Do not update existing CF value if it is not updatable
-                    } else if (!isNewEntity && !cft.isAllowEdit()) {
-                        continue;
-
-                        // Existing value update
-                    } else {
-                        serializeFromGUI(entity, cfi.getCfValue(), cft);
-                        if (cfi.isTransient()) {
+        if(groupedCustomFields != null) {
+        	for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
+        		for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
+        			// Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
+        			// instantiates automatically)
+        			// Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
+        			if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+        					|| ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
+        				if (!cfi.isTransient()) {
+        					customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
+        					log.trace("Remove empty cfi value {}", cfi);
+        				} else {
+        					log.trace("Will ommit from saving cfi {}", cfi);
+        				}
+        				
+        				// Do not update existing CF value if it is not updatable
+        			} else if (!isNewEntity && !cft.isAllowEdit()) {
+        				continue;
+        				
+        				// Existing value update
+        			} else {
+        				serializeFromGUI(entity, cfi.getCfValue(), cft);
+        				if (cfi.isTransient()) {
                             customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity, currentUser);
-                        } else {
+        				} else {
                             customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity, currentUser);
-                        }
-                        saveChildEntities(entity, cfi.getCfValue(), cft);
-                    }
-                }
-            }
+        				}
+        				saveChildEntities(entity, cfi.getCfValue(), cft);
+        			}
+        		}
+        	}
+        	}
         }
-    }
 
     /**
      * Get a child entity column corresponding to a given code
@@ -1065,7 +1065,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save custom fields for a given entity
-     * 
+     *
      * @param entity Entity, the fields relate to
      * @throws BusinessException
      */
@@ -1074,12 +1074,12 @@ public class CustomFieldDataEntryBean implements Serializable {
         String uuid = entity.getUuid();
         CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
         GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
-        if (groupedCustomFields != null) {
+        if(groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
                 for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
                     CustomFieldValue cfValue = cfi.getCfValue();
                     serializeFromGUI(entity, cfValue, cft);
-                    if (CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())) {
+                    if(CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())){
                         fieldMap.put(cft, cfValue.getEntityReferenceValueForGUI());
                     } else {
                         fieldMap.put(cft, cfValue.getValue());

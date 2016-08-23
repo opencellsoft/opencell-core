@@ -1,8 +1,9 @@
 package org.meveo.service.index;
 
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,6 @@ import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -36,14 +35,13 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -53,7 +51,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
-import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 
 /**
@@ -72,7 +69,6 @@ public class ElasticClient {
 
     public static int DEFAULT_SEARCH_PAGE_SIZE = 10;
     public static int INDEX_POPULATE_PAGE_SIZE = 100;
-    private static String INDEX_PROVIDER_PREFIX = "<provider>";
 
     @Inject
     private Logger log;
@@ -98,6 +94,9 @@ public class ElasticClient {
 
     @Inject
     private ElasticSearchIndexPopulationService elasticSearchIndexPopulationService;
+
+    @Inject
+    private CustomFieldsCacheContainerProvider cfCache;
 
     /**
      * Initialize Elastic Search client
@@ -344,42 +343,96 @@ public class ElasticClient {
     }
 
     /**
+     * Execute a search compatible primefaces data table component search
+     * 
+     * @param paginationConfig Query, pagination and sorting configuration
+     * @param currentUser Current user
+     * @param classnamesOrCetCodes An array of full classnames or CET codes
+     * @return Json result
+     * @throws BusinessException
+     */
+    public String search(PaginationConfiguration paginationConfig, User currentUser, String[] classnamesOrCetCodes) throws BusinessException {
+
+        SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null : paginationConfig
+            .getOrdering() == org.primefaces.model.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
+
+        String[] returnFields = paginationConfig.getFetchFields() == null ? null : (String[]) paginationConfig.getFetchFields().toArray();
+
+        // Search either by a field
+        if (StringUtils.isBlank(paginationConfig.getFullTextFilter()) && paginationConfig.getFilters() != null && !paginationConfig.getFilters().isEmpty()) {
+            return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
+                returnFields, currentUser, getSearchScopeInfo(classnamesOrCetCodes, true, currentUser));
+        } else {
+            return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
+                returnFields, currentUser, getSearchScopeInfo(classnamesOrCetCodes, true, currentUser));
+        }
+    }
+
+    /**
      * Execute a search on all fields (_all field)
      * 
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
+     * @param sortField - Field to sort by. If omitted, will sort by score.
+     * @param sortOrder Sorting order
+     * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param currentUser Current user
      * @param classInfo Entity classes to match
      * @return Json result
+     * @throws BusinessException
      */
-    public String search(String query, Integer from, Integer size, User currentUser, List<ElasticSearchClassInfo> classInfo) {
+    public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
+            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
-        // Not clear where to look, return empty json
-        if (classInfo.isEmpty()) {
-            return "{}";
+        Set<String> indexes = null;
+        // Not clear where to look, return al indexes for provider
+        if (classInfo == null || classInfo.isEmpty()) {
+            indexes = esConfiguration.getIndexes(currentUser.getProvider());
+        } else {
+            indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
         }
-        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
             return "{}";
         }
-        Set<String> types = esConfiguration.getTypes(classInfo);
+
+        Set<String> types = null;
+        if (classInfo != null && !classInfo.isEmpty()) {
+            types = esConfiguration.getTypes(classInfo);
+        }
 
         if (from == null) {
             from = 0;
         }
-        if (size == null) {
+        if (size == null || size.intValue() == 0) {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for {} records {}-{} on {}, {}", query, from, from + size, indexes, types);
+        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {}, {} sort by {} {}", query, from, from + size, indexes, types, sortField, sortOrder);
 
         SearchRequestBuilder reqBuilder = client.prepareSearch(indexes.toArray(new String[0]));
-        reqBuilder.setTypes(types.toArray(new String[0]));
+
+        if (types != null) {
+            reqBuilder.setTypes(types.toArray(new String[0]));
+        }
+
         reqBuilder.setFrom(from);
         reqBuilder.setSize(size);
+
+        // Limit return to only certain fields
+        if (returnFields != null && returnFields.length > 0) {
+            reqBuilder.addFields(returnFields);
+        }
+
+        // Add sorting if requested
+        if (sortField != null) {
+            if (sortOrder == null) {
+                sortOrder = SortOrder.ASC;
+            }
+            reqBuilder.addSort(sortField, sortOrder);
+        }
 
         if (StringUtils.isBlank(query)) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
@@ -389,6 +442,7 @@ public class ElasticClient {
         SearchResponse response = reqBuilder.execute().actionGet();
 
         String result = response.toString();
+        // log.trace("Data retrieved from Elastic Search in full text search is {}", result);
         return result;
     }
 
@@ -398,43 +452,70 @@ public class ElasticClient {
      * @param queryValues Fields and values to match
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
+     * @param sortField - Field to sort by. If omitted, will sort by score.
+     * @param sortOrder Sorting order
+     * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param currentUser Current user
      * @param classInfo Entity classes to match
      * @return Json result
+     * @throws BusinessException
      */
-    public String search(Map<String, String> queryValues, Integer from, Integer size, User currentUser, List<ElasticSearchClassInfo> classInfo) {
+    public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
+            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
-        // Not clear where to look, return empty json
-        if (classInfo.isEmpty()) {
-            return "{}";
+        Set<String> indexes = null;
+        // Not clear where to look, return al indexes for provider
+        if (classInfo == null || classInfo.isEmpty()) {
+            indexes = esConfiguration.getIndexes(currentUser.getProvider());
+        } else {
+            indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
         }
-        Set<String> indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
+
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
             return "{}";
         }
-        Set<String> types = esConfiguration.getTypes(classInfo);
+
+        Set<String> types = null;
+        if (classInfo != null && !classInfo.isEmpty()) {
+            types = esConfiguration.getTypes(classInfo);
+        }
 
         if (from == null) {
             from = 0;
         }
-        if (size == null) {
+        if (size == null || size.intValue() == 0) {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for {} records {}-{} on {}, {}", queryValues, from, from + size, indexes, types);
+        log.debug("Execute Elastic Search search for {} records {}-{} on {}, {} sort by {} {}", queryValues, from, from + size, indexes, types, sortField, sortOrder);
 
         SearchRequestBuilder reqBuilder = client.prepareSearch(indexes.toArray(new String[0]));
-        reqBuilder.setTypes(types.toArray(new String[0]));
+        if (types != null) {
+            reqBuilder.setTypes(types.toArray(new String[0]));
+        }
 
         reqBuilder.setFrom(from);
         reqBuilder.setSize(size);
+
+        // Limit return to only certain fields
+        if (returnFields != null && returnFields.length > 0) {
+            reqBuilder.addFields(returnFields);
+        }
+
+        // Add sorting if requested
+        if (sortField != null) {
+            if (sortOrder == null) {
+                sortOrder = SortOrder.ASC;
+            }
+            reqBuilder.addSort(sortField, sortOrder);
+        }
 
         if (queryValues.isEmpty()) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
 
         } else if (queryValues.size() == 1) {
-            Entry<String, String> fieldValue = queryValues.entrySet().iterator().next();
+            Entry<String, ?> fieldValue = queryValues.entrySet().iterator().next();
             if (fieldValue.getKey().contains(",")) {
                 reqBuilder.setQuery(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldValue.getKey().split(","))));
             } else {
@@ -444,7 +525,7 @@ public class ElasticClient {
 
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-            for (Entry<String, String> fieldValue : queryValues.entrySet()) {
+            for (Entry<String, ?> fieldValue : queryValues.entrySet()) {
                 if (fieldValue.getKey().contains(",")) {
                     boolQuery.must(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldValue.getKey().split(","))));
                 } else {
@@ -456,6 +537,7 @@ public class ElasticClient {
         SearchResponse response = reqBuilder.execute().actionGet();
 
         String result = response.toString();
+        // log.trace("Data retrieved from Elastic Search in full text search is {}", result);
         return result;
     }
 
@@ -497,10 +579,10 @@ public class ElasticClient {
 
         try {
             // Drop all indexes
-            dropIndexes();
+            elasticSearchIndexPopulationService.dropIndexes();
 
             // Recreate all indexes
-            createIndexes();
+            elasticSearchIndexPopulationService.createIndexes();
 
             // Repopulate index from DB
 
@@ -535,85 +617,15 @@ public class ElasticClient {
     }
 
     /**
-     * Make a REST call to drop all indexes
-     * 
-     * @throws BusinessException
-     */
-    private void dropIndexes() throws BusinessException {
-
-        log.debug("Dropping all Elastic Search indexes");
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
-
-        ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(uri + "/*/");
-
-        Response response = target.request().delete();
-        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-            throw new BusinessException("Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
-        }
-    }
-
-    /**
-     * Recreate indexes for all providers
-     * 
-     * @throws BusinessException
-     */
-    private void createIndexes() throws BusinessException {
-
-        // Recreate all indexes
-        List<Provider> providers = providerService.list();
-
-        for (Provider provider : providers) {
-            createIndexes(provider);
-        }
-    }
-
-    /**
      * Recreate index for a given provider
      * 
      * @param provider Provider
      * @throws BusinessException
      */
     public void createIndexes(Provider provider) throws BusinessException {
-
-        log.debug("Creating Elastic Search indexes for provider {}", provider.getCode());
-
-        ResteasyClient client = new ResteasyClientBuilder().build();
-
-        String providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
-
-        // Create indexes
-        for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
-            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, providerCode);
-            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, providerCode);
-
-            String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
-
-            ResteasyWebTarget target = client.target(uri + "/" + indexName);
-
-            Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
-            response.close();
-            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                throw new BusinessException("Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " "
-                        + response.getStatusInfo().getReasonPhrase());
-            }
-        }
-
-        // Create mappings for custom entity templates
-        List<CustomEntityTemplate> cets = customEntityTemplateService.list(provider);
-        for (CustomEntityTemplate cet : cets) {
-            createCETMapping(cet);
-        }
-
-        // Update model mapping with custom fields
-        List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex(provider);
-        for (CustomFieldTemplate cft : cfts) {
-            updateCFMapping(cft);
-        }
-
+        elasticSearchIndexPopulationService.createIndexes(provider);
     }
-
+    
     /**
      * Update Elastic Search model with custom entity template definition
      * 
@@ -621,102 +633,19 @@ public class ElasticClient {
      * @throws BusinessException
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
-
-        String index = esConfiguration.getIndex(CustomEntityInstance.class, cet.getProvider());
-        // Not interested in storing and indexing this entity in Elastic Search
-        if (index == null) {
-            return;
-        }
-
-        String type = esConfiguration.getType(CustomEntityInstance.class, cet.getCode());
-
-        String fieldMappingJson = esConfiguration.getCetMapping(cet);
-        if (fieldMappingJson == null) {
-            log.warn("No matching field mapping found for CET {}", cet);
-            return;
-        }
-
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
-
-        ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
-
-        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
-        response.close();
-        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
-        } else {
-            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-        }
-
+        elasticSearchIndexPopulationService.createCETMapping(cet);
     }
-
+    
     /**
      * Update Elastic Search model with custom field definition
      * 
      * @param cft Custom field template
      * @throws BusinessException
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
-
-        // Not interested in indexing
-        if (cft.getIndexType() == null) {
-            return;
-        }
-
-        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft);
-        if (fieldMappingJson == null) {
-            log.warn("No matching field mapping found for CFT {}", cft);
-            return;
-        }
-
-        Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
-        Class entityClass = null;
-        String entityCode = null;
-        for (Class<?> clazz : cfClasses) {
-            if (cft.getAppliesTo().startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
-                entityClass = clazz;
-                entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
-            }
-        }
-
-        if (entityClass == null) {
-            log.error("Could not find a matching entity class for {}", cft);
-            return;
-
-        } else if (!BusinessEntity.class.isAssignableFrom(entityClass)) {
-            log.trace("Entity class {} matched for {} is not BusinessEntity and is not tracked by Elastic Search", entityClass, cft);
-            return;
-        }
-
-        String index = esConfiguration.getIndex(entityClass, cft.getProvider());
-        // Not interested in storing and indexing this entity in Elastic Search
-        if (index == null) {
-            return;
-        }
-
-        String type = esConfiguration.getType(entityClass, entityCode);
-
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
-
-        ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
-
-        Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
-        response.close();
-        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
-        } else {
-            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-        }
-
+        elasticSearchIndexPopulationService.updateCFMapping(cft);
     }
-
+    
     protected TransportClient getClient() {
         return client;
     }
@@ -725,5 +654,78 @@ public class ElasticClient {
 
         code = code.replace(' ', '_');
         return code;
+    }
+
+    /**
+     * Convert classnames (full or simple name) or CET codes into ElasticSearchClassInfo object containing info for search scope (index and type) calculation
+     * 
+     * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
+     * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
+     * @param currentUser Current user to determine provider
+     * @return
+     * @throws BusinessException
+     */
+    public List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames, User currentUser) throws BusinessException {
+
+        List<ElasticSearchClassInfo> classInfos = new ArrayList<>();
+
+        if (classnamesOrCetCodes != null) {
+            for (String classnameOrCetCode : classnamesOrCetCodes) {
+
+                ElasticSearchClassInfo classInfo = getSearchScopeInfo(classnameOrCetCode, currentUser);
+                if (classInfo == null) {
+                    if (ignoreUnknownNames) {
+                        log.warn("Class or custom entity template by name {} not found", classnameOrCetCode);
+                    } else {
+                        throw new BusinessException("Class or custom entity template by name " + classnameOrCetCode + " not found");
+                    }
+                } else {
+                    classInfos.add(classInfo);
+                }
+            }
+        }
+        return classInfos;
+    }
+
+    /**
+     * Convert classname (full or simple name) or CET code into a information used to determine index and type in Elastic Search
+     * 
+     * @param classnameOrCetCode Classname (full or simple name ) or CET code
+     * @param currentUser Current user to determine provider
+     * @return Information used to determine index and type in Elastic Search
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode, User currentUser) {
+        ElasticSearchClassInfo classInfo = null;
+        try {
+            classInfo = new ElasticSearchClassInfo((Class<? extends BusinessEntity>) Class.forName(classnameOrCetCode), null);
+
+            // If not a real class, then might be a Custom Entity Instance. Check if CustomEntityTemplate exists with such name
+        } catch (ClassNotFoundException e) {
+
+            Class clazz = ReflectionUtils.getClassBySimpleNameAndParentClass(classnameOrCetCode, BusinessEntity.class);
+            if (clazz != null) {
+                classInfo = new ElasticSearchClassInfo((Class<? extends BusinessEntity>) clazz, null);
+
+            } else {
+
+                // Try first matching the CET name as is
+                CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode, currentUser.getProvider());
+                if (cet != null) {
+                    classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode);
+
+                    // If still not matched - try how code is stored in ES with spaces cleanedup
+                } else {
+                    Collection<CustomEntityTemplate> cets = cfCache.getCustomEntityTemplates(currentUser.getProvider());
+                    for (CustomEntityTemplate cetToClean : cets) {
+                        if (cleanUpCode(cetToClean.getCode()).equals(classnameOrCetCode)) {
+                            classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, cetToClean.getCode());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return classInfo;
     }
 }

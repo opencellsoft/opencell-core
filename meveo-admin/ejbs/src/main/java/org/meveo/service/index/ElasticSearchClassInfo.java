@@ -21,4 +21,9 @@ public class ElasticSearchClassInfo {
     public String getCetCode() {
         return cetCode;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ElasticSearchClassInfo [clazz=%s, cetCode=%s]", clazz, cetCode);
+    }
 }

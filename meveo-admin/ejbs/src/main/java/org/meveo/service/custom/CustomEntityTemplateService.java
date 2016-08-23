@@ -117,6 +117,10 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         }
     }
 
+    public List<CustomEntityTemplate> listNoCache(Provider provider) {
+        return super.list(provider, null);
+    }
+
     @Override
     public List<CustomEntityTemplate> list(PaginationConfiguration config) {
 

@@ -32,20 +32,44 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private static String DEFAULT = "default";
 
+    /**
+     * Contains a mapping of classnames to Elastic Search index name. Index name does not contain provider code prefix.
+     */
     private Map<String, String> indexMap = new HashMap<>();
 
+    /**
+     * Contains a mapping of classnames to Elastic Search type
+     */
     private Map<String, String> typeMap = new HashMap<>();
 
+    /**
+     * Contains a set of classames that should use upsert
+     */
     private Set<String> upsertMap = new HashSet<>();
 
+    /**
+     * Contains a mapping of Elastic Search field to entity field per classname
+     */
     private Map<String, Map<String, String>> fieldMap = new HashMap<>();
 
+    /**
+     * Contains a mapping of provider id to provider code
+     */
     private Map<Long, String> providerCodes = new HashMap<>();
 
+    /**
+     * Contains index configuration/data model for each index. Index name does not contain provider code prefix.
+     */
     private Map<String, String> dataModels = new HashMap<>();
 
+    /**
+     * Contains mapping rules for custom fields. Map key is an EL expression.
+     */
     private Map<String, String> customFieldTemplates = new HashMap<>();
 
+    /**
+     * Contains custom entity template data model
+     */
     private String customEntityTemplate = null;
 
     // @Inject
@@ -182,6 +206,30 @@ public class ElasticSearchConfiguration implements Serializable {
         }
 
         return indexes;
+    }
+
+    /**
+     * Get a unique list of indexes for given provider
+     * 
+     * @param provider Provider
+     * @return A set of index property names
+     */
+    public Set<String> getIndexes(Provider provider) {
+
+        Set<String> indexNames = new HashSet<>();
+
+        String providerCode = providerCodes.get(provider.getId());
+
+        if (providerCode == null) {
+            providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
+            providerCodes.put(provider.getId(), providerCode);
+        }
+
+        for (String indexName : indexMap.values()) {
+            indexNames.add(providerCode + "_" + indexName);
+        }
+
+        return indexNames;
     }
 
     /**

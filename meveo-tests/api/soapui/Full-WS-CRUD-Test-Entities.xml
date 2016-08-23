@@ -34223,6 +34223,48 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBOM_Script_Test e
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create CFT Service" id="a891e384-f207-4749-b84b-44a2cf148530">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="Create CFT Service" id="f84b907f-fec9-4c9d-8134-aced4e4eb9b4">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createOrUpdateField> 
+         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/>
+            <con:assertion type="Simple Contains" id="368b9338-6d7b-40c1-a09d-7bc8673aa087" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Install BOM test create offer script" id="8c3a0601-9581-407c-b9e2-38af4d360bf8">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -34407,7 +34449,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             </parameters>\r
             <prefix>${#Project#entityPrefix}_${#TestSuite#index}</prefix>\r
             <servicesToActivate>\r
-               <serviceToActivate code="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND" description="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND"/>\r
+               <serviceToActivate code="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND" description="${#Project#entityPrefix}_${#TestSuite#index}_NOT_FOUND">\r
+				<parameters>
+		               <parameter code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+		                  <doubleValue>15</doubleValue>
+		               </parameter>
+		          </parameters>               
+            	</serviceToActivate>
             </servicesToActivate>\r
          </bomOffer>\r
       </ws:createOfferFromBOM>\r
@@ -34456,7 +34504,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             <prefix>${#Project#entityPrefix}_${#TestSuite#index}_CO_OFFER</prefix>\r
             <servicesToActivate>\r
                <!--<serviceCode code="${#Project#baseEntityPrefix}_SERVICE1" description="${#Project#baseEntityPrefix}_SERVICE1"/>-->\r
-               <serviceToActivate code="${#Project#baseEntityPrefix}_SERVICE2" description="${#Project#baseEntityPrefix}_SERVICE2"/>\r
+               <serviceToActivate code="${#Project#baseEntityPrefix}_SERVICE2" description="${#Project#baseEntityPrefix}_SERVICE2">\r
+               	<parameters>
+		               <parameter code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE_CF">
+		                  <doubleValue>15</doubleValue>
+		               </parameter>
+		          </parameters>               
+            	</serviceToActivate>
             </servicesToActivate>\r
          </bomOffer>\r
       </ws:createOfferFromBOM>\r
@@ -35759,8 +35813,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep>
-      <con:properties/>
+      </con:testStep><con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
@@ -65444,11 +65497,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>+01</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>+02</con:value>
     </con:property>
     <con:property>
       <con:name>elasticSearchUrl</con:name>
