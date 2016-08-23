@@ -539,7 +539,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			productChargeInstanceService.apply(pcInstance, null, productChargeInstance.getOfferTemplate(), productInstance.getApplicationDate(), null, null, null, null, null,
 					currentUser, true);
 		} catch (BusinessException e) {
-			messages.error("Error appling product=" + e.getMessage());
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		} catch (Exception e) {
+			log.error("unexpected exception when applying a product!", e);
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		}
 		
 		productChargeInstances = null;

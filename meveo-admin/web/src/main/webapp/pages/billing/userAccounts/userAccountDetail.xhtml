@@ -195,6 +195,7 @@
                     </p:tab>
 
 					<p:tab id="productInstancesTab" title="#{messages['userAccount.tab.productInstances']}">
+						<p:messages id="applyProductMessages" />
 						<p:outputPanel id="productInstancePanel">
 							<h:form id="productInstanceResultsForm" prependId="false">
 								<p:dataTable resizableColumns="true"
@@ -251,7 +252,7 @@
 										<p:commandButton value="#{messages['action.save']}"
 											action="#{userAccountBean.applyProduct()}"
 											oncomplete="PF('applyProductPanel').toggle()"
-											update=":parentTab:productInstanceResultsForm :parentTab:applyProductForm:messages"></p:commandButton>
+											update=":parentTab:productInstanceResultsForm :parentTab:applyProductMessages"></p:commandButton>
 									</h:panelGroup>
 								</hftl:formPanel>
 							</p:panel>
