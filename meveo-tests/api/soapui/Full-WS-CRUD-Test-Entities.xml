@@ -5623,18 +5623,29 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
               <con:configuration>
                 <path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
-                <content><![CDATA[<languages>
-               <language code="ENG">
-                  <description>English</description>
-               </language>
-               <language code="FRA">
-                  <description>French</description>
-               </language>
-            </languages>]]></content>
+count(//ns2:findTradingConfigurationResponse[1]/return[1]/languages/language)</path>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="d2ad8d97-0d06-4890-9edf-6b2c3d0a5b6e" name="Contains">
+              <con:configuration>
+                <token>&lt;language code="FRA">
+                  &lt;description>French&lt;/description>
+               &lt;/language></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="c9568bda-2722-414b-8be0-daaf0c44067e" name="Contains 1">
+              <con:configuration>
+                <token>&lt;language code="ENG">
+                  &lt;description>English&lt;/description>
+               &lt;/language></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -6775,6 +6786,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -6812,6 +6824,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -7439,6 +7452,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -7475,6 +7489,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24414,6 +24429,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24501,6 +24517,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             </con:assertion>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24588,6 +24605,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24672,6 +24690,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24755,6 +24774,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -24835,6 +24855,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
