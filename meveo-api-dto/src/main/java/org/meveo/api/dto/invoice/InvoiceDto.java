@@ -143,7 +143,9 @@ public class InvoiceDto extends BaseDto {
         	RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
         	this.recordedInvoiceDto = recordedInvoiceDto;
         }
-        this.pdf = invoice.getPdf();
+        
+        // please use the service findPdfInvoice to get the unit pdf
+        //this.pdf = invoice.getPdf();
     }
 
   
