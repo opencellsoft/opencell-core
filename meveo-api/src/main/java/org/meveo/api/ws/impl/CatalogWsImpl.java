@@ -18,6 +18,7 @@ import org.meveo.api.catalog.ChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.DigitalResourceApi;
 import org.meveo.api.catalog.DiscountPlanApi;
+import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
@@ -37,6 +38,7 @@ import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
@@ -49,6 +51,8 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
+import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
@@ -122,6 +126,9 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Inject
 	private ModuleApi moduleApi;
+
+    @Inject
+    private DiscountPlanItemApi discountPlanItemApi;
 
 	@Inject
 	private ProductTemplateApi productTemplateApi;
@@ -1591,6 +1598,26 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
+	public ActionStatus createDiscountPlanItem(DiscountPlanItemDto postData) {
+		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            discountPlanItemApi.create(postData, getCurrentUser());
+	        } catch (MeveoApiException e) {
+	            result.setErrorCode(e.getErrorCode());
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        } catch (Exception e) {
+	            log.error("Failed to execute API", e);
+	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        }
+
+	        return result;
+	}
+
+	@Override
 	public ActionStatus createOrUpdateProductTemplate(ProductTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -1606,6 +1633,110 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
+
+	        return result;
+	}
+
+	@Override
+	public ActionStatus updateDiscountPlanItem(DiscountPlanItemDto postData) {
+		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            discountPlanItemApi.update(postData, getCurrentUser());
+	        } catch (MeveoApiException e) {
+	            result.setErrorCode(e.getErrorCode());
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        } catch (Exception e) {
+	            log.error("Failed to execute API", e);
+	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        }
+
+	        return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateDiscountPlanItem(DiscountPlanItemDto postData) {
+		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            discountPlanItemApi.createOrUpdate(postData, getCurrentUser());
+	        } catch (MeveoApiException e) {
+	            result.setErrorCode(e.getErrorCode());
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        } catch (Exception e) {
+	            log.error("Failed to execute API", e);
+	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        }
+
+	        return result;
+	}
+
+	@Override
+	public DiscountPlanItemResponseDto findDiscountPlanItem(String discountPlanItemCode) {
+		DiscountPlanItemResponseDto result = new DiscountPlanItemResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+        try {
+            DiscountPlanItemDto dto = discountPlanItemApi.find(discountPlanItemCode,getCurrentUser().getProvider());
+            result.setDiscountPlanItem(dto);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus removeDiscountPlanItem(String discountPlanItemCode) {
+		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            discountPlanItemApi.remove(discountPlanItemCode, getCurrentUser().getProvider());
+	        } catch (MeveoApiException e) {
+	            result.setErrorCode(e.getErrorCode());
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        } catch (Exception e) {
+	            log.error("Failed to execute API", e);
+	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        }
+
+	        return result;
+	}
+
+	@Override
+	public DiscountPlanItemsResponseDto listDiscountPlanItem() {
+		DiscountPlanItemsResponseDto result = new DiscountPlanItemsResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+        try {
+            List<DiscountPlanItemDto> dtos = discountPlanItemApi.list(getCurrentUser().getProvider());
+            result.setDiscountPlanItems(dtos);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
 		return result;
 	}

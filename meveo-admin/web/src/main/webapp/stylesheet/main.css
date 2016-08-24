@@ -624,9 +624,9 @@ form.formNoBottomBorder {
 /* Paddings */
 .NoPadding{padding:0px !important;}
 .PaddingTopPercent10{ padding-top: 10%;}
-.Padding1{ padding:1px; box-sizing:border-box;}
+.Padding1{ padding:1x; box-sizing:border-box;}
 .Padding3{ padding:3px; box-sizing:border-box;}
-.Padding5{ padding:5px; box-sizing:border-box;}
+.Padding5{ padding:10.2px; box-sizing:border-box;}
 .Padding10{ padding:10px; box-sizing:border-box;}
 .Padding15{ padding:15px; box-sizing:border-box;}
 .Padding20{ padding:20px; box-sizing:border-box;}

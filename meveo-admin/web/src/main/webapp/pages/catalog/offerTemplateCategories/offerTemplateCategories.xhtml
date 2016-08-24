@@ -31,7 +31,7 @@
 		<h:form prependId="false">
 			<p:panel id="results_panel" width="100">
 				<p:treeTable value="#{offerTemplateCategoryListBean.hierarchy}"
-					var="entity">
+					var="entity" resizableColumns="true">
 					<hftl:column backingBean="#{offerTemplateCategoryBean}"
 						label="#{messages['BusinessEntity.code']}" field="code" />
 					<hftl:column label="#{messages['commons.name']}" field="name" />

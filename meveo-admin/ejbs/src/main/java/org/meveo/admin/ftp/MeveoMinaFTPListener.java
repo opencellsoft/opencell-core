@@ -1,5 +1,7 @@
 package org.meveo.admin.ftp;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -10,6 +12,9 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.impl.DefaultFtpServer;
+import org.apache.ftpserver.impl.FtpServerContext;
+import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -38,7 +43,7 @@ public class MeveoMinaFTPListener {
 	private FtpServer server = null;
 
 	@PostConstruct
-	private void init() throws FtpException {
+	public void init() throws FtpException {
 		String portStr=paramBean.getProperty("ftpserver.port", null);
 		if(StringUtils.isBlank(portStr)){return;}
 		Integer port=null;
@@ -49,7 +54,6 @@ public class MeveoMinaFTPListener {
 			log.info("meveo ftp server doesn't start with port {}",portStr);
 			return;
 		}
-		log.debug("start mina ftp server ...");
 		FtpServerFactory serverFactory = new FtpServerFactory();
 
 		ListenerFactory factory = new ListenerFactory();
@@ -65,23 +69,24 @@ public class MeveoMinaFTPListener {
 
 		// start the server
 		server = serverFactory.createServer();
-
 		server.start();
-		log.debug("ftp server is started at port "+portStr);
-
+		log.debug("start meveo ftp server ...");
 	}
 	
 	@PreDestroy
-	private void stopServer() {
-		try {
-			if (server != null) {
-				server.stop();
-				log.debug("ftp server stoped");
-			}
-		} catch (Exception e) {
-			log.error("Error stoping ftp server", e);
+	public void stopServer() {
+		if(server!=null){
+			DefaultFtpServer defaultServer=(DefaultFtpServer)server;
+			FtpServerContext serverContext=defaultServer.getServerContext();
+	        Map<String, Listener> listeners = serverContext.getListeners();
+	        for (Listener listener : listeners.values()) {
+	            listener.stop();
+	        }
+	        if (serverContext != null) {
+	            serverContext.dispose();
+	            serverContext = null;
+	        }
 		}
+		log.debug("ftp server is stopped!");
 	}
-	
-	
 }

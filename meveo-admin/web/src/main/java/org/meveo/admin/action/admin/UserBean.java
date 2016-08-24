@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -44,6 +45,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -125,6 +127,8 @@ public class UserBean extends BaseBean<User> {
     private UploadedFile file;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+    
+    private boolean autoUnzipped;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -474,10 +478,19 @@ public class UserBean extends BaseBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={}", event.getFile());
+        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(),autoUnzipped);
         // FIXME: use resource bundle
         try {
-            copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	String filename=event.getFile().getFileName();
+        	if(this.isAutoUnzipped()){
+        		if(!filename.endsWith(".zip")){
+        			messages.info(filename+" isn't a valid zip file!");
+        		}else{
+        			copyUnZippedFile(event.getFile().getInputstream());
+        		}
+        	}else{
+        		copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	}
 
             messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
@@ -546,7 +559,28 @@ public class UserBean extends BaseBean<User> {
             }
         }
     }
-
+	public StreamedContent getDownloadZipFile(){
+    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf(File.separator)+1);
+    	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
+		try {
+			byte[] filedata=FileUtils.createZipFile(sourceFolder);
+			InputStream is=new ByteArrayInputStream(filedata);
+			return new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
+		} catch (Exception e) {
+			log.debug("error when zipped ui file - {}",e.getMessage());
+		}
+		return null;
+    }
+	
+    private void copyUnZippedFile(InputStream in) {
+    	try{
+    		String folder=getFilePath("");
+    		FileUtils.unzipFile(folder, in);
+    		buildFileList();
+    	}catch(Exception e){
+    		log.debug("error when upload zip file for new UI {}",e.getMessage());
+    	}
+    }
     public void copyFile(String fileName, InputStream in) {
         try {
 
@@ -609,4 +643,13 @@ public class UserBean extends BaseBean<User> {
         }
         return newNode;
     }
+
+	public boolean isAutoUnzipped() {
+		return autoUnzipped;
+	}
+
+	public void setAutoUnzipped(boolean autoUnzipped) {
+		this.autoUnzipped = autoUnzipped;
+	}
+    
 }

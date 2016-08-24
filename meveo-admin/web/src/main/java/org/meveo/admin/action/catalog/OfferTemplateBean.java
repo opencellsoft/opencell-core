@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
@@ -424,8 +422,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
 
