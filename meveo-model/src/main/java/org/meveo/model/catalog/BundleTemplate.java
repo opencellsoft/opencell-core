@@ -34,5 +34,12 @@ public class BundleTemplate extends ProductTemplate {
 	public void setBundleProducts(List<BundleProductTemplate> bundleProducts) {
 		this.bundleProducts = bundleProducts;
 	}
+	
+	public void addBundleProductTemplate(BundleProductTemplate bundleProductTemplate) {
+		if (getBundleProducts() == null) {
+			bundleProducts = new ArrayList<BundleProductTemplate>();
+		}
+		bundleProducts.add(bundleProductTemplate);
+	}
 
 }

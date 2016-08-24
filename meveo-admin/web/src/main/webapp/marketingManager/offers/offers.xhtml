@@ -139,7 +139,7 @@
 					<h:form id="mainForm">
 						<p:dataGrid id="dataGrid"
 							value="#{offerTemplateListBean.listFromBOM()}" var="entity"
-							paginator="true" rows="10" columns="1" layout="tabular"
+							paginator="true" rows="10" columns="1" layout="grid"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 							lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
 							rowsPerPageTemplate="10,15,20,50">
@@ -200,11 +200,11 @@
 														action="#{offerTemplateListBean.addForExport(entity)}">
 													</p:commandLink></li>
 												<li class="Padding5 FRight"><p:commandLink
-														action="#{offerTemplateBean.duplicate()}"
+														action="#{offerTemplateListBean.duplicate()}"
 														update=":tabView"
 														styleClass="fa fa-copy fa-2x no-text-decoration text-red">
 														<f:setPropertyActionListener value="#{entity}"
-															target="#{offerTemplateBean.entity}" />
+															target="#{offerTemplateListBean.entity}" />
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
@@ -240,7 +240,7 @@
 									paginatorPosition="bottom" paginatorAlwaysVisible="false"
 									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 									lazy="true" styleClass="custom-grid ui-datagrid-blank"
-									style="border: none;" rowKey="#{ost.id}">
+									style="border: none;">
 									<p:panel>
 										<h:outputText
 											value="#{messages['offerServiceTemplate.serviceTemplate']}"
@@ -293,7 +293,7 @@
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
 						dataModel="#{offerTemplateListBean.listFromBOM()}"
 						checkMany="false" exportToCsv="false" exportToXml="false"
-						exportXlsxButton="false">
+						exportXlsxButton="false" sortOrder="DESCENDING">
 						<hftl:column label="#{messages['commons.nameOrCode']}"
 							field="nameOrCode">
 						</hftl:column>
@@ -315,7 +315,7 @@
 						</p:column>
 						<p:column>
 							<p:link outcome="mmOfferDetail"
-								styleClass="Padding5 fa fa-search-plus no-text-decoration text-red">
+								styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-red">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -324,7 +324,7 @@
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:link
-								styleClass="Padding5 fa fa-edit no-text-decoration text-red"
+								styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-red"
 								outcome="mmOfferDetail">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
@@ -335,7 +335,7 @@
 							</p:link>
 							<p:commandLink action="#{offerTemplateListBean.duplicate()}"
 								update=":tabView"
-								styleClass="Padding5 fa fa-copy no-text-decoration text-red">
+								styleClass="Padding5 fa fa-copy no-text-decoration text-red fa-2x">
 								<f:setPropertyActionListener
 									target="#{offerTemplateListBean.entity}" value="#{entity}" />
 								<f:param name="tab" value="1"></f:param>
@@ -343,7 +343,7 @@
 									message="#{messages['commons.confirmDuplicate']}" />
 							</p:commandLink>
 							<p:commandLink
-								styleClass="Padding5 fa fa-share-square-o no-text-decoration text-red"
+								styleClass="Padding5 fa fa-share-square-o no-text-decoration fa-2x text-red"
 								update=":offerForExportPanel :dlgOfferExport"
 								action="#{offerTemplateListBean.addForExport(entity)}">
 							</p:commandLink>

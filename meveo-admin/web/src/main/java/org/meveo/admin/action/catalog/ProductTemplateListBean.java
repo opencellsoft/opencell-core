@@ -25,7 +25,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	private static final long serialVersionUID = -7109673492144846741L;
 
 	private MeveoInstance meveoInstanceToExport = new MeveoInstance();
-	
+
 	private List<String> bundledProducts = new ArrayList<String>();
 
 	private List<ProductTemplate> ptToExport = new ArrayList<ProductTemplate>();

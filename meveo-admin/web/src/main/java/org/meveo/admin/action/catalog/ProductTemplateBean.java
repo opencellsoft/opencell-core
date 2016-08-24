@@ -110,19 +110,15 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	protected IPersistenceService<ProductTemplate> getPersistenceService() {
 		return productTemplateService;
 	}
-	
-	public void duplicate() {
-		duplicate(entity);
-	}
 
 	@ActionMethod
-	public void duplicate(ProductTemplate productTemplate) {
-		if (productTemplate != null && productTemplate.getId() != null) {
+	public void duplicate() {
+		if (entity != null && entity.getId() != null) {
 			try {
-				productTemplateService.duplicate(productTemplate, getCurrentUser());
+				productTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
-				log.error("Error encountered persisting product template entity: {}: {}", productTemplate.getCode(), e);
+				log.error("Error encountered persisting product template entity: {}: {}", entity.getCode(), e);
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
 		}

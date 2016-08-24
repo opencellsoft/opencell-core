@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -340,6 +341,19 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public void setChannelDM(DualListModel<Channel> channelDM) {
 		this.channelDM = channelDM;
+	}
+	
+	@ActionMethod
+	public void duplicate() {
+		if (entity != null && entity.getId() != null) {
+			try {
+				bundleTemplateService.duplicate(entity, getCurrentUser());
+				messages.info(new BundleKey("messages", "save.successful"));
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting product template entity: {}: {}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
+		}
 	}
 
 }
