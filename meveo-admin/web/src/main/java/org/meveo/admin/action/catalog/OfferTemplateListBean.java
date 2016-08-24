@@ -29,6 +29,7 @@ import javax.inject.Named;
 
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -41,6 +42,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 
 	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
 	private List<OfferTemplateCategory> selOfferTemplateCategories;
+	private MeveoInstance meveoInstance = new MeveoInstance();
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
@@ -112,6 +114,14 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 
 	public void setSelOfferTemplateCategories(List<OfferTemplateCategory> selOfferTemplateCategories) {
 		this.selOfferTemplateCategories = selOfferTemplateCategories;
+	}
+
+	public MeveoInstance getMeveoInstance() {
+		return meveoInstance;
+	}
+
+	public void setMeveoInstance(MeveoInstance meveoInstance) {
+		this.meveoInstance = meveoInstance;
 	}
 
 }

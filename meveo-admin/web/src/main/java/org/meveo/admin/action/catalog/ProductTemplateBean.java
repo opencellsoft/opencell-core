@@ -110,31 +110,22 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	protected IPersistenceService<ProductTemplate> getPersistenceService() {
 		return productTemplateService;
 	}
+	
+	public void duplicate() {
+		duplicate(entity);
+	}
 
-	public String duplicate() {
-
-		if (entity != null && entity.getId() != null) {
-
-			// entity = productTemplateService.refreshOrRetrieve(entity);
-
-			// Detach and clear ids of entity and related entities
-			productTemplateService.detach(entity);
-			entity.setId(null);
-			String sourceAppliesToEntity = entity.clearUuid();
-
-			// entity.setCode(entity.getCode() + "_copy");
-
+	@ActionMethod
+	public void duplicate(ProductTemplate productTemplate) {
+		if (productTemplate != null && productTemplate.getId() != null) {
 			try {
-				productTemplateService.create(entity, getCurrentUser());
-				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				productTemplateService.duplicate(productTemplate, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
-				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				log.error("Error encountered persisting product template entity: {}: {}", productTemplate.getCode(), e);
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
 		}
-
-		return "mmProductTemplates";
 	}
 
 	public String activateProduct() throws BusinessException {

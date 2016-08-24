@@ -116,7 +116,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
-	
+
 	@Inject
 	private EntityExportImportService entityExportImportService;
 
@@ -173,13 +173,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@ActionMethod
 	public void duplicate() {
-
 		if (entity != null && entity.getId() != null) {
 			try {
 				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
-				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
 		}
@@ -229,7 +228,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
 						String serviceTemplateCode = entity.getPrefix() + "_" + serviceTemplate.getCode();
 						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
-							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
+							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
+									.getValues();
 							if (stCustomFieldInstances != null) {
 								// populate offer cf
 								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false);
@@ -519,7 +519,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
 		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
 	}
-	
+
 	public ExportTemplate getMarketingCatalogExportTemplate() {
 		return entityExportImportService.getExportImportTemplate("MMOfferTemplate");
 	}

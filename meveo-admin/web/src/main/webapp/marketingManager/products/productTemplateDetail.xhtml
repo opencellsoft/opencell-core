@@ -73,7 +73,7 @@
 												width="150">
 												<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
 											</p:graphicImage>
-											<p:fileUpload
+											<p:fileUpload rendered="#{productTemplateBean.edit}"
 												fileUploadListener="#{productTemplateBean.handleFileUpload}"
 												mode="advanced" update=":formId:messages" auto="true"
 												sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
