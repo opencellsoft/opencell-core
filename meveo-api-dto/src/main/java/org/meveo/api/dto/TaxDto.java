@@ -32,16 +32,19 @@ public class TaxDto extends BaseDto {
 
 	private String accountingCode;
 	private List<LanguageDescriptionDto> languageDescriptions;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public TaxDto() {
 
 	}
 
-	public TaxDto(Tax tax) {
+	public TaxDto(Tax tax,CustomFieldsDto customFieldInstances) {
 		code = tax.getCode();
 		description = tax.getDescription();
 		percent = tax.getPercent();
 		accountingCode = tax.getAccountingCode();
+		customFields = customFieldInstances;
 	}
 
 	public String getCode() {
@@ -84,11 +87,20 @@ public class TaxDto extends BaseDto {
 			List<LanguageDescriptionDto> languageDescriptions) {
 		this.languageDescriptions = languageDescriptions;
 	}
+	
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 
 	@Override
 	public String toString() {
 		return "TaxDto [code=" + code + ", description=" + description + ", percent=" + percent + ", accountingCode="
-				+ accountingCode + ", languageDescriptions=" + languageDescriptions + "]";
+				+ accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 
 }

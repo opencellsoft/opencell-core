@@ -13,7 +13,7 @@
 	<ui:define name="body">
 		<hftl:entityPopup id="searchInvoiceTypePopup"
 			header="#{messages['invoiceType.panel']}"
-			updateField=":formBillingCycle:invoiceTypeSelectedId :formBillingCycle:invoiceTypeSelectedId_text"
+			updateField=":formBillingCycle:tabView:invoiceTypeSelectedId :formBillingCycle:tabView:invoiceTypeSelectedId_text"
 			selection="#{billingCycleBean.entity.invoiceType}"
 			backingBean="#{invoiceTypeBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -32,9 +32,11 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" 
+		<hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" submitPartialProcess=":formBillingCycle:tabView"
 			label="#{messages['billingCycle.panel']}"
 			backingBean="#{billingCycleBean}">
+			<p:tabView id="tabView" activeIndex="#{billingCycleBean.activeTab}">
+			<p:tab title="#{messages['customer.tab.information']}">
 			<hftl:formField label="#{messages['billingCycle.code']}" field="code"
 				validateUnique="true" required="true" />
 			<hftl:formField label="#{messages['billingCycle.description']}"
@@ -57,7 +59,10 @@
 			<hftl:formField label="#{messages['billingCycle.invoicingThreshold']}"
 				field="invoicingThreshold"	required="false" />
 			<hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType"  valueLabelField="code"  
-							popup="true" popupId="searchInvoiceTypePopup" clearButton="true" required="false"/>					
+							popup="true" popupId="searchInvoiceTypePopup" clearButton="true" required="false"/>	
+			</p:tab>				
+			<hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
+			</p:tabView>							
 		</hftl:formPanel>
 
 	</ui:define>

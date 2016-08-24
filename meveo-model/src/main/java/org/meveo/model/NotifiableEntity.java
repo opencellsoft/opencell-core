@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *  With this annotation can be used as classNameFilter for notifications, it can trigger a notifiable event at any time, any position
+ * Entities with this annotation can be used as classNameFilter for notifications
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,5 +16,3 @@ import java.lang.annotation.Target;
 public @interface NotifiableEntity {
 
 }
-
-

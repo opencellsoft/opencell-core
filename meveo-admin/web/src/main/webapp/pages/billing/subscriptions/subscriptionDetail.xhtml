@@ -338,8 +338,7 @@
 											required="true" modifyOnCreate="true" />
 										<!--                                         popup="true" popupId="offerPopup" -->
 										<hftl:formField label="#{messages['businessEntity.code']}"
-											field="code" required="true" validateUnique="true"
-											maxlength="35" />
+											field="code" required="true" validateUnique="true"/>
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" maxlength="100" />
@@ -408,7 +407,7 @@
 																	field="status" />
 																<hftl:column
 																	label="#{messages['oneShotChargeInstance.chargeDate']}"
-																	field="chargeDate" />
+																	field="chargeDate" isDate="true" />
 																<hftl:column
 																	label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 																	field="amountWithoutTax" isMessage="false" />

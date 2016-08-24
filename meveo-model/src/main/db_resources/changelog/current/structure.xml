@@ -2324,6 +2324,33 @@ $BODY$
 			<column name="image_content_type" type="VARCHAR(50)" />
 		</addColumn>
 	</changeSet>
+<changeSet id="#1774_20160725" author="smichea">
+		<addColumn tableName="cat_price_plan_matrix">
+			<column name="script_instance_id" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="cat_price_plan_matrix" constraintName="fk_priceplan_script"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
+	<changeSet id="#1889_20160729" author="Mbarek">
+	    <addColumn tableName="BILLING_TAX">
+        <column name="UUID" type="VARCHAR(50)"/>
+        </addColumn>
+     </changeSet>
+     <changeSet id="#1890_20160801" author="Mbarek">
+	      <addColumn tableName="BILLING_CYCLE">
+          <column name="UUID" type="VARCHAR(50)"/>
+        </addColumn>
+       	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
+		</addColumn> 
+     </changeSet>
+     
+      <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
+         <sql>update BILLING_TAX set UUID ='TAX-'|| id </sql>   
+        <sql>update BILLING_CYCLE set UUID ='BillingCycle-'|| id </sql> 
+        </changeSet> 
 	    	
     <changeSet author="anasseh (generated)" id="#1841_13072016-1">
         <createSequence sequenceName="wf_action_seq"/>
