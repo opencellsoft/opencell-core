@@ -2540,4 +2540,62 @@ $BODY$
     	</addColumn>
     </changeSet>     
     	
+    <changeSet author="pbach (generated)" id="#1863_04082016-165">
+        <createTable tableName="hierarchy_entity">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(100)"/>
+            <column name="hierarchy_type" type="VARCHAR(10)"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="order_level" type="BIGINT"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+        </createTable>
+        
+        <createSequence sequenceName="hierarchy_entity_seq" />
+        <addPrimaryKey columnNames="id" constraintName="hierarchy_entity_pkey"
+                       tableName="hierarchy_entity" />
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_crm_provider"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_creator_hierarchy_entity_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_updater_hierarchy_entity_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+        <addForeignKeyConstraint baseColumnNames="parent_id"
+                                 baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_hierarchy_entity"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+        <addUniqueConstraint columnNames="code, hierarchy_type, provider_id" constraintName="uk_code_hierarchy_provider" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="hierarchy_entity" />
+
+        <addColumn tableName="adm_user">
+            <column name="hierarchy_level_id" type="BIGINT" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="hierarchy_level_id"
+                                 baseTableName="adm_user" constraintName="fk_hierarchy_level_adm_user_hierarchy_entity"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+    </changeSet>
+    	
 </databaseChangeLog>
