@@ -12,8 +12,6 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{bundleTemplateBean.preRenderView}" />
-			<f:event type="preRenderView"
-				listener="#{bundleTemplateBean.initEntity}" />
 			<f:viewParam name="editMode" value="#{bundleTemplateBean.editMode}" />
 		</f:metadata>
 	</ui:define>
@@ -218,6 +216,7 @@
 					</p:column>
 				</p:row>
 			</p:panelGrid>
+
 			<p:panel id="bundeList" header="#{messages['menu.productTemplates']}"
 				rendered="#{bundleTemplateBean.entity.id != null}">
 				<!-- <h:link value="#{messages['bundleTemplate.addProduct']}"
@@ -233,7 +232,8 @@
 					paginator="true" rows="5" columns="1" paginatorPosition="top"
 					paginatorAlwaysVisible="true"
 					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-					lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+					lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}"
+					widgetVar="bundleList" rowIndexVar="rowIndex">
 					<p:panelGrid>
 						<p:row>
 							<p:column rowspan="2">
@@ -249,6 +249,13 @@
 							<p:column>
 								<p:outputLabel
 									value="#{messages['productTemplate.catalogPrice']}" />
+							</p:column>
+							<p:column rowspan="2">
+								<p:commandButton
+									value="#{messages['bundleTemplate.removeProduct']}"
+									action="#{bundleTemplateBean.removeProductTemplateFromBundle(rowIndex)}"
+									update=":#{p:component('productTemplateList')}">
+								</p:commandButton>
 							</p:column>
 						</p:row>
 						<p:row>
@@ -281,17 +288,17 @@
 
 		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
 			modal="true" appendTo="@(body)">
-			<h:form id="dlgBundle">
-				<p:panel id="headerPanel">
-					<p:panel styleClass="TexAlRight">
+			<p:panel id="headerPanel">
+				<p:panel styleClass="TexAlRight">
 
-						<p:selectOneMenu></p:selectOneMenu>
-						<p:selectOneMenu></p:selectOneMenu>
-						<p:selectOneMenu></p:selectOneMenu>
-					</p:panel>
-					<p:dataGrid id="productTemplatesTable" var="prod"
-						value="#{productTemplateListBean.productTemplates}"
-						paginator="true" rows="5" columns="1" paginatorPosition="top"
+					<p:selectOneMenu></p:selectOneMenu>
+					<p:selectOneMenu></p:selectOneMenu>
+					<p:selectOneMenu></p:selectOneMenu>
+				</p:panel>
+				<h:form id="dlgBundle">
+					<p:dataGrid id="productTemplatesTable" var="prodT"
+						value="#{productTemplateListBean.listAll()}" paginator="true"
+						rows="5" columns="1" paginatorPosition="top"
 						paginatorAlwaysVisible="true"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 						lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
@@ -302,14 +309,15 @@
 									<p:column rowspan="2">
 										<p:graphicImage id="productImage" cache="false"
 											value="#{productTemplateImageStreamer.image}" height="100">
-											<f:param name="id" value="#{prod.id}"></f:param>
+											<f:param name="id" value="#{prodT.id}"></f:param>
 										</p:graphicImage>
 									</p:column>
 									<p:column>
-										<h:outputText value="#{prod.name}"></h:outputText>
+										<h:outputText value="#{prodT.name}"></h:outputText>
 									</p:column>
 									<p:column rowspan="2">
-										<h:outputText value="#{prod.businessProductModel.description}"></h:outputText>
+										<h:outputText
+											value="#{prodT.businessProductModel.description}"></h:outputText>
 									</p:column>
 									<p:column>
 										<p:outputLabel value="#{messages['commons.validFrom']}"></p:outputLabel>
@@ -324,21 +332,21 @@
 									<p:column rowspan="2">
 										<p:commandButton
 											value="#{messages['bundleTemplate.addProduct']}"
-											action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}"
-											update="dlgBundle :bundleForm:bundeList :bundleForm:productTemplateList"
+											action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
+											update="dlgBundle bundleForm :bundleForm:productTemplateList :#{p:component('productTemplateList')}"
 											oncomplete="PF('selectProduct').hide()">
 										</p:commandButton>
 									</p:column>
 								</p:row>
 								<p:row>
 									<p:column>
-										<h:outputText value="#{prod.description}"></h:outputText>
+										<h:outputText value="#{prodT.description}"></h:outputText>
 									</p:column>
 									<p:column>
-										<h:outputText value="#{prod.validFrom}"></h:outputText>
+										<h:outputText value="#{prodT.validFrom}"></h:outputText>
 									</p:column>
 									<p:column>
-										<h:outputText value="#{prod.validTo}"></h:outputText>
+										<h:outputText value="#{prodT.validTo}"></h:outputText>
 									</p:column>
 									<p:column>
 										<p:outputLabel value="0.00"></p:outputLabel>
@@ -347,8 +355,8 @@
 							</p:panelGrid>
 						</p:panel>
 					</p:dataGrid>
-				</p:panel>
-			</h:form>
+				</h:form>
+			</p:panel>
 		</p:dialog>
 	</ui:define>
 </ui:composition>

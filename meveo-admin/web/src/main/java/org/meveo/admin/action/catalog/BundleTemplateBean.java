@@ -144,6 +144,10 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		}
 	}
 
+	public void removeProductTemplateFromBundle(int index) {
+		bundleProductTemplatesToAdd.remove(index);
+	}
+
 	public void addProductTemplateToBundle(ProductTemplate prod) {
 		BundleProductTemplate bpt = new BundleProductTemplate();
 		bpt.setProductTemplate(prod);
@@ -342,7 +346,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	public void setChannelDM(DualListModel<Channel> channelDM) {
 		this.channelDM = channelDM;
 	}
-	
+
 	@ActionMethod
 	public void duplicate() {
 		if (entity != null && entity.getId() != null) {
