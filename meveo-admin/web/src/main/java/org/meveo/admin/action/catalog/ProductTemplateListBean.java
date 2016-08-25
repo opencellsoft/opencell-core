@@ -62,6 +62,12 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 			ptToExport.add(pt);
 		}
 	}
+	
+	public void deleteForExport(ProductTemplate pt) {
+		if (ptToExport.contains(pt)) {
+			ptToExport.remove(pt);
+		}
+	}
 
 	public StreamedContent getImage(ProductTemplate obj) throws IOException {
 
