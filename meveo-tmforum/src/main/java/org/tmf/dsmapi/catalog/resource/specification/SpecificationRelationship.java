@@ -1,13 +1,17 @@
 package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -24,7 +28,7 @@ import org.tmf.dsmapi.commons.Utilities;
  * }
  *
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 @Embeddable
 public class SpecificationRelationship implements Serializable {
     public final static long serialVersionUID = 1L;

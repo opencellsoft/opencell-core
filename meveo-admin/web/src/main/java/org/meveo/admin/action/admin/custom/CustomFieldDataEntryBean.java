@@ -44,11 +44,7 @@ import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.index.ElasticClient;
-import org.meveo.model.index.ElasticDocument;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -93,9 +89,6 @@ public class CustomFieldDataEntryBean implements Serializable {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-    private UserService userService;
-
-    @Inject
     private ResourceBundle resourceMessages;
 
     @Inject
@@ -117,12 +110,6 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-
-    @Inject
-    private EntityToDtoConverter entityToDtoConverter;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -685,22 +672,16 @@ public class CustomFieldDataEntryBean implements Serializable {
                     } else {
                         serializeFromGUI(entity, cfi.getCfValue(), cft);
                         if (cfi.isTransient()) {
-                            customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity, currentUser);
                         } else {
-                            customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity, currentUser);
                         }
                         saveChildEntities(entity, cfi.getCfValue(), cft);
                     }
                 }
             }
-            if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-        		User creatorUser = userService.refreshOrRetrieve(((BusinessEntity)entity).getAuditable().getUpdater());
-                ElasticDocument esDoc = new ElasticDocument((BusinessEntity) entity, creatorUser.getUserName());
-                esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity));
-                elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentProvider.getCode());
             }
         }
-    }
 
     /**
      * Get a child entity column corresponding to a given code

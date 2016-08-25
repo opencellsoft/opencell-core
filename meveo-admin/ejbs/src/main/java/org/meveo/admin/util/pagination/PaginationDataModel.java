@@ -172,7 +172,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
      */
     public List<T> list() {
         final int numberOfRows = this.getRowCount();
-        final List<T> objects = loadData(new PaginationConfiguration(0, numberOfRows, filters, fetchFields,
+        final List<T> objects = loadData(new PaginationConfiguration(0, numberOfRows, filters, null, fetchFields,
                 getSortField(), getSortOrdering()));
 
         return objects;

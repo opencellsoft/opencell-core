@@ -3,15 +3,19 @@ package org.tmf.dsmapi.catalog.resource.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Embeddable;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicValue;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -54,7 +58,7 @@ import org.tmf.dsmapi.commons.Utilities;
  * }
  *
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 @Embeddable
 public class ServiceSpecCharacteristic implements Serializable {
     public final static long serialVersionUID = 1L;

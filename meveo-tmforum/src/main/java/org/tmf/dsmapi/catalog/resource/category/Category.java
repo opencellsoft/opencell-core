@@ -10,13 +10,15 @@ import javax.persistence.MappedSuperclass;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  *
@@ -41,7 +43,7 @@ import org.tmf.dsmapi.commons.Utilities;
  */
 @MappedSuperclass
 @XmlRootElement
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 public class Category extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 

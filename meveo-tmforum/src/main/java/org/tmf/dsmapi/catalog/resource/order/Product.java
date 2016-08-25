@@ -6,12 +6,13 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.tmf.dsmapi.catalog.resource.product.Place;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @XmlRootElement
-@JsonSerialize(include=Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 public class Product implements Serializable {
 
 	/**

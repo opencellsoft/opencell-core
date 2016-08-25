@@ -7,9 +7,9 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.LazyDataModelWSize;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
+import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.SortOrder;
 
 @Named

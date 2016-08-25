@@ -25,7 +25,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.EntityCustomizationWs;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.index.ElasticClient;
 
 /**
  * @author Andrius Karpavicius
@@ -42,9 +41,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
-    
-    @Inject
-    private ElasticClient elasticClient;
 
     @Override
     public ActionStatus createField(CustomFieldTemplateDto postData) {
@@ -480,31 +476,5 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
         return result;
     }
-
-	@Override
-	public ActionStatus searchIndex(String types, String query) {
-	       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	        try {
-	        	String[] classNames = null;
-	        	try {
-	        	 classNames = types.split(",");
-	        	} catch(Exception e){
-	        		classNames = null; 
-	        	}
-	            result.setMessage(elasticClient.search(classNames, query, getCurrentUser()));
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
-
-	        return result;
-
-	}
 
 }

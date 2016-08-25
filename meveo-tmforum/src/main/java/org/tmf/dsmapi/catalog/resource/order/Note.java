@@ -5,12 +5,14 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @XmlRootElement
-@JsonSerialize(include=Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 public class Note implements Serializable{
 
 	/**

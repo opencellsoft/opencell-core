@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -13,9 +14,7 @@ import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -23,6 +22,11 @@ import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationRelationship;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -146,7 +150,7 @@ import org.tmf.dsmapi.commons.Utilities;
  */
 @MappedSuperclass
 @XmlRootElement
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 public class ResourceSpecification extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 

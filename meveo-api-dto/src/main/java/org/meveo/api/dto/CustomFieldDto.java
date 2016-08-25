@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
@@ -62,6 +63,9 @@ public class CustomFieldDto {
     // A transient object. Contains a converted value from DTO to some object when it is applicable
     @XmlTransient
     protected Object valueConverted;
+    
+    @XmlElement()
+    private CustomFieldIndexTypeEnum indexType;
 
     public CustomFieldDto() {
     }
@@ -260,12 +264,14 @@ public class CustomFieldDto {
     public void setValueConverted(Object valueConverted) {
         this.valueConverted = valueConverted;
     }
-
-    @Override
-    public String toString() {
-        return String
-            .format(
-                "CustomFieldDto [code=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="
-                        + mapValue + "]", code, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
+    
+    public CustomFieldIndexTypeEnum getIndexType() {
+        return indexType;
     }
+    
+    public void setIndexType(CustomFieldIndexTypeEnum indexType) {
+        this.indexType = indexType;
+    }
+
+
 }

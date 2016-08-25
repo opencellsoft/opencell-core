@@ -1,4 +1,4 @@
-package org.meveo.admin.action;
+package org.meveo.util.view;
 
 import org.primefaces.model.LazyDataModel;
 
