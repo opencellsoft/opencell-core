@@ -56,7 +56,7 @@
 						<p:panelGrid columns="2" columnClasses="Wid30, Wid70"
 							styleClass="ui-panelgrid-blank">
 							<p:panel>
-								<p:graphicImage id="offerImage" cache="false"
+								<p:graphicImage id="offerImage" cache="false" rendered="#{entity.offerTemplate ne null}"
 									value="#{offerTemplateImageStreamer.image}" height="100"
 									width="100">
 									<f:param name="id" value="#{entity.offerTemplate.id}"></f:param>

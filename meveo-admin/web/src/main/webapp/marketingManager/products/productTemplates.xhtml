@@ -152,7 +152,7 @@
 									styleClass="panelGrid ui-panelgrid-blank"
 									columnClasses="Wid5 VAlignTop, Wid54 VAlignTop, Wid40 VAlignTop">
 									<p:panel>
-										<p:graphicImage id="productImage" cache="false"
+										<p:graphicImage id="productImage" cache="false" rendered="#{prod ne null}"
 											value="#{productTemplateImageStreamer.image}" width="100">
 											<f:param name="id" value="#{prod.id}"></f:param>
 										</p:graphicImage>
