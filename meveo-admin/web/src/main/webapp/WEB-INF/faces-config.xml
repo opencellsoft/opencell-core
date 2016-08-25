@@ -1940,6 +1940,18 @@
             <to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
             <redirect include-view-params="true"/>
         </navigation-case>		
+        <navigation-case>
+            <from-outcome>orderDetail</from-outcome>
+            <to-view-id>/pages/order/orders/orderDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>orders</from-outcome>
+            <to-view-id>/pages/order/orders/orders.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>    
 	</navigation-rule>
 
 	<navigation-rule>
@@ -2075,18 +2087,12 @@
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
+
         <navigation-case>
-            <from-outcome>orderDetail</from-outcome>
-            <to-view-id>/pages/order/orders/orderDetail.xhtml
-            </to-view-id>
+            <from-outcome>mmFullTextSearch</from-outcome>
+            <to-view-id>/marketingManager/index/fullTextSearch.xhtml</to-view-id>
             <redirect include-view-params="true" />
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>orders</from-outcome>
-            <to-view-id>/pages/order/orders/orders.xhtml
-            </to-view-id>
-            <redirect include-view-params="true" />
-        </navigation-case>        
+        </navigation-case>          
 	</navigation-rule>
 
     <navigation-rule>

@@ -60,11 +60,12 @@
 				<div>#{identity.user.user.nameOrUsername}</div>
 				<div>#{identity.user.currentProvider.code}</div>
 			</div>
-			<div class="pull-right" style="margin-right: 40px; margin-top: 20px;">
-				<p:inputText placeholder="#{messages['commons.search']}"></p:inputText>
-				<p:commandLink styleClass="Padding5 fa fa-search"></p:commandLink>
-			</div>
-		</h:form>
+            <div class="pull-right" style="margin-right: 40px; margin-top: 20px;">
+                <p:inputText id="globalFullTextSearch" value="#{fullTextSearchBean.filters['fullText']}" placeholder="#{messages['commons.search']}" />
+                <p:commandLink id="doGlobalFullTextSearch"  styleClass="Padding5 fa fa-search" action="mmFullTextSearch" process="globalFullTextSearch @this"  />
+            </div>
+            <p:defaultCommand target="doGlobalFullTextSearch" />
+        </h:form>
 	</div>
 
 	<!-- MENU COVER -->

@@ -25,7 +25,7 @@
 				<h:form id="searchForm">
 					<div style="float: right;" class="search-wrapper">
 						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}" update=":mainForm:offerCategoriesTable" />
-						<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['name']}" placeholder="#{messages['action.search']}" />
+						<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['fullText']}" placeholder="#{messages['action.search']}" />
 						<p:defaultCommand target="searchButton" />
 					</div>
 				</h:form>
@@ -41,7 +41,7 @@
 				<p:panel id="offerCategoriesTable">
 					<c:set var="hasData" value="#{mmOfferTemplateCategoryListBean.lazyDataModel and mmOfferTemplateCategoryListBean.lazyDataModel.getRowCount>0}" />
 					<p:messages id="messages" />
-					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false" prePaginatorControls="{Controls}" paginatorPosition="top" exportXlsxButton="false" exportToXml="false">
+					<hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false" prePaginatorControls="{Controls}" paginatorPosition="top" exportXlsxButton="false" exportToXml="false" sortBy="code">
 						<f:facet name="{Controls}" render="#{hasData}">
 							<p:commandButton id="#{formId}buttonExportTop" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false">
 								<p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
