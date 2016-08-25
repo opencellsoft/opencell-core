@@ -119,5 +119,9 @@ public interface InvoiceWs extends IBaseWs {
 	@WebMethod
 	public GetInvoiceResponseDto findInvoiceByIdOrType(@WebParam(name = "id") Long id, @WebParam(name = "invoiceNumber") String invoiceNumber,
 			@WebParam(name = "invoiceType") String invoiceType);
+	
+	
+	@WebMethod
+	public CustomerInvoicesResponse invoicesWithAccountOperation(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 }

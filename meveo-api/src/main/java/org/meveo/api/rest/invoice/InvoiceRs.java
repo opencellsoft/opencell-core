@@ -141,4 +141,8 @@ public interface InvoiceRs extends IBaseRs {
     @POST
     @Path("/validate")
 	public ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
+    
+    @GET
+    @Path("/invoicesWithAccountOperation")
+    public CustomerInvoicesResponse invoicesWithAccountOperation(@QueryParam("customerAccountCode") String customerAccountCode);
 }

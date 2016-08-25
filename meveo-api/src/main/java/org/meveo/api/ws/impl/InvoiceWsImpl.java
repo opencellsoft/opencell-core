@@ -185,5 +185,18 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
         return result;
 	}
+	
+	@Override
+	public CustomerInvoicesResponse invoicesWithAccountOperation(String customerAccountCode) {
+		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+		try {
+			result.setCustomerInvoiceDtoList(invoiceApi.invoicesWithAccountOperation(customerAccountCode, getCurrentUser().getProvider()));
+
+		} catch (Exception e) {
+			super.processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
 
 }
