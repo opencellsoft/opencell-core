@@ -99,6 +99,7 @@
 						<ul class="list-unstyled">
 							<li class="Padding5"><i class="fa fa-share-square-o"
 								style="margin-right: 5px;"></i> <p:commandLink
+									onclick="PF('exportablePTs').show();"
 									value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}">
 								</p:commandLink></li>
 							<li class="Padding5">
@@ -115,7 +116,18 @@
 								<div class="FRight">
 									<p:commandLink styleClass="fa fa-play"
 										style="margin-right: 5px;"
-										value=" #{messages['page.catalog.exportTo']}">
+										value=" #{messages['page.catalog.exportTo']}"
+										update=":#{p:component('exportParametersDialog')}"
+										oncomplete="PF('exportParametersDialog').show()">
+										<!-- 										<f:setPropertyActionListener -->
+										<!-- 											target="#{entityExportImportBean.selectedExportTemplate}" -->
+										<!-- 											value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" /> -->
+										<f:setPropertyActionListener
+											target="#{entityExportImportBean.dataModelToExport}"
+											value="#{productTemplateListBean.getLazyDataModel()}" />
+										<f:setPropertyActionListener
+											target="#{entityExportImportBean.selectedEntitiesToExport}"
+											value="#{productTemplateListBean.ptToExport}" />
 									</p:commandLink>
 								</div>
 							</li>
@@ -124,6 +136,7 @@
 				</div>
 			</p:panel>
 
+			<p:messages id="main_messages"></p:messages>
 			<p:tabView id="tabView" styleClass="no-border-radius offer-wrapper"
 				activeIndex="#{productTemplateListBean.activeTab}">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
@@ -239,7 +252,7 @@
 												<li><p:commandLink
 														styleClass="fa fa-share-square-o fa-2x text-red"
 														action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
-														update=":ptToExport">
+														update=":ptToExport :exportablePTs">
 													</p:commandLink></li>
 											</ul>
 										</p:panel>
@@ -337,7 +350,7 @@
 								<li><p:commandLink
 										styleClass="fa fa-share-square-o fa-2x no-text-decoration text-red"
 										action="#{productTemplateListBean.addProductTemplateToExport(entity)}"
-										update=":ptToExport">
+										update=":ptToExport :exportablePTs">
 									</p:commandLink></li>
 							</ul>
 						</p:column>
@@ -348,6 +361,27 @@
 			<hftl:exportToXmlDialogs
 				messagesId=":#{p:component('main_messages')}" />
 		</p:panel>
+
+		<p:dialog id="exportablePTs"
+			header="#{messages['productTemplates.title']}"
+			widgetVar="exportablePTs" minHeight="40" width="800" dynamic="true"
+			modal="true" appendTo="@(body)">
+			<h:form id="dlgPTExport">
+				<p:dataTable id="offers"
+					value="#{productTemplateListBean.ptToExport}" var="e">
+					<p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
+					<p:column>
+						<p:commandButton icon="fa fa-close"
+							title="#{messages['button.closeButton']}"
+							update="dlgPTExport :ptToExport"
+							action="#{productTemplateListBean.deleteForExport(e)}">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 
 	</ui:define>
 
