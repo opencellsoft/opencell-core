@@ -108,21 +108,24 @@
 					</p:panel>
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 						<hftl:formField label="#{messages['commons.validFrom']}"
-							field="validFrom" />
+							field="validFrom" time="true" />
 						<hftl:formField label="#{messages['commons.validTo']}"
-							field="validTo" />
+							field="validTo" time="true" />
 						<hftl:formField label="#{messages['commons.status']}"
 							field="lifeCycleStatus" />
-						<hftl:formField label="#{messages['enableEntity.disabled']}"
-							doNotShowOnNew="true" allowEdit="true" field="disabled"
-							isMessage="true" />
 					</p:panelGrid>
 				</p:panel>
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<hftl:decorateFormField fieldId="bomDescriptionOrCode"
+						label="#{messages['marketingManager.catalog.family']}">
+						<h:outputLabel id="bomDescriptionOrCode"
+							value="#{offerTemplateBean.businessOfferModel.descriptionOrCode}" />
+					</hftl:decorateFormField>
 					<hftl:formField
 						label="#{messages['marketingManager.catalog.family']}"
 						allowEdit="false" field="businessOfferModel"
-						valueLabelField="code" listBean="#{businessOfferModelBean}" />
+						valueLabelField="code" listBean="#{businessOfferModelBean}"
+						rendered="#{offerTemplateBean.entity.transient}" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
 						field="channels" listType="pickUpList" valueLabelField="code"
 						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
