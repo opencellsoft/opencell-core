@@ -1981,8 +1981,14 @@
 			<to-view-id>/marketingManager/workflows/workflows.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
-		</navigation-case>		
-		<navigation-case>
+		</navigation-case>
+        <navigation-case>
+            <from-outcome>mmWorkflowDetail</from-outcome>
+            <to-view-id>/marketingManager/workflows/workflowDetail.xhtml
+            </to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
 			<from-outcome>productTemplates</from-outcome>
 			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>

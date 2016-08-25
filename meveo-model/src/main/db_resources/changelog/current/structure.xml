@@ -3141,9 +3141,6 @@ $BODY$
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
-    	
-    </changeSet>
-
     <changeSet author="pbach (generated)" id="#1861_16082016-165">
         <createTable tableName="wf_transition_rule">
             <column name="id" type="BIGINT">
@@ -3186,7 +3183,7 @@ $BODY$
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 
-        <addUniqueConstraint columnNames="name, value, type, priority, provider_id" constraintName="uk_name_value_type_priority_provider_id" deferrable="false" disabled="false"
+        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_transition_rule" />
 
         <createTable tableName="wf_transition_transition_rule">
@@ -3209,10 +3206,5 @@ $BODY$
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition_rule" />
 
         <createSequence sequenceName="wf_transition_rule_seq" />
-    </changeSet>
-    <changeSet author="pbach (generated)" id="#1861_20082016-166">
-        <dropForeignKeyConstraint baseTableName="wf_transition_rule" constraintName="uk_name_value_type_priority_provider_id"/>
-        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="wf_transition_rule" />
     </changeSet>
 </databaseChangeLog>

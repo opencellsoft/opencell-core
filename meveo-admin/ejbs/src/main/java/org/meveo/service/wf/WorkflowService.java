@@ -41,4 +41,20 @@ public class WorkflowService extends BusinessService<Workflow> {
 				.getResultList();
 	}
 
+    @SuppressWarnings("unchecked")
+    public Workflow getWorkflowOrder(Provider provider) {
+        Workflow workflow = null;
+        try {
+            return (Workflow) getEntityManager()
+                .createQuery(
+                        "from " + Workflow.class.getSimpleName()
+                                + " wf left join fetch wf.transitions where wf.wfType=:wfType and wf.status=:status and wf.provider=:provider")
+                .setParameter("wfType", "org.meveo.admin.wf.types.OrderWF")
+                .setParameter("status", WorkflowStatusEnum.ACTIVE)
+                .setParameter("provider", provider)
+                .getSingleResult();
+        } catch (Exception e) {
+        }
+        return workflow;
+    }
 }

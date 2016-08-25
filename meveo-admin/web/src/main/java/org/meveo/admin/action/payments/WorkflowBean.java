@@ -35,6 +35,7 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedTransitionRule;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
@@ -62,6 +63,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@ViewBean
 public class WorkflowBean extends BaseBean<Workflow> {
 
     private static final long serialVersionUID = 1L;
@@ -419,7 +421,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         this.wfActions = wfActions;
     }
 
-    private void addOrUpdateOrDeleteActions(WFTransition wfTransition, List<WFAction> wfActionList, boolean isUpdate) throws BusinessException {
+    public void addOrUpdateOrDeleteActions(WFTransition wfTransition, List<WFAction> wfActionList, boolean isUpdate) throws BusinessException {
 
         List<WFAction> updatedActions = new ArrayList<>();
         List<WFAction> newActions = new ArrayList<>();
@@ -453,7 +455,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         newActions.clear();
     }
 
-    private boolean checkAndPopulateTransitionRules(List<GroupedTransitionRule> groupedTransitionRules, List<WFTransitionRule> wfTransitionRules) {
+    public boolean checkAndPopulateTransitionRules(List<GroupedTransitionRule> groupedTransitionRules, List<WFTransitionRule> wfTransitionRules) {
         ParamBean paramBean = ParamBean.getInstance();
         String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
         List<RuleNameValue> uniqueNameValues = new ArrayList<>();
@@ -464,7 +466,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 newWFTransitionRule.setConditionEl(wfTransitionRule.getConditionEl());
                 newWFTransitionRule.setName(wfTransitionRule.getName());
                 newWFTransitionRule.setType(wfTransitionRule.getType());
-                newWFTransitionRule.setProvider(entity.getProvider());
+                newWFTransitionRule.setProvider(getCurrentProvider());
                 newWFTransitionRule.setDisabled(Boolean.FALSE);
 
                 if (wfTransitionRule.getType().toString().startsWith("RANGE")) {
@@ -495,7 +497,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     newWFTransitionRule.setValue(groupedTransitionRule.getNewValue());
                 }
                 WFTransitionRule existedTransitionRule = wFTransitionServiceRule.getWFTransitionRuleByNameValue(newWFTransitionRule.getName(),
-                        newWFTransitionRule.getValue(), entity.getProvider());
+                        newWFTransitionRule.getValue(), getCurrentProvider());
 
                 if (existedTransitionRule != null) {
                     messages.error(new BundleKey("messages", "transitionRule.uniqueNameValue"), new Object[]{newWFTransitionRule.getName(), newWFTransitionRule.getValue()});
@@ -508,7 +510,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
-                int currentPriority = wFTransitionServiceRule.getMaxPriority(groupedTransitionRule.getName(), newWFTransitionRule.getType(), entity.getProvider());
+                int currentPriority = wFTransitionServiceRule.getMaxPriority(groupedTransitionRule.getName(), newWFTransitionRule.getType(), getCurrentProvider());
                 newWFTransitionRule.setPriority(currentPriority + 1);
 
                 uniqueNameValues.add(ruleNameValue);

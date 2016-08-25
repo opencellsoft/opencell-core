@@ -18,23 +18,41 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
+import org.meveo.admin.action.admin.custom.GroupedTransitionRule;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.hierarchy.HierarchyLevel;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
+import org.meveo.model.wf.WFTransitionRule;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 /**
  * Standard backing bean for {@link WFTransition} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
@@ -53,22 +71,56 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     private WFTransitionService wfTransitionService;
 
     @Inject
+    private WFTransitionRuleService wFTransitionServiceRule;
+
+    @Inject
     private WorkflowService wfService;
     
     @Inject
     private WFActionService wfActionService;
 
+    @Inject
+    private UserHierarchyLevelService userHierarchyLevelService;
+
     /** Entity to edit. */
     @Inject
     private Workflow workflow;
+
+    @Inject
+    @ViewBean
+    protected WorkflowBean workflowBean;
     
     private transient WFAction wfAction = new WFAction();
+
+    private Workflow workflowOrder;
+
+    private WFTransition wfTransition = new WFTransition();
+
+    private TreeNode userGroupRootNode;
+
+    private TreeNode[] userGroupSelectedNodes;
+
+    private List<String> wfTransitionRulesName;
+
+    private List<List<WFTransitionRule>> wfTransitionRulesByName = new ArrayList<>();
+
+    private List<GroupedTransitionRule> selectedRules = new ArrayList<>();
+
+    private List<WFAction> wfActions = new ArrayList<>();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public WfTransitionBean() {
         super(WFTransition.class);
+    }
+
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
     }
 
     /**
@@ -78,14 +130,13 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
      * @throws InstantiationException
      */
     public WFTransition initEntity() {
-        if (workflow != null && workflow.getId() == null) {
-            try {
-                wfService.create(workflow, getCurrentUser());
-            } catch (BusinessException e) {
-                messages.info(new BundleKey("messages", "message.exception.business"));
-            }
+        if (workflowOrder == null) {
+            workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
         }
         entity = super.initEntity();
+        if (entity.getId() != null) {
+            editWfTransition(entity);
+        }
         return entity;
     }
 
@@ -94,13 +145,66 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
-    @Override
-    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        List<WFTransitionRule> wfTransitionRules = new ArrayList<>();
+        boolean isUniqueNameValue = workflowBean.checkAndPopulateTransitionRules(selectedRules, wfTransitionRules);
+        if (!isUniqueNameValue) {
+            return null;
+        }
+
+        for (WFTransitionRule wfTransitionRuleFor : wfTransitionRules) {
+            if (wfTransitionRuleFor.getId() == null) {
+                wFTransitionServiceRule.create(wfTransitionRuleFor, getCurrentUser());
+            }
+        }
+
+        entity.setFromStatus(wfTransition.getFromStatus());
+        entity.setToStatus(wfTransition.getToStatus());
+        entity.setConditionEl(wfTransition.getConditionEl());
+
+        entity.getWfTransitionRules().clear();
+        entity.getWfTransitionRules().addAll(wfTransitionRules);
+        entity.setWorkflow(workflowOrder);
         super.saveOrUpdate(killConversation);
 
-        return "/pages/admin/workflow/wfTransitionDetail?wfTransitionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        if (this.userGroupSelectedNodes != null) {
+            WFTransition currentTransition = wfTransitionService.findById(entity.getId(), Arrays.asList("wfActions"), true);
+            List<WFAction> deletedActions = currentTransition.getWfActions();
+            int priority = 1;
+            if (CollectionUtils.isNotEmpty(deletedActions)) {
+                for (WFAction wfAction : deletedActions) {
+                    if (wfAction.getPriority() > priority) {
+                        priority = wfAction.getPriority();
+                    }
+                    WFAction action = wfActionService.findById(wfAction.getId());
+                    wfActionService.remove(action);
+                }
+            }
 
+            List<TreeNode> assignedTeams = Arrays.asList(this.userGroupSelectedNodes);
+            for (TreeNode treeNode: assignedTeams) {
+                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
+                WFAction wfAction = new WFAction();
+                wfAction.setActionEl(userHierarchyLevel.getDescriptionOrCode());
+                wfAction.setPriority(priority + 1);
+                wfAction.setWfTransition(entity);
+                wfActionService.create(wfAction, getCurrentUser());
+                priority++;
+            }
+        }
+
+        return back();
+    }
+
+    public Workflow getWorkflowOrder() {
+        if (workflowOrder == null) {
+            workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
+        }
+        return workflowOrder;
+    }
+
+    public void setWorkflowOrder(Workflow workflowOrder) {
+        this.workflowOrder = workflowOrder;
     }
 
     /**
@@ -188,4 +292,208 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         this.wfAction = wfAction;
     }
 
+    public WFTransition getWfTransition() {
+        return wfTransition;
+    }
+
+    public void setWfTransition(WFTransition wfTransition) {
+        this.wfTransition = wfTransition;
+    }
+
+    public List<String> getWfTransitionRulesName() {
+        if (wfTransitionRulesName == null) {
+            wfTransitionRulesName = wFTransitionServiceRule.getDistinctNameWFTransitionRules(getCurrentProvider());
+        }
+        return wfTransitionRulesName;
+    }
+
+    public void setWfTransitionRulesName(List<String> wfTransitionRulesName) {
+        this.wfTransitionRulesName = wfTransitionRulesName;
+    }
+
+    public List<List<WFTransitionRule>> getWfTransitionRulesByName() {
+        return wfTransitionRulesByName;
+    }
+
+    public void setWfTransitionRulesByName(List<List<WFTransitionRule>> wfTransitionRulesByName) {
+        this.wfTransitionRulesByName = wfTransitionRulesByName;
+    }
+
+    public List<GroupedTransitionRule> getSelectedRules() {
+        return selectedRules;
+    }
+
+    public void setSelectedRules(List<GroupedTransitionRule> selectedRules) {
+        this.selectedRules = selectedRules;
+    }
+
+    public List<WFAction> getWfActions() {
+        return wfActions;
+    }
+
+    public void setWfActions(List<WFAction> wfActions) {
+        this.wfActions = wfActions;
+    }
+
+    public void editWfTransition(WFTransition wfTransition) {
+        this.wfTransition = wfTransition;
+        if (wfTransition != null && wfTransition.getWfTransitionRules() != null) {
+            wfTransitionRulesByName.clear();
+            selectedRules.clear();
+            for (WFTransitionRule wfTransitionRule : wfTransition.getWfTransitionRules()) {
+                GroupedTransitionRule groupedTransitionRule = new GroupedTransitionRule();
+                groupedTransitionRule.setName(wfTransitionRule.getName());
+                groupedTransitionRule.setValue(wfTransitionRule);
+                List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(wfTransitionRule.getName(), entity.getProvider());
+                wfTransitionRulesByName.add(list);
+                selectedRules.add(groupedTransitionRule);
+            }
+        }
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public Map<String, String> getTransitionStatusFromWorkflowType() {
+        try {
+            if (workflowOrder != null) {
+                Class<?> clazz = Class.forName(workflowOrder.getWfType());
+                Object obj = clazz.newInstance();
+                Method testMethod = obj.getClass().getMethod("getStatusList");
+                List<String> statusList = (List<String>) testMethod.invoke(obj);
+                Map<String, String> statusMap = new TreeMap<>();
+                for (String s : statusList) {
+                    statusMap.put(s, s);
+                }
+                return statusMap;
+            }
+        } catch (ClassNotFoundException e) {
+            log.error("unable to get class " + workflowOrder.getWfType(), e);
+        } catch (InstantiationException e) {
+            log.error("unable to instantiate class " + workflowOrder.getWfType(), e);
+        } catch (IllegalAccessException e) {
+            log.error("can not access constructor of class " + workflowOrder.getWfType(), e);
+        } catch (NoSuchMethodException e) {
+            log.error("unable to find getStatusList method on class " + workflowOrder.getWfType(), e);
+        } catch (SecurityException e) {
+            log.error(e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            log.error("illegal arguments for getStatusList method on class " + workflowOrder.getWfType(), e);
+        } catch (InvocationTargetException e) {
+            log.error(e.getMessage(), e);
+        }
+        return new TreeMap<>();
+    }
+
+
+    public void addNewRule() {
+        selectedRules.add(new GroupedTransitionRule());
+    }
+
+    public void deleteWfTransitionRule(int indexRule) {
+        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
+            wfTransitionRulesByName.remove(indexRule);
+        }
+        selectedRules.remove(indexRule);
+    }
+
+    public void deleteWfTransition(WFTransition dunningPlanTransition) {
+        WFTransition transition = wfTransitionService.findById(dunningPlanTransition.getId());
+        wfTransitionService.remove(transition);
+        workflowOrder.getTransitions().remove(dunningPlanTransition);
+        wfTransitionRulesByName.clear();
+        selectedRules.clear();
+        wfActions.clear();
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
+
+    public void addWFTransitionRule(int indexRule) {
+
+    }
+
+    public TreeNode getUserGroupRootNode() {
+        if (userGroupRootNode == null) {
+            userGroupRootNode = new DefaultTreeNode("Root", null);
+            List<UserHierarchyLevel> roots;
+            if (entity != null && entity.getProvider() != null) {
+                roots = userHierarchyLevelService.findRoots(entity.getProvider());
+            } else {
+                roots = userHierarchyLevelService.findRoots();
+            }
+            UserHierarchyLevel userHierarchyLevel = null;
+            if (CollectionUtils.isNotEmpty(roots)) {
+                Collections.sort(roots);
+                for (UserHierarchyLevel userGroupTree : roots) {
+                    createTree(userGroupTree, userGroupRootNode, entity.getWfActions());
+                }
+            }
+        }
+        return userGroupRootNode;
+    }
+
+    public void setUserGroupRootNode(TreeNode rootNode) {
+        this.userGroupRootNode = rootNode;
+    }
+
+    public TreeNode[] getUserGroupSelectedNodes() {
+        return userGroupSelectedNodes;
+    }
+
+    public void setUserGroupSelectedNodes(TreeNode[] userGroupSelectedNodes) {
+        this.userGroupSelectedNodes = userGroupSelectedNodes;
+    }
+
+    // Recursive function to create tree with node checked if selected
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, List<WFAction> wfActions) {
+        TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
+        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
+        newNode.setExpanded(true);
+        if (wfActions != null) {
+            for (WFAction wfAction1 : wfActions) {
+                if (wfAction1 != null && wfAction1.getActionEl().equals(hierarchyLevel.getDescriptionOrCode())) {
+                    newNode.setSelected(true);
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(subTree)) {
+            Collections.sort(subTree);
+            for (HierarchyLevel userGroupTree : subTree) {
+                createTree(userGroupTree, newNode, wfActions);
+            }
+        }
+        return newNode;
+    }
+
+    public void changedRuleName(int indexRule) {
+        List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
+        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
+            wfTransitionRulesByName.remove(indexRule);
+            wfTransitionRulesByName.add(indexRule, list);
+        } else {
+            wfTransitionRulesByName.add(indexRule, list);
+        }
+    }
+
+    @Override
+    protected String getListViewName() {
+        return "mmWorkflows";
+    }
+
+    @Override
+    public String getEditViewName() {
+        return "mmWorkflowDetail";
+    }
+
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider", "wfTransitionRules", "wfActions");
+    }
+
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("provider", "wfTransitionRules", "wfActions");
+    }
 }
