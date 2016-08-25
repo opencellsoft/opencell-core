@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -49,7 +50,7 @@ public class UsageApi extends BaseApi {
 		}
 
 		List<InvoiceCategory> invoiceCats = invoiceCategoryService.list(user.getProvider());
-
+		List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 		for (InvoiceCategory invoiceCategory : invoiceCats) {
 			List<InvoiceSubCategory> invoiceSubCats = invoiceCategory.getInvoiceSubCategories();
 			CatUsageDto catUsageDto = new CatUsageDto();
@@ -60,8 +61,8 @@ public class UsageApi extends BaseApi {
 				SubCatUsageDto subCatUsageDto = new SubCatUsageDto();
 				subCatUsageDto.setCode(invoiceSubCategory.getCode());
 				subCatUsageDto.setDescription(invoiceSubCategory.getDescription());
-				List<RatedTransaction> RTs = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
-				for (RatedTransaction rt : RTs) {
+				ratedTransactions = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
+				for (RatedTransaction rt : ratedTransactions) {
 					UsageDto usageDto = new UsageDto();
 					usageDto.setAmountWithoutTax(rt.getAmountWithoutTax());
 					usageDto.setDateEvent(rt.getUsageDate());
@@ -77,7 +78,9 @@ public class UsageApi extends BaseApi {
 				}
 				catUsageDto.getListSubCatUsage().add(subCatUsageDto);
 			}
-			result.getListCatUsage().add(catUsageDto);
+		     if(ratedTransactions.size()>0){
+		     result.getListCatUsage().add(catUsageDto);
+		     }
 		}
 		return result;
 	}
