@@ -9,14 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -26,14 +24,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	private static final long serialVersionUID = -7109673492144846741L;
 
-	@Inject
-	private MeveoInstanceService meveoInstanceService;
-
 	private MeveoInstance meveoInstanceToExport = new MeveoInstance();
-
-	private List<MeveoInstance> meveoInstances = new ArrayList<MeveoInstance>();
-
-	private List<ProductTemplate> productTemplates = new ArrayList<ProductTemplate>();
 
 	private List<String> bundledProducts = new ArrayList<String>();
 
@@ -47,8 +38,6 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	@Override
 	public void preRenderView() {
-		productTemplates = productTemplateService.list();
-		meveoInstances = meveoInstanceService.list();
 		activeProductCount = productTemplateService.productTemplateActiveCount(true);
 		inactiveProductCount = productTemplateService.productTemplateActiveCount(false);
 		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
@@ -71,6 +60,12 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	public void addProductTemplateToExport(ProductTemplate pt) {
 		if (!ptToExport.contains(pt)) {
 			ptToExport.add(pt);
+		}
+	}
+	
+	public void deleteForExport(ProductTemplate pt) {
+		if (ptToExport.contains(pt)) {
+			ptToExport.remove(pt);
 		}
 	}
 
@@ -107,28 +102,12 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 		return outputStream.toByteArray();
 	}
 
-	public List<MeveoInstance> getMeveoInstances() {
-		return meveoInstances;
-	}
-
-	public void setMeveoInstances(List<MeveoInstance> meveoInstances) {
-		this.meveoInstances = meveoInstances;
-	}
-
 	public MeveoInstance getMeveoInstanceToExport() {
 		return meveoInstanceToExport;
 	}
 
 	public void setMeveoInstanceToExport(MeveoInstance meveoInstanceToExport) {
 		this.meveoInstanceToExport = meveoInstanceToExport;
-	}
-
-	public List<ProductTemplate> getProductTemplates() {
-		return productTemplates;
-	}
-
-	public void setProductTemplates(List<ProductTemplate> productTemplates) {
-		this.productTemplates = productTemplates;
 	}
 
 	public List<String> getBundledProducts() {

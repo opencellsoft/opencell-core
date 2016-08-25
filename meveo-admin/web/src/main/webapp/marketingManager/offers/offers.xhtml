@@ -44,8 +44,7 @@
 											outcome="mmOfferTemplates"
 											value=" #{messages['action.offer.create']}">
 										</p:link>
-									</div>
-									<!-- / btn-wrapper -->
+									</div> <!-- / btn-wrapper -->
 								</li>
 							</ul>
 						</h:form>
@@ -53,13 +52,15 @@
 
 					<p:panel>
 						<ul class="ListNoStyle">
-							<li class="Padding5"><i class="fa fa-check-square-o text-red"></i>
+							<li class="Padding5"><i
+								class="fa fa-check-square-o text-red"></i>
 								#{offerTemplateListBean.countActive()}
 								#{messages['page.catalog.offersAreActive']}</li>
 							<li class="Padding5"><i class="fa fa-close text-red"></i>
 								#{offerTemplateListBean.countDisabled()}
 								#{messages['page.catalog.offersAreDeactivated']}</li>
-							<li class="Padding5"><i class="fa fa-exclamation-circle text-red"></i>
+							<li class="Padding5"><i
+								class="fa fa-exclamation-circle text-red"></i>
 								#{offerTemplateListBean.countExpiring()}
 								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
@@ -98,8 +99,12 @@
 								</p:commandLink></li>
 							<li class="Padding5">
 								<div class="FRight">
-									<p:selectOneMenu styleClass="no-border-radius">
-										<f:selectItem itemLabel="Production" itemValue="PROD"
+									<p:selectOneMenu id="exportToList"
+										styleClass="no-border-radius"
+										value="#{offerTemplateListBean.meveoInstance}">
+										<f:selectItem itemLabel="" styleClass="no-border-radius" />
+										<f:selectItems value="#{meveoInstanceBean.listActive()}"
+											var="mi" itemValue="#{mi}" itemLabel="#{mi.code}"
 											styleClass="no-border-radius" />
 									</p:selectOneMenu>
 								</div>
@@ -128,7 +133,8 @@
 
 			<p:messages id="main_messages"></p:messages>
 			<p:tabView id="tabView"
-				activeIndex="#{offerTemplateListBean.activeTab}" styleClass="no-border-radius offer-wrapper">
+				activeIndex="#{offerTemplateListBean.activeTab}"
+				styleClass="no-border-radius offer-wrapper">
 				<p:tab title="#{messages['marketingManager.catalog.view.detailed']}">
 					<h:form id="mainForm">
 						<p:dataGrid id="dataGrid"
@@ -136,7 +142,7 @@
 							paginator="true" rows="10" columns="1" layout="grid"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 							lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
-							rowsPerPageTemplate="10,15,20,50" rowKey="#{entity.id}">
+							rowsPerPageTemplate="10,15,20,50">
 							<p:panel styleClass="Wid40 VAlignTop">
 								<p:panelGrid columns="4"
 									styleClass="panelGrid ui-panelgrid-blank"
@@ -196,12 +202,9 @@
 												<li class="Padding5 FRight"><p:commandLink
 														action="#{offerTemplateListBean.duplicate()}"
 														update=":tabView"
-														styleClass="fa fa-copy no-text-decoration fa-2x">
-														<f:setPropertyActionListener
-															target="#{offerTemplateListBean.entity}"
-															value="#{entity}" />
-														<f:param name="cid"
-															value="#{javax.enterprise.context.conversation.id}" />
+														styleClass="fa fa-copy fa-2x no-text-decoration text-red">
+														<f:setPropertyActionListener value="#{entity}"
+															target="#{offerTemplateListBean.entity}" />
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
@@ -237,7 +240,7 @@
 									paginatorPosition="bottom" paginatorAlwaysVisible="false"
 									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 									lazy="true" styleClass="custom-grid ui-datagrid-blank"
-									style="border: none;" rowKey="#{ost.id}">
+									style="border: none;">
 									<p:panel>
 										<h:outputText
 											value="#{messages['offerServiceTemplate.serviceTemplate']}"
@@ -290,7 +293,7 @@
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
 						dataModel="#{offerTemplateListBean.listFromBOM()}"
 						checkMany="false" exportToCsv="false" exportToXml="false"
-						exportXlsxButton="false">
+						exportXlsxButton="false" sortOrder="DESCENDING">
 						<hftl:column label="#{messages['commons.nameOrCode']}"
 							field="nameOrCode">
 						</hftl:column>
@@ -312,7 +315,7 @@
 						</p:column>
 						<p:column>
 							<p:link outcome="mmOfferDetail"
-								styleClass="Padding5 fa fa-search-plus no-text-decoration text-red">
+								styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-red">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -321,7 +324,7 @@
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:link
-								styleClass="Padding5 fa fa-edit no-text-decoration text-red"
+								styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-red"
 								outcome="mmOfferDetail">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
@@ -331,17 +334,16 @@
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:commandLink action="#{offerTemplateListBean.duplicate()}"
-								update=":tabView" styleClass="Padding5 fa fa-copy no-text-decoration text-red">
+								update=":tabView"
+								styleClass="Padding5 fa fa-copy no-text-decoration text-red fa-2x">
 								<f:setPropertyActionListener
 									target="#{offerTemplateListBean.entity}" value="#{entity}" />
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="tab" value="1"></f:param>
 								<p:confirm header="#{messages['commons.duplicate']}"
 									message="#{messages['commons.confirmDuplicate']}" />
 							</p:commandLink>
 							<p:commandLink
-								styleClass="Padding5 fa fa-share-square-o no-text-decoration text-red"
+								styleClass="Padding5 fa fa-share-square-o no-text-decoration fa-2x text-red"
 								update=":offerForExportPanel :dlgOfferExport"
 								action="#{offerTemplateListBean.addForExport(entity)}">
 							</p:commandLink>

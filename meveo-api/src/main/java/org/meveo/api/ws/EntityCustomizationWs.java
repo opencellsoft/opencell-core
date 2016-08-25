@@ -96,7 +96,4 @@ public interface EntityCustomizationWs extends IBaseWs {
     @WebMethod
     public EntityCustomizationResponseDto findEntityCustomizations(@WebParam(name = "customizedEntityClass") String customizedEntityClass);
 
-    @WebMethod
-    public ActionStatus searchIndex(@WebParam(name = "types") String types,@WebParam(name = "query") String query);
-
 }

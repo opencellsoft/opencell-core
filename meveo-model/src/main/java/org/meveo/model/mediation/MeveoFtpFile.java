@@ -5,12 +5,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.NotifiableEntity;
 
 /**
  * Record ftp file status when uplod,download,rename,delete
  * @author Tyshan Shi
  *
  */
+@NotifiableEntity
 public class MeveoFtpFile extends AuditableEntity implements Serializable{
 
 	private static final long serialVersionUID = -6610759225502996091L;

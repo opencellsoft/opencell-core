@@ -191,24 +191,4 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         return result;
     }
     
-   
-    @Override
-    public UsageResponseDto findUsage(UsageRequestDto usageRequestDto)  {
-    	UsageResponseDto result = new UsageResponseDto();
-        try {
-            result.setListCatUsage(usageApi.find(usageRequestDto, getCurrentUser()).getListCatUsage());
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
-
-        return result;
-    }
-
 }

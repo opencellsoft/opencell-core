@@ -100,6 +100,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
 			User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
+		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
 		// 1 create offer
 		OfferTemplate newOfferTemplate = new OfferTemplate();

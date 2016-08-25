@@ -11,13 +11,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.meveo.admin.exception.BusinessException;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @XmlRootElement
-@JsonSerialize(include = Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 public class OrderItem implements Serializable {
 
     /**

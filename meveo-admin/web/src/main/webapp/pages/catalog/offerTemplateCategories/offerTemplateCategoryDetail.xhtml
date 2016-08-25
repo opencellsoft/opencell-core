@@ -40,16 +40,10 @@
 			<p:tabView id="tabView"
 				activeIndex="#{offerTemplateCategoryBean.activeTab}">
 				<p:tab tab="information" title="#{messages['customer.tab.information']}">
-					<hftl:formField label="#{messages['BusinessEntity.code']}"
-						field="code" required="true" validateUnique="true" />
-					<hftl:formField label="#{messages['commons.name']}" field="name"
-						required="true" />
-					<hftl:formField label="#{messages['BusinessEntity.description']}"
-						field="description" useConverter="false" id="description" />
-					<hftl:decorateFormField fieldId="offerImageUpload"
-						label="#{messages['commons.image']}"
-						rendered="#{not offerTemplateCategoryBean.entity.transient}">
-						<p:graphicImage cache="false" id="offerImageUpload"
+					<hftl:decorateFormField fieldId="offerImage"
+						rendered="#{not offerTemplateCategoryBean.entity.transient}"
+						label="#{messages['commons.image']}">
+						<p:graphicImage id="offerImage" cache="false"
 							value="#{offerTemplateCategoryImageStreamer.image}" height="150"
 							width="150">
 							<f:param name="id" value="#{offerTemplateCategoryBean.entity.id}"></f:param>
@@ -58,10 +52,16 @@
 						<p:fileUpload
 							fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}"
 							mode="advanced"
-							update=":formId:tabView:offerImageUpload :formId:messages"
-							immediate="false" auto="true" sizeLimit="1000000"
-							allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileLimit="1" />
+							update=":formId:tabView:offerImage :formId:messages" auto="true"
+							fileLimit="1" sizeLimit="1000000"
+							allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 					</hftl:decorateFormField>
+					<hftl:formField label="#{messages['BusinessEntity.code']}"
+						field="code" required="true" validateUnique="true" />
+					<hftl:formField label="#{messages['commons.name']}" field="name"
+						required="true" />
+					<hftl:formField label="#{messages['BusinessEntity.description']}"
+						field="description" useConverter="false" id="description" />
 					<hftl:formField label="#{messages['offerTemplateCategory.title']}"
 						field="offerTemplateCategory" valueLabelField="codeInLevel"
 						listElements="#{offerTemplateCategoryBean.getParentHierarchy()}" />

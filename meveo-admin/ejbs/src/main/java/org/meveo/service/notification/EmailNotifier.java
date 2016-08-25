@@ -76,6 +76,7 @@ public class EmailNotifier {
 
         } catch (Exception e) {
             try {
+            	log.error("Error occured when sending email",e);
                 notificationHistoryService.create(notification, entity, e.getMessage(), e instanceof MessagingException ? NotificationHistoryStatusEnum.TO_RETRY
                         : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {

@@ -94,7 +94,7 @@
 										<p:dataTable label="#{messages['invoice.linkedInvoices']}"
 											noClose="false"
 											value="#{creationInvoiceBean.entity.linkedInvoices}"
-											var="entity">
+											var="entity" resizableColumns="true">
 
 											<f:facet name="header">#{messages['invoice.linkedInvoices']}</f:facet>
 											<hftl:column label="#{messages['invoice.invoiceType']}"
@@ -157,7 +157,7 @@
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{creationInvoiceBean.isDetailed()}">
 							<p:outputPanel id="detailedInvoicePanel">
-								<p:dataTable var="aSubCatInvAgregate" editable="true"
+								<p:dataTable var="aSubCatInvAgregate" editable="true" resizableColumns="true"
 									editMode="cell"
 									value="#{creationInvoiceBean.subCategoryInvoiceAggregates}">
 									<f:facet name="header">#{messages['detailedInvoice.title']}</f:facet>
@@ -182,7 +182,7 @@
 										</p:commandButton>
 									</p:column>
 									<p:column>
-										<p:dataTable editable="true" editMode="cell"
+										<p:dataTable editable="true" editMode="cell" resizableColumns="true"
 											id="ratedTransactionTable" var="rated"
 											value="#{aSubCatInvAgregate.getRatedtransactions()}">
 											<p:columnGroup type="header">
@@ -258,7 +258,7 @@
 							rendered="#{!creationInvoiceBean.isDetailed()}">
 							<p:outputPanel id="aggregatedInvoicePanel">
 								<p:dataTable style="margin-top: 10px;" var="entity"
-									editable="true" editMode="cell"
+									editable="true" editMode="cell" resizableColumns="true"
 									value="#{creationInvoiceBean.categoryInvoiceAggregates}">
 									<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
 									<p:columnGroup type="header">
@@ -285,7 +285,7 @@
 									<p:column>
 										<p:dataTable editable="true" editMode="cell"
 											id="subCategories" var="subCat"
-											value="#{creationInvoiceBean.getSubCategoryInvoiceAggregates(entity)}">
+											value="#{creationInvoiceBean.getSubCategoryInvoiceAggregates(entity)}" resizableColumns="true">
 											<p:columnGroup type="header">
 												<p:row>
 													<p:column headerText="#{messages['BusinessEntity.code']}" />

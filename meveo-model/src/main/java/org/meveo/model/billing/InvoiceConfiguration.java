@@ -46,6 +46,9 @@ public class InvoiceConfiguration extends BaseEntity {
     
     @Column(name = "DISPLAY_CHARGES_PERIODS")
     private Boolean displayChargesPeriods = false;
+    
+    @Column(name = "DISPLAY_BILLING_CYCLE")
+    private Boolean displayBillingCycle = false;
 
     public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
@@ -118,10 +121,22 @@ public class InvoiceConfiguration extends BaseEntity {
 	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
+	
+
+
+	public Boolean getDisplayBillingCycle() {
+		return displayBillingCycle;
+	}
+
+	public void setDisplayBillingCycle(Boolean displayBillingCycle) {
+		this.displayBillingCycle = displayBillingCycle;
+	}
 
 	@Override
 	public String toString() {
-		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]";
+		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
+				+ "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", "
+				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]"+ ", displayBillingCycle=" + displayBillingCycle + "]";
 	}
 	
 	

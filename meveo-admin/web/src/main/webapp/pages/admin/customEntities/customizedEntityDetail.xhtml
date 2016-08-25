@@ -47,7 +47,7 @@
 
         <h:form id="fieldsForm">
             <p:panel width="100" header="#{messages['customizedEntities.fields']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
-                <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node">
+                <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node" resizableColumns="true">
                     <p:column headerText="#{messages['BusinessEntity.code']}">
                         <h:outputText value="#{entity.code}" rendered="#{node.type == 'field'}" />
                         <h:panelGroup styleClass="ui-icon ui-icon-folder-collapsed inlineIcon" rendered="#{node.type == 'tab'}" />
@@ -206,7 +206,7 @@
             <p:panel width="100" header="#{messages['customizedEntities.actions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
                 <p:dataTable id="entityActions" var="entity" value="#{customEntityTemplateBean.entityActions}" paginator="true" rows="10" sortBy="#{entity.code}"
                     paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true" resizableColumns="true">
                     <p:column headerText="#{messages['BusinessEntity.code']}">
                         <h:outputText value="#{entity.localCodeForRead}" />
                     </p:column>
@@ -343,11 +343,11 @@
                         componentWidth="35" />
                     <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
                         listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields"
-                        actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" />
+                        actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" allowEdit="false" />
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
                     <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="10"
-                        listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}"
+                        listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}" allowEdit="false"
                         actionListenerMethod="updateDefaultValues" />
 
                     <h:panelGroup id="mapKeyTypeField">
@@ -460,6 +460,7 @@
                     </p:fieldset>
                     <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" required="false" allowEdit="#{customFieldTemplateBean.entity.indexType==null}" componentWidth="10" />
                         <h:panelGroup id="versioning">
                             <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
                                 listenerUpdate=":cftForm:versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
@@ -467,7 +468,7 @@
                                 <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
                                     rendered="#{customFieldTemplateBean.entity.versionable}" />
                                 <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod"
-                                    rendered="#{customFieldTemplateBean.entity.versionable}" />
+                                    rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="30" />
                                 <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent"
                                     rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="15" />
                             </h:panelGroup>

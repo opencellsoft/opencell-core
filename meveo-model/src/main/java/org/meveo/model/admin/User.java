@@ -310,4 +310,13 @@ public class User extends AuditableEntity {
     public void setUserLevel(UserHierarchyLevel userLevel) {
         this.userLevel = userLevel;
     }
+    
+	public String getNameOrUsername() {
+		if (name != null && name.toString().length() > 0) {
+			return name.toString();
+		}
+
+		return userName;
+	}
+    
 }

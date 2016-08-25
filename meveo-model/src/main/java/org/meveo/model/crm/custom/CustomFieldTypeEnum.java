@@ -8,47 +8,42 @@ public enum CustomFieldTypeEnum {
     /**
      * String value
      */
-    STRING("customFieldTypeEnum.string", false, String.class),
+    STRING(false, String.class),
 
     /**
      * Date value
      */
-    DATE("customFieldTypeEnum.date", false, Date.class),
+    DATE(false, Date.class),
 
     /**
      * Long value
      */
-    LONG("customFieldTypeEnum.long", false, Long.class),
+    LONG(false, Long.class),
 
     /**
      * Double value
      */
-    DOUBLE("customFieldTypeEnum.double", false, Double.class),
+    DOUBLE(false, Double.class),
 
     /**
      * String value picked from a list of values
      */
-    LIST("customFieldTypeEnum.list", false, String.class),
+    LIST(false, String.class),
 
     /**
      * A reference to an entity
      */
-    ENTITY("customFieldTypeEnum.entity", true, EntityReferenceWrapper.class),
+    ENTITY(true, EntityReferenceWrapper.class),
 
     /**
      * A long string value
      */
-    TEXT_AREA("customFieldTypeEnum.textArea", false, String.class),
+    TEXT_AREA(false, String.class),
 
     /**
      * An embedded entity data
      */
-    CHILD_ENTITY("customFieldTypeEnum.childEntity", true, EntityReferenceWrapper.class);
-
-    /**
-     * Label for display in GUI
-     */
-    private String label;
+    CHILD_ENTITY(true, EntityReferenceWrapper.class);
 
     /**
      * Is value stored in a serialized form in DB
@@ -61,14 +56,13 @@ public enum CustomFieldTypeEnum {
     @SuppressWarnings("rawtypes")
     private Class dataClass;
 
-    CustomFieldTypeEnum(String label, boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass) {
-        this.label = label;
+    CustomFieldTypeEnum(boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass) {
         this.storedSerialized = storedSerialized;
         this.dataClass = dataClass;
     }
 
     public String getLabel() {
-        return this.label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 
     public boolean isStoredSerialized() {

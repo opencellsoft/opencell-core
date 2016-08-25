@@ -47,11 +47,13 @@ public class BillingCycleDto extends BaseDto {
 
 	private String invoiceTypeCode;
 	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
 	public BillingCycleDto() {
 
 	}
 
-	public BillingCycleDto(BillingCycle billingCycleEntity) {
+	public BillingCycleDto(BillingCycle billingCycleEntity,CustomFieldsDto customFieldInstances) {
 		if(billingCycleEntity != null){
 			code = billingCycleEntity.getCode();
 			description = billingCycleEntity.getDescription();
@@ -68,6 +70,7 @@ public class BillingCycleDto extends BaseDto {
 			if (billingCycleEntity.getCalendar() != null) {
 				calendar = billingCycleEntity.getCalendar().getCode();
 			}
+			customFields = customFieldInstances;
 		}
 	}
 
@@ -164,10 +167,22 @@ public class BillingCycleDto extends BaseDto {
 	public void setInvoiceTypeCode(String invoiceTypeCode) {
 		this.invoiceTypeCode = invoiceTypeCode;
 	}
+	
+	
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 
 	@Override
 	public String toString() {
-		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + invoiceTypeCode + "]";
+		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ","
+				+ " invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ","
+				+ " transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + ", customFields=" + customFields + "]";
 	}
 
 

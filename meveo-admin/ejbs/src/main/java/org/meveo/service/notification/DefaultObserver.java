@@ -294,7 +294,7 @@ public class DefaultObserver {
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
-    	log.debug("BusinessExceptionEvent handler inactivated");/*
+    	log.debug("BusinessExceptionEvent handler inactivated {}",bee);/*
         log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
         StringWriter errors = new StringWriter();
         bee.getException().printStackTrace(new PrintWriter(errors));
@@ -353,6 +353,7 @@ public class DefaultObserver {
     
     public void counterUpdated(@Observes CounterPeriodEvent event) {
         log.debug("DefaultObserver.counterUpdated " +event);
-        checkEvent(NotificationEventTypeEnum.COUNTER_UPDATED, event.getCounterPeriod());
+        checkEvent(NotificationEventTypeEnum.ZERO_COUNTER, event.getCounterPeriod());
     }
+
 }

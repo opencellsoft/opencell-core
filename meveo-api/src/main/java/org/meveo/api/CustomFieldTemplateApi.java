@@ -275,7 +275,8 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         cft.setMapKeyType(dto.getMapKeyType());
-
+        cft.setIndexType(dto.getIndexType());
+        
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }

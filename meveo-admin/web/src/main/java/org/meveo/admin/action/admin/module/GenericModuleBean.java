@@ -36,7 +36,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.ServiceBasedLazyDataModel;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.catalog.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
@@ -46,6 +45,7 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.module.ModuleDto;
 import org.meveo.api.module.ModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -58,6 +58,8 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.primefaces.event.FileUploadEvent;
@@ -87,6 +89,9 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     @Inject
     @ViewBean
     protected ScriptInstanceBean scriptInstanceBean;
+
+    @Inject
+    private ElasticClient elasticClient;
 
     private CustomEntityTemplate customEntity;
     private CustomFieldTemplate customField;
@@ -351,6 +356,16 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             @Override
             protected List<String> getListFieldsToFetchImpl() {
                 return getListFieldsToFetch();
+            }
+
+            @Override
+            protected ElasticClient getElasticClientImpl() {
+                return elasticClient;
+            }
+
+            @Override
+            public User getCurrentUser() {
+                return GenericModuleBean.this.getCurrentUser();
             }
         };
 

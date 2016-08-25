@@ -304,6 +304,10 @@ public class UsageRatingService {
 
 				log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
 			}
+			if(periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null){
+				CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());
+				triggerCounterPeriodEvent(counterPeriod);
+			}
 		}
 		if(periodCache!=null && (periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null)){
 			CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());

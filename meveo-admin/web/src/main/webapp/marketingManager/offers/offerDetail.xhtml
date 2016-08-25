@@ -51,7 +51,7 @@
 								width="150">
 								<f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
 							</p:graphicImage>
-							<p:fileUpload
+							<p:fileUpload rendered="#{offerTemplateBean.edit}"
 								fileUploadListener="#{offerTemplateBean.handleFileUpload}"
 								mode="advanced" update=":formId:messages" auto="true"
 								sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
@@ -108,21 +108,24 @@
 					</p:panel>
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 						<hftl:formField label="#{messages['commons.validFrom']}"
-							field="validFrom" />
+							field="validFrom" time="true" />
 						<hftl:formField label="#{messages['commons.validTo']}"
-							field="validTo" />
+							field="validTo" time="true" />
 						<hftl:formField label="#{messages['commons.status']}"
 							field="lifeCycleStatus" />
-						<hftl:formField label="#{messages['enableEntity.disabled']}"
-							doNotShowOnNew="true" allowEdit="true" field="disabled"
-							isMessage="true" />
 					</p:panelGrid>
 				</p:panel>
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<hftl:decorateFormField fieldId="bomDescriptionOrCode"
+						label="#{messages['marketingManager.catalog.family']}">
+						<h:outputLabel id="bomDescriptionOrCode"
+							value="#{offerTemplateBean.businessOfferModel.descriptionOrCode}" />
+					</hftl:decorateFormField>
 					<hftl:formField
 						label="#{messages['marketingManager.catalog.family']}"
 						allowEdit="false" field="businessOfferModel"
-						valueLabelField="code" listBean="#{businessOfferModelBean}" />
+						valueLabelField="code" listBean="#{businessOfferModelBean}"
+						rendered="#{offerTemplateBean.entity.transient}" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
 						field="channels" listType="pickUpList" valueLabelField="code"
 						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
@@ -157,8 +160,8 @@
 					<c:set var="index" value="${0}"></c:set>
 					<c:forEach
 						items="#{offerTemplateBean.entity.offerServiceTemplates}"
-						var="ost">						
-						
+						var="ost">
+
 						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
 							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
 							<p:ajax update="serviceCf_panel_#{index}"></p:ajax>

@@ -44,8 +44,5 @@ public interface InvoicingWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus cancelBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
- 
-	@WebMethod
-	UsageResponseDto findUsage(@WebParam(name = "usageRequestDto") UsageRequestDto usageRequestDto);  
-		
+ 		
 }

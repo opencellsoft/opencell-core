@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
@@ -116,7 +114,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
-	
+
 	@Inject
 	private EntityExportImportService entityExportImportService;
 
@@ -129,6 +127,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
 	private UploadedFile uploadedFile;
+	private BusinessOfferModel businessOfferModel;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -140,6 +139,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Override
 	public OfferTemplate initEntity() {
+		businessOfferModel = businessOfferModelService.findById(bomId);
+
 		return super.initEntity();
 	}
 
@@ -173,13 +174,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@ActionMethod
 	public void duplicate() {
-
 		if (entity != null && entity.getId() != null) {
 			try {
 				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
-				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
 		}
@@ -193,8 +193,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (bomId != null) {
-			BusinessOfferModel bom = businessOfferModelService.findById(bomId);
+		if (bomId != null && businessOfferModel != null) {
 			Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValues();
 			CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
 
@@ -216,7 +215,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				}
 			}
 
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(bom, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
+			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
 					entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
 					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
 					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
@@ -229,7 +228,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
 						String serviceTemplateCode = entity.getPrefix() + "_" + serviceTemplate.getCode();
 						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
-							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
+							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
+									.getValues();
 							if (stCustomFieldInstances != null) {
 								// populate offer cf
 								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false);
@@ -424,8 +424,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
 
@@ -519,9 +518,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
 		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
 	}
-	
+
 	public ExportTemplate getMarketingCatalogExportTemplate() {
 		return entityExportImportService.getExportImportTemplate("MMOfferTemplate");
+	}
+
+	public BusinessOfferModel getBusinessOfferModel() {
+		return businessOfferModel;
+	}
+
+	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
+		this.businessOfferModel = businessOfferModel;
 	}
 
 }

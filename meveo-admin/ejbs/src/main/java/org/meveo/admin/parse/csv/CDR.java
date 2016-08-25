@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.meveo.model.IProvider;
+import org.meveo.model.NotifiableEntity;
 import org.meveo.model.crm.Provider;
 
+@NotifiableEntity
 public class CDR  implements Serializable,IProvider{
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
