@@ -440,7 +440,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
-        return className;
+        return className!=null?className.trim():null;
     }
 
     /**
@@ -452,7 +452,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public static String getFullClassname(String script) {
         String packageName = getPackageName(script);
         String className = getClassName(script);
-        return (packageName != null ? packageName + "." : "") + className;
+        return (packageName != null ? packageName.trim() + "." : "") + className;
     }
 
     /**
