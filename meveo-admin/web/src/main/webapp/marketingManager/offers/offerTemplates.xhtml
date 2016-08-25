@@ -145,17 +145,19 @@
 							</p:panel>
 						</p:dataGrid>
 					</p:panel>
-					<p:panel styleClass="Wid10 text-center"
-						style="position: relative; top: 50%; transform: translateY(-50%);">
-						<p:panel header="#{messages['action.startWithThisTemplate']}">
-							<p:link styleClass="fa fa-2x fa-play no-text-decoration text-red"
-								outcome="mmOfferDetail" value="">
-								<f:param name="bomId" value="#{entity.id}"></f:param>
-								<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
-								<f:param name="edit" value="true"></f:param>
-								<f:param name="backView" value="mmOffers"></f:param>
-							</p:link>
-						</p:panel>
+					<p:panel styleClass="Wid10 text-center">
+						<div class="Container100">
+							<p:panel header="#{messages['action.startWithThisTemplate']}">
+								<p:link
+									styleClass="fa fa-2x fa-play no-text-decoration text-red"
+									outcome="mmOfferDetail" value="">
+									<f:param name="bomId" value="#{entity.id}"></f:param>
+									<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+									<f:param name="edit" value="true"></f:param>
+									<f:param name="backView" value="mmOffers"></f:param>
+								</p:link>
+							</p:panel>
+						</div>
 					</p:panel>
 				</p:dataGrid>
 			</h:form>
