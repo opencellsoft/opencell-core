@@ -1,6 +1,7 @@
 package org.tmf.dsmapi.commons;
 
 import java.io.Serializable;
+
 import javax.persistence.MappedSuperclass;
 
 /**

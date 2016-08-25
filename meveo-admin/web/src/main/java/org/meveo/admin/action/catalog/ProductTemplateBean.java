@@ -163,9 +163,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		if (catalogPriceCF != null) {
 			if (catalogPriceCF.isTransient()) {
-				customFieldInstanceService.create(catalogPriceCF, entity, getCurrentUser());
+				customFieldInstanceService.create(catalogPriceCF, getCustomFieldTemplates(entity).get(catalogPriceCF.getCode()), entity, getCurrentUser());
 			} else {
-				customFieldInstanceService.update(catalogPriceCF, entity, getCurrentUser());
+				customFieldInstanceService.update(catalogPriceCF, getCustomFieldTemplates(entity).get(catalogPriceCF.getCode()), entity, getCurrentUser());
 			}
 		}
 	}

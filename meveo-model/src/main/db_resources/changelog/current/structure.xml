@@ -871,4 +871,9 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
     	
+    <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
+            <column name="INDEX_TYPE" type="varchar(10)"/>
+        </addColumn>
+    </changeSet> 
 </databaseChangeLog>
