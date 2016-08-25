@@ -64,7 +64,8 @@
 							</p:panel>
 							<p:panel>
 								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-									<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
+									<h:outputText
+										value="#{messages['offerTemplate.bom']}: #{entity.descriptionOrCode}"></h:outputText>
 									<ui:repeat
 										value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
 										var="c" varStatus="status">
@@ -74,10 +75,8 @@
 										<h:outputText value="#{valueLabel}" />
 										<h:outputText value=", " rendered="#{not status.last}" />
 									</ui:repeat>
-									<h:outputText
-										value="#{messages['offerTemplate.bom']}: #{entity.offerTemplate.businessOfferModel.code}"
-										rendered="#{entity.offerTemplate.businessOfferModel != null}"></h:outputText>
 									<p:separator></p:separator>
+									<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
 									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
 
 									<p:panel>
@@ -146,7 +145,8 @@
 							</p:panel>
 						</p:dataGrid>
 					</p:panel>
-					<p:panel styleClass="Wid10 text-center" style="position: relative; top: 50%; transform: translateY(-50%);">
+					<p:panel styleClass="Wid10 text-center"
+						style="position: relative; top: 50%; transform: translateY(-50%);">
 						<p:panel header="#{messages['action.startWithThisTemplate']}">
 							<p:link styleClass="fa fa-2x fa-play no-text-decoration text-red"
 								outcome="mmOfferDetail" value="">
