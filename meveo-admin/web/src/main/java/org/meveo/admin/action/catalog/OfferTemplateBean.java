@@ -456,8 +456,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
-			if (getEntity().getBusinessAccountModels() != null) {
-				perksTarget.addAll(getEntity().getBusinessAccountModels());
+			if (entity.getBusinessAccountModels() != null) {
+				perksTarget.addAll(entity.getBusinessAccountModels());
 			}
 
 			perksSource.removeAll(perksTarget);
@@ -481,8 +481,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			List<Channel> perksTarget = new ArrayList<Channel>();
-			if (getEntity().getChannels() != null) {
-				perksTarget.addAll(getEntity().getChannels());
+			if (entity.getChannels() != null) {
+				perksTarget.addAll(entity.getChannels());
 			}
 
 			perksSource.removeAll(perksTarget);
@@ -506,8 +506,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
-			if (getEntity().getOfferTemplateCategories() != null) {
-				perksTarget.addAll(getEntity().getOfferTemplateCategories());
+			if (entity.getOfferTemplateCategories() != null) {
+				perksTarget.addAll(entity.getOfferTemplateCategories());
 			}
 
 			perksSource.removeAll(perksTarget);
