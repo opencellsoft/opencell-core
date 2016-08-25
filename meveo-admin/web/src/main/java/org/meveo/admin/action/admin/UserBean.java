@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,6 +29,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,27 +39,33 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.hierarchy.HierarchyLevel;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +91,7 @@ public class UserBean extends BaseBean<User> {
     private ProviderService providerService;
 
     @Inject
-    private Messages messages;
+    private UserHierarchyLevelService userHierarchyLevelService;
 
     private static final Logger log = LoggerFactory.getLogger(UserBean.class);
 
@@ -98,6 +106,10 @@ public class UserBean extends BaseBean<User> {
     private boolean show = false;
 
     private DualListModel<Role> rolesDM;
+
+    private TreeNode userGroupRootNode;
+
+    private TreeNode userGroupSelectedNode;
 
     /**
      * Repeated password to check if it matches another entered password and user did not make a mistake.
@@ -115,6 +127,8 @@ public class UserBean extends BaseBean<User> {
     private UploadedFile file;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+    
+    private boolean autoUnzipped;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -132,11 +146,43 @@ public class UserBean extends BaseBean<User> {
         }
     }
 
+    public TreeNode getUserGroupRootNode() {
+        if (userGroupRootNode == null) {
+            userGroupRootNode = new DefaultTreeNode("Root", null);
+            List<UserHierarchyLevel> roots;
+            if (entity != null && entity.getProvider() != null) {
+                roots = userHierarchyLevelService.findRoots(entity.getProvider());
+            } else {
+                roots = userHierarchyLevelService.findRoots();
+            }
+            UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
+            if (CollectionUtils.isNotEmpty(roots)) {
+                Collections.sort(roots);
+                for (UserHierarchyLevel userGroupTree : roots) {
+                    createTree(userGroupTree, userGroupRootNode, userHierarchyLevel);
+                }
+            }
+        }
+        return userGroupRootNode;
+    }
+
+    public void setUserGroupRootNode(TreeNode rootNode) {
+        this.userGroupRootNode = rootNode;
+    }
+
+    public TreeNode getUserGroupSelectedNode() {
+        return userGroupSelectedNode;
+    }
+
+    public void setUserGroupSelectedNode(TreeNode selectedNode) {
+        this.userGroupSelectedNode = selectedNode;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+         */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -164,6 +210,11 @@ public class UserBean extends BaseBean<User> {
             entity.setPassword(password);
         }
 
+        if (this.getUserGroupSelectedNode() != null) {
+            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getUserGroupSelectedNode().getData();
+            getEntity().setUserLevel(userHierarchyLevel);
+        }
+
         getEntity().getRoles().clear();
         getEntity().getRoles().addAll(roleService.refreshOrRetrieve(rolesDM.getTarget()));
 
@@ -182,14 +233,14 @@ public class UserBean extends BaseBean<User> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "roles");
+        return Arrays.asList("provider", "roles", "userLevel");
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
      */
     protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("roles", "provider");
+        return Arrays.asList("roles", "provider", "userLevel");
     }
 
     /**
@@ -427,10 +478,19 @@ public class UserBean extends BaseBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={}", event.getFile());
+        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(),autoUnzipped);
         // FIXME: use resource bundle
         try {
-            copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	String filename=event.getFile().getFileName();
+        	if(this.isAutoUnzipped()){
+        		if(!filename.endsWith(".zip")){
+        			messages.info(filename+" isn't a valid zip file!");
+        		}else{
+        			copyUnZippedFile(event.getFile().getInputstream());
+        		}
+        	}else{
+        		copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+        	}
 
             messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
@@ -499,7 +559,28 @@ public class UserBean extends BaseBean<User> {
             }
         }
     }
-
+	public StreamedContent getDownloadZipFile(){
+    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf(File.separator)+1);
+    	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
+		try {
+			byte[] filedata=FileUtils.createZipFile(sourceFolder);
+			InputStream is=new ByteArrayInputStream(filedata);
+			return new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
+		} catch (Exception e) {
+			log.debug("error when zipped ui file - {}",e.getMessage());
+		}
+		return null;
+    }
+	
+    private void copyUnZippedFile(InputStream in) {
+    	try{
+    		String folder=getFilePath("");
+    		FileUtils.unzipFile(folder, in);
+    		buildFileList();
+    	}catch(Exception e){
+    		log.debug("error when upload zip file for new UI {}",e.getMessage());
+    	}
+    }
     public void copyFile(String fileName, InputStream in) {
         try {
 
@@ -542,5 +623,33 @@ public class UserBean extends BaseBean<User> {
 
     public void onProviderChange() {
         rolesDM = null;
+        userGroupRootNode = null;
     }
+
+    // Recursive function to create tree with node checked if selected
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, UserHierarchyLevel selectedHierarchyLevel) {
+        TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
+        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
+        newNode.setExpanded(true);
+        if (selectedHierarchyLevel != null && selectedHierarchyLevel.getId().equals(hierarchyLevel.getId())) {
+            newNode.setSelected(true);
+        }
+        if (CollectionUtils.isNotEmpty(subTree)) {
+            Collections.sort(subTree);
+            for (HierarchyLevel userGroupTree : subTree) {
+                createTree(userGroupTree, newNode, selectedHierarchyLevel);
+            }
+        }
+        return newNode;
+    }
+
+	public boolean isAutoUnzipped() {
+		return autoUnzipped;
+	}
+
+	public void setAutoUnzipped(boolean autoUnzipped) {
+		this.autoUnzipped = autoUnzipped;
+	}
+    
 }

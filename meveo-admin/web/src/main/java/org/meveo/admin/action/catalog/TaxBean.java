@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
@@ -41,7 +42,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class TaxBean extends BaseBean<Tax> {
+public class TaxBean extends CustomFieldBean<Tax> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link Tax} service. Extends {@link PersistenceService}.

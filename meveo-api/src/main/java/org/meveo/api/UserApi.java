@@ -18,11 +18,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 
 /**
  * @author Edward P. Legaspi
@@ -39,7 +41,10 @@ public class UserApi extends BaseApi {
     @Inject
     private UserService userService;
 
-      public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Inject
+    private UserHierarchyLevelService userHierarchyLevelService;
+
+    public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
@@ -92,6 +97,14 @@ public class UserApi extends BaseApi {
             roles.add(role);
         }
 
+        UserHierarchyLevel userHierarchyLevel = null;
+        if(!StringUtils.isBlank(postData.getUserLevel())){
+            userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel(), provider);
+            if (userHierarchyLevel == null) {
+                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, "userLevel");
+            }
+        }
+
         User user = new User();
         user.setUserName(postData.getUsername().toUpperCase());
         user.setEmail((postData.getEmail()));
@@ -103,6 +116,7 @@ public class UserApi extends BaseApi {
         user.setLastPasswordModification(new Date());
         user.setProvider(provider);
         user.setRoles(roles);
+        user.setUserLevel(userHierarchyLevel);
 
         userService.create(user, currentUser);
     }
@@ -150,6 +164,14 @@ public class UserApi extends BaseApi {
             roles.add(role);
         }
 
+        UserHierarchyLevel userHierarchyLevel = null;
+        if(!StringUtils.isBlank(postData.getUserLevel())){
+            userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel(), user.getProvider());
+            if (userHierarchyLevel == null) {
+                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, "userLevel");
+            }
+        }
+
         user.setUserName(postData.getUsername());
         user.setEmail((postData.getEmail()));
         user.setNewPassword(postData.getPassword());
@@ -158,6 +180,7 @@ public class UserApi extends BaseApi {
         name.setFirstName(postData.getFirstName());
         user.setName(name);
         user.setRoles(roles);
+        user.setUserLevel(userHierarchyLevel);
 
         userService.update(user, currentUser);
     }
@@ -186,7 +209,7 @@ public class UserApi extends BaseApi {
 
         handleMissingParameters();
 
-        User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles"));
+        User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles", "userLevel"));
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");

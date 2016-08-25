@@ -18,8 +18,10 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hftl:formPanel label="#{messages['tax.panel']}"
+		<hftl:formPanel label="#{messages['tax.panel']}" formId="taxFormId" submitPartialProcess=":taxFormId:tabView"
 			backingBean="#{taxBean}" columns="1">
+			<p:tabView id="tabView" activeIndex="#{taxBean.activeTab}">
+			<p:tab title="#{messages['customer.tab.information']}">
 			<hftl:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
 			<hftl:formLanguageFields entity="#{taxBean.entity}"  backingBean="#{taxBean}" multiLang="true"/>
@@ -28,6 +30,9 @@
 			<hftl:formField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
+			</p:tab>
+			<hftl:customFields backingBean="#{taxBean}" messagesId=":taxFormId:messages" />
+        </p:tabView>								
 		</hftl:formPanel>
 
 	</ui:define>

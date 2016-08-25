@@ -31,6 +31,8 @@ public class ServiceTemplateDto implements Serializable {
 
     @XmlAttribute()
     private String description;
+    
+    private String longDescription;
 
     private String invoicingCalendar;
 
@@ -54,6 +56,7 @@ public class ServiceTemplateDto implements Serializable {
     public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances) {
         code = serviceTemplate.getCode();
         description = serviceTemplate.getDescription();
+        longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
@@ -230,4 +233,12 @@ public class ServiceTemplateDto implements Serializable {
                 && serviceChargeTemplateSubscriptions == null && serviceChargeTemplateTerminations == null && serviceChargeTemplateUsages == null
                 && (customFields == null || customFields.isEmpty());
     }
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
 }

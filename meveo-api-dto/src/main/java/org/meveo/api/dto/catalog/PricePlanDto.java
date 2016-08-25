@@ -57,7 +57,9 @@ public class PricePlanDto implements Serializable {
     private String criteriaEL;
 
     private String validityCalendarCode;
-	
+
+    private String scriptInstance;
+    
     private CustomFieldsDto customFields = new CustomFieldsDto();
     
     public PricePlanDto() {
@@ -99,6 +101,9 @@ public class PricePlanDto implements Serializable {
         }
         description = e.getDescription();
         criteriaEL = e.getCriteriaEL();
+        if(e.getScriptInstance() != null){
+        	scriptInstance = e.getScriptInstance().getCode();
+        }
         customFields = customFieldInstances;
     }
 
@@ -277,7 +282,8 @@ public class PricePlanDto implements Serializable {
                 + startSubscriptionDate + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate
                 + ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax="
                 + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority="
-                + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode + "]";
+                + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode 
+                + ", scriptInstance="+scriptInstance+"]";
     }
 
     public String getCode() {
@@ -311,6 +317,14 @@ public class PricePlanDto implements Serializable {
     public void setCriteriaEL(String criteriaEL) {
         this.criteriaEL = criteriaEL;
     }
+
+	public String getScriptInstance() {
+		return scriptInstance;
+	}
+
+	public void setScriptInstance(String scriptInstance) {
+		this.scriptInstance = scriptInstance;
+	}
 
 	public CustomFieldsDto getCustomFields() {
 		return customFields;

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- start sequence -->
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-1">
         <createSequence sequenceName="account_entity_seq" />
     </changeSet>
@@ -29,10 +32,10 @@
         <createSequence sequenceName="adm_notification_seq" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-10">
-        <createSequence sequenceName="adm_permission_seq" startValue="13" />
+        <createSequence sequenceName="adm_permission_seq" startValue="18" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-11">
-        <createSequence sequenceName="adm_role_seq" startValue="3" />
+        <createSequence sequenceName="adm_role_seq" startValue="5" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-12">
         <createSequence sequenceName="adm_title_seq" startValue="38" />
@@ -276,9 +279,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-93">
         <createSequence sequenceName="crm_email_seq" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-94">
-        <createSequence sequenceName="crm_provider_config_seq" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-95">
         <createSequence sequenceName="crm_provider_contact_seq" startValue="2" />
     </changeSet>
@@ -321,9 +321,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-115">
         <createSequence sequenceName="ar_credit_category_seq" startValue="6" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-116">
-        <createSequence sequenceName="crm_custom_field_period_seq" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-117">
         <createSequence sequenceName="com_meveo_instance_seq" />
     </changeSet>
@@ -332,9 +329,6 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-119">
         <createSequence sequenceName="meveo_script_instance_seq" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-120">
-        <createSequence sequenceName="MEVEO_SCRIPT_INSTANCE_ERROR_SEQ" startValue="1" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-121">
         <createSequence sequenceName="meveo_filter_condition_seq" startValue="1" />
@@ -354,6 +348,49 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-126">
         <createSequence sequenceName="meveo_filter_seq" startValue="1" />
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-127">
+        <createSequence sequenceName="meveo_filter_parameter_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-128">
+        <createSequence sequenceName="CUST_CET_SEQ" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-129">
+        <createSequence sequenceName="CUST_CEI_SEQ" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-130">
+        <createSequence sequenceName="meveo_module_seq" startValue="1" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-131">
+        <createSequence sequenceName="meveo_module_item_seq" startValue="1" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-132">
+        <createSequence sequenceName="FTP_IMPORTED_FILE_SEQ" startValue="1" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-133">
+        <createSequence sequenceName="cat_bom_entity_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-134">
+        <createSequence sequenceName="cat_offer_template_category_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-135">
+        <createSequence sequenceName="cat_offer_serv_templt_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-136">
+        <createSequence sequenceName="ar_revenue_recog_rule_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-137">
+        <createSequence sequenceName="ar_revenue_schedule_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-138">
+        <createSequence sequenceName="crm_custom_action_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-139">
+        <createSequence sequenceName="billing_invoice_type_seq" />
+    </changeSet>
+
+    <!-- end sequence -->
+
+    <!-- start tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-114">
         <createTable tableName="account_entity">
@@ -393,6 +430,9 @@
             <column name="account_type" type="VARCHAR(10)">
                 <constraints nullable="false" />
             </column>
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-115">
@@ -411,6 +451,7 @@
             <column name="updater_id" type="BIGINT" />
             <column name="currency_id" type="BIGINT" />
             <column name="language_id" type="BIGINT" />
+            <column name="DESCRIPTION_FR" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-116">
@@ -495,6 +536,7 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="body" type="TEXT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-121">
@@ -577,10 +619,10 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-126">
         <createTable tableName="adm_notif_email">
-            <column name="email_body" type="VARCHAR(2000)" />
+            <column name="email_body" type="text" />
             <column name="email_from" type="VARCHAR(1000)" />
-            <column name="email_to_el" type="VARCHAR(1000)" />
-            <column name="email_html_body" type="VARCHAR(2000)" />
+            <column name="email_to_el" type="VARCHAR(2000)" />
+            <column name="email_html_body" type="text" />
             <column name="email_subject" type="VARCHAR(500)">
                 <constraints nullable="false" />
             </column>
@@ -647,7 +689,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-131">
         <createTable tableName="adm_notif_im">
-            <column name="id_expression" type="VARCHAR(1000)" />
+            <column name="id_expression" type="VARCHAR(2000)" />
             <column name="im_provider" type="INT4">
                 <constraints nullable="false" />
             </column>
@@ -711,13 +753,12 @@
                 <constraints nullable="false" />
             </column>
             <column name="password" type="VARCHAR(255)" />
-            <column name="http_port" type="INT4">
-                <constraints nullable="false" />
-            </column>
+            <column name="http_port" type="INT4" />
             <column name="username" type="VARCHAR(255)" />
             <column name="id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
+            <column name="BODY_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-137">
@@ -740,7 +781,7 @@
             <column name="class_name_filter" type="VARCHAR(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="event_expression_filter" type="VARCHAR(1000)" />
+            <column name="event_expression_filter" type="VARCHAR(2000)" />
             <column name="event_type_filter" type="VARCHAR(20)">
                 <constraints nullable="false" />
             </column>
@@ -907,8 +948,9 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="customer_account_id" type="BIGINT" />
-            <column name="ddrequest_item_id" type="BIGINT" />
-            <column name="ddrequestlot_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -963,7 +1005,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="dunning_plan_id" type="BIGINT" />
-            <column name="CONDITION_EL" type="VARCHAR(1000)" />
+            <column name="CONDITION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-148">
@@ -1008,7 +1050,7 @@
             <column name="date_status" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="dunning_level" type="VARCHAR(255)" />
             <column name="mandate_date" type="date" />
-            <column name="mandate_identification" type="VARCHAR(35)" />
+            <column name="mandate_identification" type="VARCHAR(256)" />
             <column name="password" type="VARCHAR(10)" />
             <column name="payment_method" type="VARCHAR(20)" />
             <column name="status" type="VARCHAR(10)" />
@@ -1050,8 +1092,9 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="payment_id" type="BIGINT" />
-            <column name="customer_account_id" type="BIGINT" />
             <column name="ddrequest_lot_id" type="BIGINT" />
+            <column name="ERROR_MSG" type="VARCHAR(1000)" />
+            <column name="ACCOUNT_OPERATION_ID" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-151">
@@ -1077,8 +1120,9 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
-            <column name="REJECTED_CAUSE" type="VARCHAR(255)"></column>
-            <column name="REJECTED_INVOICES" type="INT4"></column>
+            <column name="REJECTED_CAUSE" type="VARCHAR(255)" />
+            <column name="REJECTED_INVOICES" type="INT4" />
+            <column name="FILE_FORMAT" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-152">
@@ -1103,6 +1147,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="ddrequest_lot_id" type="BIGINT" />
+            <column name="FILE_FORMAT" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-153">
@@ -1196,7 +1241,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="dunning_plan_id" type="BIGINT" />
-            <column name="CONDITION_EL" type="VARCHAR(1000)" />
+            <column name="CONDITION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-157">
@@ -1441,7 +1486,7 @@
             <column name="producible_amount_without_tax" type="numeric(23, 12)" />
             <column name="nb_producible_invoice" type="INT4" />
             <column name="rejection_reason" type="VARCHAR(255)" />
-            <column name="selected_billing_accounts" type="VARCHAR(255)" />
+            <column name="selected_billing_accounts" type="text" />
             <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="status" type="VARCHAR(255)" />
             <column name="status_date" type="TIMESTAMP WITHOUT TIME ZONE" />
@@ -1613,6 +1658,8 @@
             <column name="calendar" type="BIGINT" />
             <column name="TRANSACTION_DATE_DELAY" type="INT4" />
             <column name="INVOICE_DATE_PRODUCTION_DELAY" type="INT4" />
+            <column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
+            <column name="invoice_type_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -1728,7 +1775,6 @@
             <column name="iban" type="VARCHAR(255)" />
             <column name="invoice_date" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="invoice_number" type="VARCHAR(50)" />
-            <column name="invoice_type" type="VARCHAR(20)" />
             <column name="net_to_pay" type="numeric(23, 12)" />
             <column name="payment_method" type="VARCHAR(255)" />
             <column name="pdf" type="BYTEA" />
@@ -1743,6 +1789,12 @@
             <column name="trading_country_id" type="BIGINT" />
             <column name="trading_currency_id" type="BIGINT" />
             <column name="trading_language_id" type="BIGINT" />
+            <column name="detailed_invoice" type="boolean" defaultValue="true" />
+            <column name="invoice_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="invoice_type_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -1766,7 +1818,7 @@
             <column name="amount_tax" type="numeric(23, 12)" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="description" type="VARCHAR(50)" />
+            <column name="description" type="VARCHAR(600)" />
             <column name="description_discount" type="VARCHAR(50)" />
             <column name="discount" type="numeric(23, 12)" />
             <column name="discount_aggregate" type="BOOL">
@@ -1820,6 +1872,9 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-180">
@@ -1866,6 +1921,9 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="invoice_category_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-182">
@@ -1947,9 +2005,9 @@
             <column name="description" type="VARCHAR(255)" />
             <column name="do_not_trigger_invoicing" type="BOOL" />
             <column name="offer_code" type="VARCHAR(35)" />
-            <column name="parameter_1" type="VARCHAR(50)" />
-            <column name="parameter_2" type="VARCHAR(50)" />
-            <column name="parameter_3" type="VARCHAR(50)" />
+            <column name="parameter_1" type="VARCHAR(255)" />
+            <column name="parameter_2" type="VARCHAR(255)" />
+            <column name="parameter_3" type="VARCHAR(255)" />
             <column name="quantity" type="numeric(23, 12)" />
             <column name="status" type="VARCHAR(255)" />
             <column name="unit_amount_tax" type="numeric(23, 12)" />
@@ -1971,6 +2029,7 @@
             <column name="EDR_ID" type="BIGINT">
                 <constraints nullable="true" />
             </column>
+            <column name="adjusted_rated_tx" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-186">
@@ -2076,6 +2135,9 @@
             <column name="subscription_id" type="BIGINT" />
             <column name="sub_termin_reason_id" type="BIGINT" />
             <column name="INVOICING_CALENDAR_ID" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -2121,6 +2183,9 @@
             <column name="offer_id" type="BIGINT" />
             <column name="sub_termin_reason_id" type="BIGINT" />
             <column name="user_account_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -2309,9 +2374,9 @@
             <column name="end_date" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="offer_code" type="VARCHAR(35)" />
             <column name="operation_date" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="parameter_1" type="VARCHAR(50)" />
-            <column name="parameter_2" type="VARCHAR(50)" />
-            <column name="parameter_3" type="VARCHAR(50)" />
+            <column name="parameter_1" type="VARCHAR(255)" />
+            <column name="parameter_2" type="VARCHAR(255)" />
+            <column name="parameter_3" type="VARCHAR(255)" />
             <column name="quantity" type="numeric(23, 12)" />
             <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="status" type="VARCHAR(255)" />
@@ -2443,6 +2508,11 @@
             <column name="rating_unit_description" type="varchar(20)" />
             <column name="unit_multiplicator" type="numeric(23, 12)" />
             <column name="unit_nb_decimal" type="int4" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ROUNDING_MODE" type="VARCHAR(255)" defaultValue="NEAREST" />
+            <column name="REVENUE_RECOG_RULE_ID" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -2484,7 +2554,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="calendar_id" type="BIGINT" />
-            <column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)" />
+            <column name="CEILING_EXPRESSION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-210">
@@ -2553,7 +2623,7 @@
             </column>
             <column name="invoice_category_id" type="BIGINT" />
             <column name="invoice_sub_category_id" type="BIGINT" />
-            <column name="EXPRESSION_EL" type="VARCHAR(1000)" />
+            <column name="EXPRESSION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -2574,6 +2644,12 @@
             <column name="service_template_id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="mandatory" type="BOOL" defaultValueBoolean="false" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-215">
@@ -2596,6 +2672,18 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="bom_code" type="VARCHAR(60)" />
+            <column name="termination_script_instance_id" type="BIGINT" />
+            <column name="subscription_script_instance_id" type="BIGINT" />
+            <column name="name" type="VARCHAR(100)" />
+            <column name="entity_version" type="INT4" />
+            <column name="image" type="oid" />
+            <column name="cat_offer_template_cat_id" type="BIGINT" />
+            <column name="status" type="VARCHAR(50)" />
+            <column name="business_offer_model_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-216">
@@ -2657,6 +2745,9 @@
                 <constraints nullable="true" />
             </column>
             <column name="SEQUENCE" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-218">
@@ -2791,6 +2882,12 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="INVOICING_CALENDAR_ID" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="termination_script_instance_id" type="BIGINT" />
+            <column name="activation_script_instance_id" type="BIGINT" />
+            <column name="business_service_model_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-228">
@@ -2810,25 +2907,26 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="condition_el" type="VARCHAR(1000)" />
-            <column name="param_1_el" type="VARCHAR(1000)" />
-            <column name="param_2_el" type="VARCHAR(1000)" />
-            <column name="param_3_el" type="VARCHAR(1000)" />
-            <column name="param_4_el" type="VARCHAR(1000)" />
-            <column name="quantity_el" type="VARCHAR(1000)" />
-            <column name="subscription_el" type="VARCHAR(1000)" />
+            <column name="condition_el" type="VARCHAR(2000)" />
+            <column name="param_1_el" type="VARCHAR(2000)" />
+            <column name="param_2_el" type="VARCHAR(2000)" />
+            <column name="param_3_el" type="VARCHAR(2000)" />
+            <column name="param_4_el" type="VARCHAR(2000)" />
+            <column name="quantity_el" type="VARCHAR(2000)" />
+            <column name="subscription_el" type="VARCHAR(2000)" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="meveo_instance_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-229">
         <createTable tableName="cat_usage_charge_template">
-            <column name="filter_expression" type="VARCHAR(255)" />
-            <column name="filter_param_1" type="VARCHAR(20)" />
-            <column name="filter_param_2" type="VARCHAR(20)" />
-            <column name="filter_param_3" type="VARCHAR(20)" />
-            <column name="filter_param_4" type="VARCHAR(20)" />
+            <column name="filter_expression" type="VARCHAR(2000)" />
+            <column name="filter_param_1" type="VARCHAR(255)" />
+            <column name="filter_param_2" type="VARCHAR(255)" />
+            <column name="filter_param_3" type="VARCHAR(255)" />
+            <column name="filter_param_4" type="VARCHAR(255)" />
             <column defaultValueNumeric="1" name="priority" type="INT4" />
             <column name="id" type="BIGINT">
                 <constraints nullable="false" />
@@ -3124,27 +3222,20 @@
             <column name="code" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
-            <column name="description" type="VARCHAR(100)" />
             <column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="double_value" type="FLOAT8" />
             <column name="long_value" type="BIGINT" />
-            <column name="string_value" type="VARCHAR(255)" />
-            <column name="provider_id" type="BIGINT" />
+            <column name="string_value" type="text" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
-            <column name="access_id" type="BIGINT" />
-            <column name="account_id" type="BIGINT" />
-            <column name="charge_template_id" type="BIGINT" />
-            <column name="offer_template_id" type="BIGINT" />
-            <column name="service_template_id" type="BIGINT" />
-            <column name="subscription_id" type="BIGINT" />
-            <column name="versionable" type="BOOL" defaultValue="false">
+            <column name="SERIALIZED_VALUE" type="text" />
+            <column name="APPLIES_TO_UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
-            <column name="calendar_id" type="BIGINT" />
-            <column name="job_instance_id" type="int8" />
-            <column name="TRIGGER_END_PERIOD_EVENT" type="boolean" defaultValueBoolean="false" />
-            <column name="SERIALIZED_VALUE" type="varchar(500)" />
+            <column name="PRIORITY" type="INT4" defaultValue="0" />
+            <column name="period_end_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="period_start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-242">
@@ -3164,8 +3255,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="account_type" type="VARCHAR(255)" />
-            <column name="field_type" type="VARCHAR(255)" />
+            <column name="field_type" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="value_required" type="BOOL" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
@@ -3176,9 +3268,30 @@
             <column name="calendar_id" type="BIGINT" />
             <column name="DEFAULT_VALUE" type="VARCHAR(50)" />
             <column name="ENTITY_CLAZZ" type="varchar(255)" />
-            <column name="STORAGE_TYPE" type="varchar(255)" />
+            <column name="STORAGE_TYPE" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="TRIGGER_END_PERIOD_EVENT" type="boolean" defaultValueBoolean="false" />
             <column name="CACHE_VALUE_FOR" type="int" />
+            <column name="APPLIES_TO" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="GUI_POSITION" type="VARCHAR(100)" />
+            <column name="ALLOW_EDIT" type="BOOL" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+            <column name="HIDE_ON_NEW" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="MAX_VALUE" type="BIGINT" />
+            <column name="MIN_VALUE" type="BIGINT" />
+            <column name="REG_EXP" type="VARCHAR(80)" />
+            <column name="CACHE_VALUE" type="BOOL" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+            <column name="MAPKEY_TYPE" type="varchar(20)" />
+            <column name="APPLICABLE_ON_EL" type="varchar(2000)" />
+            <column name="CHE_FIELDS" type="VARCHAR(500)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-243">
@@ -3251,6 +3364,8 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="EXONERATION_TAX_EL" type="VARCHAR(2000)" />
+            <column name="EXONERATION_REASON" type="VARCHAR(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-247">
@@ -3294,7 +3409,6 @@
             <column name="issuer_name" type="VARCHAR(50)" />
             <column name="issuer_number" type="VARCHAR(50)" />
             <column name="hash_key" type="VARCHAR(2)" />
-            <column name="current_invoice_nb" type="BIGINT" />
             <column name="discount_accounting_code" type="VARCHAR(255)" />
             <column name="display_free_tx_in_invoice" type="BOOL" />
             <column name="email" type="VARCHAR(100)" />
@@ -3310,7 +3424,6 @@
             <column name="creditor_code" type="VARCHAR(255)" />
             <column name="financial_institution_code" type="VARCHAR(255)" />
             <column name="nne" type="VARCHAR(255)" />
-            <column name="invoice_prefix" type="VARCHAR(50)" />
             <column name="level_duplication" type="BOOL" />
             <column name="logo" type="OID" />
             <column name="multicountry_flag" type="BOOL" />
@@ -3328,28 +3441,13 @@
             <column name="customer_account_id" type="BIGINT" />
             <column name="language_id" type="BIGINT" />
             <column name="user_account_id" type="BIGINT" />
-        </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-249">
-        <createTable tableName="crm_provider_config">
-            <column name="id" type="BIGINT">
+            <column name="credit_note_prefix" type="VARCHAR(255)" />
+            <column name="current_credit_note_nb" type="BIGINT" />
+            <column name="credit_note_sequence_size" type="INT4" />
+            <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
+            <column name="RECOGNIZE_REVENUE" type="BOOL" defaultValueBoolean="false" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -3412,8 +3510,6 @@
             <column name="address_country" type="VARCHAR(50)" />
             <column name="address_state" type="VARCHAR(50)" />
             <column name="address_zipcode" type="VARCHAR(10)" />
-            <column name="current_invoice_nb" type="BIGINT" />
-            <column name="invoice_prefix" type="VARCHAR(50)" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -3421,6 +3517,12 @@
             <column name="trading_country_id" type="BIGINT" />
             <column name="trading_currency_id" type="BIGINT" />
             <column name="trading_language_id" type="BIGINT" />
+            <column name="credit_note_prefix" type="VARCHAR(255)" />
+            <column name="current_credit_note_nb" type="BIGINT" />
+            <column name="credit_note_sequence_size" type="INT4" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -3472,6 +3574,9 @@
             <column name="updater_id" type="BIGINT" />
             <column name="msr_qty_id" type="BIGINT" />
             <column name="role_id" type="BIGINT" />
+            <column name="width" type="VARCHAR(10)" />
+            <column name="height" type="VARCHAR(10)" />
+            <column name="VISIBLE" type="BOOL" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-254">
@@ -3597,6 +3702,8 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="additive" type="BOOL" />
+            <column name="VISIBLE" type="BOOL" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-259">
@@ -3610,6 +3717,13 @@
             <column name="value" type="numeric(23, 12)" />
             <column name="provider_id" type="BIGINT" />
             <column name="measurable_quantity" type="BIGINT" />
+            <column name="DIMENSION_1" type="VARCHAR(255)" />
+            <column name="DIMENSION_2" type="VARCHAR(255)" />
+            <column name="DIMENSION_3" type="VARCHAR(255)" />
+            <column name="DIMENSION_4" type="VARCHAR(255)" />
+            <column name="CODE" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-260">
@@ -3647,6 +3761,9 @@
             <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
             <column name="provider_id" type="BIGINT" />
             <column name="subscription_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-269">
@@ -3794,20 +3911,12 @@
             <column name="display_subscriptions" type="BOOL" />
             <column name="display_services" type="BOOL" />
             <column name="display_offers" type="BOOL" />
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
             <column name="display_edrs" type="BOOL" defaultValueBoolean="false" />
+            <column name="display_provider" type="BOOL" defaultValueBoolean="false" />
+            <column name="display_detail" type="BOOL" defaultValueBoolean="true" />
+            <column name="DISPLAY_PRICEPLANS" type="BOOL" defaultValueBoolean="false" />
+            <column name="DISPLAY_CF_AS_XML" type="BOOL" defaultValueBoolean="false" />
+            <column name="DISPLAY_CHARGES_PERIODS" type="BOOL" defaultValueBoolean="false" />
         </createTable>
     </changeSet>
 
@@ -3855,22 +3964,19 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="active" type="BOOL">
-                <constraints nullable="false" />
-            </column>
             <column name="job_category" type="VARCHAR(255)" />
             <column name="job_template" type="VARCHAR(255)">
                 <constraints nullable="false" />
             </column>
             <column name="parametres" type="VARCHAR(255)" />
-            <column name="user_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="timerentity_id" type="BIGINT" />
             <column name="FOLLOWING_JOB_ID" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -3924,25 +4030,6 @@
             <column name="AUTH_USERNAME" type="VARCHAR(60)" />
             <column name="AUTH_PASSWORD" type="VARCHAR(60)" />
         </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-279">
-
-        <createTable tableName="CRM_CUSTOM_FIELD_PERIOD">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="PRIORITY" type="INT4" defaultValue="0" />
-            <column name="period_end_date" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="period_start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="CF_INSTANCE_ID" type="BIGINT" />
-            <column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="double_value" type="FLOAT8" />
-            <column name="long_value" type="BIGINT" />
-            <column name="string_value" type="TEXT" />
-            <column name="SERIALIZED_VALUE" type="varchar(500)" />
-        </createTable>
-
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-280">
         <createTable tableName="meveo_script_instance">
@@ -4067,7 +4154,10 @@
             <column name="order_condition_id" type="BIGINT" />
             <column name="primary_selector_id" type="BIGINT" />
             <column name="input_xml" type="text" />
-            <column name="shared" type="BOOL" defaultValueBoolean="false"></column>
+            <column name="shared" type="BOOL" defaultValueBoolean="false" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
     </changeSet>
@@ -4156,10 +4246,9 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-296">
-        <createTable tableName="MEVEO_SCRIPT_INSTANCE_ERROR">
+        <createTable tableName="meveo_filter_parameter">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
@@ -4171,25 +4260,443 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="message" type="VARCHAR(255)" />
-            <column name="line_number" type="BIGINT" />
-            <column name="column_number" type="BIGINT" />
-            <column name="source_file" type="VARCHAR(255)" />
-            <column name="script_instance_id" type="BIGINT" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="default_value" type="VARCHAR(50)" />
+            <column name="value_required" type="BOOL" />
+            <column name="field_type" type="VARCHAR(255)" />
+            <column name="entity_clazz" type="VARCHAR(255)" />
+            <column name="filter_id" type="BIGINT" />
         </createTable>
     </changeSet>
 
-
-
-
-
-
-
-
-
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-297">
+        <createTable tableName="meveo_filter_parameter_list_val">
+            <column name="filterparameter_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="listvalues" type="VARCHAR(255)" />
+            <column name="listvalues_key" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-298">
+        <createTable tableName="CUST_CET">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="description" type="VARCHAR(100)" />
+            <column name="code" type="VARCHAR(50)" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-299">
+        <createTable tableName="adm_script_notification">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-300">
+        <createTable tableName="CUST_CEI">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="description" type="VARCHAR(100)" />
+            <column name="code" type="VARCHAR(50)" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="cet_code" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="PARENT_UUID" type="VARCHAR(60)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-301">
+        <createTable tableName="meveo_module">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="module_license" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="LOGO_PICTURE" type="varchar(255)" />
+            <column name="SCRIPT_INSTANCE_ID" type="BIGINT" />
+            <column name="INSTALLED" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="MODULE_SOURCE" type="TEXT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-302">
+        <createTable tableName="meveo_module_item">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="module_id" type="BIGINT" />
+            <column name="applies_to" type="VARCHAR(100)" />
+            <column name="item_type" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-303">
+        <createTable tableName="FTP_IMPORTED_FILE">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="URI" type="VARCHAR(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="SIZE" type="BIGINT" />
+            <column name="IMPORT_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="LAST_MODIFICATION" type="TIMESTAMP WITHOUT TIME ZONE" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-304">
+        <createTable tableName="adm_role_role">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="child_role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-305">
+        <createTable tableName="cat_bom_entity">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="offer_template_id" type="BIGINT" />
+            <column name="script_instance_id" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-306">
+        <createTable tableName="adm_script_exec_role">
+            <column name="script_instance_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-307">
+        <createTable tableName="adm_script_sourc_role">
+            <column name="script_instance_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-308">
+        <createTable tableName="cat_offer_template_category">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="UUID" type="VARCHAR(50)" />
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="image" type="oid" />
+            <column name="OFFER_TEMPLATE_CATEGORY_ID" type="BIGINT" />
+            <column name="level" type="INT" />
+            <column name="image_content_type" type="VARCHAR(50)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-309">
+        <createTable tableName="cat_business_offer_model">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="offer_template_id" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-310">
+        <createTable tableName="cat_business_serv_model">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="service_template_id" type="BIGINT" />
+            <column name="duplicate_service" type="BOOL" defaultValueBoolean="false" />
+            <column name="duplicate_price_plan" type="BOOL" defaultValueBoolean="false" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-311">
+        <createTable tableName="cat_offer_serv_incomp">
+            <column name="offer_service_template_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="service_template_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-312">
+        <createTable tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS">
+            <column name="CFT_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="POSITION" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="CODE" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="LABEL" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="KEY_TYPE" type="INT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-313">
+        <createTable tableName="crm_business_account_model">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="hierarchy_type" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-314">
+        <createTable tableName="ar_revenue_recog_rule">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL" defaultValueBoolean="false" />
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)" />
+            <column name="description" type="VARCHAR(100)" />
+            <column name="script_instance_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_delay" type="INT4" />
+            <column name="start_unit" type="VARCHAR(20)" />
+            <column name="start_event" type="VARCHAR(20)" />
+            <column name="stop_delay" type="INT4" />
+            <column name="stop_unit" type="VARCHAR(20)" />
+            <column name="stop_event" type="VARCHAR(20)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-315">
+        <createTable tableName="ar_revenue_schedule">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="charge_instance_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="revenue_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="recognized_revenue" type="numeric(23, 12)" />
+            <column name="invoiced_revenue" type="numeric(23, 12)" />
+            <column name="accrued_revenue" type="numeric(23, 12)" />
+            <column name="deffered_revenue" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-316">
+        <createTable tableName="crm_custom_action">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="APPLIES_TO" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="APPLICABLE_ON_EL" type="varchar(2000)" />
+            <column name="LABEL" type="varchar(50)" />
+            <column name="SCRIPT_INSTANCE_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-317">
+        <createTable tableName="billing_invoice_type">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="prefix_el" type="VARCHAR(2000)" />
+            <column name="sequence_size" type="INT4" />
+            <column name="matching_auto" type="BOOL" />
+            <column name="occ_template_id" type="BIGINT" />
+            <column name="current_invoice_nb" type="int8" />
+            <column name="occ_templ_negative_id" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
+        <createTable tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="applies_to_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
+        <createTable tableName="BILLING_LINKED_INVOICES">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="linked_invoice_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
+        <createTable tableName="billing_seq_invtyp_sell">
+            <column name="invoicetype_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="currentinvoicenb" type="BIGINT" />
+            <column name="prefixel" type="VARCHAR(255)" />
+            <column name="sequencesize" type="INT4" />
+            <column name="seller_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <!-- end tables -->
+    <!-- start PK -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-274">
         <addPrimaryKey columnNames="id" constraintName="account_entity_pkey" tableName="account_entity" />
@@ -4555,9 +5062,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-397">
         <addPrimaryKey columnNames="id" constraintName="crm_email_pkey" tableName="crm_email" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-398">
-        <addPrimaryKey columnNames="id" constraintName="crm_provider_config_pkey" tableName="crm_provider_config" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-399">
         <addPrimaryKey columnNames="id" constraintName="crm_provider_contact_pkey" tableName="crm_provider_contact" />
     </changeSet>
@@ -4624,9 +5128,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-426">
         <addPrimaryKey columnNames="id" constraintName="meveo_script_instance_pkey" tableName="meveo_script_instance" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-427">
-        <addPrimaryKey columnNames="id" constraintName="MEVEO_SCRIPT_INSTANCE_ERROR_pkey" tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-428">
         <addPrimaryKey columnNames="jobtrigger_id, jobparams_key" constraintName="PK_ADM_NOTIF_JOB_PARAMS" tableName="ADM_NOTIF_JOB_PARAMS" />
     </changeSet>
@@ -4657,9 +5158,68 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-437">
         <addPrimaryKey columnNames="id" constraintName="meveo_filter_pkey" tableName="meveo_filter" />
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-438">
+        <addPrimaryKey columnNames="id" constraintName="meveo_filter_parameter_pkey" tableName="meveo_filter_parameter" />
+    </changeSet>
 
 
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-439">
+        <addPrimaryKey columnNames="id" constraintName="cust_cet_pkey" tableName="cust_cet" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-440">
+        <addPrimaryKey columnNames="id" constraintName="adm_script_notification_pkey" tableName="adm_script_notification" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-441">
+        <addPrimaryKey columnNames="id" constraintName="crm_cust_cei_pkey" tableName="CUST_CEI" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-442">
+        <addPrimaryKey columnNames="id" constraintName="meveo_module_pkey" tableName="meveo_module" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-443">
+        <addPrimaryKey columnNames="id" constraintName="meveo_module_item_pkey" tableName="meveo_module_item" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-444">
+        <addPrimaryKey columnNames="id" constraintName="Ftp_Imported_File_pkey" tableName="FTP_IMPORTED_FILE" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-445">
+        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-446">
+        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-447">
+        <addPrimaryKey columnNames="id" constraintName="pk_cat_offer_template_category" tableName="cat_offer_template_category" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-448">
+        <addPrimaryKey columnNames="id" constraintName="pk_cat_bom" tableName="cat_business_offer_model" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-449">
+        <addPrimaryKey columnNames="id" constraintName="pk_cat_bsm" tableName="cat_business_serv_model" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-450">
+        <addPrimaryKey columnNames="offer_service_template_id, service_template_id" constraintName="pk_cat_offer_serv_incomp" tableName="cat_offer_serv_incomp" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-451">
+        <addPrimaryKey columnNames="id" constraintName="pk_cat_offer_serv_templates" tableName="cat_offer_serv_templates" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-452">
+        <addPrimaryKey columnNames="id" constraintName="ar_revenue_recog_rule_pkey" tableName="ar_revenue_recog_rule" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-453">
+        <addPrimaryKey columnNames="id" constraintName="ar_revenue_schedule_pkey" tableName="ar_revenue_schedule" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-454">
+        <addPrimaryKey columnNames="id" constraintName="crm_custom_action_pkey" tableName="crm_custom_action" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-455">
+        <addPrimaryKey columnNames="id" constraintName="billing_invoice_type_pkey" tableName="billing_invoice_type" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-456">
+        <addPrimaryKey columnNames="invoicetype_id, seller_id" constraintName="billing_seq_invtyp_sell_pkey" tableName="billing_seq_invtyp_sell" />
+    </changeSet>
 
+    <!-- end PK -->
+    <!-- start UK -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-422">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false"
@@ -4708,10 +5268,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-433">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_bf0bq2sqe9fefsoud50t0fbjp" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="crm_customer_brand" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-434">
-        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_c65a3hru5h04c6cbgapvsaud4" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="crm_provider_config" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-435">
         <addUniqueConstraint columnNames="provider_id, code" constraintName="uk_cygiejvomk5mi5v4o04hf4uny" deferrable="false" disabled="false"
@@ -4823,10 +5379,6 @@
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_o5gj61ogdrv2lqs68uxkswvn2" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="crm_provider_contact" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-463">
-        <addUniqueConstraint columnNames="code, account_type, provider_id" constraintName="uk_odjxv76fr14lrm19mt961b04p" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="crm_custom_field_tmpl" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-464">
         <addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="dwh_journal_entries" />
@@ -4889,24 +5441,15 @@
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_filter_provider" deferrable="false" disabled="false" initiallyDeferred="false"
             tableName="meveo_filter" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-480">
-        <addUniqueConstraint columnNames="id" tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-481">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false"
             tableName="MEVEO_SCRIPT_INSTANCE" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-482">
-        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="billing_invoice_configuration" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-483">
         <addUniqueConstraint columnNames="code" constraintName="uk_p7r8cy3d1w7g8pir7rxq17071" deferrable="false" disabled="false" initiallyDeferred="false"
             tableName="com_meveo_instance" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-484">
-        <addUniqueConstraint columnNames="CF_INSTANCE_ID, period_start_date, period_end_date" tableName="crm_custom_field_period" constraintName="uk_crm_custom_field_period" />
-    </changeSet>
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-485">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_job_instance" deferrable="false" disabled="false" initiallyDeferred="false"
             tableName="meveo_job_instance" />
@@ -4915,11 +5458,47 @@
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_q4ys10jgsw0px36rcvwdajh47" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="meveo_timer" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-487">
-        <addUniqueConstraint columnNames="code, subscription_id, account_id, charge_template_id, service_template_id, offer_template_id, access_id, job_instance_id, provider_id"
-            constraintName="uk_t8760asnmoo8x2t0k6m0my7mq" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_custom_field_inst" />
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-488">
+        <addUniqueConstraint columnNames="code,applies_to,provider_id" constraintName="uk_abfci88fr16lqf19cf961b08d" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="crm_custom_field_tmpl" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-489">
+        <addUniqueConstraint columnNames="code,cet_code,provider_id" constraintName="uk_cust_cei" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="CUST_CEI" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-490">
+        <addUniqueConstraint columnNames="APPLIES_TO_UUID, code, period_start_date, period_end_date, provider_id" tableName="crm_custom_field_inst"
+            constraintName="uk_crm_custom_field_inst" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-491">
+        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_bom_entity" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="cat_bom_entity" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-492">
+        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_module_provider" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="meveo_module" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-493">
+        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_cat_offer_template_category" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="cat_offer_template_category" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-494">
+        <addUniqueConstraint columnNames="provider_id, offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-495">
+        <addUniqueConstraint columnNames="provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="billing_invoice_configuration" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496">
+        <addUniqueConstraint columnNames="code, provider_id, occ_template_id" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_type" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
+        <addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
     </changeSet>
 
+    <!-- end UK -->
+    <!-- start FK -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-477">
         <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="account_entity" constraintName="fk_10ogn6loj5rxbuv94vlistxb8" deferrable="false"
@@ -5357,10 +5936,6 @@
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="adm_country" constraintName="fk_7iylm85ifnj4wq2f9yel3uli0" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-593">
-        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="crm_custom_field_inst" constraintName="fk_7ln8lcr2wv9bm70a1a1bfxj7l"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-594">
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category" baseTableName="cat_charge_template" constraintName="fk_7rod1pdt2un6wjrv7og61xhil"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
@@ -5620,10 +6195,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-660">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_calendar" constraintName="fk_bg9hy6b76ecf6of4e5rvc1mi7" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-661">
-        <addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_account_operation" constraintName="fk_bgalxtu1ecdtp5xhm5cfnuqtv"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-662">
         <addForeignKeyConstraint baseColumnNames="trading_country_id" baseTableName="billing_invoice" constraintName="fk_bo8b1b4gdnqloyib62h1qfwq2"
@@ -6050,10 +6621,6 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_wallet_operation" constraintName="fk_hg1a5impet68w8a37dehlnib0"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-772">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="crm_provider_config" constraintName="fk_hhmuiq7kyqvw1vfkoun3rg69j" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-773">
         <addForeignKeyConstraint baseColumnNames="hour_id" baseTableName="cat_calendar_hours" constraintName="fk_hlmhwditgy8p9em0e631ynw6r" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_hour_in_day" />
@@ -6270,10 +6837,6 @@
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="billing_trading_country" constraintName="fk_k9rx9xam7tpfhxdd9ebir310v"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-830">
-        <addForeignKeyConstraint baseColumnNames="access_id" baseTableName="crm_custom_field_inst" constraintName="fk_k9yptlmptd29otw8yhdvlq2ne" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="medina_access" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-831">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="cat_calendar" constraintName="fk_kgay4sp23tcw1d7vbh40lo4vh" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -6317,10 +6880,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-842">
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_ddrequest_lot" constraintName="fk_l2oq5xh0bmny2v55qqx2nrgui" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-843">
-        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_ddrequest_item" constraintName="fk_l37uv711gg21xjn3vqfaukick"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-844">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_triggered_edr" constraintName="fk_l4qilf98ke5xba6md9e20q17q" deferrable="false"
@@ -6369,10 +6928,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-857">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_offer_template" constraintName="fk_lwxfdcorf7aqt07qqevlio1se" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-858">
-        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="crm_custom_field_inst" constraintName="fk_lxyeg3kcnr06evyuhx0jafwpu"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-859">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="adm_user" constraintName="fk_lytcp2nwjqcrg2vm48luvu5kp" deferrable="false"
@@ -6498,10 +7053,6 @@
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_rated_transaction" constraintName="fk_o5yu3c0bnac626w755w5f0voc"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-890">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="crm_custom_field_inst" constraintName="fk_o6upbqxobw8hi1s018vvi8fvb"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-891">
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_dunning_lot" constraintName="fk_o9u6mjqv2wh9khs2k3tgj91e3" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
@@ -6513,10 +7064,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-893">
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="billing_trading_currency" constraintName="fk_obn7yfny7v3ofg0hhy7bklj5l"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-894">
-        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="crm_custom_field_inst" constraintName="fk_ocpb4fajidea56b9i45fuul73"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-895">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="cat_service_template" constraintName="fk_odits353donovme990incarx2"
@@ -6590,17 +7137,9 @@
         <addForeignKeyConstraint baseColumnNames="trading_country" baseTableName="billing_charge_instance" constraintName="fk_pgo533tdbe0f5aq3rqv6oaouv"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-913">
-        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="crm_custom_field_inst" constraintName="fk_pkgi2qiqjmbua5yl1kt1ciqew"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-914">
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_inv_sub_cat_country" constraintName="fk_pnpdbiwied1hvkv7i0fe32l29"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-915">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="crm_provider_config" constraintName="fk_psse6gfw1i6249b8vwfurduxp" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-916">
         <addForeignKeyConstraint baseColumnNames="termin_reason_id" baseTableName="billing_user_account" constraintName="fk_pvrmaqdyj4v7c2i5qa7cldvp6"
@@ -6609,10 +7148,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-917">
         <addForeignKeyConstraint baseColumnNames="pr_currency_id" baseTableName="billing_billing_run" constraintName="fk_pwbkc74fonnsw237agcx8q4yh"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-918">
-        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="crm_custom_field_inst" constraintName="fk_pxbu6qkqkyns9m2o866iggwp0"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-919">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="adm_title" constraintName="fk_py437l77cubnablwimlfuobqd" deferrable="false"
@@ -6830,10 +7365,6 @@
         <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="billing_wallet_operation" constraintName="fk_t98kqb1prnfw6scvudimx1u0q"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-975">
-        <addForeignKeyConstraint baseColumnNames="ddrequestlot_id" baseTableName="ar_account_operation" constraintName="fk_tamlvmuwj49ido2v2cfhv5mk7"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_lot" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-976">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="adm_notif_history" constraintName="fk_tcyc3mat6dxog946fa2wlmxlf" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
@@ -6874,10 +7405,6 @@
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_matching_code" constraintName="fk_u1h8wgs6xjj681hqw8o9c1sd" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-986">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="crm_provider_config" constraintName="fk_vukhlba2bipm33g574qaftcu" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-987">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_wallet" constraintName="fk_wbnx8d4j8avwqdq3gdshnxxv" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -6894,10 +7421,6 @@
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_counter_period" constraintName="fk_ygcwrm1bu5ap5wedtdq619q1"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-991">
-        <!-- <addForeignKeyConstraint baseColumnNames="MEVEO_TIMER_ID" baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_customfieldinstmeveotimer" -->
-        <!-- deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_TIMER" /> -->
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-992">
         <addForeignKeyConstraint baseColumnNames="sub_cat_invoice_agregate_id" baseTableName="billing_invoice_agregate" constraintName="fkc92fa77a520f2e17"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
@@ -6909,10 +7432,6 @@
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-994">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_creator"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_updater"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
         <addForeignKeyConstraint constraintName="provider_invoice_configuration_fk" referencedTableName="crm_provider" baseColumnNames="provider_id"
             baseTableName="billing_invoice_configuration" referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE" />
     </changeSet>
@@ -6932,16 +7451,7 @@
         <addForeignKeyConstraint baseColumnNames="jobtrigger_id" baseTableName="ADM_NOTIF_JOB_PARAMS" constraintName="fk_params_job_trigger" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-998">
-        <addForeignKeyConstraint constraintName="fk_creator_MEVEO_SCRIPT_INSTANCE_ERROR" referencedTableName="adm_user" baseColumnNames="creator_id"
-            baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
-        <addForeignKeyConstraint constraintName="fk_updater_MEVEO_SCRIPT_INSTANCE_ERROR" referencedTableName="adm_user" baseColumnNames="updater_id"
-            baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
-        <addForeignKeyConstraint constraintName="fk_script-instance_MEVEO_SCRIPT_INSTANCE_ERROR" referencedTableName="MEVEO_SCRIPT_INSTANCE"
-            baseColumnNames="script_instance_id" baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" constraintName="fk_provider_MEVEO_SCRIPT_INSTANCE_ERROR"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-999">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_filter_order_condition" constraintName="fk_meveo_filter_order_condition_crm_provider"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -7024,19 +7534,9 @@
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="com_meveo_instance" constraintName="fk_simrfknulxj9dfm6v03k4ejmh" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1012">
-        <addForeignKeyConstraint baseColumnNames="CF_INSTANCE_ID" baseTableName="CRM_CUSTOM_FIELD_PERIOD" constraintName="fk_CFP_CFI" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1013">
         <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_TMPL" constraintName="fk_CFT_CALENDAR" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1014">
-        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_CFI_CALENDAR" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
-        <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="crm_custom_field_inst" constraintName="fk_35l2eaa4jvweujsta65d2ott"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_job_instance" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1015">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_timer" constraintName="fk_dnqwct997aixcp36wuvmxgy12" deferrable="false"
@@ -7084,7 +7584,279 @@
         <addForeignKeyConstraint baseColumnNames="EDR_ID" baseTableName="BILLING_RATED_TRANSACTION" constraintName="fk_ropEdrId" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
     </changeSet>
-
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1023">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1024">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_filter_parameter" constraintName="fk_creator_meveo_filter_parameter_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1025">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="meveo_filter_parameter" constraintName="fk_updater_meveo_filter_parameter_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1026">
+        <addForeignKeyConstraint baseColumnNames="filter_id" baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_meveo_filter"
+            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1027">
+        <addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice" referencedTableName="billing_invoice" baseColumnNames="invoice_id"
+            baseTableName="billing_invoice" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1028">
+        <addForeignKeyConstraint constraintName="fk_billing_rated_transaction_rated_transaction" referencedTableName="billing_rated_transaction"
+            baseColumnNames="adjusted_rated_tx" baseTableName="billing_rated_transaction" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1029">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="cust_cet" constraintName="fk_cust_cet_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1030">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cust_cet" constraintName="fk_creator_cust_cet_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1031">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="cust_cet" constraintName="fk_updater_cust_cet_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1032">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="adm_script_notification" constraintName="fk_n1n2i3ht998wlegdshme8gyfd" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1033">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="CUST_CEI" constraintName="fk_cust_cei_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1035">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_module" constraintName="fk_meveo_module_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1036">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_module" constraintName="fk_creator_meveo_module_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1037">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="meveo_module" constraintName="fk_updater_meveo_module_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1038">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_module_item" constraintName="fk_meveo_module_item_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1039">
+        <addForeignKeyConstraint baseColumnNames="module_id" baseTableName="meveo_module_item" constraintName="fk_meveo_module_item_meveo_module"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1040">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="FTP_IMPORTED_FILE" constraintName="fk_Ftp_Imported_File_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1041">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="FTP_IMPORTED_FILE" constraintName="fk_creator_Ftp_Imported_File_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1042">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="FTP_IMPORTED_FILE" constraintName="fk_updater_Ftp_Imported_File_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1043">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_crm_custom_field_inst_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1044">
+        <addForeignKeyConstraint constraintName="fk_cat_offer_template_script_instance_termination" referencedTableName="meveo_script_instance"
+            baseColumnNames="termination_script_instance_id" baseTableName="cat_offer_template" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1045">
+        <addForeignKeyConstraint constraintName="fk_cat_offer_template_script_instance_subscription" referencedTableName="meveo_script_instance"
+            baseColumnNames="subscription_script_instance_id" baseTableName="cat_offer_template" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1046">
+        <addForeignKeyConstraint constraintName="fk_cat_service_template_script_instance_termination" referencedTableName="meveo_script_instance"
+            baseColumnNames="termination_script_instance_id" baseTableName="cat_service_template" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1047">
+        <addForeignKeyConstraint constraintName="fk_cat_service_template_script_instance_activation" referencedTableName="meveo_script_instance"
+            baseColumnNames="activation_script_instance_id" baseTableName="cat_service_template" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1048">
+        <addForeignKeyConstraint constraintName="fk_bom_entity_offer_template" referencedTableName="cat_offer_template" baseColumnNames="offer_template_id"
+            baseTableName="cat_bom_entity" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1049">
+        <addForeignKeyConstraint constraintName="fk_bom_entity_script_instance" referencedTableName="meveo_script_instance" baseColumnNames="script_instance_id"
+            baseTableName="cat_bom_entity" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1050">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_exec_role" constraintName="fk_script_instance" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1051">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_exec_role" constraintName="fk_role" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1052">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_sourc_role" constraintName="fk_script_instance" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1053">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_sourc_role" constraintName="fk_role" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1054">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_offer_template_category" constraintName="fk_cot_category_adm_user_creator"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1055">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="cat_offer_template_category" constraintName="fk_cot_category_adm_user_updater"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1056">
+        <addForeignKeyConstraint baseColumnNames="cat_offer_template_cat_id" baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_template_category"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template_category" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1057">
+        <addForeignKeyConstraint baseColumnNames="OFFER_TEMPLATE_CATEGORY_ID" baseTableName="cat_offer_template_category" constraintName="fk_offer_cat_template_offer_cat_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template_category" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1058">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="cat_business_offer_model" constraintName="fk_cat_bom_meveo_module" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1059">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_business_offer_model" constraintName="fk_cat_bom_offer_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1061">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="cat_business_serv_model" constraintName="fk_cat_bsm_meveo_module" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1062">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cat_business_serv_model" constraintName="fk_cat_bsm_service_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1064">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_service_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1065">
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_offer_template"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_serv_templates" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1066">
+        <addForeignKeyConstraint baseColumnNames="business_offer_model_id" baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_bom"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_offer_model" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1067">
+        <addForeignKeyConstraint baseColumnNames="business_service_model_id" baseTableName="cat_service_template" constraintName="fk_cat_service_template_bsm"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_serv_model" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1068">
+        <addForeignKeyConstraint constraintName="FK_CFT_MCOLS_CFT" referencedTableName="CRM_CUSTOM_FIELD_TMPL" baseColumnNames="CFT_ID" baseTableName="CRM_CUSTOM_FIELD_TMPL_MCOLS"
+            referencedColumnNames="ID" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1069">
+        <addForeignKeyConstraint baseColumnNames="ACCOUNT_OPERATION_ID" baseTableName="AR_DDREQUEST_ITEM" constraintName="fk_ar_occ_dd_item" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1070">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1071">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_creator"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1072">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_updator"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1073">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_revenue_recog_rule" constraintName="fk_ar_revenue_recog_rule_script"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1074">
+        <addForeignKeyConstraint baseColumnNames="REVENUE_RECOG_RULE_ID" baseTableName="CAT_CHARGE_TEMPLATE" constraintName="fk_CAT_CHARGE_TEMPLATE_RECOG_RULE"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="AR_REVENUE_RECOG_RULE" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1075">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1076">
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="ar_revenue_schedule" constraintName="fk_ar_revenue_schedule_charge"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1078">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="MEVEO_MODULE" constraintName="fk_meveo_module_script_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1079">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="crm_custom_action" constraintName="fk_crm_custom_action_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1080">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="crm_custom_action" constraintName="fk_creator_crm_custom_action_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1081">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="crm_custom_action" constraintName="fk_updater_crm_custom_action_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1082">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="crm_custom_action" constraintName="fk_meveo_module_script_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1083">
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_invoice_type" constraintName="fk_provider_id_billing_invoice_type"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1084">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_invoice_type" constraintName="fk_creator_id_billing_invoice_type"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1085">
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="billing_invoice_type" constraintName="fk_updater_id_billing_invoice_type"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1086">
+        <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="billing_invoice_type" constraintName="fk_occ_template_id_billing_invoice_type"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1087">
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_invoice_type_applies_to" constraintName="fk_invoice_type_id_billing_invoice_type_applies_to"
+            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1088">
+        <addForeignKeyConstraint baseColumnNames="applies_to_id" baseTableName="billing_invoice_type_applies_to" constraintName="fk_applies_to_id_billing_invoice_type_applies_to"
+            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1089">
+        <addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_invoice" referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
+            baseTableName="billing_invoice" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1090">
+        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_2rjk30cy77bs2jxqwsbrhk6qb"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1091">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1092">
+        <addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_cycle" referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
+            baseTableName="billing_cycle" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1093">
+        <addForeignKeyConstraint baseColumnNames="occ_templ_negative_id" baseTableName="billing_invoice_type" constraintName="fk_occ_templ_negative_id_billing_invoice_type"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1094">
+        <addForeignKeyConstraint baseColumnNames="meveo_instance_id" baseTableName="cat_triggered_edr" constraintName="fk_meveo_instance_id_com_meveo_instance"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_meveo_instance" />
+    </changeSet>
+    <!-- end FK -->
 
 
 
@@ -7101,7 +7873,7 @@
 
 
     <!-- Keep this always as the last changeset to remove all rebuild logs -->
-    <changeSet id="rebuild-4.1-struct-complete" author="AndriusKarpavicius">
+    <changeSet id="rebuild-4.4-struct-complete" author="AndriusKarpavicius">
         <delete tableName="databasechangelog"></delete>
     </changeSet>
 

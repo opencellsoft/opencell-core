@@ -484,6 +484,24 @@
     <con:operation id="73c78b7d-3b5a-4cf2-9120-bed96c9279fe" isOneWay="false" action="" name="listBusinessServiceModel" bindingOperationName="listBusinessServiceModel" type="Request-Response" outputName="listBusinessServiceModelResponse" inputName="listBusinessServiceModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
+    <con:operation id="80274af4-4292-4615-bada-69c757dfd799" isOneWay="false" action="" name="findDiscountPlanItem" bindingOperationName="findDiscountPlanItem" type="Request-Response" outputName="findDiscountPlanItemResponse" inputName="findDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="67eb6e57-1d7e-44fb-bb1d-5ffa07cbed32" isOneWay="false" action="" name="listDiscountPlanItem" bindingOperationName="listDiscountPlanItem" type="Request-Response" outputName="listDiscountPlanItemResponse" inputName="listDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a6c3a540-a67a-442f-b3d9-c5de1f4f5263" isOneWay="false" action="" name="removeDiscountPlanItem" bindingOperationName="removeDiscountPlanItem" type="Request-Response" outputName="removeDiscountPlanItemResponse" inputName="removeDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="07b86416-e898-4ddd-905f-f362ecaa8ea0" isOneWay="false" action="" name="createDiscountPlanItem" bindingOperationName="createDiscountPlanItem" type="Request-Response" outputName="createDiscountPlanItemResponse" inputName="createDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="98e0e0e6-8284-4284-9b80-c9660fa9a371" isOneWay="false" action="" name="createOrUpdateDiscountPlanItem" bindingOperationName="createOrUpdateDiscountPlanItem" type="Request-Response" outputName="createOrUpdateDiscountPlanItemResponse" inputName="createOrUpdateDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="91e0655c-aa08-44e3-ad0a-0b49b39d76fb" isOneWay="false" action="" name="updateDiscountPlanItem" bindingOperationName="updateDiscountPlanItem" type="Request-Response" outputName="updateDiscountPlanItemResponse" inputName="updateDiscountPlanItem" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="cae91dcb-66de-4c55-b3c0-611ee17f70af" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1177,6 +1195,18 @@
     <con:operation id="de43b680-5fcb-4879-8eea-b86d4b4c78ea" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
+    <con:operation id="d732a166-e996-49fa-bac4-4fa6ebd3ca54" isOneWay="false" action="" name="findUserHierarchyLevel" bindingOperationName="findUserHierarchyLevel" type="Request-Response" outputName="findUserHierarchyLevelResponse" inputName="findUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="903c8313-f42e-4b42-8f85-10b55f7263ee" isOneWay="false" action="" name="updateUserHierarchyLevel" bindingOperationName="updateUserHierarchyLevel" type="Request-Response" outputName="updateUserHierarchyLevelResponse" inputName="updateUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="dc90b7f2-997e-49f1-ab89-61930f525c20" isOneWay="false" action="" name="createUserHierarchyLevel" bindingOperationName="createUserHierarchyLevel" type="Request-Response" outputName="createUserHierarchyLevelResponse" inputName="createUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7a27358b-0ec7-478a-a417-348b795b6fba" isOneWay="false" action="" name="removeUserHierarchyLevel" bindingOperationName="removeUserHierarchyLevel" type="Request-Response" outputName="removeUserHierarchyLevelResponse" inputName="removeUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1701,6 +1731,153 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:testSuite id="29776575-4f06-47f5-9b59-8a1a68c88d1c" name="Setup base data">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="227e9e26-790d-4057-815e-7aed8e5b48a5" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Configuration: InvType, BC and Seller" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create InvoiceType" id="ed855ba7-7a27-4a11-95b6-6f520985622a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createInvoiceType</con:operation>
+          <con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateInvoiceType>
+         <invoiceType>
+            <code>${#Project#baseEntityPrefix}_TEST-Type</code>
+            <description>Invoice Test Type</description>
+            <occTemplateCode>FA_FACT</occTemplateCode>            
+            <sequenceDto>
+               <prefixEL>Fact_</prefixEL>
+               <sequenceSize>9</sequenceSize>
+               <currentInvoiceNb>9</currentInvoiceNb>
+            </sequenceDto>          
+            <appliesTo>COM</appliesTo>
+  		  <matchingAuto>false</matchingAuto>
+         </invoiceType>
+      </ws:createOrUpdateInvoiceType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/>
+            <con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create BillingCycle" id="bfeeacdc-abe0-439c-88f9-8818d3fba78f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateBillingCycle</con:operation>
+          <con:request name="Create BillingCycle" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateBillingCycle>
+         <!--Optional:-->
+         <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+            <!--Optional:-->
+            <transactionDateDelay>0</transactionDateDelay>
+            <invoiceDateProductionDelay>0</invoiceDateProductionDelay>            
+            <dueDateDelay>2</dueDateDelay>
+            <invoiceDateDelay>4</invoiceDateDelay>          
+            <calendar>MONTHLY</calendar>
+  		  <invoiceTypeCode>${#Project#baseEntityPrefix}_TEST-Type</invoiceTypeCode>
+         </billingCycle>
+      </ws:createOrUpdateBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Seller" id="ead7327b-e834-4ce9-972f-c32dda45e69f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateSeller</con:operation>
+          <con:request name="Create Seller" id="37258cdf-c90b-46ae-97b3-74576d44b559">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateSeller>\r         
+		<seller code="SELLER_FR" description="France Seller">
+		     <currencyCode>EUR</currencyCode>
+               <languageCode>FRA</languageCode>
+               <parentSeller>MAIN_SELLER</parentSeller>
+               <provider>DEMO</provider>
+		  	<invoiceTypeSequences>
+               <!--Zero or more repetitions:-->
+	               <entry>                
+	                  <key>${#Project#baseEntityPrefix}_TEST-Type</key>
+	                  <!--Optional:-->
+	                  <value>	                     
+	                     <prefixEL>Fact_</prefixEL>
+	                     <sequenceSize>9</sequenceSize>
+	                     <currentInvoiceNb>9</currentInvoiceNb>
+	                  </value>
+	               </entry>
+            	</invoiceTypeSequences>
+		</seller>         
+      </ws:createOrUpdateSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="5acbccda-3ff5-41f5-8aba-15c6b35387ac"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Catalog: Charges, Services, Offer, PP, Counters, Wallets" searchProperties="true" id="fe1d7e1f-858a-439a-a1d1-76b54cf3a456">
       <con:settings/>
       <con:testStep type="request" name="Create PrepaidWallet" id="19b40514-10c9-4ba9-b309-250e9fddee45">
@@ -2199,6 +2376,75 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create ScriptInstance" id="10a85956-6f18-46a4-9cb2-ff65e93ca758">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Create ScriptInstance" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.rating.RatingScript" description="rating script">
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+            package org.meveo.service.script.rating;
+
+import java.math.BigDecimal;
+import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class RatingScript extends Script {
+
+    private static final Logger log = LoggerFactory.getLogger(RatingScript.class);
+
+    public void execute(Map<String, Object> context, User user) throws BusinessException {
+        log.debug("Rating script creation script...");
+        WalletOperation op = (WalletOperation) context.get(Script.CONTEXT_ENTITY);
+        op.setAmountWithoutTax(op.getAmountTax().add(BigDecimal.ONE));
+    }
+}
+           ]]]]>><![CDATA[
+            </script>    
+         </createOrUpdateScriptInstanceRequest>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create priceplan recurring" id="de11503f-7fb8-4b89-87dd-7fddcb228b6a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -2218,6 +2464,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <eventCode>${#Project#baseEntityPrefix}_REC1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
+            <scriptInstance>org.meveo.service.script.rating.RatingScript</scriptInstance>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -5771,18 +6018,29 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
               <con:configuration>
                 <path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
-                <content><![CDATA[<languages>
-               <language code="ENG">
-                  <description>English</description>
-               </language>
-               <language code="FRA">
-                  <description>French</description>
-               </language>
-            </languages>]]></content>
+count(//ns2:findTradingConfigurationResponse[1]/return[1]/languages/language)</path>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="d2ad8d97-0d06-4890-9edf-6b2c3d0a5b6e" name="Contains">
+              <con:configuration>
+                <token>&lt;language code="FRA">
+                  &lt;description>French&lt;/description>
+               &lt;/language></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="c9568bda-2722-414b-8be0-daaf0c44067e" name="Contains 1">
+              <con:configuration>
+                <token>&lt;language code="ENG">
+                  &lt;description>English&lt;/description>
+               &lt;/language></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -6087,15 +6345,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//return[1]/billingCycles</path>
                 <content><![CDATA[<billingCycles>
-               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
-                  <invoiceDateDelay>4</invoiceDateDelay>
-                  <dueDateDelay>2</dueDateDelay>
-                  <calendar>MONTHLY</calendar>
-               </billingCycle>
                <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
                   <calendar>MONTHLY</calendar>
+               </billingCycle>
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <invoiceDateProductionDelay>0</invoiceDateProductionDelay>
+                  <transactionDateDelay>0</transactionDateDelay>
+                  <calendar>MONTHLY</calendar>
+                  <invoiceTypeCode>${#Project#baseEntityPrefix}_TEST-Type</invoiceTypeCode>
                </billingCycle>
             </billingCycles>]]></content>
                 <allowWildcards>false</allowWildcards>
@@ -6253,15 +6514,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//return[1]/billingCycles</path>
                 <content><![CDATA[<billingCycles>
-               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
-                  <invoiceDateDelay>4</invoiceDateDelay>
-                  <dueDateDelay>2</dueDateDelay>
-                  <calendar>MONTHLY</calendar>
-               </billingCycle>
                <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
                   <calendar>MONTHLY</calendar>
+               </billingCycle>
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+                  <invoiceDateDelay>4</invoiceDateDelay>
+                  <dueDateDelay>2</dueDateDelay>
+                  <invoiceDateProductionDelay>0</invoiceDateProductionDelay>
+                  <transactionDateDelay>0</transactionDateDelay>
+                  <calendar>MONTHLY</calendar>
+                  <invoiceTypeCode>${#Project#baseEntityPrefix}_TEST-Type</invoiceTypeCode>
                </billingCycle>
             </billingCycles>]]></content>
                 <allowWildcards>false</allowWildcards>
@@ -6895,6 +7159,82 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:testCase>
     <con:testCase id="4c6e35c9-0104-463b-8a28-5205e44f3406" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD User" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="prepare UserHierarchyLevel for User" id="55a865fc-5462-46e1-9132-e1333d64fcee">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUserHierarchyLevel</con:operation>
+          <con:request name="prepare UserHierarchyLevel for User" id="1d1547c4-07f7-4f65-bef8-a3271473a5f9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">\r           
+         </userHierarchyLevel>\r
+      </ws:createUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="3bdb56ab-504f-4e84-a1fa-42270e2eb7ed" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="prepare UserHierarchyLevel Update for User" id="4e95c077-e74e-4cad-bd3f-4cf49529268d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUserHierarchyLevel</con:operation>
+          <con:request name="prepare UserHierarchyLevel Update for User" id="1d1547c4-07f7-4f65-bef8-a3271473a5f9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">\r           
+         </userHierarchyLevel>\r
+      </ws:createUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="130d360c-93be-4b58-a01a-e5a72e5904ab" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create User with All Vals" id="d77ccf0f-17a9-43c6-b490-38ea856a9bb7">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -6922,6 +7262,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <provider>DEMO</provider>
             <firstName>Saidani</firstName>
             <lastName>Hatem</lastName>            
+            <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</userLevel>            
          </user>
       </ws:createUser>
    </soapenv:Body>
@@ -7029,6 +7370,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <role>superAdministrateur</role>
                </roles>
                <role>superAdministrateur</role>
+               <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</userLevel>
             </user>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -7131,6 +7473,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <provider>DEMO</provider>            
             <firstName>firstName</firstName>
             <lastName>lastName</lastName>
+            <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</userLevel>
          </user>
       </ws:updateUser>
    </soapenv:Body>
@@ -7237,6 +7580,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <role>administrateur</role>
                </roles>
                <role>administrateur</role>
+               <userLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</userLevel>
             </user>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -7478,6 +7822,80 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove UserHierarchyLevel" id="d582afc7-a8f9-4bc5-801e-28ca0f7c274d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>removeUserHierarchyLevel</con:operation>
+          <con:request name="remove UserHierarchyLevel" id="1ff35835-e2c0-457f-b664-c6da8cd8f2ab">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserHierarchyLevel>\r
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1USER</hierarchyLevelCode>\r
+      </ws:removeUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="5ee60074-f50f-440d-ba93-a9b201b4069b" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove UserHierarchyLevel for Update" id="2be21e1b-c544-4840-9927-65b47fabd047">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>removeUserHierarchyLevel</con:operation>
+          <con:request name="remove UserHierarchyLevel for Update" id="1ff35835-e2c0-457f-b664-c6da8cd8f2ab">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserHierarchyLevel>\r
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2USER</hierarchyLevelCode>\r
+      </ws:removeUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="08e01e90-e72c-4f37-a94b-e3800ea00eb8" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
@@ -21174,14 +21592,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD TerminationReason" searchProperties="true" id="f1a77b99-5a8f-4a58-9b5d-61b13154595b">
+    <con:testCase id="84ffca4c-2945-464c-8621-86eb35f4c7e6" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD InvoiceType" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="create TerminationReason with All Vals" id="ff50932e-850f-4a7c-863d-d03fd620b0c9">
+      <con:testStep type="request" name="create InvoiceType with All Vals" id="d5e9c67f-8bbc-4a14-a044-8b88b4c44d2d">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createTerminationReason</con:operation>
-          <con:request name="create TerminationReason with All Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239">
+          <con:operation>createInvoiceType</con:operation>
+          <con:request name="create InvoiceType with All Vals" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -24392,10 +24810,522 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="d1358b6c-6312-4e42-bee4-dde5ca715e27" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD UserHierarchyLevel" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="create UserHierarchyLevel with required-only fields" id="7d6de9c0-77a6-44fe-8247-9af2ac9c5c57">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUserHierarchyLevel</con:operation>
+          <con:request name="create UserHierarchyLevel with required-only fields" id="19929a55-fba8-4f2d-ac50-b6ef640990a3">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+   	<ws:createUserHierarchyLevel>
+     	<userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE2">
+      	</userHierarchyLevel>
+   	</ws:createUserHierarchyLevel> 
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="6f614111-c0c5-4774-a47b-8508624ec1de" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find UserHierarchyLevel min Req Vals" id="82e9f17b-2df8-446a-b31d-98f8504d2d2d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find UserHierarchyLevel min Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration>
+                <token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE2">
+               &lt;orderLevel>0&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create UserHierarchyLevel with All Vals" id="bc5e1a1c-4ceb-43f8-b065-1eed71dcfba8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUserHierarchyLevel</con:operation>
+          <con:request name="create UserHierarchyLevel with All Vals" id="b0f57055-458a-4cf3-b4ee-cf0aa8acc705">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">\r
+            <parentLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</parentLevel>\r
+            <orderLevel>1</orderLevel>\r
+         </userHierarchyLevel>\r
+      </ws:createUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="a3aa747e-ce19-48c9-a7df-438c2fdf0b31" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find UserHierarchyLevel with All Req Vals" id="88e56960-8d07-4d6f-9233-13ebfc09157e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find UserHierarchyLevel with All Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration>
+                <token><![CDATA[<userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_Description1">
+               <parentLevel>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</parentLevel>
+               <orderLevel>1</orderLevel>
+            </userHierarchyLevel>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update UserHierarchyLevel with all fields" id="bd9bafe7-73db-4219-a65f-b45b2ca27801">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateUserHierarchyLevel</con:operation>
+          <con:request name="update UserHierarchyLevel with all fields" id="d6a19392-add4-4fc3-97a8-f925f4d814bd">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_DescriptionUpdate">\r      
+            <parentLevel></parentLevel>\r
+            <orderLevel>2</orderLevel>\r
+         </userHierarchyLevel>\r
+      </ws:updateUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8a6d2ad6-d7c3-44ed-8f64-172ab792c2d8" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find update UserHierarchyLevel with All Req Vals" id="dc6309b8-4eb6-4dac-b7ae-2c89381b51d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find update UserHierarchyLevel with All Req Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration>
+                <token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1" description="${#Project#entityPrefix}_${#TestSuite#index}_DescriptionUpdate">
+               &lt;orderLevel>2&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update UserHierarchyLevel with required field" id="1ba172b6-6696-4cff-bfcd-52c0e87fccc4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateUserHierarchyLevel</con:operation>
+          <con:request name="update UserHierarchyLevel with required field" id="04665e39-35b4-487d-9bb6-38776acfb2b6">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateUserHierarchyLevel>\r
+         <userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1">\r
+         </userHierarchyLevel>\r
+      </ws:updateUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="9d9ab379-4354-4bc3-8b83-f1c9816fc149" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find update UserHierarchyLevel with required Vals" id="90227867-a2b0-4a9d-ac08-0827bc423ef1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findUser</con:operation>
+          <con:request name="find update UserHierarchyLevel with required Vals" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <!--Optional:-->
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="6a1513f3-5e4e-4cc8-8faa-f9b93cf407aa" name="Find All values">
+              <con:configuration>
+                <token>&lt;userHierarchyLevel code="${#Project#entityPrefix}_${#TestSuite#index}_CODE1">
+               &lt;orderLevel>0&lt;/orderLevel>
+            &lt;/userHierarchyLevel></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove UserHierarchyLevel" id="2ee4797d-6b70-4ce8-ace2-6e2067174029">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>removeUserHierarchyLevel</con:operation>
+          <con:request name="remove UserHierarchyLevel" id="99e457b8-9dfa-45e5-9f69-d23021b8db09">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserHierarchyLevel>\r
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>\r
+      </ws:removeUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="b88b022f-f2fc-4648-8c22-28dc37bff9ba" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find removed UserHierarchyLevel1" id="e48a6743-9931-45ed-8a71-be67a8392b29">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findRole</con:operation>
+          <con:request name="find removed UserHierarchyLevel1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE1</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Fail Status">
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fca54be2-0f7f-4452-b07b-29c5d9aaac4f" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove UserHierarchyLevel2" id="36e0988d-2e29-4615-a4b1-02c129a6e034">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>removeUserHierarchyLevel</con:operation>
+          <con:request name="remove UserHierarchyLevel2" id="18ebb217-2c21-4b63-ac8c-345fa1fe7166">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserHierarchyLevel>\r
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>\r
+      </ws:removeUserHierarchyLevel>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8eb6e2ac-90d2-4d37-82c2-b043a182327e" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find removed UserHierarchyLevel2" id="b22288a0-a268-44b6-9d49-dcb0b1985364">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findRole</con:operation>
+          <con:request name="find removed UserHierarchyLevel2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f558fdc8-c376-475c-90a4-1d4a54bc219e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>      
+      <ws:findUserHierarchyLevel>
+         <hierarchyLevelCode>${#Project#entityPrefix}_${#TestSuite#index}_CODE2</hierarchyLevelCode>
+      </ws:findUserHierarchyLevel>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="d8044edd-825b-474b-9624-c67ddd603564" name="Code Fail Status">
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fca54be2-0f7f-4452-b07b-29c5d9aaac4f" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>36</con:value>
+        <con:value>38</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -24976,6 +25906,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    <soapenv:Body>\r
       <ws:createOfferTemplate>\r
          <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1" description="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1">\r
+         	  <longDescription>This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. </longDescription>
             <disabled>false</disabled>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
@@ -25084,6 +26015,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:assertion type="Simple Contains" id="216b90e7-c8d3-4581-893d-8a1d86ecfa31" name="Contains 1">
               <con:configuration>
                 <token><![CDATA[<offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1" description="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1">
+               <longDescription>This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description.</longDescription>
                <disabled>false</disabled>
                <offerServiceTemplates>
                   <offerServiceTemplate>
@@ -25201,6 +26133,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    <soapenv:Body>\r
       <ws:updateOfferTemplate>\r
          <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1" description="${#Project#entityPrefix}_OFFER1_DESC">\r
+         	  <longDescription>UPDATED - This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. </longDescription>
             <disabled>true</disabled>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
@@ -25310,6 +26243,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:assertion type="Simple Contains" id="d6bc9eb9-6fc2-4f66-98a9-e89d6b7f34dd" name="Contains 1">
               <con:configuration>
                 <token><![CDATA[<offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1" description="${#Project#entityPrefix}_OFFER1_DESC">
+               <longDescription>UPDATED - This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description. This is a long offer description.</longDescription>
                <disabled>true</disabled>
                <offerServiceTemplates>
                   <offerServiceTemplate>
@@ -27571,6 +28505,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    <soapenv:Body>
       <ws:createServiceTemplate>
          <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
+         	  <longDescription>This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description.</longDescription>
             <invoicingCalendar>MONTHLY</invoicingCalendar>
             <serviceChargeTemplateRecurrings>
                <serviceChargeTemplateRecurring>
@@ -27688,6 +28623,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:assertion type="Simple Contains" id="ebcbd9be-876f-4e73-a6da-553ecb8f1cfc" name="Contains 1">
               <con:configuration>
                 <token><![CDATA[<serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
+               <longDescription>This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description.</longDescription>
                <invoicingCalendar>MONTHLY</invoicingCalendar>
                <serviceChargeTemplateRecurrings>
                   <serviceChargeTemplateRecurring>
@@ -27825,6 +28761,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    <soapenv:Body>
       <ws:updateServiceTemplate>
          <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_SERVICE1_DESC">
+         	  <longDescription>UPDATED - This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description.</longDescription>
             <invoicingCalendar>Multi period</invoicingCalendar>
             <serviceChargeTemplateRecurrings>
                <serviceChargeTemplateRecurring>
@@ -27942,6 +28879,7 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:assertion type="Simple Contains" id="8b724641-b13c-4725-8093-67b874fb5bb4" name="Contains 1">
               <con:configuration>
                 <token><![CDATA[<serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_SERVICE1_DESC">
+               <longDescription>UPDATED - This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description. This is a long service description.</longDescription>
                <invoicingCalendar>Multi period</invoicingCalendar>
                <serviceChargeTemplateRecurrings>
                   <serviceChargeTemplateRecurring>
@@ -35813,12 +36751,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
+      </con:testStep>
+      <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>130</con:value>
+        <con:value>132</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -45074,7 +46013,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>50</con:value>
+        <con:value>51</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -45179,7 +46118,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45231,7 +46170,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45361,7 +46300,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45413,7 +46352,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45457,7 +46396,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:removeDiscountPlan>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45494,7 +46433,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP1</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -45538,7 +46477,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:removeDiscountPlan>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45575,7 +46514,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findDiscountPlan>
-      	<discountPlanCocde>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCocde>
+      	<discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DP2</discountPlanCode>
       </ws:findDiscountPlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -46764,10 +47703,616 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="24576eb7-b4e2-435a-a46f-84ff62f7fe2d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD DiscountPlanItem" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="create DiscountPlan" id="6da32ff5-c42b-4ee8-ae6b-6197d5f2a1df">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createDiscountPlan</con:operation>
+          <con:request name="create DiscountPlan" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDiscountPlan>         
+         <discountPlan>            
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</code>
+         </discountPlan>
+      </ws:createDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e63c6d05-5e79-4f0c-be37-e13a775de52c" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create DiscountPlanItem with All Vals" id="a907986a-fe38-4425-9cf4-ff77e3b0ec31">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createDiscountPlanItem</con:operation>
+          <con:request name="create DiscountPlanItem with All Vals" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDiscountPlanItem>
+         <discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI1">
+            <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+            <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+            <percent>0.05</percent>
+            <accountingCode>accountingCode</accountingCode>
+            <expressionEl>expressionEl</expressionEl>
+         </discountPlanItem>
+      </ws:createDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e63c6d05-5e79-4f0c-be37-e13a775de52c" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create DiscountPlanItem with min req Vals" id="2d0876e4-5364-4661-9c68-7e7a2bcc8011">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createDiscountPlanItem</con:operation>
+          <con:request name="create DiscountPlanItem with min req Vals" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDiscountPlanItem>
+         <discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI2">
+            <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+            <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+            <percent>0.05</percent>
+         </discountPlanItem>
+      </ws:createDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e63c6d05-5e79-4f0c-be37-e13a775de52c" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find create DiscountPlanItem with All Vals" id="0bdedf54-3f46-4860-921f-43fcdd7d4226">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find create DiscountPlanItem with All Vals" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code">
+              <con:configuration>
+                <token><![CDATA[<discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI1">
+               <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+               <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+               <percent>0.050000000000</percent>
+               <accountingCode>accountingCode</accountingCode>
+               <expressionEl>expressionEl</expressionEl>
+            </discountPlanItem>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find create DiscountPlanItem with min req Vals" id="5a1f8656-917e-4246-b8af-2ac6bc0f1563">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find create DiscountPlanItem with min req Vals" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code">
+              <con:configuration>
+                <token><![CDATA[<discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI2">
+               <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+               <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+               <percent>0.050000000000</percent>
+            </discountPlanItem>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update DiscountPlanItem with All Vals" id="3fe4d67c-b72b-4423-9054-4d43a56dce71">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>updateDiscountPlanItem</con:operation>
+          <con:request name="update DiscountPlanItem with All Vals" id="a6d75cdb-904d-424f-89f8-724019664426">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateDiscountPlanItem>
+         <discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI1">
+            <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+            <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+            <percent>1.05</percent>
+            <accountingCode>accountingCode_UPDATED</accountingCode>
+            <expressionEl>expressionEl_UPDATED</expressionEl>
+         </discountPlanItem>
+      </ws:updateDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update DiscountPlanItem with min req Vals" id="49582d79-62bc-43b5-8c30-1919f8118dac">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>updateDiscountPlanItem</con:operation>
+          <con:request name="update DiscountPlanItem with min req Vals" id="a6d75cdb-904d-424f-89f8-724019664426">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateDiscountPlanItem>
+         <discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI2">
+            <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+            <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+            <percent>1.05</percent>
+         </discountPlanItem>
+      </ws:updateDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find update  DiscountPlanItem with All Vals" id="7d774a39-6e6f-4cb0-ae49-b4d81abb8b78">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find update  DiscountPlanItem with All Vals" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code">
+              <con:configuration>
+                <token><![CDATA[<discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI1">
+               <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+               <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+               <percent>1.050000000000</percent>
+               <accountingCode>accountingCode_UPDATED</accountingCode>
+               <expressionEl>expressionEl_UPDATED</expressionEl>
+            </discountPlanItem>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find update DiscountPlanItem with min req Vals" id="3839c272-a684-4705-b1b9-7eb12a08cf9e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find update DiscountPlanItem with min req Vals" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code">
+              <con:configuration>
+                <token><![CDATA[<discountPlanItem code="${#Project#entityPrefix}_${#TestSuite#index}_DPI2">
+               <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+               <invoiceCategoryCode>CONSUMPTION</invoiceCategoryCode>
+               <percent>1.050000000000</percent>
+            </discountPlanItem>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove DiscountPlanItem 1" id="3a21ef75-9e24-4ca6-bf85-e2f120e0abb9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>removeDiscountPlanItem</con:operation>
+          <con:request name="remove DiscountPlanItem 1" id="a6d75cdb-904d-424f-89f8-724019664426">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
+      </ws:removeDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find removed DiscountPlanItem 1" id="bab5c50a-5271-4cd8-9e78-5eb2fbdf8356">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find removed DiscountPlanItem 1" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI1</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="SOAP Response">
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove DiscountPlanItem 2" id="08ad341d-e3ff-4084-a9b5-e0b0e347997a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>removeDiscountPlanItem</con:operation>
+          <con:request name="remove DiscountPlanItem 2" id="a6d75cdb-904d-424f-89f8-724019664426">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeDiscountPlanItem>
+      	<discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
+      </ws:removeDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find removed DiscountPlanItem2" id="659c3154-d26a-4ab6-ad90-c35fd66b2fbd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>findDiscountPlanItem</con:operation>
+          <con:request name="find removed DiscountPlanItem2" id="5944b94e-0960-448d-b0f7-7b72d15912f2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlanItem>
+         <discountPlanItemCode>${#Project#entityPrefix}_${#TestSuite#index}_DPI2</discountPlanItemCode>
+      </ws:findDiscountPlanItem>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="SOAP Response">
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="ERROR Code">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove DiscountPlan" id="53953796-683e-4f54-b8c6-b7446c812afe">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>removeDiscountPlan</con:operation>
+          <con:request name="remove DiscountPlan" id="a6d75cdb-904d-424f-89f8-724019664426">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeDiscountPlan>
+         <discountPlanCode>${#Project#entityPrefix}_${#TestSuite#index}_DPBASE</discountPlanCode>
+      </ws:removeDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>86</con:value>
+        <con:value>87</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -46933,7 +48478,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>87</con:value>
+        <con:value>88</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49125,7 +50670,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>88</con:value>
+        <con:value>89</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57425,7 +58970,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>107</con:value>
+        <con:value>108</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57650,6 +59195,148 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
         </con:property>
       </con:properties>
     </con:testCase>
+    <con:testCase id="2a680bad-740f-4938-b38f-a932859eba6a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Apply OneShortCharge Instance" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create Subscription_1" id="a8e44489-7d5f-4328-93e6-c3cab0d32d6e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create Subscription_1" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSubscription>
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_CHARGE_1" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB_1">
+            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+            <subscriptionDate>2015-02-01</subscriptionDate>
+            <endAgreementDate>2015-05-01</endAgreementDate>
+         </subscription>
+      </ws:createOrUpdateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Activate Services_1" id="13a4265c-0184-4af0-8c9f-5b4177961973">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>activateServices</con:operation>
+          <con:request name="Activate Services_1" id="488f6e2b-07dd-4013-9577-320ed6c6e59e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:activateServices>\r
+         <activateServices>\r
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_CHARGE_1</subscription>\r
+            <servicesToActivate>\r
+               <service code="${#Project#baseEntityPrefix}_SERVICE2">\r
+                  <quantity>1</quantity>\r
+                  <subscriptionDate>2015-02-01</subscriptionDate>\r
+               </service>\r
+            </servicesToActivate>\r
+         </activateServices>\r
+      </ws:activateServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="ApplyOneShotChargeInstance" id="8719e943-df5d-4280-8d8f-0a820ede1edd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="ApplyOneShotChargeInstance" id="1286bdbb-331f-4e14-88f7-15faee42196f">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:applyOneShotChargeInstance>       
+         <applyOneShotChargeInstance>
+		  <oneShotCharge>${#Project#baseEntityPrefix}_OS1</oneShotCharge>
+		  <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_CHARGE_1</subscription>		  
+		  <createWallet></createWallet>
+		  <operationDate>2016-04-01</operationDate>
+		  <quantity>4</quantity>
+		  <description>OneShot Charge</description>
+		  <amountWithoutTax>15</amountWithoutTax>
+		  <amountWithTax>16</amountWithTax>
+		  <criteria1>criteria1</criteria1>
+		  <criteria2>criteria2</criteria2>
+		  <criteria3>criteria3</criteria3>
+		</applyOneShotChargeInstance>
+      </ws:applyOneShotChargeInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="7b16b2d8-0f87-4ad9-ab8d-b1a0076d2e3b"/>
+            <con:assertion type="Simple Contains" name="Contains" id="ff55ce8a-a6f2-418f-bd96-8fa58a9465f2">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charging and invoicing" searchProperties="true" id="349e7f41-fdf3-4cbf-9785-37f2fdaccc54">
       <con:settings/>
       <con:testStep type="request" name="RecurringRatingJob" id="1995006e-944b-4983-8bb2-2342fb8a8826">
@@ -57819,12 +59506,12 @@ and paste that invoice number in the next step.
         <con:settings/>
         <con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </con:testStep>
-      <con:testStep type="request" name="GetInvoiceXml" id="35d55d7d-eb4f-48e5-bfc8-1bd07858c0d7">
+      <con:testStep type="request" name="GetInvoiceXmlWithType" id="35d55d7d-eb4f-48e5-bfc8-1bd07858c0d7">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>InvoiceWsSoapBinding</con:interface>
           <con:operation>findXMLInvoice</con:operation>
-          <con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
+          <con:request name="GetInvoiceXmlWithType" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -57833,9 +59520,12 @@ and paste that invoice number in the next step.
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:findXMLInvoice>         
-         <invoiceNumber>000000001</invoiceNumber>
-      </ws:findXMLInvoice>
+      <ws:findXMLInvoiceWithType>
+         	<!--Optional:-->
+         	<invoiceNumber>Fact_000000010</invoiceNumber>
+         	<!--Optional:-->
+         	<invoiceType>${#Project#baseEntityPrefix}_TEST-Type</invoiceType>
+      </ws:findXMLInvoiceWithType>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
@@ -57861,12 +59551,12 @@ and paste that invoice number in the next step.
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="GetInvoicePdf" id="b0f2afaf-95f3-43cf-97c8-4c6ab92291eb">
+      <con:testStep type="request" name="GetInvoicePdfWithType" id="b0f2afaf-95f3-43cf-97c8-4c6ab92291eb">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>InvoiceWsSoapBinding</con:interface>
           <con:operation>findPdfInvoice</con:operation>
-          <con:request name="GetInvoicePdf" id="f3d0dddc-6857-4363-8f2f-917774f9fefe">
+          <con:request name="GetInvoicePdfWithType" id="f3d0dddc-6857-4363-8f2f-917774f9fefe">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -57875,9 +59565,12 @@ and paste that invoice number in the next step.
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:findPdfInvoice>         
-         <invoiceNumber>000000001</invoiceNumber>
-      </ws:findPdfInvoice>
+      <ws:findPdfInvoiceWithType>
+         	<!--Optional:-->
+         	<invoiceNumber>Fact_000000010</invoiceNumber>
+         	<!--Optional:-->
+         	<invoiceType>${#Project#baseEntityPrefix}_TEST-Type</invoiceType>
+      </ws:findPdfInvoiceWithType>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="f24123ca-553d-42a4-93d9-a187f3be4240"/>
@@ -58099,7 +59792,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>94</con:value>
+        <con:value>95</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -58724,7 +60417,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>94</con:value>
+        <con:value>95</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -59240,7 +60933,7 @@ and paste that invoice number in the next step.
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>85</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -65462,6 +67155,9 @@ and paste that invoice number in the next step.
     <con:properties/>
     <con:setupScript/>
   </con:testSuite>
+  <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:endpoint mode="OVERRIDE">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint>
+  </con:endpointStrategy>
   <con:properties>
     <con:property>
       <con:name>authorization</con:name>
@@ -65497,11 +67193,11 @@ and paste that invoice number in the next step.
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+01</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+02</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>elasticSearchUrl</con:name>

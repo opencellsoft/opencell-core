@@ -85,6 +85,14 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceType(invoiceType);
 
         billingCycleService.create(billingCycle, currentUser);
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), billingCycle, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
     }
 
@@ -139,9 +147,18 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        
         billingCycleService.update(billingCycle, currentUser);
+	   // populate customFields
+	    try {
+	        populateCustomFields(postData.getCustomFields(), billingCycle, true, currentUser, true);
+	
+	    } catch (IllegalArgumentException | IllegalAccessException e) {
+	        log.error("Failed to associate custom field instance to an entity", e);
+	        throw new MeveoApiException("Failed to associate custom field instance to an entity");
+	    }   
     }
-
+    
     public BillingCycleDto find(String billingCycleCode, Provider provider) throws MeveoApiException {
 
         if (StringUtils.isBlank(billingCycleCode)) {
@@ -156,7 +173,7 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        result = new BillingCycleDto(billingCycle);
+        result = new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle));
 
         return result;
     }
@@ -184,4 +201,6 @@ public class BillingCycleApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    
+    
 }

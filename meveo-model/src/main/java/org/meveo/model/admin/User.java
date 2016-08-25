@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -40,8 +41,8 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 
 /**
@@ -74,6 +75,10 @@ public class User extends AuditableEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> roles = new HashSet<Role>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "HIERARCHY_LEVEL_ID")
+    private UserHierarchyLevel userLevel;
 
 //	@ManyToMany(fetch = FetchType.LAZY)
 //	@JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
@@ -296,5 +301,13 @@ public class User extends AuditableEntity {
 		}
     	
     	return isAllowed;
+    }
+
+    public UserHierarchyLevel getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(UserHierarchyLevel userLevel) {
+        this.userLevel = userLevel;
     }
 }

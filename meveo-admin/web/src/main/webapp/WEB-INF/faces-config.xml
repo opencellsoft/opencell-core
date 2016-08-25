@@ -1943,6 +1943,14 @@
 		</navigation-case>
 	</navigation-rule>
 
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>userGroupHierarchy</from-outcome>
+            <to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule>
+
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->
 	<!-- <redirect view-id="/login.xhtml"> -->
