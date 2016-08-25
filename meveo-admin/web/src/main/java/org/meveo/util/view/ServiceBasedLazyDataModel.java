@@ -288,7 +288,10 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      * @return
      */
     protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-        return (String) loadingFilters.get(ESBasedDataModel.FILTER_PE_FULL_TEXT);
+        if (loadingFilters != null) {
+            return (String) loadingFilters.get(ESBasedDataModel.FILTER_PE_FULL_TEXT);
+        }
+        return null;
     }
 
     /**

@@ -1931,6 +1931,7 @@
         <navigation-case>
             <from-outcome>fullTextSearch</from-outcome>
             <to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
+            <redirect include-view-params="true"/>
         </navigation-case>		
 	</navigation-rule>
 

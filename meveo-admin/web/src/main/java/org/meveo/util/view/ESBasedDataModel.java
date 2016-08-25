@@ -108,7 +108,7 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     public static String RECORD_TYPE = "_type";
     public static String RECORD_SCORE = "_score";
     public static String RECORD_CODE = "code";
-    protected static String FILTER_FULL_TEXT = "fullText";
+    public static String FILTER_FULL_TEXT = "fullText";
     protected static String FILTER_PE_FULL_TEXT = "globalFilter";
 
     private Integer rowCount;

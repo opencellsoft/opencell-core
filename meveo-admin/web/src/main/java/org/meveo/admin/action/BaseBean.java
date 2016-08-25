@@ -74,6 +74,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.component.datatable.DataTable;
@@ -880,6 +881,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 public User getCurrentUser() {
                     return BaseBean.this.getCurrentUser();
                 }
+                
+                @Override
+                protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
+                    String fullTextValue = super.getFullTextSearchValue(loadingFilters);
+                    if (fullTextValue == null) {
+                        return (String) filters.get(ESBasedDataModel.FILTER_FULL_TEXT);
+                    }
+                    return fullTextValue;
+                }            
             };
         }
 
