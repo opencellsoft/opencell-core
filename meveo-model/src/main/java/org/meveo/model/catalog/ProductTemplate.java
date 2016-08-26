@@ -13,6 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -32,6 +33,9 @@ import org.meveo.model.ObservableEntity;
 public class ProductTemplate extends ProductOffering {
 
 	private static final long serialVersionUID = 6380565206599659432L;
+	
+	@Transient
+	public final String CATALOG_PRICE = "CATALOG_PRICE";
 
 	@OneToOne
 	@JoinColumn(name = "PRODUCT_CHARGE_TMPL_ID")

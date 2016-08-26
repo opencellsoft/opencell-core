@@ -450,9 +450,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		if (businessAccountModelsDM == null) {
 			List<BusinessAccountModel> perksSource = null;
 			if (entity != null && entity.getProvider() != null) {
-				perksSource = businessAccountModelService.list(entity.getProvider());
+				perksSource = businessAccountModelService.listInstalled(entity.getProvider());
 			} else {
-				perksSource = businessAccountModelService.list();
+				perksSource = businessAccountModelService.listInstalled(currentUser.getProvider());
 			}
 
 			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
@@ -477,7 +477,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = channelService.list(entity.getProvider());
 			} else {
-				perksSource = channelService.list();
+				perksSource = channelService.list(currentUser.getProvider());
 			}
 
 			List<Channel> perksTarget = new ArrayList<Channel>();
@@ -502,7 +502,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = offerTemplateCategoryService.list(entity.getProvider());
 			} else {
-				perksSource = offerTemplateCategoryService.list();
+				perksSource = offerTemplateCategoryService.list(currentUser.getProvider());
 			}
 
 			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();

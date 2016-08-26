@@ -30,10 +30,11 @@
 		</h:form>
 
 		<hftl:formPanel backingBean="#{offerTemplateBean}"
-			showDeleteButton="false" formButtonsTopRight="true">
+			label="#{messages['menu.offers']}" showDeleteButton="false"
+			formButtonsTopRight="true" backView="mmOfferTemplates">
 
 			<p:panelGrid columns="4"
-				columnClasses="Wid10, Wid20 VAlignTop, Wid35 VAlignTop, Wid35 VAlignTop"
+				columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop"
 				styleClass="ui-panelgrid-blank">
 				<p:panel>
 					<hftl:decorateFormField fieldId="offerImageUpload"
@@ -137,6 +138,9 @@
 						newLine="true" />
 				</p:panelGrid>
 			</p:panelGrid>
+
+			<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
+				backingBean="#{offerTemplateBean}" multiLang="true" />
 
 			<p:panel>
 				<f:facet name="header">

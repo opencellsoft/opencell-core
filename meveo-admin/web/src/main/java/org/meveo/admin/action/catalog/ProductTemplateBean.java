@@ -102,8 +102,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		getAttachmentsDM();
 		getWalletTemplatesDM();
 		getBamDM();
-		setPricePlan();
+		initPricePlan();
 		return entity;
+	}
+
+	private void initPricePlan() {
+		
 	}
 
 	@Override
@@ -169,49 +173,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			}
 		}
 	}
-
-	public void setPricePlan() {
-		if (entity != null && entity.getCode() != null && entity.getCode().length() > 0) {
-			entityPricePlan = pricePlanMatrixService.findByCode(entity.getCode(), getCurrentProvider());
-		}
-
-		if (entityPricePlan == null) {
-			entityPricePlan = new PricePlanMatrix();
-		}
-
-		String catalogPriceCode = "CATALOG_PRICE";
-
-		List<CustomFieldInstance> cfInstances = getCustomFieldInstances(entity).get(catalogPriceCode);
-
-		CustomFieldInstance cfInstance = null;
-		if (cfInstances != null && cfInstances.size() > 0) {
-			cfInstance = cfInstances.get(0);
-			if (cfInstance != null) {
-				catalogPriceCF = cfInstance;
-			}
-		}
-
-		Map<String, CustomFieldTemplate> entityCFTs = getCustomFieldTemplates(entity);
-		CustomFieldTemplate cft = entityCFTs.get(catalogPriceCode);
-
-		
-		if (cft != null && cfInstance == null) {
-			catalogPriceCF = CustomFieldInstance.fromTemplate(cft, entity);
-			catalogPriceCF.setCode(catalogPriceCode);
-		}
-	}
-
-	public void computePricePlan() {
-
-		if (catalogPriceCF != null && catalogPriceCF.getCfValue() != null && entityPricePlan != null) {
-			if (catalogPriceCF.getCfValue().getDoubleValue() != null && entityPricePlan.getAmountWithoutTax() != null) {
-				catalogPrice = new BigDecimal(catalogPriceCF.getCfValue().getDoubleValue().toString());
-				discountedAmount = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice)
-						.multiply(new BigDecimal("100"))).divide(catalogPrice);
-			}
-		}
-	}
-
+	
 	public String discardChanges() {
 		return "mmProductTemplates";
 	}
@@ -277,12 +239,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = offerTemplateCategoryService.list(entity.getProvider(), true);
 			} else {
-				perksSource = offerTemplateCategoryService.listActive();
+				perksSource = offerTemplateCategoryService.list(currentUser.getProvider(), true);
 			}
 
 			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
-			if (getEntity().getOfferTemplateCategories() != null) {
-				perksTarget.addAll(getEntity().getOfferTemplateCategories());
+			if (entity.getOfferTemplateCategories() != null) {
+				perksTarget.addAll(entity.getOfferTemplateCategories());
 			}
 			perksSource.removeAll(perksTarget);
 
@@ -302,12 +264,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = digitalResourceService.list(entity.getProvider(), true);
 			} else {
-				perksSource = digitalResourceService.listActive();
+				perksSource = digitalResourceService.list(currentUser.getProvider(), true);
 			}
 
 			List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
-			if (getEntity().getAttachments() != null) {
-				perksTarget.addAll(getEntity().getAttachments());
+			if (entity.getAttachments() != null) {
+				perksTarget.addAll(entity.getAttachments());
 			}
 			perksSource.removeAll(perksTarget);
 
@@ -335,12 +297,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = walletTemplateService.list(entity.getProvider(), true);
 			} else {
-				perksSource = walletTemplateService.listActive();
+				perksSource = walletTemplateService.list(currentUser.getProvider(), true);
 			}
 
 			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (getEntity().getWalletTemplates() != null) {
-				perksTarget.addAll(getEntity().getWalletTemplates());
+			if (entity.getWalletTemplates() != null) {
+				perksTarget.addAll(entity.getWalletTemplates());
 			}
 			perksSource.removeAll(perksTarget);
 
@@ -360,12 +322,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = businessAccountModelService.list(entity.getProvider(), true);
 			} else {
-				perksSource = businessAccountModelService.listActive();
+				perksSource = businessAccountModelService.list(currentUser.getProvider(), true);
 			}
 
 			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
-			if (getEntity().getBusinessAccountModels() != null) {
-				perksTarget.addAll(getEntity().getBusinessAccountModels());
+			if (entity.getBusinessAccountModels() != null) {
+				perksTarget.addAll(entity.getBusinessAccountModels());
 			}
 			perksSource.removeAll(perksTarget);
 
@@ -385,12 +347,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if (entity != null && entity.getProvider() != null) {
 				perksSource = channelService.list(entity.getProvider(), true);
 			} else {
-				perksSource = channelService.listActive();
+				perksSource = channelService.list(currentUser.getProvider(), true);
 			}
 
 			List<Channel> perksTarget = new ArrayList<Channel>();
-			if (getEntity().getBusinessAccountModels() != null) {
-				perksTarget.addAll(getEntity().getChannels());
+			if (entity.getBusinessAccountModels() != null) {
+				perksTarget.addAll(entity.getChannels());
 			}
 			perksSource.removeAll(perksTarget);
 
