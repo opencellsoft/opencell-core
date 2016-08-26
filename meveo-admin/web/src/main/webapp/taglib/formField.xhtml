@@ -159,6 +159,9 @@
     <c:if test="${empty(allowEdit)}">
         <c:set var="allowEdit" value="true" />
     </c:if>
+    <c:if test="${empty(showResetButton)}">
+    	<c:set var="showResetButton" value="false"/>
+    </c:if>
 
 
     <c:if test="${empty(childField)}">
