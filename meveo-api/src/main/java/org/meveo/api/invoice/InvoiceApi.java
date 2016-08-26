@@ -366,6 +366,8 @@ public class InvoiceApi extends BaseApi {
 		return response;
 	}
 
+	
+	
 	/**
 	 * list invoices based on a customer account and a provider
      * 
@@ -375,6 +377,21 @@ public class InvoiceApi extends BaseApi {
 	 * @throws MeveoApiException Meveo Api exception
 	 */
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, provider, false)	;
+	}
+	
+	/**
+	 * list invoices based on a customer account and a provider, and presentInAR
+	 * @param customerAccountCode customer account code
+	 * @param provider provider
+	 * @return list of invoice DTOs
+	 * @throws MeveoApiException Meveo Api exception
+	 */
+	public List<InvoiceDto> listPresentInAR(String customerAccountCode, Provider provider) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, provider, true)	;
+	}
+
+	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, Provider provider,boolean isPresentInAR) throws MeveoApiException {
 		if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -388,8 +405,12 @@ public class InvoiceApi extends BaseApi {
         }
 
         for (BillingAccount billingAccount : customerAccount.getBillingAccounts()) {
-            List<Invoice> invoiceList = billingAccount.getInvoices();
-
+            List<Invoice> invoiceList = new ArrayList<Invoice>();
+            if(isPresentInAR){
+            	invoiceList = invoiceService.getInvoicesWithAccountOperation(billingAccount, provider);
+            }else{
+            	invoiceList =  billingAccount.getInvoices();
+            }          
             for (Invoice invoice : invoiceList) {
             	InvoiceDto customerInvoiceDto = new InvoiceDto(invoice);
                 customerInvoiceDtos.add(customerInvoiceDto);

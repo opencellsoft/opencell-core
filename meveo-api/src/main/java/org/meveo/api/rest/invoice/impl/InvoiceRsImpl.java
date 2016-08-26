@@ -201,4 +201,22 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
         return result;
 	}
+		@Override
+		public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
+			CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+			try {
+				result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode, getCurrentUser().getProvider()));
+			} catch (MeveoApiException e) {
+				result.getActionStatus().setErrorCode(e.getErrorCode());
+				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+				result.getActionStatus().setMessage(e.getMessage());
+			} catch (Exception e) {
+				log.error("Failed to execute API", e);
+				result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+				result.getActionStatus().setMessage(e.getMessage());
+			}
+			return result;
+		}
+	
 }
