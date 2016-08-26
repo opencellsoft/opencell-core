@@ -46,7 +46,13 @@ public class WFTransitionDto extends BaseDto {
 	private String toStatus;
 	
 	@XmlElement(required = true)
-	private String conditionEl ;
+	private String conditionEl;
+
+    @XmlElement(required = true)
+    private Integer priority;
+
+    @XmlElement(required = false)
+    private String description;
 	
 	@XmlElement(required = true)
 	private String workflowCode;
@@ -66,6 +72,8 @@ public class WFTransitionDto extends BaseDto {
 		this.fromStatus = wfTransition.getFromStatus();
 		this.toStatus = wfTransition.getToStatus();
 		this.conditionEl = wfTransition.getConditionEl();
+        this.priority = wfTransition.getPriority();
+        this.description = wfTransition.getDescription();
 		this.workflowCode = wfTransition.getWorkflow().getCode();
 		for(WFAction wfAction : wfTransition.getWfActions() ){
 			WFActionDto wfadto = new WFActionDto(wfAction);
@@ -84,7 +92,9 @@ public class WFTransitionDto extends BaseDto {
 			wfTransition = new WFTransition();
 		wfTransition.setFromStatus(getFromStatus());
 		wfTransition.setToStatus(getToStatus());
-		wfTransition.setConditionEl(getConditionEl());		
+		wfTransition.setConditionEl(getConditionEl());
+        wfTransition.setPriority(getPriority());
+        wfTransition.setDescription(getDescription());
 		return wfTransition;
 	}
 
@@ -130,10 +140,23 @@ public class WFTransitionDto extends BaseDto {
 		this.conditionEl = conditionEl;
 	}
 
-	
+    public Integer getPriority() {
+        return priority;
+    }
 
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 
-	/**
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
 	 * @return the workflowDto
 	 */
 	public String getWorkflowCode() {

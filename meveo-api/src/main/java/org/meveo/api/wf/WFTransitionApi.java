@@ -56,11 +56,12 @@ public class WFTransitionApi extends BaseApi {
 		if(workflow == null) {
 			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowCode());
 		}		
-		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), workflow.getCode(),currentUser.getProvider());	
+		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), wfTransitionDto.getPriority(), workflow.getCode(), currentUser.getProvider());
 		if(wfTransition != null){
 			throw new EntityAlreadyExistsException(WFTransition.class.getName() + "with workflow=" + workflow+
 					" and FromStatus =" +wfTransitionDto.getFromStatus() + 
-					" and ToStatus =" +wfTransitionDto.getToStatus());
+					" and ToStatus =" +wfTransitionDto.getToStatus() +
+                    " and Priority =" +wfTransitionDto.getPriority());
 		}
 
         Set<WFTransitionRule> wfTransitionRuleList = new HashSet<>();
@@ -104,11 +105,12 @@ public class WFTransitionApi extends BaseApi {
 		if(workflow == null) {
 			throw new EntityDoesNotExistsException(Workflow.class, wfTransitionDto.getWorkflowCode());
 		}		
-		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), workflow.getCode(),currentUser.getProvider());	
+		WFTransition wfTransition = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), wfTransitionDto.getPriority(), workflow.getCode(),currentUser.getProvider());
 		if(wfTransition == null){
 			throw new EntityDoesNotExistsException(WFTransition.class.getName() + "with workflow=" + workflow+
 					" and FromStatus =" +wfTransitionDto.getFromStatus() + 
-					" and ToStatus =" +wfTransitionDto.getToStatus());
+					" and ToStatus =" +wfTransitionDto.getToStatus() +
+                    " and Priority =" +wfTransitionDto.getPriority());
 		}
         Set<WFTransitionRule> wfTransitionRuleList = new HashSet<>();
         if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFTransitionRuleDto())) {
@@ -141,13 +143,14 @@ public class WFTransitionApi extends BaseApi {
 	 * @param workflowCode
 	 * @param fromStatus
 	 * @param toStatus
+     * @param priority
 	 * @param currentUser
 	 * @return
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	public WFTransitionDto find(String workflowCode , String fromStatus, String toStatus, User currentUser) throws MissingParameterException, EntityDoesNotExistsException{
-		WFTransitionDto wfTransitionDto = new WFTransitionDto(find(workflowCode, fromStatus, toStatus, currentUser.getProvider()));
+	public WFTransitionDto find(String workflowCode , String fromStatus, String toStatus, Integer priority, User currentUser) throws MissingParameterException, EntityDoesNotExistsException{
+		WFTransitionDto wfTransitionDto = new WFTransitionDto(find(workflowCode, fromStatus, toStatus, priority, currentUser.getProvider()));
 		return wfTransitionDto;
 	}
 	
@@ -159,8 +162,8 @@ public class WFTransitionApi extends BaseApi {
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void remove(String workflowCode, String fromStatus, String toStatus, User currentUser) throws MeveoApiException{
-		wfTransitionService.remove(find(workflowCode, fromStatus, toStatus, currentUser.getProvider())); 
+	public void remove(String workflowCode, String fromStatus, String toStatus, Integer priority, User currentUser) throws MeveoApiException{
+		wfTransitionService.remove(find(workflowCode, fromStatus, toStatus, priority, currentUser.getProvider()));
 	}
 
 	/**
@@ -173,7 +176,7 @@ public class WFTransitionApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void createOrUpdate(WFTransitionDto wfTransitionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {		
-		WFTransition wfTransition  = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), wfTransitionDto.getWorkflowCode(),currentUser.getProvider());
+		WFTransition wfTransition  = wfTransitionService.findWFTransition(wfTransitionDto.getFromStatus(), wfTransitionDto.getToStatus(), wfTransitionDto.getPriority(), wfTransitionDto.getWorkflowCode(),currentUser.getProvider());
 		if(wfTransition == null) {
 			create(wfTransitionDto, currentUser);
 		} else {
@@ -199,8 +202,11 @@ public class WFTransitionApi extends BaseApi {
 		}			
 		if (StringUtils.isBlank(wfTransitionDto.getWorkflowCode())) {
 			missingParameters.add("WorkflowCode");
-		}			
-		handleMissingParameters();
+		}
+        if (StringUtils.isBlank(wfTransitionDto.getPriority())) {
+            missingParameters.add("Priority");
+        }
+        handleMissingParameters();
 	}
 	
 	/**
@@ -213,7 +219,7 @@ public class WFTransitionApi extends BaseApi {
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	public WFTransition find(String workflowCode , String fromStatus, String toStatus, Provider provider) throws MissingParameterException, EntityDoesNotExistsException{
+	public WFTransition find(String workflowCode , String fromStatus, String toStatus, Integer priority, Provider provider) throws MissingParameterException, EntityDoesNotExistsException{
 		if(StringUtils.isBlank(workflowCode)){
 			missingParameters.add("workflowCode");
 		}
@@ -222,18 +228,22 @@ public class WFTransitionApi extends BaseApi {
 		}
 		if(StringUtils.isBlank(toStatus )){
 			missingParameters.add("toStatus");
-		}		
-		handleMissingParameters();
+		}
+        if(StringUtils.isBlank(priority)){
+            missingParameters.add("priority");
+        }
+        handleMissingParameters();
 		
 		Workflow workflow = workflowService.findByCode(workflowCode,provider);
 		if(workflow == null) {
 			throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
 		}		
-		WFTransition wfTransition  = wfTransitionService.findWFTransition(fromStatus, toStatus, workflow.getCode(),provider);		
+		WFTransition wfTransition  = wfTransitionService.findWFTransition(fromStatus, toStatus, priority, workflow.getCode(),provider);
 		if(wfTransition == null){
 			throw new EntityDoesNotExistsException(WFTransition.class.getName() + "with workflowCode=" + workflowCode +
 					" and fromStatus =" + fromStatus + 
-					" and toStatus =" + toStatus);
+					" and toStatus =" + toStatus +
+                    " and priority =" + priority);
 		}		
 		return wfTransition;
 	}

@@ -59,10 +59,10 @@ public class WFTransitionWsImpl extends BaseWs implements WFTransitionWs {
 	}
 
 	@Override
-	public WFTransitionResponseDto find(String workflowCode, String fromStatus, String toStatus) {
+	public WFTransitionResponseDto find(String workflowCode, String fromStatus, String toStatus, Integer priority) {
 		WFTransitionResponseDto dunningPlanTransitionResponseDto = new WFTransitionResponseDto();
 		try {
-			dunningPlanTransitionResponseDto.setWfTransitionDto(wfTransitionApi.find(workflowCode, fromStatus, toStatus, getCurrentUser()));
+			dunningPlanTransitionResponseDto.setWfTransitionDto(wfTransitionApi.find(workflowCode, fromStatus, toStatus, priority, getCurrentUser()));
 		} catch (Exception e) {
 			super.processException(e, dunningPlanTransitionResponseDto.getActionStatus());
 		}
@@ -71,10 +71,10 @@ public class WFTransitionWsImpl extends BaseWs implements WFTransitionWs {
 	}
 
 	@Override
-	public ActionStatus remove(String workflowCode, String fromStatus, String toStatus) {
+	public ActionStatus remove(String workflowCode, String fromStatus, String toStatus, Integer priority) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			wfTransitionApi.remove(workflowCode, fromStatus, toStatus, getCurrentUser());	        
+			wfTransitionApi.remove(workflowCode, fromStatus, toStatus, priority, getCurrentUser());
 		} catch (Exception e) {
 			super.processException(e, result);
 		}

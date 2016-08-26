@@ -38,8 +38,8 @@ public class WFActionApi extends BaseApi {
 	 */
 	public void create(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
 		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(), 
-				wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
+                wfActionDto.getWfTransitionDto().getPriority() ,wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 				
 		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
 		
@@ -62,8 +62,8 @@ public class WFActionApi extends BaseApi {
 	 */
 	public void update(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(), 
-				wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
+                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 		
 		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
 		
@@ -108,8 +108,8 @@ public class WFActionApi extends BaseApi {
 		wfActionDto.setPriority(priority);
 		wfActionDto.setWfTransitionDto(wfTransitionDto);
 		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(), 
-				wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
+                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 		
 		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
 		
@@ -133,8 +133,8 @@ public class WFActionApi extends BaseApi {
 		wfActionDto.setPriority(priority);
 		wfActionDto.setWfTransitionDto(wfTransitionDto);
 		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(), 
-				wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
+                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 		
 		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
 		
