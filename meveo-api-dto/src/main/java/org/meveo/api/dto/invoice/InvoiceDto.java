@@ -71,6 +71,8 @@ public class InvoiceDto extends BaseDto {
     
     private RecordedInvoiceDto recordedInvoiceDto ;
     
+    private BigDecimal netToPay;
+    
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
 
@@ -145,6 +147,7 @@ public class InvoiceDto extends BaseDto {
         }
                 
         this.pdf = invoice.getPdf();
+        this.netToPay = invoice.getNetToPay();
     }
 
   
@@ -401,6 +404,20 @@ public class InvoiceDto extends BaseDto {
 	 */
 	public void setRecordedInvoiceDto(RecordedInvoiceDto recordedInvoiceDto) {
 		this.recordedInvoiceDto = recordedInvoiceDto;
+	}
+
+	/**
+	 * @return the netToPay
+	 */
+	public BigDecimal getNetToPay() {
+		return netToPay;
+	}
+
+	/**
+	 * @param netToPay the netToPay to set
+	 */
+	public void setNetToPay(BigDecimal netToPay) {
+		this.netToPay = netToPay;
 	}
 
 	
