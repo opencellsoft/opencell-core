@@ -48,9 +48,7 @@ public class UsageApi extends BaseApi {
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
 		}
-
 		List<InvoiceCategory> invoiceCats = invoiceCategoryService.list(user.getProvider());
-		List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 		for (InvoiceCategory invoiceCategory : invoiceCats) {
 			List<InvoiceSubCategory> invoiceSubCats = invoiceCategory.getInvoiceSubCategories();
 			CatUsageDto catUsageDto = new CatUsageDto();
@@ -61,7 +59,7 @@ public class UsageApi extends BaseApi {
 				SubCatUsageDto subCatUsageDto = new SubCatUsageDto();
 				subCatUsageDto.setCode(invoiceSubCategory.getCode());
 				subCatUsageDto.setDescription(invoiceSubCategory.getDescription());
-				ratedTransactions = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
+				List<RatedTransaction> ratedTransactions = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
 				for (RatedTransaction rt : ratedTransactions) {
 					UsageDto usageDto = new UsageDto();
 					usageDto.setAmountWithoutTax(rt.getAmountWithoutTax());
@@ -76,11 +74,13 @@ public class UsageApi extends BaseApi {
 					usageDto.setUnityDescription(rt.getUnityDescription());
 					subCatUsageDto.getListUsage().add(usageDto);
 				}
+				if(subCatUsageDto.getListUsage().size()>0){
 				catUsageDto.getListSubCatUsage().add(subCatUsageDto);
+				}
 			}
-		     if(ratedTransactions.size()>0){
+			if(catUsageDto.getListSubCatUsage().size()>0){
 		     result.getListCatUsage().add(catUsageDto);
-		     }
+			}
 		}
 		return result;
 	}
