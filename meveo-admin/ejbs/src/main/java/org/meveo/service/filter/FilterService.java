@@ -19,12 +19,14 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.LoginException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -39,6 +41,7 @@ import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.model.filter.Projector;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldException;
@@ -183,8 +186,14 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     @SuppressWarnings("unchecked")
-    public String filteredList(Filter filter, Provider provider) throws BusinessException {
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    public String filteredList(Filter filter, User currentUser) throws BusinessException {
+    	Provider currentProvider=null;
+    	try{
+    		currentProvider=checkProvider(filter,currentUser);
+    	}catch(Exception e){
+    		return null;
+    	}
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
 
         try {
             Query query = fqb.getQuery(getEntityManager());
@@ -207,9 +216,16 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
+    public List<? extends IEntity> filteredListAsObjects(Filter filter, User currentUser) throws BusinessException {
+    	
     	filter = refreshOrRetrieve(filter);
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    	Provider currentProvider=null;
+    	try{
+    		currentProvider=checkProvider(filter,currentUser);
+    	}catch(Exception e){
+    		return null;
+    	}
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
 
         try {
             Query query = fqb.getQuery(getEntityManager());
@@ -230,14 +246,21 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider) throws BusinessException {
-        Filter filter = (Filter) findByCode(filterName, provider);
-        return filteredList(filter, firstRow, numberOfRows);
+    public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, User currentUser) throws BusinessException {
+        Filter filter = (Filter) findByCode(filterName, currentUser.getProvider());
+        return filteredList(filter, firstRow, numberOfRows,currentUser);
     }
 
     @SuppressWarnings("unchecked")
-    public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows) throws BusinessException {
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows,User currentUser) throws BusinessException {
+    	
+    	Provider currentProvider=null;
+    	try{
+    		currentProvider=checkProvider(filter,currentUser);
+    	}catch(Exception e){
+    		return null;
+    	}
+        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
 
         try {
             Query query = fqb.getQuery(getEntityManager());
@@ -533,5 +556,24 @@ public class FilterService extends BusinessService<Filter> {
 				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 			}
 		}
+	}
+	private Provider checkProvider(Filter filter,User currentUser) throws BusinessException{
+		Provider currentProvider=null;
+		if(filter==null||filter.getPrimarySelector()==null){
+			return null;
+		}
+		String clazzName=filter.getPrimarySelector().getTargetEntity();
+		
+		Object obj=ReflectionUtils.createObject(clazzName);
+		if(obj instanceof IProvider){
+			currentProvider=currentUser.getProvider();
+		}
+		if(obj instanceof User||obj instanceof Role || obj instanceof Provider){
+			if (currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+	            throw new LoginException("Super User can't call filterList");
+	        }
+			currentProvider=currentUser.getProvider();
+		}
+		return currentProvider;
 	}
 }

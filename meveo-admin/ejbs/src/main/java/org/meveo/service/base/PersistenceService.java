@@ -612,7 +612,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (filters.containsKey("$FILTER")) {
                 Filter filter = (Filter) filters.get("$FILTER");
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
-                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
+                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false,provider);
             } else {
 
                 for (String key : filters.keySet()) {
