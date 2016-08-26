@@ -143,6 +143,6 @@ public interface InvoiceRs extends IBaseRs {
 	public ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
     
     @GET
-    @Path("/invoicesWithAccountOperation")
-    public CustomerInvoicesResponse invoicesWithAccountOperation(@QueryParam("customerAccountCode") String customerAccountCode);
+    @Path("/listPresentInAR")
+    public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode);
 }

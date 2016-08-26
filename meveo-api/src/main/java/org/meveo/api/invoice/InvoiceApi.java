@@ -365,6 +365,8 @@ public class InvoiceApi extends BaseApi {
 		return response;
 	}
 
+	
+	
 	/**
 	 * list invoices based on a customer account and a provider
 	 * @param customerAccountCode customer account code
@@ -373,6 +375,21 @@ public class InvoiceApi extends BaseApi {
 	 * @throws MeveoApiException Meveo Api exception
 	 */
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, provider, false)	;
+	}
+	
+	/**
+	 * list invoices based on a customer account and a provider, and presentInAR
+	 * @param customerAccountCode customer account code
+	 * @param provider provider
+	 * @return list of invoice DTOs
+	 * @throws MeveoApiException Meveo Api exception
+	 */
+	public List<InvoiceDto> listPresentInAR(String customerAccountCode, Provider provider) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, provider, true)	;
+	}
+
+	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, Provider provider,boolean isPresentInAR) throws MeveoApiException {
 		if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -386,8 +403,12 @@ public class InvoiceApi extends BaseApi {
         }
 
         for (BillingAccount billingAccount : customerAccount.getBillingAccounts()) {
-            List<Invoice> invoiceList = billingAccount.getInvoices();
-
+            List<Invoice> invoiceList = new ArrayList<Invoice>();
+            if(isPresentInAR){
+            	invoiceList = invoiceService.getInvoicesWithAccountOperation(billingAccount, provider);
+            }else{
+            	invoiceList =  billingAccount.getInvoices();
+            }          
             for (Invoice invoice : invoiceList) {
             	InvoiceDto customerInvoiceDto = new InvoiceDto();
                 customerInvoiceDto.setBillingAccountCode(billingAccount.getCode());
@@ -904,84 +925,4 @@ public class InvoiceApi extends BaseApi {
 	private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax){		
 		return amountWithTax.subtract(amountWithoutTax);
 	}
-	
-	public List<InvoiceDto> invoicesWithAccountOperation(String customerAccountCode, Provider provider) throws MeveoApiException {
-		if (StringUtils.isBlank(customerAccountCode)) {
-            missingParameters.add("customerAccountCode");
-            handleMissingParameters();
-        }
-
-        List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
-
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-        }
-        
-        for (BillingAccount billingAccount : customerAccount.getBillingAccounts()) {
-        	List<Invoice> invoiceList = invoiceService.getInvoicesWithAccountOperation(billingAccount, provider);
-
-            for (Invoice invoice : invoiceList) {
-            	InvoiceDto customerInvoiceDto = new InvoiceDto();
-                customerInvoiceDto.setBillingAccountCode(billingAccount.getCode());
-                customerInvoiceDto.setInvoiceDate(invoice.getInvoiceDate());
-                customerInvoiceDto.setDueDate(invoice.getDueDate());
-                customerInvoiceDto.setAmountWithoutTax(invoice.getAmountWithoutTax());
-                customerInvoiceDto.setAmountTax(invoice.getAmountTax());
-                customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
-                customerInvoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod());
-                customerInvoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
-                customerInvoiceDto.setPdfPresent(invoice.getPdf() != null);
-                customerInvoiceDto.setPdf(invoice.getPdf());
-                customerInvoiceDto.setInvoiceId(invoice.getId());
-                
-                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
-                CategoryInvoiceAgregateDto  categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-                for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-
-                    subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-
-                    if (invoiceAgregate instanceof CategoryInvoiceAgregate) {            	
-                        subCategoryInvoiceAgregateDto.setType("R");               
-                        categoryInvoiceAgregateDto.setCategoryInvoiceCode(((CategoryInvoiceAgregate) invoiceAgregate).getInvoiceCategory().getCode());
-                    } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                        subCategoryInvoiceAgregateDto.setType("F");
-                    } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                        subCategoryInvoiceAgregateDto.setType("T");
-                    }
-
-                    subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
-                    subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                    subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-                    subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
-                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-                    subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-                    subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-                    
-                    categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-                    
-                    boolean agregateAlreadyExists = false;
-                    for(CategoryInvoiceAgregateDto ciadto : customerInvoiceDto.getCategoryInvoiceAgregates()) {
-                		if(ciadto.getCategoryInvoiceCode() != null  
-                				&&  ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
-                			agregateAlreadyExists = true;
-                			break;
-                		}
-                	}
-                    
-                    if(!agregateAlreadyExists) {
-                    	customerInvoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
-                	}
-                }
-                
-                customerInvoiceDtos.add(customerInvoiceDto);
-
-            }
-        }
-
-        return customerInvoiceDtos;
-	}
-
 }

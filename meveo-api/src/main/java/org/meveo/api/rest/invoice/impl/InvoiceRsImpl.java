@@ -202,10 +202,10 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         return result;
 	}
 		@Override
-		public CustomerInvoicesResponse invoicesWithAccountOperation(@QueryParam("customerAccountCode") String customerAccountCode) {
+		public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
 			CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 			try {
-				result.setCustomerInvoiceDtoList(invoiceApi.invoicesWithAccountOperation(customerAccountCode, getCurrentUser().getProvider()));
+				result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode, getCurrentUser().getProvider()));
 			} catch (MeveoApiException e) {
 				result.getActionStatus().setErrorCode(e.getErrorCode());
 				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

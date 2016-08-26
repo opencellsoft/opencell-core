@@ -122,6 +122,6 @@ public interface InvoiceWs extends IBaseWs {
 	
 	
 	@WebMethod
-	public CustomerInvoicesResponse invoicesWithAccountOperation(@WebParam(name = "customerAccountCode") String customerAccountCode);
+	public CustomerInvoicesResponse listPresentInAR(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 }
