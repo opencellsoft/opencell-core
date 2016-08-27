@@ -632,9 +632,9 @@
             <properties>
                 <!-- Properties for liquibase plugin -->
                 <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo-1839</db.url>
-                <db.username>pbach</db.username>
-                <db.password>pbach</db.password>
+                <db.url>jdbc:postgresql://localhost/meveo</db.url>
+                <db.username>meveo</db.username>
+                <db.password>meveo</db.password>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->

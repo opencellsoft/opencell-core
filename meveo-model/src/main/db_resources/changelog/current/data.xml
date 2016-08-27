@@ -95,6 +95,7 @@
             ALTER SEQUENCE wf_transition_rule_seq RESTART WITH 10;
         </sql>
     </changeSet>
+
     <changeSet id="#1839_20160825" author="pbach">
         <sql>
             INSERT INTO wf_workflow (id, version, disabled, created, updated, code, description, enable_hostory, export_lot, status, wf_type, provider_id, creator_id, updater_id) VALUES (nextval('wf_workflow_seq'), 0, false, '2016-08-25 03:31:25.742', '2016-08-25 03:32:39.111', 'Customer Care Assignation of Orders', NULL, false, false, 'ACTIVE', 'org.meveo.admin.wf.types.OrderWF', 1, 1, 1);
