@@ -35634,7 +35634,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
+      </con:testStep>
+      <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
@@ -53978,12 +53979,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <fromStatus>FRM_STATUS_1</fromStatus>\r
                   <toStatus>TO_STATUS_1</toStatus>\r
                   <conditionEl>CND_EL_T</conditionEl>\r
+                  <priority>1</priority>
+			   <description>DESCRIPTION</description>	
                   <listWFTransitionRuleDto>
                      <!--Zero or more repetitions:-->
                      <wfTransitionRuleDto>
                         <name>Territory</name>
                         <value>north</value>
-                        <priority>1</priority>
+                        <priority>4</priority>
                         <type>STRING</type>
                         <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
                      </wfTransitionRuleDto>
@@ -54106,6 +54109,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <fromStatus>FRM_STATUS_1</fromStatus>
                      <toStatus>TO_STATUS_1</toStatus>
                      <conditionEl>CND_EL_T</conditionEl>
+                     <priority>1</priority>
+                     <description>DESCRIPTION</description>
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
@@ -54117,10 +54122,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <listWFTransitionRuleDto>
                         <wfTransitionRuleDto>
                            <name>Territory</name>
-                           <priority>1</priority>
+                           <priority>4</priority>
                            <value>north</value>
                            <type>STRING</type>
-                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                           <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
                         </wfTransitionRuleDto>
                      </listWFTransitionRuleDto>
                   </wfTransitionDto>
@@ -54227,6 +54232,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <fromStatus>FRM_STATUS_2</fromStatus>
                   <toStatus>TO_STATUS_2</toStatus>
                   <conditionEl>CND_EL_T2</conditionEl>
+                  <priority>2</priority>
+			   <description>DESCRIPTION2</description>
                   <listWFTransitionRuleDto>
                      <!--Zero or more repetitions:-->
                      <wfTransitionRuleDto>
@@ -54234,7 +54241,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                         <value>south</value>
                         <priority>2</priority>
                         <type>STRING</type>
-                        <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                        <conditionEl>#{mv.getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
                      </wfTransitionRuleDto>
                   </listWFTransitionRuleDto>
                   <!--Optional:-->\r
@@ -54361,6 +54368,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <fromStatus>FRM_STATUS_1</fromStatus>
                      <toStatus>TO_STATUS_1</toStatus>
                      <conditionEl>CND_EL_T</conditionEl>
+                     <priority>1</priority>
+                     <description>DESCRIPTION</description>
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
@@ -54372,10 +54381,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <listWFTransitionRuleDto>
                         <wfTransitionRuleDto>
                            <name>Territory</name>
-                           <priority>1</priority>
+                           <priority>4</priority>
                            <value>north</value>
                            <type>STRING</type>
-                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                           <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
                         </wfTransitionRuleDto>
                      </listWFTransitionRuleDto>
                   </wfTransitionDto>
@@ -54383,6 +54392,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <fromStatus>FRM_STATUS_2</fromStatus>
                      <toStatus>TO_STATUS_2</toStatus>
                      <conditionEl>CND_EL_T2</conditionEl>
+                     <priority>2</priority>
+                     <description>DESCRIPTION2</description>
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
@@ -54402,7 +54413,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <priority>2</priority>
                            <value>south</value>
                            <type>STRING</type>
-                           <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
+                           <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
                         </wfTransitionRuleDto>
                      </listWFTransitionRuleDto>
                   </wfTransitionDto>

@@ -442,4 +442,9 @@
         </sql>
     </changeSet>
 
+    <changeSet id="#1861_20160826" author="pbach">
+        <sql>
+            delete from wf_transition_rule where id in (6,7,9);
+        </sql>
+    </changeSet>
 </databaseChangeLog>

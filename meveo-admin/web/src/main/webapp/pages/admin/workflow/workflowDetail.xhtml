@@ -53,7 +53,7 @@
 					<p:tab title="#{messages['dunningPlan.transitions']}" id="tab2"
 						rendered="true">
                     	<p:outputPanel id="dunningPlanTransition_panel">
-                            <p:messages id="messages"/>
+                            <p:messages id="messages" rendered="#{!workflowBean.showDetailPage}"/>
                             <hftl:dataList backingBean="#{wfTransitionBean}"
 								dataModel="#{workflowBean.entity.transitions}"
 								sortBy="fromStatus"
@@ -102,7 +102,7 @@
                                 <hftl:formPanel
                                         formId="formDunningPlanTransition"
                                         edit="#{workflowBean.edit}"
-                                        label="" showMessages="false"
+                                        label=""
                                         backingBean="#{wfTransitionBean}"
                                         entity="#{workflowBean.wfTransition}"
                                         showFormButtons="false" ajaxSubmit="true">
@@ -146,7 +146,7 @@
                                                         field="description"
                                                         edit="#{workflowBean.edit}" />
                                     </p:panel>
-                                    <p:tabView id="tabDetail" dynamic="true" cache="true">
+                                    <p:tabView id="tabDetail">
                                         <p:tab title="#{messages['transition.transitionRule.panel']}">
                                             <p:panel id="transitionRulesPanel" styleClass="clearLeft">
                                                 <c:forEach items="#{workflowBean.selectedRules}" var="rule" varStatus="loopStatus">
@@ -281,12 +281,7 @@
                                     </p:tabView>
                                     <ui:param name="buttons" value="true" />
                                     <p:panel id="buttons">
-                                        <p:commandButton id="save" rendered="#{workflowBean.wfTransition.id==null}"
-                                                         action="#{workflowBean.saveWfTransition}"
-                                                         value="#{messages['action.save']}"
-                                                         update=":tabView:dunningPlanTransition_panel" />
-                                        <p:commandButton rendered="#{workflowBean.wfTransition.id!=null}"
-                                                         action="#{workflowBean.saveWfTransition}"
+                                        <p:commandButton action="#{workflowBean.saveWfTransition}"
                                                          value="#{messages['action.save']}"
                                                          update=":tabView:dunningPlanTransition_panel" />
 

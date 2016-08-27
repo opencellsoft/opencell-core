@@ -141,7 +141,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         WFTransition wfTransitionUnique = wFTransitionService.findWFTransition(wfTransition.getFromStatus(), wfTransition.getToStatus()
                 , wfTransition.getPriority(), entity.getCode(), getCurrentProvider());
         if (wfTransitionUnique != null && (wfTransition.getId() == null || wfTransition.getId() != wfTransitionUnique.getId())) {
-            messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
+            messages.error(new BundleKey("messages", "transition.uniqueValue"), new Object[]{ wfTransition.getFromStatus(), wfTransition.getToStatus(), wfTransition.getPriority()});
             FacesContext.getCurrentInstance().validationFailed();
             return;
         }
@@ -180,14 +180,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
             messages.info(new BundleKey("messages", "update.successful"));
         } else {
-
-            for (WFTransition transition : entity.getTransitions()) {
-
-                if ((transition.getFromStatus().equals(wfTransition.getFromStatus()))
-                        && (transition.getToStatus().equals(wfTransition.getToStatus()))) {
-                    throw new BusinessEntityException();
-                }
-            }
             wfTransition.getWfTransitionRules().clear();
             wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
 
