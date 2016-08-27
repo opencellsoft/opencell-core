@@ -106,4 +106,9 @@
             delete from wf_transition_rule where id in (6,7,9);
         </sql>
     </changeSet>
+    <changeSet id="#1839_20160827" author="pbach">
+        <sql>
+            INSERT INTO wf_transition (id, version, disabled, created, updated, condition_el, from_status, to_status, provider_id, creator_id, updater_id, workflow_id, priority, description) VALUES (nextval('wf_transition_seq'), 3, false, '2016-08-26 22:37:48.91', '2016-08-27 00:32:49.271', NULL, NULL, NULL, 1, 1, 1, (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'), 100, 'Catch all');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

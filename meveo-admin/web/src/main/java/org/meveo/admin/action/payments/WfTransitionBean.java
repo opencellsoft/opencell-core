@@ -18,14 +18,10 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -108,6 +104,10 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private List<WFAction> wfActions = new ArrayList<>();
 
+    private List<WFTransition> operationList = new ArrayList<>();
+
+    private WFTransition catchAll;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -133,6 +133,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         if (workflowOrder == null) {
             workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
         }
+
         entity = super.initEntity();
         if (entity.getId() != null) {
             editWfTransition(entity);
@@ -158,10 +159,14 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             }
         }
 
-        entity.setFromStatus(wfTransition.getFromStatus());
-        entity.setToStatus(wfTransition.getToStatus());
-        entity.setConditionEl(wfTransition.getConditionEl());
+        entity.setDescription(wfTransition.getDescription());
 
+        if (entity.getId() == null) {
+            WFTransition lastWfTransition = operationList.get(operationList.size() - 1);
+            if (lastWfTransition != null) {
+                entity.setPriority(lastWfTransition.getPriority() + 1);
+            }
+        }
         entity.getWfTransitionRules().clear();
         entity.getWfTransitionRules().addAll(wfTransitionRules);
         entity.setWorkflow(workflowOrder);
@@ -200,11 +205,34 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         if (workflowOrder == null) {
             workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
         }
+        if (workflowOrder != null) {
+            operationList = workflowOrder.getTransitions();
+            Collections.sort(operationList);
+            int indexCatchAll = operationList.size() - 1;
+            catchAll = operationList.get(indexCatchAll);
+            operationList.remove(indexCatchAll);
+        }
         return workflowOrder;
     }
 
     public void setWorkflowOrder(Workflow workflowOrder) {
         this.workflowOrder = workflowOrder;
+    }
+
+    public List<WFTransition> getOperationList() {
+        return operationList;
+    }
+
+    public void setOperationList(List<WFTransition> operationList) {
+        this.operationList = operationList;
+    }
+
+    public WFTransition getCatchAll() {
+        return catchAll;
+    }
+
+    public void setCatchAll(WFTransition catchAll) {
+        this.catchAll = catchAll;
     }
 
     /**
@@ -345,44 +373,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 groupedTransitionRule.setName(wfTransitionRule.getName());
                 groupedTransitionRule.setValue(wfTransitionRule);
                 List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(wfTransitionRule.getName(), entity.getProvider());
+                Collections.sort(list);
                 wfTransitionRulesByName.add(list);
                 selectedRules.add(groupedTransitionRule);
             }
         }
     }
-
-    @SuppressWarnings({ "unchecked" })
-    public Map<String, String> getTransitionStatusFromWorkflowType() {
-        try {
-            if (workflowOrder != null) {
-                Class<?> clazz = Class.forName(workflowOrder.getWfType());
-                Object obj = clazz.newInstance();
-                Method testMethod = obj.getClass().getMethod("getStatusList");
-                List<String> statusList = (List<String>) testMethod.invoke(obj);
-                Map<String, String> statusMap = new TreeMap<>();
-                for (String s : statusList) {
-                    statusMap.put(s, s);
-                }
-                return statusMap;
-            }
-        } catch (ClassNotFoundException e) {
-            log.error("unable to get class " + workflowOrder.getWfType(), e);
-        } catch (InstantiationException e) {
-            log.error("unable to instantiate class " + workflowOrder.getWfType(), e);
-        } catch (IllegalAccessException e) {
-            log.error("can not access constructor of class " + workflowOrder.getWfType(), e);
-        } catch (NoSuchMethodException e) {
-            log.error("unable to find getStatusList method on class " + workflowOrder.getWfType(), e);
-        } catch (SecurityException e) {
-            log.error(e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            log.error("illegal arguments for getStatusList method on class " + workflowOrder.getWfType(), e);
-        } catch (InvocationTargetException e) {
-            log.error(e.getMessage(), e);
-        }
-        return new TreeMap<>();
-    }
-
 
     public void addNewRule() {
         selectedRules.add(new GroupedTransitionRule());
@@ -403,10 +399,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         selectedRules.clear();
         wfActions.clear();
         messages.info(new BundleKey("messages", "delete.successful"));
-    }
-
-    public void addWFTransitionRule(int indexRule) {
-
     }
 
     public TreeNode getUserGroupRootNode() {
@@ -465,11 +457,42 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     public void changedRuleName(int indexRule) {
         List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
+        Collections.sort(list);
         if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
             wfTransitionRulesByName.remove(indexRule);
             wfTransitionRulesByName.add(indexRule, list);
         } else {
             wfTransitionRulesByName.add(indexRule, list);
+        }
+    }
+
+    public void moveUpOperation(WFTransition selectedWfTransition) throws BusinessException {
+        int index = operationList.indexOf(selectedWfTransition);
+        if (index > 0) {
+            WFTransition upWfTransition = operationList.get(index);
+            WFTransition needUpdate = wfTransitionService.findById(upWfTransition.getId(), true);
+            needUpdate.setPriority(index);
+            wfTransitionService.update(needUpdate, getCurrentUser());
+            WFTransition downWfTransition = operationList.get(index - 1);
+            needUpdate = wfTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate.setPriority(index + 1);
+            wfTransitionService.update(needUpdate, getCurrentUser());
+            Collections.swap(operationList, index, index - 1);
+        }
+    }
+
+    public void moveDownOperation(WFTransition selectedWfTransition) throws BusinessException {
+        int index = operationList.indexOf(selectedWfTransition);
+        if (index < operationList.size() - 1) {
+            WFTransition upWfTransition = operationList.get(index);
+            WFTransition needUpdate = wfTransitionService.findById(upWfTransition.getId(), true);
+            needUpdate.setPriority(index + 2);
+            wfTransitionService.update(needUpdate, getCurrentUser());
+            WFTransition downWfTransition = operationList.get(index + 1);
+            needUpdate = wfTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate.setPriority(index + 1);
+            wfTransitionService.update(needUpdate, getCurrentUser());
+            Collections.swap(operationList, index, index + 1);
         }
     }
 

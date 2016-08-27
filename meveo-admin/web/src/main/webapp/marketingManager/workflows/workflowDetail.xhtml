@@ -21,8 +21,8 @@
         <p:panel>
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['workflow.panel']}" disabled="true" />
-                    <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                    <p:menuitem outcome="mmWorkflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                    <p:menuitem value="#{messages['mmTransition.addNew']}" disabled="true"/>
                 </p:breadCrumb>
             </h:form>
         </p:panel>
@@ -33,24 +33,12 @@
             backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}"
             ajaxSubmit="true">
-            <hftl:formField
-                    label="#{messages['dunningPlanTransition.fromStatus']}"
-                    field="fromStatus" required="true" isMessage="true"
-                    edit="#{wfTransitionBean.edit}"
-                    listValues="#{wfTransitionBean.transitionStatusFromWorkflowType}" />
-
-            <hftl:formField
-                    label="#{messages['dunningPlanTransition.toStatus']}"
-                    field="toStatus" required="true" isMessage="true"
-                    listValues="#{wfTransitionBean.transitionStatusFromWorkflowType}"
-                    edit="#{wfTransitionBean.edit}" />
-
-            <hftl:formField label="#{messages['dunningPlan.conditionEl']}"
-                            field="conditionEl" textArea="true" rows="1" maxlength="2000"
+            <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true"
+                            field="description" size="100" maxlength="100"
                             edit="#{wfTransitionBean.edit}" />
-            <hftl:decorateFormField fieldId="separetorRules">
-            <p:separator id="separetorRules"></p:separator>
-            </hftl:decorateFormField>
+            <p:panel styleClass="clearLeft">
+                <p:separator/>
+            </p:panel>
             <p:panel id="transitionRulesPanel" styleClass="clearLeft">
                 <c:forEach items="#{wfTransitionBean.selectedRules}" var="rule" varStatus="loopStatus">
                     <p:panel id="transitionRulePanel#{loopStatus.index}" styleClass="clearLeft">
@@ -58,26 +46,26 @@
                             <p:tooltip for="transitionRuleOperationPanel#{loopStatus.index}"
                                        value="#{messages['commons.delete']}" showEffect="slide"
                                        hideEffect="slide" />
-                            <p:commandButton id="transitionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;" immediate="true"
+                            <p:commandButton id="transitionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
                                              action="#{wfTransitionBean.deleteWfTransitionRule(loopStatus.index)}"
-                                             icon="ui-icon-trash" process="@this,transitionRulesPanel" ajaxSubmit="true" partialSubmit="true"
+                                             icon="ui-icon-trash" process="transitionRuleOperationPanel#{loopStatus.index}" ajaxSubmit="true" partialSubmit="true"
                                              update=":formDunningPlanTransition:transitionRulesPanel" />
 
                         </hftl:decorateFormField>
-                        <hftl:decorateFormField fieldId="transitionRuleName#{loopStatus.index}" label="#{messages['transitionRuleName.rule']}">
+                        <hftl:decorateFormField fieldId="transitionRuleName#{loopStatus.index}" label="#{messages['mmTransition.criteria']}">
                             <p:selectOneMenu id="transitionRuleName#{loopStatus.index}" value="#{rule.name}" required="true">
-                                <p:ajax listener="#{wfTransitionBean.changedRuleName(loopStatus.index)}" process="@this,transitionRulePanel#{loopStatus.index}"
+                                <p:ajax listener="#{wfTransitionBean.changedRuleName(loopStatus.index)}" process="transitionRuleName#{loopStatus.index}"
                                         update=":formDunningPlanTransition:transitionRulesPanel"/>
                                 <f:selectItem itemLabel="Select Rule" itemValue="" noSelectionOption="true" />
                                 <f:selectItems value="#{wfTransitionBean.wfTransitionRulesName}" />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
 
-                        <hftl:decorateFormField fieldId="transitionRuleValue#{loopStatus.index}" label="#{messages['transitionRuleValue.value']}" rendered="#{rule.name != null}">
-                            <p:selectOneListbox id="transitionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true" validateUnique="true" converter="wfTransitionRuleConverter" immediate="true">
+                        <hftl:decorateFormField fieldId="transitionRuleValue#{loopStatus.index}" label="#{messages['mmTransition.value']}" rendered="#{rule.name != null}">
+                            <p:selectOneListbox id="transitionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true" converter="wfTransitionRuleConverter">
                                 <f:selectItems value="#{wfTransitionBean.wfTransitionRulesByName[loopStatus.index]}" var="transitionRule" itemLabel="#{transitionRule.value}" itemValue="#{transitionRule}" />
-                                <p:ajax listener="#{wfTransitionBean.addWFTransitionRule(loopStatus.index)}" event="change" update=":formDunningPlanTransition:transitionRulesPanel"
-                                        process="@this,transitionRulePanel#{loopStatus.index}"/>
+                                <p:ajax event="change" update=":formDunningPlanTransition:transitionRulesPanel"
+                                        process="transitionRuleValue#{loopStatus.index}"/>
                             </p:selectOneListbox>
                         </hftl:decorateFormField>
 
@@ -136,14 +124,14 @@
                 </c:forEach>
             </p:panel>
             <p:panel styleClass="clearLeft">
-                <p:tooltip for="addCriteriaBtn" value="#{messages['transitionRule.add']}" showEffect="slide" hideEffect="slide" />
+                <p:tooltip for="addCriteriaBtn" value="#{messages['mmTransition.addCriteria']}" showEffect="slide" hideEffect="slide" />
                 <p:commandButton id="addCriteriaBtn"
                                  action="#{wfTransitionBean.addNewRule()}" process="@this,transitionRulesPanel"
-                                 value="#{messages['transitionRule.add']}" ajaxSubmit="true" partialSubmit="true"
+                                 value="#{messages['mmTransition.addCriteria']}" ajaxSubmit="true" partialSubmit="true"
                                  icon="fa fa-plus" update=":formDunningPlanTransition:transitionRulesPanel" />
+                <p:separator></p:separator>
             </p:panel>
-            <p:separator></p:separator>
-            <hftl:decorateFormField fieldId="userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">
+            <hftl:decorateFormField fieldId="userGroupLevel" label="#{messages['mmTransition.assignedTeamMultiChoice']}" displayOneLine="true">
                 <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="checkbox"
                         selection="#{wfTransitionBean.userGroupSelectedNodes}">
                     <p:treeNode>
