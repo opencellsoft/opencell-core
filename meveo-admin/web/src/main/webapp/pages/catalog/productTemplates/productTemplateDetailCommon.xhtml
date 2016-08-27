@@ -14,7 +14,7 @@
 
 <ui:composition>
 
-	<c:set var="mainBackingBean" value="#{backingBean}" />
+	<c:set var="mainBackingBean" value="#{backingBean}" />	
 
 	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 		required="true" validateUnique="true" />
@@ -38,22 +38,22 @@
 		field="invoicingCalendar" valueLabelField="code" popup="false"
 		listBean="#{calendarBean}" />
 	<hftl:decorateFormField fieldId="productImageUpload"
-		rendered="#{productTemplateBean.entity.transient}"
+		rendered="#{mainBackingBean.entity.transient}"
 		label="#{messages['commons.image']}">
 		<p:fileUpload id="productImageUpload" auto="false" skinSimple="true"
-			mode="simple" value="#{productTemplateBean.uploadedFile}" />
+			mode="simple" value="#{mainBackingBean.uploadedFile}" />
 	</hftl:decorateFormField>
 	<hftl:decorateFormField fieldId="productImage"
-		rendered="#{not productTemplateBean.entity.transient}"
+		rendered="#{not mainBackingBean.entity.transient}"
 		label="#{messages['commons.image']}">
 		<p:outputPanel autoUpdate="true">
 			<p:graphicImage id="productImage" cache="false"
 				value="#{productTemplateImageStreamer.image}" height="150"
 				width="150">
-				<f:param name="id" value="#{productTemplateBean.entity.id}"></f:param>
+				<f:param name="id" value="#{mainBackingBean.entity.id}"></f:param>
 			</p:graphicImage>
 			<p:fileUpload
-				fileUploadListener="#{productTemplateBean.handleFileUpload}"
+				fileUploadListener="#{mainBackingBean.handleFileUpload}"
 				mode="advanced" update=":formId:messages" auto="true"
 				sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 		</p:outputPanel>
@@ -62,23 +62,26 @@
 		label="#{messages['productOffering.offerTemplateCategories']}"
 		field="offerTemplateCategories" listType="pickUpList"
 		valueLabelField="code"
-		dualListModel="#{productTemplateBean.offerTemplateCategoriesDM}" />
+		dualListModel="#{mainBackingBean.offerTemplateCategoriesDM}" />
 	<hftl:formField id="attachments"
 		label="#{messages['productOffering.attachments']}" field="attachments"
 		listType="pickUpList" valueLabelField="code"
-		dualListModel="#{productTemplateBean.attachmentsDM}" />
-	<hftl:formField id="walletTemplates"
+		dualListModel="#{mainBackingBean.attachmentsDM}" />
+	<hftl:formField id="walletTemplates" rendered="#{mode eq 'PRODUCT'}"
 		label="#{messages['productTemplates.walletTemplates']}"
 		field="walletTemplates" listType="pickUpList" valueLabelField="code"
-		dualListModel="#{productTemplateBean.walletTemplatesDM}" />
+		dualListModel="#{mainBackingBean.walletTemplatesDM}" />
 	<hftl:formField id="businessAccountModels"
 		label="#{messages['businessAccountModels.title']}"
 		field="businessAccountModels" listType="pickUpList"
-		valueLabelField="code" dualListModel="#{productTemplateBean.bamDM}" />
+		valueLabelField="code" dualListModel="#{mainBackingBean.bamDM}" />
 
 	<hftl:formField label="#{messages['enableEntity.disabled']}"
 		doNotShowOnNew="true" allowEdit="false" field="disabled"
 		isMessage="true" />
+
+	<hftl:customFields backingBean="#{mainBackingBean}"
+		messagesId=":formId:messages" />
 
 </ui:composition>
 </html>

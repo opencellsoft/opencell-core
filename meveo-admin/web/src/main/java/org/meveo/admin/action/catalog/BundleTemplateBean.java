@@ -18,6 +18,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
@@ -28,6 +29,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
+import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -62,6 +64,9 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	@Inject
 	private ChannelService channelService;
+	
+	@Inject
+	private DigitalResourceService digitalResourceService;
 
 	private PricePlanMatrix entityPricePlan;
 	private BigDecimal catalogPrice;
@@ -75,6 +80,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	private List<ProductTemplate> productTemplatesToAdd;
 
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
+	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<BusinessAccountModel> bamDM;
 	private DualListModel<Channel> channelDM;
 
@@ -345,6 +351,31 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public void setChannelDM(DualListModel<Channel> channelDM) {
 		this.channelDM = channelDM;
+	}
+	
+	public DualListModel<DigitalResource> getAttachmentsDM() {
+		if (attachmentsDM == null) {
+			List<DigitalResource> perksSource = null;
+			if (entity != null && entity.getProvider() != null) {
+				perksSource = digitalResourceService.list(entity.getProvider(), true);
+			} else {
+				perksSource = digitalResourceService.list(currentUser.getProvider(), true);
+			}
+
+			List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
+			if (entity.getAttachments() != null) {
+				perksTarget.addAll(entity.getAttachments());
+			}
+			perksSource.removeAll(perksTarget);
+
+			attachmentsDM = new DualListModel<DigitalResource>(perksSource, perksTarget);
+		}
+
+		return attachmentsDM;
+	}
+
+	public void setAttachmentsDM(DualListModel<DigitalResource> attachmentsDM) {
+		this.attachmentsDM = attachmentsDM;
 	}
 
 	@ActionMethod
