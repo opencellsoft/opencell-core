@@ -936,10 +936,22 @@
 
         <createSequence sequenceName="wf_transition_rule_seq" />
     </changeSet>
-    	
+
     <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
         <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
             <column name="INDEX_TYPE" type="varchar(10)"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet author="pbach (generated)" id="#1861_26082016-166">
+        <addColumn tableName="wf_transition">
+            <column name="priority" type="INT4" />
+        </addColumn>
+        <addColumn tableName="wf_transition">
+            <column name="description" type="VARCHAR(100)"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" />
+
+        <addUniqueConstraint columnNames="from_status, to_status, priority, workflow_id, provider_id" constraintName="uk_from_status_to_status_priority_workflow_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
     </changeSet>
 </databaseChangeLog>

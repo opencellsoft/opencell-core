@@ -38,7 +38,7 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "WF_TRANSITION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"NAME", "VALUE", "PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_RULE_SEQ")
-public class WFTransitionRule extends AuditableEntity {
+public class WFTransitionRule extends AuditableEntity implements Comparable<WFTransitionRule>{
 
 	private static final long serialVersionUID = 1L;
  
@@ -159,4 +159,8 @@ public class WFTransitionRule extends AuditableEntity {
 		return true;
 	}
 
+    @Override
+    public int compareTo(WFTransitionRule o) {
+        return Long.compare(this.priority, o.priority);
+    }
 }

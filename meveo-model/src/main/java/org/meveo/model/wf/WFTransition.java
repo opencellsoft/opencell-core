@@ -44,11 +44,11 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"FROM_STATUS", "TO_STATUS", "WORKFLOW_ID" , "PROVIDER_ID"}))
+		"FROM_STATUS", "TO_STATUS", "WORKFLOW_ID", "PRIORITY", "PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
-public class WFTransition extends AuditableEntity {
+public class WFTransition extends AuditableEntity implements Comparable<WFTransition>{
 
 	private static final long serialVersionUID = 1L;
  
@@ -57,7 +57,14 @@ public class WFTransition extends AuditableEntity {
 	
 	@Column(name = "TO_STATUS")
 	private String toStatus;
-	
+
+    @Column(name = "PRIORITY")
+    private int priority;
+
+    @Column(name = "DESCRIPTION", nullable = true, length = 100)
+    @Size(max = 100)
+    private String description;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WORKFLOW_ID")
 	private Workflow workflow;
@@ -103,7 +110,23 @@ public class WFTransition extends AuditableEntity {
 		this.toStatus = toStatus;
 	}
 
-	/**
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
 	 * @return the workflow
 	 */
 	public Workflow getWorkflow() {
@@ -199,4 +222,8 @@ public class WFTransition extends AuditableEntity {
 		return true;
 	}
 
+    @Override
+    public int compareTo(WFTransition o) {
+        return Long.compare(this.priority, o.priority);
+    }
 }

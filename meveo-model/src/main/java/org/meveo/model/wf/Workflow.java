@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -53,6 +54,7 @@ public class Workflow extends BusinessEntity {
 	String wfType = null;
 	
 	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
+    @OrderBy("priority ASC")
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
 
 	@Enumerated(EnumType.STRING)

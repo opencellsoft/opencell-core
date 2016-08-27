@@ -21,6 +21,7 @@ package org.meveo.service.wf;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
@@ -30,7 +31,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WFTransitionService extends PersistenceService<WFTransition> {
 
-	public WFTransition findWFTransition(String fromStatus,String toStatus,String workflowCode,Provider provider) {
+	public WFTransition findWFTransition(String fromStatus, String toStatus, int priority, String workflowCode, Provider provider) {
 		WFTransition wfTransition = null;
 		try {
 			wfTransition = (WFTransition) getEntityManager()
@@ -38,13 +39,15 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 							"from "
 									+ WFTransition.class
 											.getSimpleName()
-									+ " where fromStatus=:fromStatus and  toStatus=:toStatus and workflow.code=:workflowCode and provider=:provider")
+									+ " where fromStatus=:fromStatus and  toStatus=:toStatus and priority=:priority and workflow.code=:workflowCode and provider=:provider")
 					.setParameter("fromStatus", fromStatus)		
-					.setParameter("toStatus", toStatus)		
+					.setParameter("toStatus", toStatus)
+                    .setParameter("priority", priority)
 					.setParameter("workflowCode", workflowCode)
 					.setParameter("provider", provider)
 					.getSingleResult();
-		} catch (Exception e) {
+		} catch (NoResultException e) {
+            log.error("failed to find WFTransition", e);
 		}
 		return wfTransition;
 	}

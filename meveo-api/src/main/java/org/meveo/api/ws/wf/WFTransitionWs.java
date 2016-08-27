@@ -24,11 +24,13 @@ public interface WFTransitionWs extends IBaseWs {
 	    @WebMethod
 	    WFTransitionResponseDto find(@WebParam(name = "dunningPlanCode") String dunningPlanCode ,
 	    		@WebParam(name = "dunningLevelFrom") String dunningLevelFrom, 
-	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo);
+	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo,
+                @WebParam(name = "priority") Integer priority);
 	    
 	    @WebMethod
 	    ActionStatus remove(@WebParam(name = "dunningPlanCode") String dunningPlanCode ,
 	    		@WebParam(name = "dunningLevelFrom") String dunningLevelFrom, 
-	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo);
+	    		@WebParam(name = "dunningLevelTo") String dunningLevelTo,
+                @WebParam(name = "priority") Integer priority);
 	    
 }
