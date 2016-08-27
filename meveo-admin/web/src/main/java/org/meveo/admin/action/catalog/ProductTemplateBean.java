@@ -110,23 +110,22 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	private void initPricePlan() {
 		boolean exists = false;
-		if (entity.getProductChargeTemplate() != null) {
-			List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(entity.getProductChargeTemplate().getCode(), currentUser.getProvider(),
-					"priority");
-			if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
-				entityPricePlan = pricePlanMatrixes.get(0);
-				log.debug("IPIEL: found price plan {}", entityPricePlan);
-				exists = true;
-			}
+		if (entity.getProductChargeTemplate() == null)
+			return;
 
-			if (!exists) {
-				log.debug("IPIEL: no priceplan found creating...");
-				// create new price plan
-				entityPricePlan = new PricePlanMatrix();
-				entityPricePlan.setCode(entity.getProductChargeTemplate().getCode());
-				entityPricePlan.setEventCode(entity.getProductChargeTemplate().getCode());
-				entityPricePlan.setAmountWithoutTax(new BigDecimal(0));
-			}
+		List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(entity.getProductChargeTemplate().getCode(), currentUser.getProvider(),
+				"priority");
+		if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
+			entityPricePlan = pricePlanMatrixes.get(0);
+			log.debug("IPIEL: found price plan {}", entityPricePlan);
+			exists = true;
+		}
+
+		if (!exists) {
+			log.debug("IPIEL: no priceplan found creating...");
+			// create new price plan
+			entityPricePlan = new PricePlanMatrix();
+			entityPricePlan.setAmountWithoutTax(new BigDecimal(0));
 		}
 
 		List<CustomFieldInstance> cfInstances = getCustomFieldInstances(entity).get(ProductTemplate.CF_CATALOG_PRICE);
@@ -164,7 +163,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	public BigDecimal computeDiscountAmount() {
 		BigDecimal result = new BigDecimal(0);
 
-		if (entityPricePlan.getAmountWithoutTax() != null && entityPricePlan != null && catalogPriceCF != null && catalogPriceCF.getCfValue() != null
+		if (entity.getProductChargeTemplate() == null)
+			return result;
+
+		if (entityPricePlan != null && entityPricePlan.getAmountWithoutTax() != null && catalogPriceCF != null && catalogPriceCF.getCfValue() != null
 				&& catalogPriceCF.getCfValue().getDoubleValue() != null) {
 			if (catalogPrice != null && !catalogPrice.equals(new BigDecimal(0))) {
 				result = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice).multiply(new BigDecimal(100))).divide(catalogPrice);
@@ -177,6 +179,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public boolean isDiscountComputable() {
+		if (entity.getProductChargeTemplate() == null)
+			return false;
+
 		return catalogPrice != null && entityPricePlan != null && entityPricePlan.getAmountWithoutTax() != null;
 	}
 
@@ -223,7 +228,12 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	private void savePricePlanMatrix() throws BusinessException {
+		if (entity.getProductChargeTemplate() == null)
+			return;
+
 		if (entityPricePlan.isTransient()) {
+			entityPricePlan.setCode(entity.getProductChargeTemplate().getCode());
+			entityPricePlan.setEventCode(entity.getProductChargeTemplate().getCode());
 			pricePlanMatrixService.create(entityPricePlan, getCurrentUser());
 		} else {
 			pricePlanMatrixService.update(entityPricePlan, getCurrentUser());

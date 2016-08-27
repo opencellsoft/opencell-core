@@ -96,7 +96,7 @@
 					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 						<h:outputText value="#{productTemplateBean.entity.nameOrCode}"
 							rendered="#{!productTemplateBean.edit}"></h:outputText>
-						<hftl:formField label="#{messages['offerTemplate.name']}"
+						<hftl:formField label="#{messages['offerTemplate.name']}" required="true"
 							field="name" rendered="#{productTemplateBean.edit}" />
 						<hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
