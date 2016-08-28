@@ -24,11 +24,13 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.hierarchy.HierarchyLevel;
@@ -52,6 +54,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     private static final long serialVersionUID = 1L;
     private static final String ROOT = "Root";
+    private static final String ADMIN = "/layout/template.xhtml";
+    private static final String MARKETING_MANAGER = "/marketingManager/layout/template.xhtml";
+    private static final String MODULE_MM = "marketing";
 
     /** Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}. */
     @Inject
@@ -64,6 +69,12 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private Boolean isEdit = Boolean.FALSE;
 
     private Boolean showUserGroupDetail = Boolean.FALSE;
+
+    private String template = ADMIN;
+
+    @Inject
+    @RequestParam()
+    private Instance<String> module;
 
     private static final Logger log = LoggerFactory.getLogger(UserHierarchyLevelBean.class);
 
@@ -109,6 +120,21 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     public void setSelectedNode(TreeNode selectedNode) {
         this.selectedNode = selectedNode;
+    }
+
+    public String getTemplate() {
+        if (module == null || org.meveo.commons.utils.StringUtils.isBlank(module.get())) {
+            return template;
+        }
+        if (MODULE_MM.equals(String.valueOf(module.get()))) {
+            template = MARKETING_MANAGER;
+        }
+
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 
     public TreeNode getRootNode() {

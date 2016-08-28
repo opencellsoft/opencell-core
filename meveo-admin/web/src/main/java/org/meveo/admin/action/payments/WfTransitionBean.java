@@ -162,10 +162,14 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         entity.setDescription(wfTransition.getDescription());
 
         if (entity.getId() == null) {
-            WFTransition lastWfTransition = operationList.get(operationList.size() - 1);
-            if (lastWfTransition != null) {
-                entity.setPriority(lastWfTransition.getPriority() + 1);
+            int priority = 1;
+            if (operationList.size() > 0) {
+                WFTransition lastWfTransition = operationList.get(operationList.size() - 1);
+                if (lastWfTransition != null) {
+                    priority = lastWfTransition.getPriority() + 1;
+                }
             }
+            entity.setPriority(priority);
         }
         entity.getWfTransitionRules().clear();
         entity.getWfTransitionRules().addAll(wfTransitionRules);

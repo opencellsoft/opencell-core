@@ -26,6 +26,10 @@
 			<p:submenu label="#{messages['menu.myCompany']}">
 				<p:menuitem id="users" value="#{messages['menu.users']}"
 					outcome="users" />
+                <p:menuitem id="mmUserGroups" outcome="userGroupHierarchy"
+                            value="#{messages['menu.userGroupHierarchy']}">
+                    <f:param name="module" value="marketing"/>
+                </p:menuitem>
 			</p:submenu>
 
 			<p:submenu id="settings" label="#{messages['menu.settings']}">
@@ -33,7 +37,6 @@
 					value="#{messages['menu.marketingManager.manageCategories']}" />
 			</p:submenu>
 		</hftl:menu>
-
 	</h:form>
 
 </ui:composition>

@@ -2016,6 +2016,12 @@
             <redirect/>
         </navigation-case>
         <navigation-case>
+            <from-outcome>mmWorkflowDefault</from-outcome>
+            <to-view-id>/marketingManager/workflows/workflowDefault.xhtml
+            </to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
 			<from-outcome>productTemplates</from-outcome>
 			<to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
 			</to-view-id>

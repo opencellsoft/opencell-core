@@ -15,7 +15,7 @@
         </f:metadata>
     </ui:define>
     <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
+        <ui:include src="/marketingManager/layout/navigation.xhtml" />
     </ui:define>
     <ui:define name="body">
         <p:panel>
@@ -35,7 +35,7 @@
             ajaxSubmit="true">
             <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true"
                             field="description" size="100" maxlength="100"
-                            edit="#{wfTransitionBean.edit}" />
+                            edit="#{wfTransitionBean.edit}"/>
             <p:panel styleClass="clearLeft">
                 <p:separator/>
             </p:panel>

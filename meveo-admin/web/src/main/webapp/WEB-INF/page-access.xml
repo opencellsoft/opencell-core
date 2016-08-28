@@ -86,6 +86,14 @@
 		<constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
 	</page>
+
+    <page view-id=".+\/admin\/userGroupHierarchy\/.*">
+        <constraint>currentUser.hasPermission('marketing','marketingCatalogManager')</constraint>
+        <constraint>currentUser.hasPermission('catalog','catalogManagement')</constraint>
+        <constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+        <constraint type="READ">currentUser.hasPermission('catalog','catalogVisualization')</constraint>
+        <constraint type="READ">currentUser.hasPermission('administration','administrationVisualization')</constraint>
+    </page>
 	
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
