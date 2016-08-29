@@ -2,7 +2,9 @@ package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -90,8 +92,8 @@ public class BundleTemplateService extends BusinessService<BundleTemplate> {
 		List<WalletTemplate> walletTemplates = entity.getWalletTemplates();
 		entity.setWalletTemplates(new ArrayList<WalletTemplate>());
 
-		List<BundleProductTemplate> bundleProductTemplates = entity.getBundleProducts();
-		entity.setBundleProducts(new ArrayList<BundleProductTemplate>());
+		Set<BundleProductTemplate> bundleProductTemplates = entity.getBundleProducts();
+		entity.setBundleProducts(new HashSet<BundleProductTemplate>());
 
 		entity.setCode(code);
 		create(entity, getCurrentUser());
