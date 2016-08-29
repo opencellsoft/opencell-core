@@ -119,9 +119,6 @@
 										value=" #{messages['page.catalog.exportTo']}"
 										update=":#{p:component('exportParametersDialog')}"
 										oncomplete="PF('exportParametersDialog').show()">
-										<!-- 										<f:setPropertyActionListener -->
-										<!-- 											target="#{entityExportImportBean.selectedExportTemplate}" -->
-										<!-- 											value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" /> -->
 										<f:setPropertyActionListener
 											target="#{entityExportImportBean.dataModelToExport}"
 											value="#{productTemplateListBean.getLazyDataModel()}" />
@@ -152,7 +149,8 @@
 									styleClass="panelGrid ui-panelgrid-blank"
 									columnClasses="Wid5 VAlignTop, Wid54 VAlignTop, Wid40 VAlignTop">
 									<p:panel>
-										<p:graphicImage id="productImage" cache="false" rendered="#{prod ne null}"
+										<p:graphicImage id="productImage" cache="false"
+											rendered="#{prod ne null}"
 											value="#{productTemplateImageStreamer.image}" width="100">
 											<f:param name="id" value="#{prod.id}"></f:param>
 										</p:graphicImage>
@@ -197,7 +195,17 @@
 										<p:panel styleClass="text-center">
 											<ul class="list-inline">
 												<li><p:link outcome="mmProductTemplateDetail"
-														styleClass="fa fa-search-plus fa-2x no-text-decoration text-red">
+														styleClass="fa fa-search-plus fa-2x no-text-decoration text-red"
+														rendered="#{not productTemplateBean.isBundleTemplate(prod)}">
+														<f:param name="cid"
+															value="#{javax.enterprise.context.conversation.id}" />
+														<f:param name="objectId" value="#{prod.id}"></f:param>
+														<f:param name="edit" value="false"></f:param>
+														<f:param name="backView" value="mmProductTemplates"></f:param>
+														<f:param name="tab" value="0"></f:param>
+													</p:link> <p:link outcome="mmBundleTemplateDetail"
+														styleClass="fa fa-search-plus fa-2x no-text-decoration text-red"
+														rendered="#{productTemplateBean.isBundleTemplate(prod)}">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
 														<f:param name="objectId" value="#{prod.id}"></f:param>

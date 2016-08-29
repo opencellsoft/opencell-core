@@ -2,6 +2,7 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -52,7 +53,7 @@ public class BundleTemplateApi extends ProductOfferingApi {
 
 		// process all bundleProductTemplates then create
 		// bundleProductTemplateDtos accordingly.
-		List<BundleProductTemplate> bundleProducts = bundleTemplate.getBundleProducts();
+		Set<BundleProductTemplate> bundleProducts = bundleTemplate.getBundleProducts();
 		if (bundleProducts != null && !bundleProducts.isEmpty()) {
 			List<BundleProductTemplateDto> bundleProductTemplates = new ArrayList<>();
 			BundleProductTemplateDto bundleProductTemplateDto = null;
@@ -188,7 +189,7 @@ public class BundleTemplateApi extends ProductOfferingApi {
 	private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate, User user) throws MeveoApiException, BusinessException {
 		List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
 		boolean hasBundleProductTemplateDtos = bundleProductTemplates != null && !bundleProductTemplates.isEmpty();
-		List<BundleProductTemplate> existingProductTemplates = bundleTemplate.getBundleProducts();
+		Set<BundleProductTemplate> existingProductTemplates = bundleTemplate.getBundleProducts();
 		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
 		if (hasBundleProductTemplateDtos) {
 			List<BundleProductTemplate> newBundleProductTemplates = new ArrayList<>();

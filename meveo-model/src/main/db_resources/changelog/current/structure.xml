@@ -954,4 +954,12 @@
 
         <addUniqueConstraint columnNames="from_status, to_status, priority, workflow_id, provider_id" constraintName="uk_from_status_to_status_priority_workflow_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
     </changeSet>
+
+	<changeSet id="#cat_bundle_template_add_uk" author="EdwardLegaspi">
+		<addUniqueConstraint
+			columnNames="product_template_id, bundle_template_id"
+			constraintName="uk_cat_bundle_prod_tpl" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="cat_bundle_product_template" />
+	</changeSet>
+	
 </databaseChangeLog>
