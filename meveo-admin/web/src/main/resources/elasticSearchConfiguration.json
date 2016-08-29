@@ -8,7 +8,7 @@
 		"Seller": {
 			"index": "accounts"
 		},
-		"OfferTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
+		"ProductOffering,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
 			"index": "catalog"
 		},
 		"ChargeTemplate": {
@@ -36,6 +36,12 @@
 		},
 		"ChargeTemplate": {
 			"chargeType": "getClass().getSimpleName()"
+		},
+		"ProductOffering": {
+			"name": "name"
+		},
+		"OfferTemplateCategory": {
+			"name": "name"
 		}
 	},
 	"customFieldTemplates": {
@@ -121,6 +127,20 @@
 				}
 			},
 			"mappings": {
+				"ProductTemplate": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						}
+					}
+				},
 				"OfferTemplate": {
 					"properties": {
 						"code": {
@@ -128,6 +148,9 @@
 							"index": "not_analyzed"
 						},
 						"description": {
+							"type": "string"
+						},
+						"name": {
 							"type": "string"
 						}
 					}
@@ -161,6 +184,9 @@
 							"index": "not_analyzed"
 						},
 						"description": {
+							"type": "string"
+						},
+						"name": {
 							"type": "string"
 						}
 					}

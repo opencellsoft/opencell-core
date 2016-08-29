@@ -478,4 +478,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		this.catalogPrice = catalogPrice;
 	}
 
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 }
