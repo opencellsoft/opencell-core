@@ -21,342 +21,67 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<hftl:entityPopup id="offerTemplatePopup"
-			header="#{messages['offerTemplate.title']}"
-			backingBean="#{offerTemplateBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			selection="#{bundleTemplateBean.entity.offerTemplateCategories}"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description"
-			updateField=":bundleForm:offerTemplateCategories">
-		</hftl:entityPopup>
-		<hftl:formPanel formId="bundleForm"
-			label="#{messages['menu.productTemplates']}"
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.catalog.templates']}"
+					outcome="mmProductTemplates" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['marketingManager.catalog.bundle']}"
 			backingBean="#{bundleTemplateBean}" showFormButtons="true"
-			formButtonsTopRight="true">
-			<!-- <p:panel styleClass="TexAlRight">
+			showDeleteButton="false" formButtonsTopRight="true"
+			backView="mmProductTemplates">
 
-				<p:commandButton value="#{messages['action.activate']}"
-					action="#{bundleTemplateBean.activateProduct()}"
-					rendered="#{bundleTemplateBean.editMode != null and bundleTemplateBean.editMode.length() > 0}"
-					icon="ui-icon-check" update="@form" />
-				<p:commandButton value="#{messages['action.saveAsDraft']}"
-					action="#{bundleTemplateBean.saveAsDraft()}"
-					rendered="#{bundleTemplateBean.editMode != null and bundleTemplateBean.editMode.length() > 0}"
-					update="@form" />
-				<p:commandButton value="#{messages['action.discardChanges']}"
-					action="#{bundleTemplateBean.discardChanges()}"
-					rendered="#{bundleTemplateBean.editMode != null and bundleTemplateBean.editMode.length() > 0}"
-					update="@form" />
-			</p:panel> -->
-
-			<p:panel styleClass="ui-panel-blank">
-
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="mmProductTemplates"
-						value="#{messages['bundleTemplates.title']}" />
-				</p:breadCrumb>
-
-
-			</p:panel>
-
-			<p:panelGrid styleClass="ui-panelgrid-blank">
-				<p:row>
-					<p:column style="width : 34%">
-						<p:panelGrid>
-							<p:row>
-								<p:column rowspan="4">
-									<hftl:decorateFormField fieldId="productImageUpload"
-										rendered="#{bundleTemplateBean.entity.transient}"
-										label="#{messages['commons.image']}">
-										<p:fileUpload id="productImageUpload" auto="false"
-											skinSimple="true" mode="simple"
-											value="#{bundleTemplateBean.uploadedFile}" />
-									</hftl:decorateFormField>
-									<hftl:decorateFormField fieldId="productImage"
-										rendered="#{not bundleTemplateBean.entity.transient}"
-										label="#{messages['commons.image']}">
-										<p:outputPanel autoUpdate="true">
-											<p:graphicImage id="productImage" cache="false"
-												value="#{productTemplateImageStreamer.image}" height="150"
-												width="150">
-												<f:param name="id" value="#{bundleTemplateBean.entity.id}"></f:param>
-											</p:graphicImage>
-											<p:fileUpload
-												fileUploadListener="#{bundleTemplateBean.handleFileUpload}"
-												mode="advanced" update=":bundleForm:messages" auto="true"
-												sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-										</p:outputPanel>
-									</hftl:decorateFormField>
-								</p:column>
-							</p:row>
-							<p:row>
-								<p:column>
-									<hftl:formField label="#{messages['businessEntity.code']}"
-										field="code" required="true" validateUnique="true" />
-								</p:column>
-							</p:row>
-							<p:row>
-								<p:column>
-									<hftl:formField label="#{messages['commons.name']}"
-										field="name" required="true" id="name" />
-								</p:column>
-							</p:row>
-							<p:row>
-								<p:column>
-									<hftl:formField label="#{messages['commons.status']}"
-										field="lifeCycleStatus" />
-								</p:column>
-							</p:row>
-
-							<p:row>
-								<p:column>
-									<hftl:formField label="#{messages['commons.validFrom']}"
-										field="validFrom" id="validFrom" />
-								</p:column>
-								<p:column>
-									<hftl:formField label="#{messages['commons.validTo']}"
-										field="validTo" id="validTo" />
-								</p:column>
-							</p:row>
-							<p:row>
-								<p:column></p:column>
-								<p:column>
-									<hftl:formField label="#{messages['productTemplate.family']}"
-										field="businessProductModel" id="businessProductModel"
-										valueLabelField="code"
-										listElements="#{businessProductModelBean.listAll()}" />
-								</p:column>
-							</p:row>
-							<p:row>
-								<p:column></p:column>
-								<p:column>
-									<!-- <hftl:formField
-										label="#{messages['productOffering.offerTemplateCategories']}"
-										field="offerTemplateCategories" required="true"
-										id="offerTemplateCategories" popupId="offerTemplatePopup" /> -->
-									<hftl:formField id="offerTemplateCategories"
-										label="#{messages['productOffering.offerTemplateCategories']}"
-										field="offerTemplateCategories" listType="pickUpList"
-										valueLabelField="code"
-										dualListModel="#{bundleTemplateBean.offerTemplateCategoriesDM}" />
-								</p:column>
-							</p:row>
-						</p:panelGrid>
-					</p:column>
-					<p:column style="width : 33%">
-						<p:tabView>
-							<p:tab title="EUR">
-								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-									<p:outputLabel value="#{messages['productTemplate.salePrice']}" />
-									<h:outputText
-										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null and (not bundleTemplateBean.edit)}" />
-									<p:inputText
-										value="#{bundleTemplateBean.entityPricePlan.amountWithoutTax}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit)}">
-										<p:ajax event="keyup"
-											listener="#{bundleTemplateBean.computePricePlan}"
-											update="discountedAmount" />
-									</p:inputText>
-									<p:outputLabel value="0.00"
-										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
-									<p:outputLabel
-										value="#{messages['productTemplate.catalogPrice']}" />
-									<h:outputText
-										value="#{bundleTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
-									<p:inputText
-										value="#{bundleTemplateBean.catalogPriceCF.cfValue.doubleValue}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null and (bundleTemplateBean.edit) and (bundleTemplateBean.catalogPriceCF != null)}">
-										<p:ajax event="keyup"
-											listener="#{bundleTemplateBean.computePricePlan}"
-											update="discountedAmount" />
-									</p:inputText>
-									<p:outputLabel value="0.00"
-										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
-									<p:outputLabel
-										value="#{messages['productTemplate.discountedAmount']}" />
-									<h:outputText id="discountedAmount"
-										value="#{bundleTemplateBean.discountedAmount}"
-										rendered="#{bundleTemplateBean.entityPricePlan != null}" />
-									<p:outputLabel value="0.00"
-										rendered="#{bundleTemplateBean.entityPricePlan == null}" />
-								</p:panelGrid>
-							</p:tab>
-							<!-- <p:tab title="USA"></p:tab>
-							<p:tab title="JPN"></p:tab> -->
-						</p:tabView>
-					</p:column>
-					<p:column style="width : 33%">
-						<p:panelGrid columns="1" style="max-width: 100%">
-							<!-- <p:outputLabel value="#{messages['productTemplate.channel']}" />
-							<p:selectOneListbox id="pTChannel">
-								<f:selectItem itemLabel="Channel 1" itemValue="1" />
-								<f:selectItem itemLabel="Channel 2" itemValue="2" />
-								<f:selectItem itemLabel="Channel 3" itemValue="3" />
-							</p:selectOneListbox> -->
-							<!-- <hftl:formField
-								label="#{messages['productTemplate.targetSegment']}"
-								field="businessAccountModels" /> -->
-							<hftl:formField id="channels"
-								label="#{messages['channels.title']}" field="channels"
-								listType="pickUpList" valueLabelField="code"
-								dualListModel="#{bundleTemplateBean.channelDM}" />
-							<hftl:formField id="businessAccountModels"
-								label="#{messages['businessAccountModels.title']}"
-								field="businessAccountModels" listType="pickUpList"
-								valueLabelField="code"
-								dualListModel="#{bundleTemplateBean.bamDM}" />
-
-						</p:panelGrid>
-					</p:column>
-				</p:row>
-			</p:panelGrid>
-
-			<p:panel id="bundeList" header="#{messages['menu.productTemplates']}"
-				rendered="#{bundleTemplateBean.entity.id != null}">
-				<!-- <h:link value="#{messages['bundleTemplate.addProduct']}"
-					outcome="mmBundleTemplateSelectProduct">
-					<f:param name="objectId" value="#{bundleTemplateBean.entity.id}"></f:param>
-					<f:param name="cid"
-						value="#{javax.enterprise.context.conversation.id}" />
-				</h:link> -->
-				<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
-					type="button" onclick="PF('selectProduct').show();" />
-				<p:dataGrid id="productTemplateList" var="prod"
-					value="#{bundleTemplateBean.bundleProductTemplatesToAdd}"
-					paginator="true" rows="5" columns="1" paginatorPosition="top"
-					paginatorAlwaysVisible="true"
-					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-					lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}"
-					widgetVar="bundleList" rowIndexVar="rowIndex">
-					<p:panelGrid>
-						<p:row>
-							<p:column rowspan="2">
-								<p:graphicImage id="productImageForBundle" cache="false"
-									value="#{productTemplateImageStreamer.image}" height="150"
-									width="150">
-									<f:param name="id" value="#{prod.productTemplate.id}"></f:param>
-								</p:graphicImage>
-							</p:column>
-							<p:column>
-								<h:outputText value="#{prod.productTemplate.name}" />
-							</p:column>
-							<p:column>
-								<p:outputLabel
-									value="#{messages['productTemplate.catalogPrice']}" />
-							</p:column>
-							<p:column rowspan="2">
-								<p:commandButton
-									value="#{messages['bundleTemplate.removeProduct']}"
-									action="#{bundleTemplateBean.removeProductTemplateFromBundle(rowIndex)}"
-									update=":#{p:component('productTemplateList')}">
-								</p:commandButton>
-							</p:column>
-						</p:row>
-						<p:row>
-							<p:column>
-								<h:outputText value="#{prod.productTemplate.description}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="0.00" />
-							</p:column>
-						</p:row>
-					</p:panelGrid>
-				</p:dataGrid>
-
-			</p:panel>
-			<p:tabView>
-				<p:tab title="EN">
-					<hftl:formField label="#{messages['businessEntity.description']}"
-						field="description" id="description" />
-				</p:tab>
-				<!-- <p:tab title="FR"></p:tab>
-				<p:tab title="DE"></p:tab>
-				<p:tab title="US"></p:tab> -->
-
-			</p:tabView>
-			<p:panel styleClass="ui-panel-blank"
-				header="#{messages['productTemplate.attributes']}">
-				<hftl:customFields backingBean="#{bundleTemplateBean}" />
-			</p:panel>
+			<ui:include src="productTemplateDetailCommon.xhtml">
+				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
+				<ui:param name="mode" value="BUNDLE" />
+			</ui:include>
 		</hftl:formPanel>
 
 		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
 			modal="true" appendTo="@(body)">
-			<p:panel id="headerPanel">
-				<p:panel styleClass="TexAlRight">
-
-					<p:selectOneMenu></p:selectOneMenu>
-					<p:selectOneMenu></p:selectOneMenu>
-					<p:selectOneMenu></p:selectOneMenu>
-				</p:panel>
-				<h:form id="dlgBundle">
-					<p:dataGrid id="productTemplatesTable" var="prodT"
+			<h:form id="addBundleProductForm">
+				<p:panel id="headerPanel">
+					<p:dataTable id="productTemplatesTable" var="prodT"
 						value="#{productTemplateListBean.listAll()}" paginator="true"
-						rows="5" columns="1" paginatorPosition="top"
-						paginatorAlwaysVisible="true"
+						rows="5" paginatorPosition="top" paginatorAlwaysVisible="true"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-						lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
-
-						<p:panel>
-							<p:panelGrid styleClass="ui-panelgrid-blank">
-								<p:row>
-									<p:column rowspan="2">
-										<p:graphicImage id="productImage" cache="false"
-											value="#{productTemplateImageStreamer.image}" height="100">
-											<f:param name="id" value="#{prodT.id}"></f:param>
-										</p:graphicImage>
-									</p:column>
-									<p:column>
-										<h:outputText value="#{prodT.name}"></h:outputText>
-									</p:column>
-									<p:column rowspan="2">
-										<h:outputText
-											value="#{prodT.businessProductModel.description}"></h:outputText>
-									</p:column>
-									<p:column>
-										<p:outputLabel value="#{messages['commons.validFrom']}"></p:outputLabel>
-									</p:column>
-									<p:column>
-										<p:outputLabel value="#{messages['commons.validTo']}"></p:outputLabel>
-									</p:column>
-									<p:column>
-										<p:outputLabel
-											value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
-									</p:column>
-									<p:column rowspan="2">
-										<p:commandButton
-											value="#{messages['bundleTemplate.addProduct']}"
-											action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
-											update="dlgBundle bundleForm :bundleForm:productTemplateList :#{p:component('productTemplateList')}"
-											oncomplete="PF('selectProduct').hide()">
-										</p:commandButton>
-									</p:column>
-								</p:row>
-								<p:row>
-									<p:column>
-										<h:outputText value="#{prodT.description}"></h:outputText>
-									</p:column>
-									<p:column>
-										<h:outputText value="#{prodT.validFrom}"></h:outputText>
-									</p:column>
-									<p:column>
-										<h:outputText value="#{prodT.validTo}"></h:outputText>
-									</p:column>
-									<p:column>
-										<p:outputLabel value="0.00"></p:outputLabel>
-									</p:column>
-								</p:row>
-							</p:panelGrid>
-						</p:panel>
-					</p:dataGrid>
-				</h:form>
-			</p:panel>
+						lazy="true" styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:graphicImage id="productImage" cache="false"
+								value="#{productTemplateImageStreamer.image}" height="100">
+								<f:param name="id" value="#{prodT.id}"></f:param>
+							</p:graphicImage>
+						</p:column>
+						<p:column headerText="#{messages['commons.name']}">
+							<h:outputText value="#{prodT.name}"></h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['BusinessEntity.description']}">
+							<h:outputText value="#{prodT.description}" />
+						</p:column>
+						<p:column headerText="#{messages['commons.validFrom']}">
+							<h:outputText value="#{prodT.validFrom}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.validTo']}">
+							<h:outputText value="#{prodT.validTo}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.actions']}">
+							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
+								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
+								update=":#{p:component('bundleTemplateList')}"
+								oncomplete="PF('selectProduct').hide()">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
 		</p:dialog>
+
 	</ui:define>
 </ui:composition>

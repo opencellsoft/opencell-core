@@ -154,9 +154,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		} else {
 			if (catalogPriceCF.getCfValue() == null || catalogPriceCF.getCfValue().getDoubleValue() == null) {
 				catalogPriceCF.setDoubleValue(Double.valueOf(0));
-			} else {
-				catalogPrice = new BigDecimal(catalogPriceCF.getCfValue().getDoubleValue());
 			}
+
+			catalogPrice = new BigDecimal(catalogPriceCF.getCfValue().getDoubleValue());
 		}
 	}
 
@@ -168,7 +168,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		if (entityPricePlan != null && entityPricePlan.getAmountWithoutTax() != null && catalogPriceCF != null && catalogPriceCF.getCfValue() != null
 				&& catalogPriceCF.getCfValue().getDoubleValue() != null) {
-			if (catalogPrice != null && !catalogPrice.equals(new BigDecimal(0))) {
+			if (catalogPrice != null && catalogPrice.compareTo(BigDecimal.ZERO) != 0) {
 				result = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice).multiply(new BigDecimal(100))).divide(catalogPrice);
 			}
 
