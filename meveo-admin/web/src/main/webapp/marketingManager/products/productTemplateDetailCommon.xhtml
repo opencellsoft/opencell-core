@@ -210,8 +210,8 @@
     <p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
         <f:facet name="header">
             <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-            <p:commandLink actionListener="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
-                oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;" />
+            <p:commandLink action="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
+                oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;" rendered="#{mainBackingBean.edit}"/>
         </f:facet>
         <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" />
     </p:panel>

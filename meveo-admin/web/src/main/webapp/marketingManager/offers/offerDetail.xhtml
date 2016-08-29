@@ -147,7 +147,7 @@
                     <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                     <p:commandLink action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}" process="@this customFieldsWrappPanel"
                         oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration"
-                        style="margin-left: 10px;" />
+                        style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}"/>
                 </f:facet>
                 <p:tabView rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
                     <!-- custom fields -->
