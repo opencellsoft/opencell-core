@@ -2,6 +2,7 @@ package org.meveo.admin.action.admin.custom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -127,6 +128,18 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
+     * Explicitly refresh fields and action definitions while preserving field values. Should be used when entity customization is managed as part of some page that contains CF
+     * data entry and CF fields should be refreshed when entity customization is finished. Job template.
+     * 
+     * @param entity Entity to [re]load definitions and field values for
+     */
+    public void refreshFieldsAndActionsWhilePreserveValues(ICustomFieldEntity entity) {
+
+        refreshFieldsWhilePreservingValues(entity);
+        initCustomActions(entity);
+    }
+
+    /**
      * Get a grouped list of custom field definitions. If needed, load applicable custom fields (templates) and their values for a given entity
      * 
      * @param entity Entity to load definitions and field values for
@@ -207,6 +220,32 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfisAsMap, entity);
         fieldsValues.put(entity.getUuid(), entityFieldsValues);
+    }
+
+    /**
+     * Load available custom fields (templates) while preserving their values for a given entity
+     * 
+     * @param entity Entity to load definitions and field values for
+     */
+    private void refreshFieldsWhilePreservingValues(ICustomFieldEntity entity) {
+
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentProvider);
+        log.trace("Refreshing CFTS while preserving values. Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
+
+        GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
+        groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
+
+        CustomFieldValueHolder entityFieldsValues = fieldsValues.get(entity.getUuid());
+
+        // Populate new value defaults formap, list and matrix fields
+        entityFieldsValues.populateNewValueDefaults(customFieldTemplates.values(), null);
+
+        // Populate new value defaults for simple fields
+        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+            if (entityFieldsValues.getValues(cft) == null && !cft.isVersionable()) {
+                entityFieldsValues.getValues().put(cft.getCode(), Arrays.asList(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity)));
+            }
+        }
     }
 
     /**
