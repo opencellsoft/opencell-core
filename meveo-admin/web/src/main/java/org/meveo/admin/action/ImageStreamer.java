@@ -56,19 +56,26 @@ public abstract class ImageStreamer<T extends BaseEntity> {
 
 	protected byte[] downloadUrl(URL toDownload) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		InputStream stream = null;
 
 		try {
 			byte[] chunk = new byte[4096];
 			int bytesRead;
-			InputStream stream = toDownload.openStream();
+			stream = toDownload.openStream();
 
 			while ((bytesRead = stream.read(chunk)) > 0) {
 				outputStream.write(chunk, 0, bytesRead);
 			}
-
 		} catch (IOException e) {
-			e.printStackTrace();
 			return null;
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					return null;
+				}
+			}
 		}
 
 		return outputStream.toByteArray();

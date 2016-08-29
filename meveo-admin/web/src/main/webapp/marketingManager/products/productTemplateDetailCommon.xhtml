@@ -26,8 +26,7 @@
 				rendered="#{mainBackingBean.entity.transient}"
 				label="#{messages['commons.image']}">
 				<p:fileUpload id="productImageUpload" auto="false" skinSimple="true"
-					mode="simple" value="#{mainBackingBean.uploadedFile}"
-					update=":selectProduct" />
+					mode="simple" value="#{mainBackingBean.uploadedFile}" />
 			</hftl:decorateFormField>
 			<hftl:decorateFormField fieldId="productImage"
 				rendered="#{not mainBackingBean.entity.transient}"
@@ -40,7 +39,7 @@
 					</p:graphicImage>
 					<p:fileUpload rendered="#{mainBackingBean.edit}"
 						fileUploadListener="#{mainBackingBean.handleFileUpload}"
-						mode="advanced" update=":formId:messages :selectProduct"
+						mode="advanced" update=":formId:messages"
 						auto="true" sizeLimit="1000000"
 						allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 				</p:outputPanel>
