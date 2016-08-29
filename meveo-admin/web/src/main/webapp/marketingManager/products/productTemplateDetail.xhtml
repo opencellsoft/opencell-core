@@ -38,7 +38,24 @@
 				<ui:param name="backingBean" value="#{productTemplateBean}" />
 				<ui:param name="mode" value="PRODUCT" />
 			</ui:include>
-
 		</hftl:formPanel>
-	</ui:define>
+
+        <h:panelGroup id="entityCustomizationDialogPanel">
+            <p:dialog id="entityCustomizationDialog" header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
+                modal="true" closeOnEscape="true" maximizable="true" widgetVar="entityCustomizationDialog" width="90%" position="top" positionType="absolute" responsive="true">
+                <p:ajax event="close" listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(productTemplateBean.entity)}"
+                    update=":formId:customFieldsWrappPanel" />
+
+                <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml">
+                </ui:include>
+
+                <h:form>
+                    <p:panel width="100">
+                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
+                        </p:button>
+                    </p:panel>
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+    </ui:define>
 </ui:composition>

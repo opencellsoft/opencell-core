@@ -142,21 +142,20 @@
 			<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
 				backingBean="#{offerTemplateBean}" multiLang="true" />
 
-			<p:panel>
-				<f:facet name="header">
-					<h:outputText
-						value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}"
-						styleClass="SubHeader" />
-				</f:facet>
-				<p:tabView
-					rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
-					<!-- custom fields -->
-					<hftl:customFields backingBean="#{offerTemplateBean}"
-						messagesId=":formId:messages" />
-				</p:tabView>
-			</p:panel>
+            <p:panel id="customFieldsWrappPanel">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
+                    <p:commandLink action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}" process="@this customFieldsWrappPanel"
+                        oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration"
+                        style="margin-left: 10px;" />
+                </f:facet>
+                <p:tabView rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
+                    <!-- custom fields -->
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
+                </p:tabView>
+            </p:panel>
 
-			<p:panel>
+            <p:panel>
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
@@ -188,5 +187,23 @@
 			</p:panel>
 		</hftl:formPanel>
 
-	</ui:define>
+        <h:panelGroup id="entityCustomizationDialogPanel">
+            <p:dialog id="entityCustomizationDialog" header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
+                modal="true" closeOnEscape="true" maximizable="true" widgetVar="entityCustomizationDialog" width="90%" position="top" positionType="absolute" responsive="true">
+                <p:ajax event="close" listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
+                    update=":formId:customFieldsWrappPanel" />
+
+                <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml">
+                </ui:include>
+
+                <h:form>
+                    <p:panel width="100">
+                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
+                        </p:button>
+                    </p:panel>
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+
+    </ui:define>
 </ui:composition>

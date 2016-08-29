@@ -207,14 +207,14 @@
 	<hftl:formLanguageFields entity="#{mainBackingBean.entity}"
 		backingBean="#{mainBackingBean}" multiLang="true" />
 
-	<p:panel styleClass="ui-panel-blank">
-		<f:facet name="header">
-			<h:outputText value="#{messages['productTemplate.attributes']}"
-				styleClass="SubHeader" />
-		</f:facet>
-		<hftl:customFields backingBean="#{mainBackingBean}"
-			messagesId=":formId:messages" />
-	</p:panel>
+    <p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
+        <f:facet name="header">
+            <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
+            <p:commandLink actionListener="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
+                oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;" />
+        </f:facet>
+        <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" />
+    </p:panel>
 
 </ui:composition>
 
