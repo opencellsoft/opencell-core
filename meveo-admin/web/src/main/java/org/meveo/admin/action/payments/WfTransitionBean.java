@@ -482,6 +482,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             needUpdate.setPriority(index + 1);
             wfTransitionService.update(needUpdate, getCurrentUser());
             Collections.swap(operationList, index, index - 1);
+            messages.info(new BundleKey("messages", "update.successful"));
         }
     }
 
@@ -497,6 +498,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             needUpdate.setPriority(index + 1);
             wfTransitionService.update(needUpdate, getCurrentUser());
             Collections.swap(operationList, index, index + 1);
+            messages.info(new BundleKey("messages", "update.successful"));
         }
     }
 
