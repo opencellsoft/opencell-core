@@ -1298,5 +1298,30 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			return null;
 		}
 	}
+	
+	public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ) {
+		return openWalletOperationsBySubCat(walletInstance, invoiceSubCategory, null, null);
+	}
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ,Date from, Date to) {
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "op", null,walletInstance.getProvider());
+		if(invoiceSubCategory != null){
+			qb.addCriterionEntity("op.chargeInstance.chargeTemplate.invoiceSubCategory", invoiceSubCategory);
+		}
+		qb.addCriterionEntity("op.wallet", walletInstance);
+		qb.addCriterionEnum("op.status", WalletOperationStatusEnum.OPEN);
+		if(from != null){
+			qb.addCriterion("operationDate", ">=", from, false);	
+		}
+		if(to != null){
+			qb.addCriterion("operationDate", "<=", to, false);	
+		}
+				
+		try {
+			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }
