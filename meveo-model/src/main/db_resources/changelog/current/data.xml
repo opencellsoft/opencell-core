@@ -112,4 +112,9 @@
             INSERT INTO wf_transition (id, version, disabled, created, updated, condition_el, from_status, to_status, provider_id, creator_id, updater_id, workflow_id, priority, description) VALUES (nextval('wf_transition_seq'), 3, false, '2016-08-26 22:37:48.91', '2016-08-27 00:32:49.271', NULL, NULL, NULL, 1, 1, 1, (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'), 100, 'Catch all');
         </sql>
     </changeSet>
+    <changeSet id="#1839_20160830" author="pbach">
+        <sql>
+            UPDATE wf_transition set priority = 0 where priority is NULL;
+        </sql>
+    </changeSet>
 </databaseChangeLog>

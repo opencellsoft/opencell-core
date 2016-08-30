@@ -29,13 +29,13 @@
         <hftl:formPanel
             formId="formDunningPlanTransition"
             edit="#{wfTransitionBean.edit}"
-            label="#{messages['dunningPlan.transition']}"
+            label="#{messages['mmTransition.default']}"
             backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}"
             ajaxSubmit="true" showDeleteButton="false">
-            <hftl:decorateFormField fieldId="userGroupLevel" label="#{messages['mmTransition.assignedTeamMultiChoice']}" displayOneLine="true">
-                <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="checkbox"
-                        selection="#{wfTransitionBean.userGroupSelectedNodes}">
+            <hftl:decorateFormField fieldId="userGroupLevel" label="#{messages['mmTransition.assignedTeam']}" displayOneLine="true">
+                <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
+                        selection="#{wfTransitionBean.userGroupSelectedNode}">
                     <p:treeNode>
                         <h:outputText value="#{groupLevel.descriptionOrCode}" />
                     </p:treeNode>

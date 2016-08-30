@@ -94,7 +94,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private TreeNode userGroupRootNode;
 
-    private TreeNode[] userGroupSelectedNodes;
+    private TreeNode userGroupSelectedNode;
 
     private List<String> wfTransitionRulesName;
 
@@ -176,29 +176,27 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         entity.setWorkflow(workflowOrder);
         super.saveOrUpdate(killConversation);
 
-        if (this.userGroupSelectedNodes != null) {
-            WFTransition currentTransition = wfTransitionService.findById(entity.getId(), Arrays.asList("wfActions"), true);
-            List<WFAction> deletedActions = currentTransition.getWfActions();
-            int priority = 1;
-            if (CollectionUtils.isNotEmpty(deletedActions)) {
-                for (WFAction wfAction : deletedActions) {
-                    if (wfAction.getPriority() > priority) {
-                        priority = wfAction.getPriority();
-                    }
+        WFTransition currentTransition = wfTransitionService.findById(entity.getId(), Arrays.asList("wfActions"), true);
+        List<WFAction> actionList = currentTransition.getWfActions();
+        if (this.userGroupSelectedNode != null) {
+            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.userGroupSelectedNode.getData();
+            if (CollectionUtils.isNotEmpty(actionList)) {
+                for (WFAction wfAction : actionList) {
                     WFAction action = wfActionService.findById(wfAction.getId());
-                    wfActionService.remove(action);
+                    action.setActionEl(userHierarchyLevel.getDescriptionOrCode());
+                    wfActionService.update(action, getCurrentUser());
                 }
-            }
-
-            List<TreeNode> assignedTeams = Arrays.asList(this.userGroupSelectedNodes);
-            for (TreeNode treeNode: assignedTeams) {
-                UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
+            } else {
                 WFAction wfAction = new WFAction();
                 wfAction.setActionEl(userHierarchyLevel.getDescriptionOrCode());
-                wfAction.setPriority(priority + 1);
+                wfAction.setPriority(1);
                 wfAction.setWfTransition(entity);
                 wfActionService.create(wfAction, getCurrentUser());
-                priority++;
+            }
+        } else if (CollectionUtils.isNotEmpty(actionList)) {
+            for (WFAction wfAction : actionList) {
+                WFAction action = wfActionService.findById(wfAction.getId());
+                wfActionService.remove(action);
             }
         }
 
@@ -414,7 +412,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             } else {
                 roots = userHierarchyLevelService.findRoots();
             }
-            UserHierarchyLevel userHierarchyLevel = null;
             if (CollectionUtils.isNotEmpty(roots)) {
                 Collections.sort(roots);
                 for (UserHierarchyLevel userGroupTree : roots) {
@@ -429,12 +426,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         this.userGroupRootNode = rootNode;
     }
 
-    public TreeNode[] getUserGroupSelectedNodes() {
-        return userGroupSelectedNodes;
+    public TreeNode getUserGroupSelectedNode() {
+        return userGroupSelectedNode;
     }
 
-    public void setUserGroupSelectedNodes(TreeNode[] userGroupSelectedNodes) {
-        this.userGroupSelectedNodes = userGroupSelectedNodes;
+    public void setUserGroupSelectedNode(TreeNode userGroupSelectedNode) {
+        this.userGroupSelectedNode = userGroupSelectedNode;
     }
 
     // Recursive function to create tree with node checked if selected
