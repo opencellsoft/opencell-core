@@ -218,7 +218,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
-					entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
+					entity.getName(), entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
 					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
 					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
 
