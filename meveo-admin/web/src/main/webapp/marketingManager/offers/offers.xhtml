@@ -39,7 +39,7 @@
 							<ul class="ListNoStyle">
 								<li class="Padding5">
 									<div class="btn-wrapper">
-										<i class="fa fa-plus text-red"></i>
+										<i class="fa fa-plus text-blue"></i>
 										<p:link styleClass="no-text-decoration"
 											outcome="mm_offerTemplates"
 											value=" #{messages['action.offer.create']}">
@@ -53,14 +53,14 @@
 					<p:panel>
 						<ul class="ListNoStyle">
 							<li class="Padding5"><i
-								class="fa fa-check-square-o text-red"></i>
+								class="fa fa-check-square-o text-blue"></i>
 								#{offerTemplateListBean.countActive()}
 								#{messages['page.catalog.offersAreActive']}</li>
-							<li class="Padding5"><i class="fa fa-close text-red"></i>
+							<li class="Padding5"><i class="fa fa-close text-blue"></i>
 								#{offerTemplateListBean.countDisabled()}
 								#{messages['page.catalog.offersAreDeactivated']}</li>
 							<li class="Padding5"><i
-								class="fa fa-exclamation-circle text-red"></i>
+								class="fa fa-exclamation-circle text-blue"></i>
 								#{offerTemplateListBean.countExpiring()}
 								#{messages['page.catalog.offersWillExpireSoon']}</li>
 						</ul>
@@ -182,35 +182,35 @@
 											</h:outputText>
 										</p:panelGrid>
 									</p:panel>
-									<p:panel>
-										<p:panel styleClass="TexAlRight">
-											<div class="FRight">
+									<p:panel styleClass="status-wrapper">
+										<p:panel styleClass="">
+											<div class="text-bold"
+												style="padding-bottom: 10px;">#{messages['commons.status']}</div>
+											<div class="">
 												<p:inputSwitch value="#{entity.active}" disabled="true"
 													onLabel="#{messages['accountStatusEnum.active']}"
 													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 											</div>
-											<div class="FRight"
-												style="padding-top: 5px; margin-right: 10px;">#{messages['commons.status']}</div>
 										</p:panel>
 										<p:panel>
-											<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
-												<li class="Padding5 FRight"><p:commandLink
-														styleClass="fa fa-share-square-o text-red fa-2x"
+											<ul class="list-inline">
+												<li><p:commandLink
+														styleClass="fa fa-share-square-o text-blue fa-2x"
 														update=":offerForExportPanel :dlgOfferExport"
 														action="#{offerTemplateListBean.addForExport(entity)}">
 													</p:commandLink></li>
-												<li class="Padding5 FRight"><p:commandLink
+												<li><p:commandLink
 														action="#{offerTemplateListBean.duplicate()}"
 														update=":tabView"
-														styleClass="fa fa-copy fa-2x no-text-decoration text-red">
+														styleClass="fa fa-copy fa-2x no-text-decoration text-blue">
 														<f:setPropertyActionListener value="#{entity}"
 															target="#{offerTemplateListBean.entity}" />
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
 													</p:commandLink></li>
-												<li class="Padding5 FRight"><p:link
-														styleClass="fa fa-edit no-text-decoration text-red fa-2x"
+												<li><p:link
+														styleClass="fa fa-edit no-text-decoration text-blue fa-2x"
 														outcome="mm_offerTemplateDetail">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
@@ -219,9 +219,9 @@
 														<f:param name="backView" value="mm_offers"></f:param>
 														<f:param name="tab" value="0"></f:param>
 													</p:link></li>
-												<li class="Padding5 FRight"><p:link
+												<li><p:link
 														outcome="mm_offerTemplateDetail"
-														styleClass="fa fa-search-plus no-text-decoration text-red fa-2x">
+														styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
 														<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -315,7 +315,7 @@
 						</p:column>
 						<p:column>
 							<p:link outcome="mm_offerTemplateDetail"
-								styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-red">
+								styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 								<f:param name="objectId" value="#{entity.id}"></f:param>
@@ -324,7 +324,7 @@
 								<f:param name="tab" value="1"></f:param>
 							</p:link>
 							<p:link
-								styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-red"
+								styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-blue"
 								outcome="mm_offerTemplateDetail">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
@@ -335,7 +335,7 @@
 							</p:link>
 							<p:commandLink action="#{offerTemplateListBean.duplicate()}"
 								update=":tabView"
-								styleClass="Padding5 fa fa-copy no-text-decoration text-red fa-2x">
+								styleClass="Padding5 fa fa-copy no-text-decoration text-blue fa-2x">
 								<f:setPropertyActionListener
 									target="#{offerTemplateListBean.entity}" value="#{entity}" />
 								<f:param name="tab" value="1"></f:param>
@@ -343,7 +343,7 @@
 									message="#{messages['commons.confirmDuplicate']}" />
 							</p:commandLink>
 							<p:commandLink
-								styleClass="Padding5 fa fa-share-square-o no-text-decoration fa-2x text-red"
+								styleClass="Padding5 fa fa-share-square-o no-text-decoration fa-2x text-blue"
 								update=":offerForExportPanel :dlgOfferExport"
 								action="#{offerTemplateListBean.addForExport(entity)}">
 							</p:commandLink>
