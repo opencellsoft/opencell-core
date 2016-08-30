@@ -62,6 +62,8 @@ public class UsageApi extends BaseApi {
 				List<RatedTransaction> ratedTransactions = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
 				for (RatedTransaction rt : ratedTransactions) {
 					UsageDto usageDto = new UsageDto();
+					usageDto.setCode(rt.getCode());
+					usageDto.setDescription(rt.getDescription());
 					usageDto.setAmountWithoutTax(rt.getAmountWithoutTax());
 					usageDto.setDateEvent(rt.getUsageDate());
 					usageDto.setOfferCode(rt.getOfferCode());
