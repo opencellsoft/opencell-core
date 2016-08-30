@@ -80,6 +80,11 @@ public class ElasticClient {
 
     private TransportClient client = null;
 
+    /**
+     * Is Elastic Search enabled/connected
+     */
+    private boolean esEnabled = false;
+
     @Inject
     private ElasticSearchConfiguration esConfiguration;
 
@@ -126,7 +131,7 @@ public class ElasticClient {
                 List<DiscoveryNode> nodes = client.connectedNodes();
                 if (nodes.isEmpty()) {
                     log.error("No nodes available. Verify ES is running!. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr);
-                    shutdownES();
+                    throw new RuntimeException("No nodes available. Verify ES is running!");
                 } else {
                     log.debug("connected elasticsearch to {} nodes. Current settings: clusterName={}, hosts={}, port={}", nodes.size(), clusterName, hosts, portStr);
                 }
@@ -137,14 +142,23 @@ public class ElasticClient {
         } catch (Exception e) {
             log.error("Error while initializing elastic search. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr, e);
             shutdownES();
+            throw new RuntimeException(
+                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
         }
 
         try {
-            esConfiguration.loadConfiguration();
+            if (client != null) {
+                esConfiguration.loadConfiguration();
+            }
         } catch (Exception e) {
-            log.error("Error while loading elastic search mapping configuration. Elastic search client will be shutdown", e);
+            log.error("Error while loading elastic search mapping configuration", e);
             shutdownES();
+            throw new RuntimeException(
+                "Error while loading elastic search mapping configuration. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
         }
+
+        esEnabled = client != null;
+
     }
 
     /**
@@ -187,7 +201,7 @@ public class ElasticClient {
      */
     public void partialUpdate(BusinessEntity entity, Map<String, Object> fieldsToUpdate) {
 
-        if (client == null) {
+        if (!esEnabled) {
             return;
         }
 
@@ -223,7 +237,7 @@ public class ElasticClient {
      */
     private void createOrUpdate(BusinessEntity entity, boolean partialUpdate) {
 
-        if (client == null) {
+        if (!esEnabled) {
             return;
         }
 
@@ -263,7 +277,7 @@ public class ElasticClient {
      */
     public void remove(BusinessEntity entity) {
 
-        if (client == null) {
+        if (!esEnabled) {
             return;
         }
 
@@ -295,6 +309,10 @@ public class ElasticClient {
      * Process pending changes to Elastic Search
      */
     public void flushChanges() {
+
+        if (!esEnabled) {
+            return;
+        }
 
         if (queuedChanges.isNoChange()) {
             log.trace("Nothing to flush to ES");
@@ -353,6 +371,10 @@ public class ElasticClient {
      */
     public String search(PaginationConfiguration paginationConfig, User currentUser, String[] classnamesOrCetCodes) throws BusinessException {
 
+        if (!esEnabled) {
+            return "{}";
+        }
+
         SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null : paginationConfig
             .getOrdering() == org.primefaces.model.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
 
@@ -384,6 +406,10 @@ public class ElasticClient {
      */
     public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+
+        if (!esEnabled) {
+            return "{}";
+        }
 
         Set<String> indexes = null;
         // Not clear where to look, return al indexes for provider
@@ -462,6 +488,10 @@ public class ElasticClient {
      */
     public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+
+        if (!esEnabled) {
+            return "{}";
+        }
 
         Set<String> indexes = null;
         // Not clear where to look, return al indexes for provider
@@ -566,16 +596,20 @@ public class ElasticClient {
     }
 
     public boolean isEnabled() {
-        return client != null;
+        return esEnabled;
     }
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Future<ReindexingStatistics> cleanAndReindex() throws BusinessException {
 
-        log.info("Start to repopulate Elastic Search");
-
         ReindexingStatistics statistics = new ReindexingStatistics();
+
+        if (!esEnabled) {
+            return new AsyncResult<ReindexingStatistics>(statistics);
+        }
+
+        log.info("Start to repopulate Elastic Search");
 
         try {
             // Drop all indexes
@@ -623,9 +657,14 @@ public class ElasticClient {
      * @throws BusinessException
      */
     public void createIndexes(Provider provider) throws BusinessException {
+
+        if (!esEnabled) {
+            return;
+        }
+
         elasticSearchIndexPopulationService.createIndexes(provider);
     }
-    
+
     /**
      * Update Elastic Search model with custom entity template definition
      * 
@@ -633,9 +672,14 @@ public class ElasticClient {
      * @throws BusinessException
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
+
+        if (!esEnabled) {
+            return;
+        }
+
         elasticSearchIndexPopulationService.createCETMapping(cet);
     }
-    
+
     /**
      * Update Elastic Search model with custom field definition
      * 
@@ -643,9 +687,14 @@ public class ElasticClient {
      * @throws BusinessException
      */
     public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
+
+        if (!esEnabled) {
+            return;
+        }
+
         elasticSearchIndexPopulationService.updateCFMapping(cft);
     }
-    
+
     protected TransportClient getClient() {
         return client;
     }
