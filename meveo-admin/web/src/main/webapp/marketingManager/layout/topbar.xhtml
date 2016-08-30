@@ -62,7 +62,7 @@
 			</ul>
             <div class="pull-right search-wrapper" style="margin-right: 40px; margin-top: 20px;">
                 <p:inputText id="globalFullTextSearch" value="#{fullTextSearchBean.filters['fullText']}" placeholder="#{messages['commons.search']}" />
-                <p:commandLink id="doGlobalFullTextSearch"  styleClass="Padding5 fa fa-search" action="mmFullTextSearch" process="globalFullTextSearch @this"  />
+                <p:commandLink id="doGlobalFullTextSearch"  styleClass="Padding5 fa fa-search" action="mm_fullTextSearch" process="globalFullTextSearch @this"  />
             </div>
             <p:defaultCommand target="doGlobalFullTextSearch" />
         </h:form>

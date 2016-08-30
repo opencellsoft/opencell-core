@@ -9,18 +9,18 @@
 		<hftl:menu styleClass="marketingManagerNavigation"
 			rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
 			<p:submenu label="#{messages['menu.offers']}">
-				<p:menuitem id="mmOffers" outcome="mmOffers"
+				<p:menuitem id="mmOffers" outcome="mm_offers"
 					value="#{messages['menu.marketingManager.catalogList']}" />
 			</p:submenu>
 
 			<p:submenu label="#{messages['menu.marketingManager.products']}">
-				<p:menuitem id="mmProductTemplates" outcome="mmProductTemplates"
+				<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates"
 					value="#{messages['menu.marketingManager.productList']}" />
 			</p:submenu>
 
 			<p:submenu label="#{messages['menu.customers']}">
 				<p:menuitem id="workflows" value="#{messages['menu.marketingManager.workflowList']}"
-					outcome="mmWorkflows" />
+					outcome="mm_workflows" />
 			</p:submenu>
 
 			<p:submenu label="#{messages['menu.myCompany']}">
@@ -33,7 +33,7 @@
 			</p:submenu>
 
 			<p:submenu id="settings" label="#{messages['menu.settings']}">
-				<p:menuitem id="mmOfferCategories" outcome="mmOfferCategories"
+				<p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories"
 					value="#{messages['menu.marketingManager.manageCategories']}" />
 			</p:submenu>
 		</hftl:menu>

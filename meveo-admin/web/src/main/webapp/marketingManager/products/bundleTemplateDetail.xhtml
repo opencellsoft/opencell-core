@@ -25,14 +25,14 @@
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
 				<p:menuitem value="#{messages['menu.catalog.templates']}"
-					outcome="mmProductTemplates" />
+					outcome="mm_productTemplates" />
 			</p:breadCrumb>
 		</h:form>
 
 		<hftl:formPanel label="#{messages['marketingManager.catalog.bundle']}"
 			backingBean="#{bundleTemplateBean}" showFormButtons="true"
 			showDeleteButton="false" formButtonsTopRight="true"
-			backView="mmProductTemplates">
+			backView="mm_productTemplates">
 
 			<ui:include src="productTemplateDetailCommon.xhtml">
 				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
