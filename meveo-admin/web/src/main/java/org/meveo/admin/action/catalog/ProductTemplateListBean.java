@@ -50,7 +50,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	}
 
 	public String newProductTemplate() {
-		return "mmProductTemplateDetail";
+		return "mm_productTemplateDetail";
 	}
 
 	public void updateProductTemplateStatus(ProductTemplate pt) throws BusinessException {

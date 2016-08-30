@@ -445,7 +445,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
 	@Override
 	@JsonIgnore
-	public Logger getLogger() {
+	public Logger fetchLogger() {
 		return logger;
 	}
 

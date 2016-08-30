@@ -265,7 +265,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			String outcome = super.saveOrUpdate(killConversation);
 
 			if (outcome != null) {
-				return (newEntity && !outcome.equals("mmOffers")) ? getEditViewName() : outcome;
+				return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
 			}
 		}
 

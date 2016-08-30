@@ -25,13 +25,13 @@
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
 				<p:menuitem value="#{messages['menu.catalog.templates']}"
-					outcome="mmOfferTemplates" />
+					outcome="mm_offerTemplates" />
 			</p:breadCrumb>
 		</h:form>
 
 		<hftl:formPanel backingBean="#{offerTemplateBean}"
 			label="#{messages['menu.offers']}" showDeleteButton="false"
-			formButtonsTopRight="true" backView="mmOfferTemplates">
+			formButtonsTopRight="true" backView="mm_offerTemplates">
 
 			<p:panelGrid columns="4"
 				columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop"
@@ -72,7 +72,7 @@
 											message="#{messages['commons.confirmDuplicate']}" />
 									</p:commandLink></li>
 								<li class="Padding5 FLeft"><p:link styleClass="fa fa-edit"
-										outcome="mmOfferDetail">
+										outcome="mm_offerTemplateDetail">
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 										<f:param name="objectId"

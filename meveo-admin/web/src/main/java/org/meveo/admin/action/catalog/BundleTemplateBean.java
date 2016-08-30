@@ -189,7 +189,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		savePricePlanMatrix();
 
 		if (editMode != null && editMode.length() > 0) {
-			outcome = "mmProductTemplates";
+			outcome = "mm_productTemplates";
 		}
 
 		return outcome;

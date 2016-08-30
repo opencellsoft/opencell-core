@@ -39,7 +39,7 @@
                         <h:link value="#{entity['code']}" outcome="#{viewInfo[0]}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
                             <f:param name="objectId" value="#{viewInfo[1]}" />
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                            <f:param name="backView" value="fullTextSearch" />
+                            <f:param name="backView" value="mm_fullTextSearch" />
                         </h:link>
                     </p:column>
                     <p:column headerText="description" sortBy="#{description}">

@@ -30,7 +30,7 @@
                     <div class="btn-wrapper">
                         <i class="fa fa-plus text-red"></i>
                         <p:link styleClass="no-text-decoration"
-                                outcome="mmWorkflowDetail"
+                                outcome="mm_workflowDetail"
                                 value=" #{messages['mmTransition.addNew']}">
                             <f:param name="cid"
                                      value="#{javax.enterprise.context.conversation.id}" />
@@ -60,7 +60,7 @@
                 <p:panel styleClass="clearLeft">
                     <h:panelGroup layout="block" styleClass="col2-set">
                         <h:panelGroup layout="block" styleClass="col1">
-                            <p:button id="editOperationBtn" icon="ui-icon-document" outcome="mmWorkflowDetail">
+                            <p:button id="editOperationBtn" icon="ui-icon-document" outcome="mm_workflowDetail">
                                 <f:param name="objectId" value="#{transition.id}"></f:param>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />
@@ -122,7 +122,7 @@
                             <h:outputText value="#{messages['mmTransition.defaultTeam']}"></h:outputText>
                         </p:panel>
                         <p:panel>
-                            <p:button id="editDefaultBtn" icon="ui-icon-document" outcome="mmWorkflowDefault">
+                            <p:button id="editDefaultBtn" icon="ui-icon-document" outcome="mm_workflowDefault">
                                 <f:param name="objectId" value="#{wfTransitionBean.catchAll.id}"></f:param>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />

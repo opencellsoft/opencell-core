@@ -250,7 +250,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public String discardChanges() {
-		return "mmProductTemplates";
+		return "mm_productTemplates";
 	}
 
 	@Override
@@ -282,7 +282,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		savePricePlanMatrix();
 
 		if (editMode != null && editMode.length() > 0) {
-			outcome = "mmProductTemplates";
+			outcome = "mm_productTemplates";
 		}
 
 		return outcome;

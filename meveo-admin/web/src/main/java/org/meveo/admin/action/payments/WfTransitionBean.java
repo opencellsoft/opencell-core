@@ -504,12 +504,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     @Override
     protected String getListViewName() {
-        return "mmWorkflows";
+        return "mm_workflows";
     }
 
     @Override
     public String getEditViewName() {
-        return "mmWorkflowDetail";
+        return "mm_workflowDetail";
     }
 
     /**
