@@ -166,17 +166,16 @@
 												<h:outputText value="#{valueLabel}" />
 												<h:outputText value=", " rendered="#{not status.last}" />
 											</ui:repeat>
-											<h:outputText
-												value="#{messages['offerTemplate.bom']}: #{entity.businessOfferModel.code}"
+											<h:outputText value="#{entity.businessOfferModel.code}"
 												rendered="#{entity.businessOfferModel != null}"></h:outputText>
 											<p:separator></p:separator>
 											<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-											<h:outputText value="#{entity.validFrom} ">
+											<h:outputText value="#{entity.validFrom}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
 											<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-											<h:outputText value="#{entity.validTo} ">
+											<h:outputText value="#{entity.validTo}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
