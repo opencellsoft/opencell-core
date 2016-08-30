@@ -18,6 +18,8 @@ public class UsageDto extends BaseDto{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Date dateEvent;
+	private String code;
+	private String description;
 	private String unityDescription;
 	private BigDecimal unitAmountWithoutTax;
 	private BigDecimal quantity;
@@ -172,10 +174,37 @@ public class UsageDto extends BaseDto{
 		this.priceplanCode = priceplanCode;
 	}
 
-	
 	@Override
 	public String toString() {
-		return "UsageDto [dateEvent=" + dateEvent + ", unityDescription=" + unityDescription + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", offerCode=" + offerCode + ", priceplanCode=" + priceplanCode + "]";
+		return "UsageDto [dateEvent=" + dateEvent + ", code=" + code + ", description=" + description + ", unityDescription=" + unityDescription + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", offerCode=" + offerCode + ", priceplanCode=" + priceplanCode + "]";
+	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
