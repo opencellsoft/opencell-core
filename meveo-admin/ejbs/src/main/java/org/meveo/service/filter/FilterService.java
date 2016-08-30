@@ -558,22 +558,23 @@ public class FilterService extends BusinessService<Filter> {
 		}
 	}
 	private Provider checkProvider(Filter filter,User currentUser) throws BusinessException{
-		Provider currentProvider=null;
-		if(filter==null||filter.getPrimarySelector()==null){
-			return null;
+		if(filter==null||currentUser==null){
+			throw new BusinessException("filter or currentUser is null");
 		}
 		String clazzName=filter.getPrimarySelector().getTargetEntity();
 		
 		Object obj=ReflectionUtils.createObject(clazzName);
-		if(obj instanceof IProvider){
-			currentProvider=currentUser.getProvider();
+		if(obj==null){
+			throw new BusinessException("Target entity "+clazzName+" is invalid");
 		}
 		if(obj instanceof User||obj instanceof Role || obj instanceof Provider){
 			if (currentUser.hasPermission("superAdmin", "superAdminManagement")) {
 	            throw new LoginException("Super User can't call filterList");
 	        }
-			currentProvider=currentUser.getProvider();
 		}
-		return currentProvider;
+		if(!(obj instanceof IProvider)){
+			return null;
+		}
+		return currentUser.getProvider();
 	}
 }
