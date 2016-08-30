@@ -176,7 +176,7 @@ public class ResourceCandidate extends AbstractCatalogEntity implements Serializ
 
     @Override
     @JsonIgnore
-    public Logger fetchLogger() {
+    public Logger getLogger() {
         return logger;
     }
 
