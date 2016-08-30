@@ -403,7 +403,7 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
 
     @Override
     @JsonIgnore
-    public Logger getLogger() {
+    public Logger fetchLogger() {
         return logger;
     }
 

@@ -176,7 +176,7 @@ public class ServiceCandidate extends AbstractCatalogEntity implements Serializa
 
     @Override
     @JsonIgnore
-    public Logger getLogger() {
+    public Logger fetchLogger() {
         return logger;
     }
 
