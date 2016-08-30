@@ -188,7 +188,7 @@ public class Catalog extends AbstractEntity implements Serializable {
 
     @Override
     @JsonIgnore
-    public Logger fetchLogger() {
+    public Logger getLogger() {
         return logger;
     }
 

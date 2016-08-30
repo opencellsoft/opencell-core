@@ -94,12 +94,12 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
-		return createOfferFromBOM(businessOfferModel, customFields, prefix, name, offerDescription, serviceCodes, null, null, null, currentUser);
+		return createOfferFromBOM(businessOfferModel, customFields, prefix, null, name, offerDescription, serviceCodes, null, null, null, currentUser);
 	}
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String name, String offerDescription,
-			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
-			User currentUser) throws BusinessException {
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String code, String name,
+			String offerDescription, List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams,
+			List<OfferTemplateCategory> offerTemplateCategories, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -119,7 +119,11 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 			}
 		}
 
-		newOfferTemplate.setCode(prefix + bomOffer.getCode());
+		if (StringUtils.isBlank(code)) {
+			newOfferTemplate.setCode(prefix + bomOffer.getCode());
+		} else {
+			newOfferTemplate.setCode(code);
+		}
 		newOfferTemplate.setDescription(offerDescription);
 		if (StringUtils.isBlank(name)) {
 			newOfferTemplate.setName(bomOffer.getName());

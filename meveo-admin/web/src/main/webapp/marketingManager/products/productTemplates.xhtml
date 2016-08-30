@@ -167,16 +167,16 @@
 												<h:outputText value=", " rendered="#{not status.last}" />
 											</ui:repeat>
 											<h:outputText
-												value="#{messages['offerTemplate.bom']}: #{prod.businessProductModel.code}"
+												value="#{prod.businessProductModel.code}"
 												rendered="#{prod.businessProductModel != null}"></h:outputText>
 											<p:separator></p:separator>
 											<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-											<h:outputText value="#{prod.validFrom} ">
+											<h:outputText value="#{prod.validFrom}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
 											<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-											<h:outputText value="#{prod.validTo} ">
+											<h:outputText value="#{prod.validTo}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
