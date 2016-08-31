@@ -3648,10 +3648,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac3a571b-413a-4b63-91ea-abd3a84f104a" name="Find with Code provider">
-              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="e8e1fe3f-33f3-4f30-a9c3-18e76a4bffb2" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</description>
                <currency>EUR</currency>
                <country>FR</country>
@@ -3681,7 +3687,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -3722,10 +3732,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="46dc195e-51fe-4c83-a3fe-9ea3322fa1d0" name="Find with code">
-              <con:configuration><token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="eb7cf511-4361-4b9c-9ae9-b31c53e376c2" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
@@ -3747,7 +3763,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -3986,7 +4006,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="15a6dfa7-c9b7-45ac-aeee-f33a87446a53" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER1">
                <description>${#Project#entityPrefix}_${#TestSuite#index}_Provider_DESC1</description>
                <currency>USD</currency>
                <country>US</country>
@@ -4016,7 +4038,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -4064,7 +4090,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="dc476836-d22f-4c23-9d40-76742bf6345e" name="XPath Match">
-              <con:configuration><path>//provider</path><content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
+              <con:configuration>
+                <path>//provider</path>
+                <content><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER2">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
@@ -4086,7 +4114,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </provider>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -5374,7 +5406,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="e8d6ca82-da1f-476e-81f1-84922cdb6476"/>
             <con:assertion type="Simple Contains" id="7361f561-7ab4-4faa-ae83-83bf22f4eac7" name="Code Status Success">
-              <con:configuration><token><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">
+              <con:configuration>
+                <token><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">
                <multiCurrency>false</multiCurrency>
                <multiCountry>false</multiCountry>
                <multiLanguage>false</multiLanguage>
@@ -5396,7 +5429,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </provider>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username>
@@ -5482,7 +5518,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="e8d6ca82-da1f-476e-81f1-84922cdb6476"/>
             <con:assertion type="Simple Contains" id="7361f561-7ab4-4faa-ae83-83bf22f4eac7" name="Code Status Success">
-              <con:configuration><token><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">
+              <con:configuration>
+                <token><![CDATA[<provider code="${#Project#entityPrefix}_${#TestSuite#index}_PROVIDER3">
                <currency>USD</currency>
                <country>US</country>
                <language>ENG</language>
@@ -5507,7 +5544,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <displayChargesPeriods>false</displayChargesPeriods>
                   <displayFreeTransacInInvoice>false</displayFreeTransacInInvoice>
                </invoiceConfiguration>
-            </provider>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </provider>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>${#Project#entityPrefix}_${#TestSuite#index}_Username.Test.Edward.1</con:username>
@@ -5592,15 +5632,21 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
-              <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
+                <content><![CDATA[<languages>
               <language code="ENG">
                   <description>English</description>
                </language>
                <language code="FRA">
                   <description>French</description>
                </language>
-            </languages>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </languages>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -5681,15 +5727,21 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1df1196d-1fec-4a32-917c-bf92d8605212" name="languages">
-              <con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path><content><![CDATA[<languages>
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';
+//ns2:findTradingConfigurationResponse[1]/return[1]/languages</path>
+                <content><![CDATA[<languages>
                <language code="ENG">
                   <description>English</description>
                </language>
                <language code="FRA">
                   <description>French</description>
                </language>
-            </languages>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </languages>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -41063,7 +41115,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="e7d7af26-8252-4e20-952a-2a5860f70377" name="XPath Match BA statusDate">
-              <con:configuration><path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/statusDate)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+              <con:configuration>
+                <path>exists(//customer/customerAccounts/customerAccount/billingAccounts/billingAccount/statusDate)</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="c6ca6d75-b6a0-4083-ad86-5ef33fc6091e" name="XPath Match UA statusDate">
               <con:configuration>
