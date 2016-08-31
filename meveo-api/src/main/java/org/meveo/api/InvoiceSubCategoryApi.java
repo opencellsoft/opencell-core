@@ -194,7 +194,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -216,7 +216,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         }
 
         // remove cat messages
-        catMessagesService.batchRemove(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode());
+        catMessagesService.batchRemove(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode(),provider);
 
         invoiceSubCategoryService.remove(invoiceSubCategory);
 

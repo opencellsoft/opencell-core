@@ -283,7 +283,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		UserAccount ua = subscription.getUserAccount();
 		try {
 			String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode);
+			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode,chargeInstance.getProvider());
 		} catch (Exception e) {
 			log.error("failed to rate charge application",e);
 		}

@@ -213,7 +213,7 @@ public class PDFParametersConstruction {
 		if (customerAccount.getName() != null) {
 		    name="";
 		    if (customerAccount.getName().getTitle() != null){
-		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage)+" ";
+		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage,invoice.getProvider())+" ";
 		    }
 		    
 			name += customerAccount.getName().getFirstName() == null ? ""

@@ -29,15 +29,15 @@ import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE" }))
+@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE","PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
-public class CatMessages extends BaseProviderlessEntity {
+public class CatMessages extends BaseEntity {
 
 	private static final long serialVersionUID = -2933410380534805846L;
 

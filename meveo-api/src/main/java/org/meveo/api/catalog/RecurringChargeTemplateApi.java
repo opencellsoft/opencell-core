@@ -248,7 +248,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
@@ -305,7 +305,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -328,7 +328,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         }
 
         // remove cat messages
-        catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getCode());
+        catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
 
         recurringChargeTemplateService.remove(chargeTemplate);
     }

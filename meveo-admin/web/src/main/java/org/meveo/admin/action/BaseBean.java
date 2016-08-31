@@ -322,7 +322,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         languageMessagesMap.clear();
         BusinessEntity businessEntity=(BusinessEntity)entity;
 
-        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz) ,businessEntity.getCode())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz) ,businessEntity.getCode(),currentProvider)) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
@@ -399,7 +399,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey,currentProvider);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());

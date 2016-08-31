@@ -67,14 +67,14 @@ public class CatMessagesApi extends BaseApi {
 		List<CatMessages> messages = new ArrayList<>();
 		CatMessages translation = null;
 		if (!StringUtils.isBlank(languageCode)) {
-			translation = catMessagesService.findByCodeClassAndLanguage(entityCode,catMessagesService.getEntityClass(entity), languageCode);
+			translation = catMessagesService.findByCodeClassAndLanguage(entityCode,catMessagesService.getEntityClass(entity), languageCode,provider);
 			if (translation != null) {
 				messages.add(translation);
 			} else {
 				throw new EntityDoesNotExistsException(CatMessages.class, code);
 			}
 		} else {
-			List<CatMessages> messageList = catMessagesService.findByCodeAndClass(entityCode,catMessagesService.getEntityClass(entity));
+			List<CatMessages> messageList = catMessagesService.findByCodeAndClass(entityCode,catMessagesService.getEntityClass(entity),provider);
 			if (messageList != null && !messageList.isEmpty()) {
 				messages.addAll(messageList);
 			}
@@ -121,14 +121,14 @@ public class CatMessagesApi extends BaseApi {
 		List<CatMessages> messages = new ArrayList<>();
 		CatMessages translation = null;
 		if (!StringUtils.isBlank(languageCode)) {
-			translation = catMessagesService.findByCodeClassAndLanguage(entityCode,catMessagesService.getEntityClass(entity), languageCode);
+			translation = catMessagesService.findByCodeClassAndLanguage(entityCode,catMessagesService.getEntityClass(entity), languageCode,provider);
 			if (translation != null) {
 				messages.add(translation);
 			} else {
 				throw new EntityDoesNotExistsException(CatMessages.class, code);
 			}
 		} else {
-			List<CatMessages> messageList = catMessagesService.findByCodeAndClass(entityCode,catMessagesService.getEntityClass(entity));
+			List<CatMessages> messageList = catMessagesService.findByCodeAndClass(entityCode,catMessagesService.getEntityClass(entity),provider);
 			if (messageList != null && !messageList.isEmpty()) {
 				messages.addAll(messageList);
 			}
@@ -179,7 +179,7 @@ public class CatMessagesApi extends BaseApi {
 			isBlankDescription = StringUtils.isBlank(translation.getDescription());
 			// check if translation exists
 			message = null;
-			message = catMessagesService.findByCodeClassAndLanguage(entityCode,entityClass, translation.getLanguageCode());
+			message = catMessagesService.findByCodeClassAndLanguage(entityCode,entityClass, translation.getLanguageCode(),currentUser.getProvider());
 			// create/update/delete translations
 			if (message != null && !isBlankDescription) {
 				// message exists and description is not blank
@@ -217,7 +217,7 @@ public class CatMessagesApi extends BaseApi {
 			for (String messageCode : entities.keySet()) {
 				messageList = entities.get(messageCode);
 				catMessages=messageList.get(0);
-				entity = catMessagesService.findBusinessEntityByCodeAndClass(catMessages.getEntityCode(),catMessages.getEntityClass());
+				entity = catMessagesService.findBusinessEntityByCodeAndClass(catMessages.getEntityCode(),catMessages.getEntityClass(),provider);
 				if (entity != null) {
 					messageDto = new CatMessagesDto();
 					messageDto.setCode(entity.getCode());

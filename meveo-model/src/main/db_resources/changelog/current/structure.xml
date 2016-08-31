@@ -2523,27 +2523,51 @@ $BODY$
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
     </changeSet>
-    <changeSet id="#1637_20160819" author="TyshanShi">
+    <changeSet id="#1637_20160819_1" author="TyshanShi">
     	<addColumn tableName="ADM_MESSAGES">
     		<column name="ENTITY_CLASS" type="varchar(60)"/>
     		<column name="ENTITY_CODE" type="varchar(60)"/>
     	</addColumn>
     	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
     	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
-    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_rsmkrbsglxfyarsk0gtbxuydg"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="disabled"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="created"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="updated"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="creator_id"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="updater_id"/>
-    	<dropColumn tableName="ADM_MESSAGES" columnName="provider_id"/>
-    	<addUniqueConstraint columnNames="entity_code,entity_class,language_code" tableName="ADM_MESSAGES" constraintName="uk_l689uisf7wdaes80cdcx4yl74"
+    	<addUniqueConstraint columnNames="entity_code,entity_class,language_code,provider_id" tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq"
     		deferrable="false" disabled="false" initiallyDeferred="false"/>
-    	<createIndex tableName="ADM_MESSAGES" indexName="idx_code_class_languagecode" unique="true">
-    		<column name="lower(entity_code)"/>
-    		<column name="lower(entity_class)"/>
-    		<column name="lower(language_code)"/>
+    	<createIndex tableName="ADM_MESSAGES" indexName="idx_code_class_lngcode_provider" unique="true">
+    		<column name="entity_code"/>
+    		<column name="entity_class"/>
+    		<column name="language_code"/>
+    		<column name="provider_id"></column>
     	</createIndex>
     </changeSet>  
+    
+    <changeSet id="#1637_20160819_2" author="TyshanShi">
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
+				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
+				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
+				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
+		<sql>alter table ADM_MESSAGES drop column code</sql>
+	</changeSet>
     	
 </databaseChangeLog>

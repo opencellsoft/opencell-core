@@ -142,7 +142,7 @@ public class TaxApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
@@ -177,7 +177,7 @@ public class TaxApi extends BaseApi {
         result = new TaxDto(tax);
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -201,7 +201,7 @@ public class TaxApi extends BaseApi {
         }
 
         // remove cat messages
-        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getCode());
+        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getCode(),provider);
 
         taxService.remove(tax);
         return result;
