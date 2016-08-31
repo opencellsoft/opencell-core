@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -147,6 +148,16 @@ public class Seller extends BusinessCFEntity {
 	 */
 	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
 		this.invoiceTypeSequence = invoiceTypeSequence;
+	}
+
+	@Override
+	public BusinessEntity getParentEntity() {
+		return seller;
+	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return Seller.class;
 	}
 
 }
