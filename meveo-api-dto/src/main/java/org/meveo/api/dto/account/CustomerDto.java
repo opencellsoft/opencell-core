@@ -8,12 +8,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.payments.CustomerAccount;
+
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name="Customer")
+@XmlRootElement(name = "Customer")
 @XmlType(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@FilterResults(property = "customerAccounts.customerAccount", entityClass = CustomerAccount.class)
 public class CustomerDto extends AccountDto {
 
 	private static final long serialVersionUID = 3243716253817571391L;
@@ -31,7 +34,7 @@ public class CustomerDto extends AccountDto {
 	private Date mandateDate;
 
 	private ContactInformationDto contactInformation = new ContactInformationDto();
-	
+
 	/**
 	 * Use for GET / LIST only.
 	 */

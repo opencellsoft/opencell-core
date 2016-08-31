@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -18,6 +19,10 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
@@ -33,6 +38,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
  * @author Edward P. Legaspi
  **/
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class UserAccountApi extends AccountApi {
 
 	@Inject
@@ -150,14 +156,17 @@ public class UserAccountApi extends AccountApi {
 		return userAccount;
 	}
 
-	public UserAccountDto find(String userAccountCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = UserAccount.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	public UserAccountDto find(String userAccountCode, User user) throws MeveoApiException {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, user.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
@@ -271,7 +280,7 @@ public class UserAccountApi extends AccountApi {
 	public void createOrUpdatePartial(UserAccountDto userAccountDto,User currentUser) throws MeveoApiException, BusinessException{
 		UserAccountDto existedUserAccountDto = null;
 		try {
-			existedUserAccountDto = find(userAccountDto.getCode(), currentUser.getProvider());
+			existedUserAccountDto = find(userAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedUserAccountDto = null;
 		}

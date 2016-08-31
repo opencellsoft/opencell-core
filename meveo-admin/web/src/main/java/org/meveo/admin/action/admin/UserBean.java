@@ -31,10 +31,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,12 +45,17 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.DetailedSecuredEntity;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
@@ -59,20 +67,22 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.service.security.SecuredBusinessEntityService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
- * view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link User} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ViewScoped
@@ -93,10 +103,20 @@ public class UserBean extends BaseBean<User> {
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
-    private static final Logger log = LoggerFactory.getLogger(UserBean.class);
+    @Inject
+	private SecuredBusinessEntityService securedBusinessEntityService;
+
+	@Inject
+	@Any
+	private Instance<AccountBean<?>> accountBeans;
+
+	@Inject
+	@Named
+	private SellerBean sellerBean;
 
     /**
-     * Password set by user which is later encoded and set to user before saving to db.
+	 * Password set by user which is later encoded and set to user before saving
+	 * to db.
      */
     private String password;
 
@@ -112,7 +132,8 @@ public class UserBean extends BaseBean<User> {
     private TreeNode userGroupSelectedNode;
 
     /**
-     * Repeated password to check if it matches another entered password and user did not make a mistake.
+	 * Repeated password to check if it matches another entered password and
+	 * user did not make a mistake.
      */
     private String repeatedPassword;
 
@@ -125,13 +146,19 @@ public class UserBean extends BaseBean<User> {
     private String directoryName;
     private List<File> fileList;
     private UploadedFile file;
+	private String securedEntityType;
+	private Map<String, String> securedEntityTypes;
+	private Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap;
+	private BusinessEntity selectedEntity;
+	private BaseBean<?> selectedAccountBean;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
     
     private boolean autoUnzipped;
 
     /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
      */
     public UserBean() {
         super(User.class);
@@ -144,6 +171,7 @@ public class UserBean extends BaseBean<User> {
             createMissingDirectories();
             setSelectedFolder(null);
         }
+		initSelectionOptions();
     }
 
     public TreeNode getUserGroupRootNode() {
@@ -179,10 +207,10 @@ public class UserBean extends BaseBean<User> {
     }
 
     /*
-         * (non-Javadoc)
-         *
-         * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-         */
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -349,8 +377,8 @@ public class UserBean extends BaseBean<User> {
         String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + "jasper";
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
-            accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-            invoiceXmlDir, jasperDir);
+				accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO,
+				invoicePdfDir, invoiceXmlDir, jasperDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -612,8 +640,10 @@ public class UserBean extends BaseBean<User> {
     @Override
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
-        // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
-        // boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
+		// Do not user a check against user.provider as it contains only one
+		// value, while user can be linked to various providers
+		// boolean isSuperAdmin = identity.hasPermission("superAdmin",
+		// "superAdminManagement");
         boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
         if (isSuperAdmin) {
             searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
@@ -652,4 +682,133 @@ public class UserBean extends BaseBean<User> {
 		this.autoUnzipped = autoUnzipped;
 	}
     
+
+	public String getSecuredEntityType() {
+		return this.securedEntityType;
+	}
+
+	public void setSecuredEntityType(String securedEntityType) {
+		this.securedEntityType = securedEntityType;
+	}
+
+	public BusinessEntity getSelectedEntity() {
+		return selectedEntity;
+	}
+
+	public void setSelectedEntity(BusinessEntity selectedEntity) {
+		this.selectedEntity = selectedEntity;
+	}
+
+	public BaseBean<?> getSelectedAccountBean() {
+		return selectedAccountBean;
+	}
+
+	public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
+		this.selectedAccountBean = selectedAccountBean;
+	}
+
+	public Map<String, String> getSecuredEntityTypes() {
+		return this.securedEntityTypes;
+	}
+
+	public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
+		this.securedEntityTypes = securedEntityTypes;
+	}
+
+	public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
+		List<DetailedSecuredEntity> detailedSecuredEntities = new ArrayList<>();
+		DetailedSecuredEntity detailedSecuredEntity = null;
+		BusinessEntity businessEntity = null;
+		if (entity != null && entity.getSecuredEntities() != null) {
+			for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+				detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
+				businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode(), getCurrentUser());
+				detailedSecuredEntity.setDescription(businessEntity.getDescription());
+				detailedSecuredEntities.add(detailedSecuredEntity);
+			}
+		}
+		return detailedSecuredEntities;
+	}
+
+	/**
+	 * This will allow the chosen secured entity to be removed from the user's
+	 * securedEntities list.
+	 * 
+	 * @param selectedSecuredEntity
+	 *            The chosen securedEntity
+	 * @throws BusinessException
+	 */
+	@ActionMethod
+	public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
+		for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+			if (securedEntity.equals(selectedSecuredEntity)) {
+				entity.getSecuredEntities().remove(selectedSecuredEntity);
+				break;
+			}
+		}
+		super.saveOrUpdate(false);
+	}
+
+	/**
+	 * This will set the correct account bean based on the selected type(Seller,
+	 * Customer, etc.)
+	 */
+	public void updateSelectedAccountBean() {
+		if (!StringUtils.isBlank(getSecuredEntityType())) {
+			setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
+		}
+	}
+
+	/**
+	 * This will add the selected business entity to the user's securedEntities
+	 * list.
+	 * 
+	 * @param event
+	 * @throws BusinessException
+	 */
+	@ActionMethod
+	public void saveSecuredEntity(SelectEvent event) throws BusinessException {
+		log.debug("saveSecuredEntity: {}", this.selectedEntity);
+		if (this.selectedEntity != null) {
+			List<SecuredEntity> securedEntities = getEntity().getSecuredEntities();
+			for (SecuredEntity securedEntity : securedEntities) {
+				if (securedEntity.equals(this.selectedEntity)) {
+					messages.info(new BundleKey("messages", "commons.uniqueField.code"));
+					return;
+				}
+			}
+			getEntity().getSecuredEntities().add(new SecuredEntity(this.selectedEntity));
+			super.saveOrUpdate(false);
+		}
+	}
+
+	/**
+	 * This will initialize the dropdown values for selecting the entity types
+	 * (Seller, Customer, etc) and the map of managed beans associated to each
+	 * entity type.
+	 */
+	private void initSelectionOptions() {
+		log.debug("initSelectionOptions...");
+		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+		log.debug("this.accountBeanMap.", this.accountBeanMap);
+
+		if (accountBeanMap == null || accountBeanMap.isEmpty()) {
+			accountBeanMap = new HashMap<>();
+			securedEntityTypes = new HashMap<>();
+			String key = ReflectionUtils.getHumanClassName(sellerBean.getClazz().getSimpleName());
+			String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getName());
+			securedEntityTypes.put(key, value);
+			accountBeanMap.put(value, sellerBean);
+			for (AccountBean<?> accountBean : accountBeans) {
+				key = ReflectionUtils.getHumanClassName(accountBean.getClazz().getSimpleName());
+				value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getName());
+				securedEntityTypes.put(key, value);
+				accountBeanMap.put(value, accountBean);
+			}
+		}
+		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+		log.debug("this.accountBeanMap: {}", this.accountBeanMap);
+		log.debug("initSelectionOptions done.");
+	}
+
 }
