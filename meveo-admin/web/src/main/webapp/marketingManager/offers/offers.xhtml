@@ -258,7 +258,7 @@
 											header="#{messages['marketingManager.catalog.OneTimeFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
-												rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null}"
+												rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null and ost.serviceTemplate.serviceSubscriptionCharges.size() > 0}"
 												value="#{ost.serviceTemplate.serviceSubscriptionCharges}"
 												var="charge" type="ordered">
 													#{charge.chargeTemplate.descriptionOrCode}
@@ -269,7 +269,7 @@
 											header="#{messages['marketingManager.catalog.recurringFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
-												rendered="#{ost.serviceTemplate.serviceRecurringCharges != null}"
+												rendered="#{ost.serviceTemplate.serviceRecurringCharges != null and ost.serviceTemplate.serviceRecurringCharges.size() > 0}"
 												value="#{ost.serviceTemplate.serviceRecurringCharges}"
 												var="charge" type="ordered">
 													#{charge.chargeTemplate.descriptionOrCode}
@@ -280,7 +280,7 @@
 											header="#{messages['marketingManager.catalog.usageFee']}">
 											<p:dataList styleClass="dataList" paginatorPosition="bottom"
 												paginatorAlwaysVisible="false"
-												rendered="#{ost.serviceTemplate.serviceUsageCharges != null}"
+												rendered="#{ost.serviceTemplate.serviceUsageCharges != null and ost.serviceTemplate.serviceUsageCharges.size() > 0}"
 												value="#{ost.serviceTemplate.serviceUsageCharges}"
 												var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
 										</p:panel>
