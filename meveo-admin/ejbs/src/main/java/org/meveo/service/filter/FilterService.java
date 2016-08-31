@@ -19,7 +19,6 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.LoginException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -187,13 +186,12 @@ public class FilterService extends BusinessService<Filter> {
 
     @SuppressWarnings("unchecked")
     public String filteredList(Filter filter, User currentUser) throws BusinessException {
-    	Provider currentProvider=null;
-    	try{
-    		currentProvider=checkProvider(filter,currentUser);
-    	}catch(Exception e){
-    		return null;
-    	}
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
+        FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
 
         try {
             Query query = fqb.getQuery(getEntityManager());
@@ -219,14 +217,12 @@ public class FilterService extends BusinessService<Filter> {
     public List<? extends IEntity> filteredListAsObjects(Filter filter, User currentUser) throws BusinessException {
     	
     	filter = refreshOrRetrieve(filter);
-    	Provider currentProvider=null;
-    	try{
-    		currentProvider=checkProvider(filter,currentUser);
-    	}catch(Exception e){
-    		return null;
-    	}
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
-
+    	FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
         try {
             Query query = fqb.getQuery(getEntityManager());
             log.debug("query={}", fqb.getSqlString());
@@ -254,14 +250,12 @@ public class FilterService extends BusinessService<Filter> {
     @SuppressWarnings("unchecked")
     public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows,User currentUser) throws BusinessException {
     	
-    	Provider currentProvider=null;
-    	try{
-    		currentProvider=checkProvider(filter,currentUser);
-    	}catch(Exception e){
-    		return null;
-    	}
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter,currentProvider);
-
+    	FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
         try {
             Query query = fqb.getQuery(getEntityManager());
             log.debug("query={}", fqb.getSqlString());
@@ -557,24 +551,33 @@ public class FilterService extends BusinessService<Filter> {
 			}
 		}
 	}
-	private Provider checkProvider(Filter filter,User currentUser) throws BusinessException{
+	private FilteredQueryBuilder getFilteredQueryBuilder(Filter filter,User currentUser) throws BusinessException{
 		if(filter==null||currentUser==null){
 			throw new BusinessException("filter or currentUser is null");
 		}
 		String clazzName=filter.getPrimarySelector().getTargetEntity();
 		
 		Object obj=ReflectionUtils.createObject(clazzName);
+		Provider provider=null;
+		FilteredQueryBuilder filteredQueryBuilder=null;
+		boolean hasSuperadmin=false;
 		if(obj==null){
 			throw new BusinessException("Target entity "+clazzName+" is invalid");
 		}
+		if(obj instanceof IProvider){
+			provider=currentUser.getProvider();
+		}
 		if(obj instanceof User||obj instanceof Role || obj instanceof Provider){
 			if (currentUser.hasPermission("superAdmin", "superAdminManagement")) {
-	            throw new LoginException("Super User can't call filterList");
+	            provider=null;
+	            hasSuperadmin=true;
 	        }
 		}
-		if(!(obj instanceof IProvider)){
-			return null;
+		
+		filteredQueryBuilder=new FilteredQueryBuilder(filter,provider);
+		if(!hasSuperadmin&&obj.getClass().getName().equals(filter.getPrimarySelector().getTargetEntity())){
+			filteredQueryBuilder.addSqlCriterion(filter.getPrimarySelector().getAlias()+"=:provider","provider", currentUser.getProvider());
 		}
-		return currentUser.getProvider();
+		return filteredQueryBuilder;
 	}
 }
