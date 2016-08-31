@@ -3,6 +3,28 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
+	<changeSet id="#1803_20160628" author="TonyAlejandro">
+        <createTable tableName="ADM_SECURED_ENTITY">
+   			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="entity_class" type="VARCHAR(255)" />
+        </createTable>
+
+		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" />
+        <addForeignKeyConstraint 
+        	constraintName="FK_SECURED_ENTITY_USER" 
+        	referencedTableName="ADM_USER" 
+        	baseColumnNames="USER_ID" 
+        	baseTableName="ADM_SECURED_ENTITY"
+            referencedColumnNames="ID" />
+    </changeSet>
+
 	<changeSet id="#1821_20160707" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
 			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
