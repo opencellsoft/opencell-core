@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
@@ -86,7 +84,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private DualListModel<ServiceTemplate> incompatibleServices;
 
 	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-	
+
 	private UploadedFile uploadedFile;
 
 	/**
@@ -119,7 +117,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
@@ -129,43 +127,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void duplicate() {
 
 		if (entity != null && entity.getId() != null) {
-
-			entity = offerTemplateService.refreshOrRetrieve(entity);
-
-			// Lazy load related values first
-			entity.getOfferServiceTemplates().size();
-
-			// Detach and clear ids of entity and related entities
-			offerTemplateService.detach(entity);
-			entity.setId(null);
-			String sourceAppliesToEntity = entity.clearUuid();
-
-			List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
-			entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
-			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
-				// FIXME
-				// serviceTemplateService.detach(serviceTemplate);
-				entity.getOfferServiceTemplates().add(serviceTemplate);
-			}
-			entity.setCode(entity.getCode() + "_copy");
-
 			try {
-				offerTemplateService.create(entity, getCurrentUser());
-				customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				offerTemplateService.duplicate(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
-            } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
-            }
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting offer template entity: #{0}:#{1}", entity.getCode(), e);
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
 		}
 	}
 
 	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient()
-				&& (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService
-				.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
+		return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
+				getEntity()).size() > 0) ? true : false;
 	}
-
 
 	@Override
 	@ActionMethod
@@ -188,8 +163,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
 				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
-			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices
-					.getTarget()));
+			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 			if (offerServiceTemplate.getId() != null) {
 				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate, getCurrentUser());
 				entity = getPersistenceService().refreshOrRetrieve(entity);
@@ -204,8 +178,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			offerServiceTemplate.getIncompatibleServices().clear();
-			offerServiceTemplate.getIncompatibleServices().addAll(
-					serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+			offerServiceTemplate.getIncompatibleServices().addAll(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 
 		} catch (Exception e) {
 			log.error("exception when saving offer service template !", e.getMessage());
@@ -247,14 +220,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
 				source = serviceTemplateService.listActive();
 			} else {
-				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(),
-						getCurrentProvider());
+				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
 			}
 
 			List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
 
-			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null
-					&& offerServiceTemplate.getIncompatibleServices().size() > 0) {
+			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
 				target.addAll(offerServiceTemplate.getIncompatibleServices());
 			}
 			source.removeAll(target);
@@ -274,7 +245,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
 	}
-	
+
 	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
 		uploadedFile = event.getFile();
 
@@ -291,21 +262,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
-	
+
 	public long countActive() {
 		return offerTemplateService.countActive();
 	}
-	
+
 	public long countDisabled() {
 		return offerTemplateService.countDisabled();
 	}
-	
+
 	public long countExpiring() {
 		return offerTemplateService.countExpiring();
 	}
-	
+
 }

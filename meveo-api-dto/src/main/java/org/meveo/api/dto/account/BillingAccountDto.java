@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 
@@ -21,6 +22,7 @@ import org.meveo.model.payments.PaymentTermEnum;
 @XmlType(name = "BillingAccount")
 @XmlRootElement(name = "BillingAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
+@FilterResults(property = "userAccounts.userAccount", entityClass = UserAccount.class)
 public class BillingAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = 8701417481481359155L;
@@ -128,8 +130,8 @@ public class BillingAccountDto extends AccountDto {
 	public String toString() {
 		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
 				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
-				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate="+statusDate+",terminationReason=" + terminationReason + ", email=" + email
-				+ ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + "]";
+				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate=" + statusDate + ",terminationReason=" + terminationReason
+				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + "]";
 	}
 
 	public Date getSubscriptionDate() {

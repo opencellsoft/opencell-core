@@ -1,7 +1,5 @@
 package org.meveo.api.rest.payment.impl;
 
-import java.util.Date;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;

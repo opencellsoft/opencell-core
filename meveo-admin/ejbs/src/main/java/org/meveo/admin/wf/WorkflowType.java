@@ -6,6 +6,8 @@ import org.meveo.model.BaseEntity;
 
 public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType  {
 	protected E entity;
+	public WorkflowType() {}
+
 	public WorkflowType(E e){
 		entity = e;
 	}

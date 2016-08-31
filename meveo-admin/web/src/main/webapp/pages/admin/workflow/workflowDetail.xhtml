@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:e="http://primefaces.org/extension">
+
+	<ui:define name="navigation">
+		<f:metadata>
+			<f:viewParam name="workflowId" value="#{workflowBean.objectId}" />
+		</f:metadata>
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+					<p:menuitem outcome="workflows"
+						value="#{messages['menu.workflow']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<p:panel header="#{messages['workflow.panel']}">
+			<p:tabView id="tabView" dynamic="true" cache="true">
+				<p:tab title="#{messages['workflow.panel']}">
+					<hftl:formPanel backingBean="#{workflowBean}">
+						<hftl:formField label="#{messages['businessEntity.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['businessEntity.description']}"
+							field="description" useConverter="false" size="50" maxlength="50" />
+						
+						<hftl:formField
+							label="#{messages['workflow.type']}"
+							field="wfType" required="true" size="60" maxlength="255" 
+			                autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames" 
+			                isAutocomplete="true"/>
+                
+						<hftl:formField label="#{messages['workflow.exportLot']}"
+							field="exportLot" />
+						<hftl:formField label="#{messages['workflow.enableHistory']}"
+							field="enableHistory" />	
+						<hftl:formField label="#{messages['commons.status']}" field="status"
+							required="true" />
+					</hftl:formPanel>
+				</p:tab>
+
+				<c:if test="#{!workflowBean.entity.isTransient()}">
+					<p:tab title="#{messages['dunningPlan.transitions']}" id="tab2"
+						rendered="true">
+						<p:outputPanel id="dunningPlanTransition_MSG_panel">
+							<h:graphicImage value="/img/msgerror.png" style="border:0"
+								rendered="#{validation.failed}" />
+							<h:outputText value="#{messages['validation.validationFailure']}"
+								rendered="#{validation.failed}" styleClass="errorMessage" />
+						</p:outputPanel>
+
+						<hftl:decorateFormField fieldId="code"
+							label="#{messages['businessEntity.code']}">
+							<h:outputText id="code" value="#{workflowBean.entity.code}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{workflowBean.edit}" />
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField fieldId="description"
+							label="#{messages['businessEntity.description']}">
+							<h:outputText id="description"
+								value="#{workflowBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{workflowBean.edit}" />
+						</hftl:decorateFormField>
+
+
+						<p:panel id="dunningPlanTransitiondiv"
+							rendered="#{workflowBean.edit}">
+
+							<hftl:formPanel
+								formId="formDunningPlanTransition"
+								edit="#{workflowBean.edit}"
+								label="#{messages['dunningPlan.transitions']}"
+								backingBean="#{wfTransitionBean}"
+								entity="#{workflowBean.wfTransition}"
+								showFormButtons="false" ajaxSubmit="true">
+							
+								<hftl:formField
+									label="#{messages['dunningPlanTransition.fromStatus']}"
+									field="fromStatus" required="true" isMessage="true"
+									edit="#{workflowBean.edit}"
+					                listValues="#{workflowBean.transitionStatusFromWorkflowType}" />
+			                
+								<hftl:formField
+									label="#{messages['dunningPlanTransition.toStatus']}"
+									field="toStatus" required="true" isMessage="true"
+									listValues="#{workflowBean.transitionStatusFromWorkflowType}"
+									edit="#{workflowBean.edit}" />
+									
+								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
+									field="conditionEl" textArea="true" rows="1" maxlength="2000"
+									edit="#{workflowBean.edit}" />
+								<ui:param name="buttons" value="true" />
+			                    <ui:define name="buttons">
+									<p:commandButton rendered="#{wfTransition.id==null}"
+										action="#{workflowBean.saveWfTransition}"
+										value="#{messages['dunningPlanTransition.saveNewDunningPlanTransition']}"
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
+									<p:commandButton rendered="#{wfTransition.id!=null}"
+										action="#{workflowBean.saveWfTransition}"
+										value="#{messages['dunningPlanTransition.modifyDunningPlanTransition']}"
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
+
+									<p:commandButton value="#{messages['action.cancel']}"
+										action="#{workflowBean.newWfTransitionInstance}"
+										update=":tabView:dunningPlanTransitiondiv" />
+
+									<p:button id="buttonBack" value="#{messages['action.back']}"
+										outcome="#{workflowBean.back()}" includeViewParams="true">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</p:button>
+								</ui:define>
+
+							</hftl:formPanel>
+						</p:panel>
+						
+						<p:outputPanel id="dunningPlanTransition_panel">
+							<hftl:dataList backingBean="#{wfTransitionBean}"
+								dataModel="#{workflowBean.entity.transitions}"
+								sortBy="fromStatus"
+								resultsId="dunningPlanTransitions_results">
+								<p:column headerText="#{messages['dunningPlanTransition.fromStatus']}">
+									<h:link outcome="wfTransitionDetail" value="#{entity.fromStatus}">
+                                       <f:param name="wfTransitionId" value="#{entity.id}"/>
+                                       <f:param name="edit" value="true"/>
+                                       <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                    </h:link>
+								</p:column>
+								<hftl:column
+									label="#{messages['dunningPlanTransition.toStatus']}"
+									field="toStatus" />
+								<hftl:column label="#{messages['dunningPlan.conditionEl']}"
+									field="conditionEl" />
+
+								<p:column styleClass="actions-column"
+									rendered="#{workflowBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+
+									<p:tooltip for="editDunningPlanTransitionLink"
+										value="#{messages['commons.edit']}" showEffect="slide"
+										hideEffect="slide" />
+									<p:commandButton id="editDunningPlanTransitionLink"
+										update=":tabView:formDunningPlanTransition"
+										action="#{workflowBean.editWfTransition(entity)}"
+										icon="ui-icon-document" />
+									<p:tooltip for="editDunningPlanTransitionDeleteLink"
+										value="#{messages['commons.delete']}" showEffect="slide"
+										hideEffect="slide" />
+									<p:commandButton id="editDunningPlanTransitionDeleteLink"
+										action="#{workflowBean.deleteWfTransition(entity)}"
+										icon="ui-icon-trash"
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
+								</p:column>
+
+							</hftl:dataList>
+														
+						</p:outputPanel>
+						
+					</p:tab>
+				</c:if>
+
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

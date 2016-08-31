@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.BillingCycleDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -413,7 +414,7 @@ public class BillingRunDto  extends BaseDto{
 			setProcessDate(billingRunEntity.getProcessDate());
 			setStatus(billingRunEntity.getStatus());
 			setStatusDate(billingRunEntity.getStatusDate());
-			setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle()));
+			setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle(),new CustomFieldsDto()));
 			setBillingAccountNumber(billingRunEntity.getBillingAccountNumber());
 			setBillableBillingAcountNumber(billingRunEntity.getBillableBillingAcountNumber());
 			setProducibleInvoiceNumber(billingRunEntity.getProducibleInvoiceNumber());

@@ -1,5 +1,11 @@
 package org.meveo.model.crm;
 
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.payments.CustomerAccount;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -109,4 +115,51 @@ public enum AccountHierarchyTypeEnum {
 	public String getLabel() {
 		return "enum.AccountHierarchyTypeEnum." + name();
 	}
+
+	/**
+	 * This will return the class that corresponds to the top entity of the
+	 * hierarchy.
+	 * 
+	 * @return
+	 */
+	public Class<? extends BusinessEntity> topClass() {
+		switch (highLevel) {
+		case 0:
+			return UserAccount.class;
+		case 1:
+			return BillingAccount.class;
+		case 2:
+			return CustomerAccount.class;
+		case 3:
+			return Customer.class;
+		case 4:
+			return Seller.class;
+		default:
+			return null;
+		}
+	}
+
+	/**
+	 * This will return the class that corresponds to the parent of the top
+	 * entity.
+	 * 
+	 * @return
+	 */
+	public Class<? extends BusinessEntity> parentClass() {
+		switch (highLevel) {
+		case 0:
+			return BillingAccount.class;
+		case 1:
+			return CustomerAccount.class;
+		case 2:
+			return Customer.class;
+		case 3:
+			return Seller.class;
+		case 4:
+			return Seller.class;
+		default:
+			return null;
+		}
+	}
+
 }

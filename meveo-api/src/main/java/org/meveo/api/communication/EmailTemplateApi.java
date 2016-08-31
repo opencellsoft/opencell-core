@@ -1,5 +1,6 @@
 package org.meveo.api.communication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,7 +9,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.communication.EmailTemplateDto;
-import org.meveo.api.dto.communication.EmailTemplatesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -89,34 +89,34 @@ public class EmailTemplateApi extends BaseApi {
 		emailTemplate.setTextContent(emailTemplateDto.getTextContent());
 		emailTemplateService.update(emailTemplate, currentUser);
 	}
-	public EmailTemplateDto find(String code,Provider currentProvider) throws MeveoApiException,BusinessException{
-		if(StringUtils.isBlank(code)){
-			missingParameters.add("code");
+	public EmailTemplateDto find(String emailTemplateCode,Provider currentProvider) throws MeveoApiException,BusinessException{
+		if(StringUtils.isBlank(emailTemplateCode)){
+			missingParameters.add("emailTemplateCode");
 			handleMissingParameters();
 		}
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(code, currentProvider);
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, currentProvider);
 		if(emailTemplate==null){
-			throw new EntityDoesNotExistsException(EmailTemplate.class, code);
+			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
 		}
 		return new EmailTemplateDto(emailTemplate);
 	}
-	public void remove(String code,Provider provider) throws MeveoApiException{
-		if(StringUtils.isBlank(code)){
-			missingParameters.add("code");
+	public void remove(String emailTemplateCode,Provider provider) throws MeveoApiException{
+		if(StringUtils.isBlank(emailTemplateCode)){
+			missingParameters.add("emailTemplateCode");
 		}
 		handleMissingParameters();
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(code, provider);
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, provider);
 		if(emailTemplate==null){
-			throw new EntityDoesNotExistsException(EmailTemplate.class, code);
+			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
 		}
 		emailTemplateService.remove(emailTemplate);
 	}
-	public EmailTemplatesDto list(Provider provider) throws MeveoApiException{
-		EmailTemplatesDto result=new EmailTemplatesDto();
+	public List<EmailTemplateDto> list(Provider provider) throws MeveoApiException{
+		List<EmailTemplateDto> result=new ArrayList<EmailTemplateDto>();
 		List<EmailTemplate> emailTemplates=emailTemplateService.list(provider);
 		if(emailTemplates!=null){
 			for(EmailTemplate emailTemplate:emailTemplates){
-				result.getEmailTemplates().add(new EmailTemplateDto(emailTemplate));
+				result.add(new EmailTemplateDto(emailTemplate));
 			}
 		}
 		return result;

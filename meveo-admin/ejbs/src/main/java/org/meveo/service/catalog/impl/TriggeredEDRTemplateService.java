@@ -20,6 +20,8 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -30,5 +32,15 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class TriggeredEDRTemplateService extends
 		BusinessService<TriggeredEDRTemplate> {
-
+	
+	public synchronized void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
+		entity = refreshOrRetrieve(entity);
+		String code=findDuplicateCode(entity,currentUser);
+		
+		// Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+		entity.setCode(code);
+		create(entity, getCurrentUser());
+	}
 }

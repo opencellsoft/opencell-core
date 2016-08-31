@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,7 +10,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.ProviderContactDto;
-import org.meveo.api.dto.account.ProviderContactsDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -97,35 +97,35 @@ public class ProviderContactApi extends BaseApi {
 		}
 		providerContactService.update(providerContact, currentUser);
 	}
-	public ProviderContactDto find(String code,Provider provider) throws MeveoApiException{
-		if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+	public ProviderContactDto find(String providerContactCode,Provider provider) throws MeveoApiException{
+		if (StringUtils.isBlank(providerContactCode)) {
+            missingParameters.add("providerContactCode");
         }
 		handleMissingParameters();
-		ProviderContact providerContact=providerContactService.findByCode(code, provider);
+		ProviderContact providerContact=providerContactService.findByCode(providerContactCode, provider);
 		if(providerContact==null){
-			throw new EntityDoesNotExistsException(ProviderContact.class,code);
+			throw new EntityDoesNotExistsException(ProviderContact.class,providerContactCode);
 		}
 		return new ProviderContactDto(providerContact);
 	}
-	public void remove(String code,Provider provider) throws MeveoApiException{
-		if(StringUtils.isBlank(code)){
-			missingParameters.add("code");
+	public void remove(String providerContactCode,Provider provider) throws MeveoApiException{
+		if(StringUtils.isBlank(providerContactCode)){
+			missingParameters.add("providerContactCode");
 			handleMissingParameters();
 		}
-		ProviderContact providerContact=providerContactService.findByCode(code, provider);
+		ProviderContact providerContact=providerContactService.findByCode(providerContactCode, provider);
 		if(providerContact==null){
-			throw new EntityDoesNotExistsException(ProviderContact.class,code);
+			throw new EntityDoesNotExistsException(ProviderContact.class,providerContactCode);
 		}
 		providerContactService.remove(providerContact);
 			
 	}
-	public ProviderContactsDto list(Provider provider) throws MeveoApiException{
-		ProviderContactsDto result=new ProviderContactsDto();
+	public List<ProviderContactDto> list(Provider provider) throws MeveoApiException{
+		List<ProviderContactDto> result=new ArrayList<ProviderContactDto>();
 		List<ProviderContact> providerContacts=providerContactService.list(provider);
 		if(providerContacts!=null){
 			for(ProviderContact providerContact:providerContacts){
-				result.getProviderContacts().add(new ProviderContactDto(providerContact));
+				result.add(new ProviderContactDto(providerContact));
 			}
 		}
 		return result;

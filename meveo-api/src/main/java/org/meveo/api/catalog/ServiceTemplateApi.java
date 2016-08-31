@@ -260,6 +260,7 @@ public class ServiceTemplateApi extends BaseApi {
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
         serviceTemplate.setDescription(postData.getDescription());
+        serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setProvider(provider);
 
@@ -300,6 +301,7 @@ public class ServiceTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
         serviceTemplate.setDescription(postData.getDescription());
+        serviceTemplate.setLongDescription(postData.getLongDescription());
 
         Calendar invoicingCalendar = null;
         if (postData.getInvoicingCalendar() != null) {

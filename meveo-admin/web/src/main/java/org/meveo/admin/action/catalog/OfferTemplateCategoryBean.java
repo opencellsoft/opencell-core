@@ -4,16 +4,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -87,25 +82,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
-	}
-
-	public void submitActionListener() throws SerialException, SQLException {
-		log.debug("save image");
-
-		if (uploadedFile != null) {
-			byte[] contents = uploadedFile.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				log.error(e.getMessage());
-			}
-			entity.setImageContentType(uploadedFile.getContentType());
-
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
 
@@ -139,21 +116,6 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
-	}
-
-	private ActionListener submitActionListener = new ActionListener() {
-		@Override
-		public void processAction(ActionEvent event) throws AbortProcessingException {
-			log.debug("save image");
-		}
-	};
-
-	public ActionListener getSubmitActionListener() {
-		return submitActionListener;
-	}
-
-	public void setSubmitActionListener(ActionListener submitActionListener) {
-		this.submitActionListener = submitActionListener;
 	}
 
 }

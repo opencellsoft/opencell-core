@@ -5,10 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.meveo.admin.wf.WorkflowType;
+import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 
+@WorkflowTypeClass
 public class DunningWF extends WorkflowType<CustomerAccount> {
+	
+	public DunningWF() {
+		super();
+	}
 
 	public DunningWF(CustomerAccount e) {
 		super(e);

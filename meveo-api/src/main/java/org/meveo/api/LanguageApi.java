@@ -116,7 +116,9 @@ public class LanguageApi extends BaseApi {
         tradingLanguage.setAuditable(auditable);
         tradingLanguage.setLanguage(language);
         tradingLanguage.setLanguageCode(postData.getCode());
-        tradingLanguage.setPrDescription(postData.getDescription());
+		if (!StringUtils.isBlank(postData.getDescription())) {
+			tradingLanguage.setPrDescription(postData.getDescription());
+		}
     }
 
     public LanguageDto find(String code, Provider provider) throws MeveoApiException {

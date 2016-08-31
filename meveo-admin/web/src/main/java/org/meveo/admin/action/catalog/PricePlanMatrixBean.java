@@ -184,7 +184,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	@Override
 	protected String getDefaultSort() {
-		return "eventCode";
+		return "code";
 	}
 
 	@Override
@@ -277,11 +277,8 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	 @ActionMethod
 	 public void duplicate(){
 			if (entity != null && entity.getId() != null) {
-				pricePlanMatrixService.detach(entity);
-				entity.setId(null);
-				entity.setCode(entity.getCode() + "_copy");
 				try {
-					pricePlanMatrixService.create(entity, getCurrentUser());
+					pricePlanMatrixService.duplicate(entity, getCurrentUser());
 					messages.info(new BundleKey("messages", "save.successful"));
 	            } catch (BusinessException e) {
 	                log.error("Error encountered persisting price plan matrix entity: #{0}:#{1}", entity.getCode(), e);

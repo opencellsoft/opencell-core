@@ -27,6 +27,7 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 
 public abstract class BusinessService<P extends BusinessEntity> extends
@@ -88,6 +89,22 @@ public abstract class BusinessService<P extends BusinessEntity> extends
 						e != null });
 
 		return e;
+	}
+	
+	public String findDuplicateCode(BusinessEntity entity,User currentUser){
+		String code=entity.getCode()+" - Copy";
+		int id=1;
+		String criteria=code;
+		BusinessEntity temp=null;
+		while(true){
+			temp=findByCode(criteria, currentUser.getProvider());
+			if(temp==null){
+				break;
+			}
+			id++;
+			criteria=code+" "+id;
+		}
+		return criteria;
 	}
 
 }

@@ -26,6 +26,7 @@ import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
+import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -61,6 +62,7 @@ import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
+import org.meveo.api.dto.response.UserHierarchyLevelResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -580,4 +582,36 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     ActionStatus createOrUpdateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+
+    /**
+     * create userHierarchyLevel by dto
+     * @param userHierarchyLevelDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);
+
+    /**
+     * update userHierarchyLevel by dto
+     * @param userHierarchyLevelDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);
+
+    /**
+     * remove a userHierarchyCode by code
+     * @param hierarchyLevelCode
+     * @return
+     */
+    @WebMethod
+    ActionStatus removeUserHierarchyLevel(@WebParam(name="hierarchyLevelCode") String hierarchyLevelCode);
+
+    /**
+     * find a userHierarchyCode by code
+     * @param hierarchyLevelCode
+     * @return
+     */
+    @WebMethod
+    UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name="hierarchyLevelCode") String hierarchyLevelCode);
 }
