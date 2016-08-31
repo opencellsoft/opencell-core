@@ -170,16 +170,23 @@
 												value="#{prod.businessProductModel.code}"
 												rendered="#{prod.businessProductModel != null}"></h:outputText>
 											<p:separator></p:separator>
-											<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-											<h:outputText value="#{prod.validFrom}">
+											<p:panelGrid columns="3">
+												<p:panelGrid columns="1">
+													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
+													<h:outputText value="#{prod.validFrom}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
-											<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-											<h:outputText value="#{prod.validTo}">
+												</p:panelGrid>
+												<p:panel></p:panel>
+												<p:panelGrid columns="1">
+													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
+													<h:outputText value="#{prod.validTo}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
+												</p:panelGrid>
+											</p:panelGrid>
 										</p:panelGrid>
 									</p:panel>
 									<p:panel>
