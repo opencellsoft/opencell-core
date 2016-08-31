@@ -4,7 +4,7 @@
         <artifactId>meveo-admin</artifactId>
         <groupId>org.meveo</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>4.3.3</version>
+        <version>4.3.4</version>
     </parent>
     <artifactId>meveo-admin-web</artifactId>
     <name>MEVEO Admin Web Application - Web Module</name>
