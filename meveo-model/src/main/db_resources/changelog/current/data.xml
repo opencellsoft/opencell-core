@@ -428,11 +428,13 @@
 	</changeSet>
 	
 	<changeSet id="#1842_20160720" author="TyshanShi">
-		<sql>update crm_provider_contact set address_country = (case address_country when 'FR' then 'France' 
-			when 'GB' then 'United Kingdom' when 'US' then 'United States' when 'DE' then 'German' else address_country end);
+		<sql>update crm_provider_contact a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country))
+			where a.address_country in (select c.country_code from adm_country c);
 		</sql>
-		<sql>update account_entity set address_country = (case address_country when 'FR' then 'France' when 'GB' 
-			then 'United Kingdom' when 'US' then 'United States' when 'DE' then 'German' else address_country end);
+		<sql>update account_entity a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country)) 
+			where a.address_country in (select c.country_code from adm_country c);
 		</sql>
 	</changeSet>
         

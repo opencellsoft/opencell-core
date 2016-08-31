@@ -562,7 +562,7 @@ public class AccountHierarchyApi extends BaseApi {
 			if (tradingCountry == null) {
 				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 			}
-			qb.addCriterion("c.seller.tradingCountry.country.countryCode", "=", postData.getCountryCode(), true);
+			qb.addCriterion("c.address.country", "=", tradingCountry.getPrDescription(), true);
 		}
 		if (!StringUtils.isBlank(postData.getFirstName())) {
 			qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
