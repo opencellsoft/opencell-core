@@ -62,6 +62,9 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
@@ -98,8 +101,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-
-	private MEVEOCdrParser cdrParser;
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -448,7 +451,34 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
+		
+	
+		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
+			log.debug("start to execute script instance for ratePrice {}",ratePrice); 
+			User currentUser=null;
+			try {
+				log.debug("execute priceplan script " + ratePrice.getScriptInstance().getCode());
+				ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
+				HashMap<String, Object> context = new HashMap<String, Object>();
+				context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+				if(bareWalletOperation.getAuditable()!=null){
+					currentUser=bareWalletOperation.getAuditable().getCreator();
+				}
+				if(currentUser==null){
+					currentUser=getCurrentUser();
+				}
+				if(currentUser==null){
+					throw new BusinessException("CurrentUser is null");
+				}
+				script.execute(context, currentUser);
+			} catch (Exception e) {
+				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode(),currentUser);
+				throw new BusinessException("failed when run script "+ratePrice.getScriptInstance().getCode()+" ,info "+e.getMessage());
+			}
+		}
 	}
+	
+	
 
 	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation,
 			Long countryId, TradingCurrency tcurrency, Long sellerId) throws BusinessException {
@@ -608,6 +638,7 @@ public class RatingService extends BusinessService<WalletOperation>{
                 log.debug("the operation date " + bareOperation.getOperationDate() + " does not match pricePlan validity calendar " + pricePlan.getValidityCalendar().getCode()
                         + "period range ");
             }
+            
 		}
 		return null;
 	}

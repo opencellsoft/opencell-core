@@ -92,6 +92,15 @@ public class TaxApi extends BaseApi {
                 catMessagesService.create(catMsg, currentUser);
             }
         }
+     
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
         return result;
     }
@@ -156,6 +165,15 @@ public class TaxApi extends BaseApi {
         }
 
         taxService.update(tax, currentUser);
+        
+     // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 
         return result;
     }
@@ -174,7 +192,7 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        result = new TaxDto(tax);
+        result = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() + "_" + tax.getId())) {
@@ -223,8 +241,8 @@ public class TaxApi extends BaseApi {
         if (provider != null) {
             List<Tax> taxes = taxService.list(provider);
             if (taxes != null && !taxes.isEmpty()) {
-                for (Tax t : taxes) {
-                    TaxDto taxDto = new TaxDto(t);
+                for (Tax tax : taxes) {
+                    TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
                     taxesDto.getTax().add(taxDto);
                 }
             }

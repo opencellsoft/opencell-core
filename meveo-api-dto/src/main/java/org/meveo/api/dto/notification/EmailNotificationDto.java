@@ -1,5 +1,8 @@
 package org.meveo.api.dto.notification;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,6 +29,9 @@ public class EmailNotificationDto extends NotificationDto {
 
 	private String body;
 	private String htmlBody;
+	
+    @XmlElement(name = "sendToMail")
+    private List<String> sendToMail = new ArrayList<String>();
 
 	public EmailNotificationDto() {
 
@@ -79,10 +85,19 @@ public class EmailNotificationDto extends NotificationDto {
 	public void setHtmlBody(String htmlBody) {
 		this.htmlBody = htmlBody;
 	}
+	
+
+	public List<String> getSendToMail() {
+		return sendToMail;
+	}
+
+	public void setSendToMail(List<String> sendToMail) {
+		this.sendToMail = sendToMail;
+	}
 
 	@Override
 	public String toString() {
-		return "EmailNotificationDto [emailFrom=" + emailFrom + ", emailToEl=" + emailToEl + ", subject=" + subject + ", body=" + body + ", htmlBody=" + htmlBody + "]";
+		return "EmailNotificationDto [emailFrom=" + emailFrom + ", emailToEl=" + emailToEl + ", , emails=" + sendToMail + " subject=" + subject + ", body=" + body + ", htmlBody=" + htmlBody +"]";
 	}
 
 }

@@ -46,6 +46,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
@@ -150,7 +151,12 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     
     @Column(name = "SEQUENCE")
 	private Long sequence;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
+	private ScriptInstance scriptInstance;
+	
+    
 	public String getEventCode() {
 		return eventCode;
 	}
@@ -343,6 +349,14 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 		this.sequence = sequence;
 	}
 
+	public ScriptInstance getScriptInstance() {
+		return scriptInstance;
+	}
+
+	public void setScriptInstance(ScriptInstance scriptInstance) {
+		this.scriptInstance = scriptInstance;
+	}
+
 	@Override
     public String toString() {
         return String
@@ -439,6 +453,13 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 				return false;
 			}
 		} else if (seller.getId() != other.seller.getId()) {
+			return false;
+		}
+		if (scriptInstance == null) {
+			if (other.scriptInstance != null) {
+				return false;
+			}
+		} else if (scriptInstance.getId() != other.scriptInstance.getId()) {
 			return false;
 		}
 		if (priority != other.priority) {

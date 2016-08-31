@@ -67,6 +67,9 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     @Column(name = "DISPLAY_CHARGES_PERIODS")
     private Boolean displayChargesPeriods = false;
     
+    @Column(name = "DISPLAY_BILLING_CYCLE")
+    private Boolean displayBillingCycle = false;
+
     @OneToOne
     @JoinColumn(name="PROVIDER_ID")
     private Provider provider;
@@ -143,9 +146,21 @@ public class InvoiceConfiguration implements Serializable, IEntity {
 		this.displayChargesPeriods = displayChargesPeriods;
 	}
 
+
+
+	public Boolean getDisplayBillingCycle() {
+		return displayBillingCycle;
+	}
+
+	public void setDisplayBillingCycle(Boolean displayBillingCycle) {
+		this.displayBillingCycle = displayBillingCycle;
+	}
+
 	@Override
 	public String toString() {
-		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]";
+		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
+				+ "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", "
+				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]"+ ", displayBillingCycle=" + displayBillingCycle + "]";
 	}
 
 	public Long getId() {

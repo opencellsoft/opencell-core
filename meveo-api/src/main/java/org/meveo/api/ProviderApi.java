@@ -296,7 +296,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list(provider);
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax));
+                result.getTaxes().getTax().add(new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax)));
             }
         }
 
@@ -321,7 +321,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list(provider);
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle)));
             }
         }
 
