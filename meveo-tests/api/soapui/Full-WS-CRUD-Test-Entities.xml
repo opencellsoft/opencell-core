@@ -763,7 +763,13 @@
     <con:operation id="18456690-4f1b-4fe8-8a9f-dd08850ef038" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-  <con:operation id="0a7dd5bd-ad70-4526-8351-ea6798cf4414" isOneWay="false" action="" name="createDDRequestLotOp" bindingOperationName="createDDRequestLotOp" type="Request-Response" outputName="createDDRequestLotOpResponse" inputName="createDDRequestLotOp" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="e25a4aa0-dac9-4975-8274-e76058928c56" isOneWay="false" action="" name="listDDRequestLotops" bindingOperationName="listDDRequestLotops" type="Request-Response" outputName="listDDRequestLotopsResponse" inputName="listDDRequestLotops" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface>
+    <con:operation id="0a7dd5bd-ad70-4526-8351-ea6798cf4414" isOneWay="false" action="" name="createDDRequestLotOp" bindingOperationName="createDDRequestLotOp" type="Request-Response" outputName="createDDRequestLotOpResponse" inputName="createDDRequestLotOp" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e25a4aa0-dac9-4975-8274-e76058928c56" isOneWay="false" action="" name="listDDRequestLotops" bindingOperationName="listDDRequestLotops" type="Request-Response" outputName="listDDRequestLotopsResponse" inputName="listDDRequestLotops" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="63f2a050-79b9-4e44-8be3-6bb29b160b4d" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -1102,20 +1108,70 @@
     <con:operation id="e3465730-b4ec-4fe9-acb8-76c8bd1e50e4" isOneWay="false" action="" name="updateInvoiceType" bindingOperationName="updateInvoiceType" type="Request-Response" outputName="updateInvoiceTypeResponse" inputName="updateInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    
     <con:operation id="a9b30b5c-54f3-4152-bec1-e760813bb93e" isOneWay="false" action="" name="findProviderCF" bindingOperationName="findProviderCF" type="Request-Response" outputName="findProviderCFResponse" inputName="findProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    
-    
-    
     <con:operation id="9fd150a7-36e6-4815-ac16-d13503824b36" isOneWay="false" action="" name="updateProviderCF" bindingOperationName="updateProviderCF" type="Request-Response" outputName="updateProviderCFResponse" inputName="updateProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
     <con:operation id="89e778c5-d24b-493c-8834-fee0250e8933" isOneWay="false" action="" name="findRole4_2" bindingOperationName="findRole4_2" type="Request-Response" outputName="findRole4_2Response" inputName="findRole4_2" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-  <con:operation id="9a91c18b-8242-4576-91a2-3fc9419c19f8" isOneWay="false" action="" name="createOrUpdateProviderContact" bindingOperationName="createOrUpdateProviderContact" type="Request-Response" outputName="createOrUpdateProviderContactResponse" inputName="createOrUpdateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="06457d15-d6be-4d59-9325-db523cc0f0a0" isOneWay="false" action="" name="updateProviderContact" bindingOperationName="updateProviderContact" type="Request-Response" outputName="updateProviderContactResponse" inputName="updateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a9aa7249-5b45-4a19-821d-535b3509b4a9" isOneWay="false" action="" name="listProviderContacts" bindingOperationName="listProviderContacts" type="Request-Response" outputName="listProviderContactsResponse" inputName="listProviderContacts" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="ed567fb9-9e59-4027-9588-8d6b8c1dfee9" isOneWay="false" action="" name="createProviderContact" bindingOperationName="createProviderContact" type="Request-Response" outputName="createProviderContactResponse" inputName="createProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="00ffab12-9d6c-40c0-9bb1-e57108bd772d" isOneWay="false" action="" name="removeProviderContact" bindingOperationName="removeProviderContact" type="Request-Response" outputName="removeProviderContactResponse" inputName="removeProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="58185a13-8e5d-4e35-8c4c-d970f21b4969" isOneWay="false" action="" name="findProviderContact" bindingOperationName="findProviderContact" type="Request-Response" outputName="findProviderContactResponse" inputName="findProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c122d9c5-40fa-4521-8fb0-0abf7c2aadf8" isOneWay="false" action="" name="findMeveoInstance" bindingOperationName="findMeveoInstance" type="Request-Response" outputName="findMeveoInstanceResponse" inputName="findMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f8c630ef-f013-431f-b64b-bbc8d5f8c242" isOneWay="false" action="" name="removeEmailTemplate" bindingOperationName="removeEmailTemplate" type="Request-Response" outputName="removeEmailTemplateResponse" inputName="removeEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="56736202-8ecc-407e-8442-3eae822c4716" isOneWay="false" action="" name="createOrUpdateMeveoInstance" bindingOperationName="createOrUpdateMeveoInstance" type="Request-Response" outputName="createOrUpdateMeveoInstanceResponse" inputName="createOrUpdateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="64d1fbd5-f53d-4250-bd12-b0d057d58308" isOneWay="false" action="" name="listEmailTemplates" bindingOperationName="listEmailTemplates" type="Request-Response" outputName="listEmailTemplatesResponse" inputName="listEmailTemplates" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0afeec39-2e2e-4915-b67c-a68aff7b4099" isOneWay="false" action="" name="createEmailTemplate" bindingOperationName="createEmailTemplate" type="Request-Response" outputName="createEmailTemplateResponse" inputName="createEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d282dd2e-c113-4d5c-bfb2-b9ae707adb17" isOneWay="false" action="" name="listMeveoInstances" bindingOperationName="listMeveoInstances" type="Request-Response" outputName="listMeveoInstancesResponse" inputName="listMeveoInstances" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="73e3a96c-f212-4219-af39-f7b9c493fc01" isOneWay="false" action="" name="updateEmailTemplate" bindingOperationName="updateEmailTemplate" type="Request-Response" outputName="updateEmailTemplateResponse" inputName="updateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d0f0b0e5-e8ab-4988-aefd-b139d67d9aa1" isOneWay="false" action="" name="findEmailTemplate" bindingOperationName="findEmailTemplate" type="Request-Response" outputName="findEmailTemplateResponse" inputName="findEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b22e1da3-f00b-4387-b9cc-1ecc158deb6d" isOneWay="false" action="" name="updateMeveoInstance" bindingOperationName="updateMeveoInstance" type="Request-Response" outputName="updateMeveoInstanceResponse" inputName="updateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="ff1b7496-eed0-4097-9214-3c64e6432fdb" isOneWay="false" action="" name="createMeveoInstance" bindingOperationName="createMeveoInstance" type="Request-Response" outputName="createMeveoInstanceResponse" inputName="createMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="8d527590-c721-4ed9-8a99-c134a0608e19" isOneWay="false" action="" name="removeMeveoInstance" bindingOperationName="removeMeveoInstance" type="Request-Response" outputName="removeMeveoInstanceResponse" inputName="removeMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="de43b680-5fcb-4879-8eea-b86d4b4c78ea" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface>
+    <con:operation id="9a91c18b-8242-4576-91a2-3fc9419c19f8" isOneWay="false" action="" name="createOrUpdateProviderContact" bindingOperationName="createOrUpdateProviderContact" type="Request-Response" outputName="createOrUpdateProviderContactResponse" inputName="createOrUpdateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="06457d15-d6be-4d59-9325-db523cc0f0a0" isOneWay="false" action="" name="updateProviderContact" bindingOperationName="updateProviderContact" type="Request-Response" outputName="updateProviderContactResponse" inputName="updateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a9aa7249-5b45-4a19-821d-535b3509b4a9" isOneWay="false" action="" name="listProviderContacts" bindingOperationName="listProviderContacts" type="Request-Response" outputName="listProviderContactsResponse" inputName="listProviderContacts" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ed567fb9-9e59-4027-9588-8d6b8c1dfee9" isOneWay="false" action="" name="createProviderContact" bindingOperationName="createProviderContact" type="Request-Response" outputName="createProviderContactResponse" inputName="createProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="00ffab12-9d6c-40c0-9bb1-e57108bd772d" isOneWay="false" action="" name="removeProviderContact" bindingOperationName="removeProviderContact" type="Request-Response" outputName="removeProviderContactResponse" inputName="removeProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="58185a13-8e5d-4e35-8c4c-d970f21b4969" isOneWay="false" action="" name="findProviderContact" bindingOperationName="findProviderContact" type="Request-Response" outputName="findProviderContactResponse" inputName="findProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c122d9c5-40fa-4521-8fb0-0abf7c2aadf8" isOneWay="false" action="" name="findMeveoInstance" bindingOperationName="findMeveoInstance" type="Request-Response" outputName="findMeveoInstanceResponse" inputName="findMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f8c630ef-f013-431f-b64b-bbc8d5f8c242" isOneWay="false" action="" name="removeEmailTemplate" bindingOperationName="removeEmailTemplate" type="Request-Response" outputName="removeEmailTemplateResponse" inputName="removeEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="56736202-8ecc-407e-8442-3eae822c4716" isOneWay="false" action="" name="createOrUpdateMeveoInstance" bindingOperationName="createOrUpdateMeveoInstance" type="Request-Response" outputName="createOrUpdateMeveoInstanceResponse" inputName="createOrUpdateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="64d1fbd5-f53d-4250-bd12-b0d057d58308" isOneWay="false" action="" name="listEmailTemplates" bindingOperationName="listEmailTemplates" type="Request-Response" outputName="listEmailTemplatesResponse" inputName="listEmailTemplates" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0afeec39-2e2e-4915-b67c-a68aff7b4099" isOneWay="false" action="" name="createEmailTemplate" bindingOperationName="createEmailTemplate" type="Request-Response" outputName="createEmailTemplateResponse" inputName="createEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d282dd2e-c113-4d5c-bfb2-b9ae707adb17" isOneWay="false" action="" name="listMeveoInstances" bindingOperationName="listMeveoInstances" type="Request-Response" outputName="listMeveoInstancesResponse" inputName="listMeveoInstances" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="73e3a96c-f212-4219-af39-f7b9c493fc01" isOneWay="false" action="" name="updateEmailTemplate" bindingOperationName="updateEmailTemplate" type="Request-Response" outputName="updateEmailTemplateResponse" inputName="updateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d0f0b0e5-e8ab-4988-aefd-b139d67d9aa1" isOneWay="false" action="" name="findEmailTemplate" bindingOperationName="findEmailTemplate" type="Request-Response" outputName="findEmailTemplateResponse" inputName="findEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b22e1da3-f00b-4387-b9cc-1ecc158deb6d" isOneWay="false" action="" name="updateMeveoInstance" bindingOperationName="updateMeveoInstance" type="Request-Response" outputName="updateMeveoInstanceResponse" inputName="updateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ff1b7496-eed0-4097-9214-3c64e6432fdb" isOneWay="false" action="" name="createMeveoInstance" bindingOperationName="createMeveoInstance" type="Request-Response" outputName="createMeveoInstanceResponse" inputName="createMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8d527590-c721-4ed9-8a99-c134a0608e19" isOneWay="false" action="" name="removeMeveoInstance" bindingOperationName="removeMeveoInstance" type="Request-Response" outputName="removeMeveoInstanceResponse" inputName="removeMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="de43b680-5fcb-4879-8eea-b86d4b4c78ea" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -1344,7 +1400,18 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="c43cbf05-c104-49b2-9b98-52dc0ce80a23" wsaVersion="NONE" name="WorkflowWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WorkflowWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WorkflowWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint></con:endpoints><con:operation id="613cae81-2eba-4a5c-9844-f478ddec3b7c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9af94cf3-9f3b-4f4b-8468-30ee1d591bc0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+  <con:interface xsi:type="con:WsdlInterface" id="c43cbf05-c104-49b2-9b98-52dc0ce80a23" wsaVersion="NONE" name="WorkflowWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WorkflowWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WorkflowWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="613cae81-2eba-4a5c-9844-f478ddec3b7c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="9af94cf3-9f3b-4f4b-8468-30ee1d591bc0" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -1382,7 +1449,17 @@
          </workflow>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/create"/></con:call></con:operation><con:operation id="640fd460-1c12-4911-9c68-58cea779d2cb" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c14372fa-c0fd-4684-bc7c-33ef2d878bc0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/create"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="640fd460-1c12-4911-9c68-58cea779d2cb" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="c14372fa-c0fd-4684-bc7c-33ef2d878bc0" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:createOrUpdate>\r
@@ -1420,7 +1497,17 @@
          </workflow>\r
       </wf:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/createOrUpdate"/></con:call></con:operation><con:operation id="3dbc04b5-25ba-4109-a079-a469f72c403c" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="00906a95-ae47-418c-9615-c723344d2529" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/createOrUpdate"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="3dbc04b5-25ba-4109-a079-a469f72c403c" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="00906a95-ae47-418c-9615-c723344d2529" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -1428,17 +1515,47 @@
          <workflowCode>?</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/find"/></con:call></con:operation><con:operation id="5461d0a7-3f34-436f-b117-df27d8104c4a" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a64cd2b7-9f84-4d01-97e7-76b35dd77c2f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/find"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="5461d0a7-3f34-436f-b117-df27d8104c4a" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="a64cd2b7-9f84-4d01-97e7-76b35dd77c2f" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/index"/></con:call></con:operation><con:operation id="9a526256-9976-4587-8f45-a5de155b15dc" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dba65e04-3285-46f3-8fbe-e8281938473c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/index"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="9a526256-9976-4587-8f45-a5de155b15dc" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="dba65e04-3285-46f3-8fbe-e8281938473c" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:list/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/list"/></con:call></con:operation><con:operation id="b568a274-7b77-4126-b1e3-292d016e4fc2" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="abc40482-0dcb-48d1-bb73-0c30fb814309" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/list"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="b568a274-7b77-4126-b1e3-292d016e4fc2" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="abc40482-0dcb-48d1-bb73-0c30fb814309" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -1446,7 +1563,17 @@
          <workflowCode>?</workflowCode>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/remove"/></con:call></con:operation><con:operation id="aa34ac8e-20ea-460e-ac6c-4ef93758ba1b" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1230c8c5-7820-498e-914b-0b1b55000bd3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/remove"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="aa34ac8e-20ea-460e-ac6c-4ef93758ba1b" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="1230c8c5-7820-498e-914b-0b1b55000bd3" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WorkflowWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -1484,7 +1611,23 @@
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint></con:endpoints><con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="78cefb27-8939-4cb0-926b-52bcf33dfd43" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WorkflowWs/update"/>
+      </con:call>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="78cefb27-8939-4cb0-926b-52bcf33dfd43" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -1522,7 +1665,17 @@
          </wfTransitionDto>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/create"/></con:call></con:operation><con:operation id="fd9d8488-b136-49ed-8212-427ddb05e919" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4daa416f-d911-4578-958e-e3950e8897bf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/create"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="fd9d8488-b136-49ed-8212-427ddb05e919" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="4daa416f-d911-4578-958e-e3950e8897bf" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:createOrUpdate>\r
@@ -1560,7 +1713,17 @@
          </wfTransitionDto>\r
       </wf:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/createOrUpdate"/></con:call></con:operation><con:operation id="b7d1ee0d-2a98-4cc4-911e-3ce88c4e6972" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d1685c68-a28f-4710-bfec-2a307b31262f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/createOrUpdate"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="b7d1ee0d-2a98-4cc4-911e-3ce88c4e6972" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="d1685c68-a28f-4710-bfec-2a307b31262f" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -1572,12 +1735,32 @@
          <dunningLevelTo>?</dunningLevelTo>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/find"/></con:call></con:operation><con:operation id="b1a5bfc3-ca5c-4b2b-875a-c1caa395d145" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5daa0a51-b2b6-4129-b61d-20dc1c2a9945" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/find"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="b1a5bfc3-ca5c-4b2b-875a-c1caa395d145" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="5daa0a51-b2b6-4129-b61d-20dc1c2a9945" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/index"/></con:call></con:operation><con:operation id="9bbcbd25-04d6-4123-9533-301b868b2d20" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cb78d239-2295-4727-8ae9-8a8271a5e652" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/index"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="9bbcbd25-04d6-4123-9533-301b868b2d20" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="cb78d239-2295-4727-8ae9-8a8271a5e652" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -1589,7 +1772,17 @@
          <dunningLevelTo>?</dunningLevelTo>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/remove"/></con:call></con:operation><con:operation id="ef9db7b7-1105-41c9-8e7c-50bc1bdf37da" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0c8f1341-0b70-4118-88a7-7bfc5c6af829" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/remove"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="ef9db7b7-1105-41c9-8e7c-50bc1bdf37da" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="0c8f1341-0b70-4118-88a7-7bfc5c6af829" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -1627,7 +1820,23 @@
          </wfTransitionDto>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:endpoints><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint></con:endpoints><con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d8ce386e-a114-48d3-b955-91aebf4e6cf2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFTransitionWs/update"/>
+      </con:call>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="d8ce386e-a114-48d3-b955-91aebf4e6cf2" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -1665,7 +1874,17 @@
          </wfAction>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/create"/></con:call></con:operation><con:operation id="4ff660f0-8c08-424c-a6f9-a81541117f09" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a90471f5-c588-42a8-8bc8-83cc7f17dae6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/create"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="4ff660f0-8c08-424c-a6f9-a81541117f09" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="a90471f5-c588-42a8-8bc8-83cc7f17dae6" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:createOrUpdate>\r
@@ -1703,12 +1922,32 @@
          </wfAction>\r
       </wf:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/createOrUpdate"/></con:call></con:operation><con:operation id="24ec437d-425a-4276-98fe-e7bd79b0be3f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="66da4891-c5cb-47b9-a360-cc1f1c52cfeb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/createOrUpdate"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="24ec437d-425a-4276-98fe-e7bd79b0be3f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="66da4891-c5cb-47b9-a360-cc1f1c52cfeb" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:index/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/index"/></con:call></con:operation><con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4c9e6630-4bf5-4232-920f-d1ad5cb5749b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/index"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="4c9e6630-4bf5-4232-920f-d1ad5cb5749b" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -1746,7 +1985,12 @@
          </wfAction>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/update"/></con:call></con:operation></con:interface><con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.wf.ws.api.meveo.org/WFActionWs/update"/>
+      </con:call>
+    </con:operation>
+  </con:interface>
+  <con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="30a58b44-a165-4a27-a889-fe1585a451c8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
@@ -22558,7 +22802,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC1">
+              <con:configuration>
+                <token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC1">
                <firstName>Admin1</firstName>
                <lastName>Admin1</lastName>
                <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
@@ -22574,9 +22819,11 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <city>DIJON</city>
                   <country>French</country>
                </addressDto>
-            </providerContact>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </providerContact>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22615,11 +22862,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2">
+              <con:configuration>
+                <token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2">
                &lt;addressDto/>
-            &lt;/providerContact></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/providerContact></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22750,7 +23000,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
+              <con:configuration>
+                <token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
                <firstName>Admin11</firstName>
                <lastName>Admin11</lastName>
                <email>${#Project#entityPrefix}_${#TestSuite#index}1@manaty.net</email>
@@ -22766,7 +23017,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <city>DIJON1</city>
                   <country>French</country>
                </addressDto>
-            </providerContact>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </providerContact>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -22806,10 +23060,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_PC222">
+              <con:configuration>
+                <token>&lt;providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_PC222">
                &lt;addressDto/>
             &lt;/providerContact>
-         &lt;/return></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+         &lt;/return></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -22843,7 +23101,11 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -22881,8 +23143,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[
-               <providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
+              <con:configuration>
+                <token><![CDATA[<providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="${#Project#entityPrefix}_${#TestSuite#index}_PC11">
                   <firstName>Admin11</firstName>
                   <lastName>Admin11</lastName>
                   <email>${#Project#entityPrefix}_${#TestSuite#index}1@manaty.net</email>
@@ -22901,8 +23163,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                </providerContact>
                <providerContact code="${#Project#entityPrefix}_${#TestSuite#index}_PC2" description="${#Project#entityPrefix}_${#TestSuite#index}_createOrUpdate">
                   <addressDto/>
-               </providerContact>
-       ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </providerContact>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23032,7 +23296,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed ProviderContact2" id="6d904c3b-2a30-4553-9af7-0def37d68cec">
+      </con:testStep>
+      <con:testStep type="request" name="find removed ProviderContact2" id="6d904c3b-2a30-4553-9af7-0def37d68cec">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -23075,8 +23340,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD EmailTemplate" searchProperties="true" id="01b28f42-8d0a-47bf-85ba-577ebfc9a8ab">
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD EmailTemplate" searchProperties="true" id="01b28f42-8d0a-47bf-85ba-577ebfc9a8ab">
       <con:settings/>
       <con:testStep type="request" name="create EmailTemplate with All Vals" id="f56a3365-3955-4bb7-aaad-0c8a3245f3d6">
         <con:settings/>
@@ -23185,16 +23452,19 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1</subject>
                <htmlContent>htmlcontent</htmlContent>
                <textContent>text content</textContent>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23226,17 +23496,24 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Code Status Success">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2</subject>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23358,14 +23635,18 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET1">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET1_updated</subject>
                <htmlContent>htmlcontent updated</htmlContent>
                <textContent>text content updated</textContent>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23405,12 +23686,16 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
+              <con:configuration>
+                <token><![CDATA[<emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                <media>EMAIL</media>
                <tagStartDelimiter>#{</tagStartDelimiter>
                <tagEndDelimiter>}</tagEndDelimiter>
                <subject>${#Project#entityPrefix}_${#TestSuite#index}_subject_ET2_UPDATED</subject>
-            </emailTemplate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23490,7 +23775,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<emailTemplates>
+              <con:configuration>
+                <token><![CDATA[<emailTemplates>
                <emailTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_ET2">
                   <media>EMAIL</media>
                   <tagStartDelimiter>#{</tagStartDelimiter>
@@ -23505,7 +23791,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <htmlContent>htmlcontent createOrUpdate</htmlContent>
                   <textContent>text content createOrUpdate</textContent>
                </emailTemplate>
-            </emailTemplates>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </emailTemplates>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -23635,7 +23924,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed EmailTemplate2" id="d1d4a6b4-e868-43c9-b2b3-9f8078c38002">
+      </con:testStep>
+      <con:testStep type="request" name="find removed EmailTemplate2" id="d1d4a6b4-e868-43c9-b2b3-9f8078c38002">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -23678,8 +23968,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD MeveoInstance" searchProperties="true" id="aba62a64-11ea-4de0-8dbe-ec3b5925c1b8">
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD MeveoInstance" searchProperties="true" id="aba62a64-11ea-4de0-8dbe-ec3b5925c1b8">
       <con:settings/>
       <con:testStep type="request" name="create MeveoInstance with All Vals" id="5fd1a6a0-6be2-41a6-ab96-88b15c0790f7">
         <con:settings/>
@@ -23813,7 +24105,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bdb2efe4-388d-4077-9c6f-f6e7b1d0b039" name="Find: all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -23840,9 +24133,11 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23881,11 +24176,14 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e06a126-246e-487f-9cbc-45c21f297b6b" name="Find: all values">
-              <con:configuration><token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2">
+              <con:configuration>
+                <token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2">
                &lt;url>http://localhost:8080/meveo&lt;/url>
-            &lt;/meveoInstance></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/meveoInstance></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24028,7 +24326,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
+              <con:configuration>
+                <token><![CDATA[<meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI1" description="${#Project#entityPrefix}_${#TestSuite#index}_MI1 upated">
                <productName>productname</productName>
                <productVersion>productversion</productVersion>
                <owner>owner</owner>
@@ -24055,7 +24354,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                <authPassword>meveo.admin</authPassword>
                <user>MEVEO.ADMIN</user>
                <customer>WS_BASE_CUST</customer>
-            </meveoInstance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24095,9 +24397,13 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="927d62ba-50e3-4908-92a3-63087deb4d40" name="Find all values">
-              <con:configuration><token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
+              <con:configuration>
+                <token>&lt;meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                &lt;url>http://localhost:8080/meveo&lt;/url>
-            &lt;/meveoInstance></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            &lt;/meveoInstance></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24199,7 +24505,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<meveoInstances>
+              <con:configuration>
+                <token><![CDATA[<meveoInstances>
                <meveoInstance code="${#Project#entityPrefix}_${#TestSuite#index}_MI2" description="${#Project#entityPrefix}_${#TestSuite#index}_MI2 update">
                   <url>http://localhost:8080/meveo</url>
                </meveoInstance>
@@ -24231,7 +24538,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
                   <user>MEVEO.ADMIN</user>
                   <customer>WS_BASE_CUST</customer>
                </meveoInstance>
-            </meveoInstances>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </meveoInstances>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -24361,7 +24671,8 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="find removed MeveoInstance2" id="ff6024e3-609c-48bf-bd70-4a61a3f4813a">
+      </con:testStep>
+      <con:testStep type="request" name="find removed MeveoInstance2" id="ff6024e3-609c-48bf-bd70-4a61a3f4813a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -24404,8 +24715,10 @@ count(//ns2:findDescriptionsResponse/return/catMessagesDto)</path>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties/>
-    </con:testCase><con:properties>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>18</con:value>
@@ -35917,10 +36230,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
             <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ad2db34a-39b8-45dd-8579-0414bac12852" name="Contains 1">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -35946,10 +36264,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <mobile>+33666666666</mobile>
                </contactInformation>
                <customerAccounts/>
-            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </customer>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="0ae8d12d-12f7-4fa4-b75f-25a505faa00c" name="Contains 2">
-              <con:configuration><token><![CDATA[<externalRef1>EXTREF1</externalRef1>
+              <con:configuration>
+                <token><![CDATA[<externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
                   <title>M</title>
@@ -35972,7 +36294,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>WS_FULL@manaty.net</email>
                   <phone>+33100000000</phone>
                   <mobile>+33666666666</mobile>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -36175,7 +36500,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac912c45-1da6-44fd-adec-f084dedf9e82" name="Contains 1">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST_DESCP">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST_DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -36201,7 +36527,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <mobile>+33666666666</mobile>
                </contactInformation>
                <customerAccounts/>
-            </customer>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </customer>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -36584,7 +36913,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="e2cdc851-184f-47ce-af48-0fdcefa0cf5e" name="Contains 1">
-              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
+              <con:configuration>
+                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -36605,7 +36935,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>PRO</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <creditCategory>PRO</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="086febf8-2a22-499b-a0fd-2a471d995abc" name="Contains 2">
               <con:configuration>
@@ -36843,10 +37176,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e6f57cf-d5bc-4d32-9d9a-5b9242b0c40a" name="Contains 1">
-              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
+              <con:configuration>
+                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -36867,7 +37205,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <creditCategory>VIP</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ce8fc67f-68dc-4ea8-a5c7-0860a5964cb1" name="Contains 2">
               <con:configuration>
@@ -37112,7 +37453,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e6f57cf-d5bc-4d32-9d9a-5b9242b0c40a" name="Contains 1">
-              <con:configuration><token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
+              <con:configuration>
+                <token><![CDATA[<customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA-Description">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -37133,7 +37475,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <language>FRA</language>
                <status>ACTIVE</status>
                <paymentMethod>CHECK</paymentMethod>
-               <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <creditCategory>VIP</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ce8fc67f-68dc-4ea8-a5c7-0860a5964cb1" name="Contains 2">
               <con:configuration>
@@ -37558,7 +37903,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcccd71b-5d9e-4d38-85c3-6e148ecf1778" name="Contains 1">
-              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
+              <con:configuration>
+                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -37583,7 +37929,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="007328cf-960a-41ca-bee6-d323816eaec7" name="Contains 2">
               <con:configuration>
@@ -37828,7 +38177,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="209abc85-5084-41fa-b0e3-25c8085f809c" name="Contains 1">
-              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
+              <con:configuration>
+                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -37853,7 +38203,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2">
               <con:configuration>
@@ -38096,7 +38449,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="209abc85-5084-41fa-b0e3-25c8085f809c" name="Contains 1">
-              <con:configuration><token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
+              <con:configuration>
+                <token><![CDATA[<billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA-DESCP">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -38121,7 +38475,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                <subscriptionDate>2016-01-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                <paymentTerms>CASH</paymentTerms>
                <electronicBilling>true</electronicBilling>
-               <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="871e0695-22d5-43ff-85cd-41b116b2c651" name="Contains 2">
               <con:configuration>
@@ -38524,7 +38881,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88b2bf35-dac0-4231-ac00-84c531fda21b" name="Contains 1">
-              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration>
+                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXTREF1</externalRef1>
                <externalRef2>EXTREF2</externalRef2>
                <name>
@@ -38540,7 +38898,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <city>Dijon</city>
                   <country>France</country>
                </address>
-               <billingAccount>WS_BASE_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <billingAccount>WS_BASE_BA</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d337536a-58c8-4036-91b2-3f03f9dc380b" name="Contains 2">
               <con:configuration>
@@ -38776,7 +39137,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="41f84038-76a1-4255-ae6c-56aff7286ded" name="Contains 1">
-              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration>
+                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -38792,7 +39154,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <city>Dijon</city>
                   <country>France</country>
                </address>
-               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6fba02d2-4c5c-4920-91d9-55b2e090db4a" name="Contains 2">
               <con:configuration>
@@ -39026,7 +39391,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="41f84038-76a1-4255-ae6c-56aff7286ded" name="Contains 1">
-              <con:configuration><token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
+              <con:configuration>
+                <token><![CDATA[<userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_UA" description="${#Project#entityPrefix}_${#TestSuite#index}_UA">
                <externalRef1>EXT1</externalRef1>
                <externalRef2>EXT2</externalRef2>
                <name>
@@ -39042,7 +39408,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <city>Dijon</city>
                   <country>France</country>
                </address>
-               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6fba02d2-4c5c-4920-91d9-55b2e090db4a" name="Contains 2">
               <con:configuration>
@@ -39829,7 +40198,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ddfa860a-13a0-40df-b74a-156adfd4ab5b" name="Contains 1">
-              <con:configuration><token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB-Description"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB-Description"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="81808fc2-7642-48f9-bb56-8cef90dd23c6" name="XPath Match">
               <con:configuration>
@@ -40969,10 +41342,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Contains">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f13fc821-8fc1-4cdf-a59c-4bba21c85808" name="Assert Customer Part">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
                <externalRef1>1</externalRef1>
                <externalRef2>1</externalRef2>
                <name>
@@ -40998,10 +41376,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <phone>1234</phone>
                   <mobile>092152154716</mobile>
                   <fax>1234</fax>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4fe4bad5-9bff-4034-b661-77af9d9d2c2a" name="Assert CA Part1">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_CA">
                      <externalRef1>1</externalRef1>
                      <externalRef2>1</externalRef2>
@@ -41024,10 +41406,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>ENG</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="50aaaca6-159e-4acb-ab75-78ecf0fdbc01" name="Assert CA Part2">
-              <con:configuration><token><![CDATA[<contactInformation>
+              <con:configuration>
+                <token><![CDATA[<contactInformation>
                         <email>${#Project#entityPrefix}@manaty.net</email>
                         <phone>1234</phone>
                         <mobile>092152154716</mobile>
@@ -41036,10 +41422,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <dunningLevel>R0</dunningLevel>
                      <mandateIdentification>1234</mandateIdentification>
                      <mandateDate>2016-02-28T00:00:00${#Project#timezone}:00</mandateDate>
-                     <balance>0</balance>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <balance>0</balance>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="cbacb62c-0374-49db-870a-0d2ce07319b2" name="Assert BA Part">
-              <con:configuration><token><![CDATA[                     <billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_BA">
                            <externalRef1>1</externalRef1>
                            <externalRef2>1</externalRef2>
@@ -41066,10 +41456,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-02-28T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                           <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6bb74c9c-2530-4e61-9941-1d0d8f61a060" name="Assert UA Part">
-              <con:configuration><token><![CDATA[<bankCoordinates>
+              <con:configuration>
+                <token><![CDATA[<bankCoordinates>
                               <bankCode>BPI</bankCode>
                               <branchCode>LB</branchCode>
                               <accountNumber>1234</accountNumber>
@@ -41101,9 +41495,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <country>Tunisia</country>
                                     <state/>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:assertion type="Simple Contains" id="d80b3130-088d-494e-8644-27bf65d54132" name="Contains End">
               <con:configuration>
                 <token><![CDATA[<subscriptions/>
@@ -41259,7 +41655,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration><token><![CDATA[<customers>
+              <con:configuration>
+                <token><![CDATA[<customers>
                <customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
@@ -41280,10 +41677,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+102354749</phone>
-                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8555fb0e-3ca6-4e57-ba5d-7743ab6d00a1" name="find CA Part2">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -41302,10 +41703,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <language>ENG</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3b879291-96e5-4111-a3f4-414e18641154" name="find BA Part3">
-              <con:configuration><token><![CDATA[<billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -41323,10 +41728,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <billingCycle>CYC_INV_MT_1</billingCycle>
                               <country>US</country>
                               <language>ENG</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8917d615-9e61-464a-9c32-920f6351c420" name="find UA Part4">
-              <con:configuration><token><![CDATA[<userAccounts>
+              <con:configuration>
+                <token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -41340,7 +41749,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <city>Tunis</city>
                                        <country>United States</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -41449,7 +41861,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration><token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
+              <con:configuration>
+                <token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
                      <firstName>Saidani</firstName>
@@ -41469,10 +41882,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+10558474441</phone>
-                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="b8728cf9-72ad-42dc-a52b-d5958879e815" name="find CA part2">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -41491,10 +41908,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <language>FRA</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3">
-              <con:configuration><token><![CDATA[<billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -41512,10 +41933,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4">
-              <con:configuration><token><![CDATA[<userAccounts>
+              <con:configuration>
+                <token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -41529,7 +41954,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <city>Dijon</city>
                                        <country>France</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -41638,7 +42066,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="d99c08a5-3da6-48d2-a31b-5707b09e731b" name="find Customer Part1">
-              <con:configuration><token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
+              <con:configuration>
+                <token><![CDATA[<customer code="CUST_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                   <name>
                      <title>M</title>
                      <firstName>Saidani</firstName>
@@ -41658,10 +42087,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <contactInformation>
                      <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.net</email>
                      <phone>+10558474441</phone>
-                  </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="b8728cf9-72ad-42dc-a52b-d5958879e815" name="find CA part2">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                      <customerAccount code="CA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                         <name>
                            <title>M</title>
@@ -41680,10 +42113,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                         <language>FRA</language>
                         <status>ACTIVE</status>
                         <paymentMethod>CHECK</paymentMethod>
-                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                        <creditCategory>NEWCUSTOMER</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ecaaa369-be17-4293-8a40-d4778ad72112" name="find BA Part3">
-              <con:configuration><token><![CDATA[<billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                            <billingAccount code="BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                               <name>
                                  <title>M</title>
@@ -41701,10 +42138,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                               <billingCycle>CYC_INV_MT_2</billingCycle>
                               <country>FR</country>
                               <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                              <paymentMethod>CHECK</paymentMethod>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="bcfed88d-ccc9-46c4-b2ed-a448efb78fd6" name="find UA Part4">
-              <con:configuration><token><![CDATA[<userAccounts>
+              <con:configuration>
+                <token><![CDATA[<userAccounts>
                                  <userAccount code="UA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1">
                                     <name>
                                        <title>M</title>
@@ -41718,7 +42159,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                        <city>Dijon</city>
                                        <country>France</country>
                                     </address>
-                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                    <billingAccount>BA_${#Project#entityPrefix}_${#TestSuite#index}_CUST1</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -41845,7 +42289,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ad2db34a-39b8-45dd-8579-0414bac12852" name="Assert CustomerPart">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                <externalRef1>Ref1</externalRef1>
                <externalRef2>Ref2</externalRef2>
                <name>
@@ -41869,10 +42314,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>${#Project#entityPrefix}_${#TestSuite#index}@yahoo.fr</email>
                   <phone>+0122674100</phone>
                   <mobile>+0139154716</mobile>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="0ae8d12d-12f7-4fa4-b75f-25a505faa00c" name="Assert CA Part1">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                      <externalRef1>Ref1</externalRef1>
                      <externalRef2>Ref2</externalRef2>
@@ -41894,7 +42343,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>FRA</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>VIP</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <creditCategory>VIP</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="c42e4712-90dc-4eb2-bbe7-c264da6dd922" name="Contains">
               <con:configuration>
@@ -41912,7 +42364,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6c0013b9-dfbe-472e-a58a-75c30f750f05" name="Assert BA Part">
-              <con:configuration><token><![CDATA[<billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                            <externalRef1>Ref1</externalRef1>
                            <externalRef2>Ref2</externalRef2>
@@ -41938,10 +42391,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-02-01T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                           <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="35e09099-b212-4f8e-a6b7-da1285f876b1" name="Assert UA Part">
-              <con:configuration><token><![CDATA[<userAccounts>
+              <con:configuration>
+                <token><![CDATA[<userAccounts>
                               <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy">
                                  <externalRef1>Ref1</externalRef1>
                                  <externalRef2>Ref2</externalRef2>
@@ -41958,7 +42415,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <country>France</country>
                                     <state>Paris</state>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="fe1ba00d-5b74-45d0-ade1-cc563765a3a6" name="Contains BA End">
               <con:configuration>
@@ -42120,7 +42580,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ac912c45-1da6-44fd-adec-f084dedf9e82" name="Assert Customer Part">
-              <con:configuration><token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
+              <con:configuration>
+                <token><![CDATA[<customer code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                <externalRef1>EXTRef1</externalRef1>
                <externalRef2>EXTRef2</externalRef2>
                <name>
@@ -42144,10 +42605,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                   <email>${#Project#entityPrefix}_${#TestSuite#index}@manaty.com</email>
                   <phone>+0135215579</phone>
                   <mobile>+0141487410</mobile>
-               </contactInformation>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </contactInformation>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="7a156667-ac11-401c-a021-9b206dcbe8c6" name="Assert CA Part1">
-              <con:configuration><token><![CDATA[<customerAccounts>
+              <con:configuration>
+                <token><![CDATA[<customerAccounts>
                   <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                      <externalRef1>EXTRef1</externalRef1>
                      <externalRef2>EXTRef2</externalRef2>
@@ -42169,7 +42634,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                      <language>ENG</language>
                      <status>ACTIVE</status>
                      <paymentMethod>CHECK</paymentMethod>
-                     <creditCategory>PART_C</creditCategory>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                     <creditCategory>PART_C</creditCategory>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4866dff1-00f7-47da-a8d7-48ecf01a719e" name="Assert CA Part2">
               <con:configuration>
@@ -42187,7 +42655,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="40884b22-b34b-4f3a-b59c-810a0d54a898" name="Assert BA Part">
-              <con:configuration><token><![CDATA[<billingAccounts>
+              <con:configuration>
+                <token><![CDATA[<billingAccounts>
                         <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                            <externalRef1>EXTRef1</externalRef1>
                            <externalRef2>EXTRef2</externalRef2>
@@ -42213,10 +42682,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                            <subscriptionDate>2016-03-16T00:00:00${#Project#timezone}:00</subscriptionDate>
                            <paymentTerms>CASH</paymentTerms>
                            <electronicBilling>true</electronicBilling>
-                           <status>ACTIVE</status>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                           <status>ACTIVE</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="9c7418dd-e153-4a5c-b281-a5db7fef8e98" name="Assert UA Part">
-              <con:configuration><token><![CDATA[<userAccounts>
+              <con:configuration>
+                <token><![CDATA[<userAccounts>
                               <userAccount code="${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CRM-AccountHierarchy-Updated">
                                  <externalRef1>EXTRef1</externalRef1>
                                  <externalRef2>EXTRef2</externalRef2>
@@ -42233,7 +42706,10 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
                                     <country>Tunisia</country>
                                     <state>Tunisie</state>
                                  </address>
-                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                                 <billingAccount>${#Project#entityPrefix}_${#TestSuite#index}_CRM-CUST</billingAccount>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="393f16fe-2e49-4529-90c9-d7b8a66ab848" name="Contains BA end">
               <con:configuration>
@@ -42290,22 +42766,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildBSM_CO_Test exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
       <con:properties>
         <con:property>
           <con:name>index</con:name>
@@ -46588,9 +47048,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
   <con:testSuite id="cd6180bb-20fb-4221-8122-3f14e0e3b214" name="CRUD Payment">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    
-    
-    
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CR DDRequestLotOp" searchProperties="true" id="b2fe510e-624e-482e-ad4a-59f9379d5975">
       <con:settings/>
       <con:testStep type="request" name="create DDRequestLotOp 1" id="f29a8936-825b-4eb8-8314-3da18381099f">
@@ -46677,13 +47134,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
-      
-      
-      
-      
-      
       <con:testStep type="request" name="list all DDRequestLotOps" id="bda11271-e3d3-42af-9083-b6f94f3ea8e3">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -46692,7 +47142,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           <con:request name="list all DDRequestLotOps" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="9253f456-1202-46bb-95cd-01258e250cb6">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@follow-redirects">true</con:setting></con:settings>
+              <con:setting id="com.eviware.soapui.impl.support.AbstractHttpRequest@follow-redirects">true</con:setting>
+            </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/PaymentWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -46706,18 +47157,35 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="eca3027d-7009-4406-8052-889e2115df90" name="Code Status Success">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="88f14ae1-0bc8-4ff7-ac43-f0da81adf707" name="Find all values">
-              <con:configuration><token><![CDATA[<ddrequestLotOp>
+              <con:configuration>
+                <token><![CDATA[<ddrequestLotOp>
                   <fromDueDate>2016-07-01T00:00:00${#Project#timezone2}:00</fromDueDate>
                   <toDueDate>2016-07-10T00:00:00${#Project#timezone2}:00</toDueDate>
                   <ddrequestOp>CREATE</ddrequestOp>
                   <status>WAIT</status>
                   <fileFormat>SEPA</fileFormat>
-               </ddrequestLotOp>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+               </ddrequestLotOp>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match"><con:configuration><path>exists(//ddrequestLotOps/ddrequestLotOp)</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="XPath Match" id="517b3b12-a87f-46bf-9db3-d37465ca7a2b" name="XPath Match">
+              <con:configuration>
+                <path>exists(//ddrequestLotOps/ddrequestLotOp)</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -46728,10 +47196,9 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_BAM_TEST_Script1 exten
           </con:request>
         </con:config>
       </con:testStep>
-      
-      
       <con:properties/>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>index</con:name>
         <con:value>73</con:value>
@@ -61286,7 +61753,24 @@ and paste that invoice number in the next step.
     </con:testCase>
     <con:properties/>
     <con:setupScript/>
-  </con:testSuite><con:testSuite id="5f0dd374-595d-4b5f-80b1-b15cb99bb0fe" name="CRUD Workflow"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9f763cc3-8f8f-448a-88a7-2076536bd7f3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Workflow with All Vals" id="ceb72068-512a-4378-bff6-2d9f6906e495"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+  </con:testSuite>
+  <con:testSuite id="5f0dd374-595d-4b5f-80b1-b15cb99bb0fe" name="CRUD Workflow">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="9f763cc3-8f8f-448a-88a7-2076536bd7f3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Workflow" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create Workflow with All Vals" id="ceb72068-512a-4378-bff6-2d9f6906e495">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create Workflow with All Vals" id="294a8303-372b-4122-b564-9de63598ef55">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:create>\r
@@ -61324,7 +61808,38 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:create>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/><con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Workflow with min req Vals" id="df91e393-6946-4147-a637-48d2a9a946c9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a558da42-55c2-4cc1-8f49-60d4899b3aae"/>
+            <con:assertion type="Simple Contains" id="15ff5d1e-2495-417c-b4a1-daee457b0ac9" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Workflow with min req Vals" id="df91e393-6946-4147-a637-48d2a9a946c9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create Workflow with min req Vals" id="daedc3d4-ce4c-4d7b-b603-1e2445b12f88">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <wf:create>
@@ -61335,7 +61850,38 @@ and paste that invoice number in the next step.
          </workflow>
       </wf:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/><con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with All Vals" id="bfab605e-dc9c-4bf1-9e55-87675ae4d9d0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="3035a853-2f04-4f4e-aa3c-2155df365807"/>
+            <con:assertion type="Simple Contains" id="b8011d1a-fc52-451b-b89e-81e922fc04fd" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update Workflow with All Vals" id="bfab605e-dc9c-4bf1-9e55-87675ae4d9d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>update</con:operation>
+          <con:request name="Update Workflow with All Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -61379,7 +61925,38 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update Workflow with min req Vals" id="ae4c5c36-7083-4351-b727-551bab0b6e60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/>
+            <con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update Workflow with min req Vals" id="ae4c5c36-7083-4351-b727-551bab0b6e60">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>update</con:operation>
+          <con:request name="Update Workflow with min req Vals" id="8f92c46f-bf12-4255-8a7a-0d37de29dad5">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:update>\r
@@ -61391,7 +61968,38 @@ and paste that invoice number in the next step.
          </workflow>\r
       </wf:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/><con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="2723eeb8-2e64-48bc-9727-ec838566eebd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find" id="49699f52-32cd-4a03-8026-005557879056"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="781d0c56-cc79-431f-8bc3-23251753e528"/>
+            <con:assertion type="Simple Contains" id="50cee383-5014-4881-bfa0-e0fc9a1f60d7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="find" id="2723eeb8-2e64-48bc-9727-ec838566eebd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>find</con:operation>
+          <con:request name="find" id="49699f52-32cd-4a03-8026-005557879056">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:find>\r
@@ -61399,12 +62007,74 @@ and paste that invoice number in the next step.
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:find>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/><con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="list" id="2ef85666-ccdf-48df-b6ea-985f3d78bc3b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="list" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="8058b25e-80be-42e1-8fe3-70bbbc70a7cb"/>
+            <con:assertion type="Simple Contains" id="a75f933e-cbbb-40cb-a46d-559acdeac4be" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list" id="2ef85666-ccdf-48df-b6ea-985f3d78bc3b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list" id="cb150d95-b5d0-49fc-bab8-67b766d1dea2">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:list/>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/><con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="968370b7-1754-4039-958a-d2249b832fb0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WorkflowWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="remove" id="47f374be-b7c3-4284-a913-cb92dcfb6a31"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="9e2fc370-f797-40b4-a9e3-2a83bf8b0fb6"/>
+            <con:assertion type="Simple Contains" id="0fcda775-a0a6-4cbd-9cc5-ced88f173764" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="remove" id="968370b7-1754-4039-958a-d2249b832fb0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WorkflowWsSoapBinding</con:interface>
+          <con:operation>remove</con:operation>
+          <con:request name="remove" id="47f374be-b7c3-4284-a913-cb92dcfb6a31">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/WorkflowWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wf="http://wf.ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <wf:remove>\r
@@ -61412,7 +62082,41 @@ and paste that invoice number in the next step.
          <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>\r
       </wf:remove>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/><con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>931</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>93</con:value></con:property></con:properties></con:testSuite><con:properties>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b56ef087-7cd4-4283-aa2f-90c5895bbd29"/>
+            <con:assertion type="Simple Contains" id="3341c2d3-4a20-42ac-9b6f-96e5d70ff36b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>index</con:name>
+          <con:value>931</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>93</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:properties>
     <con:property>
       <con:name>authorization</con:name>
       <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>
