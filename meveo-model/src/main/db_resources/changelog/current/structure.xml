@@ -2523,5 +2523,16 @@ $BODY$
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
     </changeSet>	  
+    
+    <changeSet id="#1842_20160720" author="TyshanShi">
+		<sql>update crm_provider_contact a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country))
+			where a.address_country in (select c.country_code from adm_country c);
+		</sql>
+		<sql>update account_entity a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country)) 
+			where a.address_country in (select c.country_code from adm_country c);
+		</sql>
+	</changeSet>
     	
 </databaseChangeLog>
