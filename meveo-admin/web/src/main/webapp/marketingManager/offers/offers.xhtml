@@ -41,9 +41,10 @@
 									<div class="btn-wrapper">
 										<i class="fa fa-plus text-blue"></i>
 										<p:link styleClass="no-text-decoration"
-											outcome="mm_offerTemplates"
+											outcome="mm_offerTemplateDetail"
 											value=" #{messages['action.offer.create']}">
-										</p:link>
+                                              <f:param name="backView" value="mm_offers"/>
+                                        </p:link>
 									</div> <!-- / btn-wrapper -->
 								</li>
 							</ul>

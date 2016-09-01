@@ -120,9 +120,9 @@ a.text-blue:hover::before {
 }
 
 .btn-wrapper:hover {
-  background: #eb2f2f;
+  background: #002050;
   color: #fff !important;
-  border-color: #d13b42;
+  border-color: rgba(0, 0, 0, .1);
 }
 
 .btn-wrapper:hover i,
@@ -350,7 +350,7 @@ input[type="text"] {
 }
 
 .ui-panel-titlebar {
-  color: #d13b42;
+  color: #333;
   text-align: center!important;
   text-transform: uppercase;
 }
@@ -1079,6 +1079,7 @@ footer .footer-copyright {
 }
 
 #user-info {
+  color: #002050;
   font-size: 16px;
   line-height: 40px;
 }

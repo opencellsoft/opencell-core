@@ -95,12 +95,12 @@
 
             </c:if>
             <c:if test="#{! edit}">
-                <p:dataList id="#{id}" value="#{fieldItem.toArray()}" var="elem" type="ordered">
+                <p:dataList id="#{id}" value="#{fieldItem.toArray()}" var="elem" type="ordered" rendered="#{!fieldItem.isEmpty()}" itemStyleClass="field-value">
                     <c:if test="#{not empty(valueLabelField2)}">
                                 #{elem[valueLabelField]} #{elem[valueLabelField2]}
                     </c:if>
                     <c:if test="#{empty(valueLabelField2)}">
-                                #{elem[valueLabelField]}
+                                #{elem[valueLabelField]} 
                     </c:if>
                 </p:dataList>
             </c:if>
