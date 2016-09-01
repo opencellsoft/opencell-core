@@ -148,6 +148,10 @@
 			</hftl:decorateFormField>
 		</p:panelGrid>
 	</p:panelGrid>
+    
+    
+    <hftl:formLanguageFields entity="#{mainBackingBean.entity}"
+        backingBean="#{mainBackingBean}" multiLang="true" />
 
 	<!-- Product Templates -->
 	<c:if test="#{mode eq 'BUNDLE'}">
@@ -204,8 +208,6 @@
 		</p:panel>
 	</c:if>
 
-	<hftl:formLanguageFields entity="#{mainBackingBean.entity}"
-		backingBean="#{mainBackingBean}" multiLang="true" />
 
     <p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
         <f:facet name="header">

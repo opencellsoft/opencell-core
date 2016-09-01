@@ -190,7 +190,7 @@
 										</p:panel>
 										<p:panel>
 											<ul class="list-inline">
-												<li><p:link outcome="mm_offerTemplateDetail"
+												<li><p:link id="viewLink" outcome="mm_offerTemplateDetail"
 														styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
@@ -198,8 +198,9 @@
 														<f:param name="edit" value="false"></f:param>
 														<f:param name="backView" value="mm_offers"></f:param>
 														<f:param name="tab" value="0"></f:param>
-													</p:link></li>
-												<li><p:link
+													</p:link>
+                                                    <p:tooltip for="viewLink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /></li>
+												<li><p:link id="editLink"
 														styleClass="fa fa-edit no-text-decoration text-blue fa-2x"
 														outcome="mm_offerTemplateDetail">
 														<f:param name="cid"
@@ -208,8 +209,9 @@
 														<f:param name="edit" value="true"></f:param>
 														<f:param name="backView" value="mm_offers"></f:param>
 														<f:param name="tab" value="0"></f:param>
-													</p:link></li>
-												<li><p:commandLink
+													</p:link>
+                                                    <p:tooltip for="editLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" /></li>
+												<li><p:commandLink id="duplicateLink"
 														action="#{offerTemplateListBean.duplicate()}"
 														update=":tabView"
 														styleClass="fa fa-copy fa-2x no-text-decoration text-blue">
@@ -218,12 +220,14 @@
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
-													</p:commandLink></li>
-												<li><p:commandLink
+													</p:commandLink>
+                                                    <p:tooltip for="duplicateLink" value="#{messages['commons.duplicate']}" showEffect="slide" hideEffect="slide" /></li>
+												<li><p:commandLink id="addToExportLink"
 														styleClass="fa fa-share-square-o text-blue fa-2x"
 														update=":offerForExportPanel :dlgOfferExport"
 														action="#{offerTemplateListBean.addForExport(entity)}">
-													</p:commandLink></li>
+													</p:commandLink>
+                                                    <p:tooltip for="addToExportLink" value="#{messages['commons.addToExport']}" showEffect="slide" hideEffect="slide" /></li>
 											</ul>
 										</p:panel>
 									</p:panel>

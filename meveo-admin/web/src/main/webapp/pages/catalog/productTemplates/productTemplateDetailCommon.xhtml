@@ -18,14 +18,14 @@
 
 	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 		required="true" validateUnique="true" />
-	<hftl:formField label="#{messages['businessEntity.description']}"
-		field="description" id="description" />
-	<hftl:formField label="#{messages['commons.name']}" field="name"
-		required="true" id="name" />
+    <hftl:formField label="#{messages['commons.name']}" field="name"
+        required="true" id="name" />               
 	<hftl:formField label="#{messages['commons.validFrom']}"
 		field="validFrom" id="validFrom" />
 	<hftl:formField label="#{messages['commons.validTo']}" field="validTo"
 		id="validTo" />
+    <hftl:formLanguageFields entity="#{mainBackingBean.entity}"
+        backingBean="#{mainBackingBean}" multiLang="true" /> 
 	<hftl:formField label="#{messages['productOffering.lifeCycleStatus']}"
 		field="lifeCycleStatus" id="lifeCycleStatus" />
 	<hftl:formField label="#{messages['businessProductModel.title']}"
@@ -39,13 +39,13 @@
 		listBean="#{calendarBean}" />
 	<hftl:decorateFormField fieldId="productImageUpload"
 		rendered="#{mainBackingBean.entity.transient}"
-		label="#{messages['commons.image']}">
+		label="#{messages['commons.image']}" newLine="true">
 		<p:fileUpload id="productImageUpload" auto="false" skinSimple="true"
 			mode="simple" value="#{mainBackingBean.uploadedFile}" />
 	</hftl:decorateFormField>
 	<hftl:decorateFormField fieldId="productImage"
 		rendered="#{not mainBackingBean.entity.transient}"
-		label="#{messages['commons.image']}">
+		label="#{messages['commons.image']}" newLine="true">
 		<p:outputPanel autoUpdate="true">
 			<p:graphicImage id="productImage" cache="false"
 				value="#{productTemplateImageStreamer.image}" height="150"
@@ -62,7 +62,7 @@
 		label="#{messages['productOffering.offerTemplateCategories']}"
 		field="offerTemplateCategories" listType="pickUpList"
 		valueLabelField="code"
-		dualListModel="#{mainBackingBean.offerTemplateCategoriesDM}" />
+		dualListModel="#{mainBackingBean.offerTemplateCategoriesDM}"  newLine="true"/>
 	<hftl:formField id="attachments"
 		label="#{messages['productOffering.attachments']}" field="attachments"
 		listType="pickUpList" valueLabelField="code"
