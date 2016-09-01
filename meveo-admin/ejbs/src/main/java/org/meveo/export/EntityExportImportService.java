@@ -2040,7 +2040,7 @@ public class EntityExportImportService implements Serializable {
 		protected void writeText(QuickWriter writer, String text) {
         	if(text==null){
         		writer.write("");
-        	}else if(text.indexOf(CDATA_START)>=0||text.indexOf(CDATA_END)>0){
+        	}else if(text.indexOf(CDATA_START)>=0&&text.indexOf(CDATA_END)>0){
         		writer.write(text);
         	}else{
         		super.writeText(writer, text);

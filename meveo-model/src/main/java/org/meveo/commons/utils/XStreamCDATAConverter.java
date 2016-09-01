@@ -3,6 +3,7 @@ package org.meveo.commons.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -39,8 +40,7 @@ public class XStreamCDATAConverter implements Converter {
 
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-		log.debug("start to unmarshall...");
-		return null;
+		throw new ConversionException("Not support to unmarshall");
 	}
 
 }
