@@ -28,7 +28,12 @@ public interface PagesConfig {
         @ViewPattern("/pages/*")
         @LoggedIn()
         // @Admin(restrictAtPhase=RESTORE_VIEW)
-        PAGES
+        PAGES,
+        
+        @ViewPattern("/marketingManager/*")
+        @LoggedIn()
+        // @Admin(restrictAtPhase=RESTORE_VIEW)
+        MARKETING_MANAGER
     }
 
 }
