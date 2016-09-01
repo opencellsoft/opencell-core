@@ -102,17 +102,7 @@
 									onclick="PF('exportablePTs').show();"
 									value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}">
 								</p:commandLink></li>
-							<li class="Padding5">
-								<div class="FRight">
-									<p:selectOneMenu id="exportToList"
-										value="#{productTemplateListBean.meveoInstanceToExport}"
-										styleClass="no-border-radius">
-										<f:selectItem itemLabel="" styleClass="no-border-radius" />
-										<f:selectItems value="#{meveoInstanceBean.listActive()}"
-											var="mi" itemValue="#{mi}" itemLabel="#{mi.code}"
-											styleClass="no-border-radius" />
-									</p:selectOneMenu>
-								</div>
+							<li>
 								<div class="FRight">
 									<p:commandLink styleClass="fa fa-play"
 										style="margin-right: 5px;"

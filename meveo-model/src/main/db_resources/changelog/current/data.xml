@@ -118,4 +118,13 @@
             UPDATE wf_transition set priority = 0 where priority is NULL;
         </sql>
     </changeSet>
+    
+    <changeSet id="#1839_20160901" author="AndriusKarpavicius">
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="5" />
+            <column name="permission_id" valueNumeric="13" />
+        </insert>
+    </changeSet>
+    
+    
 </databaseChangeLog>

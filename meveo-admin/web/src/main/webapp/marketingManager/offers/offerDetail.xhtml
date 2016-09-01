@@ -92,9 +92,8 @@
 							rendered="#{offerTemplateBean.bomId ne null}" />
 						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
-						<hftl:formField label="#{messages['offerTemplate.name']}"
-							field="name" rendered="#{offerTemplateBean.edit}" />
-						<hftl:formField id="offerTemplateCategories"
+                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
+                        <hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
 							field="offerTemplateCategories" listType="pickUpList"
 							valueLabelField="code"
@@ -128,7 +127,7 @@
 						valueLabelField="code" listBean="#{businessOfferModelBean}"
 						rendered="#{offerTemplateBean.entity.transient}" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
-						field="channels" listType="pickUpList" valueLabelField="code"
+						field="channels" listType="pickUpList" valueLabelField="descriptionOrCode"
 						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
 					<hftl:formField id="businessAccountModels"
 						label="#{messages['marketingManager.catalog.targetSegment']}"

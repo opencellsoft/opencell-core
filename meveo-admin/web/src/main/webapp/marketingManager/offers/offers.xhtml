@@ -97,17 +97,7 @@
 									onclick="PF('exportableOffers').show();"
 									value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
 								</p:commandLink></li>
-							<li class="Padding5">
-								<div class="FRight">
-									<p:selectOneMenu id="exportToList"
-										styleClass="no-border-radius"
-										value="#{offerTemplateListBean.meveoInstance}">
-										<f:selectItem itemLabel="" styleClass="no-border-radius" />
-										<f:selectItems value="#{meveoInstanceBean.listActive()}"
-											var="mi" itemValue="#{mi}" itemLabel="#{mi.code}"
-											styleClass="no-border-radius" />
-									</p:selectOneMenu>
-								</div>
+							<li>
 								<div class="FRight">
 									<p:commandLink styleClass="fa fa-play"
 										style="margin-right: 5px;"
