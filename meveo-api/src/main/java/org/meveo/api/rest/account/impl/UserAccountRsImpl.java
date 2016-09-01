@@ -79,7 +79,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
