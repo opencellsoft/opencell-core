@@ -83,7 +83,7 @@ public class InvoicingApi extends BaseApi {
             }
         }
         billingRunEntity.setLastTransactionDate(createBillingRunDto.getLastTransactionDate());
-        if (createBillingRunDto.getInvoiceDate() == null) {
+        if (createBillingRunDto.getLastTransactionDate() == null) {
             if (billingCycleInput.getTransactionDateDelay() != null) {
                 billingRunEntity.setLastTransactionDate(DateUtils.addDaysToDate(billingRunEntity.getProcessDate(), billingCycleInput.getTransactionDateDelay()));
             } else {

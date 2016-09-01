@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -16,6 +17,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 @XmlRootElement(name = "CustomerAccount")
 @XmlType(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
+@FilterResults(property = "billingAccounts.billingAccount", entityClass = BillingAccount.class)
 public class CustomerAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = -137632696663739285L;
@@ -52,7 +54,7 @@ public class CustomerAccountDto extends AccountDto {
 	public CustomerAccountDto() {
 		super();
 	}
-	
+
 	public CustomerAccountStatusEnum getStatus() {
 		return status;
 	}
@@ -183,6 +185,5 @@ public class CustomerAccountDto extends AccountDto {
 	public void setContactInformation(ContactInformationDto contactInformation) {
 		this.contactInformation = contactInformation;
 	}
-
 
 }
