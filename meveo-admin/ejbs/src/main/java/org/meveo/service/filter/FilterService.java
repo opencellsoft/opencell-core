@@ -560,22 +560,20 @@ public class FilterService extends BusinessService<Filter> {
 		Object obj=ReflectionUtils.createObject(clazzName);
 		Provider provider=null;
 		FilteredQueryBuilder filteredQueryBuilder=null;
-		boolean hasSuperadmin=false;
 		if(obj==null){
 			throw new BusinessException("Target entity "+clazzName+" is invalid");
 		}
-		if(obj instanceof IProvider){
+		if(obj instanceof IProvider||obj instanceof Provider){
 			provider=currentUser.getProvider();
 		}
 		if(obj instanceof User||obj instanceof Role || obj instanceof Provider){
 			if (currentUser.hasPermission("superAdmin", "superAdminManagement")) {
 	            provider=null;
-	            hasSuperadmin=true;
 	        }
 		}
 		
 		filteredQueryBuilder=new FilteredQueryBuilder(filter,provider);
-		if(!hasSuperadmin&&obj.getClass().getName().equals(filter.getPrimarySelector().getTargetEntity())){
+		if(provider!=null&&obj instanceof Provider){
 			filteredQueryBuilder.addSqlCriterion(filter.getPrimarySelector().getAlias()+"=:provider","provider", currentUser.getProvider());
 		}
 		return filteredQueryBuilder;
