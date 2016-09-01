@@ -1069,7 +1069,8 @@ public class EntityExportImportService implements Serializable {
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, ExportImportStatistics importStats, boolean updateExistingOnly, Provider forceToProvider, User currentUser) {
+    private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, ExportImportStatistics importStats, boolean updateExistingOnly, Provider forceToProvider,
+            User currentUser) {
 
         log.debug("Saving with preserveId={} entity {} ", lookupById, entityToSave);
 
@@ -1187,7 +1188,8 @@ public class EntityExportImportService implements Serializable {
      * @return A updated
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void updateEntityFoundInDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider, User currentUser) {
+    private void updateEntityFoundInDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider,
+            User currentUser) {
 
         if (HibernateProxy.class.isAssignableFrom(entityFromDB.getClass())) {
             entityFromDB = (IEntity) ((HibernateProxy) entityFromDB).getHibernateLazyInitializer().getImplementation();
@@ -1354,8 +1356,8 @@ public class EntityExportImportService implements Serializable {
      * @throws IllegalAccessException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, ExportImportStatistics importStats, Class clazz, Provider forceToProvider, User currentUser)
-            throws IllegalAccessException {
+    private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, ExportImportStatistics importStats, Class clazz,
+            Provider forceToProvider, User currentUser) throws IllegalAccessException {
 
         // If field value was not passed - get it from an entity
         if (fieldValue == null) {
@@ -1807,6 +1809,9 @@ public class EntityExportImportService implements Serializable {
             ParameterizedType aType = (ParameterizedType) field.getGenericType();
             Type[] fieldArgTypes = aType.getActualTypeArguments();
             for (Type fieldArgType : fieldArgTypes) {
+                if (fieldArgType instanceof ParameterizedType) { // Handles cases such as Map<Class<?>, Set<SecuredEntity>> where parameterized types used inside another one
+                    continue;
+                }
                 Class fieldArgClass = (Class) fieldArgType;
                 if (typeToCheck.isAssignableFrom(fieldArgClass)) {
                     return true;

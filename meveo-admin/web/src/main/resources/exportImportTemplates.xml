@@ -308,7 +308,7 @@
             <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
         </classesToExportAsFull>
     </template>
-    <template name="MMOfferTemplate" entityToExport="org.meveo.model.catalog.OfferTemplate">
+    <template name="Offers" entityToExport="org.meveo.model.catalog.OfferTemplate">
 		<classesToExportAsFull>
 			<java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
 			<java-class>org.meveo.model.catalog.ServiceTemplate</java-class>

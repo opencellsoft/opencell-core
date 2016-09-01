@@ -535,7 +535,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	}
 
 	public ExportTemplate getMarketingCatalogExportTemplate() {
-		return entityExportImportService.getExportImportTemplate("MMOfferTemplate");
+		return entityExportImportService.getExportImportTemplate("Offers");
 	}
 
 	public BusinessOfferModel getBusinessOfferModel() {

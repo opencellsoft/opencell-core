@@ -40,7 +40,7 @@
                 </p:panel>
             </p:panel>
         </p:panel>
-        <p:panel id="transitions" styleClass="clearLeft">`
+        <p:panel id="transitions" styleClass="clearLeft">
             <p:messages id="messages"/>
             <p:dataGrid id="transitionList"
                         value="#{wfTransitionBean.operationList}" var="transition"
@@ -53,7 +53,7 @@
                                             label="#{messages['mmTransition.name']}">
                         <h:outputText id="name"
                                       value="#{transition.description}"
-                                      disabled="true" style="font-weight:bold;" />
+                                      disabled="true" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <p:separator></p:separator>
                 </p:panel>
@@ -101,7 +101,7 @@
                         <p:panel>
                             <ui:repeat value="#{transition.wfActions.toArray()}"
                                        var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" />
+                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value"/>
                             </ui:repeat>
                          </p:panel>
                     </p:panelGrid>
@@ -129,7 +129,7 @@
                         <p:panel>
                             <ui:repeat value="#{wfTransitionBean.catchAll.wfActions.toArray()}"
                                        var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" />
+                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value"/>
                             </ui:repeat>
                         </p:panel>
                     </p:panelGrid>

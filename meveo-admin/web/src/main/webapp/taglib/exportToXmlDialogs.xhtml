@@ -17,7 +17,7 @@
     <p:dialog id="exportParametersDialog" styleClass="confirm-dialog" header="#{messages['export.exportCriteria']}" severity="alert" widgetVar="exportParametersDialog" width="700"
         modal="true" closeOnEscape="true" dynamic="true">
 
-        <hftl:decorateFormPanel formId="parameterForm" label="#{entityExportImportBean.selectedExportTemplate.name}">
+        <hftl:decorateFormPanel formId="parameterForm" label="#{entityExportImportBean.selectedExportTemplate.humanName}">
             <ui:define name="fields">
                 <h:panelGroup rendered="#{entityExportImportBean.dataModelToExport==null}">
                     <ui:repeat var="parameter" value="#{entityExportImportBean.selectedExportTemplate.parameters.entrySet().toArray()}">
