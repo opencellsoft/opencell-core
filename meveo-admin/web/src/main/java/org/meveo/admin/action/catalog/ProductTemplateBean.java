@@ -439,7 +439,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		return channelDM;
 	}
 
-    public void updateDefaultCode() {
+    public void onNameChange() {
         if (StringUtils.isEmpty(entity.getCode())) {
             entity.setCode(entity.getName());
         }

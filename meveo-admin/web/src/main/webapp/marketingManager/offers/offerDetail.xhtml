@@ -92,13 +92,13 @@
 							rendered="#{offerTemplateBean.bomId ne null}" />
 						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
-                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
+                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onNameChange" listenerUpdate="code"/>
                         <hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
 							field="offerTemplateCategories" listType="pickUpList"
 							valueLabelField="code"
 							dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
-						<hftl:formField label="#{messages['offerTemplate.code']}"
+						<hftl:formField id="code" label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
 					</p:panelGrid>
 					<p:panel>

@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -546,4 +547,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		this.businessOfferModel = businessOfferModel;
 	}
 
+    public void onNameChange() {
+        if (StringUtils.isEmpty(entity.getCode())) {
+            entity.setCode(entity.getName());
+        }
+    }
 }
