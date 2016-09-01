@@ -114,6 +114,7 @@
     </changeSet>
     <changeSet id="#1839_20160830" author="pbach">
         <sql>
+            delete from wf_action;
             UPDATE wf_transition set priority = 0 where priority is NULL;
         </sql>
     </changeSet>

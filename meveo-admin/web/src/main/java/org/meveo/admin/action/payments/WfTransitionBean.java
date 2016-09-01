@@ -42,6 +42,7 @@ import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WFTransitionRuleService;
@@ -59,6 +60,8 @@ import org.primefaces.model.TreeNode;
 public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String EL = "#{mv:getBean('org.meveo.service.order.OrderService').routedToUserGroup(entity,%s)}";
 
     /**
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.
@@ -180,15 +183,16 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         List<WFAction> actionList = currentTransition.getWfActions();
         if (this.userGroupSelectedNode != null) {
             UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.userGroupSelectedNode.getData();
+            String actionEL = String.format(EL, userHierarchyLevel.getCode());
             if (CollectionUtils.isNotEmpty(actionList)) {
                 for (WFAction wfAction : actionList) {
                     WFAction action = wfActionService.findById(wfAction.getId());
-                    action.setActionEl(userHierarchyLevel.getDescriptionOrCode());
+                    action.setActionEl(actionEL);
                     wfActionService.update(action, getCurrentUser());
                 }
             } else {
                 WFAction wfAction = new WFAction();
-                wfAction.setActionEl(userHierarchyLevel.getDescriptionOrCode());
+                wfAction.setActionEl(actionEL);
                 wfAction.setPriority(1);
                 wfAction.setWfTransition(entity);
                 wfActionService.create(wfAction, getCurrentUser());
@@ -442,7 +446,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         newNode.setExpanded(true);
         if (wfActions != null) {
             for (WFAction wfAction1 : wfActions) {
-                if (wfAction1 != null && wfAction1.getActionEl().equals(hierarchyLevel.getDescriptionOrCode())) {
+                if (wfAction1 != null && hierarchyLevel.getCode().equals(wfAction1.getUserGroupCode())) {
                     newNode.setSelected(true);
                 }
             }

@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {
@@ -103,7 +104,16 @@ public class WFAction extends AuditableEntity {
 	public void setConditionEl(String conditionEl) {
 		this.conditionEl = conditionEl;
 	}
-	
+
+    public String getUserGroupCode() {
+        if (!StringUtils.isBlank(actionEl) && actionEl.indexOf(",") >= 0) {
+            int startIndexCode = actionEl.indexOf(",") + 1;
+            int endIndexCode = actionEl.length() - 2;
+            String userGroupCode = actionEl.substring(startIndexCode, endIndexCode);
+            return userGroupCode;
+        }
+        return null;
+    }
 
 	@Override
 	public int hashCode() {
