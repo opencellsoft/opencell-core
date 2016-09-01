@@ -153,7 +153,6 @@ public class UserApi extends BaseApi {
 
 		// find roles
 		Set<Role> roles = extractRoles(postData, user.getProvider());
-		}
 
 		// parse secured entities
 		List<SecuredEntity> securedEntities = extractSecuredEntities(postData, currentUser);
