@@ -139,9 +139,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Override
 	public OfferTemplate initEntity() {
-        if (bomId != null) {
-            businessOfferModel = businessOfferModelService.findById(bomId);
-        }
+		if (bomId != null) {
+			businessOfferModel = businessOfferModelService.findById(bomId);
+		}
 
 		return super.initEntity();
 	}
@@ -218,7 +218,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
-					entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
+					entity.getCode(), entity.getName(), entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
 					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
 					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
 
@@ -265,6 +265,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			String outcome = super.saveOrUpdate(killConversation);
 
 			if (outcome != null) {
+
+				if (outcome.equals("mm_offers")) {
+					// populate service custom fields
+					for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+						ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+						Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
+						if (stCustomFieldInstances != null) {
+							// populate offer cf
+							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false);
+						}
+					}
+				}
+
 				return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
 			}
 		}

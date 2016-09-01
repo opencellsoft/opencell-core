@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.CollectionTable;
@@ -196,7 +195,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProductSpecification extends AbstractCatalogEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ProductSpecification.class.getName());
+   
+    //private static final Logger logger = Logger.getLogger(ProductSpecification.class.getName());
 
     @Column(name = "PRODUCT_NUMBER", nullable = true)
     private String productNumber;
@@ -475,8 +475,8 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
 
     @Override
     @JsonIgnore
-    public Logger fetchLogger() {
-        return logger;
+    public Logger getLogger() {
+        return null;//logger;
     }
 
     @Override
@@ -540,7 +540,7 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
     @Override
     @JsonIgnore
     public boolean isValid() {
-        logger.log(Level.FINE, "ProductSpecification:valid ()");
+       // logger.log(Level.FINE, "ProductSpecification:valid ()");
 
         if (super.isValid() == false) {
             return false;
@@ -560,13 +560,13 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
     private boolean validateIsBundle() {
         if (this.isBundle == Boolean.TRUE) {
             if (Utilities.hasContents(this.bundledProductSpecification) == false) {
-                logger.log(Level.FINE, " invalid: bundledProductSpecification must be specified when isBundle is true");
+               // logger.log(Level.FINE, " invalid: bundledProductSpecification must be specified when isBundle is true");
                 return false;
             }
         }
         else {
             if (Utilities.hasContents(this.bundledProductSpecification) == true) {
-                logger.log(Level.FINE, " invalid: bundledProductSpecification must not be specififed when isBundle is false");
+              //  logger.log(Level.FINE, " invalid: bundledProductSpecification must not be specififed when isBundle is false");
                 return false;
             }
         }

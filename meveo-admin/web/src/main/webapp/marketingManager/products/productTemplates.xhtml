@@ -167,25 +167,32 @@
 												<h:outputText value=", " rendered="#{not status.last}" />
 											</ui:repeat>
 											<h:outputText
-												value="#{messages['offerTemplate.bom']}: #{prod.businessProductModel.code}"
+												value="#{prod.businessProductModel.code}"
 												rendered="#{prod.businessProductModel != null}"></h:outputText>
 											<p:separator></p:separator>
-											<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-											<h:outputText value="#{prod.validFrom} ">
+											<p:panelGrid columns="3">
+												<p:panelGrid columns="1" rendered="#{prod.validFrom ne null and prod.validFrom ne ''}">
+													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
+													<h:outputText value="#{prod.validFrom}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
-											<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-											<h:outputText value="#{prod.validTo} ">
+												</p:panelGrid>
+												<p:panel></p:panel>
+												<p:panelGrid columns="1" rendered="#{prod.validTo ne null and prod.validTo ne ''}">
+													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
+													<h:outputText value="#{prod.validTo}">
 												<f:convertDateTime type="date"
 													pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 											</h:outputText>
+												</p:panelGrid>
+											</p:panelGrid>
 										</p:panelGrid>
 									</p:panel>
 									<p:panel>
 										<p:panel styleClass="TexAlRight">
 											<div class="FRight">
-												<p:inputSwitch value="#{prod.active}" disabled="true"
+												<p:inputSwitch value="#{prod.active}" disabled="true" styleClass="#{prod.active ? 'GreenBg' : ''}"
 													onLabel="#{messages['accountStatusEnum.active']}"
 													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 											</div>
@@ -276,7 +283,7 @@
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
 						dataModel="#{productTemplateListBean.getLazyDataModel()}"
 						checkMany="false" exportToCsv="false" exportToXml="false"
-						exportXlsxButton="false" sortOrder="DESCENDING">
+						exportXlsxButton="false" sortOrder="DESCENDING" styleClass="DataListCenter">
 						<hftl:column label="#{messages['commons.nameOrCode']}"
 							field="nameOrCode">
 						</hftl:column>

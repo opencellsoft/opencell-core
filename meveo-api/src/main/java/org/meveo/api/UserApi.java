@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -25,6 +29,7 @@ import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.service.security.SecuredBusinessEntityService;
 
 /**
  * @author Edward P. Legaspi
@@ -42,6 +47,9 @@ public class UserApi extends BaseApi {
 	private UserService userService;
 
     @Inject
+	private SecuredBusinessEntityService securedBusinessEntityService;
+    
+	@Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
 	public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -88,14 +96,10 @@ public class UserApi extends BaseApi {
 		}
 
 		// find role
-		Set<Role> roles = new HashSet<Role>();
-		for (String rl : postData.getRoles()) {
-			Role role = roleService.findByName(rl, provider);
-			if (role == null) {
-				throw new EntityDoesNotExistsException(Role.class, rl);
-			}
-			roles.add(role);
-		}
+		Set<Role> roles = extractRoles(postData, provider);
+
+		// parse secured entities
+		List<SecuredEntity> securedEntities = extractSecuredEntities(postData, currentUser);
 
         UserHierarchyLevel userHierarchyLevel = null;
         if(!StringUtils.isBlank(postData.getUserLevel())){
@@ -116,6 +120,7 @@ public class UserApi extends BaseApi {
 		user.setLastPasswordModification(new Date());
 		user.setProvider(provider);
 		user.setRoles(roles);
+		user.setSecuredEntities(securedEntities);
         user.setUserLevel(userHierarchyLevel);
 
 		userService.create(user, currentUser);
@@ -142,21 +147,15 @@ public class UserApi extends BaseApi {
 			throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
 		}
 
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
 			throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
 		}
 
 		// find roles
-		Set<Role> roles = new HashSet<Role>();
-		if(postData.getRoles() != null){
-			for (String rl : postData.getRoles()) {
-				Role role = roleService.findByName(rl, user.getProvider());
-				if (role == null) {
-					throw new EntityDoesNotExistsException(Role.class, rl);
-				}
-				roles.add(role);
-			}
-		}
+		Set<Role> roles = extractRoles(postData, user.getProvider());
+
+		// parse secured entities
+		List<SecuredEntity> securedEntities = extractSecuredEntities(postData, currentUser);
 
         UserHierarchyLevel userHierarchyLevel = null;
         if(!StringUtils.isBlank(postData.getUserLevel())){
@@ -185,9 +184,40 @@ public class UserApi extends BaseApi {
 		if (!roles.isEmpty()) {
 			user.setRoles(roles);
 		}
+		user.setSecuredEntities(securedEntities);
         user.setUserLevel(userHierarchyLevel);
 
 		userService.update(user, currentUser);
+	}
+
+	private Set<Role> extractRoles(UserDto postData, Provider provider) throws EntityDoesNotExistsException {
+		Set<Role> roles = new HashSet<Role>();
+		for (String rl : postData.getRoles()) {
+			Role role = roleService.findByName(rl, provider);
+			if (role == null) {
+				throw new EntityDoesNotExistsException(Role.class, rl);
+			}
+			roles.add(role);
+		}
+		return roles;
+	}
+
+	private List<SecuredEntity> extractSecuredEntities(UserDto postData, User currentUser) throws EntityDoesNotExistsException {
+		List<SecuredEntity> securedEntities = new ArrayList<>();
+		if (postData.getSecuredEntities() != null) {
+			SecuredEntity securedEntity = null;
+			for (SecuredEntityDto securedEntityDto : postData.getSecuredEntities()) {
+				securedEntity = new SecuredEntity();
+				securedEntity.setCode(securedEntityDto.getCode());
+				securedEntity.setEntityClass(securedEntityDto.getEntityClass());
+				BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode(), currentUser);
+				if (businessEntity == null) {
+					throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getCode());
+				}
+				securedEntities.add(securedEntity);
+			}
+		}
+		return securedEntities;
 	}
 
 	public void remove(String username, User currentUser) throws MeveoApiException {
@@ -197,7 +227,7 @@ public class UserApi extends BaseApi {
 			throw new EntityDoesNotExistsException(User.class, username, "username");
 		}
 
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
 			throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
 		}
 
@@ -218,7 +248,7 @@ public class UserApi extends BaseApi {
 			throw new EntityDoesNotExistsException(User.class, username, "username");
 		}
 
-		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
+        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && user.getProvider().equals(currentUser.getProvider())))) {
 			throw new LoginException("User has no permission to access users for provider " + user.getProvider().getCode());
 		}
 

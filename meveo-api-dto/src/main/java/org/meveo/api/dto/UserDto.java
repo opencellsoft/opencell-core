@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
@@ -59,6 +60,10 @@ public class UserDto extends BaseDto {
     @XmlElement(name="role")
 	private List<String> roles;
 	
+	@XmlElementWrapper(name = "accessibleEntities")
+	@XmlElement(name = "accessibleEntity")
+	private List<SecuredEntityDto> securedEntities;
+
 	@Deprecated//use roles field
 	private String role;
 
@@ -73,10 +78,9 @@ public class UserDto extends BaseDto {
 		this.email = email;
 	}
 
-	public UserDto() {}
+	public UserDto() {
+	}
 	
-
-
 	public UserDto(User user) {
 		if(user.getName()!=null){
 		firstName = user.getName().getFirstName();
@@ -98,7 +102,17 @@ public class UserDto extends BaseDto {
             userLevel = user.getUserLevel().getCode();
         }
 
+
+		if (user.getSecuredEntities() != null) {
+			this.securedEntities = new ArrayList<>();
+			SecuredEntityDto securedEntityDto = null;
+			for (SecuredEntity securedEntity : user.getSecuredEntities()) {
+				securedEntityDto = new SecuredEntityDto(securedEntity);
+				this.securedEntities.add(securedEntityDto);
+		}
 	}
+}
+
 
 	public String getFirstName() {
 		return firstName;
@@ -148,7 +162,13 @@ public class UserDto extends BaseDto {
 		this.roles = roles;
 	}
 	
+	public List<SecuredEntityDto> getSecuredEntities() {
+		return securedEntities;
+	}
 	
+	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
+		this.securedEntities = securedEntities;
+	}
 
 	/**
 	 * @return the role
@@ -174,9 +194,7 @@ public class UserDto extends BaseDto {
 
     @Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel + " ]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
 	}
-
-
 
 }

@@ -231,7 +231,7 @@ public abstract class AbstractEntity implements Serializable {
     }
 
     @JsonIgnore
-    public abstract Logger fetchLogger();
+    public abstract Logger getLogger();
 
     public boolean keysMatch(AbstractEntity input) {
         if (input == null || getClass() != input.getClass()) {
@@ -292,7 +292,7 @@ public abstract class AbstractEntity implements Serializable {
 
     @JsonIgnore
     public boolean isValid() {
-        Logger logger = fetchLogger();
+        Logger logger = getLogger();
 
         if (Utilities.hasValue(this.name) == false) {
             logger.log(Level.FINE, " invalid: name is required");

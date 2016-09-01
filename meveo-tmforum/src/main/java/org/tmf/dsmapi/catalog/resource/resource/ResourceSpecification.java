@@ -314,7 +314,7 @@ public class ResourceSpecification extends AbstractCatalogEntity implements Seri
 
     @Override
     @JsonIgnore
-    public Logger fetchLogger() {
+    public Logger getLogger() {
         return logger;
     }
 

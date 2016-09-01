@@ -111,7 +111,7 @@ public class Category extends AbstractCatalogEntity implements Serializable {
 
     @Override
     @JsonIgnore
-    public Logger fetchLogger() {
+    public Logger getLogger() {
         return logger;
     }
 

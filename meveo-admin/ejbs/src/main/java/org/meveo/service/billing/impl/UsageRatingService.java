@@ -309,10 +309,6 @@ public class UsageRatingService {
 				triggerCounterPeriodEvent(counterPeriod);
 			}
 		}
-		if(periodCache!=null && (periodCache.getValue().compareTo(BigDecimal.ZERO) == 0 || periodCache.getValue()==null)){
-			CounterPeriod counterPeriod=counterPeriodService.findById(periodCache.getCounterPeriodId());
-			triggerCounterPeriodEvent(counterPeriod);
-		}
 		return deducedQuantityInEDRUnit;
 	}
 

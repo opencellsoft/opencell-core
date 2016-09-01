@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -19,15 +18,16 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 @Stateless
 public class UsageApi extends BaseApi {
 
 	@Inject
-	private RatedTransactionService ratedTransactionService;
+	private WalletOperationService walletOperationService;
 
 	@Inject
 	private UserAccountService userAccountService;
@@ -59,19 +59,21 @@ public class UsageApi extends BaseApi {
 				SubCatUsageDto subCatUsageDto = new SubCatUsageDto();
 				subCatUsageDto.setCode(invoiceSubCategory.getCode());
 				subCatUsageDto.setDescription(invoiceSubCategory.getDescription());
-				List<RatedTransaction> ratedTransactions = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
-				for (RatedTransaction rt : ratedTransactions) {
+				List<WalletOperation> walletOperations = walletOperationService.openWalletOperationsBySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
+				for (WalletOperation op : walletOperations) {
 					UsageDto usageDto = new UsageDto();
-					usageDto.setAmountWithoutTax(rt.getAmountWithoutTax());
-					usageDto.setDateEvent(rt.getUsageDate());
-					usageDto.setOfferCode(rt.getOfferCode());
-					usageDto.setParameter1(rt.getParameter1());
-					usageDto.setParameter2(rt.getParameter2());
-					usageDto.setParameter3(rt.getParameter3());
-					usageDto.setPriceplanCode(rt.getPriceplan() == null ? null : rt.getPriceplan().getCode());
-					usageDto.setQuantity(rt.getQuantity());
-					usageDto.setUnitAmountWithoutTax(rt.getUnitAmountWithoutTax());
-					usageDto.setUnityDescription(rt.getUnityDescription());
+					usageDto.setCode(op.getCode());
+					usageDto.setDescription(op.getDescription());
+					usageDto.setAmountWithoutTax(op.getAmountWithoutTax());
+					usageDto.setDateEvent(op.getOperationDate());
+					usageDto.setOfferCode(op.getOfferCode());
+					usageDto.setParameter1(op.getParameter1());
+					usageDto.setParameter2(op.getParameter2());
+					usageDto.setParameter3(op.getParameter3());
+					usageDto.setPriceplanCode(op.getPriceplan() == null ? null : op.getPriceplan().getCode());
+					usageDto.setQuantity(op.getQuantity());
+					usageDto.setUnitAmountWithoutTax(op.getUnitAmountWithoutTax());
+					usageDto.setUnityDescription(op.getInputUnitDescription());
 					subCatUsageDto.getListUsage().add(usageDto);
 				}
 				if(subCatUsageDto.getListUsage().size()>0){

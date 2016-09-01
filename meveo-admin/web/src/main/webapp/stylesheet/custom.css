@@ -23,6 +23,16 @@
   color: #d13b42 !important;
 }
 
+.text-blue::before,
+.text-blue {
+  color: #003050;
+}
+
+a.text-blue:hover,
+a.text-blue:hover::before {
+  color: #5c5cab !important;
+}
+
 .pull-left {
   float: left !important;
 }
@@ -273,7 +283,7 @@ body {
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger {
-  background: #eb2f2f;
+  background: #003050;
   border-right: 1px solid #a8a8a8;
   margin-right: -1px;
   margin-top: -1px;
@@ -328,7 +338,11 @@ input[type="text"] {
 }
 
 .ui-grid-row .ui-commandlink {
-  color: #d13b42;
+  color: #003050 !important;
+}
+
+.ui-grid-row .ui-commandlink:hover::before {
+  color: #5c5cab !important;
 }
 
 .ui-grid-row .ui-widget .ui-widget {
@@ -501,7 +515,7 @@ input[type="text"] {
   width: 250px;
 }
 
-#menu-button {
+#menu-button- {
   display: block;
   height: auto;
   margin-top: 17px;
@@ -805,6 +819,12 @@ footer .footer-copyright {
   footer {
     padding-top: 0;
   }
+  
+  #primary-nav-form { display: none; }
+  #responsive-menu-button { display: block; }
+  #top-menu-cover { display: none; }
+  #topbar-wrapper { margin-bottom: 10px; }
+  
 }
 
 
@@ -818,6 +838,8 @@ footer .footer-copyright {
   .ui-panel .ui-panel-content {
     padding: 0;
   }
+  
+  #top-menu-cover { display: none; }
 }
 
 /* Portrait */
@@ -886,6 +908,8 @@ footer .footer-copyright {
   	.box {
       width: calc(100% - 32px);
 	}
+	
+	
 }
 
 /* Landscape */
@@ -904,7 +928,7 @@ footer .footer-copyright {
   and (min-device-width: 375px) 
   and (max-device-width: 667px) 
   and (-webkit-min-device-pixel-ratio: 2) { 
-
+	#top-menu-cover { display: none; }
 }
 
 /* Portrait */
@@ -932,7 +956,7 @@ footer .footer-copyright {
   and (min-device-width: 414px) 
   and (max-device-width: 736px) 
   and (-webkit-min-device-pixel-ratio: 3) { 
-
+	#top-menu-cover { display: none; }
 }
 
 /* Portrait */
@@ -960,7 +984,7 @@ footer .footer-copyright {
   and (min-device-width: 768px) 
   and (max-device-width: 1024px) 
   and (-webkit-min-device-pixel-ratio: 2) {
-
+	
 }
 
 /* Portrait */
@@ -1046,8 +1070,8 @@ footer .footer-copyright {
 }
 
 #primary_nav_wrap ul ul ul {
-	top: 0;
-	left: 100%;
+  top: 0;
+  left: 100%;
 }
 
 #primary_nav_wrap ul li:hover>ul {
@@ -1057,4 +1081,10 @@ footer .footer-copyright {
 #user-info {
   font-size: 16px;
   line-height: 40px;
+}
+
+.status-wrapper .ui-panel .ui-panel-content {
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }

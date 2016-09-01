@@ -19,23 +19,29 @@
 			</p:submenu>
 
 			<p:submenu label="#{messages['menu.customers']}">
-				<p:menuitem id="workflows" value="#{messages['menu.marketingManager.workflowList']}"
+				<p:menuitem id="workflows"
+					value="#{messages['menu.marketingManager.workflowList']}"
 					outcome="mm_workflows" />
 			</p:submenu>
 
 			<p:submenu label="#{messages['menu.myCompany']}">
 				<p:menuitem id="users" value="#{messages['menu.users']}"
 					outcome="users" />
-                <p:menuitem id="mmUserGroups" outcome="userGroupHierarchy"
-                            value="#{messages['menu.userGroupHierarchy']}">
-                    <f:param name="module" value="marketing"/>
-                </p:menuitem>
+				<p:menuitem id="mmUserGroups" outcome="userGroupHierarchy"
+					value="#{messages['menu.userGroupHierarchy']}">
+					<f:param name="module" value="marketing" />
+				</p:menuitem>
 			</p:submenu>
 
 			<p:submenu id="settings" label="#{messages['menu.settings']}">
-				<p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories"
+				<p:menuitem id="mmOfferCategories"
+					outcome="mm_offerTemplateCategories"
 					value="#{messages['menu.marketingManager.manageCategories']}" />
 			</p:submenu>
+
+			<p:menuitem action="#{identity.logout}"
+				value="#{messages['menutop.logout']}"
+				rendered="#{identity.loggedIn}" immediate="true"></p:menuitem>
 		</hftl:menu>
 	</h:form>
 

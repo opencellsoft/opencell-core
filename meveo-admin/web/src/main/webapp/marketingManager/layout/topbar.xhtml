@@ -7,22 +7,19 @@
 
 	<div id="topbar-wrapper" class="clearfix">
 		<div id="layout-topbar" class="pull-left">
-			<ul class="list-inline">
-				<li><a id="menu-button"> <i class="fa fa-bars fa-3x"></i>
-				</a></li>
+			<ul class="list-inline" style="padding-top: 20px;">
+				<!-- <li><a id="menu-button"><i class="fa fa-bars fa-3x"></i> </a></li> -->
 				<li><a href="#" id="logo-wrapper"> <h:graphicImage
 							name="MeveoOpenCell.png" library="img" />
 				</a></li>
-				<!--<li>-->
-				<!-- SEARCH -->
-				<!-- TOPBAR LINKS -->
-				<!--<a id="topmenu-button"> <i class="fa fa-align-justify"></i> </a> -->
-				<!--</li>-->
 			</ul>
 		</div>
-		<!-- / topbar-wrapper -->
 
-		<h:form>
+		<div id="responsive-menu-button">
+			<a id="menu-button"><i class="fa fa-bars fa-5x"></i> </a>
+		</div>
+
+		<h:form id="primary-nav-form">
 			<div class="pull-right" id="primary_nav_wrap">
 				<ul id="top-right-menu">
 					<li><a href="#" id=""><i class="fa fa-2x fa-cog"></i></a>
@@ -56,21 +53,48 @@
 					
 				})
 			</script>
-			<ul id="user-info" class="list-inline pull-right" style="margin-right: 40px;">
+			<ul id="user-info" class="list-inline pull-right"
+				style="margin-right: 40px;">
 				<li>#{identity.user.user.nameOrUsername}</li>
 				<li>#{identity.user.currentProvider.code}</li>
 			</ul>
-            <div class="pull-right search-wrapper" style="margin-right: 40px; margin-top: 20px;">
-                <p:inputText id="globalFullTextSearch" value="#{fullTextSearchBean.filters['fullText']}" placeholder="#{messages['commons.search']}" />
-                <p:commandLink id="doGlobalFullTextSearch"  styleClass="Padding5 fa fa-search" action="mm_fullTextSearch" process="globalFullTextSearch @this"  />
-            </div>
-            <p:defaultCommand target="doGlobalFullTextSearch" />
-        </h:form>
+			<div class="pull-right search-wrapper"
+				style="margin-right: 40px; margin-top: 20px;">
+				<p:inputText id="globalFullTextSearch"
+					value="#{fullTextSearchBean.filters['fullText']}"
+					placeholder="#{messages['commons.search']}" />
+				<p:commandLink id="doGlobalFullTextSearch"
+					styleClass="Padding5 fa fa-search" action="mm_fullTextSearch"
+					process="globalFullTextSearch @this" />
+			</div>
+			<p:defaultCommand target="doGlobalFullTextSearch" />
+		</h:form>
+		<!-- / topbar-wrapper -->
 	</div>
 
 	<!-- MENU COVER -->
 	<div id="layout-menu-cover">
 		<ui:include src="layoutmenu.xhtml" />
+	</div>
+
+	<!-- TOPMENU -->
+	<div id="top-menu-cover">
+		<div class="FLeft">
+			<a href="#{request.contextPath}"><i class="fa fa-4x fa-home"></i></a>
+		</div>
+		<ul id="top-menu" class="ListNoStyle">
+			<li><p:link outcome="mm_offers"
+					value="#{messages['menu.offers']}"></p:link></li>
+			<li><p:link outcome="mm_productTemplates"
+					value="#{messages['menu.marketingManager.products']}"></p:link></li>
+			<li><p:link outcome="mm_workflows"
+					value="#{messages['menu.marketingManager.workflowList']}"></p:link></li>
+			<li><p:link outcome="users" value="#{messages['menu.users']}"></p:link></li>
+			<li><p:link outcome="userGroupHierarchy"
+					value="#{messages['menu.userGroupHierarchy']}"></p:link></li>
+			<li><p:link outcome="mm_offerTemplateCategories"
+					value="#{messages['menu.marketingManager.manageCategories']}"></p:link></li>
+		</ul>
 	</div>
 
 </ui:composition>
