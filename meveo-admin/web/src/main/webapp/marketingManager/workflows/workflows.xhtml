@@ -101,9 +101,7 @@
                         <p:panel>
                             <ui:repeat value="#{transition.wfActions.toArray()}"
                                        var="action" varStatus="status">
-                                <c:set var="valueLabel" value="#{action.userGroupCode}" />
-                                <h:outputText value="#{valueLabel}" />
-                                <h:outputText value=", " rendered="#{not status.last}" />
+                                <h:outputText value="#{action.userGroupCode}" />
                             </ui:repeat>
                          </p:panel>
                     </p:panelGrid>
@@ -131,9 +129,7 @@
                         <p:panel>
                             <ui:repeat value="#{wfTransitionBean.catchAll.wfActions.toArray()}"
                                        var="action" varStatus="status">
-                                <c:set var="valueLabel" value="#{action.userGroupCode}" />
-                                <h:outputText value="#{valueLabel}" />
-                                <h:outputText value=", " rendered="#{not status.last}" />
+                                <h:outputText value="#{action.userGroupCode}" />
                             </ui:repeat>
                         </p:panel>
                     </p:panelGrid>
