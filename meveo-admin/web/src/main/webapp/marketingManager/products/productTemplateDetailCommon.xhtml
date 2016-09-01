@@ -75,11 +75,8 @@
 			<p:panelGrid id="productDiv" columns="1" styleClass="ui-panelgrid-blank">
 				<h:outputText value="#{mainBackingBean.entity.nameOrCode}"
 					rendered="#{!mainBackingBean.edit}"></h:outputText>
-                <hftl:decorateFormField fieldId="offerTemplateName" label="#{messages['offerTemplate.name']}" rendered="#{mainBackingBean.edit}" >
-                    <p:inputText id="offerTemplateName" value="#{mainBackingBean.entity.name}" required="true" size="35">
-                        <p:ajax event="blur" update="code" process="@this" listener="#{mainBackingBean.updateDefaultCode()}" />
-                    </p:inputText>
-                </hftl:decorateFormField>
+                <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{mainBackingBean.edit}" actionListenerBean="#{mainBackingBean}" actionListenerMethod="onNameChange" listenerUpdate="code"/>
+                
 				<hftl:formField id="offerTemplateCategories"
 					label="#{messages['offerTemplate.category']}"
 					field="offerTemplateCategories" listType="pickUpList"
