@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -394,6 +395,12 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		}
 		return channelDM;
 	}
+
+    public void updateDefaultCode() {
+        if (StringUtils.isEmpty(entity.getCode())) {
+            entity.setCode(entity.getName());
+        }
+    }
 
 	public void setChannelDM(DualListModel<Channel> channelDM) {
 		this.channelDM = channelDM;
