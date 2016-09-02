@@ -68,6 +68,9 @@ select[disabled] { color : #000; }
 
 .body label { color: #666; text-shadow: 2px 2px 0px #ffffff; filter: dropshadow(color=#ffffff, offx=1, offy=1); }
 
+.login-body { margin-bottom: 20px; }
+/*#loginForm { width: 800px; background: transparent url('../img/login-bg.jpg'); }*/
+
 .columnForm { width: 50%; }
 
 .info {
