@@ -142,7 +142,7 @@
 									<p:panelGrid columns="4"
 										styleClass="panelGrid ui-panelgrid-blank"
 										columnClasses="Wid5 VAlignTop Responsive100, Wid60 Responsive100 VAlignTop, Wid34 Responsive100 VAlignTop">
-										<p:panel styleClass="TexAlCenter">
+										<p:panel styleClass="">
 											<p:graphicImage id="offerImage" cache="false"
 												value="#{offerTemplateImageStreamer.image}" height="100"
 												width="100">
@@ -150,40 +150,42 @@
 											</p:graphicImage>
 										</p:panel>
 										<p:panelGrid columns="1"
-											styleClass="ui-panelgrid-blank Padding20 TexAlCenter">
-											<p:panel styleClass="Wid100 TexAlCenter">
-											<h:outputText value="#{entity.nameOrCode}"></h:outputText>
-											<ui:repeat
-												value="#{entity.offerTemplateCategories.toArray()}" var="c"
-												varStatus="status">
-												<c:set var="valueLabel" value="#{c}" />
-												<c:set var="valueLabel"
-													value="#{valueLabel['descriptionOrCode']}" />
-												<h:outputText value="#{valueLabel}" />
-												<h:outputText value=", " rendered="#{not status.last}" />
-											</ui:repeat>
-											<h:outputText value="#{entity.businessOfferModel.code}"
-												rendered="#{entity.businessOfferModel != null}"></h:outputText>
-											<p:separator></p:separator>
-											<p:panelGrid columns="3">
-												<p:panelGrid columns="1"
-													rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
-													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-													<h:outputText value="#{entity.validFrom}">
-														<f:convertDateTime type="date"
-															pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
-													</h:outputText>
+											styleClass="ui-panelgrid-blank Padding20">
+											<p:panel styleClass="Wid100">
+												<h:outputText value="#{entity.nameOrCode}"></h:outputText>
+												<ui:repeat
+													value="#{entity.offerTemplateCategories.toArray()}" var="c"
+													varStatus="status">
+													<c:set var="valueLabel" value="#{c}" />
+													<c:set var="valueLabel"
+														value="#{valueLabel['descriptionOrCode']}" />
+													<h:outputText value="#{valueLabel}" />
+													<h:outputText value=", " rendered="#{not status.last}" />
+												</ui:repeat>
+												<br />
+												<h:outputText
+													value="#{messages['offerTemplate.template']}: #{entity.businessOfferModel.code}"
+													rendered="#{entity.businessOfferModel != null}"></h:outputText>
+												<p:separator></p:separator>
+												<p:panelGrid columns="3">
+													<p:panelGrid columns="1"
+														rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
+														<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
+														<h:outputText value="#{entity.validFrom}">
+															<f:convertDateTime type="date"
+																pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+														</h:outputText>
+													</p:panelGrid>
+													<p:panel></p:panel>
+													<p:panelGrid columns="1"
+														rendered="#{entity.validTo ne null and entity.validTo ne ''}">
+														<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
+														<h:outputText value="#{entity.validTo}">
+															<f:convertDateTime type="date"
+																pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+														</h:outputText>
+													</p:panelGrid>
 												</p:panelGrid>
-												<p:panel></p:panel>
-												<p:panelGrid columns="1"
-													rendered="#{entity.validTo ne null and entity.validTo ne ''}">
-													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-													<h:outputText value="#{entity.validTo}">
-														<f:convertDateTime type="date"
-															pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
-													</h:outputText>
-												</p:panelGrid>
-											</p:panelGrid>
 											</p:panel>
 										</p:panelGrid>
 										<p:panel styleClass="status-wrapper">
@@ -255,7 +257,7 @@
 										lazy="true"
 										styleClass="custom-grid ui-datagrid-blank dataGrid"
 										style="border: none;">
-										<p:panel styleClass="TexAlCenter">
+										<p:panel styleClass="">
 											<h:outputText
 												value="#{messages['offerServiceTemplate.serviceTemplate']}"
 												styleClass="field-label"></h:outputText>: <h:outputText
