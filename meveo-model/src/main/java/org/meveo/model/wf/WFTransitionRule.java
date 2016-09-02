@@ -161,6 +161,6 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
 
     @Override
     public int compareTo(WFTransitionRule o) {
-        return Long.compare(this.priority, o.priority);
+        return this.priority - o.priority;
     }
 }

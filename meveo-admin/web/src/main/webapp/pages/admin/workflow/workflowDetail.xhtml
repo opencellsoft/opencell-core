@@ -143,7 +143,7 @@
                                                         edit="#{workflowBean.edit}" />
 
                                         <hftl:formField label="#{messages['transition.description']}"
-                                                        field="description"
+                                                        field="description" required="true"
                                                         edit="#{workflowBean.edit}" />
                                     </p:panel>
                                     <p:tabView id="tabDetail">
@@ -166,7 +166,7 @@
                                                                 <p:ajax listener="#{workflowBean.changedRuleName(loopStatus.index)}" process="transitionRuleName#{loopStatus.index}"
                                                                         update=":tabView:formDunningPlanTransition:tabDetail:transitionRulesPanel" event="valueChange">
                                                                 </p:ajax>
-                                                                <f:selectItem itemLabel="Select Rule" itemValue="" noSelectionOption="true" />
+                                                                <f:selectItem itemLabel="#{messages['transition.selectRule']}" itemValue="" noSelectionOption="true" />
                                                                 <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
                                                             </p:selectOneMenu>
                                                         </hftl:decorateFormField>
@@ -186,7 +186,7 @@
 
                                                         <hftl:decorateFormField fieldId="transitionRuleDateValue#{loopStatus.index}" label="#{messages['transitionRuleNewValue.value']}"
                                                                                 rendered="#{rule.value.model == true and rule.value.type == 'DATE'}">
-                                                            <p:calendar id="transitionRuleDateValue#{loopStatus.index}" value="#{rule.newDate}" required="true" size="20" maxlength="100" pattern="dd/MM/yyyy"/>
+                                                            <p:calendar id="transitionRuleDateValue#{loopStatus.index}" value="#{rule.newDate}" required="true" size="16" pattern="dd/MM/yyyy"/>
                                                         </hftl:decorateFormField>
 
                                                         <hftl:decorateFormField fieldId="transitionRuleNumberValue#{loopStatus.index}" label="#{messages['transitionRuleNewValue.value']}"
@@ -194,42 +194,48 @@
                                                             <p:spinner id="transitionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" required="true"/>
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="transitionRuleFromStringValue#{loopStatus.index}" label="#{messages['transitionRuleFromValue.value']}"
+                                                        <hftl:decorateFormField fieldId="transitionRuleFromStringValue#{loopStatus.index}" label="#{messages['TransitionRuleTypeEnum.range.string']}"
                                                                                 rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
-                                                            <p:inputText id="transitionRuleFromStringValue#{loopStatus.index}" value="#{rule.newValue}" size="20" maxlength="100"/>
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="transitionRuleFromStringValue#{loopStatus.index}" value="#{messages['transitionRuleFromValue.value']}" style="padding-right:5px" />
+                                                                <p:inputText id="transitionRuleFromStringValue#{loopStatus.index}" value="#{rule.newValue}" size="16" maxlength="100"/>
+                                                                <p:outputLabel for="transitionRuleFromStringValue#{loopStatus.index}_toRange" value="#{messages['transitionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:inputText id="transitionRuleFromStringValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="16" maxlength="100"/>
+                                                            </h:panelGrid>
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="transitionRuleToStringValue#{loopStatus.index}" label="#{messages['transitionRuleToValue.value']}"
-                                                                                rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
-                                                            <p:inputText id="transitionRuleToStringValue#{loopStatus.index}" value="#{rule.anotherValue}" size="20" maxlength="100"/>
-                                                        </hftl:decorateFormField>
-                                                        <p:panel rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
-                                                            <o:validateOneOrMore components="transitionRuleFromStringValue#{loopStatus.index} transitionRuleToStringValue#{loopStatus.index}" showMessageFor="transitionRuleFromStringValue#{loopStatus.index}"/>
-                                                        </p:panel>
-                                                        <hftl:decorateFormField fieldId="transitionRuleFromNumberValue#{loopStatus.index}" label="#{messages['transitionRuleFromValue.value']}"
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
+                                                            <o:validateOneOrMore components="transitionRuleFromStringValue#{loopStatus.index} transitionRuleFromStringValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
+                                                        <hftl:decorateFormField fieldId="transitionRuleFromNumberValue#{loopStatus.index}" label="#{messages['TransitionRuleTypeEnum.range.number']}"
                                                                                 rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
-                                                            <p:spinner id="transitionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" />
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="transitionRuleFromNumberValue#{loopStatus.index}" value="#{messages['transitionRuleFromValue.value']}" style="padding-right:5px" />
+                                                                <p:spinner id="transitionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"/>
+                                                                <p:outputLabel for="transitionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{messages['transitionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:spinner id="transitionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10" maxlength="10"/>
+                                                            </h:panelGrid>
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="transitionRuleToNumberValue#{loopStatus.index}" label="#{messages['transitionRuleToValue.value']}"
-                                                                                rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
-                                                            <p:spinner id="transitionRuleToNumberValue#{loopStatus.index}" value="#{rule.anotherValue}" size="10" maxlength="10" />
-                                                        </hftl:decorateFormField>
-                                                        <p:panel rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
-                                                            <o:validateOneOrMore components="transitionRuleFromNumberValue#{loopStatus.index} transitionRuleToNumberValue#{loopStatus.index}"/>
-                                                        </p:panel>
-                                                        <hftl:decorateFormField fieldId="transitionRuleFromDateValue#{loopStatus.index}" label="#{messages['transitionRuleFromValue.value']}"
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
+                                                            <o:validateOneOrMore components="transitionRuleFromNumberValue#{loopStatus.index} transitionRuleFromNumberValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
+                                                        <hftl:decorateFormField fieldId="transitionRuleFromDateValue#{loopStatus.index}" label="#{messages['TransitionRuleTypeEnum.range.date']}"
                                                                                 rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
-                                                            <p:calendar id="transitionRuleFromDateValue#{loopStatus.index}" value="#{rule.newDate}" size="20" maxlength="100"/>
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="transitionRuleFromDateValue#{loopStatus.index}" value="#{messages['transitionRuleFromValue.value']}" style="padding-right:5px" />
+                                                                <p:calendar id="transitionRuleFromDateValue#{loopStatus.index}" value="#{rule.newDate}" size="16" pattern="dd/MM/yyyy"/>
+                                                                <p:outputLabel for="transitionRuleFromDateValue#{loopStatus.index}_toRange" value="#{messages['transitionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:calendar id="transitionRuleFromDateValue#{loopStatus.index}_toRange" value="#{rule.anotherDate}" size="16" pattern="dd/MM/yyyy"/>
+                                                            </h:panelGrid>
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="transitionRuleToDateValue#{loopStatus.index}" label="#{messages['transitionRuleToValue.value']}"
-                                                                                rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
-                                                            <p:calendar id="transitionRuleToDateValue#{loopStatus.index}" value="#{rule.anotherDate}" size="20" maxlength="100"/>
-                                                        </hftl:decorateFormField>
-                                                        <p:panel rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
-                                                            <o:validateOneOrMore components="transitionRuleFromDateValue#{loopStatus.index} transitionRuleToDateValue#{loopStatus.index}"/>
-                                                        </p:panel>
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
+                                                            <o:validateOneOrMore components="transitionRuleFromDateValue#{loopStatus.index} transitionRuleFromDateValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
                                                     </p:panel>
                                                 </c:forEach>
                                             </p:panel>
