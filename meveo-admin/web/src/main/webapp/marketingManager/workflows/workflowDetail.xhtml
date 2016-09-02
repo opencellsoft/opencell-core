@@ -128,21 +128,27 @@
                     </p:panel>
                 </c:forEach>
             </p:panel>
-            <p:panel styleClass="clearLeft">
+            <p:panel styleClass="clearLeft" style="border-bottom: solid">
                 <p:tooltip for="addCriteriaBtn" value="#{messages['mmTransition.addCriteria']}" showEffect="slide" hideEffect="slide" />
                 <p:commandButton id="addCriteriaBtn"
                                  action="#{wfTransitionBean.addNewRule()}" process="@this,transitionRulesPanel"
                                  value="#{messages['mmTransition.addCriteria']}" ajaxSubmit="true" partialSubmit="true"
                                  icon="fa fa-plus" update=":formDunningPlanTransition:transitionRulesPanel" />
-                <p:separator></p:separator>
             </p:panel>
-            <hftl:decorateFormField fieldId="userGroupLevel" label="#{messages['mmTransition.assignedTeam']} *" displayOneLine="true">
-                <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
-                        selection="#{wfTransitionBean.userGroupSelectedNode}" required="true" requiredMessage="#{messages['mmTransition.assignedTeam']} #{messages['primefaces.tree.REQUIRED']}">
-                    <p:treeNode>
-                        <h:outputText value="#{groupLevel.code}" />
-                    </p:treeNode>
-                </p:tree>
+
+            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="20">
+                <h:panelGrid columns="2">
+                    <p:panel>
+                        <p:outputLabel value="#{messages['mmTransition.assignedTeam']} *" style="padding-right:5px" />
+                        <i class="fa fa-arrow-circle-right text-red" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
+                    </p:panel>
+                    <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
+                            selection="#{wfTransitionBean.userGroupSelectedNode}" required="true" requiredMessage="#{messages['mmTransition.assignedTeam']} #{messages['primefaces.tree.REQUIRED']}">
+                        <p:treeNode>
+                            <h:outputText value="#{groupLevel.code}" />
+                        </p:treeNode>
+                    </p:tree>
+                </h:panelGrid>
             </hftl:decorateFormField>
         </hftl:formPanel>
     </ui:define>
