@@ -140,7 +140,7 @@
                 <h:panelGrid columns="2">
                     <p:panel>
                         <p:outputLabel value="#{messages['mmTransition.assignedTeam']} *" style="padding-right:5px" />
-                        <i class="fa fa-arrow-circle-right text-red" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
+                        <i class="fa fa-arrow-circle-right text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
                     </p:panel>
                     <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
                             selection="#{wfTransitionBean.userGroupSelectedNode}" required="true" requiredMessage="#{messages['mmTransition.assignedTeam']} #{messages['primefaces.tree.REQUIRED']}">
