@@ -7,6 +7,13 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
 	xmlns:s="http://jboss.org/seam/faces">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{discountPlanBean.objectId}" />
+            <f:viewParam name="tab" value="#{discountPlanBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -37,7 +44,7 @@
 			
 			<p:panel header="#{messages['discountPlan.title']}" >
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{discountPlanBean.activeTab}">
 
 				<p:tab title="#{messages['commons.information']}">
 					<hftl:formPanel formId="formDiscountPlan"

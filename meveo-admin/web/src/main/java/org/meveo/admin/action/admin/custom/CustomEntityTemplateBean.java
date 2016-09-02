@@ -133,8 +133,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             if (customizedEntityMatched != null) {
                 setEntityClassName(customizedEntityMatched.getEntityClass().getName());
                 if (customizedEntityMatched.getCustomEntityId() != null) {
-                    setObjectIdFromSet(customizedEntityMatched.getCustomEntityId());
-                    initEntity();
+                    initEntity(customizedEntityMatched.getCustomEntityId());
                 }
             }
         }

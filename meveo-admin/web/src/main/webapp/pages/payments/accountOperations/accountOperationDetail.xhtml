@@ -8,6 +8,8 @@
 	<f:metadata>
 		<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
 		<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+        <f:viewParam name="objectId" value="#{otherCreditAndChargeBean.objectId}" />
+        <f:viewParam name="tab" value="#{otherCreditAndChargeBean.activeTab}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
