@@ -187,7 +187,7 @@
 											</p:panel>
 										</p:panelGrid>
 										<p:panel styleClass="status-wrapper">
-											<p:panel styleClass="">
+											<p:panel>
 												<div class="text-bold" style="padding-bottom: 10px;">#{messages['commons.status']}</div>
 												<div class="">
 													<p:inputSwitch value="#{entity.active}" disabled="true"
@@ -196,7 +196,7 @@
 														offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 												</div>
 											</p:panel>
-											<p:panel>
+											<p:panel style="width: 200px;">
 												<ul class="list-inline">
 													<li><p:link id="viewLink"
 															outcome="mm_offerTemplateDetail"
