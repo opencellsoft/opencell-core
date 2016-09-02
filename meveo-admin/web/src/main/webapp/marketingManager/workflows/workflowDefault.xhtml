@@ -37,7 +37,7 @@
                 <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
                         selection="#{wfTransitionBean.userGroupSelectedNode}">
                     <p:treeNode>
-                        <h:outputText value="#{groupLevel.descriptionOrCode}" />
+                        <h:outputText value="#{groupLevel.code}" />
                     </p:treeNode>
                 </p:tree>
             </hftl:decorateFormField>

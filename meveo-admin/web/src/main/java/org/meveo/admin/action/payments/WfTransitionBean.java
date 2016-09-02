@@ -213,10 +213,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         }
         if (workflowOrder != null) {
             operationList = workflowOrder.getTransitions();
-            Collections.sort(operationList);
-            int indexCatchAll = operationList.size() - 1;
-            catchAll = operationList.get(indexCatchAll);
-            operationList.remove(indexCatchAll);
+            if (operationList.size() > 0) {
+                Collections.sort(operationList);
+                int indexCatchAll = operationList.size() - 1;
+                catchAll = operationList.get(indexCatchAll);
+                operationList.remove(indexCatchAll);
+            }
         }
         return workflowOrder;
     }
