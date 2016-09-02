@@ -90,6 +90,7 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -147,9 +148,6 @@ public class EntityExportImportService implements Serializable {
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
     
-    private static final String CDATA_START="<![CDATA[";
-    private static final String CDATA_END="]]>";
-
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -2040,7 +2038,7 @@ public class EntityExportImportService implements Serializable {
 		protected void writeText(QuickWriter writer, String text) {
         	if(text==null){
         		writer.write("");
-        	}else if(text.indexOf(CDATA_START)>=0&&text.indexOf(CDATA_END)>0){
+        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
         		writer.write(text);
         	}else{
         		super.writeText(writer, text);

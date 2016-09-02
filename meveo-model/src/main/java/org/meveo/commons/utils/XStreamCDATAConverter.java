@@ -18,8 +18,8 @@ public class XStreamCDATAConverter implements Converter {
 	
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	 
-	private static final String CDATA_START = "<![CDATA[";
-	private static final String CDATA_END = "]]>";
+	public static final String CDATA_START = "<![CDATA[";
+	public static final String CDATA_END = "]]>";
 
 	@SuppressWarnings("rawtypes")
 	@Override
