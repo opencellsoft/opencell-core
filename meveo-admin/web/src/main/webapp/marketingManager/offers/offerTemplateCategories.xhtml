@@ -26,7 +26,7 @@
 					<div style="float: right;" class="search-wrapper">
 						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}" update=":mainForm:offerCategoriesTable" />
 						<p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['fullText']}" placeholder="#{messages['action.search']}" />
-						<p:defaultCommand target="searchButton" />
+						<p:defaultCommand target="searchButton" style="display: none;" />
 					</div>
 				</h:form>
 			</p:panel>

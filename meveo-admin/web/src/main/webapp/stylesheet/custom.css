@@ -600,6 +600,12 @@ input[type="text"] {
   padding: 0;
 }
 
+.ui-datatable .ui-datatable-data tr.ui-state-hover a,
+.ui-datatable .ui-datatable-data tr.ui-state-hover {
+  background: #5c5cab;
+  color: #fff;
+}
+
 footer {
   background-color: #264676;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
@@ -824,7 +830,7 @@ footer .footer-copyright {
   #responsive-menu-button { display: block; }
   #top-menu-cover { display: none; }
   #topbar-wrapper { margin-bottom: 10px; }
-  
+  .dataGrid, .dataGrid table, .dataGrid table tbody, .dataList li, .dataGrid tbody, .dataGrid tr, .dataGrid td { width: 100%; text-align: center; }
 }
 
 

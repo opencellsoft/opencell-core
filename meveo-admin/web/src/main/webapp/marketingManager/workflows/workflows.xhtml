@@ -28,7 +28,7 @@
             <p:panel style="width: 16%">
                 <p:panel>
                     <div class="btn-wrapper">
-                        <i class="fa fa-plus text-red"></i>
+                        <i class="fa fa-plus text-blue"></i>
                         <p:link styleClass="no-text-decoration"
                                 outcome="mm_workflowDetail"
                                 value=" #{messages['mmTransition.addNew']}">
@@ -65,15 +65,15 @@
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />
                             </p:button>
-                            <p:commandButton id="deleteOperationBtn" icon="ui-icon-trash" styleClass="no-text-decoration text-red" action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
+                            <p:commandButton id="deleteOperationBtn" icon="ui-icon-trash" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['mmTransition.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
-                            <p:commandButton id="moveUpBtn" icon="ui-icon-arrowthick-1-n" styleClass="no-text-decoration text-red" action="#{wfTransitionBean.moveUpOperation(transition)}"
+                            <p:commandButton id="moveUpBtn" icon="ui-icon-arrowthick-1-n" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.moveUpOperation(transition)}"
                                              update="transitions" ajax="true"/>
-                            <p:commandButton id="moveDownBtn" icon="ui-icon-arrowthick-1-s" styleClass="no-text-decoration text-red" action="#{wfTransitionBean.moveDownOperation(transition)}"
+                            <p:commandButton id="moveDownBtn" icon="ui-icon-arrowthick-1-s" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.moveDownOperation(transition)}"
                                              update="transitions" ajax="true" />
                             <p:panel styleClass="clearLeft">
-                                <i class="fa fa-arrow-circle-right text-red" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
+                                <i class="fa fa-arrow-circle-right text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
                             </p:panel>
                         </h:panelGroup>
                         <h:panelGroup layout="block" styleClass="col2">
@@ -111,7 +111,7 @@
 
             <p:panel styleClass="clearLeft" >
                 <p:panel styleClass="clearLeft">
-                    <i class="fa fa-compass text-red" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
+                    <i class="fa fa-compass fa-2x text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
                     <h:outputText value="#{wfTransitionBean.catchAll.description}" />
                 </p:panel>
                 <p:panel styleClass="clearLeft">
