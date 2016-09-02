@@ -84,6 +84,7 @@ public class PDFParametersConstruction {
 	@SuppressWarnings("deprecation")
 	public Map<String, Object> constructParameters(Long invoiceId, User currentUser, Provider provider) {
 		try {
+			provider = currentUser.getProvider();
 			currencyFormat.setMinimumFractionDigits(2);
 			Invoice invoice = invoiceService.findById(invoiceId, provider);
 			Map<String, Object> parameters = new HashMap<String, Object>();
