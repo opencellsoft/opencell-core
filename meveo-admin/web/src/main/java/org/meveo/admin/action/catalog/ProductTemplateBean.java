@@ -151,7 +151,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		if (catalogPriceCF == null) {
 			log.debug("IPIEL: no CF found");
-			messages.info(new BundleKey("messages", "message.marketingManager.product.catalogPrice.missing"));
+			messages.warn(new BundleKey("messages", "message.marketingManager.product.catalogPrice.missing"));
 		} else {
 			if (catalogPriceCF.getCfValue() == null || catalogPriceCF.getCfValue().getDoubleValue() == null) {
 				catalogPriceCF.setDoubleValue(Double.valueOf(0));
@@ -305,8 +305,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 			initEntity();
 
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		}
 	}
 
