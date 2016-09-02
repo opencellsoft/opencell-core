@@ -38,6 +38,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
@@ -63,6 +64,7 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     @Column(name = "DESCRIPTION", nullable = true, length = 100)
     @Size(max = 100)
+    @NotNull
     private String description;
 
 	@ManyToOne(fetch = FetchType.LAZY)
