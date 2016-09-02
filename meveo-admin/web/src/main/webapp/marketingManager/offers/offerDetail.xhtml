@@ -120,16 +120,10 @@
 					</p:panelGrid>
 				</p:panel>
 				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-					<hftl:decorateFormField fieldId="bomDescriptionOrCode"
-						label="#{messages['marketingManager.catalog.family']}">
-						<h:outputLabel id="bomDescriptionOrCode"
-							value="#{offerTemplateBean.businessOfferModel.descriptionOrCode}" />
-					</hftl:decorateFormField>
 					<hftl:formField
 						label="#{messages['marketingManager.catalog.family']}"
 						allowEdit="false" field="businessOfferModel"
-						valueLabelField="code" listBean="#{businessOfferModelBean}"
-						rendered="#{offerTemplateBean.entity.transient}" />
+						valueLabelField="code" listBean="#{businessOfferModelBean}" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
 						field="channels" listType="pickUpList"
 						valueLabelField="descriptionOrCode"
