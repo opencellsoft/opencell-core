@@ -92,14 +92,18 @@
 							rendered="#{offerTemplateBean.bomId ne null}" />
 						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
-                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onNameChange" listenerUpdate="code"/>
-                        <hftl:formField id="offerTemplateCategories"
+						<hftl:formField label="#{messages['offerTemplate.name']}"
+							required="true" field="name" rendered="#{offerTemplateBean.edit}"
+							actionListenerBean="#{offerTemplateBean}"
+							actionListenerMethod="onNameChange" listenerUpdate="code" />
+						<hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
 							field="offerTemplateCategories" listType="pickUpList"
 							valueLabelField="code"
 							dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
-						<hftl:formField id="code" label="#{messages['offerTemplate.code']}"
-							field="code" required="true" validateUnique="true" />
+						<hftl:formField id="code"
+							label="#{messages['offerTemplate.code']}" field="code"
+							required="true" validateUnique="true" />
 					</p:panelGrid>
 					<p:panel>
 						<h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
@@ -127,7 +131,8 @@
 						valueLabelField="code" listBean="#{businessOfferModelBean}"
 						rendered="#{offerTemplateBean.entity.transient}" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
-						field="channels" listType="pickUpList" valueLabelField="descriptionOrCode"
+						field="channels" listType="pickUpList"
+						valueLabelField="descriptionOrCode"
 						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
 					<hftl:formField id="businessAccountModels"
 						label="#{messages['marketingManager.catalog.targetSegment']}"
@@ -141,20 +146,28 @@
 			<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
 				backingBean="#{offerTemplateBean}" multiLang="true" />
 
-            <p:panel id="customFieldsWrappPanel">
-                <f:facet name="header">
-                    <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-                    <p:commandLink action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}" process="@this customFieldsWrappPanel"
-                        oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration"
-                        style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}"/>
-                </f:facet>
-                <p:tabView rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
-                    <!-- custom fields -->
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
-                </p:tabView>
-            </p:panel>
+			<p:panel id="customFieldsWrappPanel">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}"
+						styleClass="SubHeader" />
+					<p:commandLink
+						action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}"
+						process="@this customFieldsWrappPanel"
+						oncomplete="PF('entityCustomizationDialog').show()"
+						update="entityCustomizationDialogPanel"
+						styleClass="fa fa-edit no-text-decoration"
+						style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
+				</f:facet>
+				<p:tabView
+					rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
+					<!-- custom fields -->
+					<hftl:customFields backingBean="#{offerTemplateBean}"
+						messagesId=":formId:messages" />
+				</p:tabView>
+			</p:panel>
 
-            <p:panel>
+			<p:panel>
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
@@ -186,23 +199,28 @@
 			</p:panel>
 		</hftl:formPanel>
 
-        <h:panelGroup id="entityCustomizationDialogPanel">
-            <p:dialog id="entityCustomizationDialog" header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
-                modal="true" closeOnEscape="true" maximizable="true" widgetVar="entityCustomizationDialog" width="90%" position="top" positionType="absolute" responsive="true">
-                <p:ajax event="close" listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
-                    update=":formId:customFieldsWrappPanel" />
+		<h:panelGroup id="entityCustomizationDialogPanel">
+			<p:dialog id="entityCustomizationDialog"
+				header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
+				modal="true" closeOnEscape="true" maximizable="true"
+				widgetVar="entityCustomizationDialog" width="90%" position="top"
+				positionType="absolute" responsive="true">
+				<p:ajax event="close"
+					listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
+					update=":formId:customFieldsWrappPanel" />
 
-<!--                 <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml"> -->
-<!--                 </ui:include> -->
+				<!--                 <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml"> -->
+				<!--                 </ui:include> -->
 
-                <h:form>
-                    <p:panel width="100">
-                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
-                        </p:button>
-                    </p:panel>
-                </h:form>
-            </p:dialog>
-        </h:panelGroup>
+				<h:form>
+					<p:panel width="100">
+						<p:button value="#{messages['commons.close']}"
+							onclick="PF('entityCustomizationDialog').hide();return false;">
+						</p:button>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+		</h:panelGroup>
 
-    </ui:define>
+	</ui:define>
 </ui:composition>
