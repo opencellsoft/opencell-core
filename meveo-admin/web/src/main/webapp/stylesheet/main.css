@@ -9,7 +9,7 @@ body { width: 100%; margin: auto; position: relative; background: #DBDBDB; font-
   margin-left : auto !important;
   margin-right : auto !important;
   margin-top : 20px ;
-
+  margin-bottom: 20px;
   padding : 10px 15px;
   min-height: 80%;
   -webkit-border-radius: 8px;
@@ -68,7 +68,7 @@ select[disabled] { color : #000; }
 
 .body label { color: #666; text-shadow: 2px 2px 0px #ffffff; filter: dropshadow(color=#ffffff, offx=1, offy=1); }
 
-.login-body { margin-bottom: 20px; }
+.login-body { margin-bottom: 20px; } 
 /*#loginForm { width: 800px; background: transparent url('../img/login-bg.jpg'); }*/
 
 .columnForm { width: 50%; }
