@@ -44,7 +44,7 @@
             <p:messages id="messages"/>
             <p:dataGrid id="transitionList"
                         value="#{wfTransitionBean.operationList}" var="transition"
-                        paginator="true" rows="10" columns="1" layout="grid"
+                        paginator="true" rows="10" columns="1" layout="grid" paginatorPosition="top"
                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
                         rowsPerPageTemplate="10,15,20,50" rowKey="#{transition.id}">
@@ -109,7 +109,7 @@
                 </p:panel>
             </p:dataGrid>
 
-            <p:panel styleClass="clearLeft" >
+            <p:panel styleClass="clearLeft" style="border-top: solid">
                 <p:panel styleClass="clearLeft">
                     <i class="fa fa-compass fa-2x text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
                     <h:outputText value="#{wfTransitionBean.catchAll.description}" />
