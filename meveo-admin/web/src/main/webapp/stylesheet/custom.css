@@ -126,6 +126,7 @@ a.text-blue:hover::before {
 }
 
 .btn-wrapper:hover i,
+.btn-wrapper:hover i::before,
 .btn-wrapper:hover a {
   color: #fff !important;
 }
@@ -154,6 +155,18 @@ hr {
   border: 0;
   border-top: 1px solid rgba(0, 32, 80, .1);
   box-sizing: content-box;
+}
+
+.width-45 {
+  width: 45%;
+}
+
+.width-55 {
+  width: 55%;
+}
+
+.width-58 {
+  width: 58%;
 }
 
 /* Override Default Styles
@@ -312,6 +325,18 @@ body {
 
 .position-relative {
   position: relative;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
 }
 
 /* Custom Styles
@@ -555,12 +580,30 @@ input[type="text"] {
   line-height: 73px !important;
 }
 
+.export-panel {
+  width: 31%;
+  margin-right: -10px;
+}
+
+.export-panel li:first-child {
+  padding-bottom: 15px;
+}
+
+.export-panel li:hover {
+  color: #002050;
+}
+
+.export-panel a:hover {
+  color: #002050;
+  cursor: pointer;
+}
+
 .marketing-manager-wrapper .ui-state-default {
   background: #eb2f2f !important;
 }
 
 .offer-wrapper {
-  margin: 50px auto;
+  margin: 50px 4px;
 }
 
 .offer-wrapper .ui-tabs-nav {
@@ -574,6 +617,7 @@ input[type="text"] {
 
 .search-wrapper {
   border: 1px solid #ddd;
+  border-right-width: 2px;
 }
 
 .search-wrapper input[type="text"] {

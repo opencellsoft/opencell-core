@@ -29,9 +29,9 @@
 			styleClass="no-border-radius">
 			<p:panel styleClass="Wid50">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-					<p:panel>
+					<p:panel style="width: 240px; margin-left: -40px;">
 						<h:form>
-							<ul class="ListNoStyle">
+							<ul class="list-unstyled">
 								<li class="Padding5">
 									<div class="btn-wrapper">
 										<i class="fa fa-plus text-blue"></i>
@@ -46,19 +46,17 @@
 										</p:link>
 									</div> <!-- / btn-wrapper -->
 								</li>
-							</ul>
-							<ul class="ListNoStyle">
 								<li class="Padding5">
 									<div class="btn-wrapper">
 										<i class="fa fa-plus text-blue"></i>
 										<p:link styleClass="no-text-decoration"
-											outcome="mm_bundleTemplateDetail"
-											value=" #{messages['productTemplate.createBundle']}">
+												outcome="mm_bundleTemplateDetail"
+												value=" #{messages['productTemplate.createBundle']}">
 											<f:param name="cid"
-												value="#{javax.enterprise.context.conversation.id}" />
+													 value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="edit" value="true" />
 											<f:param name="editMode" value="edit" />
-                                            <f:param name="backView" value="mm_productTemplates"/>
+											<f:param name="backView" value="mm_productTemplates"/>
 										</p:link>
 									</div> <!-- / btn-wrapper -->
 								</li>
@@ -84,7 +82,7 @@
 					</p:panel>
 				</p:panelGrid>
 			</p:panel>
-			<p:panel id="ptToExport" styleClass="Wid50 TexAlRight">
+			<p:panel id="ptToExport" styleClass="Wid50 TexAlRight VAlignTop">
 				<div class="Container">
 					<p:panel styleClass="Container60 VAlignTop">
 						<h:form>
@@ -96,18 +94,16 @@
 							</div>
 						</h:form>
 					</p:panel>
-					<p:panel columns="1" styleClass="Container40 no-border-radius"
+					<p:panel columns="1" styleClass="export-panel no-border-radius"
 						style="border: 1px solid #ddd" id="productForExportPanel">
 						<ul class="list-unstyled">
-							<li class="Padding5"><i class="fa fa-share-square-o"
-								style="margin-right: 5px;"></i> <p:commandLink
+							<li class="text-left"><i class="fa fa-share-square-o"></i> <p:commandLink
 									onclick="PF('exportablePTs').show();"
 									value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}">
 								</p:commandLink></li>
-							<li>
-								<div class="FRight">
+							<li class="text-left">
+								<div class="text-left">
 									<p:commandLink styleClass="fa fa-play"
-										style="margin-right: 5px;"
 										value=" #{messages['page.catalog.exportTo']}"
 										update=":#{p:component('exportParametersDialog')}"
 										oncomplete="PF('exportParametersDialog').show()">
