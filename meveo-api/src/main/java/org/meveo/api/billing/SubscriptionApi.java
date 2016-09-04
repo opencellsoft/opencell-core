@@ -358,12 +358,15 @@ public class SubscriptionApi extends BaseApi {
                     if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
                         ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId());
                         if (chargeInstance == null) {
-                            throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
-                        }
-                        chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-                        if (!currentUser.getProvider().isEntreprise()) {
-                            chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
-                        }
+							throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
+						}
+                        
+						if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
+							chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+							if (!currentUser.getProvider().isEntreprise()) {
+								chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
+							}
+						}
                     } else {
                         log.warn("chargeInstance.code and amountWithoutTax must not be null.");
                     }
