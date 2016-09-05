@@ -1,12 +1,5 @@
 package org.meveo.api.account;
 
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
@@ -20,7 +13,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.AccountDtoListFilter;
-import org.meveo.api.security.parameter.ObjectPropertyParser;
+import org.meveo.api.security.parameter.NullParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -34,6 +27,12 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -267,7 +266,7 @@ public class CustomerApi extends AccountApi {
 
 	@SecuredBusinessEntityMethod(
 			resultFilter = AccountDtoListFilter.class, 
-			validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entity = Customer.class), 
+			validate = @SecureMethodParameter(parser = NullParser.class),
 			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomersDto filterCustomer(CustomerDto postData, User currentUser) throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
