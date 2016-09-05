@@ -6,7 +6,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/marketingManager/layout/template.xhtml">
+	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -14,10 +14,6 @@
 				listener="#{bundleTemplateBean.preRenderView}" />
 			<f:viewParam name="editMode" value="#{bundleTemplateBean.editMode}" />
 		</f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/marketingManager/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">

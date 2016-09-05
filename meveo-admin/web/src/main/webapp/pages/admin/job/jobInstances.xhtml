@@ -2,14 +2,11 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{jobInstanceListBean.preRenderView}" />
-    </f:metadata>
-
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{jobInstanceListBean.preRenderView}" />
+        </f:metadata>
     </ui:define>
-
 
     <ui:define name="body">
         <hftl:searchPanel label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">

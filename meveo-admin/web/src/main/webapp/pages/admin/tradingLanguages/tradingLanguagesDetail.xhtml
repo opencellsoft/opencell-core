@@ -7,10 +7,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<c:if test="#{tradingLanguageBean.edit}">
 			<hftl:entityPopup id="languagePopup"
