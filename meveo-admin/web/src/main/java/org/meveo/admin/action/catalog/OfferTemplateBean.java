@@ -208,12 +208,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValues();
 					CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
 
+					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+					serviceConfigurationDto.setCode(st.getCode());
+					serviceConfigurationDto.setDescription(st.getDescription());					
+					servicesConfigurations.add(serviceConfigurationDto);
 					if (stCfsDto != null) {
-						ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-						serviceConfigurationDto.setCode(st.getCode());
-						serviceConfigurationDto.setDescription(st.getDescription());
 						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
-						servicesConfigurations.add(serviceConfigurationDto);
 					}
 				}
 			}

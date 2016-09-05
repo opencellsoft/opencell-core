@@ -179,13 +179,13 @@
 						</p:selectBooleanCheckbox>
 						<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 
-						<p:outputPanel id="serviceCf_panel_#{index}">
+						<p:panel id="serviceCf_panel_#{index}">
 							<p:tabView
 								rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
 								<hftl:customFields backingBean="#{serviceTemplateBean}"
 									entity="#{ost.serviceTemplate}" messagesId=":formId:messages" />
 							</p:tabView>
-						</p:outputPanel>
+						</p:panel>
 
 						<c:set var="index" value="${index + 1}"></c:set>
 					</c:forEach>
