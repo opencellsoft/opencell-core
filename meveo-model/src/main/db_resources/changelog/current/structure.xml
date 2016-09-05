@@ -983,5 +983,11 @@
 			constraintName="uk_cat_bundle_prod_tpl" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="cat_bundle_product_template" />
 	</changeSet>
-	
+
+    <changeSet id="#1844_20160903" author="pbach">
+        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>
+        <addColumn tableName="ord_order">
+            <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

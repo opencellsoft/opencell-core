@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -24,6 +24,9 @@
             <!--             <hftl:searchField label="#{messages['order.userAccount']}" field="userAccount" id="userAccount" valueLabelField="code" popup="true" popupId="searchUAPopup" /> -->
             <hftl:searchField label="#{messages['order.orderDate']}" field="orderDate" />
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
+            <hftl:decorateFormField fieldId="showMyOrdersOnly" label="#{messages['orders.showMyOrdersOnly']}" rendered="#{identity.hasPermission('administration', 'administrationManagement')}">
+                <p:selectBooleanCheckbox id="showMyOrdersOnly" value="#{orderListBean.showMyOrdersOnly}" />
+            </hftl:decorateFormField>
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['orders.title']}" sortBy="orderDate" sortOrder="DESCENDING" backingBean="#{orderListBean}">
