@@ -49,7 +49,7 @@ select[disabled] { color : #000; }
 #header { border: 0px; padding: 0px; height: 85px; background: #e9f6f4; width: 100%; margin-top : -2px; display : none; }
 #headerleft { background-position: left bottom; background-repeat: no-repeat; border: 0px; padding: 0px; height: 85px; float: left; }
 #headerright { border: 0px; padding-top: 40px; width: 300px; float: right; text-align: right; margin-right : 80px; }
-#logo { border: 0px; width: 380px; height: 50px; float: left; margin-left: 20px; margin-top: 20px; background-image: url(../img/MeveoOpenCell.png); background-repeat: no-repeat;}
+#logo { border: 0px; width: 380px; height: 50px; float: left; margin-left: 20px; margin-top: 20px; background-image: url(../img/logo-blue.png); background-repeat: no-repeat;}
 .headerinfo { position: absolute; top: 15px; float: left; vertical-align: bottom; margin-left: 220px; font-style: italic; color: #999; height: 50px; vertical-align: bottom; }
 
 /**************************************************************************
@@ -105,11 +105,11 @@ select[disabled] { color : #000; }
 /* 2 ADMIN BAR */
 #admin-bar
 {
-  height: 125px;
-
+  background: #fff;
   width: 100%;
+  /*height: 125px;
   margin-top : -15px;
-  background-color: rgb(231, 229, 226);
+  background-color: rgb(231, 229, 226);*
 }
 #admin-bar ul
 {
