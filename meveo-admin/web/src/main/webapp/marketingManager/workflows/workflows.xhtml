@@ -1,16 +1,9 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:pe="http://primefaces.org/ui/extensions"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView"
-                     listener="#{wfTransitionBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{wfTransitionBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
@@ -18,7 +11,7 @@
         <p:panel>
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true"/>
+                    <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
                 </p:breadCrumb>
             </h:form>
         </p:panel>
@@ -27,31 +20,23 @@
                 <p:panel>
                     <div class="btn-wrapper">
                         <i class="fa fa-plus text-blue"></i>
-                        <p:link styleClass="no-text-decoration"
-                                outcome="mm_workflowDetail"
-                                value=" #{messages['mmTransition.addNew']}">
-                            <f:param name="cid"
-                                     value="#{javax.enterprise.context.conversation.id}" />
+                        <p:link styleClass="no-text-decoration" outcome="mm_workflowDetail" value=" #{messages['mmTransition.addNew']}">
+                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                             <f:param name="edit" value="true" />
                         </p:link>
-                    </div> <!-- / btn-wrapper -->
+                    </div>
+                    <!-- / btn-wrapper -->
                 </p:panel>
             </p:panel>
         </p:panel>
         <p:panel id="transitions" styleClass="clearLeft">
-            <p:messages id="messages"/>
-            <p:dataGrid id="transitionList"
-                        value="#{wfTransitionBean.operationList}" var="transition"
-                        paginator="true" rows="10" columns="1" layout="grid" paginatorPosition="top"
-                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                        lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
-                        rowsPerPageTemplate="10,15,20,50" rowKey="#{transition.id}">
-                <p:panel styleClass="clearLeft" >
-                    <hftl:decorateFormField fieldId="name" displayOneLine="true"
-                                            label="#{messages['mmTransition.name']}">
-                        <h:outputText id="name"
-                                      value="#{transition.description}"
-                                      disabled="true" styleClass="field-value" />
+            <p:messages id="messages" />
+            <p:dataGrid id="transitionList" value="#{wfTransitionBean.operationList}" var="transition" paginator="true" rows="10" columns="1" layout="grid" paginatorPosition="top"
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
+                styleClass="dataGrid custom-grid ui-datagrid-blank" rowsPerPageTemplate="10,15,20,50" rowKey="#{transition.id}">
+                <p:panel styleClass="clearLeft">
+                    <hftl:decorateFormField fieldId="name" displayOneLine="true" label="#{messages['mmTransition.name']}">
+                        <h:outputText id="name" value="#{transition.description}" disabled="true" styleClass="field-value" />
                     </hftl:decorateFormField>
                     <p:separator></p:separator>
                 </p:panel>
@@ -63,13 +48,14 @@
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />
                             </p:button>
-                            <p:commandButton id="deleteOperationBtn" icon="ui-icon-trash" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
+                            <p:commandButton id="deleteOperationBtn" icon="ui-icon-trash" styleClass="no-text-decoration text-blue"
+                                action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['mmTransition.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
-                            <p:commandButton id="moveUpBtn" icon="ui-icon-arrowthick-1-n" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.moveUpOperation(transition)}"
-                                             update="transitions" ajax="true"/>
-                            <p:commandButton id="moveDownBtn" icon="ui-icon-arrowthick-1-s" styleClass="no-text-decoration text-blue" action="#{wfTransitionBean.moveDownOperation(transition)}"
-                                             update="transitions" ajax="true" />
+                            <p:commandButton id="moveUpBtn" icon="ui-icon-arrowthick-1-n" styleClass="no-text-decoration text-blue"
+                                action="#{wfTransitionBean.moveUpOperation(transition)}" update="transitions" ajax="true" />
+                            <p:commandButton id="moveDownBtn" icon="ui-icon-arrowthick-1-s" styleClass="no-text-decoration text-blue"
+                                action="#{wfTransitionBean.moveDownOperation(transition)}" update="transitions" ajax="true" />
                             <p:panel styleClass="clearLeft">
                                 <i class="fa fa-arrow-circle-right text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
                             </p:panel>
@@ -77,7 +63,7 @@
                         <h:panelGroup layout="block" styleClass="col2">
                             <p:dataTable var="rule" value="#{transition.wfTransitionRules}" rowIndexVar="rowIndex">
                                 <p:column headerText="#{messages['mmTransition.selector']}">
-                                    <h:outputText value="#{messages['mmTransition.and']}" rendered="#{rowIndex > 0}"/>
+                                    <h:outputText value="#{messages['mmTransition.and']}" rendered="#{rowIndex > 0}" />
                                 </p:column>
 
                                 <p:column headerText="#{messages['mmTransition.criteria']}">
@@ -97,11 +83,10 @@
                             <h:outputText value="#{messages['mmTransition.assignedTeam']}"></h:outputText>
                         </p:panel>
                         <p:panel>
-                            <ui:repeat value="#{transition.wfActions.toArray()}"
-                                       var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value"/>
+                            <ui:repeat value="#{transition.wfActions.toArray()}" var="action" varStatus="status">
+                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value" />
                             </ui:repeat>
-                         </p:panel>
+                        </p:panel>
                     </p:panelGrid>
                     <p:separator></p:separator>
                 </p:panel>
@@ -125,9 +110,8 @@
                             </p:button>
                         </p:panel>
                         <p:panel>
-                            <ui:repeat value="#{wfTransitionBean.catchAll.wfActions.toArray()}"
-                                       var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value"/>
+                            <ui:repeat value="#{wfTransitionBean.catchAll.wfActions.toArray()}" var="action" varStatus="status">
+                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value" />
                             </ui:repeat>
                         </p:panel>
                     </p:panelGrid>
