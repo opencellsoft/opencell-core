@@ -604,26 +604,26 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			
 			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {				
 				 serviceTemplate =serviceInstance.getServiceTemplate();
-				if (!serviceIds.contains(serviceTemplate.getId())) {
-					serviceTag = doc.createElement("service");
-					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
-					serviceTag.setAttribute("offerCode",
-							offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-					serviceTag.setAttribute("description",
-							serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
+				 if (!serviceIds.contains(serviceTemplate.getId())) {
+						serviceTag = doc.createElement("service");
+						serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
+						serviceTag.setAttribute("offerCode",
+								offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+						serviceTag.setAttribute("description",
+								serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
 
-					calendarTag = doc.createElement("calendar");
-					Text calendarText = null;
-					if (serviceTemplate.getInvoicingCalendar() != null) {
-						calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
-					} else {
-						calendarText = doc.createTextNode("");
+						calendarTag = doc.createElement("calendar");
+						Text calendarText = null;
+						if (serviceTemplate.getInvoicingCalendar() != null) {
+							calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+						} else {
+							calendarText = doc.createTextNode("");
+						}
+						calendarTag.appendChild(calendarText);
+						addCustomFields(serviceTemplate, invoice, doc, serviceTag);
+						servicesTag.appendChild(serviceTag);
+						serviceIds.add(serviceTemplate.getId());
 					}
-					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceTemplate, invoice, doc, servicesTag);
-					servicesTag.appendChild(serviceTag);
-					serviceIds.add(serviceTemplate.getId());
-				}
 			}
 		}
 	}
