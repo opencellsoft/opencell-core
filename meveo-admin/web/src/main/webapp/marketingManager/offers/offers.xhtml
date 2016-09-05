@@ -53,14 +53,14 @@
 								<ul class="ListNoStyle">
 									<li class="Padding5"><i
 										class="fa fa-check-square-o text-blue"></i>
-										#{offerTemplateListBean.countActive()}
+										#{offerTemplateListBean.activeCount}
 										#{messages['page.catalog.offersAreActive']}</li>
 									<li class="Padding5"><i class="fa fa-close text-blue"></i>
-										#{offerTemplateListBean.countDisabled()}
+										#{offerTemplateListBean.inactiveCount}
 										#{messages['page.catalog.offersAreDeactivated']}</li>
 									<li class="Padding5"><i
 										class="fa fa-exclamation-circle text-blue"></i>
-										#{offerTemplateListBean.countExpiring()}
+										#{offerTemplateListBean.almostExpiredCount}
 										#{messages['page.catalog.offersWillExpireSoon']}</li>
 								</ul>
 							</p:panel>

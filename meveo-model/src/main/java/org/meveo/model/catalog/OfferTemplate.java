@@ -47,9 +47,9 @@ import org.meveo.model.ObservableEntity;
 @DiscriminatorValue("OFFER")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
 // "CAT_OFFER_TEMPLATE_SEQ")
-@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 

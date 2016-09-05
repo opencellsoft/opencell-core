@@ -1,11 +1,12 @@
 package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -16,7 +17,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.shared.DateUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -26,28 +27,34 @@ public class ProductTemplateService extends BusinessService<ProductTemplate> {
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
 
-	public long productTemplateActiveCount(boolean status) {
+	public long countProductTemplateActive(boolean status, Provider provider) {
 		long result = 0;
 
 		Query query;
 
 		if (status) {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countActive");
+			query = getEntityManager().createNamedQuery("ProductTemplate.countActive").setParameter("provider", provider);
 		} else {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled");
+			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled").setParameter("provider", provider);
 		}
 
 		result = (long) query.getSingleResult();
 		return result;
 	}
 
-	public long productTemplateAlmostExpiredCount() {
-		long result = 0;
-		String sqlQuery = "SELECT COUNT(*) FROM " + ProductTemplate.class.getName() + " p WHERE DATE_PART('day',p.validTo - '"
-				+ DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-dd hh:mm:ss") + "') <= 7";
-		Query query = getEntityManager().createQuery(sqlQuery);
-		result = (long) query.getSingleResult();
-		return result;
+	public long countProductTemplateExpiring(Provider provider) {	
+        Long result = 0L;
+        Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring").setParameter("provider", provider);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -1);
+        query.setParameter("nowMinus1Day", c.getTime());
+
+        try {
+            result = (long) query.getSingleResult();
+        } catch (NoResultException e) {
+
+        }
+        return result;		
 	}
 
 	public synchronized void duplicate(ProductTemplate entity, User currentUser) throws BusinessException {

@@ -30,17 +30,17 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	private List<ProductTemplate> ptToExport = new ArrayList<ProductTemplate>();
 
-	private long activeProductCount = 0;
+	private long activeCount = 0;
 
-	private long inactiveProductCount = 0;
+	private long inactiveCount = 0;
 
 	private long almostExpiredCount = 0;
 
 	@Override
 	public void preRenderView() {
-		activeProductCount = productTemplateService.productTemplateActiveCount(true);
-		inactiveProductCount = productTemplateService.productTemplateActiveCount(false);
-		almostExpiredCount = productTemplateService.productTemplateAlmostExpiredCount();
+		activeCount = productTemplateService.countProductTemplateActive(true, getCurrentProvider());
+		inactiveCount = productTemplateService.countProductTemplateActive(false, getCurrentProvider());
+		almostExpiredCount = productTemplateService.countProductTemplateExpiring(getCurrentProvider());
 		super.preRenderView();
 	}
 
@@ -118,29 +118,17 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 		this.bundledProducts = bundledProducts;
 	}
 
-	public long getActiveProductCount() {
-		return activeProductCount;
-	}
-
-	public void setActiveProductCount(long activeProductCount) {
-		this.activeProductCount = activeProductCount;
-	}
-
-	public long getInactiveProductCount() {
-		return inactiveProductCount;
-	}
-
-	public void setInactiveProductCount(long inactiveProductCount) {
-		this.inactiveProductCount = inactiveProductCount;
-	}
-
-	public long getAlmostExpiredCount() {
-		return almostExpiredCount;
-	}
-
-	public void setAlmostExpiredCount(long almostExpiredCount) {
-		this.almostExpiredCount = almostExpiredCount;
-	}
+    public long getActiveCount() {
+        return activeCount;
+    }
+    
+    public long getInactiveCount() {
+        return inactiveCount;
+    }
+    
+    public long getAlmostExpiredCount() {
+        return almostExpiredCount;
+    }
 
 	public List<ProductTemplate> getPtToExport() {
 		return ptToExport;
