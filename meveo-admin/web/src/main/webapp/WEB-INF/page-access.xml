@@ -280,10 +280,15 @@
 		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
     
-    <page view-id=".+\/index\/.+">
-        <constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+    <!--  PAGE RULES FOR FULL TEXT SEARCH AND INDEXING PAGES -->
+    <page view-id=".+\/index\/index">
+        <constraint>currentUser.hasPermission('superAdmin','superAdminManagement')</constraint>
     </page>
 	
+    <page view-id=".+\/index\/fullTextSearch">
+        <constraint>true</constraint>
+    </page>
+    
     <page view-id=".+\/order\/.+" >
         <constraint>currentUser.hasPermission('order','orderManagement')</constraint>
         <constraint type="READ">currentUser.hasPermission('order','orderVisualization')</constraint>

@@ -8,17 +8,13 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
 	xmlns:o="http://omnifaces.org/ui"
-	template="/marketingManager/layout/template.xhtml">
+	template="/layout/template.xhtml">
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{productTemplateListBean.preRenderView}" />
 			<f:viewParam name="tab" value="#{productTemplateListBean.activeTab}" />
 		</f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/marketingManager/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">

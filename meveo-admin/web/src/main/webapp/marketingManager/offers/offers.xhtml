@@ -8,7 +8,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
 	xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-	template="/marketingManager/layout/template.xhtml">
+	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -16,10 +16,6 @@
 				listener="#{offerTemplateListBean.preRenderView}" />
 			<f:viewParam name="tab" value="#{offerTemplateListBean.activeTab}" />
 		</f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/marketingManager/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
