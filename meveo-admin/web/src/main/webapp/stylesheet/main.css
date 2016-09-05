@@ -109,7 +109,7 @@ select[disabled] { color : #000; }
   width: 100%;
   /*height: 125px;
   margin-top : -15px;
-  background-color: rgb(231, 229, 226);*
+  background-color: rgb(231, 229, 226);*/
 }
 #admin-bar ul
 {
@@ -689,6 +689,8 @@ form.formNoBottomBorder {
 .Container10{ width:10%; float:left; padding:12px; box-sizing:border-box; }
 .Container5{ width:5%; float:left; padding:12px; box-sizing:border-box; }
 
+.dataGrid .status-wrapper .text-bold { text-align: left; }
+
 * MEDIA QUERIES FOR CORE LAYOUT **************************************************************************************************************** */
 /* Large desktop */
 
@@ -703,8 +705,10 @@ form.formNoBottomBorder {
         display: inherit;
         opacity: 1;
     }
+    #mq { color: red; }
 }
 @media (min-width: 960px) and (max-width: 1200px) {
+	#mq { color: green; }
     /* responsive support */
     
     .Responsive {
@@ -738,6 +742,7 @@ form.formNoBottomBorder {
 /* Portrait tablet to landscape and desktop */
 
 @media (min-width: 640px) and (max-width: 960px) {
+	#mq { color: orange; }
     /*visibilities according to the platform*/
     
     .ShowOnMobile {
@@ -939,6 +944,7 @@ form.formNoBottomBorder {
 /* Landscape phone to portrait tablet */
 
 @media (min-width: 480px) and (max-width: 640px) {
+	#mq { color: yellow; }
     /*visibilities according to the platform*/
     
     .ShowOnMobile {
@@ -1146,6 +1152,7 @@ form.formNoBottomBorder {
 /* Portrait phones and down */
 
 @media (min-width: 320px) and (max-width: 480px) {
+	#mq { color: pink; }
     /*visibilities according to the platform*/
     
     .ShowOnMobile {
