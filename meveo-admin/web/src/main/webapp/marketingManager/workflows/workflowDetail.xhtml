@@ -9,17 +9,17 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
-                    <p:menuitem value="#{messages['mmTransition.addNew']}" disabled="true" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
-        <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" label="#{messages['mmTransition.operation']}" backingBean="#{wfTransitionBean}"
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                <p:menuitem value="#{messages['mmTransition.new']}" disabled="true" rendered="#{wfTransitionBean.entity.transient}" />
+                <p:menuitem value="#{messages['mmTransition.editView']}" disabled="true" rendered="#{!wfTransitionBean.entity.transient}"/>
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}" ajaxSubmit="true">
-            <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true" field="description" size="100" maxlength="100" required="true"
+            <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true" field="description" size="50" maxlength="100" required="true"
                 edit="#{wfTransitionBean.edit}" />
             <p:panel styleClass="clearLeft">
                 <p:separator />

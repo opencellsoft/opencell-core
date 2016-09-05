@@ -9,97 +9,94 @@
     </ui:define>
 
     <ui:define name="body">
-        <div>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-                    <p:menuitem value="#{messages['menu.catalog.listOfferCategories']}" />
-                </p:breadCrumb>
-            </h:form>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.catalog.offerCategories']}" outcome="mm_offerTemplateCategories"/>
+            </p:breadCrumb>
+        </h:form>
 
+        <p:panel>
+            <h:form id="searchForm">
+                <div style="float: right;" class="search-wrapper">
+                    <p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}" update=":mainForm:offerCategoriesTable" />
+                    <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['fullText']}" placeholder="#{messages['action.search']}" />
+                    <p:defaultCommand target="searchButton" style="display: none;" />
+                </div>
+            </h:form>
+        </p:panel>
+        <h:form id="mainForm">
             <p:panel>
-                <h:form id="searchForm">
-                    <div style="float: right;" class="search-wrapper">
-                        <p:commandButton id="searchButton" icon="fa fa-search" ajax="true" action="#{mmOfferTemplateCategoryListBean.search}"
-                            update=":mainForm:offerCategoriesTable" />
-                        <p:inputText id="searchField" value="#{mmOfferTemplateCategoryListBean.filters['fullText']}" placeholder="#{messages['action.search']}" />
-                        <p:defaultCommand target="searchButton" style="display: none;" />
-                    </div>
-                </h:form>
+                <p:button id="buttonNew" icon="fa fa-plus" value=" #{messages['commons.new']}" outcome="#{mmOfferTemplateCategoryListBean.newViewName}">
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    <f:param name="edit" value="true" />
+                    <f:param name="backView" value="mm_offerTemplateCategories" />
+                </p:button>
             </p:panel>
-            <h:form id="mainForm">
-                <p:panel>
-                    <p:button id="buttonNew" icon="fa fa-plus" value=" #{messages['commons.new']}" outcome="#{mmOfferTemplateCategoryListBean.newViewName}">
-                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                        <f:param name="edit" value="true" />
-                        <f:param name="backView" value="mm_offerTemplateCategories" />
-                    </p:button>
-                </p:panel>
-                <p:panel id="offerCategoriesTable">
-                    <c:set var="hasData" value="#{mmOfferTemplateCategoryListBean.lazyDataModel and mmOfferTemplateCategoryListBean.lazyDataModel.getRowCount>0}" />
-                    <p:messages id="messages" />
-                    <hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false" prePaginatorControls="{Controls}" paginatorPosition="top"
-                        exportXlsxButton="false" exportToXml="false" sortBy="code">
-                        <f:facet name="{Controls}" render="#{hasData}">
-                            <p:commandButton id="#{formId}buttonExportTop" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false">
-                                <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
-                            </p:commandButton>
-                            <p:commandButton id="#{formId}exportToXmlTop" value="#{messages['export.exportToXml']}" update=":#{p:component('exportParametersDialog')}"
-                                oncomplete="PF('exportParametersDialog').show()">
-                                <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
-                                <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{mmOfferTemplateCategoryListBean.lazyDataModel}" />
-                                <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{mmOfferTemplateCategoryListBean.selectedEntities}" />
-                            </p:commandButton>
-                        </f:facet>
+            <p:panel id="offerCategoriesTable">
+                <c:set var="hasData" value="#{mmOfferTemplateCategoryListBean.lazyDataModel and mmOfferTemplateCategoryListBean.lazyDataModel.getRowCount>0}" />
+                <p:messages id="messages" />
+                <hftl:dataList backingBean="#{mmOfferTemplateCategoryListBean}" editable="true" checkMany="false" prePaginatorControls="{Controls}" paginatorPosition="top"
+                    exportXlsxButton="false" exportToXml="false" sortBy="code">
+                    <f:facet name="{Controls}" render="#{hasData}">
+                        <p:commandButton id="#{formId}buttonExportTop" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false">
+                            <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
+                        </p:commandButton>
+                        <p:commandButton id="#{formId}exportToXmlTop" value="#{messages['export.exportToXml']}" update=":#{p:component('exportParametersDialog')}"
+                            oncomplete="PF('exportParametersDialog').show()">
+                            <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
+                            <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{mmOfferTemplateCategoryListBean.lazyDataModel}" />
+                            <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{mmOfferTemplateCategoryListBean.selectedEntities}" />
+                        </p:commandButton>
+                    </f:facet>
 
-                        <p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true" width="40%">
-                            <p:cellEditor>
-                                <f:facet name="output">
-                                    <h:outputText value="#{entity.offerTemplateCategory.name}" />
-                                </f:facet>
-                                <f:facet name="input">
-                                    <p:selectOneMenu id="parentCategory" value="#{entity.offerTemplateCategory}" required="false" converter="offerTemplateCategoryConverter"
-                                        var="parent">
-                                        <f:selectItem itemLabel="" />
-                                        <f:selectItems value="#{mmOfferTemplateCategoryListBean.parentHierarchy}" var="parentCategory" itemLabel="#{parentCategory.code}"
-                                            itemValue="#{parentCategory}" />
-                                        <p:column>
-                                            <h:outputText value="#{parent.codeInLevel}" />
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{parent.name}" />
-                                        </p:column>
-                                    </p:selectOneMenu>
-                                </f:facet>
-                            </p:cellEditor>
-                        </p:column>
-                        <p:column id="name" headerText="#{messages['offer.category.description']}" sortBy="#{entity.name}" exportable="true" width="40%">
-                            <p:cellEditor>
-                                <f:facet name="output">
-                                    <h:outputText value="#{entity.name}" />
-                                </f:facet>
-                                <f:facet name="input">
-                                    <p:inputText value="#{entity.name}" style="width:96%" />
-                                </f:facet>
-                            </p:cellEditor>
-                        </p:column>
-                        <p:column>
-                            <p:button id="editlink#{entity.id}" outcome="#{mmOfferTemplateCategoryListBean.getEditViewName()}" icon="fa fa-edit">
-                                <f:param name="objectId" value="#{entity.id}" />
-                                <f:param name="edit" value="true" />
-                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                <f:param name="backView" value="mm_offerTemplateCategories" />
-                            </p:button>
-                            <p:commandButton id="deleteButton#{entity.id}" icon="fa fa-trash" oncomplete="doDelete()">
-                                <f:setPropertyActionListener target="#{mmOfferTemplateCategoryListBean.entity}" value="#{entity}" />
-                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-                            </p:commandButton>
-                        </p:column>
-                    </hftl:dataList>
-                </p:panel>
-                <hftl:exportToXmlDialogs messagesId=":#{p:component('search_messages')}" />
-                <p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}" update="@form" />
-            </h:form>
-        </div>
+                    <p:column id="parent" headerText="#{messages['offer.parent.category']}" sortBy="#{entity.offerTemplateCategory.name}" exportable="true" width="40%">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.offerTemplateCategory.name}" />
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:selectOneMenu id="parentCategory" value="#{entity.offerTemplateCategory}" required="false" converter="offerTemplateCategoryConverter"
+                                    var="parent">
+                                    <f:selectItem itemLabel="" />
+                                    <f:selectItems value="#{mmOfferTemplateCategoryListBean.parentHierarchy}" var="parentCategory" itemLabel="#{parentCategory.code}"
+                                        itemValue="#{parentCategory}" />
+                                    <p:column>
+                                        <h:outputText value="#{parent.codeInLevel}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{parent.name}" />
+                                    </p:column>
+                                </p:selectOneMenu>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column id="name" headerText="#{messages['offer.category.description']}" sortBy="#{entity.name}" exportable="true" width="40%">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.name}" />
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{entity.name}" style="width:96%" />
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column>
+                        <p:button id="editlink#{entity.id}" outcome="#{mmOfferTemplateCategoryListBean.getEditViewName()}" icon="fa fa-edit">
+                            <f:param name="objectId" value="#{entity.id}" />
+                            <f:param name="edit" value="true" />
+                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                            <f:param name="backView" value="mm_offerTemplateCategories" />
+                        </p:button>
+                        <p:commandButton id="deleteButton#{entity.id}" icon="fa fa-trash" oncomplete="doDelete()">
+                            <f:setPropertyActionListener target="#{mmOfferTemplateCategoryListBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </hftl:dataList>
+            </p:panel>
+            <hftl:exportToXmlDialogs messagesId=":#{p:component('search_messages')}" />
+            <p:remoteCommand id="remoteDeleteButton" name="doDelete" action="#{mmOfferTemplateCategoryListBean.delete}" update="@form" />
+        </h:form>
     </ui:define>
 </ui:composition>

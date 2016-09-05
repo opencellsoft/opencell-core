@@ -8,13 +8,13 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
+            </p:breadCrumb>
+        </h:form>
+
         <p:panel styleClass="clearLeft">
             <p:panel style="width: 16%">
                 <p:panel>

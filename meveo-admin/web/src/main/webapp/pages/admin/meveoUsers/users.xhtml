@@ -13,9 +13,14 @@
 	</ui:define>
 
 	<ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.users']}" outcome="users" />
+            </p:breadCrumb>
+        </h:form>    
 
-		<hftl:searchPanel backingBean="#{userListBean}"
-			label="#{messages['user.search']}">
+		<hftl:searchPanel backingBean="#{userListBean}">
 			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
 		</hftl:searchPanel>
 

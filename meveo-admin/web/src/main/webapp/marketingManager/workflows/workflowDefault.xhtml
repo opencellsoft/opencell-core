@@ -10,17 +10,16 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
-                    <p:menuitem value="#{messages['mmTransition.default']}" disabled="true" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
-        <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" label="#{messages['mmTransition.default']}" backingBean="#{wfTransitionBean}"
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                <p:menuitem value="#{messages['mmTransition.defaultTeam']}" disabled="true" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}" ajaxSubmit="true" showDeleteButton="false">
-            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="20">
+            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="50">
                 <h:panelGrid columns="2">
                     <p:panel>
                         <p:outputLabel value="#{messages['mmTransition.assignedTeam']} *" style="padding-right:5px" />
