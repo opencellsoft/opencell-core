@@ -598,6 +598,10 @@ vertical-align:top !important;
     text-align: left;
 }
 
+.ui-treetable .ui-column-resizer{
+top: 0px !important;
+}
+
 .invoice-adjustment-table span.ui-column-title {
 	display: block !important;
 }
