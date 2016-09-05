@@ -5,7 +5,9 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:o="http://omnifaces.org/ui"
 	template="/marketingManager/layout/template.xhtml">
 	<ui:define name="metadata">
 		<f:metadata>
@@ -29,7 +31,7 @@
 			styleClass="no-border-radius">
 			<p:panel styleClass="Wid50">
 				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-					<p:panel style="width: 240px; margin-left: -40px;">
+					<p:panel>
 						<h:form>
 							<ul class="list-unstyled">
 								<li class="Padding5">
@@ -42,7 +44,7 @@
 												value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="edit" value="true" />
 											<f:param name="editMode" value="edit" />
-                                            <f:param name="backView" value="mm_productTemplates"/>
+											<f:param name="backView" value="mm_productTemplates" />
 										</p:link>
 									</div> <!-- / btn-wrapper -->
 								</li>
@@ -50,13 +52,13 @@
 									<div class="btn-wrapper">
 										<i class="fa fa-plus text-blue"></i>
 										<p:link styleClass="no-text-decoration"
-												outcome="mm_bundleTemplateDetail"
-												value=" #{messages['productTemplate.createBundle']}">
+											outcome="mm_bundleTemplateDetail"
+											value=" #{messages['productTemplate.createBundle']}">
 											<f:param name="cid"
-													 value="#{javax.enterprise.context.conversation.id}" />
+												value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="edit" value="true" />
 											<f:param name="editMode" value="edit" />
-											<f:param name="backView" value="mm_productTemplates"/>
+											<f:param name="backView" value="mm_productTemplates" />
 										</p:link>
 									</div> <!-- / btn-wrapper -->
 								</li>
@@ -135,7 +137,7 @@
 							<p:panel styleClass="Wid50 VAlignTop">
 								<p:panelGrid columns="4"
 									styleClass="panelGrid ui-panelgrid-blank"
-									columnClasses="Wid5 VAlignTop, Wid54 VAlignTop, Wid40 VAlignTop">
+									columnClasses="Wid5 VAlignTop Responsive100, Wid54 Responsive100 VAlignTop, Wid40 Responsive100 VAlignTop">
 									<p:panel>
 										<p:graphicImage id="productImage" cache="false"
 											rendered="#{prod ne null}"
@@ -144,8 +146,11 @@
 										</p:graphicImage>
 									</p:panel>
 									<p:panel>
-										<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-											<h:outputText value="#{prod.nameOrCode}"></h:outputText>
+										<p:panelGrid columns="1"
+											styleClass="ui-panelgrid-blank Responsive100">
+											<h:outputText id="nameOrCode"
+												value="#{of:abbreviate(prod.nameOrCode, 20)}"></h:outputText>
+											<p:tooltip for="nameOrCode" value="#{prod.nameOrCode}"></p:tooltip>
 											<ui:repeat value="#{prod.offerTemplateCategories.toArray()}"
 												var="c" varStatus="status">
 												<c:set var="valueLabel" value="#{c}" />
@@ -154,42 +159,41 @@
 												<h:outputText value="#{valueLabel}" />
 												<h:outputText value=", " rendered="#{not status.last}" />
 											</ui:repeat>
-											<h:outputText
-												value="#{prod.businessProductModel.code}"
+											<h:outputText value="#{prod.businessProductModel.code}"
 												rendered="#{prod.businessProductModel != null}"></h:outputText>
 											<p:separator></p:separator>
 											<p:panelGrid columns="3">
-												<p:panelGrid columns="1" rendered="#{prod.validFrom ne null and prod.validFrom ne ''}">
+												<p:panelGrid columns="1"
+													rendered="#{prod.validFrom ne null and prod.validFrom ne ''}">
 													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
 													<h:outputText value="#{prod.validFrom}">
-												<f:convertDateTime type="date"
-													pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-											</h:outputText>
+														<f:convertDateTime type="date"
+															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+													</h:outputText>
 												</p:panelGrid>
 												<p:panel></p:panel>
-												<p:panelGrid columns="1" rendered="#{prod.validTo ne null and prod.validTo ne ''}">
+												<p:panelGrid columns="1"
+													rendered="#{prod.validTo ne null and prod.validTo ne ''}">
 													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
 													<h:outputText value="#{prod.validTo}">
-												<f:convertDateTime type="date"
-													pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-											</h:outputText>
+														<f:convertDateTime type="date"
+															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+													</h:outputText>
 												</p:panelGrid>
 											</p:panelGrid>
 										</p:panelGrid>
 									</p:panel>
-									<p:panel>
+									<p:panel styleClass="status-wrapper FRight Wid55 Responsive100">
 										<p:panel styleClass="TexAlRight">
-											<div class="FRight">
-												<p:inputSwitch value="#{prod.active}" disabled="true" styleClass="#{prod.active ? 'GreenBg' : ''}"
-													onLabel="#{messages['accountStatusEnum.active']}"
-													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-											</div>
-											<div class="FRight"
-												style="padding-top: 5px; margin-right: 10px;">#{messages['commons.status']}</div>
+											<p:inputSwitch value="#{prod.active}" disabled="true"
+												styleClass="#{prod.active ? 'GreenBg' : ''}"
+												onLabel="#{messages['accountStatusEnum.active']}"
+												offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 										</p:panel>
 										<p:panel styleClass="text-center">
 											<ul class="list-inline">
-												<li><p:link id="viewLink" outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}"
+												<li><p:link id="viewLink"
+														outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}"
 														styleClass="fa fa-search-plus fa-2x no-text-decoration text-blue">
 														<f:param name="cid"
 															value="#{javax.enterprise.context.conversation.id}" />
@@ -197,8 +201,9 @@
 														<f:param name="edit" value="false"></f:param>
 														<f:param name="backView" value="mm_productTemplates"></f:param>
 														<f:param name="tab" value="0"></f:param>
-													</p:link>
-                                                    <p:tooltip for="viewLink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /></li>
+													</p:link> <p:tooltip for="viewLink"
+														value="#{messages['commons.view']}" showEffect="slide"
+														hideEffect="slide" /></li>
 												<li><p:link id="editLink"
 														styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
 														outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}">
@@ -208,8 +213,9 @@
 														<f:param name="edit" value="true" />
 														<f:param name="editMode" value="edit" />
 														<f:param name="backView" value="mm_productTemplates"></f:param>
-													</p:link>
-                                                    <p:tooltip for="editLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" /> </li>
+													</p:link> <p:tooltip for="editLink"
+														value="#{messages['commons.edit']}" showEffect="slide"
+														hideEffect="slide" /></li>
 												<li><p:commandLink id="duplicateLinkProd"
 														rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
 														styleClass="fa fa-copy fa-2x text-blue"
@@ -221,9 +227,11 @@
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
-													</p:commandLink> 
-                                                    <p:tooltip for="duplicateLinkProd" value="#{messages['commons.duplicate']}" rendered="#{not productTemplateBean.isBundleTemplate(prod)}" showEffect="slide" hideEffect="slide" />
-                                                    <p:commandLink id="duplicateLinkBndl"
+													</p:commandLink> <p:tooltip for="duplicateLinkProd"
+														value="#{messages['commons.duplicate']}"
+														rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
+														showEffect="slide" hideEffect="slide" /> <p:commandLink
+														id="duplicateLinkBndl"
 														rendered="#{productTemplateBean.isBundleTemplate(prod)}"
 														styleClass="fa fa-copy fa-2x text-blue"
 														action="#{bundleTemplateBean.duplicate()}"
@@ -234,15 +242,17 @@
 														<f:param name="tab" value="0"></f:param>
 														<p:confirm header="#{messages['commons.duplicate']}"
 															message="#{messages['commons.confirmDuplicate']}" />
-													</p:commandLink>
-                                                    <p:tooltip for="duplicateLinkBndl" value="#{messages['commons.duplicate']}" rendered="#{not productTemplateBean.isBundleTemplate(prod)}" showEffect="slide" hideEffect="slide" />
-                                                    </li>
+													</p:commandLink> <p:tooltip for="duplicateLinkBndl"
+														value="#{messages['commons.duplicate']}"
+														rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
+														showEffect="slide" hideEffect="slide" /></li>
 												<li><p:commandLink id="addToExportLink"
 														styleClass="fa fa-share-square-o fa-2x text-blue"
 														action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
 														update=":ptToExport :exportablePTs">
-													</p:commandLink>
-                                                    <p:tooltip for="addToExportLink" value="#{messages['commons.addToExport']}" showEffect="slide" hideEffect="slide" /></li>
+													</p:commandLink> <p:tooltip for="addToExportLink"
+														value="#{messages['commons.addToExport']}"
+														showEffect="slide" hideEffect="slide" /></li>
 											</ul>
 										</p:panel>
 									</p:panel>
@@ -257,7 +267,8 @@
 					<hftl:dataList id="dataList" backingBean="#{offerTemplateListBean}"
 						dataModel="#{productTemplateListBean.getLazyDataModel()}"
 						checkMany="false" exportToCsv="false" exportToXml="false"
-						exportXlsxButton="false" sortOrder="DESCENDING" styleClass="DataListCenter">
+						exportXlsxButton="false" sortOrder="DESCENDING"
+						styleClass="DataListCenter">
 						<hftl:column label="#{messages['commons.nameOrCode']}"
 							field="nameOrCode">
 						</hftl:column>

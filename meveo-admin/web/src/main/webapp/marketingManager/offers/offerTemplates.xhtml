@@ -52,61 +52,63 @@
 					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 					lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
 					rowsPerPageTemplate="10,15,20,50" rowKey="#{entity.id}">
-					<p:panel styleClass="Wid40 VAlignTop">
-						<p:panelGrid columns="2" columnClasses="Wid30, Wid70"
+					<p:panel styleClass="Wid40 Responsive100 VAlignTop">
+						<p:panelGrid columns="2"
+							columnClasses="Wid30 Responsive100, Wid70 Responsive100"
 							styleClass="ui-panelgrid-blank">
 							<p:panel>
-								<p:graphicImage id="offerImage" cache="false" rendered="#{entity.offerTemplate ne null}"
+								<p:graphicImage id="offerImage" cache="false"
+									rendered="#{entity.offerTemplate ne null}"
 									value="#{offerTemplateImageStreamer.image}" height="100"
 									width="100">
 									<f:param name="id" value="#{entity.offerTemplate.id}"></f:param>
 								</p:graphicImage>
 							</p:panel>
-							<p:panel>
-								<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-									<h:outputText
-										value="#{messages['offerTemplate.bom']}: #{entity.descriptionOrCode}"></h:outputText>
-									<ui:repeat
-										value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
-										var="c" varStatus="status">
-										<c:set var="valueLabel" value="#{c}" />
-										<c:set var="valueLabel"
-											value="#{valueLabel['descriptionOrCode']}" />
-										<h:outputText value="#{valueLabel}" />
-										<h:outputText value=", " rendered="#{not status.last}" />
-									</ui:repeat>
-									<p:separator></p:separator>
-									<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
-									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
+							<p:panel styleClass="ui-panelgrid-blank">
+								<h:outputText id="descriptionOrCode"
+									value="#{messages['offerTemplate.bom']}: #{of:abbreviate(entity.descriptionOrCode, 20)}"></h:outputText>
+								<p:tooltip for="descriptionOrCode"
+									value="#{entity.descriptionOrCode}"></p:tooltip>
+								<ui:repeat
+									value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
+									var="c" varStatus="status">
+									<c:set var="valueLabel" value="#{c}" />
+									<c:set var="valueLabel"
+										value="#{valueLabel['descriptionOrCode']}" />
+									<h:outputText value="#{valueLabel}" />
+									<h:outputText value=", " rendered="#{not status.last}" />
+								</ui:repeat>
+								<p:separator></p:separator>
+								<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
+								<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
 
-									<p:panel>
-										<ul class="list-inline text-center">
-											<li><p:link
-													styleClass="fa fa-2x fa-edit no-text-decoration text-red"
-													outcome="mm_offerTemplateDetail">
-													<f:param name="cid"
-														value="#{javax.enterprise.context.conversation.id}" />
-													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
-													<f:param name="edit" value="true"></f:param>
-													<f:param name="backView" value="mm_offerTemplates"></f:param>
-													<f:param name="tab" value="0"></f:param>
-												</p:link></li>
-											<li><p:link outcome="mm_offerTemplateDetail"
-													styleClass="fa fa-2x fa-search-plus no-text-decoration text-red">
-													<f:param name="cid"
-														value="#{javax.enterprise.context.conversation.id}" />
-													<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
-													<f:param name="edit" value="false"></f:param>
-													<f:param name="backView" value="mm_offerTemplates"></f:param>
-													<f:param name="tab" value="0"></f:param>
-												</p:link></li>
-										</ul>
-									</p:panel>
-								</p:panelGrid>
+								<p:panel>
+									<ul class="list-inline text-center">
+										<li><p:link
+												styleClass="fa fa-2x fa-edit no-text-decoration text-red"
+												outcome="mm_offerTemplateDetail">
+												<f:param name="cid"
+													value="#{javax.enterprise.context.conversation.id}" />
+												<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+												<f:param name="edit" value="true"></f:param>
+												<f:param name="backView" value="mm_offerTemplates"></f:param>
+												<f:param name="tab" value="0"></f:param>
+											</p:link></li>
+										<li><p:link outcome="mm_offerTemplateDetail"
+												styleClass="fa fa-2x fa-search-plus no-text-decoration text-red">
+												<f:param name="cid"
+													value="#{javax.enterprise.context.conversation.id}" />
+												<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+												<f:param name="edit" value="false"></f:param>
+												<f:param name="backView" value="mm_offerTemplates"></f:param>
+												<f:param name="tab" value="0"></f:param>
+											</p:link></li>
+									</ul>
+								</p:panel>
 							</p:panel>
 						</p:panelGrid>
 					</p:panel>
-					<p:panel styleClass="Wid50 VAlignTop">
+					<p:panel styleClass="Wid50 Responsive100 VAlignTop">
 						<p:dataGrid value="#{entity.offerTemplate.offerServiceTemplates}"
 							var="ost" paginator="true" rows="20" columns="1"
 							paginatorPosition="bottom" paginatorAlwaysVisible="false"
@@ -114,7 +116,7 @@
 							lazy="true" styleClass="custom-grid ui-datagrid-blank"
 							style="border: none;" rowKey="#{ost.id}">
 							<p:panel>
-								<p:panel styleClass="Wid33 VAlignTop"
+								<p:panel styleClass="Wid33 Responsive100 VAlignTop"
 									header="#{messages['marketingManager.catalog.OneTimeFee']}">
 									<p:dataList styleClass="dataList" paginatorPosition="bottom"
 										paginatorAlwaysVisible="false"
@@ -124,7 +126,7 @@
 										#{charge.chargeTemplate.descriptionOrCode}
 									</p:dataList>
 								</p:panel>
-								<p:panel styleClass="Wid33 VAlignTop"
+								<p:panel styleClass="Wid33 Responsive100 VAlignTop"
 									header="#{messages['marketingManager.catalog.recurringFee']}">
 									<p:dataList styleClass="dataList" paginatorPosition="bottom"
 										paginatorAlwaysVisible="false"
@@ -134,7 +136,7 @@
 										#{charge.chargeTemplate.descriptionOrCode}
 									</p:dataList>
 								</p:panel>
-								<p:panel styleClass="Wid33 VAlignTop"
+								<p:panel styleClass="Wid33 Responsive100 VAlignTop"
 									header="#{messages['marketingManager.catalog.usageFee']}">
 									<p:dataList styleClass="dataList" paginatorPosition="bottom"
 										paginatorAlwaysVisible="false"
@@ -145,7 +147,7 @@
 							</p:panel>
 						</p:dataGrid>
 					</p:panel>
-					<p:panel styleClass="Wid10 text-center">
+					<p:panel styleClass="Wid10 Responsive100 text-center">
 						<div class="Container100">
 							<p:panel header="#{messages['action.startWithThisTemplate']}">
 								<p:link
