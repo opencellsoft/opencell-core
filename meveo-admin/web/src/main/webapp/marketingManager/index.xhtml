@@ -40,44 +40,42 @@
 				</p:panelGrid>
 				<p:panel
 					styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
-					<div class="box-title">Churn</div>
-					<div class="box-percentage">10%</div>
-					<div class="box-direction">
-						<i class="fa fa-arrow-right"></i>
-					</div>
-					<div class="box-last-update">Last Updated at 11:55 am</div>
+					<div class="box-title">#{chartBean.churn.description}</div>
+					<div class="box-percentage">#{chartBean.churn.value}</div>
+					<div class="box-direction">#{chartBean.churn.difference} %</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']}
+						at #{chartBean.churn.lastUpdateFormatted}</div>
 				</p:panel>
 
 				<p:panel
 					styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
-					<div class="box-title">New Orders</div>
-					<div class="box-percentage">24</div>
+					<div class="box-title">#{messages['marketingManager.catalog.newOrders']}</div>
+					<div class="box-percentage">#{chartBean.newOrderStats.value}</div>
 					<div class="box-direction">
-						<i class="fa fa-arrow-up"></i> 6 %
-					</div>
-					<div class="box-last-update">Last Updated at 11:55 am</div>
+						#{chartBean.newOrderStats.difference} %</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']}
+						at #{chartBean.newOrderStats.lastUpdateFormatted}</div>
 				</p:panel>
 			</p:panel>
 
 			<p:panel styleClass="clearfix">
 				<p:panel
 					styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
-					<div class="box-title">MRR</div>
-					<div class="box-percentage">20K</div>
-					<div class="box-direction">
-						<i class="fa fa-arrow-up"></i> 6 %
-					</div>
-					<div class="box-last-update">Last Updated at 11:55 am</div>
+					<div class="box-title">#{chartBean.MRR.description}</div>
+					<div class="box-percentage">#{chartBean.MRR.value}</div>
+					<div class="box-direction">#{chartBean.MRR.difference} %</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']}
+						at #{chartBean.MRR.lastUpdateFormatted}</div>
 				</p:panel>
 
 				<p:panel
 					styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
-					<div class="box-title">Pending orders</div>
-					<div class="box-percentage">7%</div>
+					<div class="box-title">#{messages['marketingManager.catalog.pendingOrders']}</div>
+					<div class="box-percentage">#{chartBean.pendingOrderStats.value}</div>
 					<div class="box-direction">
-						<i class="fa fa-arrow-down"></i> 15 %
-					</div>
-					<div class="box-last-update">Last Updated at 11:55 am</div>
+						#{chartBean.pendingOrderStats.difference} %</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']}
+						at #{chartBean.pendingOrderStats.lastUpdateFormatted}</div>
 				</p:panel>
 			</p:panel>
 		</p:panel>

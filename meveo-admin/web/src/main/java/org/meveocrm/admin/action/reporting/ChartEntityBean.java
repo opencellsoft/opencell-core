@@ -14,7 +14,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.order.OrderService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
@@ -46,6 +48,9 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	@Inject
 	protected MeasurableQuantityService mqService;
+
+	@Inject
+	private OrderService orderService;
 
 	protected EM chartEntityModel;
 
@@ -398,6 +403,160 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 				}
 			}
 		}
+		return result;
+	}
+
+	public StatModel getNewOrderStats() {
+
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		beforeDate.add(Calendar.DATE, -1);
+		StatModel result = new StatModel();
+
+		result.setDescription("New Orders");
+		result.setLastUpdated(currentDate.getTime());
+		result.setValue(orderService.countNewOrders(currentDate).doubleValue());
+		result.setDifference(orderService.countNewOrders(beforeDate).doubleValue());
+
+		return result;
+	}
+
+	public StatModel getPendingOrderStats() {
+		Calendar currentDate = Calendar.getInstance();
+
+		Calendar beforeDate = Calendar.getInstance();
+		beforeDate.add(Calendar.DATE, -1);
+
+		Calendar beforeDate1 = Calendar.getInstance();
+		beforeDate1.add(Calendar.DATE, -2);
+
+		StatModel result = new StatModel();
+
+		result.setDescription("Pending Orders");
+		result.setLastUpdated(currentDate.getTime());
+		result.setValue(orderService.countPendingOrders(beforeDate, currentDate).doubleValue());
+		result.setDifference(orderService.countPendingOrders(beforeDate1, beforeDate).doubleValue());
+
+		return result;
+	}
+
+	public StatModel getChurn() throws BusinessException {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		currentDate.set(Calendar.DATE, 1);
+		beforeDate.set(Calendar.DATE, 1);
+		beforeDate.add(Calendar.MONTH, -1);
+		StatModel result = new StatModel();
+
+		MeasurableQuantity mq = mqService.findByCode("CHURN", getCurrentProvider());
+
+		if (mq == null) {
+			mq = new MeasurableQuantity();
+			mq.setCode("CHURN");
+			mq.setActive(true);
+			mq.setDescription("Churn");
+			mq.setSqlQuery("WITH acc_new AS"
+					+ "("
+					+ "SELECT  count(ua.id) as nb FROM billing_user_account ua"
+					+ "JOIN account_entity ae ON ae.id=ua.id"
+					+ "WHERE ua.subscription_date >= '#{date}'"
+					+ "AND ua.subscription_date < '#{nextDate}'"
+					+ "AND (ua.termination_date IS NULL OR ua.termination_date >= '#{nextDate}')"
+					+ "AND ae.provider_id = #{provider}"
+					+ "),"
+					+ "acc_end AS"
+					+ "("
+					+ "SELECT  count(ua.id) as nb FROM billing_user_account ua"
+					+ "JOIN account_entity ae ON ae.id=ua.id"
+					+ "WHERE ua.termination_date >= ' #{date}'"
+					+ "AND ua.termination_date < '#{nextDate}'"
+					+ "AND ae.provider_id = #{provider}"
+					+ "),"
+					+ "acc_period AS"
+					+ "("
+					+ "SELECT  count(ua.id) as nb FROM billing_user_account ua"
+					+ "JOIN account_entity ae ON ae.id=ua.id"
+					+ "WHERE ua.subscription_date < '#{date}'"
+					+ "AND  (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}')"
+					+ "AND ae.provider_id = #{provider}"
+					+ ")"
+					+ "SELECT"
+					+ "CASE  WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2)<>0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2)"
+					+ "ELSE 0" + "END as churn FROM acc_new ,acc_end,acc_period");
+			mqService.create(mq, getCurrentUser());
+		}
+
+		MeasuredValue currentMV = mvService.getByDate(currentDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+		Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue()
+				: new Double("0.00");
+
+		MeasuredValue beforeMV = mvService.getByDate(beforeDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+		Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue()
+				: new Double("0.00");
+		result.setValue(currentValue);
+		result.setDescription("Churn");
+		result.computeDifference(beforeValue);
+		result.setLastUpdated(currentDate.getTime());
+		return result;
+	}
+
+	public StatModel getMRR() throws BusinessException {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		currentDate.set(Calendar.DATE, 1);
+		beforeDate.set(Calendar.DATE, 1);
+		beforeDate.add(Calendar.MONTH, -1);
+		StatModel result = new StatModel();
+
+		MeasurableQuantity mq = mqService.findByCode("MRR", getCurrentProvider());
+
+		if (mq == null) {
+			mq = new MeasurableQuantity();
+			mq.setCode("MRR");
+			mq.setActive(true);
+			mq.setDescription("Churn");
+			mq.setDimension1("Offer");
+			mq.setDimension2("BA");
+			mq.setDimension3("CA");
+			mq.setDimension4("Cust");
+
+			mq.setSqlQuery("	SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,	"
+					+ "	        wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code	"
+					+ "	        FROM billing_wallet_operation wo	"
+					+ "	        LEFT JOIN crm_provider p ON p.id=wo.provider_id	"
+					+ "	        LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id	"
+					+ "	        LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id	"
+					+ "	        LEFT JOIN billing_wallet w ON w.id=wo.wallet_id	"
+					+ "	        LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id	"
+					+ "	        LEFT JOIN account_entity ua ON ua.id= uaa.id	"
+					+ "	        LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id	"
+					+ "	        LEFT JOIN account_entity ba ON ba.id= baa.id	"
+					+ "	        LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id	"
+					+ "	        LEFT JOIN account_entity ca ON ca.id= caa.id	"
+					+ "	        LEFT JOIN crm_customer custa ON custa.id= caa.customer_id	"
+					+ "	        LEFT JOIN account_entity cust ON cust.id= custa.id	"
+					+ "	        WHERE wo.disabled=FALSE	"
+					+ "	        AND wo.provider_id=#{provider}	"
+					+ "	        AND NOT(wo.end_date IS NULL)	"
+					+ "	        AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0	"
+					+ "	        AND (wo.start_date <= '#{date}') AND (wo.end_date > '#{date}')	");
+			mqService.create(mq, getCurrentUser());
+		}
+
+		MeasuredValue currentMV = mvService.getByDate(currentDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+		Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue()
+				: new Double("0.00");
+
+		MeasuredValue beforeMV = mvService.getByDate(beforeDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+		Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue()
+				: new Double("0.00");
+		result.setValue(currentValue);
+		result.setDescription("MRR");
+		result.computeDifference(beforeValue);
+		result.setLastUpdated(currentDate.getTime());
 		return result;
 	}
 }
