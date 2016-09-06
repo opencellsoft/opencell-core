@@ -18,11 +18,11 @@
 
         <p:panel styleClass="no-border-radius">
             <p:panel styleClass="Wid50">
-                <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-                    <p:panel>
+                <p:panelGrid id="left-controls" columns="2" styleClass="ui-panelgrid-blank">
+                    <p:panel id="top-button-container">
                         <h:form>
                             <ul class="list-unstyled">
-                                <li class="Padding5">
+                                <li>
                                     <div class="btn-wrapper">
                                         <i class="fa fa-plus text-blue"></i>
                                         <p:link styleClass="no-text-decoration" outcome="mm_productTemplateDetail" value=" #{messages['productTemplate.newProduct']}">
@@ -33,7 +33,7 @@
                                         </p:link>
                                     </div> <!-- / btn-wrapper -->
                                 </li>
-                                <li class="Padding5">
+                                <li>
                                     <div class="btn-wrapper">
                                         <i class="fa fa-plus text-blue"></i>
                                         <p:link styleClass="no-text-decoration" outcome="mm_bundleTemplateDetail" value=" #{messages['productTemplate.createBundle']}">
@@ -49,13 +49,13 @@
                         </h:form>
                     </p:panel>
 
-                    <p:panel>
-                        <ul class="ListNoStyle">
-                            <li class="Padding5"><i class="fa fa-check-square-o text-blue"></i> #{productTemplateListBean.activeCount}
+                    <p:panel id="top-details-container">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-check-square-o text-blue"></i> #{productTemplateListBean.activeCount}
                                 #{messages['productTemplate.activeProductsNum']}</li>
-                            <li class="Padding5"><i class="fa fa-close text-blue"></i> #{productTemplateListBean.inactiveCount}
+                            <li><i class="fa fa-close text-blue"></i> #{productTemplateListBean.inactiveCount}
                                 #{messages['productTemplate.deactivatedProductsNum']}</li>
-                            <li class="Padding5"><i class="fa fa-exclamation-circle text-blue"></i> #{productTemplateListBean.almostExpiredCount}
+                            <li><i class="fa fa-exclamation-circle text-blue"></i> #{productTemplateListBean.almostExpiredCount}
                                 #{messages['productTemplate.expiringProductsNum']}</li>
                         </ul>
                     </p:panel>
@@ -71,7 +71,7 @@
                             </div>
                         </h:form>
                     </p:panel>
-                    <p:panel columns="1" styleClass="export-panel no-border-radius" style="border: 1px solid #ddd" id="productForExportPanel">
+                    <p:panel columns="1" styleClass="export-panel no-border-radius" id="productForExportPanel">
                         <ul class="list-unstyled">
                             <li class="text-left"><i class="fa fa-share-square-o"></i> <p:commandLink onclick="PF('exportablePTs').show();"
                                     value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}">

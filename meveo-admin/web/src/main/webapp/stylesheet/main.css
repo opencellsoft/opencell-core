@@ -690,7 +690,7 @@ form.formNoBottomBorder {
 .Container80{ width:80%; float:left; padding:12px; box-sizing:border-box; }
 .Container75{ width:75%; float:left; padding:12px; box-sizing:border-box; }
 .Container70{ width:70%; float:left; padding:12px; box-sizing:border-box; }
-.Container60{ width:60%; float:left; padding:12px; box-sizing:border-box; }
+.Container60{ width:60%; float:left; box-sizing:border-box; }
 .Container50{ width:50%; float:left; padding:12px; box-sizing:border-box; }
 .Container40{ width:40%; float:left; padding:12px; box-sizing:border-box; }
 .Container33{ width:33.3%; float:left; padding:12px; box-sizing:border-box; }

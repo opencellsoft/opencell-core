@@ -21,12 +21,12 @@
         <div class="ui-fluid">
             <p:panel styleClass="no-border-radius">
                 <p:panel styleClass="Wid50 Responsive100">
-                    <div class="ui-fluid" style="margin-left: -40px;">
+                    <div id="left-controls" class="ui-fluid" style="margin-left: -40px;">
                         <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-                            <p:panel>
+                            <p:panel id="top-button-container">
                                 <h:form>
                                     <ul class="list-unstyled">
-                                        <li class="Padding5">
+                                        <li class="button-item">
                                             <div class="btn-wrapper">
                                                 <i class="fa fa-plus text-blue"></i>
                                                 <p:link styleClass="no-text-decoration" outcome="mm_offerTemplates" value=" #{messages['action.offer.create']}">
@@ -38,13 +38,13 @@
                                 </h:form>
                             </p:panel>
 
-                            <p:panel>
-                                <ul class="ListNoStyle">
-                                    <li class="Padding5"><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount}
+                            <p:panel id="top-details-container">
+                                <ul class="list-unstyled">
+                                    <li><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount}
                                         #{messages['page.catalog.offersAreActive']}</li>
-                                    <li class="Padding5"><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount}
+                                    <li><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount}
                                         #{messages['page.catalog.offersAreDeactivated']}</li>
-                                    <li class="Padding5"><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount}
+                                    <li><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount}
                                         #{messages['page.catalog.offersWillExpireSoon']}</li>
                                 </ul>
                             </p:panel>
@@ -58,20 +58,11 @@
                                 <div class="search-wrapper">
                                     <p:inputText placeholder="#{messages['action.search']}" value="#{offerTemplateListBean.filters['fullText']}" />
                                     <p:commandLink styleClass="Padding3 fa fa-search" update=":tabView"></p:commandLink>
-                                    <!-- 								<p:selectManyMenu id="searchOfferTemplateCat" -->
-                                    <!-- 									value="#{offerTemplateListBean.selOfferTemplateCategories}"> -->
-                                    <!-- 									<f:selectItem itemLabel="" itemValue="" -->
-                                    <!-- 										noSelectionOption="true" /> -->
-                                    <!-- 									<f:selectItems -->
-                                    <!-- 										value="#{offerTemplateCategoryBean.listActive()}" var="e" -->
-                                    <!-- 										itemLabel="#{e.descriptionOrCode}" itemValue="#{e}"></f:selectItems> -->
-                                    <!-- 									<s:objectConverter /> -->
-                                    <!-- 								</p:selectManyMenu> -->
                                 </div>
                                 <!-- / search-wrapper -->
                             </h:form>
                         </p:panel>
-                        <p:panel columns="1" styleClass="export-panel no-border-radius" style="border: 1px solid #ddd" id="offerForExportPanel">
+                        <p:panel columns="1" styleClass="export-panel no-border-radius" id="offerForExportPanel">
                             <ul class="list-unstyled">
                                 <li class="text-left"><i class="fa fa-share-square-o" style="margin-right: 5px;"></i> <p:commandLink onclick="PF('exportableOffers').show();"
                                         value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">

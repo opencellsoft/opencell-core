@@ -63,7 +63,12 @@ a.text-blue:hover::before {
 
 .list-unstyled {
   padding-left: 0;
+  margin:0;
   list-style: none;
+}
+
+.list-unstyled li{
+  padding: 2px 0;
 }
 
 .list-inline {
@@ -411,7 +416,6 @@ input[type="text"] {
 .ui-panel-titlebar {
   color: #333;
   text-align: center!important;
-  text-transform: uppercase;
 }
 
 .ui-separator {
@@ -615,12 +619,10 @@ input[type="text"] {
 }
 
 .export-panel {
-  width: 31%;
+  border: 1px solid #ddd !important;
+  margin-top: 0.5em !important;
+  width: 41% !important;
   margin-right: -10px;
-}
-
-.export-panel li:first-child {
-  padding-bottom: 15px;
 }
 
 .export-panel li:hover {
@@ -1095,4 +1097,24 @@ footer .footer-copyright {
   margin: 0;
   padding: 0;
   text-align: center;
+}
+
+#offerForExportPanel_content li {
+    padding: 4px 0;
+}
+
+#top-button-container_content {
+	padding: 0 1em !important;
+}
+
+#top-details-container_content {
+	padding: 0 1em !important;
+}
+
+#left-controls td.ui-panelgrid-cell {
+    vertical-align: top;
+}
+
+#left-controls li.button-item {
+    margin-left: 10px;
 }
