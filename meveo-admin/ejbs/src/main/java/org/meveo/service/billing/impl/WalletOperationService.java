@@ -1327,12 +1327,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> openWalletOperationsByCharge(WalletInstance walletInstance ) {
-		QueryBuilder qb = new QueryBuilder("select description ,sum(quantity) , sum(amount_without_tax) ,input_unit_description from billing_wallet_operation "
-				+ "where provider_id="+walletInstance.getProvider().getId()+" and wallet_id = "+walletInstance.getId()+" and  status = 'OPEN' "
-						+ "group by description,input_unit_description");		
-				
+		
 		try {
-			List<Object[]> resultList = qb.getQuery(getEntityManager()).getResultList();
+			
+			List<Object[]> resultList = getEntityManager().createNativeQuery("select description ,sum(quantity) QT, sum(amount_without_tax) MT ,input_unit_description from billing_wallet_operation "
+					+ "where wallet_id = "+walletInstance.getId()+" and  status = 'OPEN' "
+					+ "group by description,input_unit_description").getResultList();
+			
+			
 			return resultList;			
 		} catch (NoResultException e) {
 			return null;
