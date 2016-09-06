@@ -221,4 +221,17 @@ public class CountryApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void findOrCreate(String countryCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, currentUser.getProvider());
+		if (tradingCountry==null) {
+			Country country = countryService.findByCode(countryCode);
+			if (country==null) {
+				throw new EntityDoesNotExistsException(Country.class, countryCode);
+			}
+			tradingCountry = new TradingCountry();
+			tradingCountry.setCountry(country);
+			tradingCountry.setPrDescription(country.getDescriptionEn());
+			tradingCountryService.create(tradingCountry, currentUser);
+		}
+	}
 }

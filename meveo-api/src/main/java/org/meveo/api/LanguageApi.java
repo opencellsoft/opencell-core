@@ -116,9 +116,7 @@ public class LanguageApi extends BaseApi {
         tradingLanguage.setAuditable(auditable);
         tradingLanguage.setLanguage(language);
         tradingLanguage.setLanguageCode(postData.getCode());
-		if (!StringUtils.isBlank(postData.getDescription())) {
-			tradingLanguage.setPrDescription(postData.getDescription());
-		}
+        tradingLanguage.setPrDescription(postData.getDescription());
     }
 
     public LanguageDto find(String code, Provider provider) throws MeveoApiException {
@@ -155,4 +153,17 @@ public class LanguageApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void findOrCreate(String languageCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode, currentUser.getProvider());
+		if (tradingLanguage==null) {
+			Language language = languageService.findByCode(languageCode);
+			if (language==null) {
+				throw new EntityDoesNotExistsException(Language.class, languageCode);
+			}
+			tradingLanguage = new TradingLanguage();
+			tradingLanguage.setLanguage(language);
+			tradingLanguage.setPrDescription(language.getDescriptionEn());
+			tradingLanguageService.create(tradingLanguage, currentUser);
+		}
+	}
 }
