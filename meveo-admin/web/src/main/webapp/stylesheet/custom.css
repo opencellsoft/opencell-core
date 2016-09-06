@@ -228,35 +228,49 @@ body {
   background: #fff;
 }
 
+
+
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
   background-image: none;
-  background-color: #fff;
-  /*font-size: 16px;*/
-  font-weight: 300;
-  /*padding: 3px 5px;*/
-  border: 1px solid #ddd;
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  -moz-text-shadow: none;
-  -webkit-text-shadow: none;
-  text-shadow: none;
 }
 
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover,
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
-  /*background: #eb2f2f;*/
-  /*color: #fff;*/
-  /*border: 1px solid #d13b42;*/
+input[type="submit"], 
+.ui-button, 
+.ui-datatable table .ui-button {
+  background: #264676;
+  background-image: none;
+  color: #fff;
+  font-weight: 700;
+  text-transform: capitalize;
+  border: 1px solid rgba(0, 32, 80, .1);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transition: all 300ms ease-in-out 0s;
+  -moz-transition: all 300ms ease-in-out 0s;
+  -ms-transition: all 300ms ease-in-out 0s;
+  -o-transition: all 300ms ease-in-out 0s;
+  transition: all 300ms ease-in-out 0s;
+}
+
+
+input[type="submit"]:hover, 
+.ui-button:hover, 
+.ui-datatable table .ui-button:hover {
+  background: #1A3A6A;
+  color: #fff;
+  border: 1px solid rgba(0, 32, 80, .1);
+}
+
+input[type="text"] .ui-button-text,
+.ui-button .ui-button-text,
+.ui-datatable table .ui-button-text {
+  text-shadow:none;
 }
 
 .ui-state-disabled,
@@ -317,6 +331,10 @@ body {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+.ui-inputswitch-on {
+  background: #002050 !important;
 }
 
 .ui-datatable table thead tr th {
@@ -684,6 +702,10 @@ input[type="text"] {
 .ui-datatable .ui-datatable-data tr.ui-state-hover {
   background: #5c5cab;
   color: #fff;
+}
+
+.ui-datatable .ui-datatable-data tr td:first-child {
+  text-align: left;
 }
 
 #admin-bar {
