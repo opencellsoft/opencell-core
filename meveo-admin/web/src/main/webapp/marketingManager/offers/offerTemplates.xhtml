@@ -35,7 +35,7 @@
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
                     styleClass="dataGrid custom-grid ui-datagrid-blank" rowsPerPageTemplate="10,15,20,50" rowKey="#{entity.id}">
                     <p:panel styleClass="Wid40 Responsive100 VAlignTop">
-                        <p:panelGrid columns="2" columnClasses="Wid30 Responsive100, Wid70 Responsive100" styleClass="ui-panelgrid-blank">
+                        <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
                             <p:panel>
                                 <p:graphicImage id="offerImage" cache="false" rendered="#{entity.offerTemplate ne null}" value="#{offerTemplateImageStreamer.image}" height="100"
                                     width="100">
@@ -43,17 +43,16 @@
                                 </p:graphicImage>
                             </p:panel>
                             <p:panel styleClass="ui-panelgrid-blank">
-                                <h:outputText id="descriptionOrCode" value="#{of:abbreviate(entity.descriptionOrCode, 20)}"></h:outputText>
+                                <p><h:outputText id="descriptionOrCode" value="#{of:abbreviate(entity.descriptionOrCode, 20)}"></h:outputText></p>
                                 <p:tooltip for="descriptionOrCode" value="#{entity.descriptionOrCode}"></p:tooltip>
                                 <ui:repeat value="#{entity.offerTemplate.offerTemplateCategories.toArray()}" var="c" varStatus="status">
                                     <c:set var="valueLabel" value="#{c}" />
                                     <c:set var="valueLabel" value="#{valueLabel['descriptionOrCode']}" />
-                                    <h:outputText value="#{valueLabel}" />
-                                    <h:outputText value=", " rendered="#{not status.last}" />
+                                    <p><h:outputText value="#{valueLabel}" /></p>
                                 </ui:repeat>
-                                <p:separator></p:separator>
-                                <h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
-                                <h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
+                                <p:separator />
+                                <p><h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText></p>
+                                <p><h:outputText value="#{entity.offerTemplate.description}"></h:outputText></p>
                             </p:panel>
                         </p:panelGrid>
                     </p:panel>
@@ -63,21 +62,21 @@
                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
                             styleClass="custom-grid ui-datagrid-blank" style="border: none;" rowKey="#{ost.id}">
                             <p:panel>
-                                <p:panel styleClass="Wid33 Responsive100 VAlignTop" header="#{messages['marketingManager.catalog.OneTimeFee']}">
+                                <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.OneTimeFee']}">
                                     <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                         rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null}" value="#{ost.serviceTemplate.serviceSubscriptionCharges}" var="charge"
                                         type="ordered">
 										#{charge.chargeTemplate.descriptionOrCode}
 									</p:dataList>
                                 </p:panel>
-                                <p:panel styleClass="Wid33 Responsive100 VAlignTop" header="#{messages['marketingManager.catalog.recurringFee']}">
+                                <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.recurringFee']}">
                                     <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                         rendered="#{ost.serviceTemplate.serviceRecurringCharges != null}" value="#{ost.serviceTemplate.serviceRecurringCharges}" var="charge"
                                         type="ordered">
 										#{charge.chargeTemplate.descriptionOrCode}
 									</p:dataList>
                                 </p:panel>
-                                <p:panel styleClass="Wid33 Responsive100 VAlignTop" header="#{messages['marketingManager.catalog.usageFee']}">
+                                <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.usageFee']}">
                                     <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                         rendered="#{ost.serviceTemplate.serviceUsageCharges != null}" value="#{ost.serviceTemplate.serviceUsageCharges}" var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
                                 </p:panel>
