@@ -109,10 +109,6 @@
                                                     <h:outputText value="#{valueLabel}" />
                                                     <h:outputText value=", " rendered="#{not status.last}" />
                                                 </ui:repeat>
-                                                <br />
-                                                <h:outputText value="#{messages['offerTemplate.template']}: #{entity.businessOfferModel.code}"
-                                                    rendered="#{entity.businessOfferModel != null}"></h:outputText>
-                                                <p:separator></p:separator>
                                                 <p:panelGrid columns="3">
                                                     <p:panelGrid columns="1" rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
                                                         <h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
