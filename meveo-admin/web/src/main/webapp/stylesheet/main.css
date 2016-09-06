@@ -1,7 +1,18 @@
 /**************************************************************************
  * Generic html element
  **************************************************************************/
-body { width: 100%; margin: auto; position: relative; background: #DBDBDB; font-size: 12px;}
+html {
+	position: relative;
+	min-height: 100%;
+	font-family: "Segoe UI Light", "Segoe UI", "Segoe WP", "Helvetica Neue", sans-serif !important;
+}
+
+body { 
+	width: 100%; 
+	margin: auto; 
+	background: #DBDBDB; 
+	font-size: 12px;
+}
 
 .body
 {
