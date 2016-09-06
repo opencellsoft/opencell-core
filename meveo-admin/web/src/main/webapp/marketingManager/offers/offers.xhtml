@@ -90,8 +90,8 @@
                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
                                 styleClass="dataGrid custom-grid ui-datagrid-blank" rowsPerPageTemplate="10,15,20,50">
                                 <p:panel styleClass="Wid40 Responsive100 VAlignTop">
-                                    <p:panelGrid columns="3" styleClass="panelGrid ui-panelgrid-blank"
-                                        columnClasses="Wid5 VAlignTop Responsive100, Responsive100 VAlignTop, Responsive100 VAlignTop">
+                                    <p:panelGrid id="offer-info" columns="3" styleClass="panelGrid ui-panelgrid-blank"
+                                        columnClasses="Wid10, Wid80, Wid10">
 
                                         <p:panel>
                                             <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateImageStreamer.image}" height="100" width="100">
@@ -127,7 +127,7 @@
                                             </p:panel>
                                         </p:panel>
 
-                                        <p:panel styleClass="status-wrapper FRight Wid55 Responsive100">
+                                        <p:panel styleClass="status-wrapper Wid55 Responsive100">
                                             <p:panel>
                                                 <p:inputSwitch value="#{entity.active}" disabled="true" styleClass="#{entity.active ? 'GreenBg' : ''}"
                                                     onLabel="#{messages['accountStatusEnum.active']}" offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
