@@ -1,22 +1,25 @@
 package org.meveo.api;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.usage.CatUsageDto;
+import org.meveo.api.dto.usage.ChargeAggregateDto;
 import org.meveo.api.dto.usage.SubCatUsageDto;
+import org.meveo.api.dto.usage.UsageChargeAggregateResponseDto;
 import org.meveo.api.dto.usage.UsageDto;
 import org.meveo.api.dto.usage.UsageRequestDto;
 import org.meveo.api.dto.usage.UsageResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -34,7 +37,63 @@ public class UsageApi extends BaseApi {
 
 	@Inject
 	private InvoiceCategoryService invoiceCategoryService;
+	
+	/**
+	 * 
+	 * @param usageRequestDto
+	 * @param user
+	 * @return
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 */
+	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto, User user) throws MissingParameterException, EntityDoesNotExistsException {
+		
+		if (StringUtils.isBlank(usageRequestDto.getUserAccountCode())) {
+			missingParameters.add("UserAccountCode");
+		}
+		
+		handleMissingParameters();
 
+		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode(), user.getProvider());
+
+		if (userAccount == null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
+		}
+		UsageChargeAggregateResponseDto  response = new UsageChargeAggregateResponseDto();
+		
+		List<Object[]>  rows = walletOperationService.openWalletOperationsByCharge(userAccount.getWallet());
+		for(Object[] row : rows){
+			ChargeAggregateDto chargeAggregate = new ChargeAggregateDto();
+			chargeAggregate.setDescription((String) row[0]);
+			chargeAggregate.setAmount(""+NumberUtils.round((BigDecimal)row[2], 2));
+			BigDecimal quantity = BigDecimal.ZERO;
+			String quantityToDisplay = "0";
+			if((BigDecimal)row[1] != null){				
+				quantity = NumberUtils.round((BigDecimal)row[1], 2);
+				quantityToDisplay = quantity.toPlainString();
+				
+				if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){
+					quantityToDisplay = (quantity.doubleValue() / 60)+"h:" ;
+					quantityToDisplay = (quantity.doubleValue() % 60)+(String) row[3] ;
+				}else if(!StringUtils.isBlank((String) row[3])){
+					quantityToDisplay +=  " "+(String) row[3];
+				}
+			}
+			chargeAggregate.setQuantity(quantityToDisplay);
+			
+			response.getListChargeAggregate().add(chargeAggregate);
+		}				
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param usageRequestDto
+	 * @param user
+	 * @return
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 */
 	public UsageResponseDto find(UsageRequestDto usageRequestDto, User user) throws MissingParameterException, EntityDoesNotExistsException {
 
 		if (StringUtils.isBlank(usageRequestDto.getUserAccountCode())) {

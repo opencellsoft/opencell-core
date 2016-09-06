@@ -1302,6 +1302,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ) {
 		return openWalletOperationsBySubCat(walletInstance, invoiceSubCategory, null, null);
 	}
+	
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ,Date from, Date to) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "op", null,walletInstance.getProvider());
@@ -1319,6 +1320,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				
 		try {
 			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> openWalletOperationsByCharge(WalletInstance walletInstance ) {
+		QueryBuilder qb = new QueryBuilder("select description ,sum(quantity) , sum(amount_without_tax) ,input_unit_description from billing_wallet_operation "
+				+ "where provider_id="+walletInstance.getProvider().getId()+" and wallet_id = "+walletInstance.getId()+" and  status = 'OPEN' "
+						+ "group by description,input_unit_description");		
+				
+		try {
+			List<Object[]> resultList = qb.getQuery(getEntityManager()).getResultList();
+			return resultList;			
 		} catch (NoResultException e) {
 			return null;
 		}
