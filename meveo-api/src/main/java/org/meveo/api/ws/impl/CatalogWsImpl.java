@@ -2220,7 +2220,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		result.getActionStatus().setMessage("");
 
 		try {
-			ChannelDto channelDto = channelApi.find(code, getCurrentUser());
+			ChannelDto channelDto = channelApi.find(code, getCurrentUser().getProvider());
 			result.setChannel(channelDto);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -2232,6 +2232,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
+		return result;
 	}
 
 }
