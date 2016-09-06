@@ -35,11 +35,14 @@ import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -752,6 +755,22 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
+		if(expression.indexOf("serviceInstance") >= 0){
+			ServiceInstance service = null;
+			if(bareOperation.getChargeInstance() instanceof RecurringChargeInstance){
+				service=((RecurringChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
+			}else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance){
+				service=((UsageChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
+			}else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance){
+				service=((OneShotChargeInstance)bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if(service==null){
+					((OneShotChargeInstance)bareOperation.getChargeInstance()).getTerminationServiceInstance();
+				}
+			}
+			if(service !=null){
+				userMap.put("serviceIntance", service);
+			}
+		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -814,6 +833,22 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
+		if(expression.indexOf("serviceInstance") >= 0){
+			ServiceInstance service = null;
+			if(bareOperation.getChargeInstance() instanceof RecurringChargeInstance){
+				service=((RecurringChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
+			}else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance){
+				service=((UsageChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
+			}else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance){
+				service=((OneShotChargeInstance)bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if(service==null){
+					((OneShotChargeInstance)bareOperation.getChargeInstance()).getTerminationServiceInstance();
+				}
+			}
+			if(service !=null){
+				userMap.put("serviceIntance", service);
+			}
+		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -858,6 +893,23 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
+		if(expression.indexOf("serviceInstance") >= 0){
+			ServiceInstance service = null;
+			if(walletOperation.getChargeInstance() instanceof RecurringChargeInstance){
+				service=((RecurringChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
+			}else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance){
+				service=((UsageChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
+			}else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance){
+				service=((OneShotChargeInstance)walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if(service==null){
+					((OneShotChargeInstance)walletOperation.getChargeInstance()).getTerminationServiceInstance();
+				}
+			}
+			if(service !=null){
+				userMap.put("serviceIntance", service);
+			}
+		}
+
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -907,11 +959,22 @@ public class RatingService extends BusinessService<WalletOperation>{
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
 		}
-		/*if(expression.indexOf("service") >= 0){
-			ServiceTemplate service=walletOperation.getServiceInstance();
-			offer.getCustomFields();
-			userMap.put("offer",offer);
-		}*/
+		if(expression.indexOf("serviceInstance") >= 0){
+			ServiceInstance service = null;
+			if(walletOperation.getChargeInstance() instanceof RecurringChargeInstance){
+				service=((RecurringChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
+			}else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance){
+				service=((UsageChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
+			}else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance){
+				service=((OneShotChargeInstance)walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if(service==null){
+					((OneShotChargeInstance)walletOperation.getChargeInstance()).getTerminationServiceInstance();
+				}
+			}
+			if(service !=null){
+				userMap.put("serviceIntance", service);
+			}
+		}
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
