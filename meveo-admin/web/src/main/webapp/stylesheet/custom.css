@@ -228,12 +228,20 @@ body {
   background: #fff;
 }
 
-
-
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
-  background-image: none;
+  background-image: none !important;
+  color: #333;
+  text-shadow: none !important;
+  box-shadow: none;
+  border: 1px solid #ddd !important;
+}
+
+.ui-state-default:hover,
+.ui-widget-content .ui-state-default:hover,
+.ui-widget-header .ui-state-default:hover {
+  box-shadow: none !important;
 }
 
 input[type="submit"], 
@@ -345,6 +353,16 @@ input[type="text"] .ui-button-text,
 
 .ui-datatable table thead tr .ui-state-hover {
   border: 1px solid #ddd !important;
+}
+
+.ui-state-active, 
+.ui-widget-content .ui-state-active, 
+.ui-widget-header .ui-state-active, 
+.ui-picklist-list .ui-state-hover, 
+.ui-tabs-nav .ui-state-hover, 
+.ui-selectonemenu .ui-state-hover, 
+.ui-selectonemenu .ui-state-focus {
+  border: #ddd !important;
 }
 
 .position-relative {
