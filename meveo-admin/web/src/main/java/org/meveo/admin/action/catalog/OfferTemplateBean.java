@@ -140,11 +140,14 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Override
 	public OfferTemplate initEntity() {
+		OfferTemplate result = super.initEntity();
+		
 		if (bomId != null) {
 			businessOfferModel = businessOfferModelService.findById(bomId);
+			result.setCode(offerTemplateService.findDuplicateCode(result, " - Instance", currentUser));
 		}
 
-		return super.initEntity();
+		return result;
 	}
 
 	/**

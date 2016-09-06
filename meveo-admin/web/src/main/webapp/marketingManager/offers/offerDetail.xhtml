@@ -97,7 +97,7 @@
                 </f:facet>
                 <p:tabView rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
                     <!-- custom fields -->
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" tabLabel="#{messages['commons.parameters']}" />
                 </p:tabView>
             </p:panel>
 
@@ -117,7 +117,7 @@
                         <p:panel id="serviceCf_panel_#{index}">
                             <p:tabView
                                 rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
-                                <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages" />
+                                <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages" tabLabel="#{messages['commons.parameters']}" />
                             </p:tabView>
                         </p:panel>
 
