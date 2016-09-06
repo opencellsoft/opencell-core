@@ -35,23 +35,23 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.custom.GroupedTransitionRule;
+import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.model.wf.TransitionRuleTypeEnum;
+import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFActionService;
+import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
-import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -78,16 +78,16 @@ public class WorkflowBean extends BaseBean<Workflow> {
     private WFTransitionService wFTransitionService;
 
     @Inject
-    private WFTransitionRuleService wFTransitionServiceRule;
+    private WFDecisionRuleService wfDecisionRuleService;
 
     @Inject
     private WFActionService wfActionService;
 
     private List<String> wfTransitionRulesName;
 
-    private List<List<WFTransitionRule>> wfTransitionRulesByName = new ArrayList<>();
+    private List<List<WFDecisionRule>> wfDecisionRulesByName = new ArrayList<>();
 
-    private List<GroupedTransitionRule> selectedRules = new ArrayList<>();
+    private List<GroupedDecisionRule> selectedRules = new ArrayList<>();
 
     private List<WFAction> wfActions = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     // @Named
     private transient WFTransition wfTransition = new WFTransition();
 
-    private transient WFTransitionRule newWFTransitionRule = new WFTransitionRule();
+    private transient WFDecisionRule newWFDecisionRule = new WFDecisionRule();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -136,29 +136,23 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     public void saveWfTransition() throws BusinessException{
 
-        List<WFTransitionRule> wfTransitionRules = new ArrayList<>();
-        WFTransition wfTransitionUnique = wFTransitionService.findWFTransition(wfTransition.getFromStatus(), wfTransition.getToStatus()
-                , wfTransition.getPriority(), entity.getCode(), getCurrentProvider());
+        List<WFDecisionRule> wfDecisionRules = new ArrayList<>();
+        WFTransition wfTransitionUnique = wFTransitionService.findWFTransition(wfTransition.getFromStatus(), wfTransition.getToStatus(),
+                wfTransition.getPriority(), entity.getCode(), getCurrentProvider());
         if (wfTransitionUnique != null && (wfTransition.getId() == null || wfTransition.getId() != wfTransitionUnique.getId())) {
             messages.error(new BundleKey("messages", "transition.uniqueValue"), new Object[]{ wfTransition.getFromStatus(), wfTransition.getToStatus(), wfTransition.getPriority()});
             FacesContext.getCurrentInstance().validationFailed();
             return;
         }
 
-        boolean isUniqueNameValue = checkAndPopulateTransitionRules(selectedRules, wfTransitionRules);
+        boolean isUniqueNameValue = checkAndPopulateDecisionRules(selectedRules, wfDecisionRules);
         if (!isUniqueNameValue) {
             return;
         }
 
-        if (wfActions.size() > 0 && checkUniquePriorityAction(wfActions) != null) {
-            messages.error(new BundleKey("messages", "crmAccount.wfAction.uniquePriority"), new Object[]{checkUniquePriorityAction(wfActions)});
-            FacesContext.getCurrentInstance().validationFailed();
-            return;
-        }
-
-        for (WFTransitionRule wfTransitionRuleFor : wfTransitionRules) {
-            if (wfTransitionRuleFor.getId() == null) {
-                wFTransitionServiceRule.create(wfTransitionRuleFor, getCurrentUser());
+        for (WFDecisionRule wfDecisionRuleFor : wfDecisionRules) {
+            if (wfDecisionRuleFor.getId() == null) {
+                wfDecisionRuleService.create(wfDecisionRuleFor, getCurrentUser());
             }
         }
 
@@ -170,8 +164,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
             wfTrs.setPriority(wfTransition.getPriority());
             wfTrs.setDescription(wfTransition.getDescription());
 
-            wfTrs.getWfTransitionRules().clear();
-            wfTrs.getWfTransitionRules().addAll(wfTransitionRules);
+            wfTrs.getWfDecisionRules().clear();
+            wfTrs.getWfDecisionRules().addAll(wfDecisionRules);
 
             wFTransitionService.update(wfTrs, getCurrentUser());
 
@@ -179,8 +173,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
             messages.info(new BundleKey("messages", "update.successful"));
         } else {
-            wfTransition.getWfTransitionRules().clear();
-            wfTransition.getWfTransitionRules().addAll(wfTransitionRules);
+            wfTransition.getWfDecisionRules().clear();
+            wfTransition.getWfDecisionRules().addAll(wfDecisionRules);
 
             wfTransition.setWorkflow(entity);
             wFTransitionService.create(wfTransition, getCurrentUser());
@@ -191,7 +185,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
             messages.info(new BundleKey("messages", "save.successful"));
         }
 
-        wfTransitionRulesByName.clear();
+        wfDecisionRulesByName.clear();
         selectedRules.clear();
         wfActions.clear();
         showDetailPage = false;
@@ -202,7 +196,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
         wFTransitionService.remove(transition);
         entity.getTransitions().remove(dunningPlanTransition);
-        wfTransitionRulesByName.clear();
+        wfDecisionRulesByName.clear();
         selectedRules.clear();
         wfActions.clear();
         showDetailPage = false;
@@ -211,18 +205,18 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     public void editWfTransition(WFTransition dunningPlanTransition) {
         this.wfTransition = dunningPlanTransition;
-        WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfTransitionRules", "wfActions"), true);
-        if (wfTransition1 != null && wfTransition1.getWfTransitionRules() != null) {
-            wfTransitionRulesByName.clear();
+        WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfDecisionRules", "wfActions"), true);
+        if (wfTransition1 != null && wfTransition1.getWfDecisionRules() != null) {
+            wfDecisionRulesByName.clear();
             selectedRules.clear();
-            for (WFTransitionRule wfTransitionRule : wfTransition1.getWfTransitionRules()) {
-                GroupedTransitionRule groupedTransitionRule = new GroupedTransitionRule();
-                groupedTransitionRule.setName(wfTransitionRule.getName());
-                groupedTransitionRule.setValue(wfTransitionRule);
-                List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(wfTransitionRule.getName(), entity.getProvider());
+            for (WFDecisionRule wfDecisionRule : wfTransition1.getWfDecisionRules()) {
+                GroupedDecisionRule groupedDecisionRule = new GroupedDecisionRule();
+                groupedDecisionRule.setName(wfDecisionRule.getName());
+                groupedDecisionRule.setValue(wfDecisionRule);
+                List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(wfDecisionRule.getName(), entity.getProvider());
                 Collections.sort(list);
-                wfTransitionRulesByName.add(list);
-                selectedRules.add(groupedTransitionRule);
+                wfDecisionRulesByName.add(list);
+                selectedRules.add(groupedDecisionRule);
             }
         }
         if (wfTransition1 != null && wfTransition1.getWfActions() != null) {
@@ -315,7 +309,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     public List<String> getWfTransitionRulesName() {
         if (wfTransitionRulesName == null) {
-            wfTransitionRulesName = wFTransitionServiceRule.getDistinctNameWFTransitionRules(getCurrentProvider());
+            wfTransitionRulesName = wfDecisionRuleService.getDistinctNameWFTransitionRules(getCurrentProvider());
         }
         return wfTransitionRulesName;
     }
@@ -324,37 +318,43 @@ public class WorkflowBean extends BaseBean<Workflow> {
         this.wfTransitionRulesName = wfTransitionRulesName;
     }
 
-    public List<List<WFTransitionRule>> getWfTransitionRulesByName() {
-        return wfTransitionRulesByName;
+    public List<List<WFDecisionRule>> getWfDecisionRulesByName() {
+        return wfDecisionRulesByName;
     }
 
-    public void setWfTransitionRulesByName(List<List<WFTransitionRule>> wfTransitionRulesByName) {
-        this.wfTransitionRulesByName = wfTransitionRulesByName;
+    public void setWfDecisionRulesByName(List<List<WFDecisionRule>> wfDecisionRulesByName) {
+        this.wfDecisionRulesByName = wfDecisionRulesByName;
     }
 
     public void changedRuleName(int indexRule) {
-        List<WFTransitionRule> list = wFTransitionServiceRule.getWFTransitionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
+        List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
         Collections.sort(list);
-        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
-            wfTransitionRulesByName.remove(indexRule);
-            wfTransitionRulesByName.add(indexRule, list);
+        if (wfDecisionRulesByName.size() > indexRule && wfDecisionRulesByName.get(indexRule) != null) {
+            wfDecisionRulesByName.remove(indexRule);
+            wfDecisionRulesByName.add(indexRule, list);
         } else {
-            wfTransitionRulesByName.add(indexRule, list);
+            wfDecisionRulesByName.add(indexRule, list);
         }
     }
 
     public void addNewRule() {
-        selectedRules.add(new GroupedTransitionRule());
+        selectedRules.add(new GroupedDecisionRule());
     }
 
     public void addNewAction() {
         WFAction newInstance = new WFAction();
+        if (CollectionUtils.isNotEmpty(wfActions)) {
+            WFAction lastAction = wfActions.get(wfActions.size() - 1);
+            newInstance.setPriority(lastAction.getPriority() + 1);
+        } else {
+            newInstance.setPriority(1);
+        }
         wfActions.add(newInstance);
     }
 
-    public void deleteWfTransitionRule(int indexRule) {
-        if (wfTransitionRulesByName.size() > indexRule && wfTransitionRulesByName.get(indexRule) != null) {
-            wfTransitionRulesByName.remove(indexRule);
+    public void deleteWfDecisionRule(int indexRule) {
+        if (wfDecisionRulesByName.size() > indexRule && wfDecisionRulesByName.get(indexRule) != null) {
+            wfDecisionRulesByName.remove(indexRule);
         }
         selectedRules.remove(indexRule);
     }
@@ -365,20 +365,20 @@ public class WorkflowBean extends BaseBean<Workflow> {
         }
     }
 
-    public List<GroupedTransitionRule> getSelectedRules() {
+    public List<GroupedDecisionRule> getSelectedRules() {
         return selectedRules;
     }
 
-    public void setSelectedRules(List<GroupedTransitionRule> selectedRules) {
+    public void setSelectedRules(List<GroupedDecisionRule> selectedRules) {
         this.selectedRules = selectedRules;
     }
 
-    public WFTransitionRule getNewWFTransitionRule() {
-        return newWFTransitionRule;
+    public WFDecisionRule getNewWFDecisionRule() {
+        return newWFDecisionRule;
     }
 
-    public void setNewWFTransitionRule(WFTransitionRule newWFTransitionRule) {
-        this.newWFTransitionRule = newWFTransitionRule;
+    public void setNewWFDecisionRule(WFDecisionRule newWFDecisionRule) {
+        this.newWFDecisionRule = newWFDecisionRule;
     }
 
     public boolean isShowDetailPage() {
@@ -393,7 +393,14 @@ public class WorkflowBean extends BaseBean<Workflow> {
         showDetailPage = true;
         selectedRules.clear();
         wfActions.clear();
-        wfTransitionRulesByName.clear();
+        wfDecisionRulesByName.clear();
+        List<WFTransition> wfTransitionList = entity.getTransitions();
+        if (CollectionUtils.isNotEmpty(wfTransitionList)) {
+            WFTransition lastWFTransition = wfTransitionList.get(wfTransitionList.size() - 1);
+            wfTransition.setPriority(lastWFTransition.getPriority() + 1);
+        } else {
+            wfTransition.setPriority(1);
+        }
     }
 
     public List<WFAction> getWfActions() {
@@ -438,91 +445,135 @@ public class WorkflowBean extends BaseBean<Workflow> {
         newActions.clear();
     }
 
-    private boolean checkAndPopulateTransitionRules(List<GroupedTransitionRule> groupedTransitionRules, List<WFTransitionRule> wfTransitionRules) {
+    public boolean checkAndPopulateDecisionRules(List<GroupedDecisionRule> groupedDecisionRules, List<WFDecisionRule> wfDecisionRules) {
         ParamBean paramBean = ParamBean.getInstance();
         String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
         List<RuleNameValue> uniqueNameValues = new ArrayList<>();
-        for (GroupedTransitionRule groupedTransitionRule : groupedTransitionRules) {
-            if (groupedTransitionRule.getValue() != null && groupedTransitionRule.getValue().getModel()) {
-                WFTransitionRule wfTransitionRule = groupedTransitionRule.getValue();
-                newWFTransitionRule.setModel(Boolean.FALSE);
-                newWFTransitionRule.setConditionEl(wfTransitionRule.getConditionEl());
-                newWFTransitionRule.setName(wfTransitionRule.getName());
-                newWFTransitionRule.setType(wfTransitionRule.getType());
-                newWFTransitionRule.setProvider(entity.getProvider());
-                newWFTransitionRule.setDisabled(Boolean.FALSE);
+        for (GroupedDecisionRule groupedDecisionRule : groupedDecisionRules) {
+            if (groupedDecisionRule.getValue() != null && groupedDecisionRule.getValue().getModel()) {
+                WFDecisionRule wfDecisionRule = groupedDecisionRule.getValue();
+                newWFDecisionRule.setModel(Boolean.FALSE);
+                newWFDecisionRule.setConditionEl(wfDecisionRule.getConditionEl());
+                newWFDecisionRule.setName(wfDecisionRule.getName());
+                newWFDecisionRule.setType(wfDecisionRule.getType());
+                newWFDecisionRule.setProvider(getCurrentProvider());
+                newWFDecisionRule.setDisabled(Boolean.FALSE);
 
-                if (wfTransitionRule.getType().toString().startsWith("RANGE")) {
+                if (wfDecisionRule.getType().toString().startsWith("RANGE")) {
                     StringBuffer value = new StringBuffer();
-                    if (wfTransitionRule.getType() == TransitionRuleTypeEnum.RANGE_DATE) {
-                        if (groupedTransitionRule.getNewDate() != null && groupedTransitionRule.getAnotherDate() == null) {
-                            value.append(DateUtils.formatDateWithPattern(groupedTransitionRule.getNewDate(), datePattern)).append(LESS_SEPARATOR_NO_SPACE_RIGHT);
-                        } else if (groupedTransitionRule.getNewDate() == null && groupedTransitionRule.getAnotherDate() != null) {
-                            value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(DateUtils.formatDateWithPattern(groupedTransitionRule.getAnotherDate(), datePattern));
+                    if (wfDecisionRule.getType() == DecisionRuleTypeEnum.RANGE_DATE) {
+                        if (groupedDecisionRule.getNewDate() != null && groupedDecisionRule.getAnotherDate() == null) {
+                            value.append(DateUtils.formatDateWithPattern(groupedDecisionRule.getNewDate(), datePattern)).append(LESS_SEPARATOR_NO_SPACE_RIGHT);
+                        } else if (groupedDecisionRule.getNewDate() == null && groupedDecisionRule.getAnotherDate() != null) {
+                            value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(DateUtils.formatDateWithPattern(groupedDecisionRule.getAnotherDate(), datePattern));
                         } else {
-                            value.append(DateUtils.formatDateWithPattern(groupedTransitionRule.getNewDate(), datePattern))
-                                 .append(LESS_SEPARATOR).append(DateUtils.formatDateWithPattern(groupedTransitionRule.getAnotherDate(), datePattern));
+                            value.append(DateUtils.formatDateWithPattern(groupedDecisionRule.getNewDate(), datePattern))
+                                 .append(LESS_SEPARATOR).append(DateUtils.formatDateWithPattern(groupedDecisionRule.getAnotherDate(), datePattern));
                         }
                     } else {
-                        if (groupedTransitionRule.getNewValue() != null && groupedTransitionRule.getAnotherValue() == null) {
-                            value.append(groupedTransitionRule.getNewValue()).append(LESS_SEPARATOR_NO_SPACE_RIGHT);
-                        } else if (groupedTransitionRule.getNewValue() == null && groupedTransitionRule.getAnotherValue() != null) {
-                            value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(groupedTransitionRule.getAnotherValue());
+                        if (groupedDecisionRule.getNewValue() != null && groupedDecisionRule.getAnotherValue() == null) {
+                            value.append(groupedDecisionRule.getNewValue()).append(LESS_SEPARATOR_NO_SPACE_RIGHT);
+                        } else if (groupedDecisionRule.getNewValue() == null && groupedDecisionRule.getAnotherValue() != null) {
+                            value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(groupedDecisionRule.getAnotherValue());
                         } else {
-                            value.append(groupedTransitionRule.getNewValue())
-                                 .append(LESS_SEPARATOR).append(groupedTransitionRule.getAnotherValue());
+                            value.append(groupedDecisionRule.getNewValue())
+                                 .append(LESS_SEPARATOR).append(groupedDecisionRule.getAnotherValue());
                         }
                     }
-                    newWFTransitionRule.setValue(value.toString());
-                } else if (wfTransitionRule.getType() == TransitionRuleTypeEnum.DATE && groupedTransitionRule.getNewDate() != null) {
-                    newWFTransitionRule.setValue(DateUtils.formatDateWithPattern(groupedTransitionRule.getNewDate(), datePattern));
+                    newWFDecisionRule.setValue(value.toString());
+                } else if (wfDecisionRule.getType() == DecisionRuleTypeEnum.DATE && groupedDecisionRule.getNewDate() != null) {
+                    newWFDecisionRule.setValue(DateUtils.formatDateWithPattern(groupedDecisionRule.getNewDate(), datePattern));
                 } else {
-                    newWFTransitionRule.setValue(groupedTransitionRule.getNewValue());
+                    newWFDecisionRule.setValue(groupedDecisionRule.getNewValue());
                 }
-                WFTransitionRule existedTransitionRule = wFTransitionServiceRule.getWFTransitionRuleByNameValue(newWFTransitionRule.getName(),
-                        newWFTransitionRule.getValue(), entity.getProvider());
+                WFDecisionRule existedDecisionRule = wfDecisionRuleService.getWFDecisionRuleByNameValue(newWFDecisionRule.getName(),
+                        newWFDecisionRule.getValue(), getCurrentProvider());
 
-                if (existedTransitionRule != null) {
-                    messages.error(new BundleKey("messages", "transitionRule.uniqueNameValue"), new Object[]{newWFTransitionRule.getName(), newWFTransitionRule.getValue()});
+                if (existedDecisionRule != null) {
+                    messages.error(new BundleKey("messages", "decisionRule.uniqueNameValue"), new Object[]{newWFDecisionRule.getName(), newWFDecisionRule.getValue()});
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
-                RuleNameValue ruleNameValue = new RuleNameValue(newWFTransitionRule.getName(), newWFTransitionRule.getValue());
+                RuleNameValue ruleNameValue = new RuleNameValue(newWFDecisionRule.getName(), newWFDecisionRule.getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
-                    messages.error(new BundleKey("messages", "transitionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
+                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
-                int currentPriority = wFTransitionServiceRule.getMaxPriority(groupedTransitionRule.getName(), newWFTransitionRule.getType(), entity.getProvider());
-                newWFTransitionRule.setPriority(currentPriority + 1);
 
                 uniqueNameValues.add(ruleNameValue);
-                wfTransitionRules.add(newWFTransitionRule);
-                newWFTransitionRule = new WFTransitionRule();
-            } else if (groupedTransitionRule.getValue() != null) {
-                RuleNameValue ruleNameValue = new RuleNameValue(groupedTransitionRule.getValue().getName(), groupedTransitionRule.getValue().getValue());
+                wfDecisionRules.add(newWFDecisionRule);
+                newWFDecisionRule = new WFDecisionRule();
+            } else if (groupedDecisionRule.getValue() != null) {
+                RuleNameValue ruleNameValue = new RuleNameValue(groupedDecisionRule.getValue().getName(), groupedDecisionRule.getValue().getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
-                    messages.error(new BundleKey("messages", "transitionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
+                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
                 uniqueNameValues.add(ruleNameValue);
-                wfTransitionRules.add(groupedTransitionRule.getValue());
+                wfDecisionRules.add(groupedDecisionRule.getValue());
             }
         }
         return true;
     }
 
-    private Integer checkUniquePriorityAction(List<WFAction> wfActions) {
-        List<Integer> priorities = new ArrayList<>();
-        for (WFAction action : wfActions) {
-            if (priorities.contains(action.getPriority())) {
-                return action.getPriority();
-            } else {
-                priorities.add(action.getPriority());
-            }
+    public void moveUpTransition(WFTransition selectedWfTransition) throws BusinessException {
+        cancelTransitionDetail();
+        int index = entity.getTransitions().indexOf(selectedWfTransition);
+        if (index > 0) {
+            WFTransition upWfTransition = entity.getTransitions().get(index);
+            int priorityUp = upWfTransition.getPriority();
+            WFTransition downWfTransition = entity.getTransitions().get(index - 1);
+            WFTransition needUpdate = wFTransitionService.findById(upWfTransition.getId(), true);
+            needUpdate.setPriority(downWfTransition.getPriority());
+            wFTransitionService.update(needUpdate, getCurrentUser());
+            WFTransition updatedDownTransition = wFTransitionService.findById(downWfTransition.getId(), true);
+            updatedDownTransition.setPriority(priorityUp);
+            wFTransitionService.update(updatedDownTransition, getCurrentUser());
+            Collections.swap(entity.getTransitions(), index, index - 1);
+            messages.info(new BundleKey("messages", "update.successful"));
         }
-        return null;
+    }
+
+    public void moveDownTransition(WFTransition selectedWfTransition) throws BusinessException {
+        cancelTransitionDetail();
+        int index = entity.getTransitions().indexOf(selectedWfTransition);
+        if (index < entity.getTransitions().size() - 1) {
+            WFTransition upWfTransition = entity.getTransitions().get(index);
+            int priorityUp = upWfTransition.getPriority();
+            WFTransition downWfTransition = entity.getTransitions().get(index + 1);
+            WFTransition needUpdate = wFTransitionService.findById(upWfTransition.getId(), true);
+            needUpdate.setPriority(downWfTransition.getPriority());
+            wFTransitionService.update(needUpdate, getCurrentUser());
+            WFTransition updatedDownTransition = wFTransitionService.findById(downWfTransition.getId(), true);
+            updatedDownTransition.setPriority(priorityUp);
+            wFTransitionService.update(updatedDownTransition, getCurrentUser());
+            Collections.swap(entity.getTransitions(), index, index + 1);
+            messages.info(new BundleKey("messages", "update.successful"));
+        }
+    }
+
+    public void moveUpAction(int index) {
+        if (index > 0) {
+            WFAction upWfAction = wfActions.get(index);
+            int priorityUp = upWfAction.getPriority();
+            WFAction downWfAction = wfActions.get(index - 1);
+            upWfAction.setPriority(downWfAction.getPriority());
+            downWfAction.setPriority(priorityUp);
+            Collections.swap(wfActions, index, index - 1);
+        }
+    }
+
+    public void moveDownAction(int index) {
+        if (index < wfActions.size() - 1) {
+            WFAction upWfAction = wfActions.get(index);
+            int priorityUp = upWfAction.getPriority();
+            WFAction downWfAction = wfActions.get(index + 1);
+            upWfAction.setPriority(downWfAction.getPriority());
+            downWfAction.setPriority(priorityUp);
+            Collections.swap(wfActions, index, index - 1);
+        }
     }
 
     public class RuleNameValue {

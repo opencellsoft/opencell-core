@@ -18,19 +18,19 @@
  */
 package org.meveo.model.wf;
 
-public enum TransitionRuleTypeEnum {
+public enum DecisionRuleTypeEnum {
 
-    STRING(1, "TransitionRuleTypeEnum.string"),
-    DATE(2, "TransitionRuleTypeEnum.date"),
-    NUMBER(3, "TransitionRuleTypeEnum.number"),
-    RANGE_STRING(4, "TransitionRuleTypeEnum.range.string"),
-    RANGE_DATE(5, "TransitionRuleTypeEnum.range.date"),
-    RANGE_NUMBER(6, "TransitionRuleTypeEnum.range.number");
+    STRING(1, "DecisionRuleTypeEnum.string"),
+    DATE(2, "DecisionRuleTypeEnum.date"),
+    NUMBER(3, "DecisionRuleTypeEnum.number"),
+    RANGE_STRING(4, "DecisionRuleTypeEnum.range.string"),
+    RANGE_DATE(5, "DecisionRuleTypeEnum.range.date"),
+    RANGE_NUMBER(6, "DecisionRuleTypeEnum.range.number");
 
     private Integer id;
     private String label;
 
-    private TransitionRuleTypeEnum(Integer id, String label) {
+    private DecisionRuleTypeEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
     }
@@ -43,9 +43,9 @@ public enum TransitionRuleTypeEnum {
         return label;
     }
 
-    public static TransitionRuleTypeEnum getValue(Integer id) {
+    public static DecisionRuleTypeEnum getValue(Integer id) {
         if (id != null) {
-            for (TransitionRuleTypeEnum status : values()) {
+            for (DecisionRuleTypeEnum status : values()) {
                 if (id.equals(status.getId())) {
                     return status;
                 }

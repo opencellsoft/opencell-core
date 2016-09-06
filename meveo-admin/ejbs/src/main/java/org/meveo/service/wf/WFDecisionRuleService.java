@@ -24,35 +24,19 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.TransitionRuleTypeEnum;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.DecisionRuleTypeEnum;
+import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class WFTransitionRuleService extends PersistenceService<WFTransitionRule> {
-
-    public Integer getMaxPriority(String ruleName, TransitionRuleTypeEnum type, Provider provider) {
-        try {
-            return (Integer) getEntityManager()
-                .createQuery(
-                        "select MAX(wfr.priority) from " + WFTransitionRule.class.getSimpleName()
-                                + " wfr where wfr.name=:name and wfr.type=:type and wfr.provider=:provider")
-                .setParameter("name", ruleName)
-                .setParameter("type", type)
-                .setParameter("provider", provider)
-                .getSingleResult();
-        } catch (NoResultException e) {
-            log.error("failed to find ", e);
-        }
-        return 0;
-    }
+public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
 
     @SuppressWarnings("unchecked")
     public List<String> getDistinctNameWFTransitionRules(Provider provider) {
         try {
             return (List<String>) getEntityManager()
                     .createQuery(
-                            "select DISTINCT(wfr.name) from " + WFTransitionRule.class.getSimpleName()
+                            "select DISTINCT(wfr.name) from " + WFDecisionRule.class.getSimpleName()
                                     + " wfr where wfr.provider=:provider")
                     .setParameter("provider", provider)
                     .getResultList();
@@ -63,47 +47,46 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
     }
 
     @SuppressWarnings("unchecked")
-    public List<WFTransitionRule> getWFTransitionRules(String name, Provider provider) {
+    public List<WFDecisionRule> getWFDecisionRules(String name, Provider provider) {
         try {
-            return (List<WFTransitionRule>) getEntityManager()
+            return (List<WFDecisionRule>) getEntityManager()
                     .createQuery(
-                            "from " + WFTransitionRule.class.getSimpleName()
+                            "from " + WFDecisionRule.class.getSimpleName()
                                     + " where name=:name and provider=:provider")
                     .setParameter("name", name)
                     .setParameter("provider", provider)
                     .getResultList();
         } catch (NoResultException e) {
-            log.error("failed to find WFTransitionRule", e);
+            log.error("failed to find WFDecisionRule", e);
         }
         return null;
     }
 
-    public WFTransitionRule getWFTransitionRule(String name, String value, Integer priority, TransitionRuleTypeEnum type, Provider provider) {
-        WFTransitionRule wfTransitionRule = null;
+    public WFDecisionRule getWFDecisionRule(String name, String value, DecisionRuleTypeEnum type, Provider provider) {
+        WFDecisionRule wfDecisionRule = null;
         try {
-            wfTransitionRule = (WFTransitionRule) getEntityManager()
+            wfDecisionRule = (WFDecisionRule) getEntityManager()
                     .createQuery(
-                            "from " + WFTransitionRule.class.getSimpleName()
-                                    + " where name=:name and value=:value and priority=:priority and type=:type and provider=:provider")
+                            "from " + WFDecisionRule.class.getSimpleName()
+                                    + " where name=:name and value=:value and type=:type and provider=:provider")
 
                     .setParameter("name", name)
                     .setParameter("value", value)
-                    .setParameter("priority", priority)
                     .setParameter("type", type)
                     .setParameter("provider", provider)
                     .getSingleResult();
         } catch (NoResultException e) {
-            log.error("failed to find WFTransitionRule", e);
+            log.error("failed to find WFDecisionRule", e);
         }
-        return wfTransitionRule;
+        return wfDecisionRule;
     }
 
-    public WFTransitionRule getWFTransitionRuleByNameValue(String name, String value, Provider provider) {
-        WFTransitionRule wfTransitionRule = null;
+    public WFDecisionRule getWFDecisionRuleByNameValue(String name, String value, Provider provider) {
+        WFDecisionRule wfDecisionRule = null;
         try {
-            wfTransitionRule = (WFTransitionRule) getEntityManager()
+            wfDecisionRule = (WFDecisionRule) getEntityManager()
                     .createQuery(
-                            "from " + WFTransitionRule.class.getSimpleName()
+                            "from " + WFDecisionRule.class.getSimpleName()
                                     + " where name=:name and value=:value and provider=:provider")
 
                     .setParameter("name", name)
@@ -111,8 +94,8 @@ public class WFTransitionRuleService extends PersistenceService<WFTransitionRule
                     .setParameter("provider", provider)
                     .getSingleResult();
         } catch (NoResultException e) {
-            log.error("failed to find WFTransitionRule", e);
+            log.error("failed to find WFDecisionRule", e);
         }
-        return wfTransitionRule;
+        return wfDecisionRule;
     }
 }

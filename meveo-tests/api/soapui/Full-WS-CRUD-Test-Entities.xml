@@ -1427,48 +1427,6 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="bcb319d0-44d8-42dd-9b97-5d2273c333bb" wsaVersion="NONE" name="WFTransitionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFTransitionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFTransitionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:settings/>
-    <con:endpoints>
-      <con:endpoint>http://localhost:8080/meveo/WFTransitionWs</con:endpoint>
-    </con:endpoints>
-    <con:operation id="7ff4ed6b-b726-4ef0-9bf5-231324f5666f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="fd9d8488-b136-49ed-8212-427ddb05e919" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="b7d1ee0d-2a98-4cc4-911e-3ce88c4e6972" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="b1a5bfc3-ca5c-4b2b-875a-c1caa395d145" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="9bbcbd25-04d6-4123-9533-301b868b2d20" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="ef9db7b7-1105-41c9-8e7c-50bc1bdf37da" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-  </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="25dcc010-70bf-4e72-ac70-d0f07236e00e" wsaVersion="NONE" name="WFActionWsSoapBinding" type="wsdl" bindingName="{http://impl.wf.ws.api.meveo.org/}WFActionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/WFActionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:settings/>
-    <con:endpoints>
-      <con:endpoint>http://localhost:8080/meveo/WFActionWs</con:endpoint>
-    </con:endpoints>
-    <con:operation id="c2f21ce0-04b3-456e-beb9-5982b44e9251" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="4ff660f0-8c08-424c-a6f9-a81541117f09" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="24ec437d-425a-4276-98fe-e7bd79b0be3f" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-    <con:operation id="403a4b16-196f-4a31-9d13-8c2144659b99" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
-      <con:settings/>
-    </con:operation>
-  </con:interface>
   <con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -53981,16 +53939,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <conditionEl>CND_EL_T</conditionEl>\r
                   <priority>1</priority>
 			   <description>DESCRIPTION</description>	
-                  <listWFTransitionRuleDto>
+                  <listWFDecisionRuleDto>
                      <!--Zero or more repetitions:-->
-                     <wfTransitionRuleDto>
+                     <wfDecisionRuleDto>
                         <name>Territory</name>
-                        <value>north</value>
-                        <priority>4</priority>
+                        <value>north</value>                      
                         <type>STRING</type>
                         <conditionEl>#{mvn.getCFValue(entity,"Territory")=_VALUE_</conditionEl>
-                     </wfTransitionRuleDto>
-                  </listWFTransitionRuleDto>
+                     </wfDecisionRuleDto>
+                  </listWFDecisionRuleDto>
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -54119,15 +54076,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
-                     <listWFTransitionRuleDto>
-                        <wfTransitionRuleDto>
+                     <listWFDecisionRuleDto>
+                        <wfDecisionRuleDto>
                            <name>Territory</name>
-                           <priority>4</priority>
                            <value>north</value>
                            <type>STRING</type>
                            <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
-                        </wfTransitionRuleDto>
-                     </listWFTransitionRuleDto>
+                        </wfDecisionRuleDto>
+                     </listWFDecisionRuleDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
             </workflowDto>]]></token>
@@ -54234,16 +54190,15 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <conditionEl>CND_EL_T2</conditionEl>
                   <priority>2</priority>
 			   <description>DESCRIPTION2</description>
-                  <listWFTransitionRuleDto>
+                  <listWFDecisionRuleDto>
                      <!--Zero or more repetitions:-->
-                     <wfTransitionRuleDto>
+                     <wfDecisionRuleDto>
                         <name>Territory</name>
                         <value>south</value>
-                        <priority>2</priority>
                         <type>STRING</type>
                         <conditionEl>#{mv.getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
-                     </wfTransitionRuleDto>
-                  </listWFTransitionRuleDto>
+                     </wfDecisionRuleDto>
+                  </listWFDecisionRuleDto>
                   <!--Optional:-->\r
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
@@ -54378,15 +54333,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
-                     <listWFTransitionRuleDto>
-                        <wfTransitionRuleDto>
+                     <listWFDecisionRuleDto>
+                        <wfDecisionRuleDto>
                            <name>Territory</name>
-                           <priority>4</priority>
                            <value>north</value>
                            <type>STRING</type>
                            <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
-                        </wfTransitionRuleDto>
-                     </listWFTransitionRuleDto>
+                        </wfDecisionRuleDto>
+                     </listWFDecisionRuleDto>
                   </wfTransitionDto>
                   <wfTransitionDto>
                      <fromStatus>FRM_STATUS_2</fromStatus>
@@ -54407,15 +54361,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                            <conditionEl>CND_EL_A3</conditionEl>
                         </wfActionDto>
                      </listWFActionDto>
-                     <listWFTransitionRuleDto>
-                        <wfTransitionRuleDto>
+                     <listWFDecisionRuleDto>
+                        <wfDecisionRuleDto>
                            <name>Territory</name>
-                           <priority>2</priority>
                            <value>south</value>
                            <type>STRING</type>
                            <conditionEl>#{mv:getCFValue(entity,"Territory")==_VALUE_}</conditionEl>
-                        </wfTransitionRuleDto>
-                     </listWFTransitionRuleDto>
+                        </wfDecisionRuleDto>
+                     </listWFDecisionRuleDto>
                   </wfTransitionDto>
                </listWFTransitionDto>
             </workflowDto>]]></token>

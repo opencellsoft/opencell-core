@@ -24,49 +24,44 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.model.wf.TransitionRuleTypeEnum;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.DecisionRuleTypeEnum;
+import org.meveo.model.wf.WFDecisionRule;
 
-@XmlType(name = "WFTransitionRule")
+@XmlType(name = "WFDecisionRule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WFTransitionRuleDto extends BaseDto {
+public class WFDecisionRuleDto extends BaseDto {
 	private static final long serialVersionUID = 8309866046667741458L;
 
 	@XmlElement(required = true)
 	private String name;
 
-	@XmlElement(required = true)
-	private Integer priority;
-
     @XmlElement(required = true)
     private String value;
 
     @XmlElement(required = true)
-    private TransitionRuleTypeEnum type;
+    private DecisionRuleTypeEnum type;
 
 	@XmlElement(required = true)
 	private String conditionEl;
 
-	public WFTransitionRuleDto(){
+	public WFDecisionRuleDto(){
 	}
 
-	public WFTransitionRuleDto(WFTransitionRule wfTransitionRule) {
-		this.name = wfTransitionRule.getName();
-        this.value = wfTransitionRule.getValue();
-		this.priority = wfTransitionRule.getPriority();
-        this.type = wfTransitionRule.getType();
-		this.conditionEl = wfTransitionRule.getConditionEl();
+	public WFDecisionRuleDto(WFDecisionRule wfDecisionRule) {
+		this.name = wfDecisionRule.getName();
+        this.value = wfDecisionRule.getValue();
+        this.type = wfDecisionRule.getType();
+		this.conditionEl = wfDecisionRule.getConditionEl();
 	}
 	
-	public WFTransitionRule fromDto(WFTransitionRule wfTransitionRule) {
-		if(wfTransitionRule == null)
-            wfTransitionRule = new WFTransitionRule();
-        wfTransitionRule.setName(getName());
-        wfTransitionRule.setValue(getValue());
-        wfTransitionRule.setPriority(getPriority());
-        wfTransitionRule.setType(getType());
-        wfTransitionRule.setConditionEl(getConditionEl());
-		return wfTransitionRule;
+	public WFDecisionRule fromDto(WFDecisionRule wfDecisionRule) {
+		if(wfDecisionRule == null)
+            wfDecisionRule = new WFDecisionRule();
+        wfDecisionRule.setName(getName());
+        wfDecisionRule.setValue(getValue());
+        wfDecisionRule.setType(getType());
+        wfDecisionRule.setConditionEl(getConditionEl());
+		return wfDecisionRule;
 	}
 
     public String getName() {
@@ -85,27 +80,13 @@ public class WFTransitionRuleDto extends BaseDto {
         this.value = value;
     }
 
-    public TransitionRuleTypeEnum getType() {
+    public DecisionRuleTypeEnum getType() {
         return type;
     }
 
-    public void setType(TransitionRuleTypeEnum type) {
+    public void setType(DecisionRuleTypeEnum type) {
         this.type = type;
     }
-
-    /**
-	 * @return the priority
-	 */
-	public Integer getPriority() {
-		return priority;
-	}
-
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
 
 	/**
 	 * @return the conditionEl

@@ -10,8 +10,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.WFActionDto;
+import org.meveo.api.dto.payment.WFDecisionRuleDto;
 import org.meveo.api.dto.payment.WFTransitionDto;
-import org.meveo.api.dto.payment.WFTransitionRuleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -20,10 +20,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.Workflow;
+import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
-import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 
 @Stateless
@@ -39,7 +39,7 @@ public class WFTransitionApi extends BaseApi {
 	private WFTransitionService wfTransitionService;
 
     @Inject
-    private WFTransitionRuleService wfTransitionRuleService;
+    private WFDecisionRuleService wfDecisionRuleService;
 
 	/**
 	 * s
@@ -64,23 +64,22 @@ public class WFTransitionApi extends BaseApi {
                     " and Priority =" +wfTransitionDto.getPriority());
 		}
 
-        Set<WFTransitionRule> wfTransitionRuleList = new HashSet<>();
-        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFTransitionRuleDto())) {
-            for (WFTransitionRuleDto wfTransitionRuleDto : wfTransitionDto.getListWFTransitionRuleDto()) {
-                WFTransitionRule wfTransitionRule = wfTransitionRuleService.getWFTransitionRule(wfTransitionRuleDto.getName(),
-                        wfTransitionRuleDto.getValue(), wfTransitionRuleDto.getPriority(), wfTransitionRuleDto.getType(), currentUser.getProvider());
-                if (wfTransitionRule == null) {
-                    throw new EntityDoesNotExistsException(WFTransitionRule.class.getName() + "with name=" + wfTransitionRuleDto.getName() +
-                            " and value =" + wfTransitionRuleDto.getValue() +
-                            " and priority =" + wfTransitionRuleDto.getPriority() +
-                            " and type =" + wfTransitionRuleDto.getType());
+        Set<WFDecisionRule> wfDecisionRuleList = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
+            for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
+                WFDecisionRule wfDecisionRule = wfDecisionRuleService.getWFDecisionRule(wfDecisionRuleDto.getName(),
+                        wfDecisionRuleDto.getValue(), wfDecisionRuleDto.getType(), currentUser.getProvider());
+                if (wfDecisionRule == null) {
+                    throw new EntityDoesNotExistsException(WFDecisionRule.class.getName() + "with name=" + wfDecisionRuleDto.getName() +
+                            " and value =" + wfDecisionRuleDto.getValue() +
+                            " and type =" + wfDecisionRuleDto.getType());
                 }
-                wfTransitionRuleList.add(wfTransitionRule);
+                wfDecisionRuleList.add(wfDecisionRule);
             }
         }
 		wfTransition = wfTransitionDto.fromDto(wfTransition);
 		wfTransition.setWorkflow(workflow);
-        wfTransition.setWfTransitionRules(wfTransitionRuleList);
+        wfTransition.setWfDecisionRules(wfDecisionRuleList);
 		wfTransitionService.create(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
 			for(WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()){
@@ -112,23 +111,22 @@ public class WFTransitionApi extends BaseApi {
 					" and ToStatus =" +wfTransitionDto.getToStatus() +
                     " and Priority =" +wfTransitionDto.getPriority());
 		}
-        Set<WFTransitionRule> wfTransitionRuleList = new HashSet<>();
-        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFTransitionRuleDto())) {
-            for (WFTransitionRuleDto wfTransitionRuleDto : wfTransitionDto.getListWFTransitionRuleDto()) {
-                WFTransitionRule wfTransitionRule = wfTransitionRuleService.getWFTransitionRule(wfTransitionRuleDto.getName(),
-                        wfTransitionRuleDto.getValue(), wfTransitionRuleDto.getPriority(), wfTransitionRuleDto.getType(), currentUser.getProvider());
-                if (wfTransitionRule == null) {
-                    throw new EntityDoesNotExistsException(WFTransitionRule.class.getName() + "with name=" + wfTransitionRuleDto.getName() +
-                            " and value =" + wfTransitionRuleDto.getValue() +
-                            " and priority =" + wfTransitionRuleDto.getPriority() +
-                            " and type =" + wfTransitionRuleDto.getType());
+        Set<WFDecisionRule> wfDecisionRuleList = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
+            for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
+                WFDecisionRule wfDecisionRule = wfDecisionRuleService.getWFDecisionRule(wfDecisionRuleDto.getName(),
+                        wfDecisionRuleDto.getValue(), wfDecisionRuleDto.getType(), currentUser.getProvider());
+                if (wfDecisionRule == null) {
+                    throw new EntityDoesNotExistsException(WFDecisionRule.class.getName() + "with name=" + wfDecisionRuleDto.getName() +
+                            " and value =" + wfDecisionRuleDto.getValue() +
+                            " and type =" + wfDecisionRuleDto.getType());
                 }
-                wfTransitionRuleList.add(wfTransitionRule);
+                wfDecisionRuleList.add(wfDecisionRule);
             }
         }
 		wfTransition = wfTransitionDto.fromDto(wfTransition);
 		wfTransition.setWorkflow(workflow);
-        wfTransition.setWfTransitionRules(wfTransitionRuleList);
+        wfTransition.setWfDecisionRules(wfDecisionRuleList);
 		wfTransitionService.update(wfTransition, currentUser);
 		if(wfTransitionDto.getListWFActionDto() != null && !wfTransitionDto.getListWFActionDto().isEmpty()){
 			for(WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()){
@@ -244,7 +242,7 @@ public class WFTransitionApi extends BaseApi {
 					" and fromStatus =" + fromStatus + 
 					" and toStatus =" + toStatus +
                     " and priority =" + priority);
-		}		
+		}
 		return wfTransition;
 	}
 }

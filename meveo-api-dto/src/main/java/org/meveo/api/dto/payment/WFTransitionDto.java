@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 
 
 @XmlType(name = "WFTransition")
@@ -62,8 +62,8 @@ public class WFTransitionDto extends BaseDto {
 	private List<WFActionDto>  listWFActionDto = new ArrayList<WFActionDto>();
 
     @XmlElementWrapper
-    @XmlElement(name="wfTransitionRuleDto")
-    private List<WFTransitionRuleDto> listWFTransitionRuleDto = new ArrayList<>();
+    @XmlElement(name="wfDecisionRuleDto")
+    private List<WFDecisionRuleDto> listWFDecisionRuleDto = new ArrayList<>();
 
 	public WFTransitionDto(){
 	}
@@ -81,9 +81,9 @@ public class WFTransitionDto extends BaseDto {
 			listWFActionDto.add(wfadto);
 		}
 
-        for(WFTransitionRule wfTransitionRule : wfTransition.getWfTransitionRules() ){
-            WFTransitionRuleDto wfTransitionRuleDto = new WFTransitionRuleDto(wfTransitionRule);
-            listWFTransitionRuleDto.add(wfTransitionRuleDto);
+        for(WFDecisionRule wfDecisionRule : wfTransition.getWfDecisionRules() ){
+            WFDecisionRuleDto wfDecisionRuleDto = new WFDecisionRuleDto(wfDecisionRule);
+            listWFDecisionRuleDto.add(wfDecisionRuleDto);
         }
 	}
 	
@@ -177,12 +177,12 @@ public class WFTransitionDto extends BaseDto {
 		return listWFActionDto;
 	}
 
-    public List<WFTransitionRuleDto> getListWFTransitionRuleDto() {
-        return listWFTransitionRuleDto;
+    public List<WFDecisionRuleDto> getListWFDecisionRuleDto() {
+        return listWFDecisionRuleDto;
     }
 
-    public void setListWFTransitionRuleDto(List<WFTransitionRuleDto> listWFTransitionRuleDto) {
-        this.listWFTransitionRuleDto = listWFTransitionRuleDto;
+    public void setListWFDecisionRuleDto(List<WFDecisionRuleDto> listWFDecisionRuleDto) {
+        this.listWFDecisionRuleDto = listWFDecisionRuleDto;
     }
 
     /**

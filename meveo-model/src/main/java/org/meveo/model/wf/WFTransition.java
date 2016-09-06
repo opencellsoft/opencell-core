@@ -72,9 +72,9 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	private Workflow workflow;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "WF_TRANSITION_TRANSITION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "TRANSITION_RULE_ID"))
+    @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
     @OrderBy("priority ASC")
-    private Set<WFTransitionRule> wfTransitionRules = new HashSet<>();
+    private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
     @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
     @OrderBy("priority ASC")
@@ -172,16 +172,16 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     public String getCombinedEl() {
 
-        if (wfTransitionRules == null) {
+        if (wfDecisionRules == null) {
             return conditionEl;
         }
 
         StringBuffer combinedEl = new StringBuffer();
         final String AND = "AND";
-        if (wfTransitionRules != null) {
-            for (WFTransitionRule wfTransitionRule: wfTransitionRules) {
-                if (wfTransitionRule.getConditionEl() != null) {
-                    combinedEl.append(conditionEl).append(AND).append(wfTransitionRule.getConditionEl());
+        if (wfDecisionRules != null) {
+            for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
+                if (wfDecisionRule.getConditionEl() != null) {
+                    combinedEl.append(conditionEl).append(AND).append(wfDecisionRule.getConditionEl());
                 }
             }
         }
@@ -191,12 +191,12 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
         return combinedEl.toString();
     }
 
-    public Set<WFTransitionRule> getWfTransitionRules() {
-        return wfTransitionRules;
+    public Set<WFDecisionRule> getWfDecisionRules() {
+        return wfDecisionRules;
     }
 
-    public void setWfTransitionRules(Set<WFTransitionRule> wfTransitionRules) {
-        this.wfTransitionRules = wfTransitionRules;
+    public void setWfDecisionRules(Set<WFDecisionRule> wfDecisionRules) {
+        this.wfDecisionRules = wfDecisionRules;
     }
 
     @Override

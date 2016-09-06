@@ -444,7 +444,20 @@
 
     <changeSet id="#1861_20160826" author="pbach">
         <sql>
+            delete from wf_transition_transition_rule;
             delete from wf_transition_rule where id in (6,7,9);
+        </sql>
+    </changeSet>
+
+    <changeSet id="#1861_20160905" author="pbach">
+        <sql>
+            INSERT INTO wf_decision_rule select * from wf_transition_rule;
+            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
+            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
+            drop table wf_transition_transition_rule;
+            drop table wf_transition_rule;
+            drop SEQUENCE wf_transition_rule_seq;
+            ALTER TABLE wf_decision_rule DROP COLUMN priority;
         </sql>
     </changeSet>
 </databaseChangeLog>
