@@ -14,6 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BundleTemplateApi;
 import org.meveo.api.catalog.BusinessOfferApi;
+import org.meveo.api.catalog.ChannelApi;
 import org.meveo.api.catalog.ChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.DigitalResourceApi;
@@ -35,6 +36,7 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
@@ -56,6 +58,7 @@ import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
@@ -81,9 +84,6 @@ import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.shared.DateUtils;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
@@ -142,6 +142,9 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	@Inject
 	private BundleTemplateApi bundleTemplateApi;
 
+	@Inject
+	private ChannelApi channelApi;
+	
 	@Override
 	public ActionStatus createCounterTemplate(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -2128,6 +2131,107 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		}
 
 		return result;
+	}
+
+	@Override
+	public ActionStatus createChannel(ChannelDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			channelApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateChannel(ChannelDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			channelApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateChannel(ChannelDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			channelApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeChannel(String code) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			channelApi.remove(code, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public GetChannelResponseDto findChannel(String code) {
+		GetChannelResponseDto result = new GetChannelResponseDto();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+		result.getActionStatus().setMessage("");
+
+		try {
+			ChannelDto channelDto = channelApi.find(code, getCurrentUser());
+			result.setChannel(channelDto);
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
 	}
 
 }
