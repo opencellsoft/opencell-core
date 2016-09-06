@@ -21,6 +21,9 @@ public class ChannelDto implements Serializable {
 		@XmlAttribute()
 		private String description;
 
+		public ChannelDto() {
+		}
+		
 		public ChannelDto(Channel channel) {
 			if(channel!=null){
 				this.code=channel.getCode();
