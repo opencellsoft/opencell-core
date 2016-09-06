@@ -6166,18 +6166,15 @@ count(//ns2:findTradingConfigurationResponse[1]/return[1]/languages/language)</p
               <con:configuration>
                 <path>//return[1]/billingCycles</path>
                 <content><![CDATA[<billingCycles>
-               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
                   <calendar>MONTHLY</calendar>
                </billingCycle>
-               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
-                  <invoiceDateProductionDelay>0</invoiceDateProductionDelay>
-                  <transactionDateDelay>0</transactionDateDelay>
                   <calendar>MONTHLY</calendar>
-                  <invoiceTypeCode>${#Project#baseEntityPrefix}_TEST-Type</invoiceTypeCode>
                </billingCycle>
             </billingCycles>]]></content>
                 <allowWildcards>false</allowWildcards>
@@ -6335,18 +6332,15 @@ count(//ns2:findTradingConfigurationResponse[1]/return[1]/languages/language)</p
               <con:configuration>
                 <path>//return[1]/billingCycles</path>
                 <content><![CDATA[<billingCycles>
-               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
+               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
                   <calendar>MONTHLY</calendar>
                </billingCycle>
-               <billingCycle code="CYC_INV_MT_1" description="Monthly Invoice Cycle 1">
+               <billingCycle code="CYC_INV_MT_2" description="Monthly Invoice Cycle 2">
                   <invoiceDateDelay>4</invoiceDateDelay>
                   <dueDateDelay>2</dueDateDelay>
-                  <invoiceDateProductionDelay>0</invoiceDateProductionDelay>
-                  <transactionDateDelay>0</transactionDateDelay>
                   <calendar>MONTHLY</calendar>
-                  <invoiceTypeCode>${#Project#baseEntityPrefix}_TEST-Type</invoiceTypeCode>
                </billingCycle>
             </billingCycles>]]></content>
                 <allowWildcards>false</allowWildcards>
@@ -55191,18 +55185,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
 			    <filterConditions>
 			      <primitiveFilterCondition>
 			        <filterConditionType>PRIMITIVE</filterConditionType>
-			        <fieldName>startRatingDate</fieldName>
+			        <fieldName>subscriptionDate</fieldName>
 			        <operator>>=</operator>
 			        <operand>date:01/09/2015</operand>
 			      </primitiveFilterCondition>
 			    </filterConditions>
 			  </filterCondition>
 			  <primarySelector>
-			    <targetEntity>org.meveo.model.catalog.PricePlanMatrix</targetEntity>
+			    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
 			    <alias>p</alias>
 			    <displayFields>
 			      <field>code</field>
-			      <field>eventCode</field>
+			      <field>subscriptionDate</field>
 			    </displayFields>
 			    <exportFields/>
 			    <ignoreIfNotFoundForeignKeys/>
@@ -55265,18 +55259,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
 			    <filterConditions>
 			      <primitiveFilterCondition>
 			        <filterConditionType>PRIMITIVE</filterConditionType>
-			        <fieldName>startRatingDate</fieldName>
+			        <fieldName>subscriptionDate</fieldName>
 			        <operator>>=</operator>
 			        <operand>date:01/09/2015</operand>
 			      </primitiveFilterCondition>
 			    </filterConditions>
 			  </filterCondition>
 			  <primarySelector>
-			    <targetEntity>org.meveo.model.catalog.PricePlanMatrix</targetEntity>
+			    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
 			    <alias>p</alias>
 			    <displayFields>
 			      <field>code</field>
-			      <field>eventCode</field>
+			      <field>subscriptionDate</field>
 			    </displayFields>
 			    <exportFields/>
 			    <ignoreIfNotFoundForeignKeys/>
@@ -55332,18 +55326,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
 			    <filterConditions>
 			      <primitiveFilterCondition>
 			        <filterConditionType>PRIMITIVE</filterConditionType>
-			        <fieldName>startRatingDate</fieldName>
+			        <fieldName>subscriptionDate</fieldName>
 			        <operator>>=</operator>
 			        <operand>date:01/09/2015</operand>
 			      </primitiveFilterCondition>
 			    </filterConditions>
 			  </filterCondition>
 			  <primarySelector>
-			    <targetEntity>org.meveo.model.catalog.PricePlanMatrix</targetEntity>
+			    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
 			    <alias>p</alias>
 			    <displayFields>
 			      <field>code</field>
-			      <field>eventCode</field>
+			      <field>subscriptionDate</field>
 			    </displayFields>
 			    <exportFields/>
 			    <ignoreIfNotFoundForeignKeys/>
@@ -55407,18 +55401,18 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
 			    <filterConditions>
 			      <primitiveFilterCondition>
 			        <filterConditionType>PRIMITIVE</filterConditionType>
-			        <fieldName>startRatingDate</fieldName>
+			        <fieldName>subscriptionDate</fieldName>
 			        <operator>>=</operator>
 			        <operand>date:01/09/2015</operand>
 			      </primitiveFilterCondition>
 			    </filterConditions>
 			  </filterCondition>
 			  <primarySelector>
-			    <targetEntity>org.meveo.model.catalog.PricePlanMatrix</targetEntity>
+			    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
 			    <alias>p</alias>
 			    <displayFields>
 			      <field>code</field>
-			      <field>eventCode</field>
+			      <field>subscriptionDate</field>
 			    </displayFields>
 			    <exportFields/>
 			    <ignoreIfNotFoundForeignKeys/>
@@ -55464,7 +55458,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
       <ws:list>\r         
          <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter1</filter>\r         
          <firstRow>0</firstRow>\r         
-         <numberOfRows>5</numberOfRows>\r
+         <numberOfRows>10</numberOfRows>\r
       </ws:list>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -55478,6 +55472,246 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter3 for Provider" id="5b0bb466-83c7-4e38-a56d-35b09a4b24a6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter3 for Provider" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter3" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter3_DESCP">\r
+            
+            <shared>false</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>disabled</fieldName>
+			        <operator>is</operator>
+			        <operand>bool:false</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition>
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.crm.Provider</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>disabled</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter3 meveoAdmin" id="8390c862-d8d5-4008-8cde-47d82a60da57">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter3 meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter3</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update Filter3 for Provider" id="0d45f4b6-4dd3-4947-a35c-df43b84c49a7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="update Filter3 for Provider" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter3" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter3_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>disabled</fieldName>
+			        <operator>is</operator>
+			        <operand>bool:false</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition>
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.crm.Provider</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>disabled</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter3 superAdmin" id="83929de2-a6c3-4ad3-8e52-d132687b17f1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter3 superAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter3</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
