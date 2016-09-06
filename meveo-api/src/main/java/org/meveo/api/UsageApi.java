@@ -63,25 +63,33 @@ public class UsageApi extends BaseApi {
 		String currencyCode = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode();
 		List<Object[]>  rows = walletOperationService.openWalletOperationsByCharge(userAccount.getWallet());
 		for(Object[] row : rows){
-			ChargeAggregateDto chargeAggregate = new ChargeAggregateDto();
-			chargeAggregate.setDescription((String) row[0]);
-			chargeAggregate.setAmount(""+NumberUtils.round((BigDecimal)row[2], 2)+" "+currencyCode);
-			BigDecimal quantity = BigDecimal.ZERO;
-			String quantityToDisplay = "0";
-			if((BigDecimal)row[1] != null){				
-				quantity = NumberUtils.round((BigDecimal)row[1], 2);
-				quantityToDisplay = quantity.toPlainString();
-				
-				if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){
-					quantityToDisplay = (quantity.doubleValue() / 60)+"h:" ;
-					quantityToDisplay = (quantity.doubleValue() % 60)+(String) row[3] ;
-				}else if(!StringUtils.isBlank((String) row[3])){
-					quantityToDisplay +=  " "+(String) row[3];
+			try{
+				log.debug("chargeAggregate  desc {},  quantity {}, amount {}, unit {}",row[0],row[1],row[2],row[3]);
+				ChargeAggregateDto chargeAggregate = new ChargeAggregateDto();
+				chargeAggregate.setDescription((String) row[0]);
+				chargeAggregate.setAmount(""+NumberUtils.round((BigDecimal)row[2], 2)+" "+currencyCode);
+				BigDecimal quantity = BigDecimal.ZERO;
+				String quantityToDisplay = "0";
+				if((BigDecimal)row[1] != null){				
+					quantity = NumberUtils.round((BigDecimal)row[1], 2);
+					quantityToDisplay = quantity.toPlainString();
+					
+					if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){
+						long hours = quantity.longValue() / 60;
+						quantityToDisplay = hours+"h:" ;
+						long mins = quantity.longValue() % 60;
+						quantityToDisplay += mins +(String) row[3] ;
+					}else if(!StringUtils.isBlank((String) row[3])){
+						quantityToDisplay +=  " "+(String) row[3];
+					}
 				}
+				log.debug("chargeAggregate  quantityToDisplay {}",quantityToDisplay);
+				chargeAggregate.setQuantity(quantityToDisplay);
+				
+				response.getListChargeAggregate().add(chargeAggregate);
+			}catch(Exception e){
+				log.error("usage row error:",e);
 			}
-			chargeAggregate.setQuantity(quantityToDisplay);
-			
-			response.getListChargeAggregate().add(chargeAggregate);
 		}				
 		return response;
 	}
