@@ -20,33 +20,34 @@
 
         <div class="ui-fluid">
             <p:panel styleClass="no-border-radius">
-				<p:panel styleClass="Wid50">
-					<p:panelGrid id="left-controls" columns="2" styleClass="ui-panelgrid-blank">
-						<p:panel id="top-button-container">
-							<h:form>
-								<ul class="list-unstyled">
-									<li class="button-item">
-										<div class="btn-wrapper">
-											<i class="fa fa-plus text-blue"></i>
-											<p:link styleClass="no-text-decoration" outcome="mm_offerTemplates" value=" #{messages['action.offer.create']}">
-												<f:param name="backView" value="mm_offers" />
-											</p:link>
-										</div> <!-- / btn-wrapper -->
-									</li>
-								</ul>
-							</h:form>
-						</p:panel>
+                <p:panel styleClass="Wid50">
+                    <p:panelGrid id="left-controls" columns="2" styleClass="ui-panelgrid-blank">
+                        <p:panel id="top-button-container">
+                            <h:form>
+                                <ul class="list-unstyled">
+                                    <li class="button-item">
+                                        <div class="btn-wrapper">
+                                            <i class="fa fa-plus text-blue"></i>
+                                            <p:link styleClass="no-text-decoration" outcome="mm_offerTemplates" value=" #{messages['action.offer.create']}">
+                                                <f:param name="backView" value="mm_offers" />
+                                            </p:link>
+                                        </div> <!-- / btn-wrapper -->
+                                    </li>
+                                </ul>
+                            </h:form>
+                        </p:panel>
 
-						<p:panel id="top-details-container">
-							<ul class="list-unstyled">
-								<li><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount} #{messages['page.catalog.offersAreActive']}</li>
-								<li><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount} #{messages['page.catalog.offersAreDeactivated']}</li>
-								<li><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount} #{messages['page.catalog.offersWillExpireSoon']}</li>
-							</ul>
-						</p:panel>
-					</p:panelGrid>
-				</p:panel>
-				<p:panel styleClass="Wid50 Responsive100 TexAlRight VAlignTop">
+                        <p:panel id="top-details-container">
+                            <ul class="list-unstyled">
+                                <li><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount} #{messages['page.catalog.offersAreActive']}</li>
+                                <li><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount} #{messages['page.catalog.offersAreDeactivated']}</li>
+                                <li><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount}
+                                    #{messages['page.catalog.offersWillExpireSoon']}</li>
+                            </ul>
+                        </p:panel>
+                    </p:panelGrid>
+                </p:panel>
+                <p:panel styleClass="Wid50 Responsive100 TexAlRight VAlignTop">
                     <div class="Container">
                         <p:panel styleClass="Container60 VAlignTop">
                             <h:form>
@@ -59,8 +60,7 @@
                         </p:panel>
                         <p:panel columns="1" styleClass="export-panel no-border-radius" id="offerForExportPanel">
                             <ul class="list-unstyled">
-                                <li class="text-left">
-                                	<p:commandLink onclick="PF('exportableOffers').show();">
+                                <li class="text-left"><p:commandLink onclick="PF('exportableOffers').show();">
                                         <i class="fa fa-share-square-o" />
                                         <h:outputText value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
                                     </p:commandLink></li>
@@ -90,8 +90,7 @@
                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
                                 styleClass="dataGrid custom-grid ui-datagrid-blank" rowsPerPageTemplate="10,15,20,50">
                                 <p:panel styleClass="Wid40 Responsive100 VAlignTop">
-                                    <p:panelGrid id="offer-info" columns="3" styleClass="panelGrid ui-panelgrid-blank"
-                                        columnClasses="Wid10, Wid80, Wid10">
+                                    <p:panelGrid id="offer-info" columns="3" styleClass="panelGrid ui-panelgrid-blank" columnClasses="Wid10, Wid80, Wid10">
 
                                         <p:panel>
                                             <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateImageStreamer.image}" height="100" width="100">
@@ -165,40 +164,41 @@
                                 </p:panel>
 
                                 <p:panel styleClass="VAlignTop Wid60 Responsive100">
-                                    <p:dataGrid value="#{entity.offerServiceTemplates}" var="ost"
-                                        rendered="#{entity.offerServiceTemplates ne null and entity.offerServiceTemplates.size() > 0}" paginator="true" rows="20" columns="1"
-                                        paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="true"
-                                        styleClass="custom-grid ui-datagrid-blank dataGrid" style="border: none;">
-                                        <p:panel styleClass="TexAlCenter">
-                                            <h:outputText value="#{messages['offerServiceTemplate.serviceTemplate']}" styleClass="field-label"></h:outputText>: <h:outputText
-                                                styleClass="field-value" value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+                                    <p:panel>
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.OneTimeFee']}"
+                                            rendered="#{entity.getServiceTemplatesByChargeType()['SUBSCRIPTION']!=null}">
+                                            <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}" var="service" type="ordered">
+                                                    - #{service.code}
+                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
+                                                        -    
+                                                    <h:outputText value="#{service.description}" />
+                                                </h:panelGroup>
+                                            </p:dataList>
                                         </p:panel>
-                                        <p:panel>
-                                            <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-                                                header="#{messages['marketingManager.catalog.OneTimeFee']}"
-                                                rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null and ost.serviceTemplate.serviceSubscriptionCharges.size() > 0}">
-                                                <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                    value="#{ost.serviceTemplate.serviceSubscriptionCharges}" var="charge" type="ordered">
-													#{charge.chargeTemplate.descriptionOrCode}
-												</p:dataList>
-                                            </p:panel>
-                                            <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-                                                header="#{messages['marketingManager.catalog.recurringFee']}"
-                                                rendered="#{ost.serviceTemplate.serviceRecurringCharges != null and ost.serviceTemplate.serviceRecurringCharges.size() > 0}">
-                                                <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                    value="#{ost.serviceTemplate.serviceRecurringCharges}" var="charge" type="ordered">
-													#{charge.chargeTemplate.descriptionOrCode}
-											</p:dataList>
-                                            </p:panel>
-                                            <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-                                                header="#{messages['marketingManager.catalog.usageFee']}"
-                                                rendered="#{ost.serviceTemplate.serviceUsageCharges != null and ost.serviceTemplate.serviceUsageCharges.size() > 0}">
-                                                <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                    value="#{ost.serviceTemplate.serviceUsageCharges}" var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
-                                            </p:panel>
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
+                                            header="#{messages['marketingManager.catalog.recurringFee']}" rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
+                                            <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                value="#{entity.serviceTemplatesByChargeType['RECURRING']}" var="service" type="ordered">
+                                                    - #{service.code}
+                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
+                                                        -    
+                                                    <h:outputText value="#{service.description}" />
+                                                </h:panelGroup>
+                                            </p:dataList>
                                         </p:panel>
-                                    </p:dataGrid>
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.usageFee']}"
+                                            rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
+                                            <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                                                value="#{entity.serviceTemplatesByChargeType['USAGE']}" var="service" type="ordered">
+                                                    - #{service.code}
+                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
+                                                        -    
+                                                    <h:outputText value="#{service.description}" />
+                                                </h:panelGroup>
+                                                </p:dataList>
+                                        </p:panel>
+                                    </p:panel>
                                 </p:panel>
                             </p:dataGrid>
                         </h:form>

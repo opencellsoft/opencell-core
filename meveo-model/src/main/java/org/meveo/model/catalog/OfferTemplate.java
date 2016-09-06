@@ -19,7 +19,9 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,6 +39,8 @@ import javax.validation.constraints.Size;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -150,4 +154,46 @@ public class OfferTemplate extends ProductOffering {
 		this.longDescription = longDescription;
 	}
 
+    @SuppressWarnings("rawtypes")
+    public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+        Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType = new HashMap<>();
+
+        for (OfferServiceTemplate service : offerServiceTemplates) {
+            List charges = service.getServiceTemplate().getServiceRecurringCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("RECURRING")) {
+                    serviceTemplatesByChargeType.put("RECURRING", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("RECURRING").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceUsageCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("USAGE")) {
+                    serviceTemplatesByChargeType.put("USAGE", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("USAGE").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("SUBSCRIPTION")) {
+                    serviceTemplatesByChargeType.put("SUBSCRIPTION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("SUBSCRIPTION").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceTerminationCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("TERMINATION")) {
+                    serviceTemplatesByChargeType.put("TERMINATION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("TERMINATION").add(service.getServiceTemplate());
+            }
+        }
+
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        log.error("AKK by charge type {}", serviceTemplatesByChargeType);
+        return serviceTemplatesByChargeType;
+    }
 }
