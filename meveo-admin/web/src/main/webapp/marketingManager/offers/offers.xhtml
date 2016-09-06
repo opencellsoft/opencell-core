@@ -174,9 +174,13 @@
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}" var="service" type="ordered"
                                                 rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
-                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
-                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
-                                                    <h:outputText value="#{service.description}" styleClass="serviceDescription" />
+                                                <h:outputText value="#{service.descriptionOrCode}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block">
+                                                    <ul>
+                                                        <ui:repeat var="charge" value="#{service.serviceSubscriptionCharges}">
+                                                            <li><h:outputText value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+                                                        </ui:repeat>
+                                                    </ul>
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
@@ -188,9 +192,13 @@
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['RECURRING']}" var="service" type="ordered"
                                                 rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
-                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
-                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
-                                                    <h:outputText value="#{service.description}" />
+                                                <h:outputText value="#{service.descriptionOrCode}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block">
+                                                    <ul>
+                                                        <ui:repeat var="charge" value="#{service.serviceRecurringCharges}">
+                                                            <li><h:outputText value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+                                                        </ui:repeat>
+                                                    </ul>
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
@@ -202,9 +210,13 @@
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['USAGE']}" var="service" type="ordered"
                                                 rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
-                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
-                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
-                                                    <h:outputText value="#{service.description}" />
+                                                <h:outputText value="#{service.descriptionOrCode}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block">
+                                                    <ul>
+                                                        <ui:repeat var="charge" value="#{service.serviceUsageCharges}">
+                                                            <li><h:outputText value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+                                                        </ui:repeat>
+                                                    </ul>
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
