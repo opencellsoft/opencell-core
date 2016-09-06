@@ -22,7 +22,7 @@
                     <p:panel id="top-button-container">
                         <h:form>
                             <ul class="list-unstyled">
-                                <li>
+                                <li class="button-item">
                                     <div class="btn-wrapper">
                                         <i class="fa fa-plus text-blue"></i>
                                         <p:link styleClass="no-text-decoration" outcome="mm_productTemplateDetail" value=" #{messages['productTemplate.newProduct']}">
@@ -33,7 +33,7 @@
                                         </p:link>
                                     </div> <!-- / btn-wrapper -->
                                 </li>
-                                <li>
+                                <li class="button-item">
                                     <div class="btn-wrapper">
                                         <i class="fa fa-plus text-blue"></i>
                                         <p:link styleClass="no-text-decoration" outcome="mm_bundleTemplateDetail" value=" #{messages['productTemplate.createBundle']}">
@@ -73,13 +73,16 @@
                     </p:panel>
                     <p:panel columns="1" styleClass="export-panel no-border-radius" id="productForExportPanel">
                         <ul class="list-unstyled">
-                            <li class="text-left"><i class="fa fa-share-square-o"></i> <p:commandLink onclick="PF('exportablePTs').show();"
-                                    value="#{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}">
+                            <li class="text-left">
+                            	<p:commandLink onclick="PF('exportablePTs').show();">
+                                    <i class="fa fa-share-square-o" />
+                                    <h:outputText value=" #{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
                                 </p:commandLink></li>
                             <li class="text-left">
                                 <div class="text-left">
-                                    <p:commandLink styleClass="fa fa-play" value=" #{messages['page.catalog.exportTo']}" update=":#{p:component('exportParametersDialog')}"
-                                        oncomplete="PF('exportParametersDialog').show()">
+                                    <p:commandLink update=":#{p:component('exportParametersDialog')}" oncomplete="PF('exportParametersDialog').show()">
+                                        <i class="fa fa-play" />
+                                        <h:outputText value=" #{messages['page.catalog.exportTo']}" />
                                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{productTemplateListBean.getLazyDataModel()}" />
                                         <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{productTemplateListBean.ptToExport}" />
                                     </p:commandLink>

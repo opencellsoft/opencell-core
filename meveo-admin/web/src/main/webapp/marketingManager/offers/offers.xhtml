@@ -20,38 +20,33 @@
 
         <div class="ui-fluid">
             <p:panel styleClass="no-border-radius">
-                <p:panel styleClass="Wid50 Responsive100">
-                    <div id="left-controls" class="ui-fluid" style="margin-left: -40px;">
-                        <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-                            <p:panel id="top-button-container">
-                                <h:form>
-                                    <ul class="list-unstyled">
-                                        <li class="button-item">
-                                            <div class="btn-wrapper">
-                                                <i class="fa fa-plus text-blue"></i>
-                                                <p:link styleClass="no-text-decoration" outcome="mm_offerTemplates" value=" #{messages['action.offer.create']}">
-                                                    <f:param name="backView" value="mm_offers" />
-                                                </p:link>
-                                            </div> <!-- / btn-wrapper -->
-                                        </li>
-                                    </ul>
-                                </h:form>
-                            </p:panel>
+				<p:panel styleClass="Wid50">
+					<p:panelGrid id="left-controls" columns="2" styleClass="ui-panelgrid-blank">
+						<p:panel id="top-button-container">
+							<h:form>
+								<ul class="list-unstyled">
+									<li class="button-item">
+										<div class="btn-wrapper">
+											<i class="fa fa-plus text-blue"></i>
+											<p:link styleClass="no-text-decoration" outcome="mm_offerTemplates" value=" #{messages['action.offer.create']}">
+												<f:param name="backView" value="mm_offers" />
+											</p:link>
+										</div> <!-- / btn-wrapper -->
+									</li>
+								</ul>
+							</h:form>
+						</p:panel>
 
-                            <p:panel id="top-details-container">
-                                <ul class="list-unstyled">
-                                    <li><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount}
-                                        #{messages['page.catalog.offersAreActive']}</li>
-                                    <li><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount}
-                                        #{messages['page.catalog.offersAreDeactivated']}</li>
-                                    <li><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount}
-                                        #{messages['page.catalog.offersWillExpireSoon']}</li>
-                                </ul>
-                            </p:panel>
-                        </p:panelGrid>
-                    </div>
-                </p:panel>
-                <p:panel styleClass="Wid50 Responsive100 TexAlRight VAlignTop">
+						<p:panel id="top-details-container">
+							<ul class="list-unstyled">
+								<li><i class="fa fa-check-square-o text-blue"></i> #{offerTemplateListBean.activeCount} #{messages['page.catalog.offersAreActive']}</li>
+								<li><i class="fa fa-close text-blue"></i> #{offerTemplateListBean.inactiveCount} #{messages['page.catalog.offersAreDeactivated']}</li>
+								<li><i class="fa fa-exclamation-circle text-blue"></i> #{offerTemplateListBean.almostExpiredCount} #{messages['page.catalog.offersWillExpireSoon']}</li>
+							</ul>
+						</p:panel>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel styleClass="Wid50 Responsive100 TexAlRight VAlignTop">
                     <div class="Container">
                         <p:panel styleClass="Container60 VAlignTop">
                             <h:form>
@@ -64,13 +59,16 @@
                         </p:panel>
                         <p:panel columns="1" styleClass="export-panel no-border-radius" id="offerForExportPanel">
                             <ul class="list-unstyled">
-                                <li class="text-left"><i class="fa fa-share-square-o" style="margin-right: 5px;"></i> <p:commandLink onclick="PF('exportableOffers').show();"
-                                        value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
+                                <li class="text-left">
+                                	<p:commandLink onclick="PF('exportableOffers').show();">
+                                        <i class="fa fa-share-square-o" />
+                                        <h:outputText value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
                                     </p:commandLink></li>
                                 <li class="text-left">
                                     <div class="text-left">
-                                        <p:commandLink styleClass="fa fa-play" style="margin-right: 5px;" value=" #{messages['page.catalog.exportTo']}"
-                                            update=":#{p:component('exportParametersDialog')}" oncomplete="PF('exportParametersDialog').show()">
+                                        <p:commandLink update=":#{p:component('exportParametersDialog')}" oncomplete="PF('exportParametersDialog').show()">
+                                            <i class="fa fa-play" />
+                                            <h:outputText value=" #{messages['page.catalog.exportTo']}" />
                                             <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}"
                                                 value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
                                             <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{offerTemplateListBean.listFromBOM()}" />
