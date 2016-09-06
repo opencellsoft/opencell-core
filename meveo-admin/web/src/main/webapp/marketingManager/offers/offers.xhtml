@@ -165,30 +165,43 @@
 
                                 <p:panel styleClass="VAlignTop Wid60 Responsive100">
                                     <p:panel>
-                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.OneTimeFee']}"
-                                            rendered="#{entity.getServiceTemplatesByChargeType()['SUBSCRIPTION']!=null}">
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+                                            <f:facet name="header">
+                                                <h:outputText value="#{messages['marketingManager.catalog.OneTimeFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
+                                            </f:facet>
+
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}" var="service" type="ordered">
+                                                value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}" var="service" type="ordered"
+                                                rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
                                                 <h:outputText value="#{service.code}" styleClass="text-bold" />
                                                 <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
                                                     <h:outputText value="#{service.description}" styleClass="serviceDescription" />
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
-                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-                                            header="#{messages['marketingManager.catalog.recurringFee']}" rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+                                            <f:facet name="header">
+                                                <h:outputText value="#{messages['marketingManager.catalog.recurringFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}" />
+                                            </f:facet>
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                value="#{entity.serviceTemplatesByChargeType['RECURRING']}" var="service" type="ordered">
+                                                value="#{entity.serviceTemplatesByChargeType['RECURRING']}" var="service" type="ordered"
+                                                rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
                                                 <h:outputText value="#{service.code}" styleClass="text-bold" />
                                                 <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
                                                     <h:outputText value="#{service.description}" />
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
-                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius" header="#{messages['marketingManager.catalog.usageFee']}"
-                                            rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
+                                        <p:panel styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+                                            <f:facet name="header">
+                                                <h:outputText value="#{messages['marketingManager.catalog.usageFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}" />
+                                            </f:facet>
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                                                value="#{entity.serviceTemplatesByChargeType['USAGE']}" var="service" type="ordered">
+                                                value="#{entity.serviceTemplatesByChargeType['USAGE']}" var="service" type="ordered"
+                                                rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
                                                 <h:outputText value="#{service.code}" styleClass="text-bold" />
                                                 <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
                                                     <h:outputText value="#{service.description}" />
