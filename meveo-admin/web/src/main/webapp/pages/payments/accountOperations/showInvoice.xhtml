@@ -6,6 +6,13 @@
 	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{recordedInvoiceBean.objectId}" />
+            <f:viewParam name="tab" value="#{recordedInvoiceBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -13,30 +20,30 @@
 		<hftl:formPanel  edit="#{true}" formId="formOccInvoice"
 			label="#{messages['accountOperation_I.form']}" 
 			backingBean="#{recordedInvoiceBean}" showDeleteButton="false" showEditButton="true" showBackButton="false"  >
-			<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}"  >
+			<p:tabView id="tabView" activeIndex="#{recordedInvoiceBean.activeTab}"  >
 				<p:tab title="#{messages['customer.tab.information']}"> 
-				<hftl:formField
-					label="#{messages['accountOperation.transactionDate']}"
-					field="transactionDate" disabled="true" />
-				<hftl:formField label="#{messages['accountOperation.matchingStatus']}"
-					field="matchingStatus" isMessage="true" disabled="true" />
-				<hftl:formField label="#{messages['accountOperation.invoiceNumber']}"
-					field="reference" disabled="true" />
-				<hftl:formField label="#{messages['accountOperation.invoiceDate']}"
-					field="invoiceDate" disabled="true" />
-				<hftl:formField label="#{messages['accountOperation.dueDate']}"
-					field="dueDate" disabled="true" />
-
-				<hftl:formField label="#{messages['accountOperation.occDescription']}"
-					field="occDescription" size="50" maxlength="50" disabled="true" />
-
-				<hftl:formField label="#{messages['accountOperation.amountTTC']}"
-					field="amount" disabled="true" converter="bigDecimal4DigitsConverter"/>
-				<hftl:formField label="#{messages['accountOperation.amountHT']}"
-					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
-				<hftl:formField label="#{messages['accountOperation.amountTax']}"
-					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/>
-			</p:tab>
+    				<hftl:formField
+    					label="#{messages['accountOperation.transactionDate']}"
+    					field="transactionDate" disabled="true" />
+    				<hftl:formField label="#{messages['accountOperation.matchingStatus']}"
+    					field="matchingStatus" isMessage="true" disabled="true" />
+    				<hftl:formField label="#{messages['accountOperation.invoiceNumber']}"
+    					field="reference" disabled="true" />
+    				<hftl:formField label="#{messages['accountOperation.invoiceDate']}"
+    					field="invoiceDate" disabled="true" />
+    				<hftl:formField label="#{messages['accountOperation.dueDate']}"
+    					field="dueDate" disabled="true" />
+    
+    				<hftl:formField label="#{messages['accountOperation.occDescription']}"
+    					field="occDescription" size="50" maxlength="50" disabled="true" />
+    
+    				<hftl:formField label="#{messages['accountOperation.amountTTC']}"
+    					field="amount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+    				<hftl:formField label="#{messages['accountOperation.amountHT']}"
+    					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
+    				<hftl:formField label="#{messages['accountOperation.amountTax']}"
+    					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+    			</p:tab>
 				<hftl:customFields backingBean="#{recordedInvoiceBean}" messagesId=":formOccInvoice:messages" />
 			</p:tabView>	
                

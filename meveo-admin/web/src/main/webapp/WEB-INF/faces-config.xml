@@ -979,6 +979,18 @@
             </redirect>
 		</navigation-case>
 		
+        <navigation-case>
+            <from-outcome>customerAccountDetailOperationsTab</from-outcome>
+            <to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true">
+                <view-param>
+                    <name>mainTab</name>
+                    <value>1</value>
+                </view-param>
+            </redirect>
+        </navigation-case>
+                
 		<navigation-case>
 			<from-outcome>crmAccounts</from-outcome>
 			<to-view-id>/pages/crm/crmAccounts/crmAccounts.xhtml
