@@ -169,10 +169,9 @@
                                             rendered="#{entity.getServiceTemplatesByChargeType()['SUBSCRIPTION']!=null}">
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}" var="service" type="ordered">
-                                                    - #{service.code}
-                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
-                                                        -    
-                                                    <h:outputText value="#{service.description}" />
+                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
+                                                    <h:outputText value="#{service.description}" styleClass="serviceDescription" />
                                                 </h:panelGroup>
                                             </p:dataList>
                                         </p:panel>
@@ -180,9 +179,8 @@
                                             header="#{messages['marketingManager.catalog.recurringFee']}" rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['RECURRING']}" var="service" type="ordered">
-                                                    - #{service.code}
-                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
-                                                        -    
+                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
                                                     <h:outputText value="#{service.description}" />
                                                 </h:panelGroup>
                                             </p:dataList>
@@ -191,12 +189,11 @@
                                             rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
                                             <p:dataList styleClass="dataList" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                                                 value="#{entity.serviceTemplatesByChargeType['USAGE']}" var="service" type="ordered">
-                                                    - #{service.code}
-                                                    <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:10px">
-                                                        -    
+                                                <h:outputText value="#{service.code}" styleClass="text-bold" />
+                                                <h:panelGroup layout="block" rendered="#{service.description!=null}" style="margin-left:15px">
                                                     <h:outputText value="#{service.description}" />
                                                 </h:panelGroup>
-                                                </p:dataList>
+                                            </p:dataList>
                                         </p:panel>
                                     </p:panel>
                                 </p:panel>
