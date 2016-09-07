@@ -36,6 +36,9 @@
                             update="#{createEditPopupListenerUpdate}" />
                         <p:tooltip for="#{id}_addLink" value="#{messages['commons.addNew']}" />
                     </c:if>
+                    <p:commandButton immediate="true" rendered="#{showResetButton}" id="#{id}_resetLink" update="#{id}_entity" icon="ui-icon-close">
+                    	<f:setPropertyActionListener target="#{fieldItem}" value="#{null}"/>	
+                    </p:commandButton>
 
                 </c:if>
 

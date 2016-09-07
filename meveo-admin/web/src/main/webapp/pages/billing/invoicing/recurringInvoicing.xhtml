@@ -5,12 +5,14 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:event type="preRenderView"
-			listener="#{billingRunBean.preRenderView}" />
-	</f:metadata>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{billingRunBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="navigation">
+    <ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 

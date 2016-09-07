@@ -7,6 +7,12 @@
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
