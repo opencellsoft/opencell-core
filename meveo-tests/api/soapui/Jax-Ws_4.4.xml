@@ -978,21 +978,6 @@
     </con:operation>
     <con:operation id="93986b33-60ac-43bc-9af1-30e0ef897f32" isOneWay="false" action="" name="listPresentInAR" bindingOperationName="listPresentInAR" type="Request-Response" outputName="listPresentInARResponse" inputName="listPresentInAR" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
-      <con:call id="a85901f9-963d-4a90-84b3-77b621d16427" name="Request 1">
-        <con:settings/>
-        <con:encoding>UTF-8</con:encoding>
-        <con:endpoint>http://192.168.10.14:8080/meveo/InvoiceWs</con:endpoint>
-        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:listPresentInAR>\r
-         <!--Optional:-->\r
-         <customerAccountCode>?</customerAccountCode>\r
-      </ws:listPresentInAR>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/listPresentInAR"/>
-      </con:call>
     </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/MediationWs?wsdl" id="607fcb09-1e71-445d-8453-799ac5169124" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
