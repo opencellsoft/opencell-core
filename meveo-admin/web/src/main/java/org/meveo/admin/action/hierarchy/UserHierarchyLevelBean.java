@@ -163,8 +163,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void newUserHierarchyLevel() {
         showUserGroupDetail = true;
         isEdit = false;
-        setObjectIdFromSet(null);
-        UserHierarchyLevel userHierarchyLevel = initEntity();
+        UserHierarchyLevel userHierarchyLevel = initEntity(null);
         UserHierarchyLevel userHierarchyLevelParent = null;
         if (selectedNode != null) {
             userHierarchyLevelParent = (UserHierarchyLevel) selectedNode.getData();
@@ -182,8 +181,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         showUserGroupDetail = true;
         selectedNode = null;
         isEdit = false;
-        setObjectIdFromSet(null);
-        UserHierarchyLevel userHierarchyLevel = initEntity();
+        UserHierarchyLevel userHierarchyLevel = initEntity(null);
         userHierarchyLevel.setParentLevel(null);
         if (CollectionUtils.isNotEmpty(rootNode.getChildren())) {
             UserHierarchyLevel userHierarchyLast = (UserHierarchyLevel) rootNode.getChildren().get(rootNode.getChildCount() - 1).getData();

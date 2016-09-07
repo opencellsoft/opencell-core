@@ -5,6 +5,12 @@
 	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{terminationReasonBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
 	<ui:define name="body">
 		<p:panel>
 			<h:form id="crumbmenuForm">

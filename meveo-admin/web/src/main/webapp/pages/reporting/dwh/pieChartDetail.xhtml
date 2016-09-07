@@ -4,6 +4,12 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{pieChartBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
 	<ui:define name="body">
 
 

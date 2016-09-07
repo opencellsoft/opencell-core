@@ -6,10 +6,10 @@
 	template="/layout/template.xhtml">
 
     <ui:define name="metadata">
-    	<f:metadata>
-    		<f:event type="preRenderView"
-    			listener="#{billingRunBean.preRenderView}" />
-    	</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{billingRunBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
     </ui:define>
 
 	<ui:define name="body">
