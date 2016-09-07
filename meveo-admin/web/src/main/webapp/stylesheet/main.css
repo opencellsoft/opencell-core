@@ -266,13 +266,14 @@ div.body > table > thead,
 /**************************************************************************
  * JSF/Prime Overrides
  **************************************************************************/
+.ui-icon {text-indent: -99999px;}
 .ui-tabs-panel { padding: 10px !important; }
 .ui-tabs-panel .form-panel { padding: 0px !important; }
 .ui-panel-titlebar { border: none !important; }
 .ui-datatable-header, .ui-datatable-footer { text-align: left !important; }
 .ui-editor { border-radius : 8px; overflow : hidden; border : 1px solid #d6d6d6; -webkit-box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); }
 .ui-menubar { width : 93%; margin-left : auto; margin-right: auto; height : 40px; font-family: Arial, Helvetica, sans-serif; font-size: 0.9em; margin-top : -43px; color: #e6e6e6; padding: 1px; background : none; border : none; }
-.ui-menubar .ui-menu-list { width : 100%; padding-top : 5px; margin-left : 10px; float : left; margin-right : auto; }
+.ui-menubar .ui-menu-list { clear: both; padding-top: 5px; float: left; }
 .ui-menubar .ui-menu-list .ui-menu-child { -webkit-border-radius: 0px 15px 0px 15px; border-radius: 0px 15px 0px 15px; width : 150%; margin-right : 10px !important; box-shadow : none; border-top : none; border-color : #b3cecb; margin-left : -1px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list { border-top : 1px solid  #b3cecb; padding : 3px 1px 1px 3px; margin-left : 3px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem { padding : 0px !important; margin : 0px !important; width : 100%; border-left : none !important; border-right : none !important; -webkit-border-radius: 0px; border-radius: 0px; }
@@ -304,7 +305,15 @@ div.body > table > thead,
 /* .ui-button:hover .ui-button-icon-left { background-image : url(../img/ui-icons_616161_256x240-1.png) !Important; } */
 
 /* paginator */
-.ui-paginator { background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(235,235,235,1) 50%, rgba(219,219,219,1) 100%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(235,235,235,1)), color-stop(100%,rgba(219,219,219,1))); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* Chrome10+,Safari5.1+ */ background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* Opera 11.10+ */ background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* IE10+ */ background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */ }
+.ui-paginator {
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(235,235,235,1) 50%, rgba(219,219,219,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(235,235,235,1)), color-stop(100%,rgba(219,219,219,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */
+}
 .ui-paginator-top,
 .ui-paginator-bottom { border : none; }
 .ui-paginator-bottom { -webkit-box-shadow: 0px -1px 0px 0px #b8b8b8; box-shadow: 0px -1px 0px 0px #b8b8b8; }
@@ -583,9 +592,11 @@ vertical-align:top !important;
 .ui-widget-header{
 	border: none !important;
 }
-#crumbmenuForm{
-	border:none !important;
-	padding-bottom:0 !important;
+#crumbmenuForm {
+	clear: both;
+	padding-left: 19px;
+	padding-bottom: 0 !important;
+	background-color: #f7f7f7;
 }
 
 /* Custom field list/map/period new value entry*/
@@ -666,7 +677,7 @@ form.formNoBottomBorder {
 .Wid25{ width:25%;}
 .Wid20{ width:20%;}
 .Wid10{ width:10%;}
-.custom-grid .ui-paginator, .dataGrid .ui-paginator { text-align: right !important; }
+.custom-grid .ui-paginator, .dataGrid .ui-paginator { margin-left: auto; width: 250px !important; }
 .dataGrid .ui-paginator span { text-align: left !important; }
 .ui-datagrid-blank .ui-datagrid-content { border: none !important; }
 .dataList .ui-datalist-content { border: none; background: transparent; background-image: none; }

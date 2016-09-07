@@ -461,7 +461,6 @@ input[type="text"] {
 .ui-paginator {
   background: #eee;
   padding: 15px;
-  border: 1px solid #ddd !important;
 }
 
 .ui-inputswitch {
