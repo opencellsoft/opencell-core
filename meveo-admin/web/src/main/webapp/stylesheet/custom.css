@@ -656,9 +656,9 @@ input[type="text"] {
 
 .export-panel {
   border: 1px solid #ddd !important;
-  margin-top: 0.5em !important;
+  /*margin-top: 0.5em !important;
   width: 40% !important;
-  margin-right: -10px;
+  margin-right: -10px;*/
 }
 
 .export-panel li:hover {
@@ -693,7 +693,7 @@ input[type="text"] {
 }
 
 .search-wrapper input[type="text"] {
-  width: calc(100% - 48px);
+  width: calc(100% - 40px);
   font-size: 16px;
   line-height: 1.4;
   vertical-align: top;

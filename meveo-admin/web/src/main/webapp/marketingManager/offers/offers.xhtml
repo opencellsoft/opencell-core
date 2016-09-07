@@ -29,7 +29,7 @@
 
 		<div class="ui-fluid">
 			<p:panel styleClass="no-border-radius">
-				<p:panel styleClass="Wid50 Responsive100">
+				<p:panel styleClass="Wid55 Responsive100">
 					<p:panelGrid id="left-controls" columns="2"
 						styleClass="ui-panelgrid-blank">
 						<p:panel id="top-button-container">
@@ -64,50 +64,56 @@
 						</p:panel>
 					</p:panelGrid>
 				</p:panel>
-				<p:panel styleClass="Wid50 Responsive100 TexAlRight VAlignTop">
-					<div class="Container">
-						<p:panel styleClass="Container60 VAlignTop">
+				<p:panel styleClass="Wid45 Responsive100 VAlignTop">
+					<h:panelGrid columns="2"
+						columnClasses="Wid60 VAlignTop, Wid40 VAlignTop"
+						styleClass="Wid90 Responsive100 FRight VAlignTop">
+						<p:panel>
 							<h:form>
-								<div class="search-wrapper">
+								<h:panelGrid
+									styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
+									columnClasses="Wid95, Wid5" columns="2">
 									<p:inputText placeholder="#{messages['action.search']}"
 										value="#{offerTemplateListBean.filters['fullText']}" />
 									<p:commandLink styleClass="Padding3 fa fa-search"
 										update=":tabView"></p:commandLink>
-								</div>
+								</h:panelGrid>
 								<!-- / search-wrapper -->
 							</h:form>
 						</p:panel>
-						<p:panel columns="1" styleClass="export-panel no-border-radius"
-							id="offerForExportPanel">
-							<ul class="list-unstyled">
-								<li class="text-left"><p:commandLink
-										onclick="PF('exportableOffers').show();">
-										<i class="fa fa-share-square-o" />
-										<h:outputText
-											value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
-									</p:commandLink></li>
-								<li class="text-left">
-									<div class="text-left">
-										<p:commandLink
-											update=":#{p:component('exportParametersDialog')}"
-											oncomplete="PF('exportParametersDialog').show()">
-											<i class="fa fa-play" />
-											<h:outputText value=" #{messages['page.catalog.exportTo']}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedExportTemplate}"
-												value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.dataModelToExport}"
-												value="#{offerTemplateListBean.listFromBOM()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedEntitiesToExport}"
-												value="#{offerTemplateListBean.selectedOfferTemplates}" />
-										</p:commandLink>
-									</div>
-								</li>
-							</ul>
+						<p:panel>
+							<p:panel columns="1" styleClass="export-panel no-border-radius"
+								id="offerForExportPanel">
+								<ul class="list-unstyled">
+									<li class="text-left"><p:commandLink
+											onclick="PF('exportableOffers').show();">
+											<i class="fa fa-share-square-o" />
+											<h:outputText
+												value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
+										</p:commandLink></li>
+									<li class="text-left">
+										<div class="text-left">
+											<p:commandLink
+												update=":#{p:component('exportParametersDialog')}"
+												oncomplete="PF('exportParametersDialog').show()">
+												<i class="fa fa-play" />
+												<h:outputText value=" #{messages['page.catalog.exportTo']}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.selectedExportTemplate}"
+													value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.dataModelToExport}"
+													value="#{offerTemplateListBean.listFromBOM()}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.selectedEntitiesToExport}"
+													value="#{offerTemplateListBean.selectedOfferTemplates}" />
+											</p:commandLink>
+										</div>
+									</li>
+								</ul>
+							</p:panel>
 						</p:panel>
-					</div>
+					</h:panelGrid>
 				</p:panel>
 
 				<p:messages id="main_messages"></p:messages>
