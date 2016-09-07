@@ -55157,12 +55157,148 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
     </con:testCase>
     <con:testCase id="cf5a4037-4192-4769-982a-7f4d0cb9f1dc" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CRUD Filter" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="create Filter with All Vals" id="903b95fa-da80-4cee-baef-de0fa98a2ffc">
+      <con:testStep type="request" name="Create Provider Test" id="7b912bd8-9b5f-4a53-b2d3-0cda0b8e23eb">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createProvider</con:operation>
+          <con:request name="Create Provider Test" id="c50aa7cd-17c1-42d5-a007-a203aa9c591b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#superauthorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createProvider>\r
+         <provider code="${#Project#entityPrefix}_${#TestSuite#index}_TEST">\r</provider>\r
+      </ws:createProvider>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a5b8988e-d5e0-48dc-87ce-8d3ba993df71"/>
+            <con:assertion type="Simple Contains" id="bb98e3c4-066b-4478-97bd-4d32931b6320" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create UserRole Test" id="4d8eddc2-1e86-4191-9377-7c3c8991bc15">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createRole</con:operation>
+          <con:request name="Create UserRole Test" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a7b6b132-bf5d-466b-94af-01689de7367e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#superauthorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createRole>\r
+         <role name="${#Project#entityPrefix}_${#TestSuite#index}_TEST">\r
+            <description>${#Project#entityPrefix}_${#TestSuite#index}_TEST</description>\r
+            <permissions>\r
+               <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>
+               <permission permission="apiAccess" name="API User" resource="user"/>
+            </permissions>\r
+            <provider>${#Project#entityPrefix}_${#TestSuite#index}_TEST</provider>\r
+         </role>\r
+      </ws:createRole>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e7409424-0f58-45db-ab3d-4208f1f2cef7" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="bc4a2be1-c498-4ea3-858e-d399850c5ac8" name="Contains 1">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create User meveo.test for provider Test" id="4a04f5c3-09c5-4827-acdd-d9740614b3d4" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="create User meveo.test for provider Test" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a7b6b132-bf5d-466b-94af-01689de7367e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUser>
+         <user>
+            <username>meveo.test</username>
+            <password>meveo.test</password>
+            <email>${#Project#entityPrefix}_${#TestSuite#index}@test.com</email>            
+            <roles>
+               <!--Zero or more repetitions:-->
+               <role>${#Project#entityPrefix}_${#TestSuite#index}_TEST</role>
+            </roles>
+            <lastName>lastName</lastName>
+            <provider>${#Project#entityPrefix}_${#TestSuite#index}_TEST</provider>
+         </user>
+      </ws:createUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e7409424-0f58-45db-ab3d-4208f1f2cef7" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter for SUB with All Vals" id="903b95fa-da80-4cee-baef-de0fa98a2ffc">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilterWsSoapBinding</con:interface>
           <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="create Filter with All Vals" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+          <con:request name="create Filter for SUB with All Vals" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55234,12 +55370,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Filter with min req Vals" id="e67bfc26-80e2-431c-a9fb-316c6b298b80">
+      <con:testStep type="request" name="create Filter for SUB with min req Vals" id="e67bfc26-80e2-431c-a9fb-316c6b298b80">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilterWsSoapBinding</con:interface>
           <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="create Filter with min req Vals" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+          <con:request name="create Filter for SUB with min req Vals" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55299,12 +55435,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="update Filter with All Vals" id="baf22577-d040-4ee8-b9bb-f34739833222">
+      <con:testStep type="request" name="update Filter SUB with All Vals" id="baf22577-d040-4ee8-b9bb-f34739833222">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilterWsSoapBinding</con:interface>
           <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="update Filter with All Vals" id="6d3abeca-5982-460d-9bf9-67e890798e43">
+          <con:request name="update Filter SUB with All Vals" id="6d3abeca-5982-460d-9bf9-67e890798e43">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55315,7 +55451,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    <soapenv:Body>\r
       <ws:createOrUpdateFilter>      
          <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter1" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter1_DESCP">            
-            <shared>false</shared>            
+            <shared>true</shared>            
             <inputXml>
             <![CDATA[
             <filter>
@@ -55377,12 +55513,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="update Filter with min req Vals" id="1729694e-f751-4b58-972f-709aa02e7dcf">
+      <con:testStep type="request" name="update Filter SUB with min req Vals" id="1729694e-f751-4b58-972f-709aa02e7dcf">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilterWsSoapBinding</con:interface>
           <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="update Filter with min req Vals" id="6d3abeca-5982-460d-9bf9-67e890798e43">
+          <con:request name="update Filter SUB with min req Vals" id="6d3abeca-5982-460d-9bf9-67e890798e43">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55441,12 +55577,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="list Filter1" id="481d3760-b862-4a39-b6ce-baba5c1e7d1f">
+      <con:testStep type="request" name="list Filter for SUB with All Vals meveoAdmin" id="481d3760-b862-4a39-b6ce-baba5c1e7d1f">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilteredListWsSoapBinding</con:interface>
           <con:operation>list</con:operation>
-          <con:request name="list Filter1" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+          <con:request name="list Filter for SUB with All Vals meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55480,89 +55616,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Filter3 for Provider" id="5b0bb466-83c7-4e38-a56d-35b09a4b24a6">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>FilterWsSoapBinding</con:interface>
-          <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="create Filter3 for Provider" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateFilter>\r
-         
-         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter3" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter3_DESCP">\r
-            
-            <shared>false</shared>\r
-            
-            <inputXml><![CDATA[<filter>
-			  <disabled>false</disabled>
-			  <appendGeneratedCode>false</appendGeneratedCode>
-			  <filterCondition class="andCompositeFilterCondition">
-			    <filterConditionType>COMPOSITE_AND</filterConditionType>
-			    <filterConditions>
-			      <primitiveFilterCondition>
-			        <filterConditionType>PRIMITIVE</filterConditionType>
-			        <fieldName>disabled</fieldName>
-			        <operator>is</operator>
-			        <operand>bool:false</operand>
-			      </primitiveFilterCondition>
-			    </filterConditions>
-			  </filterCondition>
-			  <primarySelector>
-			    <targetEntity>org.meveo.model.crm.Provider</targetEntity>
-			    <alias>p</alias>
-			    <displayFields>
-			      <field>code</field>
-			      <field>disabled</field>
-			    </displayFields>
-			    <exportFields/>
-			    <ignoreIfNotFoundForeignKeys/>
-			  </primarySelector>
-			  <secondarySelectors/>
-		  </filter>]]]]>><![CDATA[</inputXml>\r
-         </filter>\r
-      </ws:createOrUpdateFilter>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
-              <con:configuration>
-                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
-                <content>SUCCESS</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="list Filter3 meveoAdmin" id="8390c862-d8d5-4008-8cde-47d82a60da57">
+      <con:testStep type="request" name="list Filter for SUB with All vals SuperAdmin" id="06afe31d-3574-4665-bf80-388bd004d69e">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilteredListWsSoapBinding</con:interface>
           <con:operation>list</con:operation>
-          <con:request name="list Filter3 meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+          <con:request name="list Filter for SUB with All vals SuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55572,7 +55631,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:list>\r         
-         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter3</filter>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter1</filter>\r         
          <firstRow>0</firstRow>\r         
          <numberOfRows>10</numberOfRows>\r
       </ws:list>\r
@@ -55600,12 +55659,12 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="update Filter3 for Provider" id="0d45f4b6-4dd3-4947-a35c-df43b84c49a7">
+      <con:testStep type="request" name="create Filter1 for Provider DEMO" id="5b0bb466-83c7-4e38-a56d-35b09a4b24a6">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilterWsSoapBinding</con:interface>
           <con:operation>createOrUpdateFilter</con:operation>
-          <con:request name="update Filter3 for Provider" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+          <con:request name="create Filter1 for Provider DEMO" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -55616,7 +55675,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    <soapenv:Body>\r
       <ws:createOrUpdateFilter>\r
          
-         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Filter3" description="${#Project#entityPrefix}_${#TestSuite#index}_Filter3_DESCP">\r
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Provider1" description="${#Project#entityPrefix}_${#TestSuite#index}_Provider1_DESCP">\r
             
             <shared>true</shared>\r
             
@@ -55677,14 +55736,95 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="list Filter3 superAdmin" id="83929de2-a6c3-4ad3-8e52-d132687b17f1">
+      <con:testStep type="request" name="create Filter2 for Provider TEST" id="a3b058b2-3615-4e67-a6b2-34a1980d56da">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter2 for Provider TEST" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Provider2" description="${#Project#entityPrefix}_${#TestSuite#index}_Provider2_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>disabled</fieldName>
+			        <operator>is</operator>
+			        <operand>bool:false</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition>
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.crm.Provider</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>code</field>
+			      <field>disabled</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for Provider - meveoAdmin" id="8390c862-d8d5-4008-8cde-47d82a60da57">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>FilteredListWsSoapBinding</con:interface>
           <con:operation>list</con:operation>
-          <con:request name="list Filter3 superAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+          <con:request name="list Filter1 for Provider - meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
@@ -55692,7 +55832,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:list>\r         
-         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Filter3</filter>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</filter>\r         
          <firstRow>0</firstRow>\r         
          <numberOfRows>10</numberOfRows>\r
       </ws:list>\r
@@ -55705,9 +55845,919 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="085f88a3-c543-425f-840d-53968bd54007" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<provider>
+    <code>DEMO</code>
+    <disabled>false</disabled>
+  </provider>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username>meveo.superadmin</con:username>
               <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for Provider - meveoSuperAdmin" id="83929de2-a6c3-4ad3-8e52-d132687b17f1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter1 for Provider - meveoSuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Provider1</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="961dfc47-f0ed-456e-9e18-4bc46bfbc9ad" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<provider>
+    <code>DEMO</code>
+    <disabled>false</disabled>
+  </provider>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for Provider - Test" id="6ddcc91b-9af5-442d-aa4d-17016ed6858c" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for Provider - Test" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Provider2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="1b45d9a8-4be9-42c1-a875-936fa5cfa56c" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<provider>
+    <code>${#Project#entityPrefix}_${#TestSuite#index}_TEST</code>
+    <disabled>false</disabled>
+  </provider>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for Provider - testSuperAdmin" id="f877915d-f688-44a8-b27c-5b06b0e9daff" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for Provider - testSuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Provider2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.supertest</con:username>
+              <con:password>meveo.superatest</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter1 for User - DEMO" id="df53f0e3-deb1-408d-84f9-e456dedb1a01">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter1 for User - DEMO" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_User1" description="${#Project#entityPrefix}_${#TestSuite#index}_User1_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>auditable.created</fieldName>
+			        <operator>>=</operator>
+			        <operand>date:01/01/2015</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition>
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.admin.User</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>userName</field>
+			      <field>email</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter2 for User - TEST" id="b610735f-2bde-47a6-8ed7-c9d64eab8e23" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter2 for User - TEST" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_User2" description="${#Project#entityPrefix}_${#TestSuite#index}_User2_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>auditable.created</fieldName>
+			        <operator>>=</operator>
+			        <operand>date:01/01/2015</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition>
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.admin.User</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>userName</field>
+			      <field>email</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for User - meveoAdmin" id="8a02dda2-fc6b-4a72-9ad8-281002f20a78">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter1 for User - meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_User1</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="92f4e00a-2277-4099-8d93-9258bba02499" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<user>
+    <userName>MEVEO.ADMIN</userName>
+  </user>
+  <user>
+    <userName>MEVEO.SUPERADMIN</userName>
+  </user>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for User - meveoSuperAdmin" id="a63e32cb-f97d-4280-b9b1-7be9860628bd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter1 for User - meveoSuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_User1</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="92f4e00a-2277-4099-8d93-9258bba02499" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<user>
+    <userName>MEVEO.ADMIN</userName>
+  </user>
+  <user>
+    <userName>MEVEO.SUPERADMIN</userName>
+  </user>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for User - Test" id="25f12c00-d88b-4426-9e0e-96fdd6e128d8" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for User - Test" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_User2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="92f4e00a-2277-4099-8d93-9258bba02499" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<user>
+    <userName>MEVEO.TEST</userName>
+    <email>WS_FULL_108@test.com</email>
+  </user>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for User - testSuperAdmin" id="6581faff-85d7-4741-a3b6-d4ba131bba07" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for User - testSuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_User2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="92f4e00a-2277-4099-8d93-9258bba02499" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<user>
+    <userName>MEVEO.ADMIN</userName>
+  </user>
+  <user>
+    <userName>MEVEO.SUPERADMIN</userName>
+  </user>
+  <user>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.supertest</con:username>
+              <con:password>meveo.supertest</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter1 for Role - DEMO" id="9906a37c-3786-4624-9480-5598da1b65a9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter1 for Role - DEMO" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Role1" description="${#Project#entityPrefix}_${#TestSuite#index}_Role1_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <!--filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>subscriptionDate</fieldName>
+			        <operator>>=</operator>
+			        <operand>date:01/09/2015</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition-->
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.security.Role</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>name</field>
+			      <field>description</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Filter2 for Role - TEST" id="fcc72fac-bf46-4ac0-92dd-956a0fff2ce1" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilterWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateFilter</con:operation>
+          <con:request name="create Filter2 for Role - TEST" id="e77f78ec-54e9-4ba1-b702-0e8c16fd50ff">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateFilter>\r
+         
+         <filter code="${#Project#entityPrefix}_${#TestSuite#index}_Role2" description="${#Project#entityPrefix}_${#TestSuite#index}_Role2_DESCP">\r
+            
+            <shared>true</shared>\r
+            
+            <inputXml><![CDATA[<filter>
+			  <disabled>false</disabled>
+			  <appendGeneratedCode>false</appendGeneratedCode>
+			  <!--filterCondition class="andCompositeFilterCondition">
+			    <filterConditionType>COMPOSITE_AND</filterConditionType>
+			    <filterConditions>
+			      <primitiveFilterCondition>
+			        <filterConditionType>PRIMITIVE</filterConditionType>
+			        <fieldName>subscriptionDate</fieldName>
+			        <operator>>=</operator>
+			        <operand>date:01/09/2015</operand>
+			      </primitiveFilterCondition>
+			    </filterConditions>
+			  </filterCondition-->
+			  <primarySelector>
+			    <targetEntity>org.meveo.model.security.Role</targetEntity>
+			    <alias>p</alias>
+			    <displayFields>
+			      <field>name</field>
+			      <field>description</field>
+			    </displayFields>
+			    <exportFields/>
+			    <ignoreIfNotFoundForeignKeys/>
+			  </primarySelector>
+			  <secondarySelectors/>
+		  </filter>]]]]>><![CDATA[</inputXml>\r
+         </filter>\r
+      </ws:createOrUpdateFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="55e8613d-0655-411f-9a91-45ed2423af85" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1eda23e8-1b6e-4402-8b85-963770b6a993" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createOrUpdateFilterResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for Role - meveoAdmin" id="0e1dc7fd-afa3-4a16-8911-5bb68ae1cf86">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter1 for Role - meveoAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Role1</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a131b09b-aed2-4e06-b92a-3332a41bbc98" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<role>
+    <name>administrateur</name>
+    <description>Administrateur</description>
+  </role>
+  <role>
+    <name>superAdministrateur</name>
+    <description>Super Administrateur</description>
+  </role>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter1 for Role - meveoSuperAdmin" id="396f04cf-d62c-4078-8858-0fb8fe7e9905">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter1 for Role - meveoSuperAdmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Role1</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a131b09b-aed2-4e06-b92a-3332a41bbc98" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<role>
+    <name>administrateur</name>
+    <description>Administrateur</description>
+  </role>
+  <role>
+    <name>superAdministrateur</name>
+    <description>Super Administrateur</description>
+  </role>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for Role - TEST" id="387cd1f1-1cc6-4390-98b0-3a0d0c74da9a" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for Role - TEST" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Role2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a131b09b-aed2-4e06-b92a-3332a41bbc98" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<role>
+    <name>${#Project#entityPrefix}_${#TestSuite#index}_TEST</name>
+    <description>${#Project#entityPrefix}_${#TestSuite#index}_TEST</description>
+  </role>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>MEVEO.TEST</con:username>
+              <con:password>MEVEO.TEST</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="list Filter2 for Role - testSuperadmin" id="aec55aa2-b733-46f1-bce1-220b725d1ed9" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>list</con:operation>
+          <con:request name="list Filter2 for Role - testSuperadmin" id="d49eab12-86c3-424f-8dec-56eef4b6b07a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:list>\r         
+         <filter>${#Project#entityPrefix}_${#TestSuite#index}_Role2</filter>\r         
+         <firstRow>0</firstRow>\r         
+         <numberOfRows>10</numberOfRows>\r
+      </ws:list>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a131b09b-aed2-4e06-b92a-3332a41bbc98" name="Contains">
+              <con:configuration>
+                <token><![CDATA[<role>
+    <name>administrateur</name>
+    <description>Administrateur</description>
+  </role>
+  <role>
+    <name>superAdministrateur</name>
+    <description>Super Administrateur</description>
+  </role>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.supertest</con:username>
+              <con:password>meveo.supertest</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -64171,6 +65221,10 @@ and paste that invoice number in the next step.
     <con:property>
       <con:name>timezone2</con:name>
       <con:value>-03</con:value>
+    </con:property>
+    <con:property>
+      <con:name>superauthorization</con:name>
+      <con:value>Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
