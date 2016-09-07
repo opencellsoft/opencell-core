@@ -10,6 +10,7 @@ import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
@@ -19,6 +20,8 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
+import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
@@ -246,10 +249,10 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus createOrUpdateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
 
     @WebMethod
-    GetDiscountPlanResponseDto findDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+    GetDiscountPlanResponseDto findDiscountPlan(@WebParam(name = "discountPlanCode") String discountPlanCode);
 
     @WebMethod
-    ActionStatus removeDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+    ActionStatus removeDiscountPlan(@WebParam(name = "discountPlanCode") String discountPlanCode);
 
     @WebMethod
     GetDiscountPlansResponseDto listDiscountPlan();
@@ -269,4 +272,22 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
 
+    // discount Plan item
+    @WebMethod
+    ActionStatus createDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
+
+    @WebMethod
+    ActionStatus updateDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
+
+    @WebMethod
+    DiscountPlanItemResponseDto findDiscountPlanItem(@WebParam(name = "discountPlanItemCode") String discountPlanItemCode);
+
+    @WebMethod
+    ActionStatus removeDiscountPlanItem(@WebParam(name = "discountPlanItemCode") String discountPlanItemCode);
+
+    @WebMethod
+    DiscountPlanItemsResponseDto listDiscountPlanItem();
 }

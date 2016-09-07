@@ -37,6 +37,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -49,7 +50,7 @@ import org.meveo.model.shared.ContactInformation;
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "CRM_CUSTOMER")
-public class Customer extends AccountEntity {
+public class Customer extends AccountEntity{
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -147,5 +148,15 @@ public class Customer extends AccountEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[]{seller};
+	}
+
+	@Override
+	public BusinessEntity getParentEntity() {
+		return seller;
+	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return Seller.class;
 	}
 }

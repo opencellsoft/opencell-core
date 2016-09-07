@@ -5,7 +5,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="entityClass" value="#{customEntityTemplateBean.entityClassName}" />
-            <f:viewParam name="cetId" value="#{customEntityTemplateBean.objectIdFromSet}" />
+            <f:viewParam name="cetId" value="#{customEntityTemplateBean.objectId}" />
             <f:viewParam name="appliesTo" value="#{customEntityTemplateBean.appliesTo}" />
         </f:metadata>
     </ui:define>
@@ -47,7 +47,7 @@
 
         <h:form id="fieldsForm">
             <p:panel width="100" header="#{messages['customizedEntities.fields']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
-                <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node">
+                <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node" resizableColumns="true">
                     <p:column headerText="#{messages['BusinessEntity.code']}">
                         <h:outputText value="#{entity.code}" rendered="#{node.type == 'field'}" />
                         <h:panelGroup styleClass="ui-icon ui-icon-folder-collapsed inlineIcon" rendered="#{node.type == 'tab'}" />
@@ -206,7 +206,7 @@
             <p:panel width="100" header="#{messages['customizedEntities.actions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
                 <p:dataTable id="entityActions" var="entity" value="#{customEntityTemplateBean.entityActions}" paginator="true" rows="10" sortBy="#{entity.code}"
                     paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true" resizableColumns="true">
                     <p:column headerText="#{messages['BusinessEntity.code']}">
                         <h:outputText value="#{entity.localCodeForRead}" />
                     </p:column>

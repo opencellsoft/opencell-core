@@ -71,7 +71,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 
 	private BusinessEntity businessEntity;
 	private String popupId;
-	private final String MESSAGE_CODE = "%s_%d";
 	private String objectType;
 	private Map<String, String> objectTypeMap;
 
@@ -115,18 +114,19 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		super.preRenderView();
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
 				.getRequest();
-		String messageCode = request.getParameter("messageCode");
+		String entityCode = request.getParameter("entityCode");
+		String entityClass=request.getParameter("entityClass");
 		String objectType = request.getParameter("objectType");
 		try {
 			if (objectType != null) {
 				setObjectType(getObjectTypeValue(objectType));
 			}
-			if (messageCode != null) {
-				BusinessEntity businessEntity = catMessagesService.getEntityByMessageCode(messageCode);
+			if (!StringUtils.isBlank(entityCode)&&!StringUtils.isBlank(entityClass)) {
+				BusinessEntity businessEntity = catMessagesService.findBusinessEntityByCodeAndClass(entityCode,entityClass,currentProvider);
 				setBusinessEntity(businessEntity);
 			}
 		} catch (BusinessException e) {
-			log.warn("Unable to retrieve entity with messageCode: %s", messageCode);
+			log.warn("Unable to retrieve entity with code: %s and class %s", entityCode,entityClass);
 		}
 	}
 
@@ -166,7 +166,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		}
 		csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
 		csvReader.readHeaders();
-		String messageCode = null;
+		String entityCode = null;
+		String entityClass=null;
 		String[] values = null;
 		MultilanguageEntityService<?> service = null;
 		BusinessEntity entity = null;
@@ -177,17 +178,18 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 			service = catMessagesService.getMultilanguageEntityService(values[ENTITY_CLASS]);
 			entity = service.findByCode(values[CODE], getCurrentUser().getProvider());
 			if (entity != null) {
-				messageCode = catMessagesService.getMessageCode(entity);
+				entityCode = entity.getCode();
+				entityClass=catMessagesService.getEntityClass(entity);
 			}
-			if (messageCode != null) {
-				existingDescription = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE],
-						getCurrentUser().getProvider());
+			if (entityCode != null&&entityClass!=null) {
+				existingDescription = catMessagesService.findByCodeClassAndLanguage(entityCode,entityClass, values[LANGUAGE_CODE],currentProvider);
 				if (existingDescription != null) {
 					existingDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
 					catMessagesService.update(existingDescription, getCurrentUser());
 				} else {
 					newDescription = new CatMessages();
-					newDescription.setMessageCode(messageCode);
+					newDescription.setEntityCode(entityCode);
+					newDescription.setEntityClass(entityClass);
 					newDescription.setLanguageCode(values[LANGUAGE_CODE]);
 					newDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
 					catMessagesService.create(newDescription, getCurrentUser());
@@ -204,16 +206,14 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException {
 		this.businessEntity = businessEntity;
 		if (businessEntity != null) {
-			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(
-					String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
+			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(businessEntity), businessEntity.getCode(),currentProvider);
 			this.getLanguageMessagesMap().clear();
 			for (CatMessages catMessages : catMessagesList) {
 				this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
 			}
 			if (entity.getLanguageCode() != null) {
-				CatMessages temp = catMessagesService.findByCodeAndLanguage(
-						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()),
-						entity.getLanguageCode(), getCurrentProvider());
+				CatMessages temp = catMessagesService.findByCodeClassAndLanguage(businessEntity.getCode(),getEntityClass().getSimpleName(),
+						entity.getLanguageCode(),currentProvider);
 				if (temp != null) {
 					this.setObjectId(temp.getId());
 					initEntity();
@@ -257,7 +257,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 				statusKey = "update.successful";
 				for (String key : languageMessagesMap.keySet()) {
 					description = languageMessagesMap.get(key);
-					catMsg = catMessagesService.getCatMessages(businessEntity, key);
+					catMsg = catMessagesService.getCatMessages(businessEntity, key,currentProvider);
 					if (catMsg != null) {
 						if (StringUtils.isBlank(description)) {
 							catMessagesService.remove(catMsg);
@@ -292,8 +292,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 			return back();
 		} else { // single entity
 			if (entity.isTransient()) {
-				entity.setMessageCode(
-						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
+				entity.setEntityCode(businessEntity.getCode());
+				entity.setEntityClass(catMessagesService.getEntityClass(businessEntity));
 			}
 			return super.saveOrUpdate(killConversation);
 		}
@@ -316,6 +316,11 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 			throw new BusinessException(INVALID_CLASS_TYPE);
 		}
 		return businessEntity.getClass();
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "entityCode";
 	}
 
 }

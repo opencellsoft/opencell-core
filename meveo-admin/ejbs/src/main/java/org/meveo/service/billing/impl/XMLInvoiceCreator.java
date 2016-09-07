@@ -312,11 +312,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// log.debug("creating ba");
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Element billingAccountTag = doc.createElement("billingAccount");
-			if (billingCycle == null) {
-				billingCycle = billingAccount.getBillingCycle();
-			}
-			String billingCycleCode = billingCycle != null ? billingCycle.getCode() + "" : "";
-			billingAccountTag.setAttribute("billingCycleCode", billingCycleCode);
 			String billingAccountId = billingAccount.getId() + "";
 			String billingAccountCode = billingAccount.getCode() + "";
 			billingAccountTag.setAttribute("id", billingAccountId);
@@ -326,6 +321,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2",
 					billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
+			
+			if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplayBillingCycle() != null
+					&& invoice.getProvider().getInvoiceConfiguration().getDisplayBillingCycle() ) {
+					if (billingCycle == null) {
+						billingCycle = billingAccount.getBillingCycle();
+					}
+					addBillingCyle(billingCycle, invoice, doc, billingAccountTag);
+				} 
 			
 			addCustomFields(billingAccount, invoice, doc, billingAccountTag);
 
@@ -578,6 +581,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		addCustomFields(offerTemplate, invoice, doc, offerTag);
 		offersTag.appendChild(offerTag);
 	}
+	
+	private void addBillingCyle(BillingCycle billingCycle, Invoice invoice, Document doc, Element parent) { 
+		String id = billingCycle.getId() + "";
+		Element billingCycleTag =  doc.createElement("billingCycle");
+		parent.appendChild(billingCycleTag);
+		billingCycleTag.setAttribute("id", id);
+		billingCycleTag.setAttribute("code", billingCycle.getCode() != null ? billingCycle.getCode() : "");
+		billingCycleTag.setAttribute("description",
+				billingCycle.getDescription() != null ? billingCycle.getDescription() : "");
+		addCustomFields(billingCycle, invoice, doc, billingCycleTag); 
+	}
 
 	private void addServices(Subscription subscription, Invoice invoice, Document doc, Element invoiceTag) {
 		OfferTemplate offerTemplate = subscription.getOffer();
@@ -606,7 +620,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						calendarText = doc.createTextNode("");
 					}
 					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceInstance, invoice, doc, servicesTag);
+					addCustomFields(serviceTemplate, invoice, doc, serviceTag);
 					servicesTag.appendChild(serviceTag);
 					serviceIds.add(serviceTemplate.getId());
 				}
@@ -664,7 +678,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
 				Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName()
-						.getTitle(), languageCode));
+						.getTitle(), languageCode,account.getProvider()));
 				quality.appendChild(qualityTxt);
 			}
 			nameTag.appendChild(quality);
@@ -1019,7 +1033,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element pricePlan = doc.createElement("pricePlan");
 							pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
 							pricePlan.setAttribute("description", catMessagesService.getMessageDescription(
-									ratedTransaction.getPriceplan(), languageCode));
+									ratedTransaction.getPriceplan(), languageCode,invoice.getProvider()));
 							line.appendChild(pricePlan);
 							if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
 							    addPricePlans(ratedTransaction.getPriceplan(),invoice,doc,invoiceTag);
@@ -1190,7 +1204,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 				tax.setAttribute("id", ++taxId + "");
 				tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
-
+				addCustomFields(taxInvoiceAgregate.getTax(), invoice, doc, tax);
 				String languageCode = "";
 				try {
 					// log.debug("ba={}, tradingLanguage={}",
@@ -1202,7 +1216,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					throw new BusinessException("Billing account must have a trading language.");
 				}
 
-				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
+				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode,invoice.getProvider());
 				Element taxName = doc.createElement("name");
 				Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
 				taxName.appendChild(taxNameTxt);

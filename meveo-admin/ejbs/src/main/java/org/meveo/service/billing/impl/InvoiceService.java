@@ -1025,4 +1025,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		return invoice.getLinkedInvoices().iterator().next();
 	}
+
+	public List<Invoice> getInvoicesWithAccountOperation(BillingAccount billingAccount, Provider currentProvider) {
+		try {
+			QueryBuilder qb = new QueryBuilder("SELECT i FROM " + Invoice.class.getName() + " i");
+			qb.addCriterionEntity("i.provider", currentProvider);	 
+			qb.addSql("i.recordedInvoice is not null");
+			if (billingAccount != null) {
+				qb.addCriterionEntity("i.billingAccount", billingAccount);
+			}
+			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (Exception ex) {
+			log.error("failed to get invoices with no account operation", ex);
+		}
+		return null;
+	}
 }

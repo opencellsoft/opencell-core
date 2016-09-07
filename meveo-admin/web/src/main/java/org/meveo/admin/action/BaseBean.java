@@ -167,13 +167,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backViewSave;
 
     /**
-     * Request parameter. Used for loading in object by its id.
-     */
-    @Inject
-    @RequestParam("objectId")
-    private Instance<Long> objectIdFromParam;
-
-    private Long objectIdFromSet;
+    * Object identifier to load
+    */
+    private Long objectId;
 
     /** Helper field to enter language related field values. */
     protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
@@ -315,13 +311,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private void loadMultiLanguageFields() {
 
-        if (!isMultilanguageEntity()) {
+        if (!isMultilanguageEntity()||!(entity instanceof BusinessEntity)) {
             return;
         }
 
         languageMessagesMap.clear();
+        BusinessEntity businessEntity=(BusinessEntity)entity;
 
-        for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz) ,businessEntity.getCode(),currentProvider)) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
@@ -398,12 +395,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey,currentProvider);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());
-                    } else {
-                        CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    } else if(entity instanceof BusinessEntity){
+                        CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
                         catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
@@ -415,7 +412,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
                     catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
@@ -471,7 +468,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             entity = getPersistenceService().update(entity, getCurrentUser());
         }
 
-        objectIdFromSet = (Long) entity.getId();
+        objectId = (Long) entity.getId();
 
         return entity;
     }
@@ -897,23 +894,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public Long getObjectId() {
-        if (objectIdFromSet == null && objectIdFromParam != null && objectIdFromParam.get() != null) {
-            objectIdFromSet = objectIdFromParam.get();
-        }
-
-        return objectIdFromSet;
+        return objectId;
     }
 
     public void setObjectId(Long objectId) {
-        objectIdFromSet = objectId;
-    }
-
-    public void setObjectIdFromSet(Long objectIdFromSet) {
-        this.objectIdFromSet = objectIdFromSet;
-    }
-
-    public Long getObjectIdFromSet() {
-        return objectIdFromSet;
+        this.objectId = objectId;
     }
 
     /**
@@ -926,8 +911,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected void clearObjectId() {
-        objectIdFromParam = null;
-        objectIdFromSet = null;
+        objectId = null;
     }
 
     public void onRowSelect(SelectEvent event) {

@@ -13,10 +13,10 @@
 			<f:event type="preRenderView"
 				listener="#{billingAccountBean.preRenderView}" />
 
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
             <f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />	
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />	
             <f:viewParam name="mainTab" value="#{billingAccountBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{billingAccountBean.activeTab}" />
         </f:metadata>
@@ -116,8 +116,7 @@
 												
 												<p:fieldset legend="#{messages['billingAccount.billingAccountPanel']}" styleClass="clearLeft" >
 													<hftl:formField label="#{messages['businessEntity.code']}"
-														field="code" validateUnique="true" size="35"
-														maxlength="35" required="true" />
+														field="code" validateUnique="true" size="35" required="true" />
 													<hftl:formField
 														label="#{messages['accountEntity.primaryContact']}"
 														field="primaryContact" valueLabelField="code" 
@@ -255,11 +254,12 @@
 													<hftl:formField label="#{messages['address.city']}"
 														field="address" childField="city" 
 														maxlength="50" />
-													<hftl:formField id="countryPanel"
-														label="#{messages['address.country']}" fkToEntity="true"
-														field="address" childField="country"
-														valueLabelField="descriptionEn" valueField="countryCode"
-														listBean="#{countryBean}"/>
+													<hftl:formField label="#{messages['address.country']}" field="address" childField="country" maxlength="50" />
+<!-- 													<hftl:formField id="countryPanel" -->
+<!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
+<!-- 														field="address" childField="country" -->
+<!-- 														valueLabelField="descriptionEn" valueField="countryCode" -->
+<!-- 														listBean="#{countryBean}"/> -->
 												
 											</p:fieldset>
 

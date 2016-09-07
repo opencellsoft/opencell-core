@@ -18,13 +18,18 @@
  */
 package org.meveo.model.catalog;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -32,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
@@ -84,6 +90,18 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
 
+	@Column(name = "image")
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	private Blob image;
+
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
+	
+	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
+	@Size(max = 50)
+	private String imageContentType;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -195,6 +213,46 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
 		this.businessServiceModel = businessServiceModel;
+	}
+
+	public Blob getImage() {
+		return image;
+	}
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setImage(Blob image) {
+		this.image = image;
+	}
+
+	public String getImageContentType() {
+		return imageContentType;
+	}
+
+	public void setImageContentType(String imageContentType) {
+		this.imageContentType = imageContentType;
+	}
+
+	public byte[] getImageAsByteArr() {
+		if (image != null) {
+			int blobLength;
+			try {
+				blobLength = (int) image.length();
+				byte[] blobAsBytes = image.getBytes(1, blobLength);
+
+				return blobAsBytes;
+			} catch (SQLException e) {
+				return null;
+			}
+		}
+
+		return null;
+	}
+    
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
 	}
 
     

@@ -2,6 +2,12 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{emailNotificationBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
@@ -33,8 +39,8 @@
             <hftl:formField label="#{messages['entity.code']}" field="code" required="true" maxlength="60" />
 
             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
-                autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
-            <hftl:formField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" />
+                autocompleteBean="#{emailNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter"/>
+            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" listValues="#{emailNotificationBean.getNotificationEventTypeFilters()}"/>
             <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
             <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
                 required="false" popup="true" popupId="scriptInstancePopup" newLine="true"/>

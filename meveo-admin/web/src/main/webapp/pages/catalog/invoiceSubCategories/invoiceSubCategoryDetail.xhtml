@@ -6,6 +6,13 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{invoiceSubCategoryBean.objectId}" />
+            <f:viewParam name="tab" value="#{invoiceSubCategoryBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -56,8 +63,8 @@
 			</h:form>
 		</p:panel>
 		<p:panel header="#{messages['invoiceSubCategory.panel']}">
-			<p:tabView id="tabView" binding="#{invoiceSubCategoryBean.tabView}">
-				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
+			<p:tabView id="tabView" activeIndex="#{invoiceSubCategoryBean.activeTab}">
+				<p:tab title="#{messages['customer.tab.information']}">
 
 					<hftl:formPanel id="formPanel" label=""
 						backingBean="#{invoiceSubCategoryBean}">

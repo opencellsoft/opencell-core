@@ -29,6 +29,9 @@
                 <c:if test="#{not empty converter}">
                     <f:converter converterId="#{converter}" />
                 </c:if>
+                <c:if test="#{not empty listenerUpdate}">
+                	<p:ajax update="#{listenerUpdate}" event="itemSelect"/>
+                </c:if>
             </p:autoComplete>
         </c:if>
 

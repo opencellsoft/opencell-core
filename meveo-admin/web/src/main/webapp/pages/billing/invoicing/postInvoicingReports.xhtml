@@ -7,6 +7,12 @@
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -149,8 +155,10 @@
 
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"
 			style="font-weight: bold;font-size=14;" />
-		<hftl:dataList  dataModel="#{billingRunBean.entity.invoices}"
+		<hftl:dataList  dataModel="#{billingRunBean.entity.invoices}"  
 			backingBean="#{invoiceBean}">
+        <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
+        <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
 
 			<hftl:column label="#{messages['businessEntity.code']}"
 				field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
@@ -174,13 +182,11 @@
 				field="amountTax" converterParam="4digits" />
 			<hftl:column label="#{messages['invoice.amountWithTax']}"
 				field="amountWithTax" converterParam="4digits" />
-
-
 		</hftl:dataList>
 		 <p:panel styleClass="action-buttons" >
 			<p:tooltip for="excludeBa"
 				showEffect="slide" hideEffect="slide" />
-			<p:commandButton id="excludeBa" style="left:10px; top:-26px" 
+			<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.isSelectedInvoices}"
 				value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
 				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
 				rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">

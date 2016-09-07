@@ -69,9 +69,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
 
+	private Map<String, Map<String, SI>> allScriptInstances=new HashMap<String,Map<String,SI>>();
+	
     private CharSequenceCompiler<SI> compiler;
 
     private String classpath = "";
+
 
     /**
      * Constructor.
@@ -240,7 +243,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             final String qName = getFullClassname(script.getScript());
             final String codeSource = script.getScript();
 
-            log.trace("Compiling code for {}: {}", qName, codeSource);
+            log.debug("Compiling code for {}: {}", qName, codeSource);
             script.setError(false);
             script.getScriptErrors().clear();
 
@@ -249,10 +252,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             if (!testCompile) {
                 if (!allScriptInterfaces.containsKey(script.getProvider().getCode())) {
                     allScriptInterfaces.put(script.getProvider().getCode(), new HashMap<String, Class<SI>>());
-                    log.debug("create Map for {}", script.getProvider().getCode());
+                    allScriptInstances.put(script.getCode(),new HashMap<String, SI>());
+                          log.debug("create Map for {}", script.getProvider().getCode());
                 }
                 Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
                 providerScriptInterfaces.put(script.getCode(), compiledScript);
+                Map<String,SI> providerScriptInstances = allScriptInstances.get(script.getProvider().getCode());
+                log.debug("get providerScriptInstances {}",providerScriptInstances);
+                if(providerScriptInstances==null){
+                	providerScriptInstances=new HashMap<String,SI>();
+                	allScriptInstances.put(script.getProvider().getCode(), providerScriptInstances);
+                }
+                providerScriptInstances.put(script.getCode(),compiledScript.newInstance());
                 log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
             }
         } catch (CharSequenceCompilerException e) {
@@ -354,6 +365,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
+    public SI getCachedScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    	SI script = null;
+        script = allScriptInstances.get(provider.getCode()).get(scriptCode);
+        return script;
+    }
+    
     /**
      * Add a log line for a script
      * 
@@ -423,7 +440,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
-        return className;
+        return className!=null?className.trim():null;
     }
 
     /**
@@ -435,7 +452,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public static String getFullClassname(String script) {
         String packageName = getPackageName(script);
         String className = getClassName(script);
-        return (packageName != null ? packageName + "." : "") + className;
+        return (packageName != null ? packageName.trim() + "." : "") + className;
     }
 
     /**

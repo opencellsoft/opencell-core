@@ -204,7 +204,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 				occTemplatePaymentCode, getCurrentProvider().getCode());
 		if(occ==null){
 			messages.error(new BundleKey("messages", "accountOperation.occTemplatePaymentCheckNotFound"));
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 			+ customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
 		}  
 	return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"

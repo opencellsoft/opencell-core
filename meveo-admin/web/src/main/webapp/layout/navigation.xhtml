@@ -78,6 +78,10 @@
 				outcome="roles"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
+            <p:menuitem id="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}"
+                        outcome="userGroupHierarchy"
+                        rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+
 			<p:menuitem id="sellers" outcome="sellers"
 					value="#{messages['menu.sellers']}" />
 					

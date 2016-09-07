@@ -18,14 +18,14 @@
 
         <!--  A range of numbers -->
         <c:if test="#{rangeSearch}">
-            <h:panelGrid columns="4">
-                <h:outputText value="#{messages['commons.from']}" style="padding-right:5px" />
-                <p:inputText id="#{id}" value="#{backingBean.filters['fromRange-'.concat(field)]}" size="5" disabled="#{disabled}">
+            <h:panelGrid columns="3">
+<!--                 <h:outputText value="#{messages['commons.from']}" style="padding-right:5px" /> -->
+                <p:inputText id="#{id}" value="#{backingBean.filters['fromRange-'.concat(field)]}" size="5" disabled="#{disabled}" placeholder="#{messages['commons.from']}">
                     <f:converter converterId="${converterId}" />
                 </p:inputText>
 
-                <h:outputText value="#{messages['commons.to']}" style="padding:5px" />
-                <p:inputText id="#{id}_to" value="#{backingBean.filters['toRange-'.concat(field)]}" size="5" disabled="#{disabled}">
+                <h:outputText value="-" style="padding:5px" />
+                <p:inputText id="#{id}_to" value="#{backingBean.filters['toRange-'.concat(field)]}" size="5" disabled="#{disabled}" placeholder="#{messages['commons.to']}">
                     <f:converter converterId="${converterId}" />
                 </p:inputText>
             </h:panelGrid>

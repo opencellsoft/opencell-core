@@ -4,6 +4,12 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{taxBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -18,8 +24,10 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hftl:formPanel label="#{messages['tax.panel']}"
+		<hftl:formPanel label="#{messages['tax.panel']}" formId="taxFormId" submitPartialProcess=":taxFormId:tabView"
 			backingBean="#{taxBean}" columns="1">
+			<p:tabView id="tabView" activeIndex="#{taxBean.activeTab}">
+			<p:tab title="#{messages['customer.tab.information']}">
 			<hftl:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
 			<hftl:formLanguageFields entity="#{taxBean.entity}"  backingBean="#{taxBean}" multiLang="true"/>
@@ -28,6 +36,9 @@
 			<hftl:formField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
+			</p:tab>
+			<hftl:customFields backingBean="#{taxBean}" messagesId=":taxFormId:messages" />
+        </p:tabView>								
 		</hftl:formPanel>
 
 	</ui:define>
