@@ -17,6 +17,6 @@
             <column name="role_id" valueNumeric="1" />
             <column name="permission_id" valueNumeric="17" />
         </insert>   
-	</changeSet> 
+	</changeSet>
         
 </databaseChangeLog>
