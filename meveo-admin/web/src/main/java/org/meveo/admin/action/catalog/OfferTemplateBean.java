@@ -45,6 +45,7 @@ import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -141,10 +142,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	@Override
 	public OfferTemplate initEntity() {
 		OfferTemplate result = super.initEntity();
-		
+
 		if (bomId != null) {
 			businessOfferModel = businessOfferModelService.findById(bomId);
-			result.setCode(offerTemplateService.findDuplicateCode(result, " - Instance", currentUser));
 		}
 
 		return result;
@@ -213,7 +213,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
 					serviceConfigurationDto.setCode(st.getCode());
-					serviceConfigurationDto.setDescription(st.getDescription());					
+					serviceConfigurationDto.setDescription(st.getDescription());
 					servicesConfigurations.add(serviceConfigurationDto);
 					if (stCfsDto != null) {
 						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
@@ -222,7 +222,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
-					entity.getCode(), entity.getName(), entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
+					offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
 					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
 					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
 
@@ -332,9 +332,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
 		entity.getOfferProductTemplates().remove(offerProductTemplate);
-		entity = getPersistenceService().update(entity, getCurrentUser());
-		offerProductTemplateService.remove(offerProductTemplate.getId());
-		messages.info(new BundleKey("messages", "delete.successful"));
+		messages.info(new BundleKey("messages", "delete.successful"));		
 
 		newOfferProductTemplate();
 	}
@@ -550,9 +548,39 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		this.businessOfferModel = businessOfferModel;
 	}
 
-    public void onNameChange() {
-        if (StringUtils.isEmpty(entity.getCode())) {
-            entity.setCode(entity.getName());
-        }
-    }
+	public void onNameChange() {
+		if (StringUtils.isEmpty(entity.getCode())) {
+			entity.setCode(entity.getName());
+		}
+	}
+
+	public void addProductTemplateToOffer(ProductTemplate prodTemplate) {
+		boolean found = false;
+		for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+			if (prodTemplate.equals(opt.getProductTemplate())) {
+				found = true;
+			}
+		}
+
+		if (!found) {
+			OfferProductTemplate opt = new OfferProductTemplate();
+			opt.setProductTemplate(prodTemplate);
+			opt.setOfferTemplate(entity);
+
+			try {
+				entity.addOfferProductTemplate(opt);
+				entity = getPersistenceService().update(entity, currentUser);
+			} catch (BusinessException e) {
+				log.error("IPIEL: fail creating opt {}", e.getMessage());
+				messages.error(e.getMessage());
+			}
+		}
+	}
+
+	public void removeProductTemplateFromOffer(OfferProductTemplate offerProductTemplate) throws BusinessException {
+		entity.getOfferProductTemplates().remove(offerProductTemplate);
+		entity = getPersistenceService().update(entity, getCurrentUser());
+
+		messages.info(new BundleKey("messages", "delete.successful"));
+	}
 }

@@ -20,7 +20,9 @@ package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -157,8 +159,8 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		List<Channel> channels = entity.getChannels();
 		entity.setChannels(new ArrayList<Channel>());
 
-		List<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
-		entity.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
+		Set<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
+		entity.setOfferProductTemplates(new HashSet<OfferProductTemplate>());
 
 		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
 		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());

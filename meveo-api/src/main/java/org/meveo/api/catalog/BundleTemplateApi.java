@@ -234,7 +234,6 @@ public class BundleTemplateApi extends ProductOfferingApi {
 
 		bundleProductTemplate.setProductTemplate(productTemplate);
 		bundleProductTemplate.setQuantity(bundleProductTemplateDto.getQuantity());
-		bundleProductTemplate.setProvider(provider);
 
 		return bundleProductTemplate;
 	}

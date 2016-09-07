@@ -2,6 +2,7 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -376,7 +377,7 @@ public class OfferTemplateApi extends BaseApi {
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
 		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
 		boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
-		List<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
+		Set<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
 		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
 		if (hasOfferProductTemplateDtos) {
 			List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
@@ -422,7 +423,6 @@ public class OfferTemplateApi extends BaseApi {
 
 		offerProductTemplate.setProductTemplate(productTemplate);
 		offerProductTemplate.setMandatory(mandatory);
-		offerProductTemplate.setProvider(currentUser.getProvider());
 
 		return offerProductTemplate;
 	}
@@ -441,7 +441,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		OfferTemplateDto offerTemplateDto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate));
 
-		List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
+		Set<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
 		if (childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()) {
 			List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
 			OfferProductTemplateDto offerProductTemplateDto = null;

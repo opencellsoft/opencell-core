@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -205,7 +206,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
 		this.setPlace(new ArrayList<Place>()); // leave empty
 
-		List<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
+		Set<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
 		this.setBundledProductOffering(new ArrayList<BundledProductReference>());
 		if (offerProductTemplates != null && !offerProductTemplates.isEmpty()) {
 			this.setIsBundle(Boolean.TRUE);
@@ -225,7 +226,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		this.setProductOfferingPrice(offerPrices);// empty
 	}
 
-	private void populateBundledProductOfferings(ProductOffering productOffering, UriInfo uriInfo, List<OfferProductTemplate> offerProductTemplates) {
+	private void populateBundledProductOfferings(ProductOffering productOffering, UriInfo uriInfo, Set<OfferProductTemplate> offerProductTemplates) {
 		BundledProductReference bundledProductReference = null;
 		ProductTemplate productTemplate = null;
 		for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
