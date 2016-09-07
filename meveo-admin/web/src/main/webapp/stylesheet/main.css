@@ -7,10 +7,10 @@ html {
 	font-family: "Segoe UI Light", "Segoe UI", "Segoe WP", "Helvetica Neue", sans-serif !important;
 }
 
-body { 
-	width: 100%; 
-	margin: auto; 
-	background: #DBDBDB; 
+body {
+	width: 100%;
+	margin: auto;
+	background: #DBDBDB;
 	font-size: 12px;
 }
 
@@ -42,7 +42,7 @@ body {
 
    /*font */
   font-family : helvetica;
-  
+
 }
 
 a:hover { color: rgb(63, 165, 168); }
@@ -79,7 +79,7 @@ select[disabled] { color : #000; }
 
 .body label { color: #666; text-shadow: 2px 2px 0px #ffffff; filter: dropshadow(color=#ffffff, offx=1, offy=1); }
 
-.login-body { margin-bottom: 20px; } 
+.login-body { margin-bottom: 20px; }
 /*#loginForm { width: 800px; background: transparent url('../img/login-bg.jpg'); }*/
 
 .columnForm { width: 50%; }
@@ -154,8 +154,7 @@ select[disabled] { color : #000; }
 	height: 20px;
 	padding-right: 15px;
 	padding-left: 15px;
-	border-left: 1px solid #4d4242;
-	border-right: 1px solid #e84649;
+	border-left: 1px solid #264676;
 	float: left;
 }
 #admin-bar ul li.right-part
@@ -175,7 +174,7 @@ select[disabled] { color : #000; }
 }
 #admin-bar ul li a:hover
 {
-  color: red;
+  color: #264676;
 }
 #admin-bar ul li .top-bar-home,
 #admin-bar ul li .top-bar-user
@@ -277,7 +276,7 @@ div.body > table > thead,
 .ui-menubar .ui-menu-list .ui-menu-child { -webkit-border-radius: 0px 15px 0px 15px; border-radius: 0px 15px 0px 15px; width : 150%; margin-right : 10px !important; box-shadow : none; border-top : none; border-color : #b3cecb; margin-left : -1px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list { border-top : 1px solid  #b3cecb; padding : 3px 1px 1px 3px; margin-left : 3px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem { padding : 0px !important; margin : 0px !important; width : 100%; border-left : none !important; border-right : none !important; -webkit-border-radius: 0px; border-radius: 0px; }
-.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover { color:#4d4242; background-color : #e84649; box-shadow : none; -webkit-border-radius: 0px 8px 0px 8px; border-radius: 0px 8px 0px 8px;}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover { color:#fff; background-color : #264676; box-shadow : none; -webkit-border-radius: 0px 8px 0px 8px; border-radius: 0px 8px 0px 8px;}
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover span.ui-icon-triangle-1-e {
     height: 16px;
     width: 16px;
@@ -326,7 +325,7 @@ div.body > table > thead,
 .ui-selectonemenu-list { background : white; }
 .ui-dialog-titlebar { width : 95% !important; }
 .ui-dialog-titlebar .ui-dialog-titlebar-close:hover { background : #b8eff7; }
-.ui-widget { font-size : 1em; } 
+.ui-widget { font-size : 1em; }
 .ui-widget-header { background : none; text-align : left}
 .ui-widget-content {
 	border-color: #d6d6d6;
@@ -396,16 +395,16 @@ input[type="submit"],
 .col1-set >tbody > tr > td { width : 99% !Important; display : inline-block; }
 .form-panel-fields .inner-table tr td { padding-left: 0px; }
 .col2-set {
-	width: 100%; 
+	width: 100%;
 	display: inline-block;
 }
 .col2-set .col1 {
-	width: 25%; 
+	width: 25%;
 	float:left;
 }
 
 .col2-set .col2 {
-	width: 75%; 
+	width: 75%;
 	float:left;
 }
 
@@ -453,7 +452,7 @@ input[type="submit"],
 .ui-accordion .ui-accordion-header.ui-state-hover,
  .ui-accordion .ui-accordion-header.ui-state-active {
  color:#333333 !important;	}
- 
+
 .panelGrid-column{
 vertical-align:top !important;
 }
@@ -559,15 +558,15 @@ vertical-align:top !important;
 .formFieldItem2Lines button { margin-left: 2px; }
 
 .clearLeft {
-	clear: left;	
+	clear: left;
 }
 
 .clearRight {
-	clear: right;	
+	clear: right;
 }
 
 .clearBoth {
-	clear: both;	
+	clear: both;
 }
 
 .verticalSpaceSmall {
@@ -579,7 +578,7 @@ vertical-align:top !important;
    padding:0px !important;
   }
 .dtcolumn-hidden{
-	
+
 }
 .ui-widget-header{
 	border: none !important;
@@ -589,7 +588,7 @@ vertical-align:top !important;
 	padding-bottom:0 !important;
 }
 
-/* Custom field list/map/period new value entry*/ 
+/* Custom field list/map/period new value entry*/
 .ui-datatable-footer .ui-selectonemenu {
 	margin-bottom : -7px;
 }
@@ -645,7 +644,7 @@ form.formNoBottomBorder {
 .Padding15{ padding:15px; box-sizing:border-box;}
 .Padding20{ padding:20px; box-sizing:border-box;}
 .PadLeftRightZero{padding-left:0px; padding-right:0px;}                     /* NEW */
-.PadTopBottomZero{padding-top:0px; padding-bottom:0px;}  
+.PadTopBottomZero{padding-top:0px; padding-bottom:0px;}
 .Wid100, table.Wid100 tbody, table.Wid100 tr { width: 100%; }
 .Wid100{ width:100%;}
 .Wid90{ width:90%;}
@@ -707,7 +706,7 @@ form.formNoBottomBorder {
 
 @media (min-width: 960px) {
     /*visibilities according to the platform*/
-    
+
     .ShowOnMobile {
         display: none;
         opacity: 0;
@@ -721,7 +720,7 @@ form.formNoBottomBorder {
 @media (min-width: 960px) and (max-width: 1200px) {
 	#mq { color: green; }
     /* responsive support */
-    
+
     .Responsive {
         width: 33.3%;
         float: left;
@@ -741,7 +740,7 @@ form.formNoBottomBorder {
         margin-right: 0px !important;
     }
     /* make auto of element width attribute on mobile devices with media queries */
-    
+
     .WidAutoOnMobile {
         width: auto !important;
     }
@@ -755,7 +754,7 @@ form.formNoBottomBorder {
 @media (min-width: 640px) and (max-width: 960px) {
 	#mq { color: orange; }
     /*visibilities according to the platform*/
-    
+
     .ShowOnMobile {
         display: inherit;
         opacity: 1;
@@ -768,7 +767,7 @@ form.formNoBottomBorder {
         float: none !important;
     }
     /* Containers */
-    
+
     .Container100 {
         width: 100%;
         float: left;
@@ -855,7 +854,7 @@ form.formNoBottomBorder {
         padding: 0px;
     }
     /* responsive support */
-    
+
     .Responsive {
         width: 50%;
         float: left;
@@ -875,7 +874,7 @@ form.formNoBottomBorder {
         margin-right: 0px !important;
     }
     /* make auto of element width attribute on mobile devices with media queries */
-    
+
     .WidAutoOnMobile {
         width: auto !important;
     }
@@ -884,7 +883,7 @@ form.formNoBottomBorder {
         min-height: 50px !important;
     }
     /* font size resetting for responsive modes */
-    
+
     .Fs14 {
         font-size: 13px !important;
     }
@@ -957,7 +956,7 @@ form.formNoBottomBorder {
 @media (min-width: 480px) and (max-width: 640px) {
 	#mq { color: yellow; }
     /*visibilities according to the platform*/
-    
+
     .ShowOnMobile {
         display: inherit;
         opacity: 1;
@@ -970,7 +969,7 @@ form.formNoBottomBorder {
         float: none !important;
     }
     /* Containers */
-    
+
     .Container100 {
         width: 100%;
         float: left;
@@ -1057,7 +1056,7 @@ form.formNoBottomBorder {
         padding: 0px;
     }
     /* responsive support */
-    
+
     .Responsive {
         width: 100%;
         float: left;
@@ -1077,7 +1076,7 @@ form.formNoBottomBorder {
         margin-right: 0px !important;
     }
     /* make auto of element width attribute on mobile devices with media queries */
-    
+
     .WidAutoOnMobile {
         width: auto !important;
     }
@@ -1086,7 +1085,7 @@ form.formNoBottomBorder {
         min-height: 50px !important;
     }
     /* font size resetting for responsive modes */
-    
+
     .Fs12 {
         font-size: 12px !important;
     }
@@ -1165,7 +1164,7 @@ form.formNoBottomBorder {
 @media (min-width: 320px) and (max-width: 480px) {
 	#mq { color: pink; }
     /*visibilities according to the platform*/
-    
+
     .ShowOnMobile {
         display: inherit;
         opacity: 1;
@@ -1178,7 +1177,7 @@ form.formNoBottomBorder {
         float: none !important;
     }
     /* Containers */
-    
+
     .Container100 {
         width: 100%;
         float: left;
@@ -1265,7 +1264,7 @@ form.formNoBottomBorder {
         padding: 0px;
     }
     /* responsive support */
-    
+
     .Responsive {
         width: 100%;
         float: left;
@@ -1285,7 +1284,7 @@ form.formNoBottomBorder {
         margin-right: 0px !important;
     }
     /* make auto of element width attribute on mobile devices with media queries */
-    
+
     .WidAutoOnMobile {
         width: auto !important;
     }
@@ -1293,7 +1292,7 @@ form.formNoBottomBorder {
         height: auto !important;
     }
     /* font size resetting for responsive modes */
-    
+
     .Fs12 {
         font-size: 12px !important;
     }
@@ -1403,4 +1402,4 @@ ul.Navigation li a { display: block; text-align: center; padding: 16px; text-dec
 
 .Green { color: green; }
 .GreenBg { background-color: green; }
-.DataListCenter table tr td { text-align: center; } 
+.DataListCenter table tr td { text-align: center; }
