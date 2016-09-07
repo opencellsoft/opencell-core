@@ -59,7 +59,16 @@ public class WFActionService extends PersistenceService<WFAction> {
 		}
 		return wfAction;
 	}
-	
-	
+
+    public WFAction findWFActionByUUID(String uuid, Provider provider) {
+        WFAction wfAction = null;
+        try {
+            QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
+            qb.addCriterion("a.uuid", "=", uuid, true);
+            wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (Exception e) {
+        }
+        return wfAction;
+    }
 
 }

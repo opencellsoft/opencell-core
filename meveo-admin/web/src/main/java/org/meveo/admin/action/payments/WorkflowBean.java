@@ -528,9 +528,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
             WFTransition needUpdate = wFTransitionService.findById(upWfTransition.getId(), true);
             needUpdate.setPriority(downWfTransition.getPriority());
             wFTransitionService.update(needUpdate, getCurrentUser());
-            WFTransition updatedDownTransition = wFTransitionService.findById(downWfTransition.getId(), true);
-            updatedDownTransition.setPriority(priorityUp);
-            wFTransitionService.update(updatedDownTransition, getCurrentUser());
+            needUpdate = wFTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate.setPriority(priorityUp);
+            wFTransitionService.update(needUpdate, getCurrentUser());
+            entity.getTransitions().get(index).setPriority(downWfTransition.getPriority());
+            entity.getTransitions().get(index - 1).setPriority(priorityUp);
             Collections.swap(entity.getTransitions(), index, index - 1);
             messages.info(new BundleKey("messages", "update.successful"));
         }
@@ -546,9 +548,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
             WFTransition needUpdate = wFTransitionService.findById(upWfTransition.getId(), true);
             needUpdate.setPriority(downWfTransition.getPriority());
             wFTransitionService.update(needUpdate, getCurrentUser());
-            WFTransition updatedDownTransition = wFTransitionService.findById(downWfTransition.getId(), true);
-            updatedDownTransition.setPriority(priorityUp);
-            wFTransitionService.update(updatedDownTransition, getCurrentUser());
+            needUpdate = wFTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate.setPriority(priorityUp);
+            wFTransitionService.update(needUpdate, getCurrentUser());
+            entity.getTransitions().get(index).setPriority(downWfTransition.getPriority());
+            entity.getTransitions().get(index + 1).setPriority(priorityUp);
             Collections.swap(entity.getTransitions(), index, index + 1);
             messages.info(new BundleKey("messages", "update.successful"));
         }
@@ -559,8 +563,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
             WFAction upWfAction = wfActions.get(index);
             int priorityUp = upWfAction.getPriority();
             WFAction downWfAction = wfActions.get(index - 1);
-            upWfAction.setPriority(downWfAction.getPriority());
-            downWfAction.setPriority(priorityUp);
+            wfActions.get(index).setPriority(downWfAction.getPriority());
+            wfActions.get(index - 1).setPriority(priorityUp);
             Collections.swap(wfActions, index, index - 1);
         }
     }
@@ -570,9 +574,9 @@ public class WorkflowBean extends BaseBean<Workflow> {
             WFAction upWfAction = wfActions.get(index);
             int priorityUp = upWfAction.getPriority();
             WFAction downWfAction = wfActions.get(index + 1);
-            upWfAction.setPriority(downWfAction.getPriority());
-            downWfAction.setPriority(priorityUp);
-            Collections.swap(wfActions, index, index - 1);
+            wfActions.get(index).setPriority(downWfAction.getPriority());
+            wfActions.get(index + 1).setPriority(priorityUp);
+            Collections.swap(wfActions, index, index + 1);
         }
     }
 

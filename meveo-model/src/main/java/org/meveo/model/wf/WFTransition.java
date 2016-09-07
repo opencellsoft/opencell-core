@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,21 +38,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
 @Entity
-@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"FROM_STATUS", "TO_STATUS", "WORKFLOW_ID", "PRIORITY", "PROVIDER_ID"}))
+@Table(name = "WF_TRANSITION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
 public class WFTransition extends AuditableEntity implements Comparable<WFTransition>{
 
 	private static final long serialVersionUID = 1L;
+
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
  
 	@Column(name = "FROM_STATUS")
 	private String fromStatus;
@@ -84,7 +88,15 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	@Size(max = 2000)
 	private String conditionEl;
 
-	/**
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
 	 * @return the fromStatus
 	 */
 	public String getFromStatus() {

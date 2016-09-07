@@ -37,9 +37,8 @@ public class WFActionApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void create(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
-		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
-                wfActionDto.getWfTransitionDto().getPriority() ,wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		validateDto(wfActionDto, false);
+		WFTransition  wfTransition = wfTransitionService.findWFTransitionByUUID(wfActionDto.getWfTransitionDto().getUuid(), currentUser.getProvider());
 				
 		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
 		
@@ -61,11 +60,10 @@ public class WFActionApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void update(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-		validateDto(wfActionDto);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
-                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
+		validateDto(wfActionDto, true);
+		WFTransition  wfTransition = wfTransitionService.findWFTransitionByUUID(wfActionDto.getWfTransitionDto().getUuid(), currentUser.getProvider());
 		
-		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
+		WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
 		
 		if(wfAction == null){
 			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
@@ -73,7 +71,7 @@ public class WFActionApi extends BaseApi {
 		
 		wfAction = wfActionDto.fromDto(wfAction);
 		wfAction.setWfTransition(wfTransition);
-		wfActionService.create(wfAction, currentUser);
+		wfActionService.update(wfAction, currentUser);
 	}
 	
 	/**
@@ -107,7 +105,7 @@ public class WFActionApi extends BaseApi {
 		WFActionDto wfActionDto = new WFActionDto();
 		wfActionDto.setPriority(priority);
 		wfActionDto.setWfTransitionDto(wfTransitionDto);
-		validateDto(wfActionDto);
+		validateDto(wfActionDto, true);
 		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
                 wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 		
@@ -132,7 +130,7 @@ public class WFActionApi extends BaseApi {
 		WFActionDto wfActionDto = new WFActionDto();
 		wfActionDto.setPriority(priority);
 		wfActionDto.setWfTransitionDto(wfTransitionDto);
-		validateDto(wfActionDto);
+		validateDto(wfActionDto, true);
 		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
                 wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
 		
@@ -149,11 +147,14 @@ public class WFActionApi extends BaseApi {
      * @param wfActionDto
      * @throws MissingParameterException
      */
-	public void validateDto(WFActionDto wfActionDto) throws MissingParameterException{
+	public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException{
+        if (isUpdate && wfActionDto.getUuid() == null) {
+            missingParameters.add("UUID");
+        }
 		if (StringUtils.isBlank(wfActionDto.getPriority())) {
 			missingParameters.add("priority");
 		}
-		if (wfActionDto.getWfTransitionDto() == null) {			
+		if (wfActionDto.getWfTransitionDto() == null || wfActionDto.getWfTransitionDto().getUuid() == null) {
 			missingParameters.add("WFTransitionDto");
 			handleMissingParameters();	
 		}	

@@ -458,6 +458,8 @@
             drop table wf_transition_rule;
             drop SEQUENCE wf_transition_rule_seq;
             ALTER TABLE wf_decision_rule DROP COLUMN priority;
+            update wf_transition set UUID=id where uuid is null;
+            update wf_action set UUID=id where uuid is null;
         </sql>
     </changeSet>
 </databaseChangeLog>

@@ -64,4 +64,22 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 		 return wfTransitions;
 	}
 
+    public WFTransition findWFTransitionByUUID(String uuid, Provider provider) {
+        WFTransition wfTransition = null;
+        try {
+            wfTransition = (WFTransition) getEntityManager()
+                    .createQuery(
+                            "from "
+                                    + WFTransition.class
+                                    .getSimpleName()
+                                    + " where uuid=:uuid and provider=:provider")
+                    .setParameter("uuid", uuid)
+                    .setParameter("provider", provider)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.error("failed to find WFTransition", e);
+        }
+        return wfTransition;
+    }
+
 }

@@ -53934,6 +53934,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
             <listWFTransitionDto>\r
                <!--Zero or more repetitions:-->\r
                <wfTransitionDto>\r
+                  <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                   <fromStatus>FRM_STATUS_1</fromStatus>\r
                   <toStatus>TO_STATUS_1</toStatus>\r
                   <conditionEl>CND_EL_T</conditionEl>\r
@@ -53952,6 +53953,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
                      <wfActionDto>\r
+                        <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                         <actionEl>ACT_EL</actionEl>\r
                         <priority>1</priority>\r
                         <conditionEl>CND_EL_A</conditionEl>\r
@@ -54063,6 +54065,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                <enableHistory>false</enableHistory>
                <listWFTransitionDto>
                   <wfTransitionDto>
+                     <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                      <fromStatus>FRM_STATUS_1</fromStatus>
                      <toStatus>TO_STATUS_1</toStatus>
                      <conditionEl>CND_EL_T</conditionEl>
@@ -54071,6 +54074,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
+                           <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                            <actionEl>ACT_EL</actionEl>
                            <priority>1</priority>
                            <conditionEl>CND_EL_A</conditionEl>
@@ -54185,6 +54189,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
             <listWFTransitionDto>\r
                <!--Zero or more repetitions:-->\r
                <wfTransitionDto>\r
+                  <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID2</uuid>
                   <fromStatus>FRM_STATUS_2</fromStatus>
                   <toStatus>TO_STATUS_2</toStatus>
                   <conditionEl>CND_EL_T2</conditionEl>
@@ -54203,12 +54208,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                   <listWFActionDto>\r
                      <!--Zero or more repetitions:-->\r
                      <wfActionDto>\r
-                       <actionEl>ACT_EL</actionEl>
+                        <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID2</uuid> 
+                        <actionEl>ACT_EL</actionEl>
                         <priority>2</priority>
                         <conditionEl>CND_EL_A2</conditionEl>
                      </wfActionDto>\r
                      <wfActionDto>
-                       <actionEl>ACT_EL</actionEl>
+                        <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID3</uuid>
+                        <actionEl>ACT_EL</actionEl>
                         <priority>3</priority>
                         <conditionEl>CND_EL_A3</conditionEl>
                      </wfActionDto>
@@ -54320,6 +54327,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                <enableHistory>true</enableHistory>
                <listWFTransitionDto>
                   <wfTransitionDto>
+                     <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                      <fromStatus>FRM_STATUS_1</fromStatus>
                      <toStatus>TO_STATUS_1</toStatus>
                      <conditionEl>CND_EL_T</conditionEl>
@@ -54328,6 +54336,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
+                           <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID1</uuid>
                            <actionEl>ACT_EL</actionEl>
                            <priority>1</priority>
                            <conditionEl>CND_EL_A</conditionEl>
@@ -54343,6 +54352,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      </listWFDecisionRuleDto>
                   </wfTransitionDto>
                   <wfTransitionDto>
+                     <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID2</uuid>
                      <fromStatus>FRM_STATUS_2</fromStatus>
                      <toStatus>TO_STATUS_2</toStatus>
                      <conditionEl>CND_EL_T2</conditionEl>
@@ -54351,11 +54361,13 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_ChildModule_Script_Tes
                      <workflowCode>${#Project#entityPrefix}_${#TestSuite#index}_WF1</workflowCode>
                      <listWFActionDto>
                         <wfActionDto>
+                           <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID2</uuid>
                            <actionEl>ACT_EL</actionEl>
                            <priority>2</priority>
                            <conditionEl>CND_EL_A2</conditionEl>
                         </wfActionDto>
                         <wfActionDto>
+                           <uuid>${#Project#entityPrefix}_${#TestSuite#index}_UUID3</uuid>
                            <actionEl>ACT_EL</actionEl>
                            <priority>3</priority>
                            <conditionEl>CND_EL_A3</conditionEl>

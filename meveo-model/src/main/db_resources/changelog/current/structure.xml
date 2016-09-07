@@ -2668,5 +2668,14 @@ $BODY$
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />
 
         <createSequence sequenceName="wf_decision_rule_seq" />
+
+        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_from_status_to_status_priority_workflow_provider" />
+        <dropUniqueConstraint tableName="wf_action" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" />
+        <addColumn tableName="wf_transition">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <addColumn tableName="wf_action">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

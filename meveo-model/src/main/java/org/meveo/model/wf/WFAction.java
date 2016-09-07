@@ -18,6 +18,8 @@
  */
 package org.meveo.model.wf;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,18 +27,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
 @Entity
-@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"PRIORITY", "WF_TRANSITION_ID", "PROVIDER_ID" }))
+@Table(name = "WF_ACTION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_ACTION_SEQ")
 public class WFAction extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
+
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
 
 	@Column(name = "ACTION_EL", length = 2000)
 	@Size(max = 2000)
@@ -53,8 +59,15 @@ public class WFAction extends AuditableEntity {
 	@JoinColumn(name = "WF_TRANSITION_ID")
 	private WFTransition wfTransition;
 
-	
-	/**
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
 	 * @return the actionEl
 	 */
 	public String getActionEl() {

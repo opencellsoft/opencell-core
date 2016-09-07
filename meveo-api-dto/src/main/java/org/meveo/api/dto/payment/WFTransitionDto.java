@@ -37,7 +37,10 @@ import org.meveo.model.wf.WFDecisionRule;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFTransitionDto extends BaseDto {
 	
-	private static final long serialVersionUID = 8309866046667741458L; 
+	private static final long serialVersionUID = 8309866046667741458L;
+
+    @XmlElement(required = false)
+    private String uuid;
 	
 	@XmlElement(required = true)
 	private String fromStatus;
@@ -68,7 +71,8 @@ public class WFTransitionDto extends BaseDto {
 	public WFTransitionDto(){
 	}
 		
-	public WFTransitionDto(WFTransition wfTransition) { 		
+	public WFTransitionDto(WFTransition wfTransition) {
+        this.uuid = wfTransition.getUuid();
 		this.fromStatus = wfTransition.getFromStatus();
 		this.toStatus = wfTransition.getToStatus();
 		this.conditionEl = wfTransition.getConditionEl();
@@ -90,6 +94,7 @@ public class WFTransitionDto extends BaseDto {
 	public WFTransition fromDto(WFTransition wfTransition){
 		if(wfTransition == null)
 			wfTransition = new WFTransition();
+        wfTransition.setUuid(getUuid());
 		wfTransition.setFromStatus(getFromStatus());
 		wfTransition.setToStatus(getToStatus());
 		wfTransition.setConditionEl(getConditionEl());
@@ -98,7 +103,21 @@ public class WFTransitionDto extends BaseDto {
 		return wfTransition;
 	}
 
-	/**
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
 	 * @return the fromStatus
 	 */
 	public String getFromStatus() {
