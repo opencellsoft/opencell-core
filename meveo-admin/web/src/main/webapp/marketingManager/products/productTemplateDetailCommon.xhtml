@@ -68,21 +68,23 @@
             </p:panelGrid>
 
             <h:outputText style="color: red" rendered="#{!mainBackingBean.discountComputable}" value="#{messages['message.marketingManager.product.catalogPrice.missing']}"></h:outputText>
-            <hftl:decorateFormField fieldId="salesPrice" label="#{messages['marketingManager.catalog.salesPrice']}">
-                <p:inputText id="salesPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.entityPricePlan.amountWithoutTax}">
-                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
-                    <f:converter converterId="bigDecimal4DigitsConverter" />
-                </p:inputText>
-            </hftl:decorateFormField>
-            <hftl:decorateFormField fieldId="catalogPrice" label="#{messages['marketingManager.catalog.catalogPrice']}">
-                <p:inputText id="catalogPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.catalogPrice}">
-                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
-                    <f:converter converterId="bigDecimal4DigitsConverter" />
-                </p:inputText>
-            </hftl:decorateFormField>
-            <hftl:decorateFormField fieldId="discountedAmount" label="#{messages['marketingManager.catalog.discountedAmount']} (%)">
-                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" />
-            </hftl:decorateFormField>
+            <p:panel>
+	            <hftl:decorateFormField fieldId="salesPrice" label="#{messages['marketingManager.catalog.salesPrice']}">
+	                <p:inputText id="salesPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.entityPricePlan.amountWithoutTax}">
+	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
+	                    <f:converter converterId="bigDecimal4DigitsConverter" />
+	                </p:inputText>
+	            </hftl:decorateFormField>
+	            <hftl:decorateFormField fieldId="catalogPrice" label="#{messages['marketingManager.catalog.catalogPrice']}">
+	                <p:inputText id="catalogPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.catalogPrice}">
+	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
+	                    <f:converter converterId="bigDecimal4DigitsConverter" />
+	                </p:inputText>
+	            </hftl:decorateFormField>
+	            <hftl:decorateFormField fieldId="discountedAmount" label="#{messages['marketingManager.catalog.discountedAmount']}">
+	                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" />
+	            </hftl:decorateFormField>
+            </p:panel>
         </p:panel>
 
         <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">

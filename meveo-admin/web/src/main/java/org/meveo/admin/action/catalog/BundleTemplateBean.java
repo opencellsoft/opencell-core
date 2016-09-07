@@ -173,7 +173,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		if (entityPricePlan != null && entityPricePlan.getAmountWithoutTax() != null && catalogPriceCF != null && catalogPriceCF.getCfValue() != null
 				&& catalogPriceCF.getCfValue().getDoubleValue() != null) {
 			if (catalogPrice != null && catalogPrice.compareTo(BigDecimal.ZERO) != 0) {
-				result = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice).multiply(new BigDecimal(100))).divide(catalogPrice);
+				result = entityPricePlan.getAmountWithoutTax().subtract(catalogPrice);
 			}
 
 			result = NumberUtils.round(result, currentUser.getProvider().getRounding() != null ? currentUser.getProvider().getRounding() : 2);
