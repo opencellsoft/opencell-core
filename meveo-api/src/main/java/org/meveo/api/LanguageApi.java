@@ -154,6 +154,9 @@ public class LanguageApi extends BaseApi {
         }
     }
     public void findOrCreate(String languageCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(languageCode)){
+            return;
+        }
 		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode, currentUser.getProvider());
 		if (tradingLanguage==null) {
 			Language language = languageService.findByCode(languageCode);
