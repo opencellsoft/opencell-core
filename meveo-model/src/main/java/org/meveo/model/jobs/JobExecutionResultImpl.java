@@ -19,9 +19,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.NotifiableEntity;
 
 @Entity
 @Table(name = "JOB_EXECUTION")
+@NotifiableEntity
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "JOB_EXECUTION_SEQ")
 public class JobExecutionResultImpl extends BaseEntity implements JobExecutionResult {
     private static final long serialVersionUID = 430457580612075457L;

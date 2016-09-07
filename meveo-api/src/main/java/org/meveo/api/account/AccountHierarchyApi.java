@@ -6,18 +6,18 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CountryApi;
+import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -39,6 +39,11 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -91,6 +96,7 @@ import org.meveo.util.MeveoParamBean;
  */
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
@@ -130,13 +136,16 @@ public class AccountHierarchyApi extends BaseApi {
 	private UserAccountService userAccountService;
 
 	@Inject
-	private CountryApi countryApi;
+	private TradingCountryService tradingCountryService;
 
+	@Inject
+	private CountryApi countryApi;
+	
 	@Inject
 	private LanguageApi languageApi;
-
+	
 	@Inject
-	private TradingCountryService tradingCountryService;
+	private CurrencyApi currencyApi;
 
 	@Inject
 	private SellerService sellerService;
@@ -222,20 +231,15 @@ public class AccountHierarchyApi extends BaseApi {
 
 		SellerDto sellerDto = null;
 		try {
-			sellerDto = sellerApi.find(postData.getSellerCode(), provider);
+			sellerDto = sellerApi.find(postData.getSellerCode(), currentUser);
 		} catch (Exception e) {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
 		}
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
+
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
 		sellerDto.setLanguageCode(postData.getLanguageCode());
@@ -378,22 +382,15 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 		SellerDto sellerDto = null;
 		try {
-			sellerDto = sellerApi.find(postData.getSellerCode(), provider);
+			sellerDto = sellerApi.find(postData.getSellerCode(), currentUser);
 		} catch (Exception e) {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
 		}
 
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
 
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
@@ -403,7 +400,7 @@ public class AccountHierarchyApi extends BaseApi {
 		CustomerDto customerDto = null;
 		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
 		try {
-			customerDto = customerApi.find(customerCode, provider);
+			customerDto = customerApi.find(customerCode, currentUser);
 		} catch (Exception e) {
 			throw new MeveoApiException("Customer "+customerCode+" isn't found");
 		}
@@ -479,7 +476,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		BillingAccountDto billingAccountDto = null;
 		try {
-			billingAccountDto = billingAccountApi.find(billingAccountCode, provider);
+			billingAccountDto = billingAccountApi.find(billingAccountCode, currentUser);
 		} catch (Exception e) {
 			billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(billingAccountCode);
@@ -507,7 +504,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		UserAccountDto userAccountDto = null;
 		try {
-			userAccountDto = userAccountApi.find(userAccountCode, provider);
+			userAccountDto = userAccountApi.find(userAccountCode, currentUser);
 		} catch (Exception e) {
 			userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(userAccountCode);
@@ -572,7 +569,7 @@ public class AccountHierarchyApi extends BaseApi {
 			if (tradingCountry == null) {
 				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 			}
-			qb.addCriterion("c.address.country", "=", postData.getCountryCode(), true);
+			qb.addCriterion("c.address.country", "=", tradingCountry.getPrDescription(), true);
 		}
 		if (!StringUtils.isBlank(postData.getFirstName())) {
 			qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
@@ -652,17 +649,10 @@ public class AccountHierarchyApi extends BaseApi {
 				missingParameters.add("seller.code");
 				handleMissingParameters();
 			}
-			Provider provider = currentUser.getProvider();
-			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(sellerDto.getCountryCode());
-			countryDto.setCurrencyCode(sellerDto.getCurrencyCode());
-			countryApi.createOrUpdate(countryDto, currentUser);
-
-			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-				LanguageDto languageDto = new LanguageDto();
-				languageDto.setCode(sellerDto.getLanguageCode());
-				languageApi.createOrUpdate(languageDto, currentUser);
-			}
+			
+			countryApi.findOrCreate(sellerDto.getCountryCode(),currentUser);
+			currencyApi.findOrCreate(sellerDto.getCurrencyCode(),currentUser);
+			languageApi.findOrCreate(sellerDto.getLanguageCode(),currentUser);
 
 			sellerApi.createOrUpdate(sellerDto, currentUser);
 
@@ -845,6 +835,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1119,6 +1112,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1419,6 +1415,9 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {

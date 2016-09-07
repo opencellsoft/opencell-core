@@ -78,7 +78,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser().getProvider()));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -41,7 +41,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.omnifaces.cdi.ViewScoped;
-
 @Named
 @ViewScoped
 public class SellerBean extends CustomFieldBean<Seller> {

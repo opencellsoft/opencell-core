@@ -1,5 +1,8 @@
 package org.meveo.api.notification;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -96,6 +99,12 @@ public class EmailNotificationApi extends BaseApi {
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
+        
+        Set<String> emails = new HashSet<String>();
+        for (String email : postData.getSendToMail()) { 
+        	emails.add(email);
+        }
+        notif.setEmails(emails);
 
         emailNotificationService.create(notif, currentUser);
     }
@@ -178,6 +187,11 @@ public class EmailNotificationApi extends BaseApi {
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
+        Set<String> emails = new HashSet<String>();
+        for (String email : postData.getSendToMail()) { 
+        	emails.add(email);
+        }
+        notif.setEmails(emails);
 
         emailNotificationService.update(notif, currentUser);
     }

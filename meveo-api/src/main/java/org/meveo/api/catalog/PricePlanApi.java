@@ -22,6 +22,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -29,6 +30,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -56,6 +58,9 @@ public class PricePlanApi extends BaseApi {
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -126,6 +131,14 @@ public class PricePlanApi extends BaseApi {
             }
             pricePlanMatrix.setValidityCalendar(calendar);
         }
+        
+        if(postData.getScriptInstance()!=null){
+        	ScriptInstance scriptInstance=scriptInstanceService.findByCode(postData.getScriptInstance(), provider);
+        	if(scriptInstance==null){
+        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
+        	}
+        	pricePlanMatrix.setScriptInstance(scriptInstance);
+        }
 
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
@@ -145,13 +158,13 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrixService.create(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
             throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
         }
-        pricePlanMatrixService.create(pricePlanMatrix, currentUser);
     }
 
     public void update(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -223,6 +236,14 @@ public class PricePlanApi extends BaseApi {
         } else {
             pricePlanMatrix.setValidityCalendar(null);
         }
+        
+        if(postData.getScriptInstance()!=null){
+        	ScriptInstance scriptInstance=scriptInstanceService.findByCode(postData.getScriptInstance(), provider);
+        	if(scriptInstance==null){
+        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
+        	}
+        	pricePlanMatrix.setScriptInstance(scriptInstance);
+        }
 
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
@@ -242,14 +263,13 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
             throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
         }
-        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
-
     }
 
     public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {

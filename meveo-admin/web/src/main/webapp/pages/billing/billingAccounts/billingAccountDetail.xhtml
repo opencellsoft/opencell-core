@@ -116,8 +116,7 @@
 												
 												<p:fieldset legend="#{messages['billingAccount.billingAccountPanel']}" styleClass="clearLeft" >
 													<hftl:formField label="#{messages['businessEntity.code']}"
-														field="code" validateUnique="true" size="35"
-														maxlength="35" required="true" />
+														field="code" validateUnique="true" size="35" required="true" />
 													<hftl:formField
 														label="#{messages['accountEntity.primaryContact']}"
 														field="primaryContact" valueLabelField="code" 
@@ -255,11 +254,12 @@
 													<hftl:formField label="#{messages['address.city']}"
 														field="address" childField="city" 
 														maxlength="50" />
-													<hftl:formField id="countryPanel"
-														label="#{messages['address.country']}" fkToEntity="true"
-														field="address" childField="country"
-														valueLabelField="descriptionEn" valueField="countryCode"
-														listBean="#{countryBean}"/>
+													<hftl:formField label="#{messages['address.country']}" field="address" childField="country" maxlength="50" />
+<!-- 													<hftl:formField id="countryPanel" -->
+<!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
+<!-- 														field="address" childField="country" -->
+<!-- 														valueLabelField="descriptionEn" valueField="countryCode" -->
+<!-- 														listBean="#{countryBean}"/> -->
 												
 											</p:fieldset>
 
