@@ -47,7 +47,8 @@
 <!-- 				<h:outputText value="#{entity.entityCode}" /> -->
 				<h:link value="#{entity.entityCode}" outcome="#{catMessagesListBean.getEditViewName()}">
 					<f:param name="objectType" value="#{entity.objectType}" />
-					<f:param name="messageCode" value="#{entity.messageCode}" />
+					<f:param name="entityCode" value="#{entity.entityCode}" />
+					<f:param name="entityClass" value="#{entity.entityClass}" />					
 					<f:param name="edit" value="true" />
 					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 				</h:link>

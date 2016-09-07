@@ -59,25 +59,6 @@ public class CountryService extends PersistenceService<Country> {
 			return null;
 		}
 	}
-	public Country findByDescription(String description){
-		if(description==null||description.trim().length()==0){
-			return null;
-		}
-		QueryBuilder qb=new QueryBuilder(Country.class,"c");
-		qb.startOrClause();
-		qb.addCriterion("descriptionEn", "=", description, true);
-		qb.addCriterion("descriptionFr", "=", description, true);
-		qb.endOrClause();
-		qb.addOrderCriterion("id", true);
-		try {
-			List<Country> countries= qb.getQuery(getEntityManager()).getResultList();
-			if(countries!=null){
-				return countries.get(0);
-			}
-		} catch (NoResultException e) {
-		}
-		return null;
-	}
 
 	@SuppressWarnings("unchecked")
 	public List<Country> list() {

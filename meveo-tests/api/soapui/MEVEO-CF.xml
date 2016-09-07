@@ -19332,7 +19332,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>237</con:value>
+        <con:value>239</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -22434,7 +22434,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>32</con:value>
+        <con:value>33</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -25271,11 +25271,11 @@ for( testCase in testSuite.getTestCaseList() ) {
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+02</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+01</con:value>
+      <con:value>-03</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>

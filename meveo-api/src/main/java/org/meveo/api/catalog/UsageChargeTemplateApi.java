@@ -159,7 +159,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMessages, currentUser);
             }
@@ -260,13 +260,13 @@ public class UsageChargeTemplateApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages( chargeTemplate.getCode(),UsageChargeTemplate.class.getSimpleName() , ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
                         catMessagesService.update(catMsg, currentUser);
                     } else {
-                        CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                        CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
                             ld.getDescription());
                         catMessagesService.create(catMessages, currentUser);
                     }
@@ -318,7 +318,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -341,7 +341,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         }
 
         // remove cat messages
-        catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
+        catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
 
         usageChargeTemplateService.remove(chargeTemplate);
     }

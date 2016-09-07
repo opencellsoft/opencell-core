@@ -892,6 +892,37 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
+    <changeSet id="#1842_20160720" author="TyshanShi">
+		<sql>update crm_provider_contact a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country))
+			where a.address_country in (select c.country_code from adm_country c);
+		</sql>
+		<sql>update account_entity a set address_country =(select description_en from adm_country c where 
+			lower(c.country_code)=lower(a.address_country) or lower(c.description_en)=lower(a.address_country)) 
+			where a.address_country in (select c.country_code from adm_country c);
+		</sql>
+    </changeSet>
+    <changeSet id="#1637_20160819_1" author="TyshanShi">
+    	<addColumn tableName="ADM_MESSAGES">
+    		<column name="ENTITY_CLASS" type="varchar(60)"/>
+    		<column name="ENTITY_CODE" type="varchar(60)"/>
+    	</addColumn>
+    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="disabled"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="created"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="updated"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="creator_id"/>
+    	<dropColumn tableName="ADM_MESSAGES" columnName="updater_id"/>
+    	<addUniqueConstraint columnNames="entity_code,entity_class,language_code,provider_id" tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq"
+    		deferrable="false" disabled="false" initiallyDeferred="false"/>
+    	<createIndex tableName="ADM_MESSAGES" indexName="idx_code_class_lngcode_provider" unique="true">
+    		<column name="entity_code"/>
+    		<column name="entity_class"/>
+    		<column name="language_code"/>
+    		<column name="provider_id"></column>
+    	</createIndex>
+    </changeSet>  
     <changeSet author="pbach (generated)" id="#1861_16082016-165">
         <createTable tableName="wf_transition_rule">
             <column name="id" type="BIGINT">
@@ -915,7 +946,33 @@
             <column name="type" type="VARCHAR(255)"/>
             <column name="model" type="BOOL"/>
         </createTable>
-
+    
+    <changeSet id="#1637_20160819_2" author="TyshanShi">
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
+				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
+				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
+				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
+		<sql>alter table ADM_MESSAGES drop column code</sql>
+	</changeSet>
+    	
+</databaseChangeLog>
         <addPrimaryKey columnNames="id" constraintName="wf_wf_transition_rule_pkey"
                        tableName="wf_transition_rule" />
 

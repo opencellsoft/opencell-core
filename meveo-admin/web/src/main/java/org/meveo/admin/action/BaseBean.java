@@ -320,13 +320,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private void loadMultiLanguageFields() {
 
-        if (!isMultilanguageEntity()) {
+        if (!isMultilanguageEntity()||!(entity instanceof BusinessEntity)) {
             return;
         }
 
         languageMessagesMap.clear();
+        BusinessEntity businessEntity=(BusinessEntity)entity;
 
-        for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz) ,businessEntity.getCode(),currentProvider)) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
@@ -403,12 +404,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey,currentProvider);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());
-                    } else {
-                        CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    } else if(entity instanceof BusinessEntity){
+                        CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
                         catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
@@ -420,7 +421,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
                     catMessagesService.create(catMessages, getCurrentUser());
                 }
             }

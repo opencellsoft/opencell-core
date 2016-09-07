@@ -1008,7 +1008,6 @@
     <con:endpoints>
       <con:endpoint>${#Project#meveoUrl}/InvoicingWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint>
-      <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="cancelBillingRun" bindingOperationName="cancelBillingRun" type="Request-Response" outputName="cancelBillingRunResponse" inputName="cancelBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="ee7d6457-ef94-4836-9023-9ec878d31ddf">
       <con:settings/>
@@ -3182,7 +3181,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <!--Optional:-->
          <notification code="CounterPeriodNotifcation_${#TestSuite#ticket}">
             <classNameFilter>org.meveo.model.billing.CounterPeriod</classNameFilter>
-            <eventTypeFilter>COUNTER_UPDATED</eventTypeFilter>
+            <eventTypeFilter>ZERO_COUNTER</eventTypeFilter>
             <scriptInstanceCode>org.meveo.service.script.CounterPeriodScript_${#TestSuite#ticket}</scriptInstanceCode>             
          </notification>
       </ws:createOrUpdateNotification>
@@ -3368,7 +3367,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>updateProvider</con:operation>
           <con:request name="Update Provider" id="469a1c42-2c91-47fb-b917-5cf3c2ce72c8">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uc3VwZXJhZG1pbjptZXZlby5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3398,6 +3397,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -3414,7 +3414,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceType</con:operation>
           <con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3445,6 +3445,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4844,6 +4845,216 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
       <con:property>
         <con:name>invoiceNumber</con:name>
         <con:value>Fact_000000010</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite name="#1966 - [GUI-CF] CF matrix OFFER and PROVIDER" id="05a95334-7967-4271-97d0-0223b4d423c8">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="f30d02f9-ee2f-4ef7-a924-5da3003d9c7c">
+      <con:settings/>
+      <con:testStep type="request" name="create PP CF4" id="a38e0531-d3bc-4eeb-81d4-4dd756ba599d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createInvoiceType</con:operation>
+          <con:request name="create PP CF4" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+<soapenv:Header/>
+<soapenv:Body>
+ <ws:createOrUpdateCustomFieldTemplate>
+ <customField code="${#TestSuite#ticket}_OfferMatrix" description="cf string matrix"> 
+  <fieldType>STRING</fieldType>
+  <appliesTo>OFFER</appliesTo>
+  <storageType>MATRIX</storageType>
+  <matrixColumns>
+    <matrixColumn code="Matrix1" keyType="STRING" label="matrix key" position="1"/>
+  </matrixColumns>
+</customField>
+ </ws:createOrUpdateCustomFieldTemplate>
+</soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/>
+            <con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create offer template" id="7b6cf283-cb9d-4641-8e2a-21a7330abbde">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createUsageChargeTemplate</con:operation>
+          <con:request name="Create offer template" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOfferTemplate>
+         <!--Optional:-->
+         <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <bomCode></bomCode>
+            <!--Optional:-->
+            <offerTemplateCategoryCode></offerTemplateCategoryCode>
+            <!--Optional:-->
+            <customFields>
+            <customField code="${#TestSuite#ticket}_OfferMatrix">
+                  
+                  <mapValue>
+                     <entry>
+                        <key>key1</key>
+                        <value>
+                           <stringValue>val1</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key2</key>
+                        <value>
+                           <stringValue>val2</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key3</key>
+                        <value>
+                           <stringValue>val3</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key4</key>
+                        <value>
+                           <stringValue>val4</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key5</key>
+                        <value>
+                           <stringValue>val5</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key6</key>
+                        <value>
+                           <stringValue>val6</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key7</key>
+                        <value>
+                           <stringValue>val7</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key8</key>
+                        <value>
+                           <stringValue>val9</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key10</key>
+                        <value>
+                           <stringValue>val10</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key11</key>
+                        <value>
+                           <stringValue>val11</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key12</key>
+                        <value>
+                           <stringValue>val2</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key13</key>
+                        <value>
+                           <stringValue>val3</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key14</key>
+                        <value>
+                           <stringValue>val14</stringValue>
+                        </value>
+                     </entry>
+                      <entry>
+                        <key>key15</key>
+                        <value>
+                           <stringValue>val15</stringValue>
+                        </value>
+                     </entry>
+                     
+                  </mapValue>
+               </customField>
+            </customFields>
+                      
+         </offerTemplate>
+      </ws:createOrUpdateOfferTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ada91c48-810e-481d-b581-808300f79389"/>
+            <con:assertion type="Simple Contains" name="Contains" id="fc8d3bc1-3ff4-40cb-9716-8a46ca1e7d2f">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>index</con:name>
+          <con:value>794</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>ticket</con:name>
+        <con:value>1966</con:value>
+      </con:property>
+      <con:property>
+        <con:name>authorization</con:name>
+        <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
