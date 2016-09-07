@@ -173,7 +173,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		if (entityPricePlan != null && entityPricePlan.getAmountWithoutTax() != null && catalogPriceCF != null && catalogPriceCF.getCfValue() != null
 				&& catalogPriceCF.getCfValue().getDoubleValue() != null) {
 			if (catalogPrice != null && catalogPrice.compareTo(BigDecimal.ZERO) != 0) {
-				result = (entityPricePlan.getAmountWithoutTax().subtract(catalogPrice).multiply(new BigDecimal(100))).divide(catalogPrice);
+				result = entityPricePlan.getAmountWithoutTax().subtract(catalogPrice);
 			}
 
 			result = NumberUtils.round(result, currentUser.getProvider().getRounding() != null ? currentUser.getProvider().getRounding() : 2);
@@ -215,16 +215,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 			FacesContext.getCurrentInstance().addMessage(null, message);
 		}
-	}
-
-	public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
-		entity.getBundleProducts().remove(bundleProductTemplate);
-		entity = getPersistenceService().update(entity, getCurrentUser());
-
-		bundleTemplateService.remove(bundleProductTemplate.getId());
-
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+	}	
 
 	public void addProductTemplateToBundle(ProductTemplate prodTemplate) {
 		boolean found = false;
@@ -237,16 +228,23 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		if (!found) {
 			BundleProductTemplate bpt = new BundleProductTemplate();
 			bpt.setProductTemplate(prodTemplate);
+			bpt.setBundleTemplate(entity);
 
 			try {
-				bundleProductTemplateService.create(bpt, currentUser);
 				entity.addBundleProductTemplate(bpt);
 				entity = getPersistenceService().update(entity, currentUser);
 			} catch (BusinessException e) {
-				log.error("IPIEL: fail creating bpt {}", e.getMessage());
+				log.error("IPIEL: fail creating opt {}", e.getMessage());
 				messages.error(e.getMessage());
 			}
 		}
+	}
+	
+	public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
+		entity.getBundleProducts().remove(bundleProductTemplate);
+		entity = getPersistenceService().update(entity, getCurrentUser());
+
+		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
 	private void savePricePlanMatrix() throws BusinessException {

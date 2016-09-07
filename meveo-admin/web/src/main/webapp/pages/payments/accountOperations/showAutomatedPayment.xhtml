@@ -2,9 +2,6 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
     <ui:define name="body">
         <hftl:formPanel  edit="#{true}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}" showDeleteButton="false" showEditButton="true" showBackButton="false" formId="apFormId">
 				<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}"  >

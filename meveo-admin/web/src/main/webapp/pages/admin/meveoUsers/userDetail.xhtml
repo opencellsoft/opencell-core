@@ -7,22 +7,20 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
 
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="users" value="#{messages['menu.users']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem value="#{messages['menu.users']}" outcome="users" />
+					<p:menuitem value="#{messages['user.new']}" disabled="true" rendered="#{userBean.entity.transient}" />
+					<p:menuitem value="#{messages['user.editView']}" disabled="true" rendered="#{!userBean.entity.transient}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
-		<p:panel header="#{messages['user.userPanel']}">
+		<p:panel>
 			<p:tabView id="tabView" activeIndex="#{userBean.activeTab}">
 				<p:tab title="#{messages['commons.tab.information']}">
 					<hftl:formPanel

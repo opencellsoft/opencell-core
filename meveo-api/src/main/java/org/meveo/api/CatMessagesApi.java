@@ -62,19 +62,17 @@ public class CatMessagesApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		String messageCode = catMessagesService.getMessageCode(entity);
-
 		List<CatMessages> messages = new ArrayList<>();
 		CatMessages translation = null;
 		if (!StringUtils.isBlank(languageCode)) {
-			translation = catMessagesService.findByCodeAndLanguage(messageCode, languageCode, provider);
+			translation = catMessagesService.getCatMessages(entity, languageCode);
 			if (translation != null) {
 				messages.add(translation);
 			} else {
 				throw new EntityDoesNotExistsException(CatMessages.class, code);
 			}
 		} else {
-			List<CatMessages> messageList = catMessagesService.findByCode(messageCode, provider);
+			List<CatMessages> messageList = catMessagesService.getCatMessagesList(entity);
 			if (messageList != null && !messageList.isEmpty()) {
 				messages.addAll(messageList);
 			}
@@ -116,19 +114,17 @@ public class CatMessagesApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		String messageCode = catMessagesService.getMessageCode(entity);
-
 		List<CatMessages> messages = new ArrayList<>();
 		CatMessages translation = null;
 		if (!StringUtils.isBlank(languageCode)) {
-			translation = catMessagesService.findByCodeAndLanguage(messageCode, languageCode, provider);
+			translation = catMessagesService.getCatMessages(entity, languageCode);
 			if (translation != null) {
 				messages.add(translation);
 			} else {
 				throw new EntityDoesNotExistsException(CatMessages.class, code);
 			}
 		} else {
-			List<CatMessages> messageList = catMessagesService.findByCode(messageCode, provider);
+			List<CatMessages> messageList = catMessagesService.getCatMessagesList(entity);
 			if (messageList != null && !messageList.isEmpty()) {
 				messages.addAll(messageList);
 			}
@@ -172,14 +168,12 @@ public class CatMessagesApi extends BaseApi {
 		// loop over translations
 		CatMessages message = null;
 		boolean isBlankDescription = false;
-		String messageCode = catMessagesService.getMessageCode(entity);
 
 		for (LanguageDescriptionDto translation : translations) {
 			isBlankDescription = StringUtils.isBlank(translation.getDescription());
 			// check if translation exists
 			message = null;
-			message = catMessagesService.findByCodeAndLanguage(messageCode, translation.getLanguageCode(),
-					currentUser.getProvider());
+			message = catMessagesService.getCatMessages(entity, translation.getLanguageCode());
 			// create/update/delete translations
 			if (message != null && !isBlankDescription) {
 				// message exists and description is not blank
@@ -190,10 +184,7 @@ public class CatMessagesApi extends BaseApi {
 				catMessagesService.remove(message);
 			} else if (message == null && !isBlankDescription) {
 				// message does not exist and description is not blank
-				message = new CatMessages();
-				message.setMessageCode(messageCode);
-				message.setLanguageCode(translation.getLanguageCode());
-				message.setDescription(translation.getDescription());
+				message = new CatMessages(entity,translation.getLanguageCode(), translation.getDescription());
 				catMessagesService.create(message, currentUser);
 			}
 		}
@@ -210,10 +201,13 @@ public class CatMessagesApi extends BaseApi {
 			Map<String, List<CatMessages>> entities = catMessagesToMap(catMessagesList);
 			List<CatMessages> messageList = null;
 			List<LanguageDescriptionDto> translations = null;
+			
+			CatMessages catMessages=null;
 
 			for (String messageCode : entities.keySet()) {
 				messageList = entities.get(messageCode);
-				entity = catMessagesService.getEntityByMessageCode(messageCode);
+				catMessages=messageList.get(0);
+				entity = catMessagesService.findBusinessEntityByCodeAndClass(catMessages.getEntityCode(),catMessages.getEntityClass(),provider);
 				if (entity != null) {
 					messageDto = new CatMessagesDto();
 					messageDto.setCode(entity.getCode());
@@ -230,18 +224,20 @@ public class CatMessagesApi extends BaseApi {
 
 	private Map<String, List<CatMessages>> catMessagesToMap(List<CatMessages> messageList) {
 		Map<String, List<CatMessages>> messageMap = null;
-		String messageCode = null;
+		String entityCode = null;
+		String entityClass=null;
 		List<CatMessages> list = null;
 		for (CatMessages message : messageList) {
 			if (messageMap == null) {
 				messageMap = new HashMap<>();
 			}
-			messageCode = message.getMessageCode();
-			if (!StringUtils.isBlank(messageCode)) {
-				list = messageMap.get(messageCode);
+			entityCode = message.getEntityCode();
+			entityClass=message.getEntityClass();
+			if (!StringUtils.isBlank(entityCode)) {
+				list = messageMap.get(entityClass+"_"+entityCode);
 				if (list == null) {
 					list = new ArrayList<>();
-					messageMap.put(messageCode, list);
+					messageMap.put(entityClass+"_"+entityCode, list);
 				}
 				list.add(message);
 			}

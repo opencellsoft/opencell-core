@@ -4,6 +4,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import org.meveo.api.dto.usage.UsageChargeAggregateResponseDto;
 import org.meveo.api.dto.usage.UsageRequestDto;
 import org.meveo.api.dto.usage.UsageResponseDto;
 
@@ -16,5 +17,8 @@ public interface UsageWs extends IBaseWs {
 
 	@WebMethod
 	UsageResponseDto findUsage(@WebParam(name = "usageRequestDto") UsageRequestDto usageRequestDto);  
+	
+	@WebMethod
+	UsageChargeAggregateResponseDto chargeAggregate(@WebParam(name = "usageRequestDto") UsageRequestDto usageRequestDto); 	
 		
 }

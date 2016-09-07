@@ -19,7 +19,11 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,6 +41,8 @@ import javax.validation.constraints.Size;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -47,9 +53,9 @@ import org.meveo.model.ObservableEntity;
 @DiscriminatorValue("OFFER")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
 // "CAT_OFFER_TEMPLATE_SEQ")
-@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
@@ -64,8 +70,8 @@ public class OfferTemplate extends ProductOffering {
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<OfferProductTemplate> offerProductTemplates = new HashSet<OfferProductTemplate>();
 
 	@Size(max = 2000)
 	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
@@ -119,17 +125,17 @@ public class OfferTemplate extends ProductOffering {
 		return false;
 	}
 
-	public List<OfferProductTemplate> getOfferProductTemplates() {
+	public Set<OfferProductTemplate> getOfferProductTemplates() {
 		return offerProductTemplates;
 	}
 
-	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
+	public void setOfferProductTemplates(Set<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
 
 	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		if (getOfferProductTemplates() == null) {
-			offerProductTemplates = new ArrayList<OfferProductTemplate>();
+			offerProductTemplates = new HashSet<OfferProductTemplate>();
 		}
 		offerProductTemplates.add(offerProductTemplate);
 	}
@@ -150,4 +156,46 @@ public class OfferTemplate extends ProductOffering {
 		this.longDescription = longDescription;
 	}
 
+    @SuppressWarnings("rawtypes")
+    public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+        Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType = new HashMap<>();
+
+        for (OfferServiceTemplate service : offerServiceTemplates) {
+            List charges = service.getServiceTemplate().getServiceRecurringCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("RECURRING")) {
+                    serviceTemplatesByChargeType.put("RECURRING", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("RECURRING").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceUsageCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("USAGE")) {
+                    serviceTemplatesByChargeType.put("USAGE", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("USAGE").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("SUBSCRIPTION")) {
+                    serviceTemplatesByChargeType.put("SUBSCRIPTION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("SUBSCRIPTION").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceTerminationCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("TERMINATION")) {
+                    serviceTemplatesByChargeType.put("TERMINATION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("TERMINATION").add(service.getServiceTemplate());
+            }
+        }
+
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        log.error("AKK by charge type {}", serviceTemplatesByChargeType);
+        return serviceTemplatesByChargeType;
+    }
 }

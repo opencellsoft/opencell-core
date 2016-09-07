@@ -5,14 +5,12 @@
 	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-		<f:viewParam name="customerId" value="#{customerBean.objectId}" />
-	</f:metadata>
-
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+    	<f:metadata>
+    		<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+    		<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+    	</f:metadata>
+    </ui:define>
 
 	<ui:define name="body">
 	

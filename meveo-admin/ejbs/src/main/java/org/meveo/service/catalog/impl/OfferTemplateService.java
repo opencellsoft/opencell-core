@@ -20,7 +20,9 @@ package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -90,9 +92,9 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		}
 	}
 
-	public long countActive() {
+	public long countActive(Provider provider) {
 		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive");
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive").setParameter("provider", provider);
 		try {
 			result = (long) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -101,9 +103,9 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		return result;
 	}
 
-	public long countDisabled() {
+	public long countDisabled(Provider provider) {
 		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled");
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled").setParameter("provider", provider);
 		try {
 			result = (long) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -112,9 +114,9 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		return result;
 	}
 
-	public long countExpiring() {
-		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
+	public long countExpiring(Provider provider) {
+        Long result = 0L;
+        Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring").setParameter("provider", provider);
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, -1);
 		query.setParameter("nowMinus1Day", c.getTime());
@@ -157,8 +159,8 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		List<Channel> channels = entity.getChannels();
 		entity.setChannels(new ArrayList<Channel>());
 
-		List<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
-		entity.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
+		Set<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
+		entity.setOfferProductTemplates(new HashSet<OfferProductTemplate>());
 
 		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
 		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());

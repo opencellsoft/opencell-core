@@ -8,14 +8,13 @@
 	xmlns:e="http://primefaces.org/extension"
     xmlns:o="http://omnifaces.org/ui">
 
-	<ui:define name="navigation">
-		<f:metadata>
-			<f:viewParam name="workflowId" value="#{workflowBean.objectId}" />
-		</f:metadata>
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="workflowId" value="#{workflowBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">

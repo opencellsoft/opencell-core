@@ -49,273 +49,272 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
- * Standard backing bean for {@link CatMessages} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link CatMessages} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class CatMessagesBean extends BaseBean<CatMessages> {
 
-	private static final String INVALID_CLASS_TYPE = "Invalid class type!";
+    private static final String INVALID_CLASS_TYPE = "Invalid class type!";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link CatMessages} service. Extends {@link PersistenceService}
-	 * .
-	 */
-	@Inject
-	private CatMessagesService catMessagesService;
+    /**
+     * Injected @{link CatMessages} service. Extends {@link PersistenceService} .
+     */
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	private BusinessEntity businessEntity;
-	private String popupId;
-	private final String MESSAGE_CODE = "%s_%d";
-	private String objectType;
-	private Map<String, String> objectTypeMap;
+    private BusinessEntity businessEntity;
+    private String popupId;
+    private String objectType;
+    private Map<String, String> objectTypeMap;
 
-	CsvReader csvReader = null;
-	private UploadedFile file;
-	private static final int ENTITY_CLASS = 1;
-	private static final int CODE = 2;
-	private static final int LANGUAGE_CODE = 4;
-	private static final int DESCRIPTION_TRANSLATION = 5;
+    CsvReader csvReader = null;
+    private UploadedFile file;
+    private static final int ENTITY_CLASS = 1;
+    private static final int CODE = 2;
+    private static final int LANGUAGE_CODE = 4;
+    private static final int DESCRIPTION_TRANSLATION = 5;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CatMessagesBean() {
-		super(CatMessages.class);
-		objectTypeMap = new HashMap<>();
-		Set<Class<?>> multilanguageEntities = ReflectionUtils.getClassesAnnotatedWith(MultilanguageEntity.class);
-		MultilanguageEntity annotation = null;
-		for (Class<?> entityClass : multilanguageEntities) {
-			annotation = entityClass.getAnnotation(MultilanguageEntity.class);
-			objectTypeMap.put("*" + annotation.group() + "_*", annotation.key());
-		}
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CatMessagesBean() {
+        super(CatMessages.class);
+        objectTypeMap = new HashMap<>();
+        Set<Class<?>> multilanguageEntities = ReflectionUtils.getClassesAnnotatedWith(MultilanguageEntity.class);
+        MultilanguageEntity annotation = null;
+        for (Class<?> entityClass : multilanguageEntities) {
+            annotation = entityClass.getAnnotation(MultilanguageEntity.class);
+            objectTypeMap.put("*" + annotation.group() + "_*", annotation.key());
+        }
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<CatMessages> getPersistenceService() {
-		return catMessagesService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<CatMessages> getPersistenceService() {
+        return catMessagesService;
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "catMessagess";
-	}
+    @Override
+    protected String getListViewName() {
+        return "catMessagess";
+    }
 
-	@Override
-	public void preRenderView() {
-		super.preRenderView();
-		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
-				.getRequest();
-		String messageCode = request.getParameter("messageCode");
-		String objectType = request.getParameter("objectType");
-		try {
-			if (objectType != null) {
-				setObjectType(getObjectTypeValue(objectType));
-			}
-			if (messageCode != null) {
-				BusinessEntity businessEntity = catMessagesService.getEntityByMessageCode(messageCode);
-				setBusinessEntity(businessEntity);
-			}
-		} catch (BusinessException e) {
-			log.warn("Unable to retrieve entity with messageCode: %s", messageCode);
-		}
-	}
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String entityCode = request.getParameter("entityCode");
+        String entityClass = request.getParameter("entityClass");
+        String objectType = request.getParameter("objectType");
+        try {
+            if (objectType != null) {
+                setObjectType(getObjectTypeValue(objectType));
+            }
+            if (!StringUtils.isBlank(entityCode) && !StringUtils.isBlank(entityClass)) {
+                BusinessEntity businessEntity = catMessagesService.findBusinessEntityByCodeAndClass(entityCode, entityClass, currentProvider);
+                setBusinessEntity(businessEntity);
+            }
+        } catch (BusinessException e) {
+            log.warn("Unable to retrieve entity with code: %s and class %s", entityCode, entityClass);
+        }
+    }
 
-	protected Map<String, String> getObjectTypes() {
-		return this.objectTypeMap;
-	}
+    protected Map<String, String> getObjectTypes() {
+        return this.objectTypeMap;
+    }
 
-	private String getObjectTypeValue(String objectType) {
-		String value = null;
-		String result = null;
-		for (String key : objectTypeMap.keySet()) {
-			value = objectTypeMap.get(key);
-			if (value.equalsIgnoreCase(objectType)) {
-				result = key;
-				break;
-			}
-		}
-		return result;
-	}
+    private String getObjectTypeValue(String objectType) {
+        String value = null;
+        String result = null;
+        for (String key : objectTypeMap.keySet()) {
+            value = objectTypeMap.get(key);
+            if (value.equalsIgnoreCase(objectType)) {
+                result = key;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public void handleFileUpload(FileUploadEvent event) throws Exception {
-		try {
-			file = event.getFile();
-			log.debug("File uploaded " + file.getFileName());
-			upload();
-			messages.info(new BundleKey("messages", "import.csv.successful"));
-		} catch (Exception e) {
-			log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-			messages.error(new BundleKey("messages", "import.csv.failed"),
-					e.getClass().getSimpleName() + " " + e.getMessage());
-		}
-	}
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+        try {
+            file = event.getFile();
+            log.debug("File uploaded " + file.getFileName());
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
+        }
+    }
 
-	private void upload() throws IOException, BusinessException {
-		if (file == null) {
-			return;
-		}
-		csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
-		csvReader.readHeaders();
-		String messageCode = null;
-		String[] values = null;
-		MultilanguageEntityService<?> service = null;
-		BusinessEntity entity = null;
-		CatMessages existingDescription = null;
-		CatMessages newDescription = null;
-		while (csvReader.readRecord()) {
-			values = csvReader.getValues();
-			service = catMessagesService.getMultilanguageEntityService(values[ENTITY_CLASS]);
-			entity = service.findByCode(values[CODE], getCurrentUser().getProvider());
-			if (entity != null) {
-				messageCode = catMessagesService.getMessageCode(entity);
-			}
-			if (messageCode != null) {
-				existingDescription = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE],
-						getCurrentUser().getProvider());
-				if (existingDescription != null) {
-					existingDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
-					catMessagesService.update(existingDescription, getCurrentUser());
-				} else {
-					newDescription = new CatMessages();
-					newDescription.setMessageCode(messageCode);
-					newDescription.setLanguageCode(values[LANGUAGE_CODE]);
-					newDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
-					catMessagesService.create(newDescription, getCurrentUser());
-				}
-			}
-		}
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+        String entityCode = null;
+        String entityClass = null;
+        String[] values = null;
+        MultilanguageEntityService<?> service = null;
+        BusinessEntity entity = null;
+        CatMessages existingDescription = null;
+        CatMessages newDescription = null;
+        while (csvReader.readRecord()) {
+            values = csvReader.getValues();
+            service = catMessagesService.getMultilanguageEntityService(values[ENTITY_CLASS]);
+            entity = service.findByCode(values[CODE], getCurrentUser().getProvider());
+            if (entity != null) {
+                entityCode = entity.getCode();
+                entityClass = catMessagesService.getEntityClass(entity);
+            }
+            if (entityCode != null && entityClass != null) {
+                existingDescription = catMessagesService.getCatMessages(entity, values[LANGUAGE_CODE]);
+                if (existingDescription != null) {
+                    existingDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.update(existingDescription, getCurrentUser());
+                } else {
+                    newDescription = new CatMessages();
+                    newDescription.setEntityCode(entityCode);
+                    newDescription.setEntityClass(entityClass);
+                    newDescription.setLanguageCode(values[LANGUAGE_CODE]);
+                    newDescription.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.create(newDescription, getCurrentUser());
+                }
+            }
+        }
 
-	}
+    }
 
-	public BusinessEntity getBusinessEntity() {
-		return businessEntity;
-	}
+    public BusinessEntity getBusinessEntity() {
+        return businessEntity;
+    }
 
-	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException {
-		this.businessEntity = businessEntity;
-		if (businessEntity != null) {
-			List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(
-					String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
-			this.getLanguageMessagesMap().clear();
-			for (CatMessages catMessages : catMessagesList) {
-				this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
-			}
-			if (entity.getLanguageCode() != null) {
-				CatMessages temp = catMessagesService.findByCodeAndLanguage(
-						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()),
-						entity.getLanguageCode(), getCurrentProvider());
-				if (temp != null) {
-					this.setObjectId(temp.getId());
-					initEntity();
-				}
-			}
-		}
-	}
+    public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException {
+        this.businessEntity = businessEntity;
+        if (businessEntity != null) {
+            List<CatMessages> catMessagesList = catMessagesService.getCatMessagesList(businessEntity);
+            this.getLanguageMessagesMap().clear();
+            for (CatMessages catMessages : catMessagesList) {
+                this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
+            }
+            if (entity.getLanguageCode() != null) {
+                CatMessages temp = catMessagesService.findByCodeClassAndLanguage(businessEntity.getCode(), getEntityClass().getSimpleName(), entity.getLanguageCode(),
+                    currentProvider);
+                if (temp != null) {
+                    this.setObjectId(temp.getId());
+                    initEntity();
+                }
+            }
+        }
+    }
 
-	public String getPopupId() {
-		return popupId;
-	}
+    public String getPopupId() {
+        return popupId;
+    }
 
-	public void updateBusinessEntity() {
-		this.businessEntity = null;
-		this.setObjectId(null);
-		initEntity();
-	}
+    public void updateBusinessEntity() {
+        this.businessEntity = null;
+        this.setObjectId(null);
+        initEntity();
+    }
 
-	public String getObjectType() {
-		return objectType;
-	}
+    public String getObjectType() {
+        return objectType;
+    }
 
-	public void setObjectType(String objectType) {
-		this.objectType = objectType;
-		if (!StringUtils.isBlank(objectType)) {
-			popupId = objectType.replaceAll("\\*", "");
-		} else {
-			popupId = "";
-		}
-	}
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+        if (!StringUtils.isBlank(objectType)) {
+            popupId = objectType.replaceAll("\\*", "");
+        } else {
+            popupId = "";
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (entity.getLanguageCode() == null) { // multilanguage
-			String statusKey = null;
-			String description = null;
-			CatMessages catMsg = null;
-			if (businessEntity != null && businessEntity.getId() != null) {
-				statusKey = "update.successful";
-				for (String key : languageMessagesMap.keySet()) {
-					description = languageMessagesMap.get(key);
-					catMsg = catMessagesService.getCatMessages(businessEntity, key);
-					if (catMsg != null) {
-						if (StringUtils.isBlank(description)) {
-							catMessagesService.remove(catMsg);
-						} else {
-							catMsg.setDescription(description);
-							catMessagesService.update(catMsg, getCurrentUser());
-						}
-					} else if (!StringUtils.isBlank(description)) {
-						catMsg = new CatMessages(businessEntity, key, description);
-						catMessagesService.create(catMsg, getCurrentUser());
-					}
-				}
-			} else {
-				statusKey = "save.successful";
-				for (String key : languageMessagesMap.keySet()) {
-					description = languageMessagesMap.get(key);
-					if (!StringUtils.isBlank(description)) {
-						catMsg = new CatMessages(businessEntity, key, description);
-						catMessagesService.create(catMsg, getCurrentUser());
-					}
-				}
-			}
+    @SuppressWarnings("unchecked")
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        if (entity.getLanguageCode() == null) { // multilanguage
+            String statusKey = null;
+            String description = null;
+            CatMessages catMsg = null;
+            if (businessEntity != null && businessEntity.getId() != null) {
+                statusKey = "update.successful";
+                for (String key : languageMessagesMap.keySet()) {
+                    description = languageMessagesMap.get(key);
+                    catMsg = catMessagesService.getCatMessages(businessEntity, key);
+                    if (catMsg != null) {
+                        if (StringUtils.isBlank(description)) {
+                            catMessagesService.remove(catMsg);
+                        } else {
+                            catMsg.setDescription(description);
+                            catMessagesService.update(catMsg, getCurrentUser());
+                        }
+                    } else if (!StringUtils.isBlank(description)) {
+                        catMsg = new CatMessages(businessEntity, key, description);
+                        catMessagesService.create(catMsg, getCurrentUser());
+                    }
+                }
+            } else {
+                statusKey = "save.successful";
+                for (String key : languageMessagesMap.keySet()) {
+                    description = languageMessagesMap.get(key);
+                    if (!StringUtils.isBlank(description)) {
+                        catMsg = new CatMessages(businessEntity, key, description);
+                        catMessagesService.create(catMsg, getCurrentUser());
+                    }
+                }
+            }
 
-			if (businessEntity.getDescription() != null) {
-				if (businessEntity.isTransient()) {
-					getEntityService().create(businessEntity, getCurrentUser());
-				} else {
-					getEntityService().update(businessEntity, getCurrentUser());
-				}
-			}
-			messages.info(new BundleKey("messages", statusKey));
-			return back();
-		} else { // single entity
-			if (entity.isTransient()) {
-				entity.setMessageCode(
-						String.format(MESSAGE_CODE, getEntityClass().getSimpleName(), businessEntity.getId()));
-			}
-			return super.saveOrUpdate(killConversation);
-		}
-	}
+            if (businessEntity.getDescription() != null) {
+                if (businessEntity.isTransient()) {
+                    getEntityService().create(businessEntity, getCurrentUser());
+                } else {
+                    getEntityService().update(businessEntity, getCurrentUser());
+                }
+            }
+            messages.info(new BundleKey("messages", statusKey));
+            return back();
+        } else { // single entity
+            if (entity.isTransient()) {
+                entity.setEntityCode(businessEntity.getCode());
+                entity.setEntityClass(catMessagesService.getEntityClass(businessEntity));
+            }
+            return super.saveOrUpdate(killConversation);
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	private IPersistenceService getEntityService() throws BusinessException {
-		MultilanguageEntityService<?> service = null;
-		if (businessEntity != null) {
-			service = catMessagesService.getMultilanguageEntityService(businessEntity.getClass().getSimpleName());
-		}
-		if (service == null) {
-			throw new BusinessException(INVALID_CLASS_TYPE);
-		}
-		return service;
-	}
+    @SuppressWarnings("rawtypes")
+    private IPersistenceService getEntityService() throws BusinessException {
+        MultilanguageEntityService<?> service = null;
+        if (businessEntity != null) {
+            service = catMessagesService.getMultilanguageEntityService(businessEntity.getClass().getSimpleName());
+        }
+        if (service == null) {
+            throw new BusinessException(INVALID_CLASS_TYPE);
+        }
+        return service;
+    }
 
-	private Class<?> getEntityClass() throws BusinessException {
-		if (businessEntity == null) {
-			throw new BusinessException(INVALID_CLASS_TYPE);
-		}
-		return businessEntity.getClass();
-	}
+    private Class<?> getEntityClass() throws BusinessException {
+        if (businessEntity == null) {
+            throw new BusinessException(INVALID_CLASS_TYPE);
+        }
+        return businessEntity.getClass();
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "entityCode";
+    }
 
 }

@@ -11,7 +11,7 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Opencell | Open Source Billing Platform</title>
-	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+	<link rel="shortcut icon" href="#{request.contextPath}/favicon.png" />
 	<link rel="stylesheet" type="text/css"
 		href="#{request.contextPath}/stylesheet/theme.xcss" />
 	<link rel="stylesheet" type="text/css"
@@ -25,7 +25,7 @@
 </h:head>
 
 <h:body>
-	<div id="admin-bar">
+	<div id="admin-bar" class="">
 		<div id="logo"></div>
 		<div id="headerleft"></div>
 		<div id="headerright">
@@ -41,7 +41,7 @@
 
 	<ui:include src="footer.xhtml" />
 
-	<div class="footer">Opencell @VERSION_NUMBER@ @BUILD_NUMBER@</div>
+	<!--<div class="footer">Opencell @VERSION_NUMBER@ @BUILD_NUMBER@</div>-->
 	<p:ajaxStatus
 		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
 		<f:facet name="start">

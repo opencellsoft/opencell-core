@@ -8,7 +8,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
 	xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-	template="/marketingManager/layout/template.xhtml">
+	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -18,111 +18,102 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/marketingManager/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
 					styleClass="no-text-decoration" />
+				<p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers" />
 			</p:breadCrumb>
 		</h:form>
 
 		<div class="ui-fluid">
-			<p:panel header="#{messages['menu.marketingManager.catalogView']}"
-				styleClass="no-border-radius">
-				<p:panel styleClass="Wid50 Responsive100">
-					<div class="ui-fluid">
-						<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-							<p:panel>
-								<h:form>
-									<ul class="ListNoStyle">
-										<li class="Padding5">
-											<div class="btn-wrapper">
-												<i class="fa fa-plus text-blue"></i>
-												<p:link styleClass="no-text-decoration"
-													outcome="mm_offerTemplates"
-													value=" #{messages['action.offer.create']}">
-													<f:param name="backView" value="mm_offers" />
-												</p:link>
-											</div> <!-- / btn-wrapper -->
-										</li>
-									</ul>
-								</h:form>
-							</p:panel>
-
-							<p:panel>
-								<ul class="ListNoStyle">
-									<li class="Padding5"><i
-										class="fa fa-check-square-o text-blue"></i>
-										#{offerTemplateListBean.countActive()}
-										#{messages['page.catalog.offersAreActive']}</li>
-									<li class="Padding5"><i class="fa fa-close text-blue"></i>
-										#{offerTemplateListBean.countDisabled()}
-										#{messages['page.catalog.offersAreDeactivated']}</li>
-									<li class="Padding5"><i
-										class="fa fa-exclamation-circle text-blue"></i>
-										#{offerTemplateListBean.countExpiring()}
-										#{messages['page.catalog.offersWillExpireSoon']}</li>
-								</ul>
-							</p:panel>
-						</p:panelGrid>
-					</div>
-				</p:panel>
-				<p:panel styleClass="Wid50 Responsive100 TexAlRight">
-					<div class="Container">
-						<p:panel styleClass="Container60 VAlignTop">
+			<p:panel styleClass="no-border-radius">
+				<p:panel styleClass="Wid55 Responsive100">
+					<p:panelGrid id="left-controls" columns="2"
+						styleClass="ui-panelgrid-blank">
+						<p:panel id="top-button-container">
 							<h:form>
-								<div class="search-wrapper">
+								<ul class="list-unstyled">
+									<li class="button-item">
+										<div class="btn-wrapper">
+											<i class="fa fa-plus text-blue"></i>
+											<p:link styleClass="no-text-decoration"
+												outcome="mm_offerTemplates"
+												value=" #{messages['action.offer.create']}">
+												<f:param name="backView" value="mm_offers" />
+											</p:link>
+										</div> <!-- / btn-wrapper -->
+									</li>
+								</ul>
+							</h:form>
+						</p:panel>
+
+						<p:panel id="top-details-container">
+							<ul class="list-unstyled">
+								<li><i class="fa fa-check-square-o text-blue"></i>
+									#{offerTemplateListBean.activeCount}
+									#{messages['page.catalog.offersAreActive']}</li>
+								<li><i class="fa fa-close text-blue"></i>
+									#{offerTemplateListBean.inactiveCount}
+									#{messages['page.catalog.offersAreDeactivated']}</li>
+								<li><i class="fa fa-exclamation-circle text-blue"></i>
+									#{offerTemplateListBean.almostExpiredCount}
+									#{messages['page.catalog.offersWillExpireSoon']}</li>
+							</ul>
+						</p:panel>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel styleClass="Wid45 Responsive100 VAlignTop">
+					<h:panelGrid columns="2"
+						columnClasses="Wid60 VAlignTop, Wid40 VAlignTop"
+						styleClass="Wid90 Responsive100 FRight VAlignTop">
+						<p:panel>
+							<h:form>
+								<h:panelGrid
+									styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
+									columnClasses="Wid95, Wid5" columns="2">
 									<p:inputText placeholder="#{messages['action.search']}"
 										value="#{offerTemplateListBean.filters['fullText']}" />
 									<p:commandLink styleClass="Padding3 fa fa-search"
 										update=":tabView"></p:commandLink>
-									<!-- 								<p:selectManyMenu id="searchOfferTemplateCat" -->
-									<!-- 									value="#{offerTemplateListBean.selOfferTemplateCategories}"> -->
-									<!-- 									<f:selectItem itemLabel="" itemValue="" -->
-									<!-- 										noSelectionOption="true" /> -->
-									<!-- 									<f:selectItems -->
-									<!-- 										value="#{offerTemplateCategoryBean.listActive()}" var="e" -->
-									<!-- 										itemLabel="#{e.descriptionOrCode}" itemValue="#{e}"></f:selectItems> -->
-									<!-- 									<s:objectConverter /> -->
-									<!-- 								</p:selectManyMenu> -->
-								</div>
+								</h:panelGrid>
 								<!-- / search-wrapper -->
 							</h:form>
 						</p:panel>
-						<p:panel columns="1" styleClass="Container40 no-border-radius"
-							style="border: 1px solid #ddd" id="offerForExportPanel">
-							<ul class="list-unstyled">
-								<li class="Padding5"><i class="fa fa-share-square-o"
-									style="margin-right: 5px;"></i> <p:commandLink
-										onclick="PF('exportableOffers').show();"
-										value="#{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}">
-									</p:commandLink></li>
-								<li>
-									<div class="FRight">
-										<p:commandLink styleClass="fa fa-play"
-											style="margin-right: 5px;"
-											value=" #{messages['page.catalog.exportTo']}"
-											update=":#{p:component('exportParametersDialog')}"
-											oncomplete="PF('exportParametersDialog').show()">
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedExportTemplate}"
-												value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.dataModelToExport}"
-												value="#{offerTemplateListBean.listFromBOM()}" />
-											<f:setPropertyActionListener
-												target="#{entityExportImportBean.selectedEntitiesToExport}"
-												value="#{offerTemplateListBean.selectedOfferTemplates}" />
-										</p:commandLink>
-									</div>
-								</li>
-							</ul>
+						<p:panel>
+							<p:panel columns="1" styleClass="export-panel no-border-radius"
+								id="offerForExportPanel">
+								<ul class="list-unstyled">
+									<li class="text-left"><p:commandLink
+											onclick="PF('exportableOffers').show();">
+											<i class="fa fa-share-square-o" />
+											<h:outputText
+												value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
+										</p:commandLink></li>
+									<li class="text-left">
+										<div class="text-left">
+											<p:commandLink
+												update=":#{p:component('exportParametersDialog')}"
+												oncomplete="PF('exportParametersDialog').show()">
+												<i class="fa fa-play" />
+												<h:outputText value=" #{messages['page.catalog.exportTo']}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.selectedExportTemplate}"
+													value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.dataModelToExport}"
+													value="#{offerTemplateListBean.listFromBOM()}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.selectedEntitiesToExport}"
+													value="#{offerTemplateListBean.selectedOfferTemplates}" />
+											</p:commandLink>
+										</div>
+									</li>
+								</ul>
+							</p:panel>
 						</p:panel>
-					</div>
+					</h:panelGrid>
 				</p:panel>
 
 				<p:messages id="main_messages"></p:messages>
@@ -139,20 +130,25 @@
 								lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
 								rowsPerPageTemplate="10,15,20,50">
 								<p:panel styleClass="Wid40 Responsive100 VAlignTop">
-									<p:panelGrid columns="4"
+									<p:panelGrid id="offer-info" columns="3"
 										styleClass="panelGrid ui-panelgrid-blank"
-										columnClasses="Wid5 VAlignTop Responsive100, Wid60 Responsive100 VAlignTop, Wid34 Responsive100 VAlignTop">
-										<p:panel styleClass="">
+										columnClasses="Wid10 Responsive100, Wid60 Responsive100, Wid30 Responsive100">
+
+										<p:panel>
 											<p:graphicImage id="offerImage" cache="false"
 												value="#{offerTemplateImageStreamer.image}" height="100"
 												width="100">
 												<f:param name="id" value="#{entity.id}"></f:param>
 											</p:graphicImage>
 										</p:panel>
-										<p:panelGrid columns="1"
-											styleClass="ui-panelgrid-blank Padding20">
-											<p:panel styleClass="Wid100">
-												<h:outputText value="#{entity.nameOrCode}"></h:outputText>
+
+										<p:panel>
+											<p>
+												<h:outputText id="nameOrCode"
+													value="#{of:abbreviate(entity.nameOrCode, 25)}"></h:outputText>
+											</p>
+											<p:tooltip for="nameOrCode" value="#{entity.nameOrCode}"></p:tooltip>
+											<p>
 												<ui:repeat
 													value="#{entity.offerTemplateCategories.toArray()}" var="c"
 													varStatus="status">
@@ -162,43 +158,36 @@
 													<h:outputText value="#{valueLabel}" />
 													<h:outputText value=", " rendered="#{not status.last}" />
 												</ui:repeat>
-												<br />
-												<h:outputText
-													value="#{messages['offerTemplate.template']}: #{entity.businessOfferModel.code}"
-													rendered="#{entity.businessOfferModel != null}"></h:outputText>
-												<p:separator></p:separator>
-												<p:panelGrid columns="3">
-													<p:panelGrid columns="1"
-														rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
-														<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-														<h:outputText value="#{entity.validFrom}">
-															<f:convertDateTime type="date"
-																pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-														</h:outputText>
-													</p:panelGrid>
-													<p:panel></p:panel>
-													<p:panelGrid columns="1"
-														rendered="#{entity.validTo ne null and entity.validTo ne ''}">
-														<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-														<h:outputText value="#{entity.validTo}">
-															<f:convertDateTime type="date"
-																pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-														</h:outputText>
-													</p:panelGrid>
+											</p>
+											<p:panelGrid columns="3">
+												<p:panelGrid columns="1"
+													rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
+													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
+													<h:outputText value="#{entity.validFrom}">
+														<f:convertDateTime type="date"
+															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+													</h:outputText>
 												</p:panelGrid>
-											</p:panel>
-										</p:panelGrid>
-										<p:panel styleClass="status-wrapper">
+												<p:panel></p:panel>
+												<p:panelGrid columns="1"
+													rendered="#{entity.validTo ne null and entity.validTo ne ''}">
+													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
+													<h:outputText value="#{entity.validTo}">
+														<f:convertDateTime type="date"
+															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+													</h:outputText>
+												</p:panelGrid>
+											</p:panelGrid>
+										</p:panel>
+
+										<p:panel>
 											<p:panel>
-												<div class="text-bold" style="padding-bottom: 10px;">#{messages['commons.status']}</div>
-												<div class="">
-													<p:inputSwitch value="#{entity.active}" disabled="true"
-														styleClass="#{entity.active ? 'GreenBg' : ''}"
-														onLabel="#{messages['accountStatusEnum.active']}"
-														offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-												</div>
+												<p:inputSwitch value="#{entity.active}" disabled="true"
+													styleClass="#{entity.active ? 'GreenBg' : ''}"
+													onLabel="#{messages['accountStatusEnum.active']}"
+													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 											</p:panel>
-											<p:panel style="width: 200px;">
+											<p:panel>
 												<ul class="list-inline">
 													<li><p:link id="viewLink"
 															outcome="mm_offerTemplateDetail"
@@ -248,56 +237,86 @@
 										</p:panel>
 									</p:panelGrid>
 								</p:panel>
+
 								<p:panel styleClass="VAlignTop Wid60 Responsive100">
-									<p:dataGrid value="#{entity.offerServiceTemplates}" var="ost"
-										rendered="#{entity.offerServiceTemplates ne null and entity.offerServiceTemplates.size() > 0}"
-										paginator="true" rows="20" columns="1"
-										paginatorPosition="bottom" paginatorAlwaysVisible="false"
-										paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-										lazy="true"
-										styleClass="custom-grid ui-datagrid-blank dataGrid"
-										style="border: none;">
-										<p:panel styleClass="">
-											<h:outputText
-												value="#{messages['offerServiceTemplate.serviceTemplate']}"
-												styleClass="field-label"></h:outputText>: <h:outputText
-												styleClass="field-value"
-												value="#{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
-										</p:panel>
-										<p:panel>
-											<p:panel
-												styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-												header="#{messages['marketingManager.catalog.OneTimeFee']}"
-												rendered="#{ost.serviceTemplate.serviceSubscriptionCharges != null and ost.serviceTemplate.serviceSubscriptionCharges.size() > 0}">
-												<p:dataList styleClass="dataList" paginatorPosition="bottom"
-													paginatorAlwaysVisible="false"
-													value="#{ost.serviceTemplate.serviceSubscriptionCharges}"
-													var="charge" type="ordered">
-													#{charge.chargeTemplate.descriptionOrCode}
-												</p:dataList>
-											</p:panel>
-											<p:panel
-												styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-												header="#{messages['marketingManager.catalog.recurringFee']}"
-												rendered="#{ost.serviceTemplate.serviceRecurringCharges != null and ost.serviceTemplate.serviceRecurringCharges.size() > 0}">
-												<p:dataList styleClass="dataList" paginatorPosition="bottom"
-													paginatorAlwaysVisible="false"
-													value="#{ost.serviceTemplate.serviceRecurringCharges}"
-													var="charge" type="ordered">
-													#{charge.chargeTemplate.descriptionOrCode}
+									<p:panel>
+										<p:panel
+											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+											<f:facet name="header">
+												<h:outputText
+													value="#{messages['marketingManager.catalog.OneTimeFee']}"
+													rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
+											</f:facet>
+
+											<p:dataList styleClass="dataList" paginatorPosition="bottom"
+												paginatorAlwaysVisible="false"
+												value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}"
+												var="service" type="ordered"
+												rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
+												<h:outputText value="#{service.descriptionOrCode}"
+													styleClass="text-bold" />
+												<h:panelGroup layout="block">
+													<ul>
+														<ui:repeat var="charge"
+															value="#{service.serviceSubscriptionCharges}">
+															<li><h:outputText
+																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+														</ui:repeat>
+													</ul>
+												</h:panelGroup>
 											</p:dataList>
-											</p:panel>
-											<p:panel
-												styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius"
-												header="#{messages['marketingManager.catalog.usageFee']}"
-												rendered="#{ost.serviceTemplate.serviceUsageCharges != null and ost.serviceTemplate.serviceUsageCharges.size() > 0}">
-												<p:dataList styleClass="dataList" paginatorPosition="bottom"
-													paginatorAlwaysVisible="false"
-													value="#{ost.serviceTemplate.serviceUsageCharges}"
-													var="charge" type="ordered">#{charge.chargeTemplate.descriptionOrCode}</p:dataList>
-											</p:panel>
 										</p:panel>
-									</p:dataGrid>
+										<p:panel
+											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+											<f:facet name="header">
+												<h:outputText
+													value="#{messages['marketingManager.catalog.recurringFee']}"
+													rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}" />
+											</f:facet>
+											<p:dataList styleClass="dataList" paginatorPosition="bottom"
+												paginatorAlwaysVisible="false"
+												value="#{entity.serviceTemplatesByChargeType['RECURRING']}"
+												var="service" type="ordered"
+												rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
+												<h:outputText value="#{service.descriptionOrCode}"
+													styleClass="text-bold" />
+												<h:panelGroup layout="block">
+													<ul>
+														<ui:repeat var="charge"
+															value="#{service.serviceRecurringCharges}">
+															<li><h:outputText
+																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+														</ui:repeat>
+													</ul>
+												</h:panelGroup>
+											</p:dataList>
+										</p:panel>
+										<p:panel
+											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+											<f:facet name="header">
+												<h:outputText
+													value="#{messages['marketingManager.catalog.usageFee']}"
+													rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}" />
+											</f:facet>
+											<p:dataList styleClass="dataList" paginatorPosition="bottom"
+												paginatorAlwaysVisible="false"
+												value="#{entity.serviceTemplatesByChargeType['USAGE']}"
+												var="service" type="ordered"
+												rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
+												<h:outputText value="#{service.descriptionOrCode}"
+													styleClass="text-bold" />
+												<h:panelGroup layout="block">
+													<ul>
+														<ui:repeat var="charge"
+															value="#{service.serviceUsageCharges}">
+															<li><h:outputText
+																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+														</ui:repeat>
+													</ul>
+												</h:panelGroup>
+											</p:dataList>
+										</p:panel>
+									</p:panel>
 								</p:panel>
 							</p:dataGrid>
 						</h:form>

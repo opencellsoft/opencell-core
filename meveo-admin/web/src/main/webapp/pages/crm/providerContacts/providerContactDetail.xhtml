@@ -6,10 +6,6 @@
 	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -70,11 +66,10 @@
 					<hftl:formField label="#{messages['address.city']}"
 						required="true" id="city" field="address" childField="city"
 						maxlength="50" />
-
 					<hftl:formField label="#{messages['address.country']}"
-						fkToEntity="true" field="address" childField="country"
-						valueLabelField="descriptionEn" valueField="countryCode"
-						listBean="#{countryBean}"/>
+						required="true" id="country" field="address" childField="country"
+						maxlength="50" />
+
 			</p:fieldset>
 
 		</hftl:formPanel>

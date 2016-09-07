@@ -27,9 +27,9 @@ import org.meveo.model.ObservableEntity;
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
 @NamedQueries({
-		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false"),
-		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true"),
-		@NamedQuery(name = "ProductTemplate.countExpiring", query = "SELECT COUNT(*) FROM ProductTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
+		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false and provider=:provider"),
+		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true and provider=:provider"),
+		@NamedQuery(name = "ProductTemplate.countExpiring", query = "SELECT COUNT(*) FROM ProductTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
 public class ProductTemplate extends ProductOffering {
 
 	private static final long serialVersionUID = 6380565206599659432L;

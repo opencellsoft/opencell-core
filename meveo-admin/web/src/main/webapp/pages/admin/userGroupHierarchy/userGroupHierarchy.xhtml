@@ -2,12 +2,18 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
-        <p:panel header="#{messages['userGroupHierarchy.panel']}">
+
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem value="#{messages['menu.userGroupHierarchy']}" outcome="users" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+
+        <p:panel>
             <p:messages id="messages" />
             <h:panelGroup layout="block" styleClass="col2-set">
                 <h:panelGroup id="userGroupPanel" layout="block" styleClass="col1">

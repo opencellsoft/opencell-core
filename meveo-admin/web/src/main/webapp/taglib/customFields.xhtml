@@ -55,8 +55,12 @@
     <c:set var="index" value="0" />
 
     <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
-
-        <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
+		
+		<c:if test="${empty(tabLabel)}">
+			<c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}"></c:set>
+		</c:if>
+		
+        <p:tab title="#{tabLabel}">
 
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
                 <c:if test="#{cfFieldOrFg.type == 'field'}">

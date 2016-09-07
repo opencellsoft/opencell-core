@@ -22,10 +22,6 @@
         </f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -254,11 +250,12 @@
 													<hftl:formField label="#{messages['address.city']}"
 														field="address" childField="city" 
 														maxlength="50" />
-													<hftl:formField id="countryPanel"
-														label="#{messages['address.country']}" fkToEntity="true"
-														field="address" childField="country"
-														valueLabelField="descriptionEn" valueField="countryCode"
-														listBean="#{countryBean}"/>
+													<hftl:formField label="#{messages['address.country']}" field="address" childField="country" maxlength="50" />
+<!-- 													<hftl:formField id="countryPanel" -->
+<!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
+<!-- 														field="address" childField="country" -->
+<!-- 														valueLabelField="descriptionEn" valueField="countryCode" -->
+<!-- 														listBean="#{countryBean}"/> -->
 												
 											</p:fieldset>
 

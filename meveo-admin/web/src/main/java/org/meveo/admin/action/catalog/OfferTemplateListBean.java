@@ -44,6 +44,20 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	private List<OfferTemplateCategory> selOfferTemplateCategories;
 	private MeveoInstance meveoInstance = new MeveoInstance();
 
+    private long activeCount = 0;
+
+    private long inactiveCount = 0;
+
+    private long almostExpiredCount = 0;
+
+    @Override
+    public void preRenderView() {
+        activeCount = offerTemplateService.countActive(getCurrentProvider());
+        inactiveCount = offerTemplateService.countDisabled(getCurrentProvider());
+        almostExpiredCount = offerTemplateService.countExpiring(getCurrentProvider());
+        super.preRenderView();
+    }
+	
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("offerTemplateCategories");
@@ -74,17 +88,6 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 		RequestContext.getCurrentInstance().openDialog("selectedOffersForExport", options, null);
 	}
 
-	public long countActive() {
-		return offerTemplateService.countActive();
-	}
-
-	public long countDisabled() {
-		return offerTemplateService.countDisabled();
-	}
-
-	public long countExpiring() {
-		return offerTemplateService.countExpiring();
-	}
 
 	public LazyDataModel<OfferTemplate> listFromBOM() {
 		// filters.put("businessOfferModel",
@@ -124,4 +127,15 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 		this.meveoInstance = meveoInstance;
 	}
 
+	public long getActiveCount() {
+        return activeCount;
+    }
+	
+	public long getInactiveCount() {
+        return inactiveCount;
+    }
+	
+	public long getAlmostExpiredCount() {
+        return almostExpiredCount;
+    }
 }

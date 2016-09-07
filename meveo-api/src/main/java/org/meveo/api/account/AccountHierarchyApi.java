@@ -12,13 +12,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CountryApi;
+import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -137,13 +136,16 @@ public class AccountHierarchyApi extends BaseApi {
 	private UserAccountService userAccountService;
 
 	@Inject
+	private TradingCountryService tradingCountryService;
+
+	@Inject
 	private CountryApi countryApi;
 
 	@Inject
 	private LanguageApi languageApi;
 
 	@Inject
-	private TradingCountryService tradingCountryService;
+	private CurrencyApi currencyApi;
 
 	@Inject
 	private SellerService sellerService;
@@ -234,15 +236,10 @@ public class AccountHierarchyApi extends BaseApi {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
 		}
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
+
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
 		sellerDto.setLanguageCode(postData.getLanguageCode());
@@ -391,16 +388,9 @@ public class AccountHierarchyApi extends BaseApi {
 			sellerDto.setCode(postData.getSellerCode());
 		}
 
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
 
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
@@ -579,7 +569,7 @@ public class AccountHierarchyApi extends BaseApi {
 			if (tradingCountry == null) {
 				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 			}
-			qb.addCriterion("c.address.country", "=", postData.getCountryCode(), true);
+			qb.addCriterion("c.address.country", "=", tradingCountry.getPrDescription(), true);
 		}
 		if (!StringUtils.isBlank(postData.getFirstName())) {
 			qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
@@ -659,17 +649,10 @@ public class AccountHierarchyApi extends BaseApi {
 				missingParameters.add("seller.code");
 				handleMissingParameters();
 			}
-			Provider provider = currentUser.getProvider();
-			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(sellerDto.getCountryCode());
-			countryDto.setCurrencyCode(sellerDto.getCurrencyCode());
-		//	countryApi.createOrUpdate(countryDto, currentUser);
 
-			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-				LanguageDto languageDto = new LanguageDto();
-				languageDto.setCode(sellerDto.getLanguageCode());
-				//languageApi.createOrUpdate(languageDto, currentUser);
-			}
+			countryApi.findOrCreate(sellerDto.getCountryCode(),currentUser);
+			currencyApi.findOrCreate(sellerDto.getCurrencyCode(),currentUser);
+			languageApi.findOrCreate(sellerDto.getLanguageCode(),currentUser);
 
 			sellerApi.createOrUpdate(sellerDto, currentUser);
 

@@ -94,7 +94,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMsg, currentUser);
             }
@@ -158,7 +158,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId(), ld.getLanguageCode(), ld.getDescription());
+                    CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                     catMessagesService.create(catMsg, currentUser);
                 }
@@ -194,7 +194,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() + "_" + invoiceSubCategory.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -214,9 +214,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, code);
         }
-
-        // remove cat messages
-        catMessagesService.batchRemove(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getId(), provider);
 
         invoiceSubCategoryService.remove(invoiceSubCategory);
 

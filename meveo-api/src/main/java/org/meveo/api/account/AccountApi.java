@@ -23,31 +23,26 @@ import org.meveo.service.catalog.impl.TitleService;
 @Stateless
 public class AccountApi extends BaseApi {
 
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private CountryService countryService;
 
     public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
         Address address = new Address();
         if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
-            	if(country!=null){
-            		postData.getAddress().setCountry(country.getCountryCode());
-            	}else{
-            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            	}
-            }
-
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
             address.setZipCode(postData.getAddress().getZipCode());
             address.setCity(postData.getAddress().getCity());
-            address.setCountry(postData.getAddress().getCountry());
+            if(!StringUtils.isBlank(postData.getAddress().getCountry())){
+            	Country country=countryService.findByCode(postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
+                
+            }
             address.setState(postData.getAddress().getState());
         }
 
@@ -81,15 +76,6 @@ public class AccountApi extends BaseApi {
     public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
         Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
         if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-            	Country country=countryService.findByDescription(postData.getAddress().getCountry());
-            	if(country!=null){
-            		postData.getAddress().setCountry(country.getCountryCode());
-            	}else{
-            		throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            	}
-            }
 
             if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
                 address.setAddress1(postData.getAddress().getAddress1());
@@ -107,7 +93,8 @@ public class AccountApi extends BaseApi {
                 address.setCity(postData.getAddress().getCity());
             }
             if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
-                address.setCountry(postData.getAddress().getCountry());
+            	Country country=countryService.findByCode(postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
             }
             if (!StringUtils.isBlank(postData.getAddress().getState())) {
                 address.setState(postData.getAddress().getState());

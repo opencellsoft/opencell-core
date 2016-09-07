@@ -9,6 +9,7 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
@@ -29,6 +30,7 @@ import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
@@ -357,5 +359,21 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+
+
+    @WebMethod
+    ActionStatus createChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus updateChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus removeChannel(@WebParam(name = "channel") String code);
+
+    @WebMethod
+    GetChannelResponseDto findChannel(@WebParam(name = "channel") String code);
 
 }
