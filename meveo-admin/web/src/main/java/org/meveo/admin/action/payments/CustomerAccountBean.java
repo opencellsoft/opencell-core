@@ -161,14 +161,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			return null;
 		}
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=true&mainTab=1&faces-redirect=true";
+		return "customerAccountDetailOperationsTab";
 	}
 
 	public String backCA() {
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=true&mainTab=1&faces-redirect=true";
+		return "customerAccountDetailOperationsTab";
 	}
 
 	/**
