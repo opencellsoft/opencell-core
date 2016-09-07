@@ -28,7 +28,7 @@ public class BundleTemplate extends ProductTemplate {
 
 	private static final long serialVersionUID = -4295608354238684804L;
 
-	@OneToMany(mappedBy = "bundleTemplate", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
+	@OneToMany(mappedBy = "bundleTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<BundleProductTemplate> bundleProducts = new HashSet<BundleProductTemplate>();
 
 	public Set<BundleProductTemplate> getBundleProducts() {

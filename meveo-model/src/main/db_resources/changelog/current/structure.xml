@@ -984,4 +984,11 @@
 			disabled="false" initiallyDeferred="false" tableName="cat_bundle_product_template" />
 	</changeSet>
 	
+	<changeSet id="#cat_offer_product_template_cat_bundle_product_template" author="EdwardLegaspi">
+		<dropColumn tableName="cat_offer_product_template" columnName="version"/>
+		<dropColumn tableName="cat_offer_product_template" columnName="provider_id"/>
+		<dropColumn tableName="cat_bundle_product_template" columnName="version"/>
+		<dropColumn tableName="cat_bundle_product_template" columnName="provider_id"/>
+	</changeSet>
+	
 </databaseChangeLog>

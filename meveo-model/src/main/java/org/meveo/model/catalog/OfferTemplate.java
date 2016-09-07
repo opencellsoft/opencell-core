@@ -20,8 +20,10 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,8 +70,8 @@ public class OfferTemplate extends ProductOffering {
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<OfferProductTemplate> offerProductTemplates = new HashSet<OfferProductTemplate>();
 
 	@Size(max = 2000)
 	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
@@ -123,17 +125,17 @@ public class OfferTemplate extends ProductOffering {
 		return false;
 	}
 
-	public List<OfferProductTemplate> getOfferProductTemplates() {
+	public Set<OfferProductTemplate> getOfferProductTemplates() {
 		return offerProductTemplates;
 	}
 
-	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
+	public void setOfferProductTemplates(Set<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
 
 	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		if (getOfferProductTemplates() == null) {
-			offerProductTemplates = new ArrayList<OfferProductTemplate>();
+			offerProductTemplates = new HashSet<OfferProductTemplate>();
 		}
 		offerProductTemplates.add(offerProductTemplate);
 	}

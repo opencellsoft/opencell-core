@@ -1,149 +1,323 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
-            <f:event type="preRenderView" listener="#{offerTemplateListBean.preRenderView}" />
-        </f:metadata>
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
+			<f:event type="preRenderView"
+				listener="#{offerTemplateListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
 
-    <ui:define name="body">
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-                <p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers" />
-                <p:menuitem value="#{messages['menu.catalog.newOffer']}" outcome="mm_offerTemplates" rendered="#{offerTemplateBean.entity.transient}" />
-                <p:menuitem value="#{messages['menu.catalog.offer.configuration']}" disabled="true" />
-            </p:breadCrumb>
-        </h:form>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers" />
+				<p:menuitem value="#{messages['menu.catalog.newOffer']}"
+					outcome="mm_offerTemplates"
+					rendered="#{offerTemplateBean.entity.transient}" />
+				<p:menuitem value="#{messages['menu.catalog.offer.configuration']}"
+					disabled="true" />
+			</p:breadCrumb>
+		</h:form>
 
-        <hftl:formPanel backingBean="#{offerTemplateBean}" showDeleteButton="false" formButtonsTopRight="true" backView="mm_offerTemplates">
+		<hftl:formPanel backingBean="#{offerTemplateBean}"
+			showDeleteButton="false" formButtonsTopRight="true"
+			backView="mm_offerTemplates">
 
-            <p:panelGrid columns="4" columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop" styleClass="ui-panelgrid-blank">
-                <p:panel>
-                    <hftl:decorateFormField fieldId="offerImageUpload" rendered="#{offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:fileUpload id="offerImageUpload" auto="false" skinSimple="true" mode="simple" value="#{offerTemplateBean.uploadedFile}" />
-                    </hftl:decorateFormField>
-                    <hftl:decorateFormField fieldId="offerImage" rendered="#{not offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:outputPanel autoUpdate="true">
-                            <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateImageStreamer.image}" height="150" width="150">
-                                <f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
-                            </p:graphicImage>
-                            <p:fileUpload rendered="#{offerTemplateBean.edit}" fileUploadListener="#{offerTemplateBean.handleFileUpload}" mode="advanced" update=":formId:messages"
-                                auto="true" sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                        </p:outputPanel>
-                    </hftl:decorateFormField>
-                    <p:outputPanel>
-                        <p:panel rendered="#{not offerTemplateBean.edit}">
-                            <ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
-                                <li class="Padding5 FLeft"><p:commandLink action="#{offerTemplateBean.duplicate()}" update="@form" styleClass="fa fa-copy">
-                                        <f:param name="edit" value="false"></f:param>
-                                        <f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
-                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                        <p:confirm header="#{messages['commons.duplicate']}" message="#{messages['commons.confirmDuplicate']}" />
-                                    </p:commandLink></li>
-                                <li class="Padding5 FLeft"><p:link styleClass="fa fa-edit" outcome="mm_offerTemplateDetail">
-                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                        <f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
-                                        <f:param name="edit" value="true"></f:param>
-                                        <f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
-                                        <f:param name="tab" value="0"></f:param>
-                                    </p:link></li>
-                            </ul>
-                        </p:panel>
-                    </p:outputPanel>
-                </p:panel>
-                <p:panel>
-                    <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-                        <hftl:formField label="#{messages['offerTemplate.prefix']}" required="true" field="prefix" rendered="#{offerTemplateBean.bomId ne null}" />
-                        <h:outputText value="#{offerTemplateBean.entity.nameOrCode}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
-                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}"
-                            actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onNameChange" listenerUpdate="code" />
-                        <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
-                        <hftl:formField label="#{messages['marketingManager.catalog.family']}" allowEdit="false" field="businessOfferModel" valueLabelField="code"
-                            listBean="#{businessOfferModelBean}" />
-                        <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
+			<p:panelGrid columns="4"
+				columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop"
+				styleClass="ui-panelgrid-blank">
+				<p:panel>
+					<hftl:decorateFormField fieldId="offerImageUpload"
+						rendered="#{offerTemplateBean.entity.transient}"
+						label="#{messages['commons.image']}">
+						<p:fileUpload id="offerImageUpload" auto="false" skinSimple="true"
+							mode="simple" value="#{offerTemplateBean.uploadedFile}" />
+					</hftl:decorateFormField>
+					<hftl:decorateFormField fieldId="offerImage"
+						rendered="#{not offerTemplateBean.entity.transient}"
+						label="#{messages['commons.image']}">
+						<p:outputPanel autoUpdate="true">
+							<p:graphicImage id="offerImage" cache="false"
+								value="#{offerTemplateImageStreamer.image}" height="150"
+								width="150">
+								<f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
+							</p:graphicImage>
+							<p:fileUpload rendered="#{offerTemplateBean.edit}"
+								fileUploadListener="#{offerTemplateBean.handleFileUpload}"
+								mode="advanced" update=":formId:messages" auto="true"
+								sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+						</p:outputPanel>
+					</hftl:decorateFormField>
+					<p:outputPanel>
+						<p:panel rendered="#{not offerTemplateBean.edit}">
+							<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
+								<li class="Padding5 FLeft"><p:commandLink
+										action="#{offerTemplateBean.duplicate()}" update="@form"
+										styleClass="fa fa-copy">
+										<f:param name="edit" value="false"></f:param>
+										<f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<p:confirm header="#{messages['commons.duplicate']}"
+											message="#{messages['commons.confirmDuplicate']}" />
+									</p:commandLink></li>
+								<li class="Padding5 FLeft"><p:link styleClass="fa fa-edit"
+										outcome="mm_offerTemplateDetail">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="objectId"
+											value="#{offerTemplateBean.entity.id}"></f:param>
+										<f:param name="edit" value="true"></f:param>
+										<f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
+										<f:param name="tab" value="0"></f:param>
+									</p:link></li>
+							</ul>
+						</p:panel>
+					</p:outputPanel>
+				</p:panel>
+				<p:panel>
+					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<hftl:formField label="#{messages['offerTemplate.prefix']}"
+							required="true" field="prefix"
+							rendered="#{offerTemplateBean.bomId ne null}" />
+						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
+							rendered="#{!offerTemplateBean.edit}"></h:outputText>
+						<hftl:formField label="#{messages['offerTemplate.name']}"
+							required="true" field="name" rendered="#{offerTemplateBean.edit}"
+							actionListenerBean="#{offerTemplateBean}"
+							actionListenerMethod="onNameChange" listenerUpdate="code" />
+						<hftl:formField id="code"
+							label="#{messages['offerTemplate.code']}" field="code"
+							required="true" validateUnique="true" />
+						<hftl:formField
+							label="#{messages['marketingManager.catalog.family']}"
+							allowEdit="false" field="businessOfferModel"
+							valueLabelField="code" listBean="#{businessOfferModelBean}" />
+						<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
+							backingBean="#{offerTemplateBean}" multiLang="true" />
 
-                    </p:panelGrid>
-                    <p:panel>
-                        <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
-                        <h:outputText value="#{offerTemplateBean.entity.auditable.creator}"></h:outputText>
-                    </p:panel>
-                    <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-                        <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" />
-                        <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" />
-                        <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" />
-                    </p:panelGrid>
-                </p:panel>
-                <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-                    <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="pickUpList"
-                        valueLabelField="code" dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
-                    <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="pickUpList" valueLabelField="descriptionOrCode"
-                        dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
-                    <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="pickUpList"
-                        valueLabelField="code" dualListModel="#{offerTemplateBean.businessAccountModelsDM}" newLine="true" />
-                </p:panelGrid>
-            </p:panelGrid>
+					</p:panelGrid>
+					<p:panel>
+						<h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
+						<h:outputText
+							value="#{offerTemplateBean.entity.auditable.creator}"></h:outputText>
+					</p:panel>
+					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<hftl:formField label="#{messages['commons.validFrom']}"
+							field="validFrom" time="true" />
+						<hftl:formField label="#{messages['commons.validTo']}"
+							field="validTo" time="true" />
+						<hftl:formField label="#{messages['commons.status']}"
+							field="lifeCycleStatus" />
+					</p:panelGrid>
+				</p:panel>
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<hftl:formField id="offerTemplateCategories"
+						label="#{messages['offerTemplate.category']}"
+						field="offerTemplateCategories" listType="pickUpList"
+						valueLabelField="code"
+						dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
+					<hftl:formField id="channels" label="#{messages['channels.title']}"
+						field="channels" listType="pickUpList"
+						valueLabelField="descriptionOrCode"
+						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
+					<hftl:formField id="businessAccountModels"
+						label="#{messages['marketingManager.catalog.targetSegment']}"
+						field="businessAccountModels" listType="pickUpList"
+						valueLabelField="code"
+						dualListModel="#{offerTemplateBean.businessAccountModelsDM}"
+						newLine="true" />
+				</p:panelGrid>
+			</p:panelGrid>
 
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="#{messages['menu.marketingManager.products']}"
+						styleClass="SubHeader" />
+				</f:facet>
 
-            <p:panel id="customFieldsWrappPanel">
-                <f:facet name="header">
-                    <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-                    <p:commandLink action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}" process="@this customFieldsWrappPanel"
-                        oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration"
-                        style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
-                </f:facet>
-                <p:tabView rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
-                    <!-- custom fields -->
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" tabLabel="#{messages['commons.parameters']}" />
-                </p:tabView>
-            </p:panel>
+				<p:panel rendered="#{offerTemplateBean.edit}">
+					<p:commandButton
+						value="#{messages['offerTemplate.action.addProduct']}"
+						type="button" onclick="PF('selectProduct').show();"
+						update=":selectProduct" />
+				</p:panel>
 
-            <p:panel>
-                <f:facet name="header">
-                    <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-                </f:facet>
-                <p:panel>
-                    <c:set var="index" value="${0}"></c:set>
-                    <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost">
+				<p:panel id="productTemplateList">
+					<p:dataTable var="entity"
+						value="#{offerTemplateBean.entity.offerProductTemplates}"
+						paginator="true" rows="5" paginatorPosition="top"
+						paginatorAlwaysVisible="true"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						styleClass="ui-panelgrid-blank custom-grid" lazy="false"
+						widgetVar="productList" rowKey="#{entity.id}">
+						<p:column>
+							<p:graphicImage cache="false"
+								value="#{productTemplateImageStreamer.image}" height="150"
+								width="150">
+								<f:param name="id" value="#{entity.productTemplate.id}"></f:param>
+							</p:graphicImage>
+						</p:column>
+						<p:column headerText="#{messages['commons.name']}">
+							<p:link outcome="mm_productTemplateDetail"
+								value="#{entity.productTemplate.name}">
+								<f:param name="cid"
+									value="#{javax.enterprise.context.conversation.id}" />
+								<f:param name="objectId" value="#{entity.productTemplate.id}"></f:param>
+								<f:param name="edit" value="false"></f:param>
+								<f:param name="backView" value="mm_productTemplates"></f:param>
+								<f:param name="tab" value="0"></f:param>
+							</p:link>
+						</p:column>
+						<p:column headerText="#{messages['BusinessEntity.description']}">
+							<h:outputText value="#{entity.productTemplate.description}" />
+						</p:column>
+						<p:column headerText="#{messages['commons.actions']}"
+							rendered="#{offerTemplateBean.edit}">
+							<h:panelGroup layout="block" styleClass="form-panel-actions">
+								<p:commandButton
+									value="#{messages['offerTemplate.action.removeProduct']}"
+									immediate="true"
+									action="#{offerTemplateBean.removeProductTemplateFromOffer(entity)}"
+									update=":#{p:component('productTemplateList')}">
+								</p:commandButton>
+							</h:panelGroup>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:panel>
 
-                        <p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
-                            <p:ajax update="serviceCf_panel_#{index}"></p:ajax>
-                        </p:selectBooleanCheckbox>
-                        <h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+			<p:panel id="customFieldsWrappPanel">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}"
+						styleClass="SubHeader" />
+					<p:commandLink
+						action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}"
+						process="@this customFieldsWrappPanel"
+						oncomplete="PF('entityCustomizationDialog').show()"
+						update="entityCustomizationDialogPanel"
+						styleClass="fa fa-edit no-text-decoration"
+						style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
+				</f:facet>
+				<p:tabView
+					rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
+					<!-- custom fields -->
+					<hftl:customFields backingBean="#{offerTemplateBean}"
+						messagesId=":formId:messages"
+						tabLabel="#{messages['commons.parameters']}" />
+				</p:tabView>
+			</p:panel>
 
-                        <p:panel id="serviceCf_panel_#{index}">
-                            <p:tabView
-                                rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
-                                <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages" tabLabel="#{messages['commons.parameters']}" />
-                            </p:tabView>
-                        </p:panel>
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
+						styleClass="SubHeader" />
+				</f:facet>
+				<p:panel>
+					<c:set var="index" value="${0}"></c:set>
+					<c:forEach
+						items="#{offerTemplateBean.entity.offerServiceTemplates}"
+						var="ost">
 
-                        <c:set var="index" value="${index + 1}"></c:set>
-                    </c:forEach>
-                </p:panel>
-            </p:panel>
-        </hftl:formPanel>
+						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
+							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+							<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
+						</p:selectBooleanCheckbox>
+						<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 
-        <h:panelGroup id="entityCustomizationDialogPanel">
-            <p:dialog id="entityCustomizationDialog" header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
-                modal="true" closeOnEscape="true" maximizable="true" widgetVar="entityCustomizationDialog" width="90%" position="top" positionType="absolute" responsive="true">
-                <p:ajax event="close" listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
-                    update=":formId:customFieldsWrappPanel" />
+						<p:panel id="serviceCf_panel_#{index}">
+							<p:tabView
+								rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
+								<hftl:customFields backingBean="#{serviceTemplateBean}"
+									entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+									tabLabel="#{messages['commons.parameters']}" />
+							</p:tabView>
+						</p:panel>
 
-                <!--                 <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml"> -->
-                <!--                 </ui:include> -->
+						<c:set var="index" value="${index + 1}"></c:set>
+					</c:forEach>
+				</p:panel>
+			</p:panel>
+		</hftl:formPanel>
 
-                <h:form>
-                    <p:panel width="100">
-                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
-                        </p:button>
-                    </p:panel>
-                </h:form>
-            </p:dialog>
-        </h:panelGroup>
+		<h:panelGroup id="entityCustomizationDialogPanel">
+			<p:dialog id="entityCustomizationDialog"
+				header="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
+				modal="true" closeOnEscape="true" maximizable="true"
+				widgetVar="entityCustomizationDialog" width="90%" position="top"
+				positionType="absolute" responsive="true">
+				<p:ajax event="close"
+					listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
+					update=":formId:customFieldsWrappPanel" />
 
-    </ui:define>
+				<!--                 <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml"> -->
+				<!--                 </ui:include> -->
+
+				<h:form>
+					<p:panel width="100">
+						<p:button value="#{messages['commons.close']}"
+							onclick="PF('entityCustomizationDialog').hide();return false;">
+						</p:button>
+					</p:panel>
+				</h:form>
+			</p:dialog>
+		</h:panelGroup>
+
+		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
+			modal="true" appendTo="@(body)">
+			<h:form id="addOfferProductForm">
+				<p:panel id="headerPanel">
+					<p:dataTable id="productTemplatesTable" var="entity"
+						value="#{productTemplateListBean.listAll()}" paginator="true"
+						rows="5" paginatorPosition="top" paginatorAlwaysVisible="true"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						lazy="true" styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:graphicImage id="productImage" cache="false"
+								value="#{productTemplateImageStreamer.image}" height="100">
+								<f:param name="id" value="#{entity.id}"></f:param>
+							</p:graphicImage>
+						</p:column>
+						<p:column headerText="#{messages['commons.name']}">
+							<h:outputText value="#{entity.name}"></h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['BusinessEntity.description']}">
+							<h:outputText value="#{entity.description}" />
+						</p:column>
+						<p:column headerText="#{messages['commons.validFrom']}">
+							<h:outputText value="#{entity.validFrom}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.validTo']}">
+							<h:outputText value="#{entity.validTo}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.actions']}">
+							<p:commandButton
+								value="#{messages['offerTemplate.action.addProduct']}"
+								action="#{offerTemplateBean.addProductTemplateToOffer(entity)}"
+								update=":#{p:component('productTemplateList')}"
+								oncomplete="PF('selectProduct').hide()">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
 </ui:composition>
