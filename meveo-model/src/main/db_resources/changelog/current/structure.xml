@@ -1047,4 +1047,11 @@
                 ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
         <sql>alter table ADM_MESSAGES drop column code</sql>
     </changeSet>
+
+    <changeSet id="#1844_20160903" author="pbach">
+        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>
+        <addColumn tableName="ord_order">
+            <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
