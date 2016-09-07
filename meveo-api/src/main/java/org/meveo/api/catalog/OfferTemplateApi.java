@@ -363,7 +363,7 @@ public class OfferTemplateApi extends BaseApi {
 
 		// check offer product templates
 		processOfferProductTemplates(postData, offerTemplate, currentUser);
-		offerTemplateService.update(offerTemplate, currentUser);
+		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
 		try {

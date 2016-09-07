@@ -327,9 +327,6 @@ public class RecurringChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
-
         recurringChargeTemplateService.remove(chargeTemplate);
     }
 

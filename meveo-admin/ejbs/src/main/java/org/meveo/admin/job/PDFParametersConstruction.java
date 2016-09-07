@@ -81,7 +81,6 @@ public class PDFParametersConstruction {
 		return constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public Map<String, Object> constructParameters(Long invoiceId, User currentUser, Provider provider) {
 		try {
 			provider = currentUser.getProvider();
@@ -214,7 +213,7 @@ public class PDFParametersConstruction {
 		if (customerAccount.getName() != null) {
 		    name="";
 		    if (customerAccount.getName().getTitle() != null){
-		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage,invoice.getProvider())+" ";
+		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage)+" ";
 		    }
 		    
 			name += customerAccount.getName().getFirstName() == null ? ""

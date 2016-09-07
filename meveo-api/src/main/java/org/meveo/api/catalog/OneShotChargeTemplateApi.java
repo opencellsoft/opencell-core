@@ -330,9 +330,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
-
         oneShotChargeTemplateService.remove(chargeTemplate);
 
     }

@@ -317,7 +317,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						}
 					}
 
-					String invSubCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory, languageCode,currentUser.getProvider());
+					String invSubCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory, languageCode);
 					SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 					invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 					invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
@@ -393,7 +393,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					if (catInvoiceAgregateMap.containsKey(invoiceCategoryId)) {
 						invoiceAgregateCat = catInvoiceAgregateMap.get(invoiceCategoryId);
 					} else {
-						String invCatDescTranslated  = catMessagesService.getMessageDescription(invoiceSubCategory.getInvoiceCategory(), languageCode,currentUser.getProvider());
+						String invCatDescTranslated  = catMessagesService.getMessageDescription(invoiceSubCategory.getInvoiceCategory(), languageCode);
 						invoiceAgregateCat = new CategoryInvoiceAgregate();
 						invoiceAgregateCat.setAuditable(billingAccount.getAuditable());
 						invoiceAgregateCat.setProvider(billingAccount.getProvider());

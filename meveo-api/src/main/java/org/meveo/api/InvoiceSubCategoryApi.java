@@ -215,9 +215,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode(),provider);
-
         invoiceSubCategoryService.remove(invoiceSubCategory);
 
     }

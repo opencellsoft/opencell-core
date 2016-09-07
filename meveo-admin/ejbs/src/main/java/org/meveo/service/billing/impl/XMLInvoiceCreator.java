@@ -677,8 +677,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
-				Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName()
-						.getTitle(), languageCode,account.getProvider()));
+                Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode));
 				quality.appendChild(qualityTxt);
 			}
 			nameTag.appendChild(quality);
@@ -1032,8 +1031,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						if (ratedTransaction.getPriceplan() != null) {
 							Element pricePlan = doc.createElement("pricePlan");
 							pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
-							pricePlan.setAttribute("description", catMessagesService.getMessageDescription(
-									ratedTransaction.getPriceplan(), languageCode,invoice.getProvider()));
+                            pricePlan.setAttribute("description", catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(), languageCode));
 							line.appendChild(pricePlan);
 							if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
 							    addPricePlans(ratedTransaction.getPriceplan(),invoice,doc,invoiceTag);
@@ -1216,7 +1214,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					throw new BusinessException("Billing account must have a trading language.");
 				}
 
-				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode,invoice.getProvider());
+				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
 				Element taxName = doc.createElement("name");
 				Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
 				taxName.appendChild(taxNameTxt);

@@ -218,9 +218,6 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getCode(),provider);
-
         taxService.remove(tax);
         return result;
     }

@@ -58,6 +58,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
@@ -66,6 +67,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
@@ -125,6 +127,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @EJB
+    private CatMessagesService catMessagesService;
+    
     /**
      * Constructor.
      */
@@ -354,6 +359,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
         }
 
+        // Remove description translations
+        if (e instanceof BusinessEntity && e.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
+            catMessagesService.batchRemove((BusinessEntity) e);
+        }
+        
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
     }
 

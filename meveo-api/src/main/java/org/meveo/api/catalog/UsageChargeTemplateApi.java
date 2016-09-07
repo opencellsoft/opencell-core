@@ -339,10 +339,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
-
-        // remove cat messages
-        catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
-
+        
         usageChargeTemplateService.remove(chargeTemplate);
     }
 

@@ -396,20 +396,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
 
+        // Save description translations
         if (!isMultilanguageEntity()) {
             entity = saveOrUpdate(entity);
 
-        } else {
+        } else if (entity instanceof BusinessEntity) {
             if (entity.getId() != null) {
 
-                for (String msgKey : languageMessagesMap.keySet()) {
-                    String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey,currentProvider);
+                for (String languageKey : languageMessagesMap.keySet()) {
+                    String description = languageMessagesMap.get(languageKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());
-                    } else if(entity instanceof BusinessEntity){
-                        CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
+                    } else {
+                        CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
                         catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
@@ -421,7 +422,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
+                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, msgKey, description);
                     catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
