@@ -1,7 +1,8 @@
 /* Helper classes
 ====================================== */
 
-.clearfix:after {
+.clearfix:after,
+#layout-topbar-cover:after {
   content: '';
   display: block;
   clear: both;
@@ -85,6 +86,11 @@ a.text-blue:hover::before {
 
 .hidden {
   display: none !important;
+}
+
+.ui-fileupload-choose {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
 }
 
 .btn-wrapper {
@@ -353,16 +359,6 @@ input[type="text"] .ui-button-text,
 
 .ui-datatable table thead tr .ui-state-hover {
   border: 1px solid #ddd !important;
-}
-
-.ui-state-active,
-.ui-widget-content .ui-state-active,
-.ui-widget-header .ui-state-active,
-.ui-picklist-list .ui-state-hover,
-.ui-tabs-nav .ui-state-hover,
-.ui-selectonemenu .ui-state-hover,
-.ui-selectonemenu .ui-state-focus {
-  border: #ddd !important;
 }
 
 .position-relative {
@@ -1105,13 +1101,14 @@ footer .footer-copyright {
   top: 74px;
   right: 0;
   background: #264676;
-  padding: 0
+  padding: 0;
   border: 1px solid rgba(0, 0, 0, .1);
 }
 
 #primary_nav_wrap ul ul li {
   float: none;
   width: 200px;
+  border-left: none !important;
 }
 
 #primary_nav_wrap ul ul li:hover {
@@ -1164,4 +1161,9 @@ footer .footer-copyright {
 
 #left-controls li.button-item {
     margin-left: -24px;
+}
+
+#layout-portlets-cover {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
 }
