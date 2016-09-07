@@ -24,27 +24,27 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.IEntity;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@Table(name = "ADM_MESSAGES")
+@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE","PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
-public class CatMessages extends AuditableEntity {
-	private static final long serialVersionUID = 1L;
+public class CatMessages extends BaseEntity {
 
-	@Column(name = "CODE", length = 50)
-	@Size(max = 50)
-	private String messageCode;
+	private static final long serialVersionUID = -2933410380534805846L;
 
-	@Column(name = "LANGUAGE_CODE", length = 3)
+	@Column(name="ENTITY_CODE",length=60,nullable=false)
+	private String entityCode;
+
+	@Column(name = "LANGUAGE_CODE", length = 3,nullable=false)
 	@Size(max = 3)
 	private String languageCode;
 
@@ -53,13 +53,10 @@ public class CatMessages extends AuditableEntity {
 	private String description;
 	
 	@Transient
-	private String entityCode;
-	
-	@Transient
 	private String entityDescription;
 	
-	@Transient
-	private String className;
+	@Column(name="ENTITY_CLASS",length=60,nullable=false)
+	private String entityClass;
 	
 	@Transient
 	private String group;
@@ -70,39 +67,28 @@ public class CatMessages extends AuditableEntity {
 	public CatMessages() {
 		super();
 	}
-
-	public CatMessages(Auditable auditable) {
-		super(auditable);
+	public CatMessages(String entityClass,String entityCode,String languageCode,String description){
+		this.entityClass=entityClass;
+		this.entityCode=entityCode;
+		this.languageCode=languageCode;
+		this.description=description;
 	}
 
-    public CatMessages(IEntity businessEntity, String languageCode, String description) {
+    public CatMessages(BusinessEntity businessEntity, String languageCode, String description) {
         super();
 
-        String className =ReflectionUtils.getCleanClassName(businessEntity.getClass().getSimpleName());
-        this.messageCode = className + "_" + businessEntity.getId();
+        this.entityClass =ReflectionUtils.getCleanClassName(businessEntity.getClass().getSimpleName());
+        this.entityCode = businessEntity.getCode();
         this.languageCode = languageCode;
         this.description = description;
     }
 	   
-	public CatMessages(String messageCode, String languageCode, String description) {
-		super();
-		this.messageCode = messageCode;
-		this.languageCode = languageCode;
-		this.description = description;
+	public String getEntityCode() {
+		return entityCode;
 	}
 
-	public CatMessages(String messageCode, String languageCode) {
-		super();
-		this.messageCode = messageCode;
-		this.languageCode = languageCode;
-	}
-
-	public String getMessageCode() {
-		return messageCode;
-	}
-
-	public void setMessageCode(String messageCode) {
-		this.messageCode = messageCode;
+	public void setEntityCode(String messageCode) {
+		this.entityCode = messageCode;
 	}
 
 	public String getLanguageCode() {
@@ -121,31 +107,8 @@ public class CatMessages extends AuditableEntity {
 		this.description = description;
 	}
 
-    /**
-     * Parse entity ID from a message code that is in a format "classname_id"
-     * 
-     * @return Entity identifier
-     */
-    public long getEntityId() {
-        
-        //Logger log = LoggerFactory.getLogger(this.getClass());
-        try {
-            return Long.parseLong(messageCode.substring(messageCode.lastIndexOf('_') + 1));
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-    
     public String getEntityClass() {
-    	if(StringUtils.isBlank(className)){
-    		if (messageCode == null){
-    			return "";
-    		}	
-    		if (messageCode.indexOf("_") >= 0) {
-    			className = messageCode.substring(0, messageCode.indexOf("_"));
-    		}
-    	}
-		return className;
+		return entityClass;
     }
     
 	public String getObjectType() {
@@ -170,14 +133,6 @@ public class CatMessages extends AuditableEntity {
 		return group;
 	}
 
-	public String getEntityCode() {
-		return entityCode;
-	}
-
-	public void setEntityCode(String entityCode) {
-		this.entityCode = entityCode;
-	}
-
 	public String getEntityDescription() {
 		return entityDescription;
 	}
@@ -185,6 +140,8 @@ public class CatMessages extends AuditableEntity {
 	public void setEntityDescription(String entityDescription) {
 		this.entityDescription = entityDescription;
 	}
-    
+	public void setEntityClass(String entityClass) {
+		this.entityClass = entityClass;
+	}
     
 }
