@@ -412,13 +412,14 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
     }
 
     public StatModel getPendingOrderStats() {
+        Calendar currentDate = Calendar.getInstance();
         Calendar beforeDate = Calendar.getInstance();
-
+        beforeDate.add(Calendar.DATE, -1);
         StatModel result = new StatModel();
 
         result.setDescription("Pending Orders");
         result.setLastUpdated(Calendar.getInstance().getTime());
-        result.setValue(orderService.countPendingOrders(beforeDate).doubleValue());
+        result.setValue(orderService.countPendingOrders(currentDate).doubleValue());
         result.computeDifference(orderService.countPendingOrders(beforeDate).doubleValue());
 
         return result;
