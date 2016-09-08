@@ -6030,7 +6030,7 @@
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
           </con:settings>
-          <con:endpoint>http://localhost:8080</con:endpoint>
+          <con:endpoint>${#Project#meveoUrl}</con:endpoint>
           <con:request>{
 	"code" : "OFF_2",
 	"description" : "OFF_2",
@@ -19162,10 +19162,10 @@
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="JsonPath Match" id="9763fd67-3855-47fb-9f3f-767ebb8e25c1" name="Match content of [provider]">
+            <con:assertion type="JsonPath Match" id="a63f067f-f49d-4245-9147-02c8c1090dd2" name="Match content of [provider]">
               <con:configuration>
                 <path>$.provider</path>
-                <content>{"code":"${#Project#entityPrefix}_${#TestSuite#index}_P1","description":"${#Project#entityPrefix}_${#TestSuite#index}_P1","currency":"USD","country":"US","language":"ENG","multiCurrency":true,"multiCountry":true,"multiLanguage":true,"userAccount":null,"enterprise":true,"levelDuplication":true,"rounding":2,"prepaidReservationExpirationDelayinMillisec":9999,"discountAccountingCode":"accountCode","email":"WSREST_FULL_1_P1@manaty.net","bankCoordinates":{"bankCode":"SGMB","branchCode":"12345","accountNumber":"33333333333","key":"11","iban":"11","bic":"11","accountOwner":"owner","bankName":"SGMB","bankId":"11","issuerNumber":"1111","issuerName":"DEMO","ics":"ics"},"recognizeRevenue":true,"invoiceConfiguration":{"displaySubscriptions":true,"displayServices":true,"displayOffers":true,"displayEdrs":true,"displayProvider":true,"displayCfAsXML":true,"displayPricePlans":true,"displayDetail":true,"displayChargesPeriods":true,"displayBillingCycle":false,"displayFreeTransacInInvoice":true}}</content>
+                <content>{"code":"WSREST_FULL_1_P1","description":"WSREST_FULL_1_P1","currency":"USD","country":"US","language":"ENG","multiCurrency":true,"multiCountry":true,"multiLanguage":true,"userAccount":null,"enterprise":true,"levelDuplication":true,"rounding":2,"prepaidReservationExpirationDelayinMillisec":9999,"discountAccountingCode":"accountCode","email":"WSREST_FULL_1_P1@manaty.net","bankCoordinates":{"bankCode":"SGMB","branchCode":"12345","accountNumber":"33333333333","key":"11","iban":"11","bic":"11","accountOwner":"owner","bankName":"SGMB","bankId":"11","issuerNumber":"1111","issuerName":"DEMO","ics":"ics"},"recognizeRevenue":true,"invoiceConfiguration":{"displaySubscriptions":true,"displayServices":true,"displayOffers":true,"displayEdrs":true,"displayProvider":true,"displayCfAsXML":true,"displayPricePlans":true,"displayDetail":true,"displayChargesPeriods":true,"displayBillingCycle":false,"displayFreeTransacInInvoice":true}}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -19209,10 +19209,10 @@
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="JsonPath Match" id="69582570-d049-4248-b810-64aa70dfaad5" name="Match content of [provider]">
+            <con:assertion type="JsonPath Match" id="4854ef05-91d6-4b43-bef0-579a38d4c1e5" name="Match content of [provider]">
               <con:configuration>
                 <path>$.provider</path>
-                <content>{"code":"${#Project#entityPrefix}_${#TestSuite#index}_P2","description":null,"currency":null,"country":null,"language":null,"multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":60000,"discountAccountingCode":null,"email":null,"bankCoordinates":{"bankCode":null,"branchCode":null,"accountNumber":null,"key":null,"iban":null,"bic":null,"accountOwner":null,"bankName":null,"bankId":null,"issuerNumber":null,"issuerName":null,"ics":null},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":true,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
+                <content>{"code":"WSREST_FULL_1_P2","description":null,"currency":null,"country":null,"language":null,"multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":60000,"discountAccountingCode":null,"email":null,"bankCoordinates":{"bankCode":null,"branchCode":null,"accountNumber":null,"key":null,"iban":null,"bic":null,"accountOwner":null,"bankName":null,"bankId":null,"issuerNumber":null,"issuerName":null,"ics":null},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":true,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -19367,10 +19367,10 @@
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="JsonPath Match" id="839a4af7-e81c-4b84-82cf-2ca6f452c231" name="Match content of [provider]">
+            <con:assertion type="JsonPath Match" id="54737153-9d5c-4029-aed6-eebce4c06e14" name="Match content of [provider]">
               <con:configuration>
                 <path>$.provider</path>
-                <content>{"code":"${#Project#entityPrefix}_${#TestSuite#index}_P1","description":"${#Project#entityPrefix}_${#TestSuite#index}_P1","currency":"USD","country":"US","language":"ENG","multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":9999,"discountAccountingCode":"accountCode","email":"${#Project#entityPrefix}_${#TestSuite#index}_P1@manaty.net","bankCoordinates":{"bankCode":"SGMB","branchCode":"12345","accountNumber":"33333333333","key":"11","iban":"11","bic":"11","accountOwner":"owner","bankName":"SGMB","bankId":"11","issuerNumber":"1111","issuerName":"DEMO","ics":"ics"},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":false,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
+                <content>{"code":"WSREST_FULL_1_P1","description":"WSREST_FULL_1_P1","currency":"USD","country":"US","language":"ENG","multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":9999,"discountAccountingCode":"accountCode","email":"WSREST_FULL_1_P1@manaty.net","bankCoordinates":{"bankCode":"SGMB","branchCode":"12345","accountNumber":"33333333333","key":"11","iban":"11","bic":"11","accountOwner":"owner","bankName":"SGMB","bankId":"11","issuerNumber":"1111","issuerName":"DEMO","ics":"ics"},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":false,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -19414,10 +19414,10 @@
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="JsonPath Match" id="22192796-5972-4728-b3f9-481da14fe788" name="Match content of [provider]">
+            <con:assertion type="JsonPath Match" id="15d6922a-c87e-437c-bc3d-35e022ea501f" name="Match content of [provider]">
               <con:configuration>
                 <path>$.provider</path>
-                <content>{"code":"${#Project#entityPrefix}_${#TestSuite#index}_P2","description":"${#Project#entityPrefix}_${#TestSuite#index}_P2_DESCUPDATE","currency":null,"country":null,"language":null,"multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":60000,"discountAccountingCode":null,"email":null,"bankCoordinates":{"bankCode":null,"branchCode":null,"accountNumber":null,"key":null,"iban":null,"bic":null,"accountOwner":null,"bankName":null,"bankId":null,"issuerNumber":null,"issuerName":null,"ics":null},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":true,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
+                <content>{"code":"WSREST_FULL_1_P2","description":"WSREST_FULL_1_P2_DESCUPDATE","currency":null,"country":null,"language":null,"multiCurrency":false,"multiCountry":false,"multiLanguage":false,"userAccount":null,"enterprise":false,"levelDuplication":false,"rounding":2,"prepaidReservationExpirationDelayinMillisec":60000,"discountAccountingCode":null,"email":null,"bankCoordinates":{"bankCode":null,"branchCode":null,"accountNumber":null,"key":null,"iban":null,"bic":null,"accountOwner":null,"bankName":null,"bankId":null,"issuerNumber":null,"issuerName":null,"ics":null},"recognizeRevenue":false,"invoiceConfiguration":{"displaySubscriptions":false,"displayServices":false,"displayOffers":false,"displayEdrs":false,"displayProvider":false,"displayCfAsXML":false,"displayPricePlans":false,"displayDetail":true,"displayChargesPeriods":false,"displayBillingCycle":false,"displayFreeTransacInInvoice":false}}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>

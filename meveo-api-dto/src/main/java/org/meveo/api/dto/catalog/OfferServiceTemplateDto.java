@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +18,14 @@ import org.meveo.model.catalog.ServiceTemplate;
  **/
 @XmlRootElement(name = "OfferServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferServiceTemplateDto {
+public class OfferServiceTemplateDto implements Serializable{
 
+	private static final long serialVersionUID = 7137259235916807339L;
 	private ServiceTemplateDto serviceTemplate;
 	private Boolean mandatory;
 
 	@XmlElementWrapper(name = "incompatibleServices")
-	@XmlElement(name = "serviceTemplate")
+	@XmlElement(name = "incompatibleServiceTemplate")
 	private List<ServiceTemplateDto> incompatibleServices = new ArrayList<>();
 
 	public OfferServiceTemplateDto() {
