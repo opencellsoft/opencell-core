@@ -450,14 +450,20 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
                     + "AND  (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}')" + "AND ae.provider_id = #{provider}" + ")" + "SELECT"
                     + "CASE  WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2)<>0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2)" + "ELSE 0"
                     + "END as churn FROM acc_new ,acc_end,acc_period");
+            mq.setEditable(true);
+            mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
             mqService.create(mq, getCurrentUser());
         }
 
-        MeasuredValue currentMV = mvService.getByDate(currentDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+        List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("CHURN", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+        MeasuredValue currentMV = (currentMVs != null && currentMVs.size() > 0) ? currentMVs.get(0) : new MeasuredValue();
         Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue() : new Double("0.00");
 
-        MeasuredValue beforeMV = mvService.getByDate(beforeDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+        List<MeasuredValue> beforeMVs = mvService.getByDateAndPeriod("CHURN", beforeDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+        MeasuredValue beforeMV = (beforeMVs != null && beforeMVs.size() > 0) ? beforeMVs.get(0) : new MeasuredValue();
         Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue() : new Double("0.00");
+
+        log.info("Current MV : " + currentValue + ", Before MV : " + beforeValue);
         result.setValue(currentValue);
         result.setDescription("Churn");
         result.computeDifference(beforeValue);
@@ -485,7 +491,8 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
             mq.setDimension2("BA");
             mq.setDimension3("CA");
             mq.setDimension4("Cust");
-
+            mq.setEditable(true);
+            mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
             mq.setSqlQuery("	SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,	"
                     + "	        wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code	" + "	        FROM billing_wallet_operation wo	"
                     + "	        LEFT JOIN crm_provider p ON p.id=wo.provider_id	" + "	        LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id	"
@@ -499,10 +506,12 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
             mqService.create(mq, getCurrentUser());
         }
 
-        MeasuredValue currentMV = mvService.getByDate(currentDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+        List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("MRR", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+        MeasuredValue currentMV = (currentMVs != null && currentMVs.size() > 0) ? currentMVs.get(0) : new MeasuredValue();
         Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue() : new Double("0.00");
 
-        MeasuredValue beforeMV = mvService.getByDate(beforeDate.getTime(), MeasurementPeriodEnum.MONTHLY, mq);
+        List<MeasuredValue> beforeMVs = mvService.getByDateAndPeriod("MRR", beforeDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+        MeasuredValue beforeMV = (beforeMVs != null && beforeMVs.size() > 0) ? beforeMVs.get(0) : new MeasuredValue();
         Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue() : new Double("0.00");
         result.setValue(currentValue);
         result.setDescription("MRR");
