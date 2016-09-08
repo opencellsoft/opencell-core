@@ -12,30 +12,31 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class OrderService extends BusinessService<Order> {
 
-	public Long countNewOrders(Calendar endDate) {
+    public Long countNewOrders(Calendar endDate) {
 
-		Calendar startDate = endDate;
-		startDate.add(Calendar.DATE, -1);
-		Query query = getEntityManager().createQuery(
-				"select count(*) from " + Order.class.getName()
-						+ " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate");
-		query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
-		query.setParameter("endDate", endDate.getTime());
-		query.setParameter("startDate", startDate.getTime());
-		Long count = (Long) query.getSingleResult();
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(endDate.getTime());
+        startDate.add(Calendar.DATE, -1);
 
-		return count.longValue();
-	}
+        String sqlQuery = "select count(*) from " + Order.class.getName()
+                + " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate";
+        Query query = getEntityManager().createQuery(sqlQuery);
 
-	public Long countPendingOrders(Calendar startDate, Calendar endDate) {
-		startDate.add(Calendar.DATE, -1);
-		Query query = getEntityManager().createQuery(
-				"select count(*) from " + Order.class.getName()
-						+ " a where a.status = :orderStatus AND a.auditable.created <= :startDate");
-		query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
-		query.setParameter("startDate", startDate.getTime());
-		Long count = (Long) query.getSingleResult();
+        query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
+        query.setParameter("endDate", endDate.getTime());
+        query.setParameter("startDate", startDate.getTime());
+        Long count = (Long) query.getSingleResult();
 
-		return count.longValue();
-	}
+        return count.longValue();
+    }
+
+    public Long countPendingOrders(Calendar startDate) {
+        startDate.add(Calendar.DATE, -1);
+        Query query = getEntityManager().createQuery("select count(*) from " + Order.class.getName() + " a where a.status = :orderStatus AND a.auditable.created < :startDate");
+        query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
+        query.setParameter("startDate", startDate.getTime());
+        Long count = (Long) query.getSingleResult();
+
+        return count.longValue();
+    }
 }
