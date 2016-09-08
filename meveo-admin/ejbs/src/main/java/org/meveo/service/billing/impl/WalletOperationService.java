@@ -1329,10 +1329,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<Object[]> openWalletOperationsByCharge(WalletInstance walletInstance ) {
 		
 		try {
-			
-			List<Object[]> resultList = getEntityManager().createNativeQuery("select description ,sum(quantity) QT, sum(amount_without_tax) MT ,input_unit_description from billing_wallet_operation "
-					+ "where wallet_id = "+walletInstance.getId()+" and  status = 'OPEN' "
-					+ "group by description,input_unit_description").getResultList();
+			//todo ejbQL and make namedQuery
+			List<Object[]> resultList = getEntityManager().createNativeQuery("select op.description ,sum(op.quantity) QT, sum(op.amount_without_tax) MT ,op.input_unit_description from "+
+					 "billing_wallet_operation op , cat_charge_template ct, billing_charge_instance ci "+
+					 "where op.wallet_id = "+walletInstance.getId()+" and  op.status = 'OPEN'  and op.charge_instance_id = ci.id and ci.charge_template_id = ct.id and ct.id in (select id from cat_usage_charge_template) "+
+					 "group by op.description, op.input_unit_description").getResultList();
 			
 			
 			return resultList;			
