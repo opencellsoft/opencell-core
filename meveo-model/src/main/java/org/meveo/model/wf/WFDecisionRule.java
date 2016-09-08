@@ -33,8 +33,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "name", "value", "provider" })
 @Table(name = "WF_DECISION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"NAME", "VALUE", "PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_DECISION_RULE_SEQ")

@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,8 +45,8 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;
-import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -131,7 +132,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
-        return "/pages/admin/workflow/workflowDetail?workflowId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        return "workflowDetail";
     }
 
     public void saveWfTransition() throws BusinessException{
@@ -192,10 +193,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
         wfTransition = new WFTransition();
     }
 
-    public void deleteWfTransition(WFTransition dunningPlanTransition) {
-        WFTransition transition = wFTransitionService.findById(dunningPlanTransition.getId()); 
+    public void deleteWfTransition(WFTransition transitionToDelete) {
+        WFTransition transition = wFTransitionService.findById(transitionToDelete.getId()); 
         wFTransitionService.remove(transition);
-        entity.getTransitions().remove(dunningPlanTransition);
+        entity.getTransitions().remove(transitionToDelete);
         wfDecisionRulesByName.clear();
         selectedRules.clear();
         wfActions.clear();
@@ -203,8 +204,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
         messages.info(new BundleKey("messages", "delete.successful"));
     }
 
-    public void editWfTransition(WFTransition dunningPlanTransition) {
-        this.wfTransition = dunningPlanTransition;
+    public void editWfTransition(WFTransition transitionToEdit) {
+        this.wfTransition = transitionToEdit;
         WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfDecisionRules", "wfActions"), true);
         if (wfTransition1 != null && wfTransition1.getWfDecisionRules() != null) {
             wfDecisionRulesByName.clear();
@@ -580,7 +581,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         }
     }
 
-    public class RuleNameValue {
+    public class RuleNameValue implements Serializable {
 
         private static final long serialVersionUID = 3694377290046737073L;
         private String name;

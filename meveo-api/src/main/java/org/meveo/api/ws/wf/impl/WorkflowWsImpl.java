@@ -22,10 +22,10 @@ public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 	 private WorkflowApi workflowApi;
 	 
 	    @Override
-	    public ActionStatus create(WorkflowDto dunningPlanDto) {
+	    public ActionStatus create(WorkflowDto workflowDto) {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	workflowApi.create(dunningPlanDto, getCurrentUser());
+	        	workflowApi.create(workflowDto, getCurrentUser());
 	        } catch (Exception e) {
 	        	super.processException(e, result);
 	        }
@@ -33,10 +33,10 @@ public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 	    }
 
 	    @Override
-	    public ActionStatus update(WorkflowDto dunningPlanDto) {
+	    public ActionStatus update(WorkflowDto workflowDto) {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	workflowApi.update(dunningPlanDto, getCurrentUser());
+	        	workflowApi.update(workflowDto, getCurrentUser());
 	        } catch (Exception e) {
 	        	super.processException(e, result);
 	        }

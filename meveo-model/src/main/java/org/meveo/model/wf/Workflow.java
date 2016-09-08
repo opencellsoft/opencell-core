@@ -40,7 +40,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
-@ExportIdentifier({ "code", "provider", "wfType" })
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_WORKFLOW_SEQ")
 public class Workflow extends BusinessEntity {

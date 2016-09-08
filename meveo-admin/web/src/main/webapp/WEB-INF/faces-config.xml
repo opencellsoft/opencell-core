@@ -1075,7 +1075,7 @@
 			<from-outcome>workflowDetail</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>wfTransitions</from-outcome>
