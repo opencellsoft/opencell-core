@@ -47,8 +47,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		MeasuredValue result = null;
 		QueryBuilder queryBuilder = new QueryBuilder("FROM " + MeasuredValue.class.getName() + " m ");
 		queryBuilder.addCriterionDate("m.date", date);
-		queryBuilder.addCriterion("m.measurementPeriod", "=", period, false);
-		queryBuilder.addCriterion("m.measurableQuantity", "=", mq, false);
+		queryBuilder.addCriterionEnum("m.measurementPeriod", period);
+		queryBuilder.addCriterionEntity("m.measurableQuantity", mq);
 		Query query = queryBuilder.getQuery(em);
 		@SuppressWarnings("unchecked")
 		List<MeasuredValue> res = query.getResultList();
@@ -58,33 +58,30 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		return result;
 	}
 
-	public Long getMeasuredValueSumByDate(Date fromDate, Date toDate, String code, MeasurementPeriodEnum period,
-			String followUpTheme, Boolean includeLastdDay) {
+	public Long getMeasuredValueSumByDate(Date fromDate, Date toDate, String code, MeasurementPeriodEnum period, String followUpTheme, Boolean includeLastdDay) {
 		Calendar cal = Calendar.getInstance();
 		String sqlQuery = null;
 		if (fromDate == null && toDate != null) {
 			if (!includeLastdDay) {
 				cal.setTime(toDate);
-				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date > '"
-						+ cal.getTime().toString() + "')";
+				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date > '" + cal.getTime().toString() + "')";
 			} else {
 				cal.setTime(toDate);
-				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '"
-						+ cal.getTime().toString() + "')";
+				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + cal.getTime().toString() + "')";
 			}
 
 		} else if (fromDate != null && toDate == null) {
 			cal.setTime(fromDate);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 
-			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '"
-					+ fromDate.toString() + "' AND mv.date < '" + cal.getTime().toString() + "')";
+			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
+					+ cal.getTime().toString() + "')";
 
 		} else if (fromDate != null && toDate != null) {
 			cal.setTime(toDate);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
-			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '"
-					+ fromDate.toString() + "' AND mv.date < '" + cal.getTime().toString() + "') ";
+			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
+					+ cal.getTime().toString() + "') ";
 
 		}
 
@@ -106,33 +103,30 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
 	}
 
-	public Long getMeasuredValueSumByDate(EntityManager em, Date fromDate, Date toDate, String code,
-			MeasurementPeriodEnum period, String followUpTheme, Boolean includeLastdDay) {
+	public Long getMeasuredValueSumByDate(EntityManager em, Date fromDate, Date toDate, String code, MeasurementPeriodEnum period, String followUpTheme, Boolean includeLastdDay) {
 		Calendar cal = Calendar.getInstance();
 		String sqlQuery = null;
 		if (fromDate == null && toDate != null) {
 			if (!includeLastdDay) {
 				cal.setTime(toDate);
-				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date < '"
-						+ cal.getTime().toString() + "')";
+				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date < '" + cal.getTime().toString() + "')";
 			} else {
 				cal.setTime(toDate);
-				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date <= '"
-						+ cal.getTime().toString() + "')";
+				sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date <= '" + cal.getTime().toString() + "')";
 			}
 
 		} else if (fromDate != null && toDate == null) {
 			cal.setTime(fromDate);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 
-			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '"
-					+ fromDate.toString() + "' AND mv.date < '" + cal.getTime().toString() + "')";
+			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
+					+ cal.getTime().toString() + "')";
 
 		} else if (fromDate != null && toDate != null) {
 			cal.setTime(toDate);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
-			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '"
-					+ fromDate.toString() + "' AND mv.date < '" + cal.getTime().toString() + "') ";
+			sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
+					+ cal.getTime().toString() + "') ";
 
 		}
 
@@ -163,8 +157,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		Calendar end = Calendar.getInstance();
 		// result.add("");
 		String dimension = "dimension" + dimensionIndex;
-		String sqlQuery = "SELECT DISTINCT(mv." + dimension + ") FROM " + MeasuredValue.class.getName()
-				+ " mv WHERE mv.measurableQuantity=" + mq.getId() + " ";
+		String sqlQuery = "SELECT DISTINCT(mv." + dimension + ") FROM " + MeasuredValue.class.getName() + " mv WHERE mv.measurableQuantity=" + mq.getId() + " ";
 		if (fromDate != null) {
 			Calendar start = Calendar.getInstance();
 			start.setTime(fromDate);
@@ -196,14 +189,12 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		return result;
 	}
 
-	public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate,
-			MeasurementPeriodEnum period, MeasurableQuantity mq) {
+	public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq) {
 		return getByDateAndPeriod(code, fromDate, toDate, period, mq, false);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate,
-			MeasurementPeriodEnum period, MeasurableQuantity mq, Boolean sortByDate) {
+	public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq, Boolean sortByDate) {
 
 		QueryBuilder queryBuilder = new QueryBuilder("FROM " + MeasuredValue.class.getName() + " m ");
 

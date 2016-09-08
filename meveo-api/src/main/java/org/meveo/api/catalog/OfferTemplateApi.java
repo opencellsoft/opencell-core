@@ -387,22 +387,25 @@ public class OfferTemplateApi extends BaseApi {
 				List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
 				offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
 				newOfferProductTemplates.removeAll(existingProductTemplates);
-				for (OfferProductTemplate offerProductTemplateForRemoval : offerProductTemplatesForRemoval) {
-					// offerProductTemplateService.remove(offerProductTemplateForRemoval);
-					offerTemplate.getOfferProductTemplates().remove(offerProductTemplateForRemoval);
-				}
-			}
-			for (OfferProductTemplate newOfferProductTemplate : newOfferProductTemplates) {
-				// newOfferProductTemplate.setOfferTemplate(offerTemplate);
-				offerTemplate.getOfferProductTemplates().add(newOfferProductTemplate);
-				// offerProductTemplateService.create(newOfferProductTemplate,
-				// currentUser);
-			}
-		} else if (hasExistingProductTemplates) {
-			for (OfferProductTemplate offerProductTemplateForRemoval : existingProductTemplates) {
+				// for (OfferProductTemplate offerProductTemplateForRemoval :
+				// offerProductTemplatesForRemoval) {
 				// offerProductTemplateService.remove(offerProductTemplateForRemoval);
-				offerTemplate.getOfferProductTemplates().remove(offerProductTemplateForRemoval);
+				// }
+				offerTemplate.getOfferProductTemplates().removeAll(offerProductTemplatesForRemoval);
 			}
+			// for (OfferProductTemplate newOfferProductTemplate :
+			// newOfferProductTemplates) {
+			// newOfferProductTemplate.setOfferTemplate(offerTemplate);
+			// offerProductTemplateService.create(newOfferProductTemplate,
+			// currentUser);
+			// }
+			offerTemplate.getOfferProductTemplates().addAll(newOfferProductTemplates);
+		} else if (hasExistingProductTemplates) {
+			// for (OfferProductTemplate offerProductTemplateForRemoval :
+			// existingProductTemplates) {
+			// offerProductTemplateService.remove(offerProductTemplateForRemoval);
+			// }
+			offerTemplate.getOfferProductTemplates().removeAll(existingProductTemplates);
 		}
 	}
 

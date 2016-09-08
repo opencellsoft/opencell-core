@@ -20,7 +20,6 @@ import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
@@ -31,9 +30,6 @@ public class BundleTemplateApi extends ProductOfferingApi {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
-
-	@Inject
-	private BundleProductTemplateService bundleProductTemplateService;
 
 	public BundleTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
@@ -203,17 +199,24 @@ public class BundleTemplateApi extends ProductOfferingApi {
 				List<BundleProductTemplate> bundleProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
 				bundleProductTemplatesForRemoval.removeAll(newBundleProductTemplates);
 				newBundleProductTemplates.removeAll(existingProductTemplates);
-				for (BundleProductTemplate bundleProductTemplateForRemoval : bundleProductTemplatesForRemoval) {
-					bundleProductTemplateService.remove(bundleProductTemplateForRemoval);
-				}
+				// for (BundleProductTemplate bundleProductTemplateForRemoval :
+				// bundleProductTemplatesForRemoval) {
+				// bundleProductTemplateService.remove(bundleProductTemplateForRemoval);
+				// }
+				bundleTemplate.getBundleProducts().removeAll(bundleProductTemplatesForRemoval);
 			}
-			for (BundleProductTemplate newBundleProductTemplate : newBundleProductTemplates) {
-				bundleProductTemplateService.create(newBundleProductTemplate, user);
-			}
+			// for (BundleProductTemplate newBundleProductTemplate :
+			// newBundleProductTemplates) {
+			// bundleProductTemplateService.create(newBundleProductTemplate,
+			// user);
+			// }
+			bundleTemplate.getBundleProducts().addAll(newBundleProductTemplates);
 		} else if (hasExistingProductTemplates) {
-			for (BundleProductTemplate offerProductTemplateForRemoval : existingProductTemplates) {
-				bundleProductTemplateService.remove(offerProductTemplateForRemoval);
-			}
+			// for (BundleProductTemplate offerProductTemplateForRemoval :
+			// existingProductTemplates) {
+			// bundleProductTemplateService.remove(offerProductTemplateForRemoval);
+			// }
+			bundleTemplate.getBundleProducts().removeAll(existingProductTemplates);
 		}
 
 	}
