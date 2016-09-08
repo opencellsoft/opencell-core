@@ -28,7 +28,6 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -49,9 +48,6 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
-
-	@Inject
-	private OfferProductTemplateService offerProductTemplateService;
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
@@ -391,18 +387,25 @@ public class OfferTemplateApi extends BaseApi {
 				List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
 				offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
 				newOfferProductTemplates.removeAll(existingProductTemplates);
-				for (OfferProductTemplate offerProductTemplateForRemoval : offerProductTemplatesForRemoval) {
-					offerProductTemplateService.remove(offerProductTemplateForRemoval);
-				}
+				// for (OfferProductTemplate offerProductTemplateForRemoval :
+				// offerProductTemplatesForRemoval) {
+				// offerProductTemplateService.remove(offerProductTemplateForRemoval);
+				// }
+				offerTemplate.getOfferProductTemplates().removeAll(offerProductTemplatesForRemoval);
 			}
-			for (OfferProductTemplate newOfferProductTemplate : newOfferProductTemplates) {
-				newOfferProductTemplate.setOfferTemplate(offerTemplate);
-				offerProductTemplateService.create(newOfferProductTemplate, currentUser);
-			}
+			// for (OfferProductTemplate newOfferProductTemplate :
+			// newOfferProductTemplates) {
+			// newOfferProductTemplate.setOfferTemplate(offerTemplate);
+			// offerProductTemplateService.create(newOfferProductTemplate,
+			// currentUser);
+			// }
+			offerTemplate.getOfferProductTemplates().addAll(newOfferProductTemplates);
 		} else if (hasExistingProductTemplates) {
-			for (OfferProductTemplate offerProductTemplateForRemoval : existingProductTemplates) {
-				offerProductTemplateService.remove(offerProductTemplateForRemoval);
-			}
+			// for (OfferProductTemplate offerProductTemplateForRemoval :
+			// existingProductTemplates) {
+			// offerProductTemplateService.remove(offerProductTemplateForRemoval);
+			// }
+			offerTemplate.getOfferProductTemplates().removeAll(existingProductTemplates);
 		}
 	}
 

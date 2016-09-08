@@ -41,7 +41,6 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.component.tabview.TabView;
 
 /**
  * Standard backing bean for {@link InvoiceSubCategory} (extends
@@ -84,8 +83,6 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 	private Instance<Long> invoiceCategoryId;
 
 	private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
-
-	private TabView tabView = null;
 
 	public void newInvoiceSubcategoryCountryInstance() {
 		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
@@ -258,17 +255,5 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 	public void setInvoiceSubcategoryCountry(
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
 		this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
-	}
-
-	public TabView getTabView() {
-		return tabView;
-	}
-
-	public void setTabView(TabView tabView) {
-		this.tabView = tabView;
-	}
-
-	public void setIndex() {
-		tabView.setActiveIndex(0);
 	}
 }

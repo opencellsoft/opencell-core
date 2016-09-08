@@ -22,7 +22,7 @@
             </ui:define>
             <ui:define name="buttons">
                 <p:commandButton ajax="false" value="#{messages['accountOperation.buttonSelectionType']}" action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
-                <p:button value="#{messages['action.back']}" outcome="customerAccountDetail" includeViewParams="true">
+                <p:button value="#{messages['action.back']}" outcome="customerAccountDetailOperationsTab" includeViewParams="true">
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
             </ui:define>

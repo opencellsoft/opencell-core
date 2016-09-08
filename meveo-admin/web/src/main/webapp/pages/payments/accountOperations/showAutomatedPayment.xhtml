@@ -2,9 +2,16 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{automatedPaymentBean.objectId}" />
+			<f:viewParam name="tab" value="#{automatedPaymentBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
     <ui:define name="body">
         <hftl:formPanel  edit="#{true}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}" showDeleteButton="false" showEditButton="true" showBackButton="false" formId="apFormId">
-				<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}"  >
+				<p:tabView id="tabView" activeIndex="#{automatedPaymentBean.activeTab}"  >
 				<p:tab title="#{messages['customer.tab.information']}"> 
             <hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />

@@ -172,13 +172,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backViewSave;
 
     /**
-     * Request parameter. Used for loading in object by its id.
-     */
-    @Inject
-    @RequestParam("objectId")
-    private Instance<Long> objectIdFromParam;
-
-    private Long objectIdFromSet;
+    * Object identifier to load
+    */
+    private Long objectId;
 
     /** Helper field to enter language related field values. */
     protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
@@ -478,7 +474,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             entity = getPersistenceService().update(entity, getCurrentUser());
         }
 
-        objectIdFromSet = (Long) entity.getId();
+        objectId = (Long) entity.getId();
 
         return entity;
     }
@@ -934,23 +930,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public Long getObjectId() {
-        if (objectIdFromSet == null && objectIdFromParam != null && objectIdFromParam.get() != null) {
-            objectIdFromSet = objectIdFromParam.get();
-        }
-
-        return objectIdFromSet;
+        return objectId;
     }
 
     public void setObjectId(Long objectId) {
-        objectIdFromSet = objectId;
-    }
-
-    public void setObjectIdFromSet(Long objectIdFromSet) {
-        this.objectIdFromSet = objectIdFromSet;
-    }
-
-    public Long getObjectIdFromSet() {
-        return objectIdFromSet;
+        this.objectId = objectId;
     }
 
     /**
@@ -967,8 +951,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
     protected void clearObjectId() {
-        objectIdFromParam = null;
-        objectIdFromSet = null;
+        objectId = null;
     }
 
     protected User getCurrentUser() {

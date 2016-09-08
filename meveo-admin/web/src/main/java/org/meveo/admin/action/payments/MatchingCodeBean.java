@@ -69,9 +69,9 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		try {
 			matchingCodeService.unmatching(entity.getId(), getCurrentUser());
 			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
-			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 					+ entity.getMatchingAmounts().get(0).getAccountOperation()
-					.getCustomerAccount().getId()+ "&edit=true&faces-redirect=true&includeViewParams=true";
+					.getCustomerAccount().getId()+ "&edit=true&mainTab=1&faces-redirect=true&includeViewParams=true";
 			
 		} catch (BusinessException e) {
 			log.error("failed to unmatching ",e);

@@ -1,58 +1,102 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="body">
+	<ui:define name="body">
 
-        <p:panel styleClass="no-border-radius">
-            <h:outputText value="#{messages['commons.welcome']} #{identity.user.user.name.fullName}" rendered="#{identity.loggedIn}" />
-        </p:panel>
+		<p:panel styleClass="no-border-radius">
+			<h:outputText value="#{messages['commons.welcome']} #{identity.user.user.name.fullName}" rendered="#{identity.loggedIn}" />
+		</p:panel>
 
-        <p:panel styleClass="box-wrapper no-border-radius">
-            <p:panel styleClass="clearfix">
-                <p:panelGrid columns="2" layout="grid">
+		<p:panel styleClass="box-wrapper no-border-radius">
+			<p:panel styleClass="clearfix">
+				<!-- <p:panelGrid columns="2" layout="grid">
                     <c:forEach items="#{chartBean.stats}" var="stat" varStatus="i">
                         <p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
                             <div class="box-title">#{stat.description}</div>
                             <div class="box-percentage">#{stat.value}</div>
                             <div class="box-direction">
-                                <!-- <i class="fa fa-arrow-right"></i> -->
+                                <i class="fa fa-arrow-right"></i>
                                 #{stat.difference}%
                             </div>
                             <div class="box-last-update">#{messages['report.lastUpdated']} at #{stat.lastUpdateFormatted}</div>
                         </p:panel>
                     </c:forEach>
-                </p:panelGrid>
-                <p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
-                    <div class="box-title">#{chartBean.churn.description}</div>
-                    <div class="box-percentage">#{chartBean.churn.value}</div>
-                    <div class="box-direction">#{chartBean.churn.difference} %</div>
-                    <div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.churn.lastUpdateFormatted}</div>
-                </p:panel>
+                </p:panelGrid> -->
+				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
+					<div class="box-title">#{chartBean.churn.description}</div>
+					<div class="box-percentage">#{chartBean.churn.value}</div>
+					<div class="box-direction">
+						<p:outputPanel rendered="#{chartBean.churn.difference gt 0}">
+							<i class="fa fa-arrow-up" />#{chartBean.churn.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.churn.difference lt 0}">
+							<i class="fa fa-arrow-down" />#{chartBean.churn.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.churn.difference eq 0}">
+							<i class="fa fa-arrow-left" />
+							<i class="fa fa-arrow-right" /> #{chartBean.churn.difference} %
+						</p:outputPanel>
+					</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.churn.lastUpdateFormatted}</div>
+				</p:panel>
 
-                <p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
-                    <div class="box-title">#{messages['marketingManager.catalog.newOrders']}</div>
-                    <div class="box-percentage">#{chartBean.newOrderStats.value}</div>
-                    <div class="box-direction">#{chartBean.newOrderStats.difference} %</div>
-                    <div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.newOrderStats.lastUpdateFormatted}</div>
-                </p:panel>
-            </p:panel>
+				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
+					<div class="box-title">#{messages['marketingManager.catalog.newOrders']}</div>
+					<div class="box-percentage">#{chartBean.newOrderStats.value}</div>
+					<div class="box-direction">
+						<p:outputPanel rendered="#{chartBean.newOrderStats.difference gt 0}">
+							<i class="fa fa-arrow-up" />#{chartBean.newOrderStats.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.newOrderStats.difference lt 0}">
+							<i class="fa fa-arrow-down" />#{chartBean.newOrderStats.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.newOrderStats.difference eq 0}">
+							<i class="fa fa-arrow-left" />
+							<i class="fa fa-arrow-right" /> #{chartBean.newOrderStats.difference} %
+						</p:outputPanel>
+					</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.newOrderStats.lastUpdateFormatted}</div>
+				</p:panel>
+			</p:panel>
 
-            <p:panel styleClass="clearfix">
-                <p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
-                    <div class="box-title">#{chartBean.MRR.description}</div>
-                    <div class="box-percentage">#{chartBean.MRR.value}</div>
-                    <div class="box-direction">#{chartBean.MRR.difference} %</div>
-                    <div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.MRR.lastUpdateFormatted}</div>
-                </p:panel>
+			<p:panel styleClass="clearfix">
+				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
+					<div class="box-title">#{chartBean.MRR.description}</div>
+					<div class="box-percentage">#{chartBean.MRR.value}</div>
+					<div class="box-direction">
+						<p:outputPanel rendered="#{chartBean.MRR.difference gt 0}">
+							<i class="fa fa-arrow-up" />#{chartBean.MRR.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.MRR.difference lt 0}">
+							<i class="fa fa-arrow-down" />#{chartBean.MRR.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.MRR.difference eq 0}">
+							<i class="fa fa-arrow-left" />
+							<i class="fa fa-arrow-right" /> #{chartBean.MRR.difference} %
+						</p:outputPanel>
+					</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.MRR.lastUpdateFormatted}</div>
+				</p:panel>
 
-                <p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
-                    <div class="box-title">#{messages['marketingManager.catalog.pendingOrders']}</div>
-                    <div class="box-percentage">#{chartBean.pendingOrderStats.value}</div>
-                    <div class="box-direction">#{chartBean.pendingOrderStats.difference} %</div>
-                    <div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.pendingOrderStats.lastUpdateFormatted}</div>
-                </p:panel>
-            </p:panel>
-        </p:panel>
-    </ui:define>
+				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
+					<div class="box-title">#{messages['marketingManager.catalog.pendingOrders']}</div>
+					<div class="box-percentage">#{chartBean.pendingOrderStats.value}</div>
+					<div class="box-direction">
+						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference gt 0}">
+							<i class="fa fa-arrow-up" />#{chartBean.pendingOrderStats.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference lt 0}">
+							<i class="fa fa-arrow-down" />#{chartBean.pendingOrderStats.difference} %
+						</p:outputPanel>
+						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference eq 0}">
+							<i class="fa fa-arrow-left" />
+							<i class="fa fa-arrow-right" /> #{chartBean.pendingOrderStats.difference} %
+						</p:outputPanel>
+					</div>
+					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.pendingOrderStats.lastUpdateFormatted}</div>
+				</p:panel>
+			</p:panel>
+		</p:panel>
+	</ui:define>
 </ui:composition>

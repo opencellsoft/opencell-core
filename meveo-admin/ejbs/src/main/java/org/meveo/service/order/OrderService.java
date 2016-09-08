@@ -21,11 +21,14 @@ public class OrderService extends BusinessService<Order> {
 
 	public Long countNewOrders(Calendar endDate) {
 
-		Calendar startDate = endDate;
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(endDate.getTime());
 		startDate.add(Calendar.DATE, -1);
-		Query query = getEntityManager().createQuery(
-				"select count(*) from " + Order.class.getName()
-						+ " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate");
+
+        String sqlQuery = "select count(*) from " + Order.class.getName()
+                + " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate";
+        Query query = getEntityManager().createQuery(sqlQuery);
+
 		query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
 		query.setParameter("endDate", endDate.getTime());
 		query.setParameter("startDate", startDate.getTime());
@@ -34,11 +37,9 @@ public class OrderService extends BusinessService<Order> {
 		return count.longValue();
 	}
 
-	public Long countPendingOrders(Calendar startDate, Calendar endDate) {
+    public Long countPendingOrders(Calendar startDate) {
 		startDate.add(Calendar.DATE, -1);
-		Query query = getEntityManager().createQuery(
-				"select count(*) from " + Order.class.getName()
-						+ " a where a.status = :orderStatus AND a.auditable.created <= :startDate");
+        Query query = getEntityManager().createQuery("select count(*) from " + Order.class.getName() + " a where a.status = :orderStatus AND a.auditable.created < :startDate");
 		query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
 		query.setParameter("startDate", startDate.getTime());
 		Long count = (Long) query.getSingleResult();

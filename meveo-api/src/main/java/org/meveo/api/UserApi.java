@@ -192,6 +192,9 @@ public class UserApi extends BaseApi {
 
 	private Set<Role> extractRoles(UserDto postData, Provider provider) throws EntityDoesNotExistsException {
 		Set<Role> roles = new HashSet<Role>();
+		if(postData.getRoles() == null){
+			return roles;
+		}
 		for (String rl : postData.getRoles()) {
 			Role role = roleService.findByName(rl, provider);
 			if (role == null) {
