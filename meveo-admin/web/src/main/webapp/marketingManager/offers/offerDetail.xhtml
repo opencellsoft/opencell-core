@@ -11,8 +11,8 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
-			<f:event type="preRenderView"
-				listener="#{offerTemplateListBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+			<f:event type="preRenderView" listener="#{offerTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
