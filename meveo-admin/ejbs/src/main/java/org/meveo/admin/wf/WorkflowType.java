@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.meveo.model.BaseEntity;
 
-public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType  {
+public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType<E>{
 	protected E entity;
 	public WorkflowType() {}
 
@@ -14,4 +14,7 @@ public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowTyp
 	public abstract List<String> getStatusList();
     public abstract void changeStatus(String newStatus);
     public abstract String getActualStatus();    
+    public E getEntity(){
+    	return entity;
+    }    
 }

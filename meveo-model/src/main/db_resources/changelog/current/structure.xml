@@ -555,4 +555,9 @@
         <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_action" />
     </changeSet>
+    
+    <changeSet author="anasseh" id="#2007_10092016">
+  	   <dropColumn tableName="WF_WORKFLOW" columnName="EXPORT_LOT"/>
+    </changeSet>
+    
 </databaseChangeLog>
