@@ -37,7 +37,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
 	private BusinessServiceModelService businessServiceModelService;
 
 	@Inject
-	private BusinessOfferModelService businessOfferModelService;
+	protected BusinessOfferModelService businessOfferModelService;
 
 	private Map<String, String> offerCFVs = new HashMap<>();
 	private String serviceCodePrefix;
