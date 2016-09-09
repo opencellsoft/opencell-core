@@ -56,10 +56,6 @@ public class Workflow extends BusinessEntity {
 	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
     @OrderBy("priority ASC")
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private WorkflowStatusEnum status;
 	
 	@Column(name = "EXPORT_LOT")
 	boolean exportLot;
@@ -93,20 +89,6 @@ public class Workflow extends BusinessEntity {
 	 */
 	public void setTransitions(List<WFTransition> transitions) {
 		this.transitions = transitions;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public WorkflowStatusEnum getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(WorkflowStatusEnum status) {
-		this.status = status;
 	}
 
 	/**

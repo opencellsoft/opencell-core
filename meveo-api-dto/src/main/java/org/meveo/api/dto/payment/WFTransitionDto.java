@@ -48,24 +48,21 @@ public class WFTransitionDto extends BaseDto {
 	@XmlElement(required = true)
 	private String toStatus;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private String conditionEl;
 
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     private Integer priority;
 
-    @XmlElement(required = false)
+    @XmlElement(required = true)
     private String description;
-	
-	@XmlElement(required = true)
-	private String workflowCode;
-	
-	@XmlElementWrapper
-    @XmlElement(name="wfActionDto")
+
+    @XmlElementWrapper(name="actions")
+    @XmlElement(name="action")
 	private List<WFActionDto>  listWFActionDto = new ArrayList<WFActionDto>();
 
-    @XmlElementWrapper
-    @XmlElement(name="wfDecisionRuleDto")
+    @XmlElementWrapper(name="decisionRules")
+    @XmlElement(name="decisionRule")
     private List<WFDecisionRuleDto> listWFDecisionRuleDto = new ArrayList<>();
 
 	public WFTransitionDto(){
@@ -78,10 +75,8 @@ public class WFTransitionDto extends BaseDto {
 		this.conditionEl = wfTransition.getConditionEl();
         this.priority = wfTransition.getPriority();
         this.description = wfTransition.getDescription();
-		this.workflowCode = wfTransition.getWorkflow().getCode();
 		for(WFAction wfAction : wfTransition.getWfActions() ){
 			WFActionDto wfadto = new WFActionDto(wfAction);
-			wfadto.setWfTransitionDto(this);
 			listWFActionDto.add(wfadto);
 		}
 
@@ -174,20 +169,6 @@ public class WFTransitionDto extends BaseDto {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    /**
-	 * @return the workflowDto
-	 */
-	public String getWorkflowCode() {
-		return workflowCode;
-	}
-
-	/**
-	 * @param workflowCode the workflowDto to set
-	 */
-	public void setWorkflowCode(String workflowCode) {
-		this.workflowCode = workflowCode;
-	}
 
 	/**
 	 * @return the listWFActionDto

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +35,7 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -62,6 +62,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@ViewBean
 public class WorkflowBean extends BaseBean<Workflow> {
 
     private static final long serialVersionUID = 1L;
@@ -138,13 +139,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
     public void saveWfTransition() throws BusinessException{
 
         List<WFDecisionRule> wfDecisionRules = new ArrayList<>();
-        WFTransition wfTransitionUnique = wFTransitionService.findWFTransition(wfTransition.getFromStatus(), wfTransition.getToStatus(),
-                wfTransition.getPriority(), entity.getCode(), getCurrentProvider());
-        if (wfTransitionUnique != null && (wfTransition.getId() == null || wfTransition.getId() != wfTransitionUnique.getId())) {
-            messages.error(new BundleKey("messages", "transition.uniqueValue"), new Object[]{ wfTransition.getFromStatus(), wfTransition.getToStatus(), wfTransition.getPriority()});
-            FacesContext.getCurrentInstance().validationFailed();
-            return;
-        }
 
         boolean isUniqueNameValue = checkAndPopulateDecisionRules(selectedRules, wfDecisionRules);
         if (!isUniqueNameValue) {
@@ -162,7 +156,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
             wfTrs.setFromStatus(wfTransition.getFromStatus());
             wfTrs.setToStatus(wfTransition.getToStatus());
             wfTrs.setConditionEl(wfTransition.getConditionEl());
-            wfTrs.setPriority(wfTransition.getPriority());
             wfTrs.setDescription(wfTransition.getDescription());
 
             wfTrs.getWfDecisionRules().clear();
@@ -261,11 +254,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @Override
     protected IPersistenceService<Workflow> getPersistenceService() {
         return workflowService;
-    }
-
-    @Produces
-    public Workflow getDunningPlan() {
-        return entity;
     }
 
     @Override
@@ -526,10 +514,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
             WFTransition upWfTransition = entity.getTransitions().get(index);
             int priorityUp = upWfTransition.getPriority();
             WFTransition downWfTransition = entity.getTransitions().get(index - 1);
-            WFTransition needUpdate = wFTransitionService.findById(upWfTransition.getId(), true);
+            WFTransition needUpdate = wFTransitionService.refreshOrRetrieve(upWfTransition);
             needUpdate.setPriority(downWfTransition.getPriority());
             wFTransitionService.update(needUpdate, getCurrentUser());
-            needUpdate = wFTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate = wFTransitionService.refreshOrRetrieve(downWfTransition);
             needUpdate.setPriority(priorityUp);
             wFTransitionService.update(needUpdate, getCurrentUser());
             entity.getTransitions().get(index).setPriority(downWfTransition.getPriority());

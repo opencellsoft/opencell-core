@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.WFActionDto;
-import org.meveo.api.dto.payment.WFTransitionDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
@@ -36,17 +36,9 @@ public class WFActionApi extends BaseApi {
 	 * @throws EntityAlreadyExistsException
 	 * @throws BusinessException
 	 */
-	public void create(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
+	public void create(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
 		validateDto(wfActionDto, false);
-		WFTransition  wfTransition = wfTransitionService.findWFTransitionByUUID(wfActionDto.getWfTransitionDto().getUuid(), currentUser.getProvider());
-				
-		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
-		
-		if(wfAction != null){
-			throw new EntityAlreadyExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
-		}
-		
-		wfAction = wfActionDto.fromDto(wfAction);
+        WFAction wfAction = fromDTO(wfActionDto, null);
 		wfAction.setWfTransition(wfTransition);
 		wfActionService.create(wfAction, currentUser);
 	}
@@ -58,18 +50,22 @@ public class WFActionApi extends BaseApi {
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws BusinessException
+     * @throws BusinessApiException
 	 */
-	public void update(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+	public void update(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException,
+                                         EntityDoesNotExistsException, BusinessException, BusinessApiException {
 		validateDto(wfActionDto, true);
-		WFTransition  wfTransition = wfTransitionService.findWFTransitionByUUID(wfActionDto.getWfTransitionDto().getUuid(), currentUser.getProvider());
-		
-		WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
+
+        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
 		
 		if(wfAction == null){
-			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
+			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with uuid=" + wfActionDto.getUuid());
 		}
+        if (!wfTransition.equals(wfAction.getWfTransition())) {
+            throw new BusinessApiException();
+        }
 		
-		wfAction = wfActionDto.fromDto(wfAction);
+		wfAction = fromDTO(wfActionDto, wfAction);
 		wfAction.setWfTransition(wfTransition);
 		wfActionService.update(wfAction, currentUser);
 	}
@@ -82,97 +78,45 @@ public class WFActionApi extends BaseApi {
 	 * @throws EntityDoesNotExistsException
 	 * @throws EntityAlreadyExistsException
 	 * @throws BusinessException
+     * @throws BusinessApiException
 	 */
-	public void createOrUpdate(WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {		
-		try {
-			find(wfActionDto.getWfTransitionDto(), wfActionDto.getPriority(), currentUser);		
-		} catch (EntityDoesNotExistsException e) {
-			create(wfActionDto, currentUser);
-		}
-		update(wfActionDto, currentUser);
+	public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
+            EntityAlreadyExistsException, BusinessException, BusinessApiException {
+        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
+        if (wfAction == null) {
+            create(wfTransition, wfActionDto, currentUser);
+        } else {
+            update(wfTransition, wfActionDto, currentUser);
+        }
 	}
 
-	/**
-	 * 
-	 * @param wfTransitionDto
-	 * @param priority
-	 * @param currentUser
-	 * @return
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 */
-	public WFActionDto find(WFTransitionDto wfTransitionDto,Integer priority , User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
-		WFActionDto wfActionDto = new WFActionDto();
-		wfActionDto.setPriority(priority);
-		wfActionDto.setWfTransitionDto(wfTransitionDto);
-		validateDto(wfActionDto, true);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
-                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
-		
-		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
-		
-		if(wfAction == null){
-			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
-		}		
-		wfActionDto = new WFActionDto(wfAction);
-		return wfActionDto;
-	}
-
-	/**
-	 * 
-	 * @param wfTransitionDto
-	 * @param priority
-	 * @param currentUser
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 */
-	public void remove(WFTransitionDto wfTransitionDto,Integer priority , User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
-		WFActionDto wfActionDto = new WFActionDto();
-		wfActionDto.setPriority(priority);
-		wfActionDto.setWfTransitionDto(wfTransitionDto);
-		validateDto(wfActionDto, true);
-		WFTransition  wfTransition = wfTransitionService.findWFTransition(wfActionDto.getWfTransitionDto().getFromStatus(), wfActionDto.getWfTransitionDto().getToStatus(),
-                wfActionDto.getWfTransitionDto().getPriority(), wfActionDto.getWfTransitionDto().getWorkflowCode(), currentUser.getProvider());
-		
-		WFAction wfAction = wfActionService.findByPriorityAndTransition(wfTransition, wfActionDto.getPriority(), currentUser.getProvider());
-		
-		if(wfAction == null){
-			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with priority=" + wfActionDto.getPriority() +" and wfTransition =" + wfActionDto.getWfTransitionDto());
-		}		
-		wfActionService.remove(wfAction);
-	}
-	
     /**
      * 
      * @param wfActionDto
      * @throws MissingParameterException
      */
 	public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException{
-        if (isUpdate && wfActionDto.getUuid() == null) {
-            missingParameters.add("UUID");
+        if (isUpdate && StringUtils.isBlank(wfActionDto.getUuid())) {
+            missingParameters.add("uuid");
         }
-		if (StringUtils.isBlank(wfActionDto.getPriority())) {
-			missingParameters.add("priority");
-		}
-		if (wfActionDto.getWfTransitionDto() == null || wfActionDto.getWfTransitionDto().getUuid() == null) {
-			missingParameters.add("WFTransitionDto");
-			handleMissingParameters();	
-		}	
-		
-		if (StringUtils.isBlank(wfActionDto.getWfTransitionDto().getFromStatus())) {
-			missingParameters.add("WFTransition.fromStatus");
-		}
-		
-		if (StringUtils.isBlank(wfActionDto.getWfTransitionDto().getToStatus())) {
-			missingParameters.add("WFTransition.toStatus");
-		}
-		
-		if (StringUtils.isBlank(wfActionDto.getWfTransitionDto().getWorkflowCode())) {
-			missingParameters.add("WorkflowDto.code");
+		if (StringUtils.isBlank(wfActionDto.getActionEl())) {
+			missingParameters.add("actionEl");
 		}
 		
 		handleMissingParameters();	
 	}
+
+    protected WFAction fromDTO(WFActionDto dto, WFAction wfActionToUpdate) {
+        WFAction wfAction = new WFAction();
+        if (wfActionToUpdate != null) {
+            wfAction = wfActionToUpdate;
+        }
+
+        wfAction.setActionEl(dto.getActionEl());
+        wfAction.setPriority(dto.getPriority());
+        wfAction.setConditionEl(dto.getConditionEl());
+        return wfAction;
+    }
 	
 }
 

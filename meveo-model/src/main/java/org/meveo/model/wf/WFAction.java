@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -35,7 +36,7 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_ACTION")
+@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_ACTION_SEQ")
 public class WFAction extends AuditableEntity {
 
@@ -48,6 +49,7 @@ public class WFAction extends AuditableEntity {
 
 	@Column(name = "ACTION_EL", length = 2000)
 	@Size(max = 2000)
+    @NotNull
 	private String actionEl;
 
 	@Column(name = "PRIORITY")

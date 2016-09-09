@@ -24,7 +24,6 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.PersistenceService;
 
@@ -62,25 +61,6 @@ public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
         return null;
     }
 
-    public WFDecisionRule getWFDecisionRule(String name, String value, DecisionRuleTypeEnum type, Provider provider) {
-        WFDecisionRule wfDecisionRule = null;
-        try {
-            wfDecisionRule = (WFDecisionRule) getEntityManager()
-                    .createQuery(
-                            "from " + WFDecisionRule.class.getSimpleName()
-                                    + " where name=:name and value=:value and type=:type and provider=:provider")
-
-                    .setParameter("name", name)
-                    .setParameter("value", value)
-                    .setParameter("type", type)
-                    .setParameter("provider", provider)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            log.error("failed to find WFDecisionRule", e);
-        }
-        return wfDecisionRule;
-    }
-
     public WFDecisionRule getWFDecisionRuleByNameValue(String name, String value, Provider provider) {
         WFDecisionRule wfDecisionRule = null;
         try {
@@ -91,6 +71,24 @@ public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
 
                     .setParameter("name", name)
                     .setParameter("value", value)
+                    .setParameter("provider", provider)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.error("failed to find WFDecisionRule", e);
+        }
+        return wfDecisionRule;
+    }
+
+    public WFDecisionRule getWFDecisionRuleByName(String name, Provider provider) {
+        WFDecisionRule wfDecisionRule = null;
+        try {
+            wfDecisionRule = (WFDecisionRule) getEntityManager()
+                    .createQuery(
+                            "from " + WFDecisionRule.class.getSimpleName()
+                                    + " where model=:model and name=:name and provider=:provider")
+
+                    .setParameter("model", true)
+                    .setParameter("name", name)
                     .setParameter("provider", provider)
                     .getSingleResult();
         } catch (NoResultException e) {

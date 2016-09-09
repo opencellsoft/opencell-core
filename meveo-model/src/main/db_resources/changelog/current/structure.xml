@@ -496,7 +496,6 @@
             <column name="provider_id" type="BIGINT"/>
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
-            <column name="priority" type="INT4"/>
             <column name="type" type="VARCHAR(255)"/>
             <column name="model" type="BOOL"/>
         </createTable>
@@ -551,5 +550,9 @@
         <addColumn tableName="wf_action">
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
+        <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_transition_uuid_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_transition" />
+        <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_action" />
     </changeSet>
 </databaseChangeLog>

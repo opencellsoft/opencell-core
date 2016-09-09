@@ -38,6 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,7 +47,7 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_TRANSITION")
+@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
@@ -79,7 +80,6 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
-    @OrderBy("priority ASC")
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
     @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
@@ -185,24 +185,32 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	}
 
     public String getCombinedEl() {
-
+        String combinedELFormat = "#{%s}";
+        String result = "";
         if (wfDecisionRules == null) {
             return conditionEl;
         }
-
+        String transitionEl = "";
+        if (conditionEl.indexOf("#{") > 0) {
+            transitionEl = conditionEl.substring(2, conditionEl.length() - 1);
+        }
         StringBuffer combinedEl = new StringBuffer();
-        final String AND = "AND";
+        final String AND = " AND ";
         if (wfDecisionRules != null) {
             for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
                 if (wfDecisionRule.getConditionEl() != null) {
-                    combinedEl.append(conditionEl).append(AND).append(wfDecisionRule.getConditionEl());
+                    if (wfDecisionRule.getConditionEl().indexOf("#{") > 0) {
+                        String decisionEl = wfDecisionRule.getConditionEl().substring(2, wfDecisionRule.getConditionEl().length() - 1);
+                        combinedEl.append(transitionEl).append(AND).append(decisionEl);
+                    }
                 }
             }
         }
         if (combinedEl.toString().startsWith(AND)) {
-            return combinedEl.toString().substring(3);
+            return String.format(combinedELFormat, combinedEl.toString().substring(5));
+        } else {
+            return String.format(combinedELFormat, combinedEl.toString());
         }
-        return combinedEl.toString();
     }
 
     public Set<WFDecisionRule> getWfDecisionRules() {

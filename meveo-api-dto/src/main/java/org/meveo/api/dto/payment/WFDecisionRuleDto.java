@@ -38,20 +38,12 @@ public class WFDecisionRuleDto extends BaseDto {
     @XmlElement(required = true)
     private String value;
 
-    @XmlElement(required = true)
-    private DecisionRuleTypeEnum type;
-
-	@XmlElement(required = true)
-	private String conditionEl;
-
 	public WFDecisionRuleDto(){
 	}
 
 	public WFDecisionRuleDto(WFDecisionRule wfDecisionRule) {
 		this.name = wfDecisionRule.getName();
         this.value = wfDecisionRule.getValue();
-        this.type = wfDecisionRule.getType();
-		this.conditionEl = wfDecisionRule.getConditionEl();
 	}
 	
 	public WFDecisionRule fromDto(WFDecisionRule wfDecisionRule) {
@@ -59,8 +51,6 @@ public class WFDecisionRuleDto extends BaseDto {
             wfDecisionRule = new WFDecisionRule();
         wfDecisionRule.setName(getName());
         wfDecisionRule.setValue(getValue());
-        wfDecisionRule.setType(getType());
-        wfDecisionRule.setConditionEl(getConditionEl());
 		return wfDecisionRule;
 	}
 
@@ -79,28 +69,6 @@ public class WFDecisionRuleDto extends BaseDto {
     public void setValue(String value) {
         this.value = value;
     }
-
-    public DecisionRuleTypeEnum getType() {
-        return type;
-    }
-
-    public void setType(DecisionRuleTypeEnum type) {
-        this.type = type;
-    }
-
-	/**
-	 * @return the conditionEl
-	 */
-	public String getConditionEl() {
-		return conditionEl;
-	}
-
-	/**
-	 * @param conditionEl the conditionEl to set
-	 */
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
 
 }
 

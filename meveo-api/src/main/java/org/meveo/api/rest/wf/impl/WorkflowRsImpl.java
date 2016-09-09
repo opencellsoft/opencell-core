@@ -81,7 +81,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public WorkflowsResponseDto list() {
 			WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
 			try {
-				workflowsResponseDto.setWorkflowsDto(workflowApi.list(getCurrentUser()));
+				workflowsResponseDto.setListWorkflowDto(workflowApi.list(getCurrentUser()));
 			} catch (Exception e) {
 	        	super.processException(e, workflowsResponseDto.getActionStatus());
 	        }

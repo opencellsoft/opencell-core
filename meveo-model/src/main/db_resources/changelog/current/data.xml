@@ -43,13 +43,14 @@
 
     <changeSet id="#1861_20160905" author="pbach">
         <sql>
-            INSERT INTO wf_decision_rule select * from wf_transition_rule;
+            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
+            value, provider_id, creator_id, updater_id, type, model
+            FROM wf_decision_rule;
             INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
             SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
             drop table wf_transition_transition_rule;
             drop table wf_transition_rule;
             drop SEQUENCE wf_transition_rule_seq;
-            ALTER TABLE wf_decision_rule DROP COLUMN priority;
             update wf_transition set UUID=id where uuid is null;
             update wf_action set UUID=id where uuid is null;
         </sql>

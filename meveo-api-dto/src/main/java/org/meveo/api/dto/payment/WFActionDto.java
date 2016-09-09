@@ -36,17 +36,14 @@ public class WFActionDto extends BaseDto {
     @XmlElement(required = false)
     private String uuid;
 
-	@XmlElement(required = false)
+	@XmlElement(required = true)
 	private String actionEl;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private Integer priority;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private String conditionEl;
-	
-	@XmlTransient
-	private WFTransitionDto wfTransitionDto;
 	
 	public WFActionDto(){
 	}
@@ -56,12 +53,6 @@ public class WFActionDto extends BaseDto {
 		this.actionEl = wfAction.getActionEl();
 		this.priority = wfAction.getPriority();
 		this.conditionEl = wfAction.getConditionEl();
-		this.wfTransitionDto = new WFTransitionDto();
-        this.wfTransitionDto.setUuid(wfAction.getWfTransition().getUuid());
-		this.wfTransitionDto.setConditionEl(wfAction.getWfTransition().getConditionEl());
-		this.wfTransitionDto.setFromStatus(wfAction.getWfTransition().getFromStatus());
-		this.wfTransitionDto.setToStatus(wfAction.getWfTransition().getToStatus());
-		this.wfTransitionDto.setWorkflowCode(wfAction.getWfTransition().getWorkflow().getCode());
 	}
 	
 	public WFAction fromDto(WFAction wfAction) {
@@ -128,14 +119,6 @@ public class WFActionDto extends BaseDto {
 	 */
 	public void setConditionEl(String conditionEl) {
 		this.conditionEl = conditionEl;
-	}
-	
-	public WFTransitionDto getWfTransitionDto() {
-		return wfTransitionDto;
-	}
-	
-	public void setWfTransitionDto(WFTransitionDto wfTransitionDto) {
-		this.wfTransitionDto = wfTransitionDto;
 	}
 	
 	@Override

@@ -49,44 +49,27 @@ public class WorkflowDto extends BaseDto {
 	@XmlElement(required = true)	
 	private String wfType;
 	
-	@XmlElement(required = true)
-	private WorkflowStatusEnum status;
-	
 	private Boolean exportLot =false;
 	private Boolean enableHistory =false;
 	
-	@XmlElementWrapper
-    @XmlElement(name="wfTransitionDto")
+	@XmlElementWrapper(name="transitions")
+    @XmlElement(name="transition")
 	private List<WFTransitionDto> listWFTransitionDto = new ArrayList<WFTransitionDto>();
 	
 	public WorkflowDto(){
 	}
 	public WorkflowDto(Workflow workflow) {
 		this.code=workflow.getCode();
-		this.description=workflow.getDescription();		
-		this.status=workflow.getStatus(); 
+		this.description=workflow.getDescription();
 	    this.wfType = workflow.getWfType();
 	    this.exportLot = workflow.isExportLot();
 	    this.enableHistory = workflow.isEnableHistory();
 	    for(WFTransition wfTransition : workflow.getTransitions()){
 	    	WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
-	    	wftdto.setWorkflowCode(getCode());
 	    	listWFTransitionDto.add(wftdto);
 	    }
 	}
-	
-	public Workflow fromDto(Workflow workflow){
-		if(workflow == null)
-			workflow = new Workflow();
-		workflow.setCode(getCode());
-		workflow.setDescription(getDescription());
-		workflow.setStatus(getStatus());
-		workflow.setEnableHistory(getEnableHistory());
-		workflow.setExportLot(getExportLot());
-		workflow.setWfType(getWfType());		
-	    return workflow;
-		
-	}
+
 	/**
 	 * @return the code
 	 */
@@ -123,18 +106,7 @@ public class WorkflowDto extends BaseDto {
 	public void setWfType(String wfType) {
 		this.wfType = wfType;
 	}
-	/**
-	 * @return the status
-	 */
-	public WorkflowStatusEnum getStatus() {
-		return status;
-	}
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(WorkflowStatusEnum status) {
-		this.status = status;
-	}
+
 	/**
 	 * @return the exportLot
 	 */
@@ -174,8 +146,7 @@ public class WorkflowDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + ", status=" + status + ", exportLot=" + exportLot + ", enableHistory=" + enableHistory + ", listWFTransitionDto=" + listWFTransitionDto + "]";
+		return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + ", exportLot=" + exportLot + ", enableHistory=" + enableHistory + ", listWFTransitionDto=" + listWFTransitionDto + "]";
 	}
 	
 }
-
