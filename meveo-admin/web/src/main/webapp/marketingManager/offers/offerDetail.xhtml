@@ -262,17 +262,16 @@
 					listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
 					update=":formId:customFieldsWrappPanel" />
 
-				<!--                 <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml"> -->
-				<!--                 </ui:include> -->
+                <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml">
+                </ui:include>
 
-				<h:form>
-					<p:panel width="100">
-						<p:button value="#{messages['commons.close']}"
-							onclick="PF('entityCustomizationDialog').hide();return false;">
-						</p:button>
-					</p:panel>
-				</h:form>
-			</p:dialog>
+                <h:form>
+                    <p:panel width="100">
+                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
+                        </p:button>
+                    </p:panel>
+                </h:form>
+            </p:dialog>
 		</h:panelGroup>
 
 		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
