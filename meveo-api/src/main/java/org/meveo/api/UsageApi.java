@@ -22,6 +22,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -76,7 +77,7 @@ public class UsageApi extends BaseApi {
 					
 					if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){
 						long hours = quantity.longValue() / 60;
-						quantityToDisplay = hours+"h:" ;
+						quantityToDisplay = hours+"h " ;
 						long mins = quantity.longValue() % 60;
 						quantityToDisplay += mins +(String) row[3] ;
 					}else if(!StringUtils.isBlank((String) row[3])){
@@ -127,21 +128,23 @@ public class UsageApi extends BaseApi {
 				subCatUsageDto.setCode(invoiceSubCategory.getCode());
 				subCatUsageDto.setDescription(invoiceSubCategory.getDescription());
 				List<WalletOperation> walletOperations = walletOperationService.openWalletOperationsBySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
-				for (WalletOperation op : walletOperations) {
-					UsageDto usageDto = new UsageDto();
-					usageDto.setCode(op.getCode());
-					usageDto.setDescription(op.getDescription());
-					usageDto.setAmountWithoutTax(op.getAmountWithoutTax());
-					usageDto.setDateEvent(op.getOperationDate());
-					usageDto.setOfferCode(op.getOfferCode());
-					usageDto.setParameter1(op.getParameter1());
-					usageDto.setParameter2(op.getParameter2());
-					usageDto.setParameter3(op.getParameter3());
-					usageDto.setPriceplanCode(op.getPriceplan() == null ? null : op.getPriceplan().getCode());
-					usageDto.setQuantity(op.getQuantity());
-					usageDto.setUnitAmountWithoutTax(op.getUnitAmountWithoutTax());
-					usageDto.setUnityDescription(op.getInputUnitDescription());
-					subCatUsageDto.getListUsage().add(usageDto);
+				for (WalletOperation op : walletOperations) {					
+					if(op.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
+						UsageDto usageDto = new UsageDto();
+						usageDto.setCode(op.getCode());
+						usageDto.setDescription(op.getDescription());
+						usageDto.setAmountWithoutTax(op.getAmountWithoutTax());
+						usageDto.setDateEvent(op.getOperationDate());
+						usageDto.setOfferCode(op.getOfferCode());
+						usageDto.setParameter1(op.getParameter1());
+						usageDto.setParameter2(op.getParameter2());
+						usageDto.setParameter3(op.getParameter3());
+						usageDto.setPriceplanCode(op.getPriceplan() == null ? null : op.getPriceplan().getCode());
+						usageDto.setQuantity(op.getQuantity());
+						usageDto.setUnitAmountWithoutTax(op.getUnitAmountWithoutTax());
+						usageDto.setUnityDescription(op.getInputUnitDescription());
+						subCatUsageDto.getListUsage().add(usageDto);
+					}
 				}
 				if(subCatUsageDto.getListUsage().size()>0){
 				catUsageDto.getListSubCatUsage().add(subCatUsageDto);
