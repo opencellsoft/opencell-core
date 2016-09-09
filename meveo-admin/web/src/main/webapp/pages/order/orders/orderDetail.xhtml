@@ -70,6 +70,10 @@
                                 rendered="#{orderBean.entity.expectedCompletionDate!=null and orderBean.entity.completionDate==null}" />
                             <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" rendered="#{orderBean.entity.completionDate!=null}" />
                         </p:fieldset>
+
+                        <div class="clearLeft"></div>
+                        <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
+
                     </hf:namingContainer>
                 </p:tab>
                 <p:tab title="#{messages['order.tab.orderItems']}" id="tabItems">

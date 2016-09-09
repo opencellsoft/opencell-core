@@ -52,12 +52,12 @@
 	</changeSet>  
 	<changeSet id="#1889_20160729" author="Mbarek">
 	    <addColumn tableName="BILLING_TAX">
-        <column name="UUID" type="VARCHAR(50)"/>
+        <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 	</changeSet>
      <changeSet id="#1890_20160801" author="Mbarek">
-	      <addColumn tableName="BILLING_CYCLE">
-          <column name="UUID" type="VARCHAR(50)"/>
+	    <addColumn tableName="BILLING_CYCLE">
+          <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
 			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
@@ -623,7 +623,7 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
-            <column name="UUID" type="VARCHAR(50)"/>
+            <column name="UUID" type="VARCHAR(60)"/>
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -1054,4 +1054,17 @@
             <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#1889_20160908" author="AndriusKarpavicius">
+        <addColumn tableName="ORD_ORDER">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update ORD_ORDER set UUID ='ORDER-'|| id </sql>   
+        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID"/> 
+        
+        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID"/> 
+        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID"/> 
+        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID"/> 
+    </changeSet> 
+    
 </databaseChangeLog>

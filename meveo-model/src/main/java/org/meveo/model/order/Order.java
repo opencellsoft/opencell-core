@@ -23,16 +23,18 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@CustomFieldEntity(cftCodePrefix = "ORDER")
 @Table(name = "ORD_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ORDER_SEQ")
-public class Order extends BusinessEntity {
+public class Order extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 

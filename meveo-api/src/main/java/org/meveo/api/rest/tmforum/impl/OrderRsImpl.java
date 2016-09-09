@@ -130,6 +130,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         return response;
     }
 
+    @SuppressWarnings("hiding")
     @Override
     public Response deleteProductOrder(String orderId, UriInfo info) {
 

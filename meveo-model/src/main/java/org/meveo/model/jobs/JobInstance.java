@@ -171,9 +171,4 @@ public class JobInstance extends BusinessCFEntity {
         return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate,
             parametres, jobCategoryEnum, timerEntity, followingJob);
     }
-
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
-    }
 }

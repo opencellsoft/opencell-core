@@ -39,7 +39,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,11 +85,6 @@ public class OfferTemplate extends ProductOffering {
 
 	public void setOfferServiceTemplates(List<OfferServiceTemplate> offerServiceTemplates) {
 		this.offerServiceTemplates = offerServiceTemplates;
-	}
-
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
 	}
 
 	public void addOfferServiceTemplate(OfferServiceTemplate serviceTemplate) {

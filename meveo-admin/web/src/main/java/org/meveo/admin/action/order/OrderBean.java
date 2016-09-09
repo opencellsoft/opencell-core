@@ -34,6 +34,7 @@ import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.billing.OrderApi;
@@ -80,7 +81,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
  */
 @Named
 @ViewScoped
-public class OrderBean extends BaseBean<Order> {
+public class OrderBean extends CustomFieldBean<Order> {
 
     private static final long serialVersionUID = 7399464661886086329L;
 
