@@ -53,11 +53,25 @@
     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
 
     <c:set var="index" value="0" />
+    
+    <c:set var="tabLabel" value="&nbsp;" />
+    <c:set var="hasMoreThan1Groups" value="false" />
+    <c:if test="${empty(dontDisplayHeaderIf1Row)}">
+    	<c:set var="dontDisplayHeaderIf1Row" value="false" />
+    </c:if>    
+    <c:if test="${not empty(dontDisplayHeaderIf1Row)}">
+    	<c:set var="hasMoreThan1Groups" value="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children.size()>1}" />
+    </c:if>
 
     <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
-		
-		<c:if test="${empty(tabLabel)}">
+				
+		<c:if test="#{not dontDisplayHeaderIf1Row}">
 			<c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}"></c:set>
+		</c:if>
+		<c:if test="#{dontDisplayHeaderIf1Row}">
+			<c:if test="#{hasMoreThan1Groups}">
+				<c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}"></c:set>
+			</c:if>
 		</c:if>
 		
         <p:tab title="#{tabLabel}">

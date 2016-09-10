@@ -215,7 +215,7 @@
 					<!-- custom fields -->
 					<hftl:customFields backingBean="#{offerTemplateBean}"
 						messagesId=":formId:messages"
-						tabLabel="#{messages['commons.parameters']}" />
+						dontDisplayHeaderIf1Row="true" />
 				</p:tabView>
 			</p:panel>
 
@@ -242,7 +242,7 @@
 								rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
 								<hftl:customFields backingBean="#{serviceTemplateBean}"
 									entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-									tabLabel="#{messages['commons.parameters']}" />
+									dontDisplayHeaderIf1Row="true" />
 							</p:tabView>
 						</p:panel>
 
