@@ -151,12 +151,14 @@ public class WorkflowService extends BusinessService<Workflow> {
 			executeWorkflows(entity, workflow, currentUser);
 		}else{
 			 List<Workflow> wfs =  findByEntity(entity,currentUser.getProvider());
+			if(wfs == null || wfs.isEmpty() ){
+				throw new EntityNotFoundException("Cant find  any Workflow entity for the given baseEntity");
+			}
 			 for(Workflow wf : wfs){
 				 executeWorkflows(entity, wf, currentUser);
 			 }
 		}
-		
-		
+				
 	}
 	
 	
@@ -172,7 +174,8 @@ public class WorkflowService extends BusinessService<Workflow> {
         log.debug("listByFromStatus.size:"+(listByFromStatus == null ? null : listByFromStatus.size()));
         for(WFTransition wfTransition :listByFromStatus ){
         	 log.debug("processing transition:"+wfTransition);
-        	if(matchExpression(wfTransition.getCombinedEl(), entity)){
+        	 log.debug("processing transition.getConditionEl:"+wfTransition.getConditionEl());
+        	if(matchExpression(wfTransition.getConditionEl(), entity)){
         		 log.debug("conditionEl is true");
         		 log.debug("listWfActions.size:"+(wfTransition.getWfActions() == null ? null : wfTransition.getWfActions().size()));
         		for(WFAction wfAction : wfTransition.getWfActions()){
