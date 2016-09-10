@@ -21,38 +21,24 @@
 
     <changeSet id="#1861_20160817" author="pbach">
         <sql>
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 1, 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 2, 'STRING', 'south', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 3, 'STRING', 'west', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 4, 'STRING', 'north', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 1, 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (6, 0, false, '2016-08-15 08:11:26.359', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 2, 'RANGE_NUMBER', '200|300', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (7, 0, false, '2016-08-15 08:11:49.716', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 3, 'RANGE_NUMBER', '300|500', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 1, 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (9, 0, false, '2016-08-16 08:43:11.128', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 2, 'STRING', 'Medium Account', 1, 1, NULL, false);
-            ALTER SEQUENCE wf_transition_rule_seq RESTART WITH 10;
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (6, 0, false, '2016-08-15 08:11:26.359', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '200|300', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (7, 0, false, '2016-08-15 08:11:49.716', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '300|500', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (9, 0, false, '2016-08-16 08:43:11.128', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Medium Account', 1, 1, NULL, false);
+            ALTER SEQUENCE wf_decision_rule_seq RESTART WITH 10;
         </sql>
     </changeSet>
 
     <changeSet id="#1861_20160826" author="pbach">
         <sql>
-            delete from wf_transition_transition_rule;
-            delete from wf_transition_rule where id in (6,7,9);
+            delete from wf_transition_decision_rule;
+            delete from wf_decision_rule where id in (6,7,9);
         </sql>
     </changeSet>
 
-    <changeSet id="#1861_20160905" author="pbach">
-        <sql>
-            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
-            value, provider_id, creator_id, updater_id, type, model
-            FROM wf_decision_rule;
-            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
-            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
-            drop table wf_transition_transition_rule;
-            drop table wf_transition_rule;
-            drop SEQUENCE wf_transition_rule_seq;
-            update wf_transition set UUID=id where uuid is null;
-            update wf_action set UUID=id where uuid is null;
-        </sql>
-    </changeSet>
 </databaseChangeLog>

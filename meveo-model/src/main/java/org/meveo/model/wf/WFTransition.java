@@ -43,6 +43,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -186,30 +187,32 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	}
 
     public String getCombinedEl() {
-        String combinedELFormat = "#{%s}";
         if (CollectionUtils.isEmpty(wfDecisionRules)) {
             return conditionEl;
         }
-        String transitionEl = "";
-        if (conditionEl != null && conditionEl.indexOf("#{") == 0) {
-            transitionEl = conditionEl.substring(2, conditionEl.length() - 1);
-        }
+
         StringBuffer combinedEl = new StringBuffer();
         final String AND = " AND ";
-
+        StringBuffer combinedDecisionRuleEL = new StringBuffer();
         for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
-            if (wfDecisionRule.getConditionEl() != null) {
-                if (wfDecisionRule.getConditionEl().indexOf("#{") == 0) {
-                    String decisionEl = wfDecisionRule.getConditionEl().substring(2, wfDecisionRule.getConditionEl().length() - 1);
-                    combinedEl.append(transitionEl).append(AND).append(decisionEl);
-                }
+            if (!StringUtils.isBlank(wfDecisionRule.getConditionEl())) {
+                combinedDecisionRuleEL.append(AND).append(wfDecisionRule.getConditionEl());
             }
         }
-        if (combinedEl.toString().startsWith(AND)) {
-            return String.format(combinedELFormat, combinedEl.toString().substring(5));
-        } else {
-            return String.format(combinedELFormat, combinedEl.toString());
+        String trimmedEl = "";
+        String elWithoutBrackets = "";
+        if (!StringUtils.isBlank(conditionEl)) {
+            trimmedEl = conditionEl.trim();
+            if (trimmedEl != null && trimmedEl.indexOf("{") >= 0 && trimmedEl.indexOf("}") >= 0) {
+                elWithoutBrackets = trimmedEl.substring(2, trimmedEl.length() - 1);
+            }
         }
+        if (StringUtils.isBlank(elWithoutBrackets)) {
+            return combinedDecisionRuleEL.substring(5);
+        } else if (combinedDecisionRuleEL.toString().startsWith(AND)) {
+            combinedEl.append(trimmedEl.substring(0, trimmedEl.length() - 1)).append(combinedDecisionRuleEL).append("}");
+        }
+        return combinedEl.toString();
     }
 
     public Set<WFDecisionRule> getWfDecisionRules() {

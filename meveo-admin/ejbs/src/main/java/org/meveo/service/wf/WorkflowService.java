@@ -175,7 +175,7 @@ public class WorkflowService extends BusinessService<Workflow> {
         for(WFTransition wfTransition :listByFromStatus ){
         	 log.debug("processing transition:"+wfTransition);
         	 log.debug("processing transition.getConditionEl:"+wfTransition.getConditionEl());
-        	if(matchExpression(wfTransition.getConditionEl(), entity)){
+        	if(matchExpression(wfTransition.getCombinedEl(), entity)){
         		 log.debug("conditionEl is true");
         		 log.debug("listWfActions.size:"+(wfTransition.getWfActions() == null ? null : wfTransition.getWfActions().size()));
         		for(WFAction wfAction : wfTransition.getWfActions()){

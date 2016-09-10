@@ -554,6 +554,22 @@
                              initiallyDeferred="false" tableName="wf_transition" />
         <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_action" />
+        <sql>
+            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
+            value, provider_id, creator_id, updater_id, type, model
+            FROM wf_transition_rule;
+            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
+            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
+            update wf_transition set UUID='TRANSITION-'||id where UUID is null;
+            update wf_action set UUID='ACTION-'||id where UUID is null;
+        </sql>
+
+        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID"/>
+        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID"/>
+
+        <dropTable tableName="wf_transition_transition_rule"/>
+        <dropTable tableName="wf_transition_rule"/>
+        <dropSequence sequenceName="wf_transition_rule_seq"/>
     </changeSet>
     
     <changeSet author="anasseh" id="#2007_10092016">
