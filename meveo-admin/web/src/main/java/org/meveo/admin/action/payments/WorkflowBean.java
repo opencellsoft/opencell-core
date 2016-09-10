@@ -230,9 +230,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<String> autocompleteClassNames(String query) {
-log.debug(" \n\n  debut:"+query);
     	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
-    	log.debug(" \n\n  allWFType :"+allWFType);
     	 List<String> classNames = new ArrayList<String>();
     	for(Class<?> clazz :allWFType ){    		
     			classNames.add(clazz.getName());    		
@@ -262,7 +260,7 @@ log.debug(" \n\n  debut:"+query);
     @SuppressWarnings({ "unchecked" })
 	public Map<String, String> getTransitionStatusFromWorkflowType() {
     	try {
-			Class<?> clazz = Class.forName(entity.getWfType());
+			Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(),getCurrentProvider());    		
 			Object obj = clazz.newInstance();
 			Method testMethod = obj.getClass().getMethod("getStatusList");
 			List<String> statusList = (List<String>) testMethod.invoke(obj);

@@ -21,6 +21,7 @@ package org.meveo.service.wf;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,162 +50,171 @@ import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class WorkflowService extends BusinessService<Workflow> {
-	
+
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
-	
+
 	@Inject
 	private WFTransitionService wfTransitionService;
-	
-    @Inject
-    private BaseEntityService baseEntityService;
+
+	@Inject
+	private BaseEntityService baseEntityService;
 
 	@SuppressWarnings("unchecked")
 	public List<Workflow> getWorkflows(Provider provider) {
-		return (List<Workflow>) getEntityManager()
-				.createQuery(
-						"from " + Workflow.class.getSimpleName()
-								+ " where status=:status and provider=:provider")				
-				.setParameter("provider", provider)
-				.getResultList();
+		return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where status=:status and provider=:provider").setParameter("provider", provider).getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<Workflow> findByWFType(String wfType,Provider provider) {
-		return (List<Workflow>) getEntityManager()
-				.createQuery(
-						"from " + Workflow.class.getSimpleName()
-								+ " where wfType=:wfType and provider=:provider")
-				.setParameter("wfType", wfType)
-				.setParameter("provider", provider)
-				.getResultList();
-	}	
-	
+	public List<Workflow> findByWFType(String wfType, Provider provider) {
+		return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType and provider=:provider").setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
+	}
+
 	/**
 	 * Return all workflowType classes
+	 * 
 	 * @param provider
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Class<?>> getAllWFTypes(Provider provider){
-        List<Class> classes = null;        
-        List<Class<?>> result = new ArrayList<Class<?>>();
-        try {
-            classes = ReflectionUtils.getClasses("org.meveo");
-        } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package", e);
-            return null;
-        }        
-        for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(WorkflowTypeClass.class)) {
-            	result.add(clazz);
-            }
-        }        
-        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode());
-      
-      if(mmap != null){
-        for(Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()){
-        	if(entry.getValue().isAnnotationPresent(WorkflowTypeClass.class)){
-        		result.add( entry.getValue());
-        		  
-        	}        	
-        } 
-      }
-        return result;
+	public List<Class<?>> getAllWFTypes(Provider provider) {
+		List<Class> classes = null;
+		List<Class<?>> result = new ArrayList<Class<?>>();
+		try {
+			classes = ReflectionUtils.getClasses("org.meveo");
+		} catch (Exception e) {
+			log.error("Failed to get a list of classes for a model package", e);
+			return null;
+		}
+		for (Class clazz : classes) {
+			if (clazz.isAnnotationPresent(WorkflowTypeClass.class)) {
+				result.add(clazz);
+			}
+		}
+		Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode());
+
+		if (mmap != null) {
+			for (Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()) {
+				if (entry.getValue().isAnnotationPresent(WorkflowTypeClass.class)) {
+					result.add(entry.getValue());
+
+				}
+			}
+		}
+		return result;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param e
 	 * @return
 	 */
-	public List<Class<?>> getWFTypeByEntity(IEntity e,Provider provider){		
-		  List<Class<?>> result = new ArrayList<Class<?>>();		
-		  for(Class<?> clazz : getAllWFTypes(provider)){					 
-			if(((Class<?>)((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0]).getName().equals(e.getClass().getName())){			
+	public List<Class<?>> getWFTypeByEntity(IEntity e, Provider provider) {
+		List<Class<?>> result = new ArrayList<Class<?>>();
+		for (Class<?> clazz : getAllWFTypes(provider)) {
+			String genericClassName = "";
+			while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+				clazz = clazz.getSuperclass();
+			}
+			Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+
+			if (o instanceof TypeVariable) {
+				genericClassName = ((Class<?>) ((TypeVariable) o).getBounds()[0]).getName();
+			} else {
+				genericClassName = ((Class<?>) o).getName();
+			}
+
+			if (e.getClass().getName().equals(genericClassName)) {
 				result.add(clazz);
 			}
-		}		
-		return result;
-	}
-	
-	
-	public List<Workflow> findByEntity(IEntity e,Provider provider){
-		List<Workflow> result = new ArrayList<Workflow>();
-		List<Class<?>>   listWFType = getWFTypeByEntity(e,provider);
-		for(Class<?> wfTypeclass : listWFType){
-			result.addAll(findByWFType(wfTypeclass.getName(), provider));
-		}		
-		return result;
-		
-	}
-	
-	
-	public void executeMatchingWorkflows(IEntity entity, String workflowCode,User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException{
-		
-		if(!StringUtils.isBlank(workflowCode)){
-			Workflow workflow = findByCode(workflowCode, currentUser.getProvider());
-			if(workflow == null){
-				throw new EntityNotFoundException("Cant find Workflow entity by code:"+workflowCode);
-			}
-			executeWorkflows(entity, workflow, currentUser);
-		}else{
-			 List<Workflow> wfs =  findByEntity(entity,currentUser.getProvider());
-			if(wfs == null || wfs.isEmpty() ){
-				throw new EntityNotFoundException("Cant find  any Workflow entity for the given baseEntity");
-			}
-			 for(Workflow wf : wfs){
-				 executeWorkflows(entity, wf, currentUser);
-			 }
 		}
-				
+		return result;
 	}
-	
-	
-	
-	public void executeWorkflows(IEntity entity, Workflow workflow,User currentUser) throws BusinessException, NoSuchMethodException, SecurityException, 
-	                             ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 
-		Constructor<?> constructor = Class.forName(workflow.getWfType()).getConstructor(entity.getClass());
-		IWorkflowType  wfType =  (IWorkflowType) constructor.newInstance(entity);
-        log.debug("ActualStatus:"+wfType.getActualStatus());
-        log.debug("StatusList:"+wfType.getStatusList());
-        List<WFTransition> listByFromStatus = wfTransitionService.listByFromStatus(wfType.getActualStatus(), workflow);            
-        log.debug("listByFromStatus.size:"+(listByFromStatus == null ? null : listByFromStatus.size()));
-        for(WFTransition wfTransition :listByFromStatus ){
-        	 log.debug("processing transition:"+wfTransition);
-        	 log.debug("processing transition.getConditionEl:"+wfTransition.getConditionEl());
-        	if(matchExpression(wfTransition.getCombinedEl(), entity)){
-        		 log.debug("conditionEl is true");
-        		 log.debug("listWfActions.size:"+(wfTransition.getWfActions() == null ? null : wfTransition.getWfActions().size()));
-        		for(WFAction wfAction : wfTransition.getWfActions()){
-        			log.debug("matchExpression wfAction:"+wfAction);
-        			if(matchExpression(wfAction.getConditionEl(), entity)){
-        				log.debug("wfAction conditionEl is true");
-        				matchExpression(wfAction.getActionEl(), entity);
-        				log.debug("wfAction executed");
-        				//TODO es history
-        			}            			
-        		}
-        		wfType.changeStatus(wfTransition.getToStatus());   
-        		
-        		log.debug("wfType.changeStatus({}) done",wfTransition.getToStatus());
-        		baseEntityService.update(entity, currentUser);
-        		log.debug("entity updated");            		
-        		break;
-        	}            	
-        }
+	public List<Workflow> findByEntity(IEntity e, Provider provider) {
+		List<Workflow> result = new ArrayList<Workflow>();
+		List<Class<?>> listWFType = getWFTypeByEntity(e, provider);
+		for (Class<?> wfTypeclass : listWFType) {
+			result.addAll(findByWFType(wfTypeclass.getName(), provider));
+		}
+		return result;
+
 	}
-	
+
+	public void executeMatchingWorkflows(IEntity entity, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException {
+
+		if (!StringUtils.isBlank(workflowCode)) {
+			Workflow workflow = findByCode(workflowCode, currentUser.getProvider());
+			if (workflow == null) {
+				throw new EntityNotFoundException("Cant find Workflow entity by code:" + workflowCode);
+			}
+			executeWorkflow(entity, workflow, currentUser);
+		} else {
+			List<Workflow> wfs = findByEntity(entity, currentUser.getProvider());
+			if (wfs == null || wfs.isEmpty()) {
+				throw new EntityNotFoundException("Cant find  any Workflow entity for the given baseEntity");
+			}else{
+				log.debug("list workflow matching:{}"+wfs);
+			}
+			for (Workflow wf : wfs) {
+				executeWorkflow(entity, wf, currentUser);
+			}
+		}
+
+	}
+
+	public void executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		log.debug("Executing workflow:{} ..."+workflow.getCode());
+		Class<?> wfTypeClass = getWFTypeClassForName(workflow.getWfType(),currentUser.getProvider());
+		Constructor<?> constructor = wfTypeClass.getConstructor(entity.getClass());
+		IWorkflowType wfType = (IWorkflowType) constructor.newInstance(entity);
+		log.debug("ActualStatus:" + wfType.getActualStatus());
+		log.debug("StatusList:" + wfType.getStatusList());
+		List<WFTransition> listByFromStatus = wfTransitionService.listByFromStatus(wfType.getActualStatus(), workflow);
+		log.debug("listByFromStatus.size:" + (listByFromStatus == null ? null : listByFromStatus.size()));
+		for (WFTransition wfTransition : listByFromStatus) {
+			log.debug("processing transition:" + wfTransition);
+			log.debug("processing transition.getConditionEl:" + wfTransition.getConditionEl());
+			if (matchExpression(wfTransition.getCombinedEl(), entity)) {
+				log.debug("conditionEl is true");
+				log.debug("listWfActions.size:" + (wfTransition.getWfActions() == null ? null : wfTransition.getWfActions().size()));
+				for (WFAction wfAction : wfTransition.getWfActions()) {
+					log.debug("matchExpression wfAction:" + wfAction);
+					if (matchExpression(wfAction.getConditionEl(), entity)) {
+						log.debug("wfAction conditionEl is true");
+						matchExpression(wfAction.getActionEl(), entity);
+						log.debug("wfAction executed");
+						// TODO es history
+					}
+				}
+				wfType.changeStatus(wfTransition.getToStatus());
+
+				log.debug("wfType.changeStatus({}) done", wfTransition.getToStatus());
+				baseEntityService.update(entity, currentUser);
+				log.debug("entity updated");
+				break;
+			}
+		}
+	}
+
+	public Class<?> getWFTypeClassForName(String wfTypeClassName,Provider provider) throws ClassNotFoundException {
+		Class<?> clazz = null;
+		if (scriptInstanceService.getAllScriptInterfaces().get(provider.getCode()).containsKey(wfTypeClassName)) {
+			clazz = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode()).get(wfTypeClassName);
+		} else {
+			clazz = Class.forName(wfTypeClassName);
+		}
+		return clazz;
+	}
+
 	private boolean matchExpression(String expression, Object object) throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		if(expression.indexOf("entity") >= 0 ){			
-            userMap.put("entity", object);
+		if (expression.indexOf("entity") >= 0) {
+			userMap.put("entity", object);
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
@@ -214,5 +224,5 @@ public class WorkflowService extends BusinessService<Workflow> {
 			throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
 		}
 		return result;
-	}	
+	}
 }

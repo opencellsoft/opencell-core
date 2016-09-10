@@ -6,17 +6,16 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 
 
-public class WFTypeScript extends WorkflowType<BaseEntity> implements WFTypeScriptInterface {
+public class WFTypeScript<E extends BaseEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
 
 	public WFTypeScript() {
 		super();
 	}
 
-	public WFTypeScript(BaseEntity e) {
+	public WFTypeScript(E e) {
 		super(e);
 	}
 
