@@ -33,11 +33,9 @@ import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.IWorkflowType;
-import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -88,9 +86,9 @@ public class WorkflowService extends BusinessService<Workflow> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Class<? extends WorkflowType<?>>> getAllWFTypes(Provider provider){
+	public List<Class<?>> getAllWFTypes(Provider provider){
         List<Class> classes = null;        
-        List<Class<? extends WorkflowType<?>>> result = new ArrayList<Class<? extends WorkflowType<?>>>();
+        List<Class<?>> result = new ArrayList<Class<?>>();
         try {
             classes = ReflectionUtils.getClasses("org.meveo");
         } catch (Exception e) {
@@ -103,10 +101,12 @@ public class WorkflowService extends BusinessService<Workflow> {
             }
         }        
         Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode());
+      
       if(mmap != null){
         for(Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()){
         	if(entry.getValue().isAnnotationPresent(WorkflowTypeClass.class)){
-        		classes.add(entry.getValue());
+        		result.add( entry.getValue());
+        		  
         	}        	
         } 
       }
@@ -119,9 +119,9 @@ public class WorkflowService extends BusinessService<Workflow> {
 	 * @param e
 	 * @return
 	 */
-	public List<Class<? extends WorkflowType<?>>> getWFTypeByEntity(IEntity e,Provider provider){		
-		  List<Class<? extends WorkflowType<?>>> result = new ArrayList<Class<? extends WorkflowType<?>>>();		
-		  for(Class<? extends WorkflowType<?>> clazz : getAllWFTypes(provider)){					 
+	public List<Class<?>> getWFTypeByEntity(IEntity e,Provider provider){		
+		  List<Class<?>> result = new ArrayList<Class<?>>();		
+		  for(Class<?> clazz : getAllWFTypes(provider)){					 
 			if(((Class<?>)((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0]).getName().equals(e.getClass().getName())){			
 				result.add(clazz);
 			}
@@ -132,8 +132,8 @@ public class WorkflowService extends BusinessService<Workflow> {
 	
 	public List<Workflow> findByEntity(IEntity e,Provider provider){
 		List<Workflow> result = new ArrayList<Workflow>();
-		List<Class<? extends WorkflowType<?>>>   listWFType = getWFTypeByEntity(e,provider);
-		for(Class<? extends WorkflowType<?>> wfTypeclass : listWFType){
+		List<Class<?>>   listWFType = getWFTypeByEntity(e,provider);
+		for(Class<?> wfTypeclass : listWFType){
 			result.addAll(findByWFType(wfTypeclass.getName(), provider));
 		}		
 		return result;

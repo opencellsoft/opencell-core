@@ -39,9 +39,11 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;
@@ -228,22 +230,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<String> autocompleteClassNames(String query) {
-
-        List<Class> classes = null;
-        try {
-            classes = ReflectionUtils.getClasses("org.meveo");
-        } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package", e);
-            return null;
-        }
-
-        List<String> classNames = new ArrayList<String>();
-        for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(WorkflowTypeClass.class)) {
-                classNames.add(clazz.getName());
-            }
-        }
-
+log.debug(" \n\n  debut:"+query);
+    	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
+    	log.debug(" \n\n  allWFType :"+allWFType);
+    	 List<String> classNames = new ArrayList<String>();
+    	for(Class<?> clazz :allWFType ){    		
+    			classNames.add(clazz.getName());    		
+    	}    	
         Collections.sort(classNames);
         return classNames;
     }
