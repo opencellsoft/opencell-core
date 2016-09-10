@@ -47,7 +47,7 @@ public class OrderService extends BusinessService<Order> {
 		return count.longValue();
 	}
 
-    public Order routedToUserGroup(Order entity, String userGroupCode) throws BusinessException {
+    public Order routeToUserGroup(Order entity, String userGroupCode) throws BusinessException {
         UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode, getCurrentUser().getProvider());
         if (userHierarchyLevel == null) {
             log.trace("No UserHierarchyLevel found {}/{}", entity, userGroupCode);

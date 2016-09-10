@@ -61,7 +61,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String EL = "#{mv:getBean('org.meveo.service.order.OrderService').routedToUserGroup(entity,%s)}";
+    private static final String EL = "#{mv:getBean('org.meveo.service.order.OrderService').routeToUserGroup(entity,\"%s\")}";
 
     /**
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.

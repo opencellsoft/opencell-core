@@ -107,8 +107,8 @@ public class WFAction extends AuditableEntity {
 
     public String getUserGroupCode() {
         if (!StringUtils.isBlank(actionEl) && actionEl.indexOf(",") >= 0) {
-            int startIndexCode = actionEl.indexOf(",") + 1;
-            int endIndexCode = actionEl.length() - 2;
+            int startIndexCode = actionEl.indexOf(",") + 2;
+            int endIndexCode = actionEl.length() - 3;
             String userGroupCode = actionEl.substring(startIndexCode, endIndexCode);
             return userGroupCode;
         }

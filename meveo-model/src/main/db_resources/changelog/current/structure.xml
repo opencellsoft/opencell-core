@@ -1065,6 +1065,17 @@
         <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID"/> 
         <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID"/> 
         <addNotNullConstraint tableName="billing_product_instance" columnName="UUID"/> 
-    </changeSet> 
-    
+    </changeSet>
+
+    <changeSet id="#1844_20160910" author="pbach">
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, ',', ',"') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, ')}', '")}') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, 'routedToUserGroup', 'routeToUserGroup') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+    </changeSet>
 </databaseChangeLog>

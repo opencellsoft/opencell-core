@@ -2115,13 +2115,13 @@
             <from-outcome>mm_workflowDetail</from-outcome>
             <to-view-id>/marketingManager/workflows/workflowDetail.xhtml
             </to-view-id>
-            <redirect/>
+            <redirect include-view-params="true" />
         </navigation-case>
         <navigation-case>
             <from-outcome>mm_workflowDefault</from-outcome>
             <to-view-id>/marketingManager/workflows/workflowDefault.xhtml
             </to-view-id>
-            <redirect/>
+            <redirect include-view-params="true" />
         </navigation-case>
         <navigation-case>
             <from-outcome>mm_userHierarchyLevelDetail</from-outcome>
