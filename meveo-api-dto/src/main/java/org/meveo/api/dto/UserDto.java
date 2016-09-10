@@ -57,7 +57,7 @@ public class UserDto extends BaseDto {
 	private String lastName;
 
 	@XmlElementWrapper
-    @XmlElement(name="role")
+    @XmlElement(name="userRole")
 	private List<String> roles;
 	
 	@XmlElementWrapper(name = "accessibleEntities")
