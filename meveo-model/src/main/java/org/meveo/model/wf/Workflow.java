@@ -24,8 +24,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -37,7 +35,6 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.validation.constraint.ClassName;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
@@ -50,15 +47,12 @@ public class Workflow extends BusinessEntity {
 	@Column(name = "WF_TYPE")
 	@NotNull
     @Size(max = 255)
-    @ClassName
 	String wfType = null;
 	
 	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
     @OrderBy("priority ASC")
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
 	
-	@Column(name = "EXPORT_LOT")
-	boolean exportLot;
 	
 	@Column(name = "ENABLE_HOSTORY")
 	boolean enableHistory;
@@ -89,20 +83,6 @@ public class Workflow extends BusinessEntity {
 	 */
 	public void setTransitions(List<WFTransition> transitions) {
 		this.transitions = transitions;
-	}
-
-	/**
-	 * @return the exportLot
-	 */
-	public boolean isExportLot() {
-		return exportLot;
-	}
-
-	/**
-	 * @param exportLot the exportLot to set
-	 */
-	public void setExportLot(boolean exportLot) {
-		this.exportLot = exportLot;
 	}
 
 	/**

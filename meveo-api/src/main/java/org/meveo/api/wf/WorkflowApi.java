@@ -1,5 +1,6 @@
 package org.meveo.api.wf;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
+import org.meveo.service.wf.BaseEntityService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.service.wf.WFTransitionService;
 
@@ -36,6 +40,9 @@ public class WorkflowApi extends BaseApi {
 
     @Inject
     private WFTransitionService wfTransitionService;
+    
+	@Inject
+	private BaseEntityService baseEntityService;
 	
 	/**
 	 * 
@@ -190,8 +197,7 @@ public class WorkflowApi extends BaseApi {
         workflow.setCode(dto.getCode());
         workflow.setDescription(dto.getDescription());
         workflow.setEnableHistory(dto.getEnableHistory());
-        workflow.setExportLot(dto.getExportLot());
-
+   
         return workflow;
     }
 	
@@ -220,6 +226,34 @@ public class WorkflowApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
 		}
 		return workflow;
+	}
+	
+	public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
+		if(StringUtils.isBlank(baseEntityName)){
+			missingParameters.add("baseEntityName");
+			handleMissingParameters();
+		}
+		
+		if(StringUtils.isBlank(baseEntityInstanceId)){
+			missingParameters.add("baseEntityInstanceId");
+			handleMissingParameters();
+		}
+		
+		Class<IEntity> clazz = null;
+		try{
+			clazz = (Class<IEntity>) Class.forName(baseEntityName);
+		}catch(Exception e){
+			throw new MeveoApiException("Cant find class for baseEntityName");
+		}
+		baseEntityService.setEntityClass(clazz);
+		
+		IEntity baseEntity = baseEntityService.findById(baseEntityInstanceId);	
+		if(baseEntity == null){
+			throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
+		}
+		log.debug("baseEntity.getId() : "+baseEntity.getId());
+		
+		workflowService.executeMatchingWorkflows(baseEntity, workflowCode, currentUser);
 	}
 }
 

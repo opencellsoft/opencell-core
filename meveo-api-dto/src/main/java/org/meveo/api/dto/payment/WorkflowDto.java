@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
-import org.meveo.model.wf.WorkflowStatusEnum;
+
 
 
 @XmlType(name = "Workflow")
@@ -48,8 +48,7 @@ public class WorkflowDto extends BaseDto {
 	
 	@XmlElement(required = true)	
 	private String wfType;
-	
-	private Boolean exportLot =false;
+		
 	private Boolean enableHistory =false;
 	
 	@XmlElementWrapper(name="transitions")
@@ -61,8 +60,7 @@ public class WorkflowDto extends BaseDto {
 	public WorkflowDto(Workflow workflow) {
 		this.code=workflow.getCode();
 		this.description=workflow.getDescription();
-	    this.wfType = workflow.getWfType();
-	    this.exportLot = workflow.isExportLot();
+	    this.wfType = workflow.getWfType();	   
 	    this.enableHistory = workflow.isEnableHistory();
 	    for(WFTransition wfTransition : workflow.getTransitions()){
 	    	WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
@@ -108,18 +106,6 @@ public class WorkflowDto extends BaseDto {
 	}
 
 	/**
-	 * @return the exportLot
-	 */
-	public Boolean getExportLot() {
-		return exportLot;
-	}
-	/**
-	 * @param exportLot the exportLot to set
-	 */
-	public void setExportLot(Boolean exportLot) {
-		this.exportLot = exportLot;
-	}
-	/**
 	 * @return the enableHistory
 	 */
 	public Boolean getEnableHistory() {
@@ -146,7 +132,7 @@ public class WorkflowDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + ", exportLot=" + exportLot + ", enableHistory=" + enableHistory + ", listWFTransitionDto=" + listWFTransitionDto + "]";
+		return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + " enableHistory=" + enableHistory + ", listWFTransitionDto=" + listWFTransitionDto + "]";
 	}
 	
 }

@@ -21,6 +21,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.job.Job;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.wf.WorkflowService;
 
 @Startup
 @Singleton
@@ -28,6 +30,12 @@ public class WorkflowJob extends Job {
 
     @Inject
     private WorkflowJobBean workflowJobBean;
+    
+    @Inject
+    CustomerAccountService customerAccountService;
+    
+    @Inject
+    WorkflowService workflowService;    
     
 	 @Inject
 	 private ResourceBundle resourceMessages;
@@ -41,7 +49,7 @@ public class WorkflowJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {    	
     	workflowJobBean.execute(result, currentUser,jobInstance);
     }
 
@@ -53,26 +61,7 @@ public class WorkflowJob extends Job {
     @Override
 	public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
-        
-		
-//        CustomFieldTemplate workflowType = new CustomFieldTemplate();
-//        workflowType.setCode("wfJob_workflowType");
-//        workflowType.setAppliesTo("JOB_WorkflowJob");
-//        workflowType.setActive(true);
-//        workflowType.setDescription("Workflow type");
-//        workflowType.setFieldType(CustomFieldTypeEnum.LIST);
-//        workflowType.setValueRequired(true);
-//        Map<String,String> listValues = new HashMap<String,String>();
-//        listValues.put("OfferValidationWF","OfferValidationWF");
-//        listValues.put("InvoiceValidationWF","InvoiceValidationWF");
-//        listValues.put("InvoicePaymentWF","InvoicePaymentWF");
-//        listValues.put("OrderProcessingWF","OrderProcessingWF");
-//        listValues.put("DunningWF","DunningWF");
-//        listValues.put("UserCreationWF","UserCreationWF");
-//        listValues.put("AccountCreationWF","AccountCreationWF");		
-//        workflowType.setListValues(listValues);
-//        result.put("wfJob_workflowType", workflowType);
-		
+     
 		CustomFieldTemplate filterCF = new CustomFieldTemplate();
 		filterCF.setCode("wfJob_filter");
 		filterCF.setAppliesTo("JOB_WorkflowJob");

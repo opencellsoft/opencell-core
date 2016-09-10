@@ -89,4 +89,14 @@ public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 			return workflowsResponseDto;
 		}
 		
+		@Override
+		public ActionStatus execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode) {
+			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+			try {
+				workflowApi.execute( baseEntityName,  baseEntityInstanceId,  workflowCode,getCurrentUser() );
+			} catch (Exception e) {
+	        	super.processException(e, result);
+	        }			
+			return result;
+		}
 }
