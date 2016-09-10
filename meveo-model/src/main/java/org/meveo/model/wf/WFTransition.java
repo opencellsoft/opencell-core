@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -186,23 +187,21 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     public String getCombinedEl() {
         String combinedELFormat = "#{%s}";
-        String result = "";
-        if (wfDecisionRules == null) {
+        if (CollectionUtils.isEmpty(wfDecisionRules)) {
             return conditionEl;
         }
         String transitionEl = "";
-        if (conditionEl.indexOf("#{") > 0) {
+        if (conditionEl != null && conditionEl.indexOf("#{") == 0) {
             transitionEl = conditionEl.substring(2, conditionEl.length() - 1);
         }
         StringBuffer combinedEl = new StringBuffer();
         final String AND = " AND ";
-        if (wfDecisionRules != null) {
-            for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
-                if (wfDecisionRule.getConditionEl() != null) {
-                    if (wfDecisionRule.getConditionEl().indexOf("#{") > 0) {
-                        String decisionEl = wfDecisionRule.getConditionEl().substring(2, wfDecisionRule.getConditionEl().length() - 1);
-                        combinedEl.append(transitionEl).append(AND).append(decisionEl);
-                    }
+
+        for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
+            if (wfDecisionRule.getConditionEl() != null) {
+                if (wfDecisionRule.getConditionEl().indexOf("#{") == 0) {
+                    String decisionEl = wfDecisionRule.getConditionEl().substring(2, wfDecisionRule.getConditionEl().length() - 1);
+                    combinedEl.append(transitionEl).append(AND).append(decisionEl);
                 }
             }
         }
