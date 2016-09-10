@@ -5,10 +5,11 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
+import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 
-
+@WorkflowTypeClass
 public class WFTypeScript<E extends BaseEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
 
 	public WFTypeScript() {
