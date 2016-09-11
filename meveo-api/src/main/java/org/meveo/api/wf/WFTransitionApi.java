@@ -234,8 +234,11 @@ public class WFTransitionApi extends BaseApi {
         return wfTransition;
     }
 
-    protected WFDecisionRule createNewWFDecisionRuleByName(String name, String value, User currentUser) throws BusinessException{
+    protected WFDecisionRule createNewWFDecisionRuleByName(String name, String value, User currentUser) throws EntityDoesNotExistsException, BusinessException{
         WFDecisionRule wfDecisionRule = wfDecisionRuleService.getWFDecisionRuleByName(name, currentUser.getProvider());
+        if (wfDecisionRule == null) {
+            throw new EntityDoesNotExistsException(WFDecisionRule.class, name);
+        }
         WFDecisionRule newWFDecisionRule = new WFDecisionRule();
         newWFDecisionRule.setModel(Boolean.FALSE);
         newWFDecisionRule.setConditionEl(wfDecisionRule.getConditionEl());
