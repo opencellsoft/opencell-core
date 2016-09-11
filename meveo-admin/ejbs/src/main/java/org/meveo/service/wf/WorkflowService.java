@@ -110,7 +110,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 	 * @param e
 	 * @return
 	 */
-	public List<Class<?>> getWFTypeByEntity(IEntity e, Provider provider) {
+	public List<Class<?>> getWFTypeByEntity(Class<? extends IEntity> e, Provider provider) {
 		List<Class<?>> result = new ArrayList<Class<?>>();
 		for (Class<?> clazz : getAllWFTypes(provider)) {
 			String genericClassName = "";
@@ -125,7 +125,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 				genericClassName = ((Class<?>) o).getName();
 			}
 
-			if (e.getClass().getName().equals(genericClassName)) {
+			if (e.getName().equals(genericClassName)) {
 				result.add(clazz);
 			}
 		}
@@ -134,11 +134,11 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	/**
 	 * Find a Workflow by an Entity
-	 * @param e
+	 * @param class1
 	 * @param provider
 	 * @return
 	 */
-	public List<Workflow> findByEntity(IEntity e, Provider provider) {
+	public List<Workflow> findByEntity(Class<? extends IEntity> e, Provider provider) {
 		List<Workflow> result = new ArrayList<Workflow>();
 		List<Class<?>> listWFType = getWFTypeByEntity(e, provider);
 		for (Class<?> wfTypeclass : listWFType) {
@@ -172,7 +172,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 			}
 			executeWorkflow(entity, workflow, currentUser);
 		} else {
-			List<Workflow> wfs = findByEntity(entity, currentUser.getProvider());
+			List<Workflow> wfs = findByEntity(entity.getClass(), currentUser.getProvider());
 			if (wfs == null || wfs.isEmpty()) {
 				throw new EntityNotFoundException("Cant find  any Workflow entity for the given baseEntity");
 			}else{

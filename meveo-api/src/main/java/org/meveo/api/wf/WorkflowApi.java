@@ -228,6 +228,49 @@ public class WorkflowApi extends BaseApi {
 		return workflow;
 	}
 	
+	/**
+	 * Find a Workflow by an Entity
+	 * 
+	 * @param baseEntityName
+	 * @param currentUser
+	 * @return
+	 * @throws MeveoApiException
+	 */
+	public List<WorkflowDto> findByEntity(String baseEntityName, User currentUser) throws MeveoApiException {
+		if(StringUtils.isBlank(baseEntityName)){
+			missingParameters.add("baseEntityName");
+			handleMissingParameters();
+		}
+		Class<? extends IEntity> clazz = null;
+		try{
+			clazz = (Class<? extends IEntity>) Class.forName(baseEntityName);
+		}catch(Exception e){
+			throw new MeveoApiException("Cant find class for baseEntityName");
+		}
+		List<WorkflowDto>  listWfDto = new ArrayList<WorkflowDto>();
+		List<Workflow> listWF = workflowService.findByEntity(clazz, currentUser.getProvider());
+		for(Workflow wf : listWF){
+			listWfDto.add(new WorkflowDto(wf));
+		}
+		return listWfDto;
+	}
+	
+	/**
+	 * 
+	 * @param baseEntityName
+	 * @param baseEntityInstanceId
+	 * @param workflowCode
+	 * @param currentUser
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws BusinessException
+	 * @throws MeveoApiException
+	 */
 	public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");

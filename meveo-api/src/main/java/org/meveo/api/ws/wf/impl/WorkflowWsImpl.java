@@ -99,4 +99,15 @@ public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 	        }			
 			return result;
 		}
+
+		@Override
+		public WorkflowsResponseDto findByEntity(String baseEntityName) {
+			WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
+			try {
+				workflowsResponseDto.setListWorkflowDto(workflowApi.findByEntity(baseEntityName,getCurrentUser()));
+			} catch (Exception e) {
+	        	super.processException(e, workflowsResponseDto.getActionStatus());
+	        }			
+			return workflowsResponseDto;
+		}
 }

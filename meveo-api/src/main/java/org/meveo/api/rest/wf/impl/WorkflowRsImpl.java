@@ -87,6 +87,28 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 	        }
 			
 			return workflowsResponseDto;
+		}
+
+		@Override
+		public ActionStatus execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode) {
+			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+			try {
+				workflowApi.execute( baseEntityName,  baseEntityInstanceId,  workflowCode,getCurrentUser() );
+			} catch (Exception e) {
+	        	super.processException(e, result);
+	        }			
+			return result;
+		}
+
+		@Override
+		public WorkflowsResponseDto findByEntity(String baseEntityName) {
+			WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
+			try {
+				workflowsResponseDto.setListWorkflowDto(workflowApi.findByEntity(baseEntityName,getCurrentUser()));
+			} catch (Exception e) {
+	        	super.processException(e, workflowsResponseDto.getActionStatus());
+	        }			
+			return workflowsResponseDto;
 		}		
 }
 
