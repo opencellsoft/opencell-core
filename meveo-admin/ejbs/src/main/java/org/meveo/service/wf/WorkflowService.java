@@ -105,6 +105,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 	}
 
 	/**
+	 * Return all workflowType classes applied on an Entity
 	 * 
 	 * @param e
 	 * @return
@@ -131,6 +132,12 @@ public class WorkflowService extends BusinessService<Workflow> {
 		return result;
 	}
 
+	/**
+	 * Find a Workflow by an Entity
+	 * @param e
+	 * @param provider
+	 * @return
+	 */
 	public List<Workflow> findByEntity(IEntity e, Provider provider) {
 		List<Workflow> result = new ArrayList<Workflow>();
 		List<Class<?>> listWFType = getWFTypeByEntity(e, provider);
@@ -141,6 +148,21 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	}
 
+   /**
+    * Execute all matching workflows for the entity if workflowCode is no set, 
+    * 
+    * @param entity
+    * @param workflowCode
+    * @param currentUser
+    * @throws NoSuchMethodException
+    * @throws SecurityException
+    * @throws ClassNotFoundException
+    * @throws InstantiationException
+    * @throws IllegalAccessException
+    * @throws IllegalArgumentException
+    * @throws InvocationTargetException
+    * @throws BusinessException
+    */
 	public void executeMatchingWorkflows(IEntity entity, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException {
 
 		if (!StringUtils.isBlank(workflowCode)) {
@@ -163,6 +185,21 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	}
 
+	/**
+	 * Execute the workflow for the entity
+	 * 
+	 * @param entity
+	 * @param workflow
+	 * @param currentUser
+	 * @throws BusinessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
 	public void executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		log.debug("Executing workflow:{} ..."+workflow.getCode());
 		Class<?> wfTypeClass = getWFTypeClassForName(workflow.getWfType(),currentUser.getProvider());
@@ -197,6 +234,14 @@ public class WorkflowService extends BusinessService<Workflow> {
 		}
 	}
 
+	/**
+	 * Return the workflowType class by name
+	 * 
+	 * @param wfTypeClassName
+	 * @param provider
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public Class<?> getWFTypeClassForName(String wfTypeClassName,Provider provider) throws ClassNotFoundException {
 		Class<?> clazz = null;
 		if (scriptInstanceService.getAllScriptInterfaces().get(provider.getCode()).containsKey(wfTypeClassName)) {
