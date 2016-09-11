@@ -33,7 +33,7 @@ public class UnitWorkflowJobBean{
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, User currentUser, BaseEntity entity,Workflow workflow) {    	
     	try {    		
-    		workflowService.executeWorkflows(entity, workflow, currentUser);
+    		workflowService.executeWorkflow(entity, workflow, currentUser);
     		result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to unit workflow for {}", entity, e);           

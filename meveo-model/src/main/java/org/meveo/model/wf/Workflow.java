@@ -98,8 +98,10 @@ public class Workflow extends BusinessEntity {
 	public void setEnableHistory(boolean enbaleHistory) {
 		this.enableHistory = enbaleHistory;
 	}
-	
-	
-
+		
+	@Override
+	public String toString() {
+		return "Workflow [code=" + code + ", description=" + description + "]";
+	}
 
 }
