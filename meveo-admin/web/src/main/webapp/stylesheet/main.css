@@ -692,6 +692,7 @@ form.formNoBottomBorder {
 .Wid20{ width:20%;}
 .Wid10{ width:10%;}
 .custom-grid .ui-paginator, .dataGrid .ui-paginator { margin-left: auto; width: 250px !important; }
+.custom-grid .ui-paginator > select, .dataGrid .ui-paginator > select { margin-left: 0; }
 .dataGrid .ui-paginator span { text-align: left !important; }
 .ui-datagrid-blank .ui-datagrid-content { border: none !important; }
 .dataList .ui-datalist-content { border: none; background: transparent; background-image: none; }
