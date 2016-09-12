@@ -18,6 +18,7 @@
         datePattern - date pattern for date entry/display
         dateTimePattern - date time pattern for period date display
         messagesId - an ID of messages component for validation messages
+        defaultTabLabel - a default tab label if it was not set during entity customization. If not provided a messages['customFieldTemplate.cfValues'] will be used
         
 -->
 
@@ -44,6 +45,9 @@
     <c:if test="${empty(entity)}">
         <c:set var="entity" value="#{backingBean.entity}" />
     </c:if>
+    <c:if test="${empty(defaultTabLabel)}">
+        <c:set var="defaultTabLabel" value="#{messages['customFieldTemplate.cfValues']}" />
+    </c:if>
     <c:set var="newEntity" value="#{entity.transient}" />
     <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <c:set var="edit" value="#{edit and backingBean.canUserUpdateEntity()}" />
@@ -53,27 +57,11 @@
     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
 
     <c:set var="index" value="0" />
-    
-    <c:set var="tabLabel" value="&nbsp;" />
-    <c:set var="hasMoreThan1Groups" value="false" />
-    <c:if test="${empty(dontDisplayHeaderIf1Row)}">
-    	<c:set var="dontDisplayHeaderIf1Row" value="false" />
-    </c:if>    
-    <c:if test="${not empty(dontDisplayHeaderIf1Row)}">
-    	<c:set var="hasMoreThan1Groups" value="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children.size()>1}" />
-    </c:if>
 
     <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
-				
-		<c:if test="#{not dontDisplayHeaderIf1Row}">
-			<c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}"></c:set>
-		</c:if>
-		<c:if test="#{dontDisplayHeaderIf1Row}">
-			<c:if test="#{hasMoreThan1Groups}">
-				<c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}"></c:set>
-			</c:if>
-		</c:if>
-		
+
+        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
+
         <p:tab title="#{tabLabel}">
 
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">

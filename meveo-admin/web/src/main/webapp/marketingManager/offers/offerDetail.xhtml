@@ -210,14 +210,16 @@
 						styleClass="fa fa-edit no-text-decoration"
 						style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
 				</f:facet>
-				<p:tabView
-					rendered="#{offerTemplateBean.getCustomFieldTemplates(offerTemplateBean.entity).size() > 0}">
 					<!-- custom fields -->
-					<hftl:customFields backingBean="#{offerTemplateBean}"
-						messagesId=":formId:messages"
-						dontDisplayHeaderIf1Row="true" />
-				</p:tabView>
-			</p:panel>
+                <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                </c:if>
+                <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
+                    <p:tabView>
+                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                    </p:tabView>
+                </c:if>
+            </p:panel>
 
 			<p:panel>
 				<f:facet name="header">
@@ -238,13 +240,19 @@
 						<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 
 						<p:panel id="serviceCf_panel_#{index}">
-							<p:tabView
-								rendered="#{offerTemplateBean.getCustomFieldTemplates(ost.serviceTemplate).size() > 0 and (ost.serviceTemplate.selected or not offerTemplateBean.edit or offerTemplateBean.bomId eq null)}">
-								<hftl:customFields backingBean="#{serviceTemplateBean}"
-									entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-									dontDisplayHeaderIf1Row="true" />
-							</p:tabView>
-						</p:panel>
+
+                            <!-- custom fields -->
+                            <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() ==1}">
+                                <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+                                    defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{index}" />
+                            </c:if>
+                            <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
+                                <p:tabView>
+                                    <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+                                        defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{index}" />
+                                </p:tabView>
+                            </c:if>
+                        </p:panel>
 
 						<c:set var="index" value="${index + 1}"></c:set>
 					</c:forEach>

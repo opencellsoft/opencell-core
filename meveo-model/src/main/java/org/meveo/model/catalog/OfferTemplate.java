@@ -41,8 +41,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -79,6 +77,9 @@ public class OfferTemplate extends ProductOffering {
 
 	@Transient
 	public String prefix;
+	
+	@Transient
+	public Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -158,7 +159,12 @@ public class OfferTemplate extends ProductOffering {
 
     @SuppressWarnings("rawtypes")
     public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
-        Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType = new HashMap<>();
+        
+        if (serviceTemplatesByChargeType!=null){
+            return serviceTemplatesByChargeType;
+        }
+        
+        serviceTemplatesByChargeType = new HashMap<>();
 
         for (OfferServiceTemplate service : offerServiceTemplates) {
             List charges = service.getServiceTemplate().getServiceRecurringCharges();
@@ -194,8 +200,6 @@ public class OfferTemplate extends ProductOffering {
             }
         }
 
-        Logger log = LoggerFactory.getLogger(this.getClass());
-        log.error("AKK by charge type {}", serviceTemplatesByChargeType);
         return serviceTemplatesByChargeType;
     }
 }

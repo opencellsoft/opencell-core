@@ -148,9 +148,16 @@
                 oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;"
                 rendered="#{mainBackingBean.edit}" />
         </f:facet>
-        <p:tabView rendered="#{mainBackingBean.getCustomFieldTemplates(mainBackingBean.entity).size() > 0}">
-        <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" />
-        </p:tabView>
+
+        <!-- custom fields -->
+        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() == 1}">
+            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+        </c:if>
+        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() > 1}">
+            <p:tabView>
+                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+            </p:tabView>
+        </c:if>
     </p:panel>
 
 </ui:composition>
