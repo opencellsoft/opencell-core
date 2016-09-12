@@ -2052,6 +2052,12 @@
     <!--  Navigation rules for Marketing Manager pages -->
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>mm_home</from-outcome>
+			<to-view-id>/marketingManager/index.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>mm_offerTemplates</from-outcome>
 			<to-view-id>/marketingManager/offers/offerTemplates.xhtml
 			</to-view-id>
