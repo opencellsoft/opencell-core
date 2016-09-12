@@ -6,6 +6,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 
@@ -52,4 +53,7 @@ public class WFTypeScript<E extends BaseEntity> extends WorkflowType<E> implemen
 		return null;
 	}
 
+    protected Object getServiceInterface(String serviceInterfaceName) {
+        return EjbUtils.getServiceInterface(serviceInterfaceName);
+    }
 }
