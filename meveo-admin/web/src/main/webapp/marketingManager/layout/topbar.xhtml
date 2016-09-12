@@ -5,15 +5,12 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<div id="topbar-wrapper" class="clearfix">
-		<div id="layout-topbar" class="pull-left">
-			<ul class="list-inline" style="padding-top: 20px;">
-				<!-- <li><a id="menu-button"><i class="fa fa-bars fa-3x"></i> </a></li> -->
-				<li><a href="#{request.contextPath}" id="logo-wrapper"> <h:graphicImage
-							name="MeveoOpenCell.png" library="img" />
-				</a></li>
-			</ul>
-		</div>
+    <div id="topbar-wrapper" class="clearfix">
+        <div id="layout-topbar" class="pull-left">
+            <a href="#{request.contextPath}" id="logo-wrapper"> 
+            	<h:graphicImage name="logo.png" library="img" />
+           	</a>
+        </div>
 
 		<div id="responsive-menu-button">
 			<a id="menu-button"><i class="fa fa-bars fa-5x"></i> </a>
@@ -58,7 +55,7 @@
 				<li>#{identity.user.user.nameOrUsername}</li>
 				<li>#{identity.user.currentProvider.code}</li>
 			</ul>
-			<div class="pull-right" style="margin-right: 40px; margin-top: 20px;">
+			<div class="search-wrapper">
 				<p:inputText id="globalFullTextSearch"
 					value="#{fullTextSearchBean.filters['fullText']}"
 					placeholder="#{messages['commons.search']}" />
