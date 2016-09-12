@@ -15,7 +15,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.service.wf.WFActionService;
-import org.meveo.service.wf.WFTransitionService;
 
 
 @Stateless
@@ -23,10 +22,7 @@ public class WFActionApi extends BaseApi {
 
 	@Inject
 	private  WFActionService  wfActionService;
-	
-	@Inject
-	private  WFTransitionService  wfTransitionService;
-	
+		
 	/**
 	 * 	
 	 * @param wfActionDto

@@ -1,8 +1,8 @@
 package org.meveo.api.wf;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -26,8 +26,8 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.wf.BaseEntityService;
-import org.meveo.service.wf.WorkflowService;
 import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WorkflowService;
 
 @Stateless
 public class WorkflowApi extends BaseApi {
@@ -236,17 +236,18 @@ public class WorkflowApi extends BaseApi {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public List<WorkflowDto> findByEntity(String baseEntityName, User currentUser) throws MeveoApiException {
+	@SuppressWarnings("unchecked")
+    public List<WorkflowDto> findByEntity(String baseEntityName, User currentUser) throws MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();
-		}
-		Class<? extends IEntity> clazz = null;
-		try{
-			clazz = (Class<? extends IEntity>) Class.forName(baseEntityName);
-		}catch(Exception e){
-			throw new MeveoApiException("Cant find class for baseEntityName");
-		}
+        }
+        Class<? extends IEntity> clazz = null;
+        try {
+            clazz = (Class<? extends IEntity>) Class.forName(baseEntityName);
+        } catch (Exception e) {
+            throw new MeveoApiException("Cant find class for baseEntityName");
+        }
 		List<WorkflowDto>  listWfDto = new ArrayList<WorkflowDto>();
 		List<Workflow> listWF = workflowService.findByEntity(clazz, currentUser.getProvider());
 		for(Workflow wf : listWF){
@@ -271,7 +272,8 @@ public class WorkflowApi extends BaseApi {
 	 * @throws BusinessException
 	 * @throws MeveoApiException
 	 */
-	public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
+	@SuppressWarnings("unchecked")
+    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();

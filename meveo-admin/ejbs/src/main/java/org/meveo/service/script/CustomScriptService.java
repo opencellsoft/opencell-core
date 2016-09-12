@@ -314,7 +314,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    public Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
 
         if (allScriptInterfaces.containsKey(provider.getCode())) {
@@ -565,18 +565,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
         return parameters;
     }
-    
-	/**
-	 * @return the allScriptInterfaces
-	 */
-	public Map<String, Map<String, Class<SI>>> getAllScriptInterfaces() {
-		return allScriptInterfaces;
-	}
 
-	/**
-	 * @param allScriptInterfaces the allScriptInterfaces to set
-	 */
-	public void setAllScriptInterfaces(Map<String, Map<String, Class<SI>>> allScriptInterfaces) {
-		this.allScriptInterfaces = allScriptInterfaces;
-	}    
+    /**
+     * Get all script interfaces for a given provider
+     * 
+     * @return the allScriptInterfaces
+     */
+    public Map<String, Class<SI>> getAllScriptInterfaces(Provider provider) {
+        return allScriptInterfaces.get(provider.getCode());
+    } 
 }

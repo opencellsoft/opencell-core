@@ -21,19 +21,15 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.wf.WFAction;
-import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
-import org.meveo.service.wf.WorkflowService;
 
 @Stateless
 public class WFTransitionApi extends BaseApi {
-
-	@Inject
-	private WorkflowService workflowService;
 	
 	@Inject
 	private WFActionApi wfActionApi;

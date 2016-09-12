@@ -33,6 +33,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.wf.IWorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -47,6 +49,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
+import org.springframework.aop.ThrowsAdvice;
 
 @Stateless
 public class WorkflowService extends BusinessService<Workflow> {
@@ -91,7 +94,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 				result.add(clazz);
 			}
 		}
-		Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode());
+		Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces(provider);
 
 		if (mmap != null) {
 			for (Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()) {
@@ -110,7 +113,8 @@ public class WorkflowService extends BusinessService<Workflow> {
 	 * @param e
 	 * @return
 	 */
-	public List<Class<?>> getWFTypeByEntity(Class<? extends IEntity> e, Provider provider) {
+	@SuppressWarnings("rawtypes")
+    public List<Class<?>> getWFTypeByEntity(Class<? extends IEntity> e, Provider provider) {
 		List<Class<?>> result = new ArrayList<Class<?>>();
 		for (Class<?> clazz : getAllWFTypes(provider)) {
 			String genericClassName = "";
@@ -247,23 +251,30 @@ public class WorkflowService extends BusinessService<Workflow> {
 		}
 	}
 
-	/**
-	 * Return the workflowType class by name
-	 * 
-	 * @param wfTypeClassName
-	 * @param provider
-	 * @return
-	 * @throws ClassNotFoundException
-	 */
-	public Class<?> getWFTypeClassForName(String wfTypeClassName,Provider provider) throws ClassNotFoundException {
-		Class<?> clazz = null;
-		if (scriptInstanceService.getAllScriptInterfaces().get(provider.getCode()).containsKey(wfTypeClassName)) {
-			clazz = scriptInstanceService.getAllScriptInterfaces().get(provider.getCode()).get(wfTypeClassName);
-		} else {
-			clazz = Class.forName(wfTypeClassName);
-		}
-		return clazz;
-	}
+    /**
+     * Return the workflowType class by name
+     * 
+     * @param wfTypeClassName
+     * @param provider
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InvalidScriptException
+     */
+    public Class<?> getWFTypeClassForName(String wfTypeClassName, Provider provider) throws ClassNotFoundException, InvalidScriptException {
+
+        try {
+            return Class.forName(wfTypeClassName);
+        } catch (ClassNotFoundException ex) {
+
+            try {
+                Class<?> clazz = scriptInstanceService.getScriptInterface(provider, wfTypeClassName);
+                return clazz;
+
+            } catch (ElementNotFoundException e) {
+                throw new ClassNotFoundException("Class " + wfTypeClassName);
+            }
+        }
+    }
 
 	private boolean matchExpression(String expression, Object object) throws BusinessException {
 		Boolean result = true;

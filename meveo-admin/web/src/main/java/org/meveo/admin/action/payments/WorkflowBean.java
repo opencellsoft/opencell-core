@@ -19,7 +19,6 @@
 package org.meveo.admin.action.payments;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +38,7 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.admin.wf.WorkflowType;
-import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;
@@ -228,7 +223,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
      * @param query A partial class name (including a package)
      * @return A list of classnames
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<String> autocompleteClassNames(String query) {
     	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
     	 List<String> classNames = new ArrayList<String>();
@@ -269,21 +263,9 @@ public class WorkflowBean extends BaseBean<Workflow> {
 				statusMap.put(s, s);
 			}
 			return statusMap;
-		} catch (ClassNotFoundException e) {
-			log.error("unable to get class " + entity.getWfType(), e);
-		} catch (InstantiationException e) {
-			log.error("unable to instantiate class " + entity.getWfType(), e);
-		} catch (IllegalAccessException e) {
-			log.error("can not access constructor of class " + entity.getWfType(), e);
-		} catch (NoSuchMethodException e) {
-			log.error("unable to find getStatusList method on class " + entity.getWfType(), e);
-		} catch (SecurityException e) {
-			log.error(e.getMessage(), e);
-		} catch (IllegalArgumentException e) {
-			log.error("illegal arguments for getStatusList method on class " + entity.getWfType(), e);
-		} catch (InvocationTargetException e) {
-			log.error(e.getMessage(), e);
-		}
+		} catch (Exception e) {
+			log.error("Unable to get/instantiate or retrieve status list for class " + entity.getWfType(), e);
+		} 
     	return new TreeMap<>();
     }
 
