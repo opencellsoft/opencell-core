@@ -134,13 +134,13 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	/**
 	 * Find a Workflow by an Entity
-	 * @param class1
+	 * @param entityClass
 	 * @param provider
 	 * @return
 	 */
-	public List<Workflow> findByEntity(Class<? extends IEntity> e, Provider provider) {
+	public List<Workflow> findByEntity(Class<? extends IEntity> entityClass, Provider provider) {
 		List<Workflow> result = new ArrayList<Workflow>();
-		List<Class<?>> listWFType = getWFTypeByEntity(e, provider);
+		List<Class<?>> listWFType = getWFTypeByEntity(entityClass, provider);
 		for (Class<?> wfTypeclass : listWFType) {
 			result.addAll(findByWFType(wfTypeclass.getName(), provider));
 		}
@@ -148,6 +148,19 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	}
 
+    /**
+     * Check if there is any Workflow setup for a given entity class
+     * 
+     * @param entityClass
+     * @param provider
+     * @return
+     */
+    public boolean isWorkflowSetup(Class<? extends IEntity> entityClass, Provider provider) {
+        List<Workflow> workflows = findByEntity(entityClass, provider);
+        return !workflows.isEmpty();
+    }
+	
+	
    /**
     * Execute all matching workflows for the entity if workflowCode is no set, 
     * 
