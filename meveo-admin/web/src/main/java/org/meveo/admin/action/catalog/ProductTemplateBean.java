@@ -277,6 +277,11 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			entity.getBusinessAccountModels().clear();
 			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
 		}
+		
+		if (entity.getChannels() != null) {
+			entity.getChannels().clear();
+			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
+		}
 
 		String outcome = super.saveOrUpdate(killConversation);
 
