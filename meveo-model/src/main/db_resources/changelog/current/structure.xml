@@ -1023,7 +1023,7 @@
 		<dropColumn tableName="cat_bundle_product_template" columnName="provider_id"/>
 	</changeSet>
 	
-    <changeSet id="#1637_20160819_2" author="TyshanShi">
+ <!--   <changeSet id="#1637_20160819_2" author="TyshanShi">
         <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
                 id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
                 ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
@@ -1046,5 +1046,5 @@
         <sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
                 ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
         <sql>alter table ADM_MESSAGES drop column code</sql>
-    </changeSet>
+    </changeSet> -->
 </databaseChangeLog>
