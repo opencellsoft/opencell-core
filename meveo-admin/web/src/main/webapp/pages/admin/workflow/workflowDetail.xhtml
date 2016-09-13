@@ -8,10 +8,6 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
         <p:panel>
             <h:form id="crumbmenuForm">
@@ -109,7 +105,7 @@
                                                                         update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" event="valueChange">
                                                                     </p:ajax>
                                                                     <f:selectItem itemLabel="#{messages['transition.selectRule']}" itemValue="" noSelectionOption="true" />
-                                                                    <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
+                                                                    <f:selectItems value="#{workflowBean.wfDecisionRulesName}" />
                                                                 </p:selectOneMenu>
                                                             </hftl:decorateFormField>
 
@@ -143,7 +139,7 @@
                                                                 label="#{messages['decisionRuleNewValue.value']}"
                                                                 rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}">
                                                                 <p:spinner id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
-                                                                    required="true" />
+                                                                    required="true"/>
                                                             </hftl:decorateFormField>
 
                                                             <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}"

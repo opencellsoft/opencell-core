@@ -82,7 +82,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @Inject
     private WFActionService wfActionService;
 
-    private List<String> wfTransitionRulesName;
+    private List<String> wfDecisionRulesName;
 
     private List<List<WFDecisionRule>> wfDecisionRulesByName = new ArrayList<>();
 
@@ -269,15 +269,15 @@ public class WorkflowBean extends BaseBean<Workflow> {
     	return new TreeMap<>();
     }
 
-    public List<String> getWfTransitionRulesName() {
-        if (wfTransitionRulesName == null) {
-            wfTransitionRulesName = wfDecisionRuleService.getDistinctNameWFTransitionRules(getCurrentProvider());
+    public List<String> getWfDecisionRulesName() {
+        if (wfDecisionRulesName == null) {
+            wfDecisionRulesName = wfDecisionRuleService.getDistinctNameWFTransitionRules(getCurrentProvider());
         }
-        return wfTransitionRulesName;
+        return wfDecisionRulesName;
     }
 
-    public void setWfTransitionRulesName(List<String> wfTransitionRulesName) {
-        this.wfTransitionRulesName = wfTransitionRulesName;
+    public void setWfDecisionRulesName(List<String> wfDecisionRulesName) {
+        this.wfDecisionRulesName = wfDecisionRulesName;
     }
 
     public List<List<WFDecisionRule>> getWfDecisionRulesByName() {
