@@ -262,18 +262,11 @@ public class WorkflowApi extends BaseApi {
 	 * @param baseEntityInstanceId
 	 * @param workflowCode
 	 * @param currentUser
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
 	 * @throws BusinessException
 	 * @throws MeveoApiException
 	 */
 	@SuppressWarnings("unchecked")
-    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
+    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws BusinessException, MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();

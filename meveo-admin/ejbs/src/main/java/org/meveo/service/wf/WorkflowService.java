@@ -19,7 +19,6 @@
 package org.meveo.service.wf;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -49,7 +48,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.springframework.aop.ThrowsAdvice;
 
 @Stateless
 public class WorkflowService extends BusinessService<Workflow> {
@@ -171,16 +169,9 @@ public class WorkflowService extends BusinessService<Workflow> {
     * @param entity
     * @param workflowCode
     * @param currentUser
-    * @throws NoSuchMethodException
-    * @throws SecurityException
-    * @throws ClassNotFoundException
-    * @throws InstantiationException
-    * @throws IllegalAccessException
-    * @throws IllegalArgumentException
-    * @throws InvocationTargetException
     * @throws BusinessException
     */
-	public void executeMatchingWorkflows(IEntity entity, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException {
+	public void executeMatchingWorkflows(IEntity entity, String workflowCode, User currentUser) throws BusinessException {
 
 		if (!StringUtils.isBlank(workflowCode)) {
 			Workflow workflow = findByCode(workflowCode, currentUser.getProvider());
@@ -204,23 +195,17 @@ public class WorkflowService extends BusinessService<Workflow> {
 
 	/**
 	 * Execute the workflow for the entity
-	 * 
 	 * @param entity
 	 * @param workflow
 	 * @param currentUser
 	 * @throws BusinessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
 	 */
-	public void executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException{
+		try{
 		log.debug("Executing workflow:{} ..."+workflow.getCode());
 		Class<?> wfTypeClass = getWFTypeClassForName(workflow.getWfType(),currentUser.getProvider());
 		Constructor<?> constructor = wfTypeClass.getConstructor(entity.getClass());
+		@SuppressWarnings("rawtypes")
 		IWorkflowType wfType = (IWorkflowType) constructor.newInstance(entity);
 		log.debug("ActualStatus:" + wfType.getActualStatus());
 		log.debug("StatusList:" + wfType.getStatusList());
@@ -248,6 +233,10 @@ public class WorkflowService extends BusinessService<Workflow> {
 				log.debug("entity updated");
 				break;
 			}
+		}
+		}catch(Exception e){
+			log.error("Execution workflow failed",e);
+			throw new BusinessException(e.getMessage());
 		}
 	}
 
