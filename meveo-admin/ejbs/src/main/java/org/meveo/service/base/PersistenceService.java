@@ -77,7 +77,7 @@ import org.meveo.util.MeveoJpaForJobs;
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
-    protected final Class<E> entityClass;
+    protected  Class<E> entityClass;
 
     public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
     public static String SEARCH_CURRENT_USER = "currentUser";

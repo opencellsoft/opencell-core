@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,17 +43,24 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
-@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"FROM_STATUS", "TO_STATUS", "WORKFLOW_ID", "PRIORITY", "PROVIDER_ID"}))
+@ExportIdentifier({ "uuid", "provider" })
+@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
 public class WFTransition extends AuditableEntity implements Comparable<WFTransition>{
 
 	private static final long serialVersionUID = 1L;
+
+    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
  
 	@Column(name = "FROM_STATUS")
 	private String fromStatus;
@@ -72,9 +81,8 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	private Workflow workflow;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "WF_TRANSITION_TRANSITION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "TRANSITION_RULE_ID"))
-    @OrderBy("priority ASC")
-    private Set<WFTransitionRule> wfTransitionRules = new HashSet<>();
+    @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
+    private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
     @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
     @OrderBy("priority ASC")
@@ -84,7 +92,15 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	@Size(max = 2000)
 	private String conditionEl;
 
-	/**
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
 	 * @return the fromStatus
 	 */
 	public String getFromStatus() {
@@ -171,32 +187,40 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 	}
 
     public String getCombinedEl() {
-
-        if (wfTransitionRules == null) {
+        if (CollectionUtils.isEmpty(wfDecisionRules)) {
             return conditionEl;
         }
 
         StringBuffer combinedEl = new StringBuffer();
-        final String AND = "AND";
-        if (wfTransitionRules != null) {
-            for (WFTransitionRule wfTransitionRule: wfTransitionRules) {
-                if (wfTransitionRule.getConditionEl() != null) {
-                    combinedEl.append(conditionEl).append(AND).append(wfTransitionRule.getConditionEl());
-                }
+        final String AND = " AND ";
+        StringBuffer combinedDecisionRuleEL = new StringBuffer();
+        for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
+            if (!StringUtils.isBlank(wfDecisionRule.getConditionEl())) {
+                combinedDecisionRuleEL.append(AND).append(wfDecisionRule.getConditionEl());
             }
         }
-        if (combinedEl.toString().startsWith(AND)) {
-            return combinedEl.toString().substring(3);
+        String trimmedEl = "";
+        String elWithoutBrackets = "";
+        if (!StringUtils.isBlank(conditionEl)) {
+            trimmedEl = conditionEl.trim();
+            if (trimmedEl != null && trimmedEl.indexOf("{") >= 0 && trimmedEl.indexOf("}") >= 0) {
+                elWithoutBrackets = trimmedEl.substring(2, trimmedEl.length() - 1);
+            }
+        }
+        if (StringUtils.isBlank(elWithoutBrackets)) {
+            return combinedDecisionRuleEL.substring(5);
+        } else if (combinedDecisionRuleEL.toString().startsWith(AND)) {
+            combinedEl.append(trimmedEl.substring(0, trimmedEl.length() - 1)).append(combinedDecisionRuleEL).append("}");
         }
         return combinedEl.toString();
     }
 
-    public Set<WFTransitionRule> getWfTransitionRules() {
-        return wfTransitionRules;
+    public Set<WFDecisionRule> getWfDecisionRules() {
+        return wfDecisionRules;
     }
 
-    public void setWfTransitionRules(Set<WFTransitionRule> wfTransitionRules) {
-        this.wfTransitionRules = wfTransitionRules;
+    public void setWfDecisionRules(Set<WFDecisionRule> wfDecisionRules) {
+        this.wfDecisionRules = wfDecisionRules;
     }
 
     @Override
@@ -226,6 +250,6 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     @Override
     public int compareTo(WFTransition o) {
-        return Long.compare(this.priority, o.priority);
+        return this.priority - o.priority;
     }
 }

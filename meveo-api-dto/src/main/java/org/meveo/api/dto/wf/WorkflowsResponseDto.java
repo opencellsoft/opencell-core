@@ -1,8 +1,11 @@
 package org.meveo.api.dto.wf;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.meveo.api.dto.payment.WorkflowsDto;
+import javax.xml.bind.annotation.*;
+
+import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -12,19 +15,24 @@ import org.meveo.api.dto.response.BaseResponse;
  *
  */
 @XmlRootElement(name="WorkflowsResponse")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowsResponseDto extends BaseResponse {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1262341691039525086L;
-	private WorkflowsDto workflowsDto;
-	public WorkflowsDto getWorkflowsDto() {
-		return workflowsDto;
-	}
-	public void setWorkflowsDto(WorkflowsDto workflowsDto) {
-		this.workflowsDto = workflowsDto;
-	}
-	
+
+    @XmlElementWrapper(name="workflows")
+    @XmlElement(name="workflow")
+    private List<WorkflowDto> listWorkflowDto = new ArrayList<WorkflowDto>();
+
+    public List<WorkflowDto> getListWorkflowDto() {
+        return listWorkflowDto;
+    }
+
+    public void setListWorkflowDto(List<WorkflowDto> listWorkflowDto) {
+        this.listWorkflowDto = listWorkflowDto;
+    }
 }
 

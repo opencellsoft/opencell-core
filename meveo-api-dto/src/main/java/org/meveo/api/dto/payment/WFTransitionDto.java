@@ -30,14 +30,17 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 
 
 @XmlType(name = "WFTransition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFTransitionDto extends BaseDto {
 	
-	private static final long serialVersionUID = 8309866046667741458L; 
+	private static final long serialVersionUID = 8309866046667741458L;
+
+    @XmlElement(required = false)
+    private String uuid;
 	
 	@XmlElement(required = true)
 	private String fromStatus;
@@ -45,51 +48,48 @@ public class WFTransitionDto extends BaseDto {
 	@XmlElement(required = true)
 	private String toStatus;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private String conditionEl;
 
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     private Integer priority;
 
-    @XmlElement(required = false)
+    @XmlElement(required = true)
     private String description;
-	
-	@XmlElement(required = true)
-	private String workflowCode;
-	
-	@XmlElementWrapper
-    @XmlElement(name="wfActionDto")
+
+    @XmlElementWrapper(name="actions")
+    @XmlElement(name="action")
 	private List<WFActionDto>  listWFActionDto = new ArrayList<WFActionDto>();
 
-    @XmlElementWrapper
-    @XmlElement(name="wfTransitionRuleDto")
-    private List<WFTransitionRuleDto> listWFTransitionRuleDto = new ArrayList<>();
+    @XmlElementWrapper(name="decisionRules")
+    @XmlElement(name="decisionRule")
+    private List<WFDecisionRuleDto> listWFDecisionRuleDto = new ArrayList<>();
 
 	public WFTransitionDto(){
 	}
 		
-	public WFTransitionDto(WFTransition wfTransition) { 		
+	public WFTransitionDto(WFTransition wfTransition) {
+        this.uuid = wfTransition.getUuid();
 		this.fromStatus = wfTransition.getFromStatus();
 		this.toStatus = wfTransition.getToStatus();
 		this.conditionEl = wfTransition.getConditionEl();
         this.priority = wfTransition.getPriority();
         this.description = wfTransition.getDescription();
-		this.workflowCode = wfTransition.getWorkflow().getCode();
 		for(WFAction wfAction : wfTransition.getWfActions() ){
 			WFActionDto wfadto = new WFActionDto(wfAction);
-			wfadto.setWfTransitionDto(this);
 			listWFActionDto.add(wfadto);
 		}
 
-        for(WFTransitionRule wfTransitionRule : wfTransition.getWfTransitionRules() ){
-            WFTransitionRuleDto wfTransitionRuleDto = new WFTransitionRuleDto(wfTransitionRule);
-            listWFTransitionRuleDto.add(wfTransitionRuleDto);
+        for(WFDecisionRule wfDecisionRule : wfTransition.getWfDecisionRules() ){
+            WFDecisionRuleDto wfDecisionRuleDto = new WFDecisionRuleDto(wfDecisionRule);
+            listWFDecisionRuleDto.add(wfDecisionRuleDto);
         }
 	}
 	
 	public WFTransition fromDto(WFTransition wfTransition){
 		if(wfTransition == null)
 			wfTransition = new WFTransition();
+        wfTransition.setUuid(getUuid());
 		wfTransition.setFromStatus(getFromStatus());
 		wfTransition.setToStatus(getToStatus());
 		wfTransition.setConditionEl(getConditionEl());
@@ -98,7 +98,21 @@ public class WFTransitionDto extends BaseDto {
 		return wfTransition;
 	}
 
-	/**
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
 	 * @return the fromStatus
 	 */
 	public String getFromStatus() {
@@ -156,20 +170,6 @@ public class WFTransitionDto extends BaseDto {
         this.description = description;
     }
 
-    /**
-	 * @return the workflowDto
-	 */
-	public String getWorkflowCode() {
-		return workflowCode;
-	}
-
-	/**
-	 * @param workflowCode the workflowDto to set
-	 */
-	public void setWorkflowCode(String workflowCode) {
-		this.workflowCode = workflowCode;
-	}
-
 	/**
 	 * @return the listWFActionDto
 	 */
@@ -177,12 +177,12 @@ public class WFTransitionDto extends BaseDto {
 		return listWFActionDto;
 	}
 
-    public List<WFTransitionRuleDto> getListWFTransitionRuleDto() {
-        return listWFTransitionRuleDto;
+    public List<WFDecisionRuleDto> getListWFDecisionRuleDto() {
+        return listWFDecisionRuleDto;
     }
 
-    public void setListWFTransitionRuleDto(List<WFTransitionRuleDto> listWFTransitionRuleDto) {
-        this.listWFTransitionRuleDto = listWFTransitionRuleDto;
+    public void setListWFDecisionRuleDto(List<WFDecisionRuleDto> listWFDecisionRuleDto) {
+        this.listWFDecisionRuleDto = listWFDecisionRuleDto;
     }
 
     /**
