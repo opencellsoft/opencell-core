@@ -43,7 +43,7 @@ public class OfferTemplateDto implements Serializable {
     private String offerTemplateCategoryCode;
 
     @XmlElementWrapper(name = "offerTemplateCategories")
-    @XmlElement(name = "code")
+    @XmlElement(name = "offerTemplateCategory")
     private List<String> offerTemplateCategories;
 
     @XmlElementWrapper(name = "offerServiceTemplates")
