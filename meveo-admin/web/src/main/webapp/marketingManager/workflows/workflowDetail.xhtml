@@ -64,6 +64,7 @@
                         <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
                             rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}" componentWidth="20">
                             <p:spinner id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" required="true" />
+                            <pe:keyFilter for="decisionRuleNumberValue#{loopStatus.index}" mask="num" />
                         </hftl:decorateFormField>
 
                         <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.string']}"
@@ -82,11 +83,13 @@
 
                         <hftl:decorateFormField fieldId="decisionRuleFromNumberValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.number']}"
                             rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}" componentWidth="20">
-                            <h:panelGrid columns="4">
+                            <h:panelGrid columns="6">
                                 <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
                                 <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" />
+                                <pe:keyFilter for="decisionRuleFromNumberValue#{loopStatus.index}" mask="num" />
                                 <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
                                 <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10" maxlength="10" />
+                                <pe:keyFilter for="decisionRuleFromNumberValue#{loopStatus.index}_toRange" mask="num" />
                             </h:panelGrid>
                         </hftl:decorateFormField>
 
