@@ -23,16 +23,18 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@CustomFieldEntity(cftCodePrefix = "ORDER")
 @Table(name = "ORD_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ORDER_SEQ")
-public class Order extends BusinessEntity {
+public class Order extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
@@ -124,8 +126,8 @@ public class Order extends BusinessEntity {
     private List<OrderItem> orderItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROUTED_TO_USER_ID")
-    private User routedToUser;
+    @JoinColumn(name = "ROUTED_TO_USER_GROUP_ID")
+    private UserHierarchyLevel routedToUserGroup;
 
     @Column(name = "RECEIVED_FROM", length = 50)
     private String receivedFromApp;
@@ -241,17 +243,17 @@ public class Order extends BusinessEntity {
         this.orderItems.add(orderItem);
     }
 
-    public User getRoutedToUser() {
-        return routedToUser;
+    public UserHierarchyLevel getRoutedToUserGroup() {
+        return routedToUserGroup;
     }
 
-    public void setRoutedToUser(User routedToUser) {
-        this.routedToUser = routedToUser;
+    public void setRoutedToUserGroup(UserHierarchyLevel routedToUserGroup) {
+        this.routedToUserGroup = routedToUserGroup;
     }
 
     public String getRoutedTo() {
-        if (routedToUser != null) {
-            return routedToUser.getName().getFullName();
+        if (routedToUserGroup != null) {
+            return routedToUserGroup.getCode();
         }
         return null;
     }

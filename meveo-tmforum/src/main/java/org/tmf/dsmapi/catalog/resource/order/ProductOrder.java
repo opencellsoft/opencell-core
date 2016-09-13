@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,10 +17,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value=Include.NON_NULL)
 public class ProductOrder implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4883520016795545598L;
+	
 	private String id;
 	private String href;
 	private String externalld;
@@ -46,6 +45,9 @@ public class ProductOrder implements Serializable {
 	private List<Note> note;
 	private List<RelatedParty> relatedParty;
 	private List<OrderItem> orderItem;
+	
+    private CustomFieldsDto customFields = new CustomFieldsDto();
+	
 	public String getId() {
 		return id;
 	}
@@ -142,6 +144,12 @@ public class ProductOrder implements Serializable {
 	public void setOrderItem(List<OrderItem> orderItem) {
 		this.orderItem = orderItem;
 	}
-	
 
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

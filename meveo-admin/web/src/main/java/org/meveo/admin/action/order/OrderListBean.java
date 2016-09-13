@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action.order;
 
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
@@ -26,4 +28,29 @@ import javax.inject.Named;
 public class OrderListBean extends OrderBean {
 
     private static final long serialVersionUID = 6301829745333803753L;
+    private static final String SEARCH_USER_GROUP = "routedToUserGroup";
+
+    private boolean showMyOrdersOnly = true;
+
+    public boolean isShowMyOrdersOnly() {
+        return showMyOrdersOnly;
+    }
+
+    public void setShowMyOrdersOnly(boolean showMyOrdersOnly) {
+        this.showMyOrdersOnly = showMyOrdersOnly;
+    }
+
+    /**
+     * Add additional criteria for searching by my orders for administrationManagement only
+     */
+    @Override
+    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+
+        boolean isAdmin = currentUser.hasPermission("administration", "administrationManagement");
+        if (isAdmin && showMyOrdersOnly) {
+            searchCriteria.put(SEARCH_USER_GROUP, getCurrentUser().getUserLevel());
+        }
+
+        return searchCriteria;
+    }
 }

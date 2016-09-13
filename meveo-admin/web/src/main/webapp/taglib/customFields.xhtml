@@ -74,7 +74,7 @@
                     </c:if>
                 </c:if>
                 <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
-                    <p:panel header="#{cfFieldOrFg.data}">
+                    <p:fieldset legend="#{cfFieldOrFg.data}">
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
                             <c:if
@@ -83,7 +83,7 @@
                                     dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
                             </c:if>
                         </c:forEach>
-                    </p:panel>
+                    </p:fieldset>
                 </c:if>
             </c:forEach>
 

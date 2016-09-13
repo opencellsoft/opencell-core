@@ -40,7 +40,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -478,10 +477,5 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 	@Override
 	public int compareTo(PricePlanMatrix o) {
 		return this.getPriority()-o.getPriority();
-	}
-
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
 	}
 }

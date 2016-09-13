@@ -12,19 +12,19 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="entity_class" type="VARCHAR(255)" />
-		</createTable>
+        </createTable>
 
 		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" />
         <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" />
         <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" />
-		<addForeignKeyConstraint
+        <addForeignKeyConstraint 
         	constraintName="FK_SECURED_ENTITY_USER" 
         	referencedTableName="ADM_USER" 
         	baseColumnNames="USER_ID" 
         	baseTableName="ADM_SECURED_ENTITY"
             referencedColumnNames="ID" />
-	</changeSet>
-	
+    </changeSet>
+
 	<changeSet id="#1821_20160707" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
 			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
@@ -52,12 +52,12 @@
 	</changeSet>  
 	<changeSet id="#1889_20160729" author="Mbarek">
 	    <addColumn tableName="BILLING_TAX">
-        <column name="UUID" type="VARCHAR(50)"/>
+        <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 	</changeSet>
      <changeSet id="#1890_20160801" author="Mbarek">
-	      <addColumn tableName="BILLING_CYCLE">
-          <column name="UUID" type="VARCHAR(50)"/>
+	    <addColumn tableName="BILLING_CYCLE">
+          <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
 			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
@@ -623,7 +623,7 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
-            <column name="UUID" type="VARCHAR(50)"/>
+            <column name="UUID" type="VARCHAR(60)"/>
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -1147,5 +1147,36 @@
     <changeSet author="anasseh" id="#2007_10092016">
   	   <dropColumn tableName="WF_WORKFLOW" columnName="EXPORT_LOT"/>
     </changeSet>
+
+    <changeSet id="#1844_20160903" author="pbach">
+        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>
+        <addColumn tableName="ord_order">
+            <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
     
+    <changeSet id="#1889_20160908" author="AndriusKarpavicius">
+        <addColumn tableName="ORD_ORDER">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>update ORD_ORDER set UUID ='ORDER-'|| id </sql>   
+        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID"/> 
+        
+        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID"/> 
+        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID"/> 
+        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID"/> 
+    </changeSet>
+
+    <changeSet id="#1844_20160910" author="pbach">
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, ',', ',"') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, ')}', '")}') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+        <sql>update WF_ACTION set ACTION_EL = REPLACE(ACTION_EL, 'routedToUserGroup', 'routeToUserGroup') where WF_TRANSITION_ID in
+            (select ID from WF_TRANSITION where WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'));
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

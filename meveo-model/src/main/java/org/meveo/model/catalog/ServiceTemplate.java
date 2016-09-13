@@ -44,7 +44,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 
 @Entity
@@ -204,11 +203,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	public void setInvoicingCalendar(Calendar invoicingCalendar) {
 		this.invoicingCalendar = invoicingCalendar;
-	}
-
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
 	}
 
 	public BusinessServiceModel getBusinessServiceModel() {

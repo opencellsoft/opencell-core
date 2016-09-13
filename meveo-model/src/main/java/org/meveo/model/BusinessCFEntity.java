@@ -50,4 +50,9 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
+    
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities(){
+        return null;
+    }
 }

@@ -15,11 +15,14 @@ import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -111,6 +114,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "now", MeveoFunctionMapper.class.getMethod("getNowTimestamp"));
 
             addFunction("mv", "formatDate", MeveoFunctionMapper.class.getMethod("formatDate", Date.class, String.class));
+
+            addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
