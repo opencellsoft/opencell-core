@@ -25,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -38,6 +40,8 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "uuid", "provider" })
 @Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_ACTION_SEQ")
+@NamedQueries({
+	@NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC")})
 public class WFAction extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
