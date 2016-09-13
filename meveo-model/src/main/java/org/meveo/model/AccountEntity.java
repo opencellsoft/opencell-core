@@ -47,7 +47,7 @@ import org.meveo.model.shared.Name;
 public abstract class AccountEntity extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
-
+    
 	@Column(name = "EXTERNAL_REF_1", length = 50)
 	@Size(max = 50)
 	private String externalRef1;

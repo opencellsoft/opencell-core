@@ -202,7 +202,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
-    @OneToOne(mappedBy = "provider", cascade= CascadeType.ALL)
+    @OneToOne(mappedBy = "provider", cascade= CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
 	
