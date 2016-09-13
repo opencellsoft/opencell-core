@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 
 /**
@@ -24,6 +25,7 @@ import org.meveo.model.ObservableEntity;
  */
 @Entity
 @ObservableEntity
+@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
 @NamedQueries({

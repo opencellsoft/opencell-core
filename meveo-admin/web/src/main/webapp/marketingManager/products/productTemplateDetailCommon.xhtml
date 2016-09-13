@@ -11,7 +11,7 @@
 
     <p:growl id="growl" globalOnly="true" autoUpdate="false"></p:growl>
 
-    <p:panelGrid columns="4" columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop" styleClass="ui-panelgrid-blank">
+    <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid35 Responsive100 VAlignTop, Wid35 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
         <p:panel>
             <hftl:decorateFormField fieldId="productImageUpload" rendered="#{mainBackingBean.entity.transient}" label="#{messages['commons.image']}">
                 <p:fileUpload id="productImageUpload" auto="false" skinSimple="true" mode="simple" value="#{mainBackingBean.uploadedFile}" />
@@ -47,7 +47,7 @@
         </p:panel>
 
         <p:panel>
-            <p:panelGrid id="productDiv" columns="1" styleClass="ui-panelgrid-blank">
+            <h:panelGrid id="productDiv" columns="1" styleClass="ui-panelgrid-blank Wid100">
                 <h:outputText value="#{mainBackingBean.entity.nameOrCode}" rendered="#{!mainBackingBean.edit}"></h:outputText>
                 <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{mainBackingBean.edit}" actionListenerBean="#{mainBackingBean}"
                     actionListenerMethod="onNameChange" listenerUpdate="code" />
@@ -56,7 +56,7 @@
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
                     listElements="#{businessProductModelBean.listAll()}" />
                 <hftl:formLanguageFields entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" multiLang="true" />
-            </p:panelGrid>
+            </h:panelGrid>
             <p:panel>
                 <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
                 <h:outputText value="#{mainBackingBean.entity.auditable.creator}"></h:outputText>

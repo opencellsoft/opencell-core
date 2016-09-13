@@ -40,10 +40,12 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 // @ExportIdentifier({ "code", "provider" })
 // @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints =

@@ -33,8 +33,8 @@
 			showDeleteButton="false" formButtonsTopRight="true"
 			backView="mm_offerTemplates">
 
-			<p:panelGrid columns="4"
-				columnClasses="Wid10, Wid30 VAlignTop, Wid30 VAlignTop, Wid30 VAlignTop"
+			<p:panelGrid columns="3"
+				columnClasses="Wid10 Responsive100, Wid35 Responsive100 VAlignTop, Wid35 Responsive100 VAlignTop"
 				styleClass="ui-panelgrid-blank">
 				<p:panel>
 					<hftl:decorateFormField fieldId="offerImageUpload"
@@ -86,7 +86,7 @@
 					</p:outputPanel>
 				</p:panel>
 				<p:panel>
-					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
 						<hftl:formField label="#{messages['offerTemplate.prefix']}"
 							required="true" field="prefix"
 							rendered="#{offerTemplateBean.bomId ne null}" />
@@ -106,7 +106,7 @@
 						<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
 							backingBean="#{offerTemplateBean}" multiLang="true" />
 
-					</p:panelGrid>
+					</h:panelGrid>
 					<p:panel>
 						<h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
 						<h:outputText

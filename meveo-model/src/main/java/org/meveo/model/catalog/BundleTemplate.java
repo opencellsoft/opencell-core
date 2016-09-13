@@ -12,6 +12,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 
 /**
@@ -19,6 +20,7 @@ import org.meveo.model.ObservableEntity;
  */
 @Entity
 @ObservableEntity
+@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "BUNDLE")
 @DiscriminatorValue("BUNDLE")
 @NamedQueries({ @NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
