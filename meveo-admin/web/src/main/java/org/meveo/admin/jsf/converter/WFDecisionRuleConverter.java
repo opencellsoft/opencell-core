@@ -20,8 +20,8 @@ package org.meveo.admin.jsf.converter;
 
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.WFTransitionRule;
-import org.meveo.service.wf.WFTransitionRuleService;
+import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.service.wf.WFDecisionRuleService;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -29,11 +29,11 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-@FacesConverter("wfTransitionRuleConverter")
-public class WFTransitionRuleConverter implements Converter {
+@FacesConverter("wfDecisionRuleConverter")
+public class WFDecisionRuleConverter implements Converter {
 
     @Inject
-    private WFTransitionRuleService wFTransitionServiceRule;
+    private WFDecisionRuleService wFDecisionServiceRule;
 
     @Inject
     @CurrentProvider
@@ -43,7 +43,7 @@ public class WFTransitionRuleConverter implements Converter {
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if(value != null && value.trim().length() > 0) {
             Long id = Long.parseLong(value);
-            return wFTransitionServiceRule.findById(id);
+            return wFDecisionServiceRule.findById(id);
         } else {
             return null;
         }
@@ -54,6 +54,6 @@ public class WFTransitionRuleConverter implements Converter {
 	    if (o == null) {
             return null;
         }
-        return String.valueOf(((WFTransitionRule) o).getId());
+        return String.valueOf(((WFDecisionRule) o).getId());
 	}
 }

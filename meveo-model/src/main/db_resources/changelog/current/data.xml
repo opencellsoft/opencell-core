@@ -52,7 +52,6 @@
         
         <sql>ALTER SEQUENCE adm_user_seq RESTART WITH 4;</sql>
 	</changeSet>
-        
     
     <changeSet id="#1844_20160722_orders" author="AndriusKarpavicius">
     
@@ -79,37 +78,37 @@
             <column name="role_id" valueNumeric="1" />
             <column name="permission_id" valueNumeric="19" />
         </insert>        
-    </changeSet>    
+    </changeSet>
 
     <changeSet id="#1861_20160817" author="pbach">
         <sql>
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 1, 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 2, 'STRING', 'south', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 3, 'STRING', 'west', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 4, 'STRING', 'north', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 1, 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (6, 0, false, '2016-08-15 08:11:26.359', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 2, 'RANGE_NUMBER', '200|300', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (7, 0, false, '2016-08-15 08:11:49.716', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 3, 'RANGE_NUMBER', '300|500', 1, 1, NULL, false);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 1, 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_transition_rule (id, version, disabled, created, updated, condition_el, name, priority, type, value, provider_id, creator_id, updater_id, model) VALUES (9, 0, false, '2016-08-16 08:43:11.128', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 2, 'STRING', 'Medium Account', 1, 1, NULL, false);
-            ALTER SEQUENCE wf_transition_rule_seq RESTART WITH 10;
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (6, 0, false, '2016-08-15 08:11:26.359', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '200|300', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (7, 0, false, '2016-08-15 08:11:49.716', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '300|500', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (9, 0, false, '2016-08-16 08:43:11.128', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Medium Account', 1, 1, NULL, false);
+            ALTER SEQUENCE wf_decision_rule_seq RESTART WITH 10;
         </sql>
     </changeSet>
 
     <changeSet id="#1839_20160825" author="pbach">
         <sql>
-            INSERT INTO wf_workflow (id, version, disabled, created, updated, code, description, enable_hostory, export_lot, status, wf_type, provider_id, creator_id, updater_id) VALUES (nextval('wf_workflow_seq'), 0, false, '2016-08-25 03:31:25.742', '2016-08-25 03:32:39.111', 'Customer Care Assignation of Orders', NULL, false, false, 'ACTIVE', 'org.meveo.admin.wf.types.OrderWF', 1, 1, 1);
+            INSERT INTO wf_workflow (id, version, disabled, created, updated, code, description, enable_hostory, wf_type, provider_id, creator_id, updater_id) VALUES (nextval('wf_workflow_seq'), 0, false, '2016-08-25 03:31:25.742', '2016-08-25 03:32:39.111', 'Customer Care Assignation of Orders', NULL, false, 'org.meveo.admin.wf.types.OrderWF', 1, 1, 1);
         </sql>
     </changeSet>
     <changeSet id="#1861_20160826" author="pbach">
         <sql>
-            delete from wf_transition_transition_rule;
-            delete from wf_transition_rule where id in (6,7,9);
+            delete from wf_transition_decision_rule;
+            delete from wf_decision_rule where id in (6,7,9);
         </sql>
     </changeSet>
     <changeSet id="#1839_20160827" author="pbach">
         <sql>
-            INSERT INTO wf_transition (id, version, disabled, created, updated, condition_el, from_status, to_status, provider_id, creator_id, updater_id, workflow_id, priority, description) VALUES (nextval('wf_transition_seq'), 3, false, '2016-08-26 22:37:48.91', '2016-08-27 00:32:49.271', NULL, NULL, NULL, 1, 1, 1, (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'), 100, 'Catch all');
+            INSERT INTO wf_transition (id, uuid, version, disabled, created, updated, condition_el, from_status, to_status, provider_id, creator_id, updater_id, workflow_id, priority, description) VALUES (nextval('wf_transition_seq'), 'WFTransition' || nextval('wf_transition_seq'), 3, false, '2016-08-26 22:37:48.91', '2016-08-27 00:32:49.271', NULL, NULL, NULL, 1, 1, 1, (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'), 100, 'Catch all');
         </sql>
     </changeSet>
     <changeSet id="#1839_20160830" author="pbach">
@@ -126,5 +125,13 @@
         </insert>
     </changeSet>
     
-    
+    <changeSet id="#1849_20160909" author="LuisMance">
+    	<sql>
+            <![CDATA[INSERT INTO dwh_measurable_quant (id, version, disabled, created, updated, code, description, editable, measurement_period, sql_query, provider_id, creator_id, additive) VALUES (nextval('dwh_measurable_quant_seq'), 0, false, '2016-09-09 09:36:00.00', '2016-09-09 09:36:00.00', 'CHURN2', 'Churn', false, 'MONTHLY', 'WITH acc_new AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date >= "#{date}" AND ua.subscription_date < "#{nextDate}" AND (ua.termination_date IS NULL OR ua.termination_date >= "#{nextDate}")AND ae.provider_id = #{provider}),acc_end AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.termination_date >= "#{date}" AND ua.termination_date < "#{nextDate}" AND ae.provider_id = #{provider}),acc_period AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date < "#{date}" AND  (ua.termination_date IS NULL  OR ua.termination_date>="#{nextDate}") AND ae.provider_id = #{provider}) SELECT CASE  WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2) <> 0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2) ELSE 0 END as churn FROM acc_new ,acc_end,acc_period', 1, 1, false);]]>
+        </sql>
+        <sql>
+            <![CDATA[INSERT INTO dwh_measurable_quant (id, version, disabled, created, updated, code, description, dimension_1, dimension_2, dimension_3, dimension_4, editable, measurement_period, sql_query, provider_id, creator_id, additive) VALUES (nextval('dwh_measurable_quant_seq'), 0, false, '2016-09-09 09:36:00.00', '2016-09-09 09:36:00.00', 'MRR2', 'MRR', 'Offer', 'BA', 'CA', 'Cust', false, 'MONTHLY', '	SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value, wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code FROM billing_wallet_operation wo LEFT JOIN crm_provider p ON p.id=wo.provider_id LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id LEFT JOIN billing_wallet w ON w.id=wo.wallet_id LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id LEFT JOIN account_entity ua ON ua.id= uaa.id LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id LEFT JOIN account_entity ba ON ba.id= baa.id LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id LEFT JOIN account_entity ca ON ca.id= caa.id LEFT JOIN crm_customer custa ON custa.id= caa.customer_id LEFT JOIN account_entity cust ON cust.id= custa.id WHERE wo.disabled=FALSE AND wo.provider_id=#{provider} AND NOT(wo.end_date IS NULL) AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0 AND (wo.start_date <= "#{date}") AND (wo.end_date > "#{date}")', 1, 1, false);]]>
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

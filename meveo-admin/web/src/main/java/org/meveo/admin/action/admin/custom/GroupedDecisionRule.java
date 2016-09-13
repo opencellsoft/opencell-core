@@ -3,15 +3,15 @@ package org.meveo.admin.action.admin.custom;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 
-public class GroupedTransitionRule implements Serializable {
+public class GroupedDecisionRule implements Serializable {
 
     private static final long serialVersionUID = 5027554537383208719L;
 
     private String name;
 
-    private WFTransitionRule value;
+    private WFDecisionRule value;
 
     private String newValue;
 
@@ -29,11 +29,11 @@ public class GroupedTransitionRule implements Serializable {
         this.name = name;
     }
 
-    public WFTransitionRule getValue() {
+    public WFDecisionRule getValue() {
         return value;
     }
 
-    public void setValue(WFTransitionRule value) {
+    public void setValue(WFDecisionRule value) {
         this.value = value;
     }
 

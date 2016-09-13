@@ -1088,31 +1088,7 @@
 			<from-outcome>workflowDetail</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
 			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>wfTransitions</from-outcome>
-			<to-view-id>/pages/admin/workflow/wfTransitions.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>wfTransitionDetail</from-outcome>
-			<to-view-id>/pages/admin/workflow/wfTransitionDetail.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionPlanItems</from-outcome>
-			<to-view-id>/pages/admin/workflow/actionPlanItems.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionPlanItemDetail</from-outcome>
-			<to-view-id>/pages/admin/workflow/actionPlanItemDetail.xhtml
-			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>matchingCodes</from-outcome>
@@ -2051,6 +2027,12 @@
 
     <!--  Navigation rules for Marketing Manager pages -->
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mm_home</from-outcome>
+			<to-view-id>/marketingManager/index.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_offerTemplates</from-outcome>
 			<to-view-id>/marketingManager/offers/offerTemplates.xhtml

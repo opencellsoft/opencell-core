@@ -479,17 +479,29 @@ input[type="text"] {
 
 /*--------- */
 #topbar-wrapper {
-  padding: 0 15px;
+  background: #002050;
+  padding: 0 0 0 15px;
+}
+
+#topbar-wrapper .search-wrapper {
+  padding: 15px 15px 0 0;
+  border: none;
+  float: right;
+}
+
+#topbar-wrapper .search-wrapper input[type="text"] {
+  width: 178px;
+  box-sizing: border-box;
+}
+
+#topbar-wrapper .search-wrapper a {
+  display: none;
 }
 
 #layout-topbar-cover {
   background: #fff;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
-  font-size: 15px;
   color: #2f2f2f;
-}
-
-#layout-topbar-cover {
+  font-size: 15px;
   font-weight: normal;
   line-height: 1.5;
   font-family: 'Segoe UI', 'wf_segoe-ui_normal', 'Source Sans Pro', Arial, sans-serif;
@@ -500,7 +512,6 @@ input[type="text"] {
 }
 
 #layout-topbar {
-  background: #fff;
   line-height: 40px;
   /*margin: 0 auto 10px;*/
 }
@@ -601,12 +612,12 @@ input[type="text"] {
 
 #logo-wrapper {
   display: block;
-  margin: 0;
+  margin: 16px 0 0 1px;
   padding: 0;
 }
 
 #logo-wrapper img {
-  width: 250px;
+  width: 198px;
 }
 
 #menu-button- {
@@ -626,7 +637,7 @@ input[type="text"] {
 }
 
 #top-right-menu a {
-  color: #264676;
+  color: #fff;
   font-size: 16px;
   line-height: 1;
   vertical-align: bottom;
@@ -638,7 +649,7 @@ input[type="text"] {
 }
 
 #top-right-menu a:hover {
-  color: #5c5cab
+  background: #1a3a6a;
 }
 
 #top-right-menu .fa-question {
@@ -646,7 +657,7 @@ input[type="text"] {
 }
 
 #top-right-menu i {
-  line-height: 73px !important;
+  line-height: 61px !important;
 }
 
 .export-panel {
@@ -674,7 +685,7 @@ input[type="text"] {
 }
 
 .offer-wrapper .ui-tabs-nav {
-  margin-top: -47px !important;
+  margin-top: -48px !important;
 }
 
 .offer-wrapper .ui-tabs-nav li {
@@ -875,7 +886,7 @@ footer .footer-copyright {
   #primary-nav-form { display: none; }
   #responsive-menu-button { display: block; }
   #top-menu-cover { display: none; }
-  #topbar-wrapper { margin-bottom: 10px; }
+  /*#topbar-wrapper { margin-bottom: 10px; }*/
   .dataGrid, .dataGrid table, .dataGrid table tbody, .dataList li, .dataGrid tbody, .dataGrid tr, .dataGrid td { width: 100%; text-align: center; }
 }
 
@@ -902,6 +913,7 @@ footer .footer-copyright {
   and (orientation: portrait) {
   	#topbar-wrapper {
       padding: 0 15px;
+      height: 61px;
   	}
 
   	#layout-topbar .list-inline li {
@@ -1036,7 +1048,9 @@ footer .footer-copyright {
   and (min-device-width: 768px)
   and (max-device-width: 1024px)
   and (-webkit-min-device-pixel-ratio: 2) {
-
+  #topbar-wrapper {
+    height: 61px;
+  }
 }
 
 /* Portrait */
@@ -1098,7 +1112,7 @@ footer .footer-copyright {
 #primary_nav_wrap ul ul {
   display: none;
   position: absolute;
-  top: 74px;
+  top: 61px;
   right: 0;
   background: #264676;
   padding: 0;
@@ -1132,9 +1146,9 @@ footer .footer-copyright {
 }
 
 #user-info {
-  color: #002050;
+  color: #fff;
   font-size: 16px;
-  line-height: 40px;
+  line-height: 29px;
 }
 
 .status-wrapper .ui-panel .ui-panel-content {

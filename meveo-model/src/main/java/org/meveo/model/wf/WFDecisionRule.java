@@ -33,12 +33,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
-@Table(name = "WF_TRANSITION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
+@ExportIdentifier({ "name", "value", "provider" })
+@Table(name = "WF_DECISION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"NAME", "VALUE", "PROVIDER_ID"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_RULE_SEQ")
-public class WFTransitionRule extends AuditableEntity implements Comparable<WFTransitionRule>{
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_DECISION_RULE_SEQ")
+public class WFDecisionRule extends AuditableEntity implements Comparable<WFDecisionRule>{
 
 	private static final long serialVersionUID = 1L;
  
@@ -52,14 +54,10 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
     @NotNull
 	private String value;
 
-    @Column(name = "PRIORITY")
-    @NotNull
-    private int priority;
-
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
     @NotNull
-    private TransitionRuleTypeEnum type;
+    private DecisionRuleTypeEnum type;
 	
 	@Column(name = "CONDITION_EL", length = 2000)
 	@Size(max = 2000)
@@ -69,7 +67,7 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
     @Column(name = "MODEL")
     private boolean model = false;
 
-    @ManyToMany(mappedBy="wfTransitionRules")
+    @ManyToMany(mappedBy="wfDecisionRules")
     private Set<WFTransition> wfTransitions = new HashSet<>();
 
     public String getName() {
@@ -88,20 +86,12 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
         this.value = value;
     }
 
-    public TransitionRuleTypeEnum getType() {
+    public DecisionRuleTypeEnum getType() {
         return type;
     }
 
-    public void setType(TransitionRuleTypeEnum type) {
+    public void setType(DecisionRuleTypeEnum type) {
         this.type = type;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
     }
 
 	/**
@@ -150,7 +140,7 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
-		WFTransitionRule other = (WFTransitionRule) obj;
+		WFDecisionRule other = (WFDecisionRule) obj;
 		if (getId() == null) {
 			if (other.getId() != null)
 				return false;
@@ -160,7 +150,17 @@ public class WFTransitionRule extends AuditableEntity implements Comparable<WFTr
 	}
 
     @Override
-    public int compareTo(WFTransitionRule o) {
-        return Long.compare(this.priority, o.priority);
+    public int compareTo(WFDecisionRule o) {
+        Boolean model1 = this.getModel();
+        Boolean model2 = o.getModel();
+        int bComp = model2.compareTo(model1);
+
+        if (bComp != 0) {
+            return bComp;
+        } else {
+            String x1 = this.getValue();
+            String x2 = o.getValue();
+            return x1.compareTo(x2);
+        }
     }
 }

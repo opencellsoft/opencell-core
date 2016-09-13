@@ -99,6 +99,9 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	public BundleTemplate initEntity() {
 		BundleTemplate result = super.initEntity();
+		getOfferTemplateCategoriesDM();
+		getAttachmentsDM();
+		getBamDM();
 
 		initPricePlan();
 
@@ -185,6 +188,26 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if (entity.getOfferTemplateCategories() != null) {
+			entity.getOfferTemplateCategories().clear();
+			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+		}
+
+		if (entity.getAttachments() != null) {
+			entity.getAttachments().clear();
+			entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
+		}
+
+		if (entity.getBusinessAccountModels() != null) {
+			entity.getBusinessAccountModels().clear();
+			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
+		}
+		
+		if (entity.getChannels() != null) {
+			entity.getChannels().clear();
+			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
+		}
+		
 		String outcome = super.saveOrUpdate(killConversation);
 
 		savePricePlanMatrix();

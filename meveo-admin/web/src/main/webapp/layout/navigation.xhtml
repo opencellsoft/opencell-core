@@ -56,7 +56,7 @@
         </c:if>
     </c:forEach>
     
-	<p:menubar rendered="#{identity.loggedIn}">
+	<p:menubar styleClass="horizontal-nav" rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.configuration']}"
 			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 

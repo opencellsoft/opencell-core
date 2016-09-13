@@ -25,10 +25,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.wf.WFTransitionRule;
+import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
-import org.meveo.service.wf.WFTransitionRuleService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -38,7 +38,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class WfTransitionRuleBean extends BaseBean<WFTransitionRule> {
+public class WfDecisionRuleBean extends BaseBean<WFDecisionRule> {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,22 +52,22 @@ public class WfTransitionRuleBean extends BaseBean<WFTransitionRule> {
     private WFTransitionService wFTransitionService;
 
     @Inject
-    private WFTransitionRuleService wFTransitionRuleService;
+    private WFDecisionRuleService wFDecisionRuleService;
 
 
     // @Produces
     // @Named
-    private transient WFTransitionRule wfTransitionRule = new WFTransitionRule();
+    private transient WFDecisionRule wfDecisionRule = new WFDecisionRule();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link org.meveo.admin.action.BaseBean}.
      */
-    public WfTransitionRuleBean() {
-        super(WFTransitionRule.class);
+    public WfDecisionRuleBean() {
+        super(WFDecisionRule.class);
     }
 
     @Override
-    public WFTransitionRule initEntity() {
+    public WFDecisionRule initEntity() {
         super.initEntity();
      //   PersistenceUtils.initializeAndUnproxy(entity.getActions());
         return entity;
@@ -90,8 +90,8 @@ public class WfTransitionRuleBean extends BaseBean<WFTransitionRule> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<WFTransitionRule> getPersistenceService() {
-        return wFTransitionRuleService;
+    protected IPersistenceService<WFDecisionRule> getPersistenceService() {
+        return wFDecisionRuleService;
     }
 
     @Override

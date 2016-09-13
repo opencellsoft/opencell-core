@@ -27,5 +27,7 @@ import org.meveo.service.base.PersistenceService;
 public class BaseEntityService extends PersistenceService<IEntity>{
 
 	
-
+    public void setEntityClass(Class<IEntity> clazz) {
+   	 this.entityClass = (Class<IEntity>) clazz;
+   }
 }

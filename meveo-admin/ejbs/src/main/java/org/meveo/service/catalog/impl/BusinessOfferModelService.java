@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -36,6 +38,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.offer.OfferModelScriptService;
@@ -559,5 +562,16 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		// save the cf
 
 		return newOfferTemplate;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BusinessOfferModel> listInstalled(Provider provider) {
+		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b", null, null, provider);
+		qb.addCriterion("installed", "=", true, true);
+		try {
+			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }

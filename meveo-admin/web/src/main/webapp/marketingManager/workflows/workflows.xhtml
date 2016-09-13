@@ -61,7 +61,7 @@
                             </p:panel>
                         </h:panelGroup>
                         <h:panelGroup layout="block" styleClass="col2">
-                            <p:dataTable var="rule" value="#{transition.wfTransitionRules}" rowIndexVar="rowIndex">
+                            <p:dataTable var="rule" value="#{transition.wfDecisionRules}" rowIndexVar="rowIndex">
                                 <p:column headerText="#{messages['mmTransition.selector']}">
                                     <h:outputText value="#{messages['mmTransition.and']}" rendered="#{rowIndex > 0}" />
                                 </p:column>

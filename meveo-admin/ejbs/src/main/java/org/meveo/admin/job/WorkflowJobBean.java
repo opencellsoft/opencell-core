@@ -15,6 +15,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.WorkflowAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -86,7 +87,7 @@ public class WorkflowJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(workflowAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(),workflow,result, currentUser));
+				futures.add(workflowAsync.launchAndForget((List<BaseEntity>) subListCreator.getNextWorkSet(),workflow,result, currentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

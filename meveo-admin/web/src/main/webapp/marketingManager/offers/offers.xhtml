@@ -187,7 +187,7 @@
 													onLabel="#{messages['accountStatusEnum.active']}"
 													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
 											</p:panel>
-											<p:panel>
+											<p:panel style="width: 150px;">
 												<ul class="list-inline">
 													<li><p:link id="viewLink"
 															outcome="mm_offerTemplateDetail"
@@ -256,7 +256,7 @@
 												<h:outputText value="#{service.descriptionOrCode}"
 													styleClass="text-bold" />
 												<h:panelGroup layout="block">
-													<ul>
+													<ul class="list-unstyled">
 														<ui:repeat var="charge"
 															value="#{service.serviceSubscriptionCharges}">
 															<li><h:outputText
@@ -281,7 +281,7 @@
 												<h:outputText value="#{service.descriptionOrCode}"
 													styleClass="text-bold" />
 												<h:panelGroup layout="block">
-													<ul>
+													<ul class="list-unstyled">
 														<ui:repeat var="charge"
 															value="#{service.serviceRecurringCharges}">
 															<li><h:outputText
@@ -306,7 +306,7 @@
 												<h:outputText value="#{service.descriptionOrCode}"
 													styleClass="text-bold" />
 												<h:panelGroup layout="block">
-													<ul>
+													<ul class="list-unstyled">
 														<ui:repeat var="charge"
 															value="#{service.serviceUsageCharges}">
 															<li><h:outputText

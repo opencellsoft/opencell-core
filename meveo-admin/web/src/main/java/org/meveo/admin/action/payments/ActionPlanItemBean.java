@@ -56,7 +56,8 @@ public class ActionPlanItemBean extends BaseBean<WFAction> {
 	@Inject
 	private WorkflowService dunningPlanService;
 
-	@Inject
+    //TODO comment @Inject because remove @Produre Workflow in workflowBean and Abdelhadi consider to reuse this bean on his purpose or clean later
+	// @Inject
 	private Workflow dunningPlan;
 
 	/**

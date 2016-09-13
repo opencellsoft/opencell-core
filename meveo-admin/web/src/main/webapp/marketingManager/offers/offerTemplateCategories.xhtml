@@ -26,13 +26,17 @@
 
 		<p:panel>
 			<h:form id="searchForm">
-				<div style="float: right;" class="search-wrapper">
-					<p:commandButton id="searchButton" icon="fa fa-search" ajax="true"
-						action="#{mmOfferTemplateCategoryListBean.search}"
-						update=":mainForm:offerCategoriesTable" />
-					<p:inputText id="searchField"
-						value="#{mmOfferTemplateCategoryListBean.filters['fullText']}"
-						placeholder="#{messages['action.search']}" />
+				<div style="float: right;" class="">
+					<h:panelGrid
+						styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
+						columnClasses="Wid95, Wid5" columns="2">
+						<p:inputText id="searchField"
+							value="#{mmOfferTemplateCategoryListBean.filters['fullText']}"
+							placeholder="#{messages['action.search']}" />
+						<p:commandButton id="searchButton" icon="fa fa-search" ajax="true"
+							action="#{mmOfferTemplateCategoryListBean.search}"
+							update=":mainForm:offerCategoriesTable" />
+					</h:panelGrid>
 					<p:defaultCommand target="searchButton" style="display: none;" />
 				</div>
 			</h:form>
@@ -105,8 +109,7 @@
 							</f:facet>
 						</p:cellEditor>
 					</p:column>
-					<p:column id="code"
-						headerText="#{messages['BusinessEntity.description']}"
+					<p:column id="code" headerText="#{messages['BusinessEntity.code']}"
 						sortBy="#{entity.name}" exportable="true" width="40%">
 						<h:outputText value="#{entity.code}" />
 					</p:column>
