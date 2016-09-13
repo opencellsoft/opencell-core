@@ -130,7 +130,7 @@ select[disabled] { color : #000; }
 #admin-bar ul
 {
   margin-left: auto;
-  margin-right: 3%;
+  /*margin-right: 3%;*/
   float : right;
   position: absolute;
   top: 5px;
