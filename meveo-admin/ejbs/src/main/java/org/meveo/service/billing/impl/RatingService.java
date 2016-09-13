@@ -491,7 +491,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
 			if (!sellerAreEqual) {
 				log.debug("The seller of the customer " + sellerId + " is not the same as pricePlan seller "
-						+ pricePlan.getSeller().getId() + " (" + pricePlan.getSeller().getCode() + ")");
+						+ pricePlan.getSeller().getId() );
 				continue;
 			}
 
