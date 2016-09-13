@@ -1141,6 +1141,7 @@
         <dropTable tableName="wf_transition_transition_rule"/>
         <dropTable tableName="wf_transition_rule"/>
         <dropSequence sequenceName="wf_transition_rule_seq"/>
+        <dropColumn tableName="WF_WORKFLOW" columnName="status"/>
     </changeSet>
     
     <changeSet author="anasseh" id="#2007_10092016">
