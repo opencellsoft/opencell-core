@@ -20,7 +20,7 @@
 			<div class="pull-right" id="primary_nav_wrap">
 				<ul id="top-right-menu">
 					<li><a href="#" id=""><i class="fa fa-2x fa-cog"></i></a>
-						<ul style="display: none;">
+						<ul style="display: none; z-index: 1">
 							<li><h:commandLink action="#{identity.logout}"
 									value="#{messages['menutop.logout']}"
 									rendered="#{identity.loggedIn}" immediate="true" /></li>
