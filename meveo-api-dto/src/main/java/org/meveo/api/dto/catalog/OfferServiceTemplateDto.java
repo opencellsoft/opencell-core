@@ -23,7 +23,7 @@ public class OfferServiceTemplateDto {
 	private Boolean mandatory;
 
 	@XmlElementWrapper(name = "incompatibleServices")
-	@XmlElement(name = "serviceTemplate")
+	@XmlElement(name = "incompatibleServiceTemplate")
 	private List<ServiceTemplateDto> incompatibleServices = new ArrayList<>();
 
 	public OfferServiceTemplateDto() {

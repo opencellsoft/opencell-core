@@ -16,6 +16,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -30,6 +31,9 @@ public class FilterBean extends BaseBean<Filter> {
 
 	@Inject
 	private FilterService filterService;
+	
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
 	private List<CustomFieldTemplate> parameters;
 

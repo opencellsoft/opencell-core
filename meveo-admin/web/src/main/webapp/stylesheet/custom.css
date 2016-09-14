@@ -68,7 +68,12 @@ a.text-blue:hover::before {
   list-style: none;
 }
 
-.list-unstyled li{
+.no-list-style {
+  list-style: none;
+  padding-bottom: 5px;
+}
+
+.list-unstyled li {
   padding: 2px 0;
 }
 

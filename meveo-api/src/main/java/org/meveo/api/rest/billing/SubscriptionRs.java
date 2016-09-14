@@ -17,6 +17,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -105,6 +106,17 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Path("/list")
     SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+
+    /**
+     * List All Subscriptions with pagination
+     * 
+     * @param pageSize
+     * @param pageNumber
+     * @return
+     */
+    @GET
+    @Path("/listAll")
+    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber);
 
     @GET
     @Path("/")

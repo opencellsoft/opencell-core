@@ -34,7 +34,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     private static final long serialVersionUID = 9099292371182275568L;
 
     @Inject
-    private CustomFieldTemplateService cftService;
+    private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
     private CalendarService calendarService;
@@ -90,7 +90,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Override
     protected IPersistenceService<CustomFieldTemplate> getPersistenceService() {
-        return cftService;
+        return customFieldTemplateService;
     }
 
     @Override
@@ -182,7 +182,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             perksSource.add(new CustomFieldMatrixColumn("code", "Code"));
             perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
 
-            Map<String, CustomFieldTemplate> cfts = cftService.findByAppliesTo(
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
                 EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())), getCurrentProvider());
 
             for (CustomFieldTemplate cft : cfts.values()) {

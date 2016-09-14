@@ -210,13 +210,18 @@ public abstract class BaseApi {
 
         // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
-
+        if(entity.getParentCFEntities() != null){
+	        for(ICustomFieldEntity entityParent :entity.getParentCFEntities()){
+	        	 cfisAsMap.putAll(customFieldInstanceService.getCustomFieldInstances(entityParent));
+	        }
+        }
+               
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
             }
-            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
+            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {            	 
                 missingParameters.add(cft.getCode());
             } else {
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
