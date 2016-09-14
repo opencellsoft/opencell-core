@@ -24,6 +24,7 @@ import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
+import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -85,14 +86,14 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private WalletTemplateService walletTemplateService;
-    
+
     @Inject
     private AccessApi accessApi;
 
     @SuppressWarnings("rawtypes")
     @Inject
     private ChargeInstanceService chargeInstanceService;
-    
+
     @Inject
     private UserAccountApi userAccountApi;
 
@@ -148,17 +149,17 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-        
+
         if (postData.getProducts() != null) {
-			for (ProductDto productDto : postData.getProducts().getProducts()) {
-				if (StringUtils.isBlank(productDto.getCode())) {
-					log.warn("code is null={}", productDto);
-					continue;
-				}
-				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-				userAccountApi.applyProduct(dto , currentUser);
-			}
-		}
+            for (ProductDto productDto : postData.getProducts().getProducts()) {
+                if (StringUtils.isBlank(productDto.getCode())) {
+                    log.warn("code is null={}", productDto);
+                    continue;
+                }
+                ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+                userAccountApi.applyProduct(dto, currentUser);
+            }
+        }
     }
 
     public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -215,17 +216,17 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-        
+
         if (postData.getProducts() != null) {
-			for (ProductDto productDto : postData.getProducts().getProducts()) {
-				if (StringUtils.isBlank(productDto.getCode())) {
-					log.warn("code is null={}", productDto);
-					continue;
-				}
-				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-				userAccountApi.applyProduct(dto , currentUser);
-			}
-		}
+            for (ProductDto productDto : postData.getProducts().getProducts()) {
+                if (StringUtils.isBlank(productDto.getCode())) {
+                    log.warn("code is null={}", productDto);
+                    continue;
+                }
+                ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+                userAccountApi.applyProduct(dto, currentUser);
+            }
+        }
 
     }
 
@@ -283,7 +284,8 @@ public class SubscriptionApi extends BaseApi {
                     if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
                         if (serviceToActivateDto.getSubscriptionDate() != null) {
                             log.warn("need date for serviceInstance with code={}", subscriptionServiceInstance.getCode());
-                            // subscriptionServiceInstance.setDescription(serviceTemplate.getDescription()); // Is there a need to reset it?
+                            // subscriptionServiceInstance.setDescription(serviceTemplate.getDescription());
+                            // // Is there a need to reset it?
                             subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                             subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
                             serviceInstance = subscriptionServiceInstance;
@@ -358,15 +360,15 @@ public class SubscriptionApi extends BaseApi {
                     if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
                         ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId());
                         if (chargeInstance == null) {
-							throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
-						}
-                        
-						if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
-							chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-							if (!currentUser.getProvider().isEntreprise()) {
-								chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
-							}
-						}
+                            throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
+                        }
+
+                        if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
+                            chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+                            if (!currentUser.getProvider().isEntreprise()) {
+                                chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
+                            }
+                        }
                     } else {
                         log.warn("chargeInstance.code and amountWithoutTax must not be null.");
                     }
@@ -649,6 +651,25 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    public SubscriptionsListDto listAll(int pageSize, int pageNum, Provider provider) throws MeveoApiException {
+
+        SubscriptionsListDto result = new SubscriptionsListDto();
+        int fromIndex = pageSize * pageNum;
+        int toIndex = fromIndex + pageSize;
+        List<Subscription> subscriptionAll = subscriptionService.list();
+        result.setListSize(subscriptionAll.size());
+        toIndex = subscriptionAll.size() > toIndex ? toIndex : subscriptionAll.size();
+        List<Subscription> subscriptions = subscriptionAll.subList(fromIndex, toIndex);
+        if (subscriptions != null) {
+            for (Subscription s : subscriptions) {
+                result.getSubscription().add(subscriptionToDto(s));
+            }
+        }
+
+        return result;
+
+    }
+
     public SubscriptionDto findSubscription(String subscriptionCode, Provider provider) throws MeveoApiException {
         SubscriptionDto result = new SubscriptionDto();
 
@@ -717,133 +738,134 @@ public class SubscriptionApi extends BaseApi {
 
         return dto;
     }
-    public void createOrUpdatePartial(SubscriptionDto subscriptionDto,User currentUser) throws MeveoApiException, BusinessException{
 
-		SubscriptionDto existedSubscriptionDto = null;
-		try {
-			existedSubscriptionDto = findSubscription(subscriptionDto.getCode(), currentUser.getProvider());
-		} catch (Exception e) {
-			existedSubscriptionDto = null;
-		}
+    public void createOrUpdatePartial(SubscriptionDto subscriptionDto, User currentUser) throws MeveoApiException, BusinessException {
 
-		log.debug("createOrUpdate subscription {}",subscriptionDto);
-		if (existedSubscriptionDto == null) {
-			create(subscriptionDto, currentUser);
-		} else {
-			if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
-				TerminateSubscriptionRequestDto terminateSubscriptionDto = new TerminateSubscriptionRequestDto();
-				terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
-				terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
-				terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
-				terminateSubscription(terminateSubscriptionDto, currentUser);
-				return;
-			} else {
+        SubscriptionDto existedSubscriptionDto = null;
+        try {
+            existedSubscriptionDto = findSubscription(subscriptionDto.getCode(), currentUser.getProvider());
+        } catch (Exception e) {
+            existedSubscriptionDto = null;
+        }
 
-				if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
-					existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
-				}
+        log.debug("createOrUpdate subscription {}", subscriptionDto);
+        if (existedSubscriptionDto == null) {
+            create(subscriptionDto, currentUser);
+        } else {
+            if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
+                TerminateSubscriptionRequestDto terminateSubscriptionDto = new TerminateSubscriptionRequestDto();
+                terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
+                terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
+                terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
+                terminateSubscription(terminateSubscriptionDto, currentUser);
+                return;
+            } else {
 
-				if (!StringUtils.isBlank(subscriptionDto.getDescription())) {
-					existedSubscriptionDto.setDescription(subscriptionDto.getDescription());
-				}
-				if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
-					existedSubscriptionDto.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
-				}
+                if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
+                    existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
+                }
 
-				if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
-					existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
-				}
+                if (!StringUtils.isBlank(subscriptionDto.getDescription())) {
+                    existedSubscriptionDto.setDescription(subscriptionDto.getDescription());
+                }
+                if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
+                    existedSubscriptionDto.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
+                }
 
-				if(!StringUtils.isBlank(subscriptionDto.getCustomFields())){
-					existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
-				}
-				update(existedSubscriptionDto, currentUser);
-			}
-		}
-		// accesses
-		if (subscriptionDto.getAccesses() != null) {
-			for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
-				if (StringUtils.isBlank(accessDto.getCode())) {
-					log.warn("code is null={}", accessDto);
-					continue;
-				}
-				if (!StringUtils.isBlank(accessDto.getSubscription())
-						&& !accessDto.getSubscription().equalsIgnoreCase(subscriptionDto.getCode())) {
-					throw new MeveoApiException("Access's subscription " + accessDto.getSubscription()
-							+ " doesn't match with parent subscription " + subscriptionDto.getCode());
-				} else {
-					accessDto.setSubscription(subscriptionDto.getCode());
-				}
-				accessApi.createOrUpdatePartial(accessDto,currentUser);
-			}
-		}
+                if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
+                    existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
+                }
 
-		if (subscriptionDto.getServices() != null) {
-			InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
-			instantiateServicesDto.setSubscription(subscriptionDto.getCode());
-			List<ServiceToInstantiateDto> serviceToInstantiates = instantiateServicesDto.getServicesToInstantiate().getService();
+                if (!StringUtils.isBlank(subscriptionDto.getCustomFields())) {
+                    existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
+                }
+                update(existedSubscriptionDto, currentUser);
+            }
+        }
+        // accesses
+        if (subscriptionDto.getAccesses() != null) {
+            for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
+                if (StringUtils.isBlank(accessDto.getCode())) {
+                    log.warn("code is null={}", accessDto);
+                    continue;
+                }
+                if (!StringUtils.isBlank(accessDto.getSubscription()) && !accessDto.getSubscription().equalsIgnoreCase(subscriptionDto.getCode())) {
+                    throw new MeveoApiException("Access's subscription " + accessDto.getSubscription() + " doesn't match with parent subscription " + subscriptionDto.getCode());
+                } else {
+                    accessDto.setSubscription(subscriptionDto.getCode());
+                }
+                accessApi.createOrUpdatePartial(accessDto, currentUser);
+            }
+        }
 
-			ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
-			activateServicesDto.setSubscription(subscriptionDto.getCode());
-			List<ServiceToActivateDto> serviceToActivates = activateServicesDto.getServicesToActivateDto().getService();
+        if (subscriptionDto.getServices() != null) {
+            InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
+            instantiateServicesDto.setSubscription(subscriptionDto.getCode());
+            List<ServiceToInstantiateDto> serviceToInstantiates = instantiateServicesDto.getServicesToInstantiate().getService();
 
-			for (ServiceInstanceDto serviceInstanceDto : subscriptionDto.getServices().getServiceInstance()) {
-				if (StringUtils.isBlank(serviceInstanceDto.getCode())) {
-					log.warn("code is null={}", serviceInstanceDto);
-					continue;
-				}
+            ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
+            activateServicesDto.setSubscription(subscriptionDto.getCode());
+            List<ServiceToActivateDto> serviceToActivates = activateServicesDto.getServicesToActivateDto().getService();
 
-				if (serviceInstanceDto.getTerminationDate() != null) {
-					TerminateSubscriptionServicesRequestDto terminateServiceDto = new TerminateSubscriptionServicesRequestDto();
-					terminateServiceDto.getServices().add(serviceInstanceDto.getCode());
-					terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
-					terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
-					terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
-					terminateServices(terminateServiceDto, currentUser);
-					continue;
-				}
+            for (ServiceInstanceDto serviceInstanceDto : subscriptionDto.getServices().getServiceInstance()) {
+                if (StringUtils.isBlank(serviceInstanceDto.getCode())) {
+                    log.warn("code is null={}", serviceInstanceDto);
+                    continue;
+                }
 
-				if (StringUtils.isBlank(serviceInstanceDto.getSubscriptionDate())) {//instance service in sub's
-					ServiceToInstantiateDto serviceToInstantiate = new ServiceToInstantiateDto();
-					serviceToInstantiate.setCode(serviceInstanceDto.getCode());
-					serviceToInstantiate.setQuantity(serviceInstanceDto.getQuantity());
-					serviceToInstantiate.setCustomFields(serviceInstanceDto.getCustomFields());
-					serviceToInstantiates.add(serviceToInstantiate);
-				}else {
-					ServiceToActivateDto serviceToActivateDto = new ServiceToActivateDto();
-					serviceToActivateDto.setCode(serviceInstanceDto.getCode());
-					serviceToActivateDto.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
-					serviceToActivateDto.setQuantity(serviceInstanceDto.getQuantity());
-					serviceToActivateDto.setCustomFields(serviceInstanceDto.getCustomFields());
-					serviceToActivates.add(serviceToActivateDto);
-				}
-				if (!serviceToInstantiates.isEmpty()) {
-					try{
-						instantiateServices(instantiateServicesDto, currentUser);
-					}catch(Exception e){
-						log.error("instantiate service",e);
-					}
-					serviceToInstantiates.clear();
-				}
+                if (serviceInstanceDto.getTerminationDate() != null) {
+                    TerminateSubscriptionServicesRequestDto terminateServiceDto = new TerminateSubscriptionServicesRequestDto();
+                    terminateServiceDto.getServices().add(serviceInstanceDto.getCode());
+                    terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
+                    terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
+                    terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
+                    terminateServices(terminateServiceDto, currentUser);
+                    continue;
+                }
 
-				if (!serviceToActivates.isEmpty()) {
-					activateServices(activateServicesDto, currentUser, true);
-					serviceToActivates.clear();
-				}
-			}
-		}
-		
-		
-		if (subscriptionDto.getProducts() != null) {
-			for (ProductDto productDto : subscriptionDto.getProducts().getProducts()) {
-				if (StringUtils.isBlank(productDto.getCode())) {
-					log.warn("code is null={}", productDto);
-					continue;
-				}
-				ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-				userAccountApi.applyProduct(dto , currentUser);
-			}
-		}
-		
+                if (StringUtils.isBlank(serviceInstanceDto.getSubscriptionDate())) {// instance
+                                                                                    // service
+                                                                                    // in
+                                                                                    // sub's
+                    ServiceToInstantiateDto serviceToInstantiate = new ServiceToInstantiateDto();
+                    serviceToInstantiate.setCode(serviceInstanceDto.getCode());
+                    serviceToInstantiate.setQuantity(serviceInstanceDto.getQuantity());
+                    serviceToInstantiate.setCustomFields(serviceInstanceDto.getCustomFields());
+                    serviceToInstantiates.add(serviceToInstantiate);
+                } else {
+                    ServiceToActivateDto serviceToActivateDto = new ServiceToActivateDto();
+                    serviceToActivateDto.setCode(serviceInstanceDto.getCode());
+                    serviceToActivateDto.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+                    serviceToActivateDto.setQuantity(serviceInstanceDto.getQuantity());
+                    serviceToActivateDto.setCustomFields(serviceInstanceDto.getCustomFields());
+                    serviceToActivates.add(serviceToActivateDto);
+                }
+                if (!serviceToInstantiates.isEmpty()) {
+                    try {
+                        instantiateServices(instantiateServicesDto, currentUser);
+                    } catch (Exception e) {
+                        log.error("instantiate service", e);
+                    }
+                    serviceToInstantiates.clear();
+                }
+
+                if (!serviceToActivates.isEmpty()) {
+                    activateServices(activateServicesDto, currentUser, true);
+                    serviceToActivates.clear();
+                }
+            }
+        }
+
+        if (subscriptionDto.getProducts() != null) {
+            for (ProductDto productDto : subscriptionDto.getProducts().getProducts()) {
+                if (StringUtils.isBlank(productDto.getCode())) {
+                    log.warn("code is null={}", productDto);
+                    continue;
+                }
+                ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+                userAccountApi.applyProduct(dto, currentUser);
+            }
+        }
+
     }
 }
