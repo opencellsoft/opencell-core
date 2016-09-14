@@ -48,7 +48,7 @@
 
         <p:panel>
             <h:panelGrid id="productDiv" columns="1" styleClass="ui-panelgrid-blank Wid100">
-                <h:outputText value="#{mainBackingBean.entity.nameOrCode}" rendered="#{!mainBackingBean.edit}"></h:outputText>
+                <h:outputText value="#{mainBackingBean.entity.nameOrCode}" rendered="#{!mainBackingBean.edit}" styleClass="field-value"/>
                 <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{mainBackingBean.edit}" actionListenerBean="#{mainBackingBean}"
                     actionListenerMethod="onNameChange" listenerUpdate="code" />
 
@@ -67,22 +67,27 @@
                 <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" />
             </p:panelGrid>
 
-            <h:outputText style="color: red" rendered="#{!mainBackingBean.discountComputable}" value="#{messages['message.marketingManager.product.catalogPrice.missing']}"></h:outputText>
             <p:panel>
 	            <hftl:decorateFormField fieldId="salesPrice" label="#{messages['marketingManager.catalog.salesPrice']}">
-	                <p:inputText id="salesPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.entityPricePlan.amountWithoutTax}">
+	                <p:inputText id="salesPrice" value="#{mainBackingBean.salesPrice}" rendered="#{mainBackingBean.edit}">
 	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
 	                    <f:converter converterId="bigDecimal4DigitsConverter" />
 	                </p:inputText>
+                    <h:outputText value="#{mainBackingBean.salesPrice}" rendered="#{!mainBackingBean.edit}" styleClass="field-value">
+                        <f:converter converterId="bigDecimal4DigitsConverter" />
+                    </h:outputText>                    
 	            </hftl:decorateFormField>
 	            <hftl:decorateFormField fieldId="catalogPrice" label="#{messages['marketingManager.catalog.catalogPrice']}">
-	                <p:inputText id="catalogPrice" disabled="#{!mainBackingBean.discountComputable}" value="#{mainBackingBean.catalogPrice}">
+	                <p:inputText id="catalogPrice" value="#{mainBackingBean.catalogPrice}" rendered="#{mainBackingBean.edit}">
 	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
 	                    <f:converter converterId="bigDecimal4DigitsConverter" />
 	                </p:inputText>
+                    <h:outputText value="#{mainBackingBean.catalogPrice}" rendered="#{!mainBackingBean.edit}" styleClass="field-value">
+                        <f:converter converterId="bigDecimal4DigitsConverter" />
+                    </h:outputText> 
 	            </hftl:decorateFormField>
 	            <hftl:decorateFormField fieldId="discountedAmount" label="#{messages['marketingManager.catalog.discountedAmount']}">
-	                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" />
+	                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" styleClass="field-value"/>
 	            </hftl:decorateFormField>
             </p:panel>
         </p:panel>

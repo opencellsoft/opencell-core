@@ -69,8 +69,6 @@ import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
@@ -116,12 +114,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     protected PermissionService permissionService;
-
-    @Inject
-    protected CustomFieldTemplateService customFieldTemplateService;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private CatMessagesService catMessagesService;

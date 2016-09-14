@@ -18,6 +18,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -36,6 +37,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     @Inject
     private CurrentProviderBean currentProviderBean;
+    
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     /**
      * Request parameter
