@@ -18,26 +18,37 @@
  */
 package org.meveo.service.wf;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFAction;
+import org.meveo.model.wf.WFTransition;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WFActionService extends PersistenceService<WFAction> {
 
-    @SuppressWarnings("unchecked")
-    public WFAction findWFActionByUUID(String uuid, Provider provider) {
-        WFAction wfAction = null;
-        try {
-            QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
-            qb.addCriterion("a.uuid", "=", uuid, true);
-            wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (Exception e) {
-        }
-        return wfAction;
-    }
+
+	public WFAction findWFActionByUUID(String uuid, Provider provider) {
+		WFAction wfAction = null;
+		try {
+			QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
+			qb.addCriterion("a.uuid", "=", uuid, true);
+			wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (Exception e) {
+		}
+		return wfAction;
+	}
+
+	public List<WFAction> listByTransition(WFTransition wfTransition) {		
+		List<WFAction> wfTransitions =  (List<WFAction>) getEntityManager()
+				.createNamedQuery("WFAction.listByTransition", WFAction.class)
+				.setParameter("wfTransition", wfTransition)
+				.getResultList();
+		return wfTransitions;
+	}
 
 }
