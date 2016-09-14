@@ -38,34 +38,33 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
+@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_ACTION_SEQ")
-@NamedQueries({
-	@NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC")})
+@NamedQueries({ @NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC") })
 public class WFAction extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-	@Column(name = "ACTION_EL", length = 2000)
-	@Size(max = 2000)
+    @Column(name = "ACTION_EL", length = 2000)
+    @Size(max = 2000)
     @NotNull
-	private String actionEl;
+    private String actionEl;
 
-	@Column(name = "PRIORITY")
-	private int priority;
-	
-	@Column(name = "CONDITION_EL", length = 2000)
-	@Size(max = 2000)
-	private String conditionEl;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WF_TRANSITION_ID")
-	private WFTransition wfTransition;
+    @Column(name = "PRIORITY")
+    private int priority;
+
+    @Column(name = "CONDITION_EL", length = 2000)
+    @Size(max = 2000)
+    private String conditionEl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WF_TRANSITION_ID")
+    private WFTransition wfTransition;
 
     public String getUuid() {
         return uuid;
@@ -76,78 +75,87 @@ public class WFAction extends AuditableEntity {
     }
 
     /**
-	 * @return the actionEl
-	 */
-	public String getActionEl() {
-		return actionEl;
-	}
+     * @return the actionEl
+     */
+    public String getActionEl() {
+        return actionEl;
+    }
 
-	/**
-	 * @param actionEl the actionEl to set
-	 */
-	public void setActionEl(String actionEl) {
-		this.actionEl = actionEl;
-	}
+    /**
+     * @param actionEl the actionEl to set
+     */
+    public void setActionEl(String actionEl) {
+        this.actionEl = actionEl;
+    }
 
-	/**
-	 * @return the priority
-	 */
-	public int getPriority() {
-		return priority;
-	}
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
+    }
 
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	/**
-	 * @return the wfTransition
-	 */
-	public WFTransition getWfTransition() {
-		return wfTransition;
-	}
+    /**
+     * @return the wfTransition
+     */
+    public WFTransition getWfTransition() {
+        return wfTransition;
+    }
 
-	/**
-	 * @param wfTransition the wfTransition to set
-	 */
-	public void setWfTransition(WFTransition wfTransition) {
-		this.wfTransition = wfTransition;
-	}
+    /**
+     * @param wfTransition the wfTransition to set
+     */
+    public void setWfTransition(WFTransition wfTransition) {
+        this.wfTransition = wfTransition;
+    }
 
-	public String getConditionEl() {
-		return conditionEl;
-	}
+    public String getConditionEl() {
+        return conditionEl;
+    }
 
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
-	
+    public void setConditionEl(String conditionEl) {
+        this.conditionEl = conditionEl;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		WFAction other = (WFAction) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        WFAction other = (WFAction) obj;
+        if (getId() == null) {
+            if (other.getId() != null) {
+                return false;
+            }
+        } else if (!getId().equals(other.getId())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("WFAction [actionEl=%s, conditionEl=%s]", actionEl, conditionEl);
+    }
 }
