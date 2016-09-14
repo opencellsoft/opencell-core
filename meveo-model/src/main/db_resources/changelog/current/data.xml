@@ -134,4 +134,54 @@
         </sql>
     </changeSet>
 
+	<changeSet id="#1849_20160909" author="EdwardPLegaspi">
+		<sql><![CDATA[DELETE FROM dwh_measurable_quant WHERE code IN ('MRR2', 'CHURN2');]]></sql>
+
+		<insert tableName="meveo_timer">
+			<column name="id" value="2" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="Last" />
+			<column name="sc_d_o_week" value="0" />
+			<column name="sc_hour" value="23" />
+			<column name="sc_min" value="59" />
+			<column name="sc_month" value="*" />
+			<column name="sc_sec" value="59" />
+			<column name="sc_year" value="*" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="code" value="Monthly" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="2015-03-19 00:04:19.913" />
+		</insert>
+
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="2016-09-14 00:00:00.000" />
+			<column name="job_category" value="DWH" />
+			<column name="job_template" value="DWHQueryJob" />
+			<column name="code" value="DWH_Job_MRR" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="timerentity_id" valueNumeric="2" />
+			<column name="UUID" value="DWH_Job_MRR" />
+			<column name="parametres" value="MRR"></column>
+		</insert>
+
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="2016-09-14 00:00:00.000" />
+			<column name="job_category" value="DWH" />
+			<column name="job_template" value="DWHQueryJob" />
+			<column name="code" value="DWH_Job_CHURN" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="timerentity_id" valueNumeric="2" />
+			<column name="UUID" value="DWH_Job_CHURN" />
+			<column name="parametres" value="CHURN"></column>
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
