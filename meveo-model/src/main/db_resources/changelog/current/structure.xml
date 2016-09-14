@@ -1179,4 +1179,10 @@
         </sql>
     </changeSet>
 
+    <changeSet id="#1839_20160914" author="pbach">
+        <sql>
+            update WF_TRANSITION set FROM_STATUS = 'ACKNOWLEDGED', TO_STATUS = 'IN_PROGRESS' where FROM_STATUS is NULL and TO_STATUS is NULL and WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF');
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

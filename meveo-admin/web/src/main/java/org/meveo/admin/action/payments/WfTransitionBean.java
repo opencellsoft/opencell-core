@@ -35,6 +35,7 @@ import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.WFDecisionRule;
@@ -167,6 +168,8 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 }
             }
             entity.setPriority(priority);
+            entity.setFromStatus(OrderStatusEnum.ACKNOWLEDGED.toString());
+            entity.setToStatus(OrderStatusEnum.IN_PROGRESS.toString());
         }
         entity.getWfDecisionRules().clear();
         entity.getWfDecisionRules().addAll(wfDecisionRules);
