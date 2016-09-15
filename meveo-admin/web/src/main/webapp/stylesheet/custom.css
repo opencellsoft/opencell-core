@@ -342,7 +342,7 @@ input[type="text"] .ui-button-text,
 }
 
 .ui-state-highlight {
-  background: #eb2f2f !important;
+  background: #264676 !important;
   background-image: none !important;
 }
 
@@ -474,7 +474,7 @@ input[type="text"] {
 }
 
 .ui-breadcrumb ul li a:hover {
-  color: #d13b42;
+  color: #264676;
 }
 
 .ui-breadcrumb ul li .ui-menuitem-link {
