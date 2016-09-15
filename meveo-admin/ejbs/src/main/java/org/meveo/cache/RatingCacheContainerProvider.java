@@ -17,7 +17,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -71,41 +70,38 @@ public class RatingCacheContainerProvider {
     /**
      * Contains association between charge code and price plans. Key format: <provider id>_<charge template code, which is pricePlanMatrix.eventCode>
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-price-plan")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-price-plan")
     private BasicCache<String, List<PricePlanMatrix>> pricePlanCache;
 
     /**
      * Contains association between usage charge template id and cached usage charge template information. Key format: UsageChargeTemplate.id
      */
-    // @Resource(lookup =
-    // "java:jboss/infinispan/cache/meveo/meveo-usage-charge-template-cache-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usage-charge-template-cache-cache")
     private BasicCache<Long, CachedUsageChargeTemplate> usageChargeTemplateCacheCache;
 
     /**
      * Contains association between subscription and usage charge instances. Key format: Subscription.id
      */
-    // @Resource(lookup =
-    // "java:jboss/infinispan/cache/meveo/meveo-charge-instance-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-charge-instance-cache")
     private BasicCache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
 
     /**
      * Contains association between counter instance id and cached counter information. Key format: CounterInstance.id
      */
-    // @Resource(lookup =
-    // "java:jboss/infinispan/cache/meveo/meveo-counter-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-counter-cache")
     private BasicCache<Long, CachedCounterInstance> counterCache;
 
-    @Resource(name = "java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;
+    // @Resource(name = "java:jboss/infinispan/container/meveo")
+    // private CacheContainer meveoContainer;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("RatingCacheContainerProvider initializing...");
-            pricePlanCache = meveoContainer.getCache("meveo-price-plan");
-            usageChargeTemplateCacheCache = meveoContainer.getCache("meveo-usage-charge-template-cache-cache");
-            usageChargeInstanceCache = meveoContainer.getCache("meveo-charge-instance-cache");
-            counterCache = meveoContainer.getCache("meveo-counter-cache");
+            // pricePlanCache = meveoContainer.getCache("meveo-price-plan");
+            // usageChargeTemplateCacheCache = meveoContainer.getCache("meveo-usage-charge-template-cache-cache");
+            // usageChargeInstanceCache = meveoContainer.getCache("meveo-charge-instance-cache");
+            // counterCache = meveoContainer.getCache("meveo-counter-cache");
 
             populatePricePlanCache();
             populateUsageChargeCache();
@@ -114,6 +110,7 @@ public class RatingCacheContainerProvider {
 
         } catch (Exception e) {
             log.error("RatingCacheContainerProvider init() error", e);
+            throw e;
         }
     }
 

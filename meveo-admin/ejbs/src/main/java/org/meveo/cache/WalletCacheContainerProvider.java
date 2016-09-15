@@ -16,7 +16,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.UsageChargeInstance;
@@ -54,38 +53,39 @@ public class WalletCacheContainerProvider {
     /**
      * Contains association between prepaid wallet instance and balance value. Key format: WalletInstance.id.
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-balance")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-balance")
     private BasicCache<Long, BigDecimal> balanceCache;
 
     /**
      * Contains association between prepaid wallet instance and reserved balance value. Key format: WalletInstance.id.
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-reservedBalance")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-reservedBalance")
     private BasicCache<Long, BigDecimal> reservedBalanceCache;
 
     /**
      * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). Key format: UsageChargeInstance.id.
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usageChargeInstanceWallet")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usageChargeInstanceWallet")
     private BasicCache<Long, List<Long>> usageChargeInstanceWalletCache;
 
-    @Resource(name = "java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;
+    // @Resource(name = "java:jboss/infinispan/container/meveo")
+    // private CacheContainer meveoContainer;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("WalletCacheContainerProvider initializing...");
 
-            balanceCache = meveoContainer.getCache("meveo-balance");
-            reservedBalanceCache = meveoContainer.getCache("meveo-reservedBalance");
-            usageChargeInstanceWalletCache = meveoContainer.getCache("meveo-usageChargeInstanceWallet");
+            // balanceCache = meveoContainer.getCache("meveo-balance");
+            // reservedBalanceCache = meveoContainer.getCache("meveo-reservedBalance");
+            // usageChargeInstanceWalletCache = meveoContainer.getCache("meveo-usageChargeInstanceWallet");
 
             populateWalletCache();
 
             log.info("WalletCacheContainerProvider initialized");
         } catch (Exception e) {
             log.error("WalletCacheContainerProvider init() error", e);
+            throw e;
         }
     }
 

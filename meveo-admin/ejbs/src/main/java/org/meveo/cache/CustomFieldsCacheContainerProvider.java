@@ -21,7 +21,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.catalog.CalendarDaily;
@@ -78,17 +77,17 @@ public class CustomFieldsCacheContainerProvider {
     /**
      * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code and value is a list of values
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cfv-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cfv-cache")
     private BasicCache<String, Map<String, List<CachedCFPeriodValue>>> customFieldValueCache;
 
-    @Resource(name = "java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;
+    // @Resource(name = "java:jboss/infinispan/container/meveo")
+    // private CacheContainer meveoContainer;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("CustomFieldsCacheContainerProvider initializing...");
-            customFieldValueCache = meveoContainer.getCache("meveo-cfv-cache");
+            // customFieldValueCache = meveoContainer.getCache("meveo-cfv-cache");
 
             populateCFValueCache();
 
@@ -96,6 +95,7 @@ public class CustomFieldsCacheContainerProvider {
 
         } catch (Exception e) {
             log.error("CustomFieldsCacheContainerProvider init() error", e);
+            throw e;
         }
     }
 

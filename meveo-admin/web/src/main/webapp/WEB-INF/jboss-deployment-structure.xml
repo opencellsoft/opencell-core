@@ -10,5 +10,8 @@
 			<module name="org.jboss.logmanager" />
 			<module name="org.jboss.logmanager.log4j" />
 		</exclusions> -->
+        <dependencies>
+          <module name="org.infinispan" />
+        </dependencies>          
 	</deployment>
 </jboss-deployment-structure>
