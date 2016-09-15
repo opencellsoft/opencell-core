@@ -297,20 +297,4 @@ public class WorkflowService extends BusinessService<Workflow> {
         ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
 	}
 
-    @SuppressWarnings("unchecked")
-    public Workflow getWorkflowOrder(Provider provider) {
-        Workflow workflow = null;
-        try {
-            return (Workflow) getEntityManager()
-                    .createQuery(
-                            "from " + Workflow.class.getSimpleName()
-                                    + " wf left join fetch wf.transitions where wf.wfType=:wfType and wf.provider=:provider")
-                    .setParameter("wfType", "org.meveo.admin.wf.types.OrderWF")
-                    .setParameter("provider", provider)
-                    .getSingleResult();
-        } catch (Exception e) {
-
-        }
-        return workflow;
-    }
 }

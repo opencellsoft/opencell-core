@@ -33,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.wf.types.OrderWF;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.OrderStatusEnum;
@@ -62,6 +63,9 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     private static final long serialVersionUID = 1L;
 
     private static final String EL = "#{mv:getBean('org.meveo.service.order.OrderService').routeToUserGroup(entity,\"%s\")}";
+
+    private final String WF_ORDER = "Customer Care Assignation of Orders";
+    private final String CATCH_ALL = "Catch all";
 
     /**
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.
@@ -129,10 +133,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
      * @throws InstantiationException
      */
     public WFTransition initEntity() {
-        if (workflowOrder == null) {
-            workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
-        }
-
         entity = super.initEntity();
         if (entity.getId() != null) {
             editWfTransition(entity);
@@ -204,20 +204,43 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         return back();
     }
 
-    public Workflow getWorkflowOrder() {
+    public Workflow getWorkflowOrder() throws BusinessException {
         if (workflowOrder == null) {
-            workflowOrder = wfService.getWorkflowOrder(getCurrentUser().getProvider());
+            List<Workflow> list = wfService.findByWFType(OrderWF.class.getName(), getCurrentUser().getProvider());
+            if (CollectionUtils.isNotEmpty(list)) {
+                workflowOrder = list.get(0);
+            } else {
+                workflowOrder = new Workflow();
+                workflowOrder.setWfType(OrderWF.class.getName());
+                workflowOrder.setCode(WF_ORDER);
+                wfService.create(workflowOrder, getCurrentUser());
+                WFTransition catchAllDefault = createCatchAll();
+                workflowOrder.getTransitions().add(catchAllDefault);
+            }
         }
         if (workflowOrder != null) {
             operationList = workflowOrder.getTransitions();
-            if (operationList.size() > 0) {
+            if (CollectionUtils.isNotEmpty(operationList)) {
                 Collections.sort(operationList);
                 int indexCatchAll = operationList.size() - 1;
                 catchAll = operationList.get(indexCatchAll);
                 operationList.remove(indexCatchAll);
+            } else {
+                catchAll = createCatchAll();
             }
         }
         return workflowOrder;
+    }
+
+    private WFTransition createCatchAll() throws BusinessException {
+        WFTransition catchAllDefault = new WFTransition();
+        catchAllDefault.setPriority(100);
+        catchAllDefault.setDescription(CATCH_ALL);
+        catchAllDefault.setFromStatus(OrderStatusEnum.ACKNOWLEDGED.toString());
+        catchAllDefault.setToStatus(OrderStatusEnum.IN_PROGRESS.toString());
+        catchAllDefault.setWorkflow(workflowOrder);
+        wfTransitionService.create(catchAllDefault, getCurrentUser());
+        return catchAllDefault;
     }
 
     public void setWorkflowOrder(Workflow workflowOrder) {
