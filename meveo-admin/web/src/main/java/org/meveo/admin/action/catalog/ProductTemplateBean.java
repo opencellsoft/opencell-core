@@ -198,7 +198,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
                 pricePlanMatrixService.create(pricePlan, getCurrentUser());
             }
         }
-        customFieldInstanceService.setCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, catalogPrice.doubleValue(), getCurrentUser());
+        
+        customFieldInstanceService.setCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, catalogPrice == null ? null : catalogPrice.doubleValue(), getCurrentUser());
     }
 
 	public String discardChanges() {
