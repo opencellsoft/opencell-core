@@ -329,7 +329,7 @@ div.body > table > thead,
 .ui-paginator-bottom { -webkit-box-shadow: 0px -1px 0px 0px #b8b8b8; box-shadow: 0px -1px 0px 0px #b8b8b8; }
 
 /* tooltip improvement */
-.ui-tooltip { position : fixed !Important; left : 15% !important; top : 90% !important; bottom : 0px !important; width : 900px !Important; margin-left : auto !important; margin-right : auto !important;  display : visible !important; background : transparent; height : 64px; padding-top : 30px; padding-right : 50px; padding-left : 150px; color : white; border : none !important; background-image :url(../img/tooltip-bg.png); background-repeat : no-repeat; background-size : 1050px 104px; }
+.ui-tooltip { position : fixed !Important; left : 15% !important; top : 80% !important; bottom : 75px !important; width : 900px !Important; margin-left : auto !important; margin-right : auto !important;  display : visible !important; background : transparent; height : 64px; padding-top : 30px; padding-right : 50px; padding-left : 150px; color : white; border : none !important; background-image :url(../img/tooltip-bg.png); background-repeat : no-repeat; background-size : 1050px 104px; }
 
 .ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td { width : 300px; }
 /* key - value coloring on details */
