@@ -7,6 +7,7 @@ import java.util.List;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderStatusEnum;
 
 @WorkflowTypeClass
@@ -32,6 +33,9 @@ public class OrderWF extends WorkflowType<Order> {
 	@Override
 	public void changeStatus(String newStatus) {
 		entity.setStatus(OrderStatusEnum.valueOf(newStatus));
+		for (OrderItem orderItem : entity.getOrderItems()) {
+            orderItem.setStatus(entity.getStatus());
+        }
 	}
 
 	@Override

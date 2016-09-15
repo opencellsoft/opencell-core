@@ -145,9 +145,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         if (postData.getProducts() != null) {
@@ -212,9 +212,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         if (postData.getProducts() != null) {
@@ -346,8 +346,8 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity {}", serviceToActivateDto.getCode(), e);
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}",serviceToActivateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
             }
@@ -485,10 +485,11 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity {}", serviceToInstantiateDto.getCode(), e);
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}",serviceToInstantiateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
                 }
+                
             }
         }
     }

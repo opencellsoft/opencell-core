@@ -21,7 +21,7 @@
             <!--             <hftl:searchField label="#{messages['order.userAccount']}" field="userAccount" id="userAccount" valueLabelField="code" popup="true" popupId="searchUAPopup" /> -->
             <hftl:searchField label="#{messages['order.orderDate']}" field="orderDate" />
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
-            <hftl:decorateFormField fieldId="showMyOrdersOnly" label="#{messages['orders.showMyOrdersOnly']}" rendered="#{identity.hasPermission('administration', 'administrationManagement')}">
+            <hftl:decorateFormField fieldId="showMyOrdersOnly" label="#{messages['orders.showMyOrdersOnly']}" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
                 <p:selectBooleanCheckbox id="showMyOrdersOnly" value="#{orderListBean.showMyOrdersOnly}" />
             </hftl:decorateFormField>
         </hftl:searchPanel>
@@ -34,7 +34,7 @@
             <hftl:column label="#{messages['commons.status']}" field="status" isMessage="true" messagePrefix="OrderStatusEnum" />
             <hftl:column label="#{messages['order.completionDate']}" field="completionDate" />
             <hftl:column label="#{messages['order.receivedFromApp']}" field="receivedFromApp" />
-            <hftl:column label="#{messages['order.routedTo']}" field="routedTo" />
+            <hftl:column label="#{messages['order.routedTo']}" field="routedToUserGroup.descriptionOrCode"/>
             <hftl:actionsColumn permission="#{identity.hasPermission('order','orderManagement')}" />
         </hftl:dataList>
 

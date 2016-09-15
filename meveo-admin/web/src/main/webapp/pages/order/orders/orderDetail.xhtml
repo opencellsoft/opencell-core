@@ -40,35 +40,39 @@
             selectionListenerBean="#{orderBean}" selectionListenerMethod="onMainProductOfferingSet">
         </hftl:entityPopup>
 
-        <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
-            showEditButton="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" ajaxSubmit="true" submitPartialProcess=":orderForm:tabView:orderInfo">
+        <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.orderEditable}"
+            showEditButton="#{orderBean.orderEditable}" ajaxSubmit="true" submitPartialProcess=":orderForm:tabView:orderInfo">
             <p:tabView id="tabView" activeIndex="#{orderBean.activeTab}">
                 <p:tab title="#{messages['order.tab.order']}" id="tabOrder">
                     <hf:namingContainer id="orderInfo">
                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
-                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" showOnNew="false" allowEdit="false" />
-                        <hftl:formField label="#{messages['order.priority']}" field="priority" />
-                        <hftl:formField label="#{messages['order.category']}" field="category" />
+                        <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                        <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
-                        <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" rendered="#{orderBean.entity.receivedFromApp!=null}" />
+                        <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
 
                         <p:fieldset legend="#{messages['order.processingInstructions']}" styleClass="clearBoth">
-                            <hftl:formField label="#{messages['order.deliveryInstructions']}" field="deliveryInstructions" />
+                            <hftl:formField label="#{messages['order.deliveryInstructions']}" field="deliveryInstructions"
+                                allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
-                            <hftl:formField label="#{messages['order.requestedStartDate']}" field="requestedStartDate" />
-                            <hftl:formField label="#{messages['order.requestedCompletionDate']}" field="requestedCompletionDate" />
+                            <hftl:formField label="#{messages['order.requestedStartDate']}" field="requestedStartDate"
+                                allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                            <hftl:formField label="#{messages['order.requestedCompletionDate']}" field="requestedCompletionDate"
+                                allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         </p:fieldset>
                         <p:fieldset legend="#{messages['order.processingStatus']}" styleClass="clearBoth" rendered="#{orderBean.entity.status!=OrderStatusEnum.IN_CREATION}">
                             <hftl:formField label="#{messages['commons.status']}" field="status" showOnNew="false" edit="false" />
-                            <hftl:formField label="#{messages['order.statusMessage']}" field="statusMessage" rendered="#{orderBean.entity.statusMessage!=null}" />
+                            <hftl:formField label="#{messages['order.statusMessage']}" field="statusMessage" edit="false" rendered="#{orderBean.entity.statusMessage!=null}" />
 
-                            <hftl:formField label="#{messages['order.routedTo']}" field="routedTo" rendered="#{orderBean.entity.routedTo!=null}" />
+                            <hftl:formField label="#{messages['order.routedTo']}" field="routedToUserGroup" edit="false" valueLabelField="descriptionOrCode"
+                                rendered="#{orderBean.entity.routedToUserGroup!=null}" />
                             <hftl:formField label="#{messages['order.startDate']}" field="startDate" edit="false" rendered="#{orderBean.entity.startDate!=null}" />
-                            <hftl:formField label="#{messages['order.expectedCompletionDate']}" field="expectedCompletionDate"
-                                rendered="#{orderBean.entity.expectedCompletionDate!=null and orderBean.entity.completionDate==null}" />
-                            <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" rendered="#{orderBean.entity.completionDate!=null}" />
+                            <hftl:formField label="#{messages['order.expectedCompletionDate']}" field="expectedCompletionDate" />
+                            <!--                                 rendered="#{orderBean.entity.expectedCompletionDate!=null and orderBean.entity.completionDate==null}" /> -->
+                            <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" edit="false" rendered="#{orderBean.entity.completionDate!=null}" />
                         </p:fieldset>
 
                         <div class="clearLeft"></div>
@@ -128,21 +132,23 @@
                             <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
                                 <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.itemId']}" field="itemId" edit="false" componentWidth="10" />
                                 <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.action']}" field="action" required="true" componentWidth="25"
-                                    listenerUpdate="orderItemDetails" actionListenerBean="#{orderBean}" actionListenerMethod="onActionTypeChange" />
+                                    listenerUpdate="orderItemDetails" actionListenerBean="#{orderBean}" actionListenerMethod="onActionTypeChange"
+                                    edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                 <h:panelGroup>
                                     <hftl:formField id="userAccount" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.userAccount']}" field="userAccount"
                                         valueLabelField="code" required="true" popup="true" popupId="userAccountPopup"
+                                        edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
                                         rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
                                 </h:panelGroup>
 
                                 <h:panelGroup>
                                     <hftl:formField id="subscription" entity="#{orderBean.selectedOrderItem}" label="#{messages['access.subscription']}" field="subscription"
-                                        valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true"
+                                        valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
                                         rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE)}" />
                                 </h:panelGroup>
                                 <h:panelGroup>
                                     <hftl:formField id="offer" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.mainOffering']}" field="mainOffering"
-                                        valueLabelField="code" popup="true" popupId="offerPopup" required="true"
+                                        valueLabelField="code" popup="true" popupId="offerPopup" required="true" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
                                         rendered="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}" />
                                 </h:panelGroup>
                                 <h:panelGroup
@@ -315,7 +321,7 @@
 
                                                     <div class="clearLeft"></div>
                                                     <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":orderForm:tabView:orderItemMessages" />
+                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"/>
 
                                                 </p:tab>
                                             </c:forEach>
@@ -359,7 +365,7 @@
 
 
                 <p:commandButton value="Send to process" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
-                    rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION and !orderBean.entity.transient}" />
+                    rendered="#{!orderBean.entity.transient and orderBean.orderEditable}" />
             </ui:define>
 
         </hftl:formPanel>

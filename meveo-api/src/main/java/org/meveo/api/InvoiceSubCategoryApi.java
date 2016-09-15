@@ -103,10 +103,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, currentUser, true);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
-        }        
+            throw e;
+        }       
     }
 
     public void update(InvoiceSubCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -171,10 +171,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, currentUser, true);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
-        } 
+            throw e;
+        }
     }
 
     public InvoiceSubCategoryDto find(String code, Provider provider) throws MeveoApiException {

@@ -156,10 +156,10 @@ public class OfferTemplateApi extends BaseApi {
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), offerTemplate, true, currentUser);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 	}
 
 	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
@@ -364,10 +364,10 @@ public class OfferTemplateApi extends BaseApi {
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 	}
 
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {

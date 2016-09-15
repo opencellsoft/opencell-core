@@ -207,7 +207,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param currentUser Current user
 	 * @throws BusinessException
 	 */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public IEntity executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException {
         try {
 
@@ -231,7 +231,8 @@ public class WorkflowService extends BusinessService<Workflow> {
                             log.debug("Processing action: {} on entity {}", wfAction);
                             executeExpression(wfAction.getActionEl(), entity);
                             log.trace("Workflow action executed, entity will be refreshed. Action {}, entity {}", wfAction, entity);
-                            entity = baseEntityService.refreshOrRetrieve(entity);
+                            baseEntityService.setEntityClass((Class<IEntity>) entity.getClass());
+                            entity = baseEntityService.findById((Long) entity.getId());
 					}
 				}
 				wfType.changeStatus(wfTransition.getToStatus());

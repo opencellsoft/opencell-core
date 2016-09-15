@@ -82,12 +82,9 @@ public abstract class BaseApi {
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      * @throws MeveoApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws IllegalArgumentException,
-            IllegalAccessException, MeveoApiException {
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws MeveoApiException {
         populateCustomFields(customFieldsDto, entity, isNewEntity, currentUser, true);
     }
 
@@ -99,12 +96,10 @@ public abstract class BaseApi {
      * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
      * @param checkCustomField Should a check be made if CF field is required
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      * @throws MeveoApiException
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField)
-            throws IllegalArgumentException, IllegalAccessException, MeveoApiException {
+            throws MeveoApiException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
@@ -133,7 +128,7 @@ public abstract class BaseApi {
      */
     @SuppressWarnings("unchecked")
     private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MeveoApiException {
+            User currentUser, boolean checkCustomFields) throws MeveoApiException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {

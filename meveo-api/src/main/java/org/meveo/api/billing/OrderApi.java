@@ -52,6 +52,7 @@ import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 import org.tmf.dsmapi.catalog.resource.order.OrderItem;
@@ -93,6 +94,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private OrderItemService orderItemService;
+
+    @Inject
+    private WorkflowService workflowService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -240,14 +244,44 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
-        processOrder(order, currentUser);
+        order = initiateWorkflow(order, currentUser);
 
         return orderToDto(order);
+    }
+
+    /**
+     * Initiate workflow on order. If workflow is enabled on Order class, then execute workflow. If workflow is not enabled - then process the order right away.
+     * 
+     * @param order
+     * @param currentUser
+     * @return
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    public Order initiateWorkflow(Order order, User currentUser) throws BusinessException {
+
+        if (order.getStatus() == OrderStatusEnum.IN_CREATION) {
+            order.setStatus(OrderStatusEnum.ACKNOWLEDGED);
+        }
+
+        if (workflowService.isWorkflowSetup(Order.class, currentUser.getProvider())) {
+            order = (Order) workflowService.executeMatchingWorkflows(order, currentUser);
+
+        } else {
+            try {
+                order = processOrder(order, currentUser);
+            } catch (MeveoApiException e) {
+                throw new BusinessException(e);
+            }
+        }
+
+        return order;
+
     }
 
     /**
@@ -258,22 +292,28 @@ public class OrderApi extends BaseApi {
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public void processOrder(Order order, User currentUser) throws BusinessException, MeveoApiException {
+    public Order processOrder(Order order, User currentUser) throws BusinessException, MeveoApiException {
 
         log.info("Processing order {}", order.getCode());
 
-        order.setStatus(OrderStatusEnum.IN_PROGRESS);
+        order = orderService.refreshOrRetrieve(order);
+
         order.setStartDate(new Date());
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             processOrderItem(order, orderItem, currentUser);
         }
 
+        order.setCompletionDate(new Date());
         order.setStatus(OrderStatusEnum.COMPLETED);
-
-        orderService.update(order, currentUser);
+        for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
+            orderItem.setStatus(OrderStatusEnum.COMPLETED);
+        }
+        order = orderService.update(order, currentUser);
 
         log.trace("Finished processing order {}", order.getCode());
+
+        return order;
     }
 
     private void processOrderItem(Order order, org.meveo.model.order.OrderItem orderItem, User currentUser) throws BusinessException, MeveoApiException {
@@ -387,9 +427,9 @@ public class OrderApi extends BaseApi {
 
                 try {
                     populateCustomFields(customFields, subscription, true, currentUser, true);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
+                } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                    throw e;
                 }
 
                 // Services are expressed as child products
@@ -458,9 +498,15 @@ public class OrderApi extends BaseApi {
 
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
+        String subscriptionCode = (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(),
+            String.class, UUID.randomUUID().toString());
+
+        if (subscriptionService.findByCode(subscriptionCode, currentUser.getProvider()) != null) {
+            throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
+        }
+
         Subscription subscription = new Subscription();
-        subscription.setCode((String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(),
-            String.class, UUID.randomUUID().toString()));
+        subscription.setCode(subscriptionCode);
         subscription.setUserAccount(orderItem.getUserAccount());
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
@@ -473,9 +519,9 @@ public class OrderApi extends BaseApi {
 
         try {
             populateCustomFields(customFields, subscription, true, currentUser, true);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
 
         // instantiate and activate services
@@ -485,7 +531,7 @@ public class OrderApi extends BaseApi {
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem, User currentUser) throws BusinessException, MeveoApiException {
+            OrderItem productOrderItem, User currentUser) throws BusinessException {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -497,6 +543,10 @@ public class OrderApi extends BaseApi {
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
 
+        if (productInstanceService.findByCode(code, currentUser.getProvider()) != null) {
+            throw new BusinessException("Product instance with code " + code + " already exists");
+        }
+
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
             currentUser);
         productInstance.setProvider(currentUser.getProvider());
@@ -506,9 +556,9 @@ public class OrderApi extends BaseApi {
 
             populateCustomFields(customFields, productInstance, true, currentUser, true);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
         ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, currentUser);
         List<ProductChargeInstance> list = new ArrayList<>();
@@ -700,21 +750,21 @@ public class OrderApi extends BaseApi {
         if (order == null) {
             throw new EntityDoesNotExistsException(ProductOrder.class, orderId);
         }
-        
+
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
-        
+
         // TODO Need to initiate workflow if there is one
-        
+
         order = orderService.refreshOrRetrieve(order);
 
         return orderToDto(order);
-        
+
     }
 
     public void deleteProductOrder(String orderId, User currentUser) throws EntityDoesNotExistsException, ActionForbiddenException {
@@ -749,7 +799,7 @@ public class OrderApi extends BaseApi {
         }
         productOrder.setRequestedCompletionDate(order.getRequestedCompletionDate());
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
-        productOrder.setState(order.getStatus().toString());
+        productOrder.setState(order.getStatus().getApiState());
 
         List<OrderItem> productOrderItems = new ArrayList<>();
         productOrder.setOrderItem(productOrderItems);
@@ -774,7 +824,7 @@ public class OrderApi extends BaseApi {
 
         OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
         //
-        productOrderItem.setState(orderItem.getStatus().getApiState());
+        productOrderItem.setState(orderItem.getOrder().getStatus().getApiState());
 
         return productOrderItem;
     }

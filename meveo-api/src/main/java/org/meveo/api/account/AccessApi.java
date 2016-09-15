@@ -56,9 +56,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                throw e;
             }
 
         } else {
@@ -95,9 +95,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                throw e;
             }
 
         } else {

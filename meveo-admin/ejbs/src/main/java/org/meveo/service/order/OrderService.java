@@ -48,11 +48,11 @@ public class OrderService extends BusinessService<Order> {
 	}
 
     public Order routeToUserGroup(Order entity, String userGroupCode) throws BusinessException {
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode, getCurrentUser().getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode, entity.getProvider()); // Should be a getCurrentUser().getProvider(), but currentUser is not available in non-gui execution environment
         if (userHierarchyLevel == null) {
             log.trace("No UserHierarchyLevel found {}/{}", entity, userGroupCode);
         }
         entity.setRoutedToUserGroup(userHierarchyLevel);
-        return this.update(entity, getCurrentUser());
+        return this.update(entity, entity.getAuditable().getCreator());
     }
 }

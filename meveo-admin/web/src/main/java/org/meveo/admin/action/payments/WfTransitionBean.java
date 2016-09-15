@@ -62,7 +62,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String EL = "#{mv:getBean('org.meveo.service.order.OrderService').routeToUserGroup(entity,\"%s\")}";
+    private static final String EL = "#{mv:getBean('OrderService').routeToUserGroup(entity,'%s')}";
 
     private final String WF_ORDER = "Customer Care Assignation of Orders";
     private final String CATCH_ALL = "Catch all";
