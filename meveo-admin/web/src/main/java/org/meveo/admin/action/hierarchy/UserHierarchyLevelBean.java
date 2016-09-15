@@ -18,7 +18,10 @@
  */
 package org.meveo.admin.action.hierarchy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -28,7 +31,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
@@ -111,7 +113,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     public TreeNode getRootNode() {
         if (rootNode == null) {
-            rootNode = new SortedTreeNode(null, ROOT, null);
+            rootNode = new SortedTreeNode(ROOT, null);
             List<UserHierarchyLevel> roots;
             if (entity != null && entity.getProvider() != null) {
                 roots = userHierarchyLevelService.findRoots(entity.getProvider());
@@ -150,14 +152,12 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         }
         TreeNode treeNode = event.getTreeNode();
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) treeNode.getData();
-        if (userHierarchyLevel != null && userHierarchyLevel.getId() != null) {
-            userHierarchyLevel = userHierarchyLevelService.refreshOrRetrieve(userHierarchyLevel);
-            setEntity(userHierarchyLevel);
-            selectedNode = treeNode;
-            selectedNode.setSelected(true);
-            showUserGroupDetail = true;
-            isEdit = true;
-        }
+        userHierarchyLevel = userHierarchyLevelService.refreshOrRetrieve(userHierarchyLevel);
+        setEntity(userHierarchyLevel);
+        selectedNode = treeNode;
+        selectedNode.setSelected(true);
+        showUserGroupDetail = true;
+        isEdit = true;
     }
 
     public void newUserHierarchyLevel() {
@@ -322,16 +322,11 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     // Recursive function to create tree
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
-        TreeNode newNode = new SortedTreeNode("level", userHierarchyLevel, rootNode);
+        TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
-        Set<User> users = ((UserHierarchyLevel) userHierarchyLevel).getUsers();
-        if (CollectionUtils.isNotEmpty(users)) {
-            UserHierarchyLevel userLink = new UserHierarchyLevel();
-            userLink.setCode(users.size() + " Users");
-            new SortedTreeNode("user", userLink, newNode);
-        }
         if (userHierarchyLevel.getChildLevels() != null) {
-            List<HierarchyLevel> subTree = new ArrayList<HierarchyLevel>(userHierarchyLevel.getChildLevels());
+
+            List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(userHierarchyLevel.getChildLevels());
             if (CollectionUtils.isNotEmpty(subTree)) {
                 Collections.sort(subTree);
                 for (HierarchyLevel child : subTree) {
@@ -350,8 +345,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             super();
         }
 
-        public SortedTreeNode(String type, Object data, TreeNode parent) {
-            super(type, data, parent);
+        public SortedTreeNode(Object data, TreeNode parent) {
+            super(data, parent);
         }
 
         public boolean canMoveUp() {

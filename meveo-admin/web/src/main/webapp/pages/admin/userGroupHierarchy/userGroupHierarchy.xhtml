@@ -12,12 +12,9 @@
             <h:panelGroup id="userGroupPanel" layout="block" styleClass="col1">
                 <p:panel header="#{messages['userGroupHierarchy.userGroupLevelHierarchy']}">
                     <p:outputPanel style="height: 100%;overflow: auto;display: block">
-                        <p:tree style="height: 400px; width: 95%" value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel" selectionMode="single" rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
+                        <p:tree style="height: 375px; width: 95%" value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel" selectionMode="single" rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
                             <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update="messages buttons userGroupLevelDetailPanel" />
-                            <p:treeNode type="level">
-                                <h:outputText value="#{userGroupLevel.descriptionOrCode}" />
-                            </p:treeNode>
-                            <p:treeNode type="user" icon="ui-icon-document">
+                            <p:treeNode>
                                 <h:outputText value="#{userGroupLevel.descriptionOrCode}" />
                             </p:treeNode>
                         </p:tree>
@@ -28,9 +25,6 @@
             <h:panelGroup layout="block" styleClass="col2">
                 <p:panel header="#{messages['userGroupHierarchy.userGroupLevel']}" styleClass="form-panel">
                     <h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
-                        <h:panelGroup>
-                            <p:inputText id="search" value="" size="30" placeholder="#{messages['commons.search']}" />
-                        </h:panelGroup>
                         <h:panelGrid columns="2">
                             <p:commandButton id="addUserHierarchyRootBtn" icon="fa fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}"
                                             update="messages userGroupLevelDetailPanel" style="padding-right:5px" >
@@ -65,7 +59,7 @@
                     <p:fieldset legend="#{messages['userGroupHierarchy.configureUserGroupLevel']}" styleClass="clearLeft">
                         <h:panelGroup id="userGroupLevelDetailPanel">
                             <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false"
-                                ajaxSubmit="true" submitUpdate="@form userGroupPanel buttons">
+                                ajaxSubmit="true" submitUpdate="@form userGroupPanel messages" showMessages="false">
                                 <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" size="50" />
                                 <hftl:formField label="#{messages['businessEntity.description']}" field="description" newLine="true" size="80"/>
                             </hftl:formPanel>
