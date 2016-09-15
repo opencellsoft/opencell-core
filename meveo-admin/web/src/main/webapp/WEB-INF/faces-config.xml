@@ -69,7 +69,7 @@
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>
 			<if>#{not(identity.loggedIn)}</if>
-			<to-view-id>/loginInternal.xhtml</to-view-id>
+			<to-view-id>/login.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 

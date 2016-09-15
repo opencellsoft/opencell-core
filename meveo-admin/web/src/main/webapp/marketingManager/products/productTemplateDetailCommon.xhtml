@@ -11,7 +11,7 @@
 
     <p:growl id="growl" globalOnly="true" autoUpdate="false"></p:growl>
 
-    <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid35 Responsive100 VAlignTop, Wid35 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
+    <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
         <p:panel>
             <hftl:decorateFormField fieldId="productImageUpload" rendered="#{mainBackingBean.entity.transient}" label="#{messages['commons.image']}">
                 <p:fileUpload id="productImageUpload" auto="false" skinSimple="true" mode="simple" value="#{mainBackingBean.uploadedFile}" />
@@ -61,11 +61,11 @@
                 <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
                 <h:outputText value="#{mainBackingBean.entity.auditable.creator}"></h:outputText>
             </p:panel>
-            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-                <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" />
-                <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" />
-                <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" />
-            </p:panelGrid>
+            <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
+                <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" displayOneLine="true" labelWidth="40" />
+                <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" displayOneLine="true" labelWidth="40" />
+                <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
+            </h:panelGrid>
 
             <p:panel>
 	            <hftl:decorateFormField fieldId="salesPrice" label="#{messages['marketingManager.catalog.salesPrice']}">
@@ -92,14 +92,14 @@
             </p:panel>
         </p:panel>
 
-        <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-            <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="pickUpList" valueLabelField="code"
-                dualListModel="#{mainBackingBean.offerTemplateCategoriesDM}" />
-            <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="pickUpList" valueLabelField="code"
-                dualListModel="#{mainBackingBean.channelDM}" newLine="true" />
-            <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="pickUpList"
-                valueLabelField="code" dualListModel="#{mainBackingBean.bamDM}" newLine="true" />
-        </p:panelGrid>
+        <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
+            <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox" valueLabelField="code"
+                listBean="#{offerTemplateCategoryListBean}" componentWidth="100"  />
+            <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="code"
+                listBean="#{channelListBean}" newLine="true" componentWidth="100" />
+            <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
+                valueLabelField="code" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
+        </h:panelGrid>
 
     </p:panelGrid>
 
