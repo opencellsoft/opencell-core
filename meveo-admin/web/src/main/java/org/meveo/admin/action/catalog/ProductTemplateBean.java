@@ -95,10 +95,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Override
 	public ProductTemplate initEntity() {
 		ProductTemplate result = super.initEntity();
-		getOfferTemplateCategoriesDM();
-		getAttachmentsDM();
-		getWalletTemplatesDM();
-		getBamDM();
+	
 		createMissingCustomFields();
 
 		initPricePlan();
@@ -210,27 +207,27 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		if (entity.getOfferTemplateCategories() != null) {
+		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
 			entity.getOfferTemplateCategories().clear();
 			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
 		}
 
-		if (entity.getAttachments() != null) {
+		if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
 			entity.getAttachments().clear();
 			entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
 		}
 
-		if (entity.getWalletTemplates() != null) {
+		if (walletTemplatesDM != null && (walletTemplatesDM.getSource() != null || walletTemplatesDM.getTarget() != null)) {
 			entity.getWalletTemplates().clear();
 			entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
 		}
 
-		if (entity.getBusinessAccountModels() != null) {
+		if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
 			entity.getBusinessAccountModels().clear();
 			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
 		}
 		
-		if (entity.getChannels() != null) {
+		if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
 			entity.getChannels().clear();
 			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
 		}

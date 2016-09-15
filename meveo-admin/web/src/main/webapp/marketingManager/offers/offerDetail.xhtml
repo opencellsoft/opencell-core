@@ -11,7 +11,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
-            <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+			<f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
 		</f:metadata>
 	</ui:define>
 
@@ -33,7 +33,7 @@
 			backView="mm_offerTemplates">
 
 			<p:panelGrid columns="3"
-				columnClasses="Wid10 Responsive100, Wid35 Responsive100 VAlignTop, Wid35 Responsive100 VAlignTop"
+				columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop"
 				styleClass="ui-panelgrid-blank">
 				<p:panel>
 					<hftl:decorateFormField fieldId="offerImageUpload"
@@ -85,7 +85,8 @@
 					</p:outputPanel>
 				</p:panel>
 				<p:panel>
-					<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
+					<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100"
+						columnClasses="Wid100">
 						<hftl:formField label="#{messages['offerTemplate.prefix']}"
 							required="true" field="prefix"
 							rendered="#{offerTemplateBean.bomId ne null}" />
@@ -111,32 +112,33 @@
 						<h:outputText
 							value="#{offerTemplateBean.entity.auditable.creator}"></h:outputText>
 					</p:panel>
-					<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
+					<h:panelGrid columns="1"
+						styleClass="ui-panelgrid-blank Wid100 Responsive100">
 						<hftl:formField label="#{messages['commons.validFrom']}"
-							field="validFrom" time="true" displayOneLine="true" labelWidth="40" />
+							field="validFrom" time="true" displayOneLine="true"
+							labelWidth="40" />
 						<hftl:formField label="#{messages['commons.validTo']}"
 							field="validTo" time="true" displayOneLine="true" labelWidth="40" />
 						<hftl:formField label="#{messages['commons.status']}"
 							field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
 					</h:panelGrid>
 				</p:panel>
-				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+				<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
 					<hftl:formField id="offerTemplateCategories"
 						label="#{messages['offerTemplate.category']}"
-						field="offerTemplateCategories" listType="pickUpList"
-						valueLabelField="code"
-						dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
+						field="offerTemplateCategories" listType="selectCheckbox"
+						valueLabelField="code" listBean="#{offerTemplateCategoryListBean}"
+						componentWidth="100" />
 					<hftl:formField id="channels" label="#{messages['channels.title']}"
-						field="channels" listType="pickUpList"
-						valueLabelField="descriptionOrCode"
-						dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
+						field="channels" listType="selectCheckbox"
+						valueLabelField="descriptionOrCode" listBean="#{channelListBean}"
+						newLine="true" componentWidth="100" />
 					<hftl:formField id="businessAccountModels"
 						label="#{messages['marketingManager.catalog.targetSegment']}"
-						field="businessAccountModels" listType="pickUpList"
-						valueLabelField="code"
-						dualListModel="#{offerTemplateBean.businessAccountModelsDM}"
-						newLine="true" />
-				</p:panelGrid>
+						field="businessAccountModels" listType="selectCheckbox"
+						valueLabelField="code" listBean="#{businessAccountModelListBean}"
+						newLine="true" componentWidth="100" />
+				</h:panelGrid>
 			</p:panelGrid>
 
 			<p:panel>
@@ -209,16 +211,22 @@
 						styleClass="fa fa-edit no-text-decoration"
 						style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
 				</f:facet>
-					<!-- custom fields -->
-                <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-                </c:if>
-                <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
-                    <p:tabView>
-                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-                    </p:tabView>
-                </c:if>
-            </p:panel>
+				<!-- custom fields -->
+				<c:if
+					test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
+					<hftl:customFields backingBean="#{offerTemplateBean}"
+						messagesId=":formId:messages"
+						defaultTabLabel="#{messages['commons.parameters']}" />
+				</c:if>
+				<c:if
+					test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
+					<p:tabView>
+						<hftl:customFields backingBean="#{offerTemplateBean}"
+							messagesId=":formId:messages"
+							defaultTabLabel="#{messages['commons.parameters']}" />
+					</p:tabView>
+				</c:if>
+			</p:panel>
 
 			<p:panel>
 				<f:facet name="header">
@@ -240,18 +248,24 @@
 
 						<p:panel id="serviceCf_panel_#{index}">
 
-                            <!-- custom fields -->
-                            <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() ==1}">
-                                <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-                                    defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{index}" />
-                            </c:if>
-                            <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
-                                <p:tabView>
-                                    <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-                                        defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{index}" />
-                                </p:tabView>
-                            </c:if>
-                        </p:panel>
+							<!-- custom fields -->
+							<c:if
+								test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() ==1}">
+								<hftl:customFields backingBean="#{serviceTemplateBean}"
+									entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+									defaultTabLabel="#{messages['commons.parameters']}"
+									prefix="cf_#{index}" />
+							</c:if>
+							<c:if
+								test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
+								<p:tabView>
+									<hftl:customFields backingBean="#{serviceTemplateBean}"
+										entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+										defaultTabLabel="#{messages['commons.parameters']}"
+										prefix="cf_#{index}" />
+								</p:tabView>
+							</c:if>
+						</p:panel>
 
 						<c:set var="index" value="${index + 1}"></c:set>
 					</c:forEach>
@@ -269,16 +283,18 @@
 					listener="#{customFieldDataEntryBean.refreshFieldsAndActionsWhilePreserveValues(offerTemplateBean.entity)}"
 					update=":formId:customFieldsWrappPanel" />
 
-                <ui:include src="../../pages/admin/customEntities/customFieldsAndActions.xhtml">
-                </ui:include>
+				<ui:include
+					src="../../pages/admin/customEntities/customFieldsAndActions.xhtml">
+				</ui:include>
 
-                <h:form>
-                    <p:panel width="100">
-                        <p:button value="#{messages['commons.close']}" onclick="PF('entityCustomizationDialog').hide();return false;">
-                        </p:button>
-                    </p:panel>
-                </h:form>
-            </p:dialog>
+				<h:form>
+					<p:panel width="100">
+						<p:button value="#{messages['commons.close']}"
+							onclick="PF('entityCustomizationDialog').hide();return false;">
+						</p:button>
+					</p:panel>
+				</h:form>
+			</p:dialog>
 		</h:panelGroup>
 
 		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
