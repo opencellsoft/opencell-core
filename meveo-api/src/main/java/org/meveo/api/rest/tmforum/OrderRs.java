@@ -47,7 +47,7 @@ public interface OrderRs {
      */
     @GET
     @Path("/{orderId}")
-    public Response getProductOrder(@PathParam("id") String id, @Context UriInfo info);
+    public Response getProductOrder(@PathParam("orderId") String id, @Context UriInfo info);
 
     /**
      * Get a list of product orders optionaly filtered by some criteria
@@ -69,7 +69,7 @@ public interface OrderRs {
      */
     @PATCH
     @Path("/{id}")
-    public Response updateProductOrder(@PathParam("orderId") String id, ProductOrder productOrder, @Context UriInfo info);
+    public Response updateProductOrder(@PathParam("id") String id, ProductOrder productOrder, @Context UriInfo info);
 
     /**
      * Delete a product order
