@@ -291,7 +291,7 @@
     <p:dialog id="cftDialog" header="#{messages['customFieldTemplate.panel']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="cftDialog" width="90%"
         appendTo="@(body)" position="top">
 
-        <p:scrollPanel mode="native" style="max-height:550px">
+        <p:scrollPanel mode="native" style="max-height:550px;">
 
             <hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
 
@@ -336,7 +336,7 @@
                     </p:fieldset>
                 </h:panelGroup>
 
-                <h:panelGroup id="matrixColumns" styleClass="clearLeft">
+                <h:panelGroup id="matrixColumns" styleClass="clearfix">
                     <p:fieldset legend="#{messages['customFieldTemplate.matrixColumn.columns']}" styleClass="clearLeft"
                         rendered="#{customFieldTemplateBean.entity.storageType == 'MATRIX'}">
                         <p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px"
@@ -398,7 +398,7 @@
                     </p:fieldset>
                 </h:panelGroup>
 
-                <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="clearLeft">
+                <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
                     <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
                     <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
                     <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
@@ -414,7 +414,7 @@
                     <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp"
                         rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29" componentWidth="19" />
                 </p:fieldset>
-                <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
+                <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">
                     <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
                     <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" required="false"
                         allowEdit="#{customFieldTemplateBean.entity.indexType==null}" componentWidth="10" />

@@ -1247,3 +1247,16 @@ footer .footer-copyright {
 #left-controls li.button-item {
     margin-left: -24px;
 }
+
+.versioning-and-caching,
+.validations {
+  border: none;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.versioning-and-caching .ui-fieldset-legend,
+.validations .ui-fieldset-legend {
+  border: none !important;
+  padding: 0 0 10px;
+}
