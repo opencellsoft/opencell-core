@@ -1286,28 +1286,28 @@ form.formNoBottomBorder {
     }
     .NoIndent {
         display: block;
-        margin: 0px auto;
-        padding: 0px;
+        margin: 0 auto;
+        padding: 0;
     }
     /* responsive support */
 
     .Responsive {
         width: 100%;
         float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
     .Responsive50 {
         width: 100%;
         float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
     .Responsive100 {
-        width: 100%;
+        width: 100% !important;
         float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
     /* make auto of element width attribute on mobile devices with media queries */
 

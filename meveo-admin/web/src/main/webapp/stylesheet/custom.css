@@ -118,7 +118,7 @@ a.text-blue:hover::before {
 
 .btn-wrapper a {
   color: #333;
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 300;
   font-family: 'Segoe UI', 'wf_segoe-ui_normal', 'Source Sans Pro', Arial, sans-serif;
   -webkit-transition: all 300ms ease-in-out 0s;
@@ -211,7 +211,7 @@ body {
 .ui-tabs .ui-tabs-nav li a {
   color: #333;
   font-family: 'Segoe UI', 'wf_segoe-ui_normal', 'Source Sans Pro', Arial, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 300;
   padding: 10px 15px;
 }
