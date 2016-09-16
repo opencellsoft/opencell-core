@@ -1,14 +1,18 @@
 package org.meveo.service.catalog.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -56,4 +60,28 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
 		}
 	}
 
+    @SuppressWarnings("rawtypes")
+    public boolean canDeleteOfferTemplateCategory(Long id) {
+        List<String> fieldsFetch = Arrays.asList("children");
+
+        OfferTemplateCategory offerTemplateCategory = findById(id, fieldsFetch);
+        if (offerTemplateCategory != null && CollectionUtils.isNotEmpty(offerTemplateCategory.getChildren())) {
+           return false;
+        }
+
+       return true;
+    }
+
+    public List<OfferTemplateCategory> findRoots(Provider provider) {
+        Query query = getEntityManager()
+                .createQuery(
+                        "from " + OfferTemplateCategory.class.getSimpleName()
+                                + " where offerTemplateCategory.id IS NULL and provider=:provider");
+        query.setParameter("provider", provider);
+        if (query.getResultList().size() == 0) {
+            return null;
+        }
+
+        return query.getResultList();
+    }
 }
