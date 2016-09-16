@@ -172,8 +172,8 @@ select[disabled] { color : #000; }
 #admin-bar ul li,
 #admin-bar ul li a
 {
-   font-family: helvetica;
-   font-size: 0.95em;
+   font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;
+   font-size: 15px;
    color : #fff;
    padding-top: 5px;
    text-decoration: none;

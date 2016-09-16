@@ -1181,6 +1181,13 @@ footer .footer-copyright {
   text-align: center;
 }
 
+.ui-inputswitch .ui-inputswitch-on span {
+  color: #fff;
+  -webkit-text-shadow: none;
+  -moz-text-shadow: none;
+  text-shadow: none;  
+}
+
 #offerForExportPanel_content li {
     padding: 4px 0;
 }
