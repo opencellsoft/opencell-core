@@ -136,6 +136,7 @@
                     	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}" />
 						<s:objectConverter />
+						<p:ajax update="#{id}_selectedItemPanel"></p:ajax>
 					</p:selectCheckboxMenu>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
@@ -143,8 +144,23 @@
 					 	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
 						<s:objectConverter />
+						<p:ajax update="#{id}_selectedItemPanel"></p:ajax>
 					</p:selectCheckboxMenu>
 				</c:if>
+				
+				<p:panel id="#{id}_selectedItemPanel" >
+					<h:panelGroup styleClass="field-value">
+						<ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+							<c:if test="#{not empty(valueLabelField2)}">
+	                            #{elem[valueLabelField]} #{elem[valueLabelField2]}
+	                    	</c:if>
+							<c:if test="#{empty(valueLabelField2)}">
+								#{elem[valueLabelField]}
+	                    	</c:if>
+							<h:outputText value="#{!loop.last ? ', ' : ''}" />
+						</ui:repeat>
+					</h:panelGroup>
+				</p:panel>
 
             </c:if>
 			
