@@ -496,6 +496,18 @@ input[type="text"] {
   border: none !important;
 }
 
+.switch-wrapper .ui-inputswitch .ui-inputswitch-off {
+  height: 25px;
+  padding-top: 0;
+}
+
+.switch-wrapper .ui-inputswitch .ui-inputswitch-off span {
+  background: #002050;
+  height: 19px;
+  color: #fff;
+  padding-top: 6px;
+}
+
 .ui-breadcrumb ul li a {
   margin-top: 4px !important;
   text-decoration: none;
