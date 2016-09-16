@@ -465,7 +465,35 @@ input[type="text"] {
 }
 
 .ui-inputswitch {
-  height: 18px;
+  /*height: 18px;*/
+  border: none !important;
+}
+
+.ui-inputswitch .ui-inputswitch-on,
+.ui-inputswitch .ui-inputswitch-off {
+  top: -1px;
+  padding-top: 6px;
+}
+
+.ui-inputswitch.ui-state-disabled {
+  opacity: 1;
+  padding: 0;
+}
+
+.switch-wrapper {
+  padding: 0;
+}
+
+.switch-wrapper > div {
+  padding: 0 !important;
+}
+
+.switch-wrapper > div > div {
+  border: 1px solid #ddd !important;
+}
+
+.switch-wrapper .ui-inputswitch-handle {
+  border: none !important;
 }
 
 .ui-breadcrumb ul li a {
