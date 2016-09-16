@@ -241,46 +241,60 @@
 			</p:panel>
 
 			<p:panel>
-				<f:facet name="header">
-					<h:outputText
-						value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
-						styleClass="SubHeader" />
-				</f:facet>
+				<f:facet name="header">#{messages['marketingManager.catalog.servicesToInclude']}</f:facet>
+
 				<p:panel>
 					<c:set var="index" value="${0}"></c:set>
-					<c:forEach
-						items="#{offerTemplateBean.entity.offerServiceTemplates}"
-						var="ost">
 
-						<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
-							rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
-							<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+					<h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank"
+						columnClasses="Responsive Wid2, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
 
-						<p:panel id="serviceCf_panel_#{index}">
+						<c:forEach
+							items="#{offerTemplateBean.entity.offerServiceTemplates}"
+							var="ost">
 
-							<!-- custom fields -->
-							<c:if
-								test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() ==1}">
-								<hftl:customFields backingBean="#{serviceTemplateBean}"
-									entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-									defaultTabLabel="#{messages['commons.parameters']}"
-									prefix="cf_#{index}" />
-							</c:if>
-							<c:if
-								test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
-								<p:tabView>
-									<hftl:customFields backingBean="#{serviceTemplateBean}"
-										entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-										defaultTabLabel="#{messages['commons.parameters']}"
-										prefix="cf_#{index}" />
-								</p:tabView>
-							</c:if>
-						</p:panel>
+							<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
+								rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+								<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
+							</p:selectBooleanCheckbox>
 
-						<c:set var="index" value="${index + 1}"></c:set>
-					</c:forEach>
+							<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+
+							<p:outputPanel id="serviceCf_panel_#{index}">
+								<p:panel rendered="#{ost.serviceTemplate.selected}">
+									<f:facet name="header">
+										<p:panel styleClass="TexAlLeft">
+											<h:outputText
+												value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
+												styleClass="SubHeader" />
+										</p:panel>
+									</f:facet>
+									<!-- custom fields -->
+									<c:if
+										test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
+										<hftl:customFields backingBean="#{serviceTemplateBean}"
+											entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+											defaultTabLabel="#{messages['commons.parameters']}"
+											prefix="cf_#{index}" />
+									</c:if>
+									<c:if
+										test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
+										<p:tabView>
+											<hftl:customFields backingBean="#{serviceTemplateBean}"
+												entity="#{ost.serviceTemplate}"
+												messagesId=":formId:messages"
+												defaultTabLabel="#{messages['commons.parameters']}"
+												prefix="cf_#{index}" />
+										</p:tabView>
+									</c:if>
+								</p:panel>
+							</p:outputPanel>
+
+							<c:set var="index" value="${index + 1}"></c:set>
+						</c:forEach>
+
+					</h:panelGrid>
+
 				</p:panel>
 			</p:panel>
 		</hftl:formPanel>
