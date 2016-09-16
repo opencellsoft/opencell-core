@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TimerConfig;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
@@ -23,11 +22,8 @@ import org.meveo.admin.parse.csv.CDR;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.event.CounterPeriodEvent;
-import org.meveo.event.communication.InboundCommunicationEvent;
-import org.meveo.event.qualifier.Created;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
@@ -220,7 +216,7 @@ public class UsageRatingService {
 
 		// log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(),
-				chargeInstance.getAmountWithTax(), countryId, currency, chargeInstance.getAuditable().getCreator());
+				chargeInstance.getAmountWithTax(), countryId, currency, provider);
 	}
 
 	/**
