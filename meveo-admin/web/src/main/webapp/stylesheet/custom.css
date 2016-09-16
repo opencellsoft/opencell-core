@@ -1263,3 +1263,7 @@ footer .footer-copyright {
   border: none !important;
   padding: 0 0 10px;
 }
+
+.ui-dialog {
+  z-index: 99999999 !important;
+}
