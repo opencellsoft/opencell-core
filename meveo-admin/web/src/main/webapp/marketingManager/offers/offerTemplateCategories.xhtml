@@ -45,6 +45,7 @@
 			<p:panel>
 				<p:button id="buttonNew" icon="fa fa-plus"
 					value=" #{messages['commons.new']}"
+					styleClass="btn-theme-default"
 					outcome="#{mmOfferTemplateCategoryListBean.newViewName}">
 					<f:param name="cid"
 						value="#{javax.enterprise.context.conversation.id}" />
@@ -61,13 +62,17 @@
 					paginatorPosition="top" exportXlsxButton="false"
 					exportToXml="false" sortBy="code">
 					<f:facet name="{Controls}" render="#{hasData}">
-						<p:commandButton id="#{formId}buttonExportTop" icon="ui-icon-xls"
+						<p:commandButton id="#{formId}buttonExportTop" 
+							styleClass="btn-theme-default" 
+							style="margin-right: 12px;"
+							icon="ui-icon-xls"
 							value="#{messages['commons.exportExcel']}" ajax="false">
 							<p:dataExporter type="xls" target="datatable_#{resultsId}"
 								fileName="data" pageOnly="false" />
 						</p:commandButton>
 						<p:commandButton id="#{formId}exportToXmlTop"
 							value="#{messages['export.exportToXml']}"
+							styleClass="btn-theme-default"
 							update=":#{p:component('exportParametersDialog')}"
 							oncomplete="PF('exportParametersDialog').show()">
 							<f:setPropertyActionListener

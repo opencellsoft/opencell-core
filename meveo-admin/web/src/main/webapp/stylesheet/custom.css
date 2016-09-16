@@ -240,9 +240,9 @@ body {
   background: #fff;
 }
 
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default {
+.custom-grid .ui-state-default,
+.custom-grid .ui-widget-content .ui-state-default,
+.custom-grid .ui-widget-header .ui-state-default {
   background-image: none !important;
   color: #333;
   text-shadow: none !important;
