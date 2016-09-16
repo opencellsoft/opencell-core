@@ -41,6 +41,7 @@
                                 resultsId="dunningPlanTransitions_results">
                                 <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
                                 <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
+                                <hftl:column label="#{messages['businessEntity.description']}" field="description" />
                                 <hftl:column label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" />
 
                                 <p:column styleClass="actions-column" rendered="#{workflowBean.edit}">
@@ -235,12 +236,12 @@
 
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}">
+                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}" componentWidth="75">
                                                                 <p:inputTextarea id="actionEl#{actionIndex.index}" value="#{action.actionEl}" required="true" autoResize="true" style="width:100%;"
                                                                     maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}">
+                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}" componentWidth="75">
                                                                 <p:inputTextarea id="conditionElAction#{actionIndex.index}" value="#{action.conditionEl}" autoResize="true"
                                                                     style="width:100%;" maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>

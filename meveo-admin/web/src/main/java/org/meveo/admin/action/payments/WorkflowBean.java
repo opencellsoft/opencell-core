@@ -222,7 +222,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
      * 
      * @param query A partial class name (including a package)
      * @return A list of classnames
-     */
+     */ 
     public List<String> autocompleteClassNames(String query) {
     	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
     	 List<String> classNames = new ArrayList<String>();

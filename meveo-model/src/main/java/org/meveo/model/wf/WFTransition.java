@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,24 +50,23 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
+@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
-@NamedQueries({
-	@NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue")})
-public class WFTransition extends AuditableEntity implements Comparable<WFTransition>{
+@NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue order by priority ASC") })
+public class WFTransition extends AuditableEntity implements Comparable<WFTransition> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
- 
-	@Column(name = "FROM_STATUS")
-	private String fromStatus;
-	
-	@Column(name = "TO_STATUS")
-	private String toStatus;
+
+    @Column(name = "FROM_STATUS")
+    private String fromStatus;
+
+    @Column(name = "TO_STATUS")
+    private String toStatus;
 
     @Column(name = "PRIORITY")
     private int priority;
@@ -76,21 +76,21 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     @NotNull
     private String description;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WORKFLOW_ID")
-	private Workflow workflow;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKFLOW_ID")
+    private Workflow workflow;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
-    @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("priority ASC")
     private List<WFAction> wfActions = new ArrayList<WFAction>();
-	
-	@Column(name = "CONDITION_EL", length = 2000)
-	@Size(max = 2000)
-	private String conditionEl;
+
+    @Column(name = "CONDITION_EL", length = 2000)
+    @Size(max = 2000)
+    private String conditionEl;
 
     public String getUuid() {
         return uuid;
@@ -101,32 +101,32 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     }
 
     /**
-	 * @return the fromStatus
-	 */
-	public String getFromStatus() {
-		return fromStatus;
-	}
+     * @return the fromStatus
+     */
+    public String getFromStatus() {
+        return fromStatus;
+    }
 
-	/**
-	 * @param fromStatus the fromStatus to set
-	 */
-	public void setFromStatus(String fromStatus) {
-		this.fromStatus = fromStatus;
-	}
+    /**
+     * @param fromStatus the fromStatus to set
+     */
+    public void setFromStatus(String fromStatus) {
+        this.fromStatus = fromStatus;
+    }
 
-	/**
-	 * @return the toStatus
-	 */
-	public String getToStatus() {
-		return toStatus;
-	}
+    /**
+     * @return the toStatus
+     */
+    public String getToStatus() {
+        return toStatus;
+    }
 
-	/**
-	 * @param toStatus the toStatus to set
-	 */
-	public void setToStatus(String toStatus) {
-		this.toStatus = toStatus;
-	}
+    /**
+     * @param toStatus the toStatus to set
+     */
+    public void setToStatus(String toStatus) {
+        this.toStatus = toStatus;
+    }
 
     public int getPriority() {
         return priority;
@@ -145,46 +145,46 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     }
 
     /**
-	 * @return the workflow
-	 */
-	public Workflow getWorkflow() {
-		return workflow;
-	}
+     * @return the workflow
+     */
+    public Workflow getWorkflow() {
+        return workflow;
+    }
 
-	/**
-	 * @param workflow the workflow to set
-	 */
-	public void setWorkflow(Workflow workflow) {
-		this.workflow = workflow;
-	}
+    /**
+     * @param workflow the workflow to set
+     */
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
 
-	/**
-	 * @return the wfActions
-	 */
-	public List<WFAction> getWfActions() {
-		return wfActions;
-	}
+    /**
+     * @return the wfActions
+     */
+    public List<WFAction> getWfActions() {
+        return wfActions;
+    }
 
-	/**
-	 * @param wfActions the wfActions to set
-	 */
-	public void setWfActions(List<WFAction> wfActions) {
-		this.wfActions = wfActions;
-	}
+    /**
+     * @param wfActions the wfActions to set
+     */
+    public void setWfActions(List<WFAction> wfActions) {
+        this.wfActions = wfActions;
+    }
 
-	/**
-	 * @return the conditionEl
-	 */
-	public String getConditionEl() {
-		return conditionEl;
-	}
+    /**
+     * @return the conditionEl
+     */
+    public String getConditionEl() {
+        return conditionEl;
+    }
 
-	/**
-	 * @param conditionEl the conditionEl to set
-	 */
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
+    /**
+     * @param conditionEl the conditionEl to set
+     */
+    public void setConditionEl(String conditionEl) {
+        this.conditionEl = conditionEl;
+    }
 
     public String getCombinedEl() {
         if (CollectionUtils.isEmpty(wfDecisionRules)) {
@@ -224,32 +224,42 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		WFTransition other = (WFTransition) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        WFTransition other = (WFTransition) obj;
+        if (getId() == null) {
+            if (other.getId() != null) {
+                return false;
+            }
+        } else if (!getId().equals(other.getId())) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public int compareTo(WFTransition o) {
         return this.priority - o.priority;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("WFTransition [fromStatus=%s, toStatus=%s, priority=%s, conditionEl=%s, combinedEl=%s]", fromStatus, toStatus, priority, conditionEl, getCombinedEl());
     }
 }

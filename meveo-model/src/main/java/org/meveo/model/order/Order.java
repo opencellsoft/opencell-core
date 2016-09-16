@@ -251,13 +251,6 @@ public class Order extends BusinessCFEntity {
         this.routedToUserGroup = routedToUserGroup;
     }
 
-    public String getRoutedTo() {
-        if (routedToUserGroup != null) {
-            return routedToUserGroup.getCode();
-        }
-        return null;
-    }
-
     public String getReceivedFromApp() {
         return receivedFromApp;
     }

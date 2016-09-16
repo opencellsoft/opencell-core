@@ -60,13 +60,10 @@
 								</p:graphicImage>
 							</p:panel>
 
-							<p:panel styleClass="Wid75 Responsive100">
+							<p:panel styleClass="Wid75 Responsive100 VAlignTop">
 								<p>
-									<h:outputText id="descriptionOrCode"
-										value="#{of:abbreviate(entity.descriptionOrCode, 25)}"></h:outputText>
+									<h:outputText id="name" value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
 								</p>
-								<p:tooltip for="descriptionOrCode"
-									value="#{entity.descriptionOrCode}"></p:tooltip>
 								<p>
 									<ui:repeat
 										value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
@@ -79,9 +76,6 @@
 									</ui:repeat>
 								</p>
 								<p:separator></p:separator>
-								<p>
-									<h:outputText value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
-								</p>
 								<p>
 									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
 								</p>

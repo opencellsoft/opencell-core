@@ -45,7 +45,7 @@
 					<hftl:decorateFormField fieldId="offerImage"
 						rendered="#{not offerTemplateBean.entity.transient}"
 						label="#{messages['commons.image']}">
-						<p:outputPanel autoUpdate="true">
+						<p:outputPanel autoUpdate="true" style="border: 1px solid #ddd;">
 							<p:graphicImage id="offerImage" cache="false"
 								value="#{offerTemplateImageStreamer.image}" height="150"
 								width="150">
@@ -59,10 +59,10 @@
 					</hftl:decorateFormField>
 					<p:outputPanel>
 						<p:panel rendered="#{not offerTemplateBean.edit}">
-							<ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
-								<li class="Padding5 FLeft"><p:commandLink
+							<ul class="list-inline">
+								<li class=""><p:commandLink
 										action="#{offerTemplateBean.duplicate()}" update="@form"
-										styleClass="fa fa-copy">
+										styleClass="fa fa-copy text-blue fa-2x">
 										<f:param name="edit" value="false"></f:param>
 										<f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
 										<f:param name="cid"
@@ -70,7 +70,8 @@
 										<p:confirm header="#{messages['commons.duplicate']}"
 											message="#{messages['commons.confirmDuplicate']}" />
 									</p:commandLink></li>
-								<li class="Padding5 FLeft"><p:link styleClass="fa fa-edit"
+								<li class=""><p:link
+										styleClass="fa fa-edit fa-2x text-blue no-text-decoration"
 										outcome="mm_offerTemplateDetail">
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
@@ -99,10 +100,20 @@
 						<hftl:formField id="code"
 							label="#{messages['offerTemplate.code']}" field="code"
 							required="true" validateUnique="true" />
-						<hftl:formField
-							label="#{messages['marketingManager.catalog.family']}"
-							allowEdit="false" field="businessOfferModel"
-							valueLabelField="code" listBean="#{businessOfferModelBean}" />
+						<c:if test="#{offerTemplateBean.bomId eq null}">
+							<hftl:formField
+								label="#{messages['marketingManager.catalog.family']}"
+								allowEdit="false" field="businessOfferModel"
+								valueLabelField="code" listBean="#{businessOfferModelBean}" />
+						</c:if>
+						<c:if test="#{offerTemplateBean.bomId ne null}">
+							<hftl:decorateFormField fieldId="family"
+								label="#{messages['marketingManager.catalog.family']}">
+								<h:outputText id="family"
+									value="#{offerTemplateBean.businessOfferModel.code}"
+									styleClass="field-value" />
+							</hftl:decorateFormField>
+						</c:if>
 						<hftl:formLanguageFields entity="#{offerTemplateBean.entity}"
 							backingBean="#{offerTemplateBean}" multiLang="true" />
 
@@ -116,11 +127,12 @@
 						styleClass="ui-panelgrid-blank Wid100 Responsive100">
 						<hftl:formField label="#{messages['commons.validFrom']}"
 							field="validFrom" time="true" displayOneLine="true"
-							labelWidth="40" />
+							labelWidth="100" />
 						<hftl:formField label="#{messages['commons.validTo']}"
-							field="validTo" time="true" displayOneLine="true" labelWidth="40" />
+							field="validTo" time="true" displayOneLine="true"
+							labelWidth="100" />
 						<hftl:formField label="#{messages['commons.status']}"
-							field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
+							field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
 					</h:panelGrid>
 				</p:panel>
 				<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">

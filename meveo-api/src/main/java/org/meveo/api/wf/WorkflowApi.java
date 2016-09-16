@@ -1,6 +1,5 @@
 package org.meveo.api.wf;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -262,18 +261,11 @@ public class WorkflowApi extends BaseApi {
 	 * @param baseEntityInstanceId
 	 * @param workflowCode
 	 * @param currentUser
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
 	 * @throws BusinessException
 	 * @throws MeveoApiException
 	 */
 	@SuppressWarnings("unchecked")
-    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, BusinessException, MeveoApiException {
+    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws BusinessException, MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();
@@ -298,7 +290,7 @@ public class WorkflowApi extends BaseApi {
 		}
 		log.debug("baseEntity.getId() : "+baseEntity.getId());
 		
-		workflowService.executeMatchingWorkflows(baseEntity, workflowCode, currentUser);
+		workflowService.executeWorkflow(baseEntity, workflowCode, currentUser);
 	}
 }
 

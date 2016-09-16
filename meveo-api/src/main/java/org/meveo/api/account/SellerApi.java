@@ -134,9 +134,9 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
         
         return seller;
@@ -229,9 +229,9 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         return seller;

@@ -69,8 +69,9 @@ public class BusinessOfferApi extends BaseApi {
 							CustomFieldsDto cfsDto = new CustomFieldsDto();
 							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
 							populateCustomFields(cfsDto, serviceTemplate, true, currentUser);
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							throw new MeveoApiException(e.getMessage());
+						} catch (Exception e) {
+						    log.error("Failed to associate custom field instance to an entity", e);
+							throw e;
 						}
 						break;
 					}
@@ -84,8 +85,9 @@ public class BusinessOfferApi extends BaseApi {
 				CustomFieldsDto cfsDto = new CustomFieldsDto();
 				cfsDto.setCustomField(postData.getCustomFields());
 				populateCustomFields(cfsDto, newOfferTemplate, true, currentUser);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new MeveoApiException(e.getMessage());
+			} catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
 			}
 		}
 	}
