@@ -134,7 +134,7 @@ public class RealtimeChargingService {
 		op.setSeller(seller);
 
 		chargeApplicationRatingService.rateBareWalletOperation(op, null,
-				null, tradingCountryId, currency, provider);
+				null, tradingCountryId, currency, invoiceSubcategoryCountry.getAuditable().getCreator());
 
 		return priceWithoutTax ? op.getAmountWithoutTax() : op
 				.getAmountWithTax();

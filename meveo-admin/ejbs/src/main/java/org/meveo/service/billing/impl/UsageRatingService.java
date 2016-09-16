@@ -220,7 +220,7 @@ public class UsageRatingService {
 
 		// log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(),
-				chargeInstance.getAmountWithTax(), countryId, currency, provider);
+				chargeInstance.getAmountWithTax(), countryId, currency, chargeInstance.getAuditable().getCreator());
 	}
 
 	/**
