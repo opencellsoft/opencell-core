@@ -12,7 +12,7 @@
             <h:panelGroup id="offerCategoryPanel" layout="block" styleClass="col1">
                 <p:panel header="#{messages['offerTemplateCategory.offerTemplateCategories']}">
                     <p:outputPanel style="height: 100%;overflow: auto;display: block">
-                        <p:tree style="height: 425px; width: 95%" value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}" var="offerTemplateCategory" selectionMode="single" rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount>0}">
+                        <p:tree style="height: 450px; width: 95%" value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}" var="offerTemplateCategory" selectionMode="single" rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount>0}">
                             <p:ajax event="select" listener="#{offerTemplateCategoryBean.onNodeSelect}" update="offerTemplateCategoryDetailPanel" />
                             <p:treeNode>
                                 <h:outputText value="#{offerTemplateCategory.descriptionOrCode}" />
@@ -54,49 +54,50 @@
                             </p:commandButton>
                             <p:outputLabel value="#{messages['offerTemplateCategory.deleteOfferTemplateCategory']}"/>
                         </h:panelGrid>
+
+                        <h:panelGroup layout="block" id="offerTemplateCategoryDetailPanel">
+                            <hftl:formPanel ajaxSubmit="true"
+                                            submitPartialProcess=":formId:tabView"
+                                            label="" showBackButton="false" showDeleteButton="false"
+                                            submitUpdate="@form offerCategoryPanel messages"
+                                            backingBean="#{offerTemplateCategoryBean}" showMessages="false"
+                                            showEnableDisableButton="true" enctype="multipart/form-data">
+
+                                <p:tabView id="tabView" style="margin-left: -30px;"
+                                           activeIndex="#{offerTemplateCategoryBean.activeTab}">
+                                    <p:tab title="#{messages['customer.tab.information']}">
+                                        <hftl:decorateFormField fieldId="offerImage"
+                                                                rendered="#{not offerTemplateCategoryBean.entity.transient}"
+                                                                label="#{messages['commons.image']}">
+                                            <p:graphicImage id="offerImage" cache="false"
+                                                            value="#{offerTemplateCategoryImageStreamer.image}" height="150"
+                                                            width="150">
+                                                <f:param name="id" value="#{offerTemplateCategoryBean.entity.id}"></f:param>
+                                            </p:graphicImage>
+                                            <p:fileUpload
+                                                    fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}"
+                                                    mode="advanced"
+                                                    update=":formId:tabView:offerImage :messages" auto="true"
+                                                    fileLimit="1" sizeLimit="1000000"
+                                                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+                                        </hftl:decorateFormField>
+                                        <hftl:formField label="#{messages['BusinessEntity.code']}"
+                                                        field="code" required="true" validateUnique="true" />
+                                        <hftl:formField label="#{messages['commons.name']}" field="name"
+                                                        required="true" />
+                                        <hftl:formField label="#{messages['BusinessEntity.description']}"
+                                                        field="description" useConverter="false" id="description" />
+                                        <hftl:formField label="#{messages['enableEntity.disabled']}"
+                                                        doNotShowOnNew="true" allowEdit="false" field="disabled"
+                                                        isMessage="true" />
+                                    </p:tab>
+
+                                    <hftl:customFields backingBean="#{offerTemplateCategoryBean}"
+                                                       messagesId=":messages" />
+                                </p:tabView>
+                            </hftl:formPanel>
+                        </h:panelGroup>
                     </h:panelGrid>
-
-                    <h:panelGroup layout="block" id="offerTemplateCategoryDetailPanel">
-                        <hftl:formPanel ajaxSubmit="true" id="offerTemplateCategoryDetailPanel"
-                                        submitPartialProcess=":formId:tabView"
-                                        label="" showBackButton="false" showDeleteButton="false" showMessages="false"
-                                        backingBean="#{offerTemplateCategoryBean}"
-                                        showEnableDisableButton="true" enctype="multipart/form-data">
-
-                            <p:tabView id="tabView"
-                                       activeIndex="#{offerTemplateCategoryBean.activeTab}">
-                                <p:tab title="#{messages['customer.tab.information']}">
-                                    <hftl:decorateFormField fieldId="offerImage"
-                                                            rendered="#{not offerTemplateCategoryBean.entity.transient}"
-                                                            label="#{messages['commons.image']}">
-                                        <p:graphicImage id="offerImage" cache="false"
-                                                        value="#{offerTemplateCategoryImageStreamer.image}" height="150"
-                                                        width="150">
-                                            <f:param name="id" value="#{offerTemplateCategoryBean.entity.id}"></f:param>
-                                        </p:graphicImage>
-                                        <p:fileUpload
-                                                fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}"
-                                                mode="advanced"
-                                                update=":formId:tabView:offerImage :formId:messages" auto="true"
-                                                fileLimit="1" sizeLimit="1000000"
-                                                allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                                    </hftl:decorateFormField>
-                                    <hftl:formField label="#{messages['BusinessEntity.code']}"
-                                                    field="code" required="true" validateUnique="true" />
-                                    <hftl:formField label="#{messages['commons.name']}" field="name"
-                                                    required="true" />
-                                    <hftl:formField label="#{messages['BusinessEntity.description']}"
-                                                    field="description" useConverter="false" id="description" />
-                                    <hftl:formField label="#{messages['enableEntity.disabled']}"
-                                                    doNotShowOnNew="true" allowEdit="false" field="disabled"
-                                                    isMessage="true" />
-                                </p:tab>
-
-                                <hftl:customFields backingBean="#{offerTemplateCategoryBean}"
-                                                   messagesId=":formId:messages" />
-                            </p:tabView>
-                        </hftl:formPanel>
-                    </h:panelGroup>
                 </p:panel>
             </h:panelGroup>
         </h:panelGroup>

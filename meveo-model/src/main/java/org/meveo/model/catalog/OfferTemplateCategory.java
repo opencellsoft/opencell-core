@@ -35,7 +35,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE",
 		"PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
-public class OfferTemplateCategory extends BusinessCFEntity {
+public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory> {
 
 	private static final long serialVersionUID = -5088201294684394309L;
 
@@ -124,17 +124,6 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 		this.imageContentType = imageContentType;
 	}
 
-	@Transient
-	public String getCodeInLevel() {
-		if (level == 2) {
-			return "-" + code;
-		} else if (level == 2) {
-			return "--" + code;
-		}
-
-		return code;
-	}
-
 	public List<OfferTemplateCategory> getChildren() {
 		return children;
 	}
@@ -143,4 +132,8 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 		this.children = children;
 	}
 
+    @Override
+    public int compareTo(OfferTemplateCategory o) {
+        return o.level - this.level;
+    }
 }

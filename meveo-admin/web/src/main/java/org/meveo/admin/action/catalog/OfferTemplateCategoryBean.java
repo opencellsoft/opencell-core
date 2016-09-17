@@ -70,18 +70,19 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 	@Override
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (entity.getOfferTemplateCategory() != null && entity.getOfferTemplateCategory().getLevel() == 3) {
-			throw new BusinessException("Max level for offer template category.");
-		}
+		super.saveOrUpdate(killConversation);
+        rootOfferTemplateCategory = null;
+        getRootOfferTemplateCategory();
 
-		if (!entity.isTransient()) {
-			// check if level is changed
-			if (entity.getOfferTemplateCategory() != null) {
-				entity.setLevel(entity.getOfferTemplateCategory().getLevel() + 1);
-			}
-		}
-
-		return super.saveOrUpdate(killConversation);
+        if (selectedOfferTemplateCategory != null) {
+            selectedOfferTemplateCategory.setSelected(false);
+        }
+        selectedOfferTemplateCategory = rootOfferTemplateCategory.findNodeByData(entity);
+        if (selectedOfferTemplateCategory != null) {
+            selectedOfferTemplateCategory.setSelected(true);
+        }
+        isEdit = true;
+        return null;
 	}
 
 	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
@@ -165,7 +166,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         this.selectedOfferTemplateCategory = selectedOfferTemplateCategory;
     }
 
-    public void onNodeSelect(NodeSelectEvent event) {
+    public String onNodeSelect(NodeSelectEvent event) {
         if (selectedOfferTemplateCategory != null) {
             selectedOfferTemplateCategory.setSelected(false);
         }
@@ -175,6 +176,8 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         setEntity(offerTemplateCategory);
         selectedOfferTemplateCategory = treeNode;
         selectedOfferTemplateCategory.setSelected(true);
+        isEdit = true;
+        return "offerTemplateCategories";
     }
 
     public void newOfferTemplateCategory() {
@@ -209,7 +212,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         OfferTemplateCategory offerTemplateCategory = (OfferTemplateCategory) selectedOfferTemplateCategory.getData();
         if (offerTemplateCategory != null) {
             if (!offerTemplateCategoryService.canDeleteOfferTemplateCategory(offerTemplateCategory.getId())) {
-                messages.error(new BundleKey("messages", "userGroupHierarchy.errorDelete"));
+                messages.error(new BundleKey("messages", "offerTemplateCategory.errorDelete"));
                 return;
             }
             offerTemplateCategoryService.remove(offerTemplateCategory.getId());
@@ -248,6 +251,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             updatePositionValue((SortedTreeNode) node.getParent());
             node.setSelected(true);
             setEntity(offerTemplateCategoryService.refreshOrRetrieve((OfferTemplateCategory) node.getData()));
+            messages.info(new BundleKey("messages", "update.successful"));
 
         } catch (BusinessException e) {
             log.error("Failed to move up {}", node, e);
@@ -285,6 +289,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             updatePositionValue((SortedTreeNode) node.getParent());
             node.setSelected(true);
             setEntity(offerTemplateCategoryService.refreshOrRetrieve((OfferTemplateCategory) node.getData()));
+            messages.info(new BundleKey("messages", "update.successful"));
 
         } catch (BusinessException e) {
             log.error("Failed to move down {}", node, e);
@@ -301,8 +306,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             OfferTemplateCategory offerTemplateCategory = (OfferTemplateCategory) selectedOfferTemplateCategory.getData();
             setEntity(offerTemplateCategory);
         } else {
-            entity.setCode(null);
-            entity.setDescription(null);
+            newEntity();
         }
     }
 
