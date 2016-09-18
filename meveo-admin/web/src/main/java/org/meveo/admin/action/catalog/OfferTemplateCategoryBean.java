@@ -166,7 +166,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         this.selectedOfferTemplateCategory = selectedOfferTemplateCategory;
     }
 
-    public String onNodeSelect(NodeSelectEvent event) {
+    public void onNodeSelect(NodeSelectEvent event) {
         if (selectedOfferTemplateCategory != null) {
             selectedOfferTemplateCategory.setSelected(false);
         }
@@ -176,8 +176,8 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         setEntity(offerTemplateCategory);
         selectedOfferTemplateCategory = treeNode;
         selectedOfferTemplateCategory.setSelected(true);
+        setObjectId(offerTemplateCategory.getId());
         isEdit = true;
-        return "offerTemplateCategories";
     }
 
     public void newOfferTemplateCategory() {
@@ -302,11 +302,13 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
      */
     @Override
     public void resetFormEntity() {
-        if (isEdit && selectedOfferTemplateCategory != null) {
+        if (isEdit && selectedOfferTemplateCategory != null && entity.getId() != null) {
             OfferTemplateCategory offerTemplateCategory = (OfferTemplateCategory) selectedOfferTemplateCategory.getData();
             setEntity(offerTemplateCategory);
         } else {
-            newEntity();
+            entity.setCode(null);
+            entity.setDescription(null);
+            entity.setName(null);
         }
     }
 

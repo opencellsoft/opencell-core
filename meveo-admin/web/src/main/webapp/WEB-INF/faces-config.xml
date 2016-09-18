@@ -668,7 +668,7 @@
 			<from-outcome>offerTemplateCategories</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>offerTemplateCategoryDetail</from-outcome>
