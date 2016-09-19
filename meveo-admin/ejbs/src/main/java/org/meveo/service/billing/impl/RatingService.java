@@ -759,7 +759,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				}
 			}
 			if(service !=null){
-				userMap.put("serviceIntance", service);
+				userMap.put("serviceInstance", service);
 			}
 		}
 		if(expression.indexOf("offer") >= 0){
@@ -897,7 +897,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				}
 			}
 			if(service !=null){
-				userMap.put("serviceIntance", service);
+				userMap.put("serviceInstance", service);
 			}
 		}
 
@@ -963,7 +963,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				}
 			}
 			if(service !=null){
-				userMap.put("serviceIntance", service);
+				userMap.put("serviceInstance", service);
 			}
 		}
 		if (expression.indexOf("ua") >= 0) {
