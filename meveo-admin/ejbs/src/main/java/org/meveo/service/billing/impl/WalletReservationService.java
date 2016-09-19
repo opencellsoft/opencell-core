@@ -167,7 +167,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			BigDecimal quantity) throws BusinessException {
 
 		BigDecimal servicesSum = computeServicesSum(offerTemplate, userAccount, subscriptionDate, param1, param2,
-				param3, quantity);
+				param3, quantity,currentUser);
 
 		BigDecimal ratedAmount = computeRatedAmount(currentUser, seller, userAccount, subscriptionDate);
 
@@ -195,13 +195,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 	}
 
 	public BigDecimal computeServicesSum(OfferTemplate offerTemplate, UserAccount userAccount, Date subscriptionDate,
-			String param1, String param2, String param3, BigDecimal quantity) throws BusinessException {
+			String param1, String param2, String param3, BigDecimal quantity,User currentUser) throws BusinessException {
 		BigDecimal servicesSum = new BigDecimal(0);
 
 		for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
 			servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(
 					userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate, offerTemplate.getCode(), quantity, param1,
-					param2, param3, true));
+					param2, param3, true,currentUser));
 		}
 
 		return servicesSum;

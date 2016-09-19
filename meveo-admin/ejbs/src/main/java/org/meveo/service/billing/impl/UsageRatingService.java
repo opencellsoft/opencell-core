@@ -141,7 +141,7 @@ public class UsageRatingService {
 	 * @throws BusinessException
 	 */
 	public WalletOperation rateEDRwithMatchingCharge(EDR edr, BigDecimal deducedQuantity, CachedUsageChargeInstance chargeCache, UsageChargeInstance chargeInstance,
-			Provider provider, boolean isReservation) throws BusinessException {
+			User currentUser, boolean isReservation) throws BusinessException {
 		WalletOperation walletOperation = null;
 		if (isReservation) {
 			walletOperation = new WalletReservation();
@@ -149,13 +149,13 @@ public class UsageRatingService {
 			walletOperation = new WalletOperation();
 		}
 
-		rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, chargeCache, chargeInstance, provider);
+		rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, chargeCache, chargeInstance, currentUser);
 		
 		return walletOperation;
 	}
     
 	public void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal deducedQuantity, CachedUsageChargeInstance chargeCache,
-			UsageChargeInstance chargeInstance, Provider provider) throws BusinessException {		
+			UsageChargeInstance chargeInstance, User currentUser) throws BusinessException {		
 		walletOperation.setSubscriptionDate(null);
 		walletOperation.setOperationDate(edr.getEventDate());
 		walletOperation.setParameter1(edr.getParameter1());
@@ -163,7 +163,7 @@ public class UsageRatingService {
 		walletOperation.setParameter3(edr.getParameter3());
 		walletOperation.setInputQuantity(edr.getQuantity());
 		walletOperation.setEdr(edr);
-		walletOperation.setProvider(provider);
+		walletOperation.setProvider(currentUser.getProvider());
 
 		// FIXME: copy those info in chargeInstance instead of performing
 		// multiple queries
@@ -171,7 +171,7 @@ public class UsageRatingService {
 		TradingCountry country = chargeInstance.getUserAccount().getBillingAccount().getTradingCountry();
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId, provider);
+				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId, currentUser.getProvider());
 
 		if (invoiceSubcategoryCountry == null) {
 			throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category="
@@ -213,10 +213,9 @@ public class UsageRatingService {
 
 		walletOperation.setOfferCode(chargeInstance.getOfferTemplate()==null?null:chargeInstance.getOfferTemplate().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-
-		// log.info("provider code:" + provider.getCode());
+		
 		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(),
-				chargeInstance.getAmountWithTax(), countryId, currency, provider);
+				chargeInstance.getAmountWithTax(), countryId, currency, currentUser);
 	}
 
 	/**
@@ -351,13 +350,13 @@ public class UsageRatingService {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			if (deducedQuantity == null) {
-				rateEDRwithMatchingCharge(walletOperation, edr, edr.getQuantity(), charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, edr.getQuantity(), charge, chargeInstance, currentUser);
 			} else {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, chargeInstance, provider);
+				rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, chargeInstance, currentUser);
 			}
 			
-			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
+			walletOperationService.chargeWalletOperation(walletOperation, currentUser);
 
 			// handle associated edr creation
 			if (charge.getTemplateCache().getEdrTemplates().size() > 0) {
@@ -444,11 +443,10 @@ public class UsageRatingService {
 			stopEDRRating = true;
 		}
 
-		if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
-			Provider provider = charge.getProvider();
+		if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {			
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			WalletReservation walletOperation = (WalletReservation) rateEDRwithMatchingCharge(edr, deducedQuantity,
-					charge, chargeInstance, provider, true);
+					charge, chargeInstance, currentUser, true);
 			walletOperation.setReservation(reservation);
 			walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
 			reservation.setAmountWithoutTax(reservation.getAmountWithoutTax()
@@ -459,7 +457,7 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 
-			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
+			walletOperationService.chargeWalletOperation(walletOperation, currentUser);
 		} else {
 			log.warn("deduceQuantity is null");
 		}

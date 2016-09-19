@@ -103,6 +103,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+	
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -205,7 +206,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	public WalletOperation prerateChargeApplication(String code, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
 			Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
 			BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
-			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
+			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode,User currentUser) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
 		Auditable auditable=new Auditable();
@@ -259,7 +260,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			unitPriceWithTax = amountWithTax;
 		}
 
-		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, provider);
+		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, currentUser);
         log.debug(" wo amountWithoutTax =",result.getAmountWithoutTax());
 		return result;
 
@@ -269,7 +270,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	public WalletOperation rateChargeApplication(String code, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
 			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
-			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule) throws BusinessException {
+			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule,User currentUser) throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
@@ -278,7 +279,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		WalletOperation result = prerateChargeApplication(code, subscriptionDate, chargeInstance.getOfferTemplate() == null ? null : chargeInstance.getOfferTemplate().getCode(),
 				chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, taxPercent, discountPercent,
-				nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate, mode);
+				nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate, mode,currentUser);
 
 		chargeInstance.getWalletOperations().add(result);
 		
@@ -370,13 +371,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 	// used to rate or rerate a bareWalletOperation
 	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency,
-			Provider provider) throws BusinessException {
+			User currentUser) throws BusinessException {
 
 		PricePlanMatrix ratePrice = null;
-		String providerCode = provider.getCode();
+		String providerCode = currentUser.getProvider().getCode();
 
 		if (unitPriceWithoutTax == null) {
-            List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(provider.getId(), bareWalletOperation.getCode());            
+            List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(currentUser.getProvider().getId(), bareWalletOperation.getCode());            
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new RuntimeException("No price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
             }
@@ -406,7 +407,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			if (recChargeTemplate.getShareLevel() != null) {
 				RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) bareWalletOperation
 						.getChargeInstance();
-				int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider,
+				int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), currentUser.getProvider(),
 						recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
 				if (sharedQuantity > 0) {
 					unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity),
@@ -441,9 +442,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 			amountTax = priceWithTax.subtract(priceWithoutTax);
 		}
 
-		if (provider.getRounding() != null && provider.getRounding() > 0) {
-			priceWithoutTax = NumberUtils.round(priceWithoutTax, provider.getRounding());
-			priceWithTax = NumberUtils.round(priceWithTax, provider.getRounding());
+		if (currentUser.getProvider().getRounding() != null && currentUser.getProvider().getRounding() > 0) {
+			priceWithoutTax = NumberUtils.round(priceWithoutTax, currentUser.getProvider().getRounding());
+			priceWithTax = NumberUtils.round(priceWithTax, currentUser.getProvider().getRounding());
 		}
 
 		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
@@ -456,24 +457,15 @@ public class RatingService extends BusinessService<WalletOperation>{
 		
 	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
-			log.debug("start to execute script instance for ratePrice {}",ratePrice); 	
-			User currentUser=getCurrentUser();
+			log.debug("start to execute script instance for ratePrice {}",ratePrice); 			
 			try {
 				log.debug("execute priceplan script " + ratePrice.getScriptInstance().getCode());
-				ScriptInterface script = scriptInstanceService.getCachedScriptInstance(provider, ratePrice.getScriptInstance().getCode());
+				ScriptInterface script = scriptInstanceService.getCachedScriptInstance(currentUser.getProvider(), ratePrice.getScriptInstance().getCode());
 				HashMap<String, Object> context = new HashMap<String, Object>();
 				context.put(Script.CONTEXT_ENTITY, bareWalletOperation);	
-
-				if(currentUser==null){
-					log.debug("get currentUser from PP");
-					currentUser=ratePrice.getAuditable().getLastUser();
-				}
-				if(currentUser==null){
-					throw new BusinessException("CurrentUser is null");
-				}
 				script.execute(context, currentUser);
 			} catch (Exception e) {
-				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode(),currentUser);
+				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode(),currentUser.getName());
 				throw new BusinessException("failed when run script "+ratePrice.getScriptInstance().getCode()+" ,info "+e.getMessage());
 			}
 		}
@@ -718,7 +710,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 							null, operation.getPriceplan().getTradingCountry()==null?null:
 								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
 									.getTradingCurrency(),
-									currentUser.getProvider());
+									currentUser);
 			}
 			create(operation,currentUser);
 			operationToRerate.updateAudit(currentUser);
