@@ -415,7 +415,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public BigDecimal getCatalogPrice() {
-		return catalogPrice;
+		return catalogPrice == null ? new BigDecimal(0) : catalogPrice;
 	}
 
 	public void setCatalogPrice(BigDecimal catalogPrice) {
@@ -423,7 +423,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 	
 	public BigDecimal getSalesPrice() {
-        return salesPrice;
+		return salesPrice == null ? new BigDecimal(0) : salesPrice;
     }
 	
 	public void setSalesPrice(BigDecimal salesPrice) {

@@ -68,26 +68,28 @@
             </h:panelGrid>
 
             <p:panel>
-	            <hftl:decorateFormField fieldId="salesPrice" label="#{messages['marketingManager.catalog.salesPrice']}">
-	                <p:inputText id="salesPrice" value="#{mainBackingBean.salesPrice}" rendered="#{mainBackingBean.edit}">
-	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
-	                    <f:converter converterId="bigDecimal4DigitsConverter" />
-	                </p:inputText>
+            	<hftl:decorateFormField label="#{messages['marketingManager.catalog.salesPrice']}">
+	                <pe:inputNumber id="salesPrice" value="#{mainBackingBean.salesPrice}" decimalPlaces="2" rendered="#{mainBackingBean.edit}">
+            			<p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
+            		</pe:inputNumber>
                     <h:outputText value="#{mainBackingBean.salesPrice}" rendered="#{!mainBackingBean.edit}" styleClass="field-value">
                         <f:converter converterId="bigDecimal4DigitsConverter" />
                     </h:outputText>                    
-	            </hftl:decorateFormField>
-	            <hftl:decorateFormField fieldId="catalogPrice" label="#{messages['marketingManager.catalog.catalogPrice']}">
-	                <p:inputText id="catalogPrice" value="#{mainBackingBean.catalogPrice}" rendered="#{mainBackingBean.edit}">
+	            </hftl:decorateFormField>     		
+	            
+	            <hftl:decorateFormField label="#{messages['marketingManager.catalog.catalogPrice']}">
+	                <pe:inputNumber id="catalogPrice" value="#{mainBackingBean.catalogPrice}" rendered="#{mainBackingBean.edit}">
 	                    <p:ajax event="blur" update=":formId:discountedAmount"></p:ajax>
 	                    <f:converter converterId="bigDecimal4DigitsConverter" />
-	                </p:inputText>
+	                </pe:inputNumber>
                     <h:outputText value="#{mainBackingBean.catalogPrice}" rendered="#{!mainBackingBean.edit}" styleClass="field-value">
                         <f:converter converterId="bigDecimal4DigitsConverter" />
                     </h:outputText> 
 	            </hftl:decorateFormField>
 	            <hftl:decorateFormField fieldId="discountedAmount" label="#{messages['marketingManager.catalog.discountedAmount']}">
-	                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" styleClass="field-value"/>
+	                <h:outputText id="discountedAmount" value="#{mainBackingBean.computeDiscountAmount}" styleClass="field-value">
+	                	<f:converter converterId="bigDecimal4DigitsConverter" />
+	                </h:outputText>
 	            </hftl:decorateFormField>
             </p:panel>
         </p:panel>
