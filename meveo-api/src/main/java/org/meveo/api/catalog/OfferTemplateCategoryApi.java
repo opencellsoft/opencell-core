@@ -3,6 +3,7 @@ package org.meveo.api.catalog;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -11,6 +12,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -79,8 +81,14 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
             String parentCode = postData.getOfferTemplateCategoryCode();
             if (!StringUtils.isBlank(parentCode)) {
-                OfferTemplateCategory parentOfferTemplateCategory = offerTemplateCategoryService.findByCode(parentCode, provider);
+                OfferTemplateCategory parentOfferTemplateCategory = offerTemplateCategoryService.findByCode(parentCode, provider, Arrays.asList("children"));
                 if (parentOfferTemplateCategory != null) {
+                    if (CollectionUtils.isNotEmpty(parentOfferTemplateCategory.getChildren())) {
+                        OfferTemplateCategory lastChild = parentOfferTemplateCategory.getChildren().get(parentOfferTemplateCategory.getChildren().size() - 1);
+                        offerTemplateCategory.setLevel(lastChild.getLevel() + 1);
+                    } else {
+                        offerTemplateCategory.setLevel(1);
+                    }
                     offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
                 }
             }
