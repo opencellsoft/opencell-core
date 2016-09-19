@@ -95,12 +95,12 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 	@Inject
 	private OfferModelScriptService offerModelScriptService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String name, String offerDescription,
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
-		return createOfferFromBOM(businessOfferModel, customFields, prefix, null, name, offerDescription, serviceCodes, null, null, null, currentUser);
+		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, currentUser);
 	}
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String code, String name,
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name,
 			String offerDescription, List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams,
 			List<OfferTemplateCategory> offerTemplateCategories, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
@@ -110,7 +110,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 		OfferTemplate newOfferTemplate = new OfferTemplate();
 
 		// check if offer already exists
-		if (offerTemplateService.findByCode(prefix + bomOffer.getCode(), currentUser.getProvider()) != null) {
+		if (offerTemplateService.findByCode(code, currentUser.getProvider()) != null) {
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 		}
 
@@ -121,12 +121,9 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				log.error("Failed to execute a script {}", businessOfferModel.getScript().getCode(), e);
 			}
 		}
-
-		if (StringUtils.isBlank(code)) {
-			newOfferTemplate.setCode(prefix + bomOffer.getCode());
-		} else {
-			newOfferTemplate.setCode(code);
-		}
+		
+		newOfferTemplate.setCode(code);		
+		
 		newOfferTemplate.setDescription(offerDescription);
 		if (StringUtils.isBlank(name)) {
 			newOfferTemplate.setName(bomOffer.getName());
@@ -154,7 +151,7 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
 
-		prefix = prefix + "_";
+		String prefix = newOfferTemplate.getId() + "_";
 
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		// 2 create services

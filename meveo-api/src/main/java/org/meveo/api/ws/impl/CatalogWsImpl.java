@@ -1222,7 +1222,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
+			result.setMessage("" + businessOfferApi.createOfferFromBOM(postData, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -22,6 +22,10 @@ public class BomOfferDto extends BaseDto {
 	@NotNull
 	@XmlAttribute(required = true)
 	private String bomCode;
+	
+	@NotNull
+	@XmlAttribute(required = true)
+	private String code;
 
 	@XmlAttribute
 	private String description;
@@ -30,6 +34,7 @@ public class BomOfferDto extends BaseDto {
 	@XmlElement(name = "parameter")
 	private List<CustomFieldDto> customFields;
 
+	@Deprecated
 	private String prefix;
 
 	@XmlElementWrapper(name = "servicesToActivate")
@@ -80,6 +85,14 @@ public class BomOfferDto extends BaseDto {
 	public String toString() {
 		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate="
 				+ servicesToActivate + "]";
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

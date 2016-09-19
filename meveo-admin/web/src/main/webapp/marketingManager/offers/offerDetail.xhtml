@@ -88,9 +88,6 @@
 				<p:panel>
 					<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100"
 						columnClasses="Wid100">
-						<hftl:formField label="#{messages['offerTemplate.prefix']}"
-							required="true" field="prefix"
-							rendered="#{offerTemplateBean.bomId ne null}" />
 						<h:outputText value="#{offerTemplateBean.entity.nameOrCode}"
 							rendered="#{!offerTemplateBean.edit}"></h:outputText>
 						<hftl:formField label="#{messages['offerTemplate.name']}"

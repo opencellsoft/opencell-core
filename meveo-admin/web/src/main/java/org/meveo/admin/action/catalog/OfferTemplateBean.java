@@ -221,10 +221,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				}
 			}
 
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getPrefix(),
-					offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations, channelService.refreshOrRetrieve(channelsDM.getTarget()),
-					businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()),
-					offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()), currentUser);
+			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null,
+					offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations,
+					entity.getChannels(), entity.getBusinessAccountModels(), entity.getOfferTemplateCategories(), currentUser);
 
 			// populate service custom fields
 			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -232,7 +231,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				if (serviceTemplate.isSelected()) {
 					for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
 						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
-						String serviceTemplateCode = entity.getPrefix() + "_" + serviceTemplate.getCode();
+						String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
 						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
 							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
 									.getValues();
@@ -332,7 +331,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
 		entity.getOfferProductTemplates().remove(offerProductTemplate);
-		messages.info(new BundleKey("messages", "delete.successful"));		
+		messages.info(new BundleKey("messages", "delete.successful"));
 
 		newOfferProductTemplate();
 	}

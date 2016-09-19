@@ -24,7 +24,7 @@ public class BusinessOfferApi extends BaseApi {
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
 
-	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
+	public Long createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
 
 		if (StringUtils.isBlank(postData.getBomCode())) {
@@ -51,7 +51,7 @@ public class BusinessOfferApi extends BaseApi {
 
 		OfferTemplate newOfferTemplate = null;
 		try {
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getPrefix(), null, postData.getDescription(),
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getCode(), null, postData.getDescription(),
 					postData.getServicesToActivate(), currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
@@ -90,5 +90,7 @@ public class BusinessOfferApi extends BaseApi {
                 throw e;
 			}
 		}
+		
+		return newOfferTemplate.getId();
 	}
 }
