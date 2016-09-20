@@ -103,11 +103,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	public BundleTemplate initEntity() {
 		BundleTemplate result = super.initEntity();
-		getOfferTemplateCategoriesDM();
-		getAttachmentsDM();
-		getBamDM();
+
 		createMissingCustomFields();
-		
 		initPricePlan();
 
 		return result;

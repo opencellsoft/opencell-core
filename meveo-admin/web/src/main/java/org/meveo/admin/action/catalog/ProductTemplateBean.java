@@ -97,7 +97,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		ProductTemplate result = super.initEntity();
 	
 		createMissingCustomFields();
-
 		initPricePlan();
 
 		return result;
