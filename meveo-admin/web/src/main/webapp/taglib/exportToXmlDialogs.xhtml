@@ -62,7 +62,7 @@
 
             <ui:define name="buttons">
                 <p:commandButton value="#{messages['export.export']}" action="#{entityExportImportBean.export()}"
-                    oncomplete="PF('exportParametersDialog').hide();PF('exportResultsDialog').show()" update="#{messagesId}, :exportResults" />
+                    oncomplete="PF('exportParametersDialog').hide();PF('exportResultsDialog').show()" update="#{messagesId}, :#{p:component('exportResults')}" />
                 <p:commandButton value="#{messages['action.cancel']}" onclick="PF('exportParametersDialog').hide()" type="button" />
             </ui:define>
         </hftl:decorateFormPanel>
