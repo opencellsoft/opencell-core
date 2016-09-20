@@ -60,18 +60,6 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
 		}
 	}
 
-    @SuppressWarnings("rawtypes")
-    public boolean canDeleteOfferTemplateCategory(Long id) {
-        List<String> fieldsFetch = Arrays.asList("children");
-
-        OfferTemplateCategory offerTemplateCategory = findById(id, fieldsFetch);
-        if (offerTemplateCategory != null && CollectionUtils.isNotEmpty(offerTemplateCategory.getChildren())) {
-           return false;
-        }
-
-       return true;
-    }
-
     public List<OfferTemplateCategory> findRoots(Provider provider) {
         Query query = getEntityManager()
                 .createQuery(

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityExistsException;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -105,30 +106,6 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 		}
 	}
 
-	public List<OfferTemplateCategory> getParentHierarchy() {
-		if (offerTemplateCategories == null) {
-			offerTemplateCategories = new ArrayList<OfferTemplateCategory>();
-
-			List<OfferTemplateCategory> result = offerTemplateCategoryService.listAllRootsExceptId(getEntity().getId());
-
-			for (OfferTemplateCategory a : result) {
-				offerTemplateCategories.add(a);
-				if (a.getChildren() != null && a.getChildren().size() > 0) {
-					for (OfferTemplateCategory b : a.getChildren()) {
-						offerTemplateCategories.add(b);
-						if (b.getChildren() != null && b.getChildren().size() > 0) {
-							for (OfferTemplateCategory c : b.getChildren()) {
-								offerTemplateCategories.add(c);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return offerTemplateCategories;
-	}
-
 	public UploadedFile getUploadedFile() {
 		return uploadedFile;
 	}
@@ -211,16 +188,20 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
     public void removeOfferTemplateCategory() {
         OfferTemplateCategory offerTemplateCategory = (OfferTemplateCategory) selectedOfferTemplateCategory.getData();
         if (offerTemplateCategory != null) {
-            if (!offerTemplateCategoryService.canDeleteOfferTemplateCategory(offerTemplateCategory.getId())) {
-                messages.error(new BundleKey("messages", "offerTemplateCategory.errorDelete"));
-                return;
+            try {
+                offerTemplateCategoryService.remove(offerTemplateCategory.getId());
+                offerTemplateCategoryService.remove(offerTemplateCategory.getId());
+                selectedOfferTemplateCategory.getParent().getChildren().remove(selectedOfferTemplateCategory);
+                selectedOfferTemplateCategory = null;
+                initEntity();
+                messages.info(new BundleKey("messages", "delete.successful"));
+            } catch (Throwable t) {
+                if (t.getCause() instanceof EntityExistsException) {
+                    messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+                } else {
+                    messages.error(new BundleKey("messages", "error.delete.unexpected"));
+                }
             }
-            offerTemplateCategoryService.remove(offerTemplateCategory.getId());
-            selectedOfferTemplateCategory.getParent().getChildren().remove(selectedOfferTemplateCategory);
-            selectedOfferTemplateCategory = null;
-            initEntity();
-
-            messages.info(new BundleKey("messages", "delete.successful"));
         }
     }
 
