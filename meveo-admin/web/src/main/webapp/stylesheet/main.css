@@ -702,6 +702,12 @@ form.formNoBottomBorder {
 .VAlignTop { vertical-align: top; }
 .VAlignMiddle { vertical-align: middle; }
 
+/* Font Type */
+.FontBold{ font-weight:bold;}
+.FontLight{ font-weight:lighter;}
+.FontNormal{ font-weight:normal;}
+.FontItalic{font-style:italic;}
+
 /* for responsive mode - if you want any ContainerX element has a responsive fluid abilities with media queries you must add this class to your element*/
 .Responsive{}
 .Responsive50{}
@@ -732,48 +738,18 @@ form.formNoBottomBorder {
 
 @media (min-width: 960px) {
     /*visibilities according to the platform*/
-
-    .ShowOnMobile {
-        display: none;
-        opacity: 0;
-    }
-    .ShowOnDesktop {
-        display: inherit;
-        opacity: 1;
-    }
-    #mq { color: red; }
+   	.ShowOnMobile{display:none;opacity:0;}
+ 	.ShowOnDesktop{display:inherit;opacity:1;}
+ 	#mq{color:red;}	
 }
 @media (min-width: 960px) and (max-width: 1200px) {
 	#mq { color: green; }
     /* responsive support */
-
-    .Responsive {
-        width: 33.3%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive50 {
-        width: 50%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive100 {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    /* make auto of element width attribute on mobile devices with media queries */
-
-    .WidAutoOnMobile {
-        width: auto !important;
-    }
-    .HeiAutoOnMobile {
-        height: auto !important;
-        min-height: 50px !important;
-    }
+	.Responsive{width:33.3%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive50{width:50%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive100{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.WidAutoOnMobile{width:auto !important;}
+	.HeiAutoOnMobile{height:auto !important;min-height:50px !important;}
 }
 /* Portrait tablet to landscape and desktop */
 
@@ -781,201 +757,53 @@ form.formNoBottomBorder {
 	#mq { color: orange; }
     /*visibilities according to the platform*/
 
-    .ShowOnMobile {
-        display: inherit;
-        opacity: 1;
-    }
-    .ShowOnDesktop {
-        display: none;
-        opacity: 0;
-    }
-    .FloatNoneOnMobile {
-        float: none !important;
-    }
-    /* Containers */
-
-    .Container100 {
-        width: 100%;
-        float: left;
-        padding: 10px;
-    }
-    .Container96 {
-        width: 96%;
-        float: left;
-        padding: 10px;
-    }
-    .Container90 {
-        width: 90%;
-        float: left;
-        padding: 10px;
-    }
-    .Container85 {
-        width: 85%;
-        float: left;
-        padding: 10px;
-    }
-    .Container80 {
-        width: 80%;
-        float: left;
-        padding: 10px;
-    }
-    .Container75 {
-        width: 75%;
-        float: left;
-        padding: 10px;
-    }
-    .Container70 {
-        width: 70%;
-        float: left;
-        padding: 10px;
-    }
-    .Container60 {
-        width: 60%;
-        float: left;
-        padding: 10px;
-    }
-    .Container50 {
-        width: 50%;
-        float: left;
-        padding: 10px;
-    }
-    .Container40 {
-        width: 40%;
-        float: left;
-        padding: 10px;
-    }
-    .Container33 {
-        width: 33.3%;
-        float: left;
-        padding: 10px;
-    }
-    .Container30 {
-        width: 30%;
-        float: left;
-        padding: 10px;
-    }
-    .Container25 {
-        width: 25%;
-        float: left;
-        padding: 10px;
-    }
-    .Container20 {
-        width: 20%;
-        float: left;
-        padding: 10px;
-    }
-    .Container10 {
-        width: 10%;
-        float: left;
-        padding: 10px;
-    }
-    .Container5 {
-        width: 5%;
-        float: left;
-        padding: 10px;
-    }
-    .NoIndent {
-        display: block;
-        margin: 0px auto;
-        padding: 0px;
-    }
-    /* responsive support */
-
-    .Responsive {
-        width: 50%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive50 {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive100 {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    /* make auto of element width attribute on mobile devices with media queries */
-
-    .WidAutoOnMobile {
-        width: auto !important;
-    }
-    .HeiAutoOnMobile {
-        height: auto !important;
-        min-height: 50px !important;
-    }
-    /* font size resetting for responsive modes */
-
-    .Fs14 {
-        font-size: 13px !important;
-    }
-    .Fs15 {
-        font-size: 14px !important;
-    }
-    .Fs16 {
-        font-size: 15px !important;
-    }
-    .Fs17 {
-        font-size: 16px !important;
-    }
-    .Fs18 {
-        font-size: 16px !important;
-    }
-    .Fs19 {
-        font-size: 16px !important;
-    }
-    .Fs20 {
-        font-size: 18px !important;
-    }
-    .Fs21 {
-        font-size: 18px !important;
-    }
-    .Fs22 {
-        font-size: 20px !important;
-    }
-    .Fs23 {
-        font-size: 20px !important;
-    }
-    .Fs24 {
-        font-size: 22px !important;
-    }
-    .Fs25 {
-        font-size: 22px !important;
-    }
-    .Fs26 {
-        font-size: 24px !important;
-    }
-    .Fs27 {
-        font-size: 24px !important;
-    }
-    .Fs28 {
-        font-size: 26px !important;
-    }
-    .Fs29 {
-        font-size: 26px !important;
-    }
-    .Fs30 {
-        font-size: 28px !important;
-    }
-    .Fs40 {
-        font-size: 30px !important;
-    }
-    .Fs50 {
-        font-size: 35px !important;
-    }
-    .Fs60 {
-        font-size: 40px !important;
-    }
-    .Fs100 {
-        font-size: 60px !important;
-    }
-    .Fs130 {
-        font-size: 70px !important;
-    }
+	.ShowOnMobile{display:inherit;opacity:1;}
+	.ShowOnDesktop{display:none;opacity:0;}
+	.FloatNoneOnMobile{float:none !important;}
+	.Container100{width:100%;float:left;padding:10px;}
+	.Container96{width:96%;float:left;padding:10px;}
+	.Container90{width:90%;float:left;padding:10px;}
+	.Container85{width:85%;float:left;padding:10px;}
+	.Container80{width:80%;float:left;padding:10px;}
+	.Container75{width:75%;float:left;padding:10px;}
+	.Container70{width:70%;float:left;padding:10px;}
+	.Container60{width:60%;float:left;padding:10px;}
+	.Container50{width:50%;float:left;padding:10px;}
+	.Container40{width:40%;float:left;padding:10px;}
+	.Container33{width:33.3%;float:left;padding:10px;}
+	.Container30{width:30%;float:left;padding:10px;}
+	.Container25{width:25%;float:left;padding:10px;}
+	.Container20{width:20%;float:left;padding:10px;}
+	.Container10{width:10%;float:left;padding:10px;}
+	.Container5{width:5%;float:left;padding:10px;}
+	.NoIndent{display:block;margin:0px auto;padding:0px;}
+	.Responsive{width:50%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive50{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive100{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.WidAutoOnMobile{width:auto !important;}
+	.HeiAutoOnMobile{height:auto !important;min-height:50px !important;}
+	.Fs14{font-size:13px !important;}
+	.Fs15{font-size:14px !important;}
+	.Fs16{font-size:15px !important;}
+	.Fs17{font-size:16px !important;}
+	.Fs18{font-size:16px !important;}
+	.Fs19{font-size:16px !important;}
+	.Fs20{font-size:18px !important;}
+	.Fs21{font-size:18px !important;}
+	.Fs22{font-size:20px !important;}
+	.Fs23{font-size:20px !important;}
+	.Fs24{font-size:22px !important;}
+	.Fs25{font-size:22px !important;}
+	.Fs26{font-size:24px !important;}
+	.Fs27{font-size:24px !important;}
+	.Fs28{font-size:26px !important;}
+	.Fs29{font-size:26px !important;}
+	.Fs30{font-size:28px !important;}
+	.Fs40{font-size:30px !important;}
+	.Fs50{font-size:35px !important;}
+	.Fs60{font-size:40px !important;}
+	.Fs100{font-size:60px !important;}
+	.Fs130{font-size:70px !important;}    
 }
 /* Landscape phone to portrait tablet */
 
@@ -983,207 +811,55 @@ form.formNoBottomBorder {
 	#mq { color: yellow; }
     /*visibilities according to the platform*/
 
-    .ShowOnMobile {
-        display: inherit;
-        opacity: 1;
-    }
-    .ShowOnDesktop {
-        display: none;
-        opacity: 0;
-    }
-    .FloatNoneOnMobile {
-        float: none !important;
-    }
-    /* Containers */
-
-    .Container100 {
-        width: 100%;
-        float: left;
-        padding: 5px;
-    }
-    .Container96 {
-        width: 96%;
-        float: left;
-        padding: 5px;
-    }
-    .Container90 {
-        width: 90%;
-        float: left;
-        padding: 5px;
-    }
-    .Container85 {
-        width: 85%;
-        float: left;
-        padding: 5px;
-    }
-    .Container80 {
-        width: 80%;
-        float: left;
-        padding: 5px;
-    }
-    .Container75 {
-        width: 75%;
-        float: left;
-        padding: 5px;
-    }
-    .Container70 {
-        width: 70%;
-        float: left;
-        padding: 5px;
-    }
-    .Container60 {
-        width: 60%;
-        float: left;
-        padding: 5px;
-    }
-    .Container50 {
-        width: 50%;
-        float: left;
-        padding: 5px;
-    }
-    .Container40 {
-        width: 40%;
-        float: left;
-        padding: 5px;
-    }
-    .Container33 {
-        width: 33.3%;
-        float: left;
-        padding: 5px;
-    }
-    .Container30 {
-        width: 30%;
-        float: left;
-        padding: 5px;
-    }
-    .Container25 {
-        width: 25%;
-        float: left;
-        padding: 5px;
-    }
-    .Container20 {
-        width: 20%;
-        float: left;
-        padding: 5px;
-    }
-    .Container10 {
-        width: 10%;
-        float: left;
-        padding: 5px;
-    }
-    .Container5 {
-        width: 5%;
-        float: left;
-        padding: 5px;
-    }
-    .NoIndent {
-        display: block;
-        margin: 0px auto;
-        padding: 0px;
-    }
-    /* responsive support */
-
-    .Responsive {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive50 {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    .Responsive100 {
-        width: 100%;
-        float: left;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-    }
-    /* make auto of element width attribute on mobile devices with media queries */
-
-    .WidAutoOnMobile {
-        width: auto !important;
-    }
-    .HeiAutoOnMobile {
-        height: auto !important;
-        min-height: 50px !important;
-    }
-    /* font size resetting for responsive modes */
-
-    .Fs12 {
-        font-size: 12px !important;
-    }
-    .Fs13 {
-        font-size: 12px !important;
-    }
-    .Fs14 {
-        font-size: 13px !important;
-    }
-    .Fs15 {
-        font-size: 13px !important;
-    }
-    .Fs16 {
-        font-size: 13px !important;
-    }
-    .Fs17 {
-        font-size: 14px !important;
-    }
-    .Fs18 {
-        font-size: 15px !important;
-    }
-    .Fs19 {
-        font-size: 17px !important;
-    }
-    .Fs20 {
-        font-size: 17px !important;
-    }
-    .Fs21 {
-        font-size: 18px !important;
-    }
-    .Fs22 {
-        font-size: 18px !important;
-    }
-    .Fs23 {
-        font-size: 20px !important;
-    }
-    .Fs24 {
-        font-size: 21px !important;
-    }
-    .Fs25 {
-        font-size: 22px !important;
-    }
-    .Fs26 {
-        font-size: 23px !important;
-    }
-    .Fs27 {
-        font-size: 23px !important;
-    }
-    .Fs28 {
-        font-size: 25px !important;
-    }
-    .Fs29 {
-        font-size: 25px !important;
-    }
-    .Fs30 {
-        font-size: 26px !important;
-    }
-    .Fs40 {
-        font-size: 30px !important;
-    }
-    .Fs50 {
-        font-size: 32px !important;
-    }
-    .Fs60 {
-        font-size: 35px !important;
-    }
-    .Fs100 {
-        font-size: 40px !important;
-    }
-    .Fs130 {
-        font-size: 50px !important;
-    }
+	.ShowOnMobile{display:inherit;opacity:1;}
+	.ShowOnDesktop{display:none;opacity:0;}
+	.FloatNoneOnMobile{float:none !important;}
+	.Container100{width:100%;float:left;padding:5px;}
+	.Container96{width:96%;float:left;padding:5px;}
+	.Container90{width:90%;float:left;padding:5px;}
+	.Container85{width:85%;float:left;padding:5px;}
+	.Container80{width:80%;float:left;padding:5px;}
+	.Container75{width:75%;float:left;padding:5px;}
+	.Container70{width:70%;float:left;padding:5px;}
+	.Container60{width:60%;float:left;padding:5px;}
+	.Container50{width:50%;float:left;padding:5px;}
+	.Container40{width:40%;float:left;padding:5px;}
+	.Container33{width:33.3%;float:left;padding:5px;}
+	.Container30{width:30%;float:left;padding:5px;}
+	.Container25{width:25%;float:left;padding:5px;}
+	.Container20{width:20%;float:left;padding:5px;}
+	.Container10{width:10%;float:left;padding:5px;}
+	.Container5{width:5%;float:left;padding:5px;}
+	.NoIndent{display:block;margin:0px auto;padding:0px;}
+	.Responsive{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive50{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.Responsive100{width:100%;float:left;margin-left:0px !important;margin-right:0px !important;}
+	.WidAutoOnMobile{width:auto !important;}
+	.HeiAutoOnMobile{height:auto !important;min-height:50px !important;}
+	.Fs12{font-size:12px !important;}
+	.Fs13{font-size:12px !important;}
+	.Fs14{font-size:13px !important;}
+	.Fs15{font-size:13px !important;}
+	.Fs16{font-size:13px !important;}
+	.Fs17{font-size:14px !important;}
+	.Fs18{font-size:15px !important;}
+	.Fs19{font-size:17px !important;}
+	.Fs20{font-size:17px !important;}
+	.Fs21{font-size:18px !important;}
+	.Fs22{font-size:18px !important;}
+	.Fs23{font-size:20px !important;}
+	.Fs24{font-size:21px !important;}
+	.Fs25{font-size:22px !important;}
+	.Fs26{font-size:23px !important;}
+	.Fs27{font-size:23px !important;}
+	.Fs28{font-size:25px !important;}
+	.Fs29{font-size:25px !important;}
+	.Fs30{font-size:26px !important;}
+	.Fs40{font-size:30px !important;}
+	.Fs50{font-size:32px !important;}
+	.Fs60{font-size:35px !important;}
+	.Fs100{font-size:40px !important;}
+	.Fs130{font-size:50px !important;}
 }
 /* Portrait phones and down */
 
@@ -1191,206 +867,56 @@ form.formNoBottomBorder {
 	#mq { color: pink; }
     /*visibilities according to the platform*/
 
-    .ShowOnMobile {
-        display: inherit;
-        opacity: 1;
-    }
-    .ShowOnDesktop {
-        display: none;
-        opacity: 0;
-    }
-    .FloatNoneOnMobile {
-        float: none !important;
-    }
-    /* Containers */
-
-    .Container100 {
-        width: 100%;
-        float: left;
-        padding: 5px;
-    }
-    .Container96 {
-        width: 96%;
-        float: left;
-        padding: 5px;
-    }
-    .Container90 {
-        width: 90%;
-        float: left;
-        padding: 5px;
-    }
-    .Container85 {
-        width: 85%;
-        float: left;
-        padding: 5px;
-    }
-    .Container80 {
-        width: 80%;
-        float: left;
-        padding: 5px;
-    }
-    .Container75 {
-        width: 75%;
-        float: left;
-        padding: 5px;
-    }
-    .Container70 {
-        width: 70%;
-        float: left;
-        padding: 5px;
-    }
-    .Container60 {
-        width: 60%;
-        float: left;
-        padding: 5px;
-    }
-    .Container50 {
-        width: 50%;
-        float: left;
-        padding: 5px;
-    }
-    .Container40 {
-        width: 40%;
-        float: left;
-        padding: 5px;
-    }
-    .Container33 {
-        width: 33.3%;
-        float: left;
-        padding: 5px;
-    }
-    .Container30 {
-        width: 30%;
-        float: left;
-        padding: 5px;
-    }
-    .Container25 {
-        width: 25%;
-        float: left;
-        padding: 5px;
-    }
-    .Container20 {
-        width: 20%;
-        float: left;
-        padding: 5px;
-    }
-    .Container10 {
-        width: 10%;
-        float: left;
-        padding: 5px;
-    }
-    .Container5 {
-        width: 5%;
-        float: left;
-        padding: 5px;
-    }
-    .NoIndent {
-        display: block;
-        margin: 0 auto;
-        padding: 0;
-    }
-    /* responsive support */
-
-    .Responsive {
-        width: 100%;
-        float: left;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-    .Responsive50 {
-        width: 100%;
-        float: left;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-    .Responsive100 {
-        width: 100% !important;
-        float: left;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-    /* make auto of element width attribute on mobile devices with media queries */
-
-    .WidAutoOnMobile {
-        width: auto !important;
-    }
-    .HeiAutoOnMobile {
-        height: auto !important;
-    }
-    /* font size resetting for responsive modes */
-
-    .Fs12 {
-        font-size: 12px !important;
-    }
-    .Fs13 {
-        font-size: 12px !important;
-    }
-    .Fs14 {
-        font-size: 13px !important;
-    }
-    .Fs15 {
-        font-size: 13px !important;
-    }
-    .Fs16 {
-        font-size: 13px !important;
-    }
-    .Fs17 {
-        font-size: 14px !important;
-    }
-    .Fs18 {
-        font-size: 15px !important;
-    }
-    .Fs19 {
-        font-size: 17px !important;
-    }
-    .Fs20 {
-        font-size: 17px !important;
-    }
-    .Fs21 {
-        font-size: 18px !important;
-    }
-    .Fs22 {
-        font-size: 18px !important;
-    }
-    .Fs23 {
-        font-size: 20px !important;
-    }
-    .Fs24 {
-        font-size: 21px !important;
-    }
-    .Fs25 {
-        font-size: 22px !important;
-    }
-    .Fs26 {
-        font-size: 23px !important;
-    }
-    .Fs27 {
-        font-size: 23px !important;
-    }
-    .Fs28 {
-        font-size: 25px !important;
-    }
-    .Fs29 {
-        font-size: 25px !important;
-    }
-    .Fs30 {
-        font-size: 25px !important;
-    }
-    .Fs40 {
-        font-size: 28px !important;
-    }
-    .Fs50 {
-        font-size: 30px !important;
-    }
-    .Fs60 {
-        font-size: 32px !important;
-    }
-    .Fs100 {
-        font-size: 35px !important;
-    }
-    .Fs130 {
-        font-size: 40px !important;
-    }
+   	.ShowOnMobile{display:inherit;opacity:1;}
+	.ShowOnDesktop{display:none;opacity:0;}
+	.FloatNoneOnMobile{float:none !important;}
+	.Container100{width:100%;float:left;padding:5px;}
+	.Container96{width:96%;float:left;padding:5px;}
+	.Container90{width:90%;float:left;padding:5px;}
+	.Container85{width:85%;float:left;padding:5px;}
+	.Container80{width:80%;float:left;padding:5px;}
+	.Container75{width:75%;float:left;padding:5px;}
+	.Container70{width:70%;float:left;padding:5px;}
+	.Container60{width:60%;float:left;padding:5px;}
+	.Container50{width:50%;float:left;padding:5px;}
+	.Container40{width:40%;float:left;padding:5px;}
+	.Container33{width:33.3%;float:left;padding:5px;}
+	.Container30{width:30%;float:left;padding:5px;}
+	.Container25{width:25%;float:left;padding:5px;}
+	.Container20{width:20%;float:left;padding:5px;}
+	.Container10{width:10%;float:left;padding:5px;}
+	.Container5{width:5%;float:left;padding:5px;}
+	.NoIndent{display:block;margin:0 auto;padding:0;}
+	.Responsive{width:100%;float:left;margin-left:0 !important;margin-right:0 !important;}
+	.Responsive50{width:100%;float:left;margin-left:0 !important;margin-right:0 !important;}
+	.Responsive100{width:100% !important;float:left;margin-left:0 !important;margin-right:0 !important;}
+	.WidAutoOnMobile{width:auto !important;}
+	.HeiAutoOnMobile{height:auto !important;}
+	.Fs12{font-size:12px !important;}
+	.Fs13{font-size:12px !important;}
+	.Fs14{font-size:13px !important;}
+	.Fs15{font-size:13px !important;}
+	.Fs16{font-size:13px !important;}
+	.Fs17{font-size:14px !important;}
+	.Fs18{font-size:15px !important;}
+	.Fs19{font-size:17px !important;}
+	.Fs20{font-size:17px !important;}
+	.Fs21{font-size:18px !important;}
+	.Fs22{font-size:18px !important;}
+	.Fs23{font-size:20px !important;}
+	.Fs24{font-size:21px !important;}
+	.Fs25{font-size:22px !important;}
+	.Fs26{font-size:23px !important;}
+	.Fs27{font-size:23px !important;}
+	.Fs28{font-size:25px !important;}
+	.Fs29{font-size:25px !important;}
+	.Fs30{font-size:25px !important;}
+	.Fs40{font-size:28px !important;}
+	.Fs50{font-size:30px !important;}
+	.Fs60{font-size:32px !important;}
+	.Fs100{font-size:35px !important;}
+	.Fs130{font-size:40px !important;}
+	   
 }
 /* clearfix for Container */
 
