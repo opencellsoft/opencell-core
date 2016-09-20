@@ -54,7 +54,7 @@
 
                 <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
-                    listElements="#{businessProductModelBean.listAll()}" />
+                    listElements="#{businessProductModelBean.listAll()}" rendered="#{!mainBackingBean.edit and mainBackingBean.entity.businessProductModel != null}" />
                 <hftl:formLanguageFields entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" multiLang="true" />
             </h:panelGrid>
             <p:panel>
