@@ -26,6 +26,10 @@ public class BomOfferDto extends BaseDto {
 	@NotNull
 	@XmlAttribute(required = true)
 	private String code;
+	
+	@NotNull
+	@XmlAttribute(required = true)
+	private String name;
 
 	@XmlAttribute
 	private String description;
@@ -83,8 +87,8 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate="
-				+ servicesToActivate + "]";
+		return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
+				+ ", servicesToActivate=" + servicesToActivate + "]";
 	}
 
 	public String getCode() {
@@ -93,6 +97,14 @@ public class BomOfferDto extends BaseDto {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
