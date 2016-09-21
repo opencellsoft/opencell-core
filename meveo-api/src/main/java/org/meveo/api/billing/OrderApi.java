@@ -34,6 +34,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -560,9 +561,14 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, currentUser);
+        
         List<ProductChargeInstance> list = new ArrayList<>();
-        list.add(pcInstance);
+        ProductChargeInstance pcInstance = null;
+        for(ProductChargeTemplate productChargeTemplate: productTemplate.getProductChargeTemplates()){
+        	pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
+        	list.add(pcInstance);
+        }
+        
         productInstance.setProductChargeInstances(list);
         productInstanceService.create(productInstance, currentUser);
         productChargeInstanceService.apply(pcInstance, null, offerTemplate, chargeDate, null, null, null, null, null, currentUser, true);

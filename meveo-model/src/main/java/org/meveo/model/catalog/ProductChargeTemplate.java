@@ -19,9 +19,11 @@
 package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
@@ -36,7 +38,8 @@ public class ProductChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(optional = false, mappedBy = "productChargeTemplate")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRODUCT_TMPL_ID")
 	private ProductTemplate productTemplate;
 
 	public ProductTemplate getProductTemplate() {

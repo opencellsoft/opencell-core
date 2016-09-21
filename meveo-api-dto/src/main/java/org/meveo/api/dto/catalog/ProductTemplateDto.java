@@ -22,8 +22,9 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 
 	private static final long serialVersionUID = 1866373944715745993L;
 
-	@XmlElement(required = true)
-	private ProductChargeTemplateDto productChargeTemplate;
+	@XmlElementWrapper(name = "productChargeTemplates")
+	@XmlElement(name = "productChargeTemplate", required = true)
+	private List<ProductChargeTemplateDto> productChargeTemplates;
 
 	private BusinessProductModelDto businessProductModel;
 
@@ -54,12 +55,12 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 		}
 	}
 
-	public ProductChargeTemplateDto getProductChargeTemplate() {
-		return productChargeTemplate;
+	public List<ProductChargeTemplateDto> getProductChargeTemplates() {
+		return productChargeTemplates;
 	}
-
-	public void setProductChargeTemplate(ProductChargeTemplateDto productChargeTemplate) {
-		this.productChargeTemplate = productChargeTemplate;
+	
+	public void setProductChargeTemplates(List<ProductChargeTemplateDto> productChargeTemplates) {
+		this.productChargeTemplates = productChargeTemplates;
 	}
 
 	public BusinessProductModelDto getBusinessProductModel() {

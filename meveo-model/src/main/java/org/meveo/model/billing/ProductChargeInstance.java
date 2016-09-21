@@ -51,19 +51,20 @@ public class ProductChargeInstance extends ChargeInstance {
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
-	public ProductChargeInstance(ProductInstance productInstance, User user){
+	public ProductChargeInstance(ProductInstance productInstance, ProductChargeTemplate productChargeTemplate, User user){
 		this.code = productInstance.getCode();
 		this.description = productInstance.getDescription();
 		this.chargeDate = productInstance.getApplicationDate();
 		this.userAccount=productInstance.getUserAccount();
-		this.chargeTemplate=productInstance.getProductTemplate().getProductChargeTemplate();
 		this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		this.setCountry(userAccount.getBillingAccount().getTradingCountry());
 		this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
 		this.productInstance = productInstance;
-		this.productChargeTemplate=productInstance.getProductTemplate().getProductChargeTemplate();
 		this.status = InstanceStatusEnum.ACTIVE;
 		this.setQuantity(productInstance.getQuantity()==null?BigDecimal.ONE:productInstance.getQuantity());
+		this.chargeTemplate=productChargeTemplate;
+		this.productChargeTemplate=productChargeTemplate;
+		
         Auditable auditable = new Auditable();
         auditable.setCreated(new Date());
         auditable.setCreator(user);

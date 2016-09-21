@@ -1,5 +1,7 @@
 package org.meveo.api.catalog;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -55,9 +57,11 @@ public class ProductTemplateApi extends ProductOfferingApi {
 			missingParameters.add("code");
 		}
 
-		ProductChargeTemplateDto productChargeTemplateDto = postData.getProductChargeTemplate();
-		if (productChargeTemplateDto == null || StringUtils.isBlank(productChargeTemplateDto.getCode())) {
-			missingParameters.add("productChargeTemplate");
+		List<ProductChargeTemplateDto> productChargeTemplateDtos = postData.getProductChargeTemplates();
+		for(ProductChargeTemplateDto productChargeTemplateDto : productChargeTemplateDtos){
+			if (productChargeTemplateDto == null || StringUtils.isBlank(productChargeTemplateDto.getCode())) {
+				missingParameters.add("productChargeTemplate");
+			}
 		}
 
 		handleMissingParameters();
@@ -78,11 +82,11 @@ public class ProductTemplateApi extends ProductOfferingApi {
 
 		processImage(postData, productTemplate);
 
-		processProductChargeTemplate(postData, productTemplate, provider);
-
 		// save product template now so that they can be referenced by the
 		// related entities below.
 		productTemplateService.create(productTemplate, currentUser);
+		
+		processProductChargeTemplate(postData, productTemplate, provider);
 
 		processDigitalResources(postData, productTemplate, currentUser);
 
@@ -125,7 +129,7 @@ public class ProductTemplateApi extends ProductOfferingApi {
 
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException {
+	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("productTemplate code");
@@ -136,7 +140,6 @@ public class ProductTemplateApi extends ProductOfferingApi {
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
-
 		productTemplateService.remove(productTemplate);
 	}
 

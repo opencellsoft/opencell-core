@@ -110,12 +110,12 @@ public class BundleTemplateApi extends ProductOfferingApi {
 
 		processImage(postData, bundleTemplate);
 
-		processProductChargeTemplate(postData, bundleTemplate, provider);
-
 		// save product template now so that they can be referenced by the
 		// related entities below.
 		bundleTemplateService.create(bundleTemplate, currentUser);
 
+		processProductChargeTemplate(postData, bundleTemplate, provider);
+		
 		processDigitalResources(postData, bundleTemplate, currentUser);
 
 		processOfferTemplateCategories(postData, bundleTemplate, provider);
@@ -197,25 +197,22 @@ public class BundleTemplateApi extends ProductOfferingApi {
 			}
 			if (hasExistingProductTemplates) {
 				List<BundleProductTemplate> bundleProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
+				List<BundleProductTemplate> newBundleProductTemplateForRemoval = new ArrayList<>();
 				bundleProductTemplatesForRemoval.removeAll(newBundleProductTemplates);
-				newBundleProductTemplates.removeAll(existingProductTemplates);
-				// for (BundleProductTemplate bundleProductTemplateForRemoval :
-				// bundleProductTemplatesForRemoval) {
-				// bundleProductTemplateService.remove(bundleProductTemplateForRemoval);
-				// }
 				bundleTemplate.getBundleProducts().removeAll(bundleProductTemplatesForRemoval);
+				for(BundleProductTemplate currentBundleProductTemplate : bundleTemplate.getBundleProducts()){
+					for(BundleProductTemplate newBundleProductTemplate : newBundleProductTemplates){
+						if(newBundleProductTemplate.equals(currentBundleProductTemplate)){
+							currentBundleProductTemplate.setQuantity(newBundleProductTemplate.getQuantity());
+							newBundleProductTemplateForRemoval.add(currentBundleProductTemplate);
+							break;
+						}
+					}
+				}
+				newBundleProductTemplates.removeAll(newBundleProductTemplateForRemoval);
 			}
-			// for (BundleProductTemplate newBundleProductTemplate :
-			// newBundleProductTemplates) {
-			// bundleProductTemplateService.create(newBundleProductTemplate,
-			// user);
-			// }
 			bundleTemplate.getBundleProducts().addAll(newBundleProductTemplates);
 		} else if (hasExistingProductTemplates) {
-			// for (BundleProductTemplate offerProductTemplateForRemoval :
-			// existingProductTemplates) {
-			// bundleProductTemplateService.remove(offerProductTemplateForRemoval);
-			// }
 			bundleTemplate.getBundleProducts().removeAll(existingProductTemplates);
 		}
 

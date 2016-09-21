@@ -1185,4 +1185,17 @@
         </sql>
     </changeSet>
 
+	<changeSet id="#1839_20160717_cat_product_charge_templ" author="TonyAlejandro">
+		<addColumn tableName="cat_product_charge_templ">
+			<column name="product_tmpl_id" type="BIGINT" />
+		</addColumn>
+		<addUniqueConstraint columnNames="id, product_tmpl_id"
+			constraintName="uk_product_charge_templ" deferrable="false" disabled="false"
+			initiallyDeferred="false" tableName="cat_product_charge_templ" />
+		<addForeignKeyConstraint baseColumnNames="product_tmpl_id"
+			baseTableName="cat_product_charge_templ" constraintName="fk_cat_prod_tpl_prod_chrg_tpl"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+
 </databaseChangeLog>

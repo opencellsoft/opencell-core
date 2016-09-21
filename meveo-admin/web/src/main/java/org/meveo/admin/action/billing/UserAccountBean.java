@@ -53,6 +53,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -529,21 +530,27 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		
 		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
 		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
-
-		ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, currentUser);
+		
 		List<ProductChargeInstance> list = new ArrayList<>();
-		list.add(pcInstance);
+		ProductChargeInstance productChargeInstance = null;
+		for(ProductChargeTemplate productChargeTemplate: productInstance.getProductTemplate().getProductChargeTemplates()){
+			productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
+			list.add(productChargeInstance);
+		}
+		
 		productInstance.setProductChargeInstances(list);
 		
-		try {
-			productInstanceService.create(productInstance, currentUser);
-			productChargeInstanceService.apply(pcInstance, null, productChargeInstance.getOfferTemplate(), productInstance.getApplicationDate(), null, null, null, null, null,
-					currentUser, true);
-		} catch (BusinessException e) {
-			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
-		} catch (Exception e) {
-			log.error("unexpected exception when applying a product! {}", e.getMessage());
-			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		for(ProductChargeInstance pcInstance: list){
+			try {
+				productInstanceService.create(productInstance, currentUser);
+				productChargeInstanceService.apply(pcInstance, null, productChargeInstance.getOfferTemplate(), productInstance.getApplicationDate(), null, null, null, null, null,
+						currentUser, true);
+			} catch (BusinessException e) {
+				messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+			} catch (Exception e) {
+				log.error("unexpected exception when applying a product! {}", e.getMessage());
+				messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+			}
 		}
 		
 		productChargeInstances = null;

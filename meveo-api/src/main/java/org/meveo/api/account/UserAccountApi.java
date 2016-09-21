@@ -330,52 +330,56 @@ public class UserAccountApi extends AccountApi {
 		}
 	}
 
-	public WalletOperationDto applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
-		WalletOperationDto result = null;  
+	public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		List<WalletOperationDto> result = new ArrayList<>();
 		if (StringUtils.isBlank(postData.getProduct())) {
-	            missingParameters.add("product");
-	        }
-	        if (StringUtils.isBlank(postData.getUserAccount())) {
-	            missingParameters.add("userAccount");
-	        }
-	        if (postData.getOperationDate() == null) {
-	            missingParameters.add("operationDate");
-	        }
+			missingParameters.add("product");
+		}
+		if (StringUtils.isBlank(postData.getUserAccount())) {
+			missingParameters.add("userAccount");
+		}
+		if (postData.getOperationDate() == null) {
+			missingParameters.add("operationDate");
+		}
 
-	        handleMissingParameters();
+		handleMissingParameters();
 
-	        Provider provider = currentUser.getProvider();
+		Provider provider = currentUser.getProvider();
 
-	        ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), provider);
-	        if (productTemplate == null) {
-	            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
-	        }
-	        
-	        OfferTemplate offerTemplate=null;
-	        if(!StringUtils.isBlank(postData.getOffer())){
-	        	offerTemplate=offerTemplateService.findByCode(postData.getOffer(), provider);
-		        if (offerTemplate == null) {
-		            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOffer());
-		        }	        	
-	        }
+		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), provider);
+		if (productTemplate == null) {
+			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
+		}
 
-	        UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
-	        if (userAccount == null) {
-	            throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
-	        }
+		OfferTemplate offerTemplate = null;
+		if (!StringUtils.isBlank(postData.getOffer())) {
+			offerTemplate = offerTemplateService.findByCode(postData.getOffer(), provider);
+			if (offerTemplate == null) {
+				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOffer());
+			}
+		}
 
-	        if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
-	            throw new MeveoApiException("User account is not ACTIVE.");
-	        }
+		UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
+		if (userAccount == null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
+		}
 
-	        try {
-	        	WalletOperation walletOperation =  productInstanceService.applyProduct(userAccount, productTemplate, postData.getQuantity(),
-	        			postData.getOperationDate(), postData.getDescription(), postData.getAmountWithoutTax(), postData.getAmountWithTax(), offerTemplate,
-	        			postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),currentUser, true);
-	        	result = new WalletOperationDto(walletOperation);
-	        } catch (BusinessException e) {
-	            throw new MeveoApiException(e.getMessage());
-	        }
-	        return result;
+		if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+			throw new MeveoApiException("User account is not ACTIVE.");
+		}
+
+		List<WalletOperation> walletOperations = null;
+
+		try {
+			walletOperations = productInstanceService.applyProduct(userAccount, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getDescription(),
+					postData.getAmountWithoutTax(), postData.getAmountWithTax(), offerTemplate, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
+					currentUser, true);
+			for (WalletOperation walletOperation : walletOperations) {
+				result.add(new WalletOperationDto(walletOperation));
+			}
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+		return result;
 	}
 }

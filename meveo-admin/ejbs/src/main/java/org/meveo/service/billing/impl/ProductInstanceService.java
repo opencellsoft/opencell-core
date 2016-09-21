@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
@@ -97,22 +99,23 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     
 
     
-    public WalletOperation applyProduct(UserAccount userAccount,ProductTemplate productTemplate, BigDecimal quantity,
-    		Date chargeDate,String description,BigDecimal amountWithoutTax, BigDecimal amountWithTax, 
-    		OfferTemplate offerTemplate,String criteria1, String criteria2, String criteria3,
-    		User user,boolean persist) throws BusinessException{
-    	WalletOperation result = null;
-    	ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, UUID.randomUUID().toString(), description, user);
-    	if(persist){
-    		create(productInstance,user);
-    	}
-    	ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance,user);
-    	if(persist){
-    		productChargeInstanceService.create(pcInstance,user);
-    	}
-    	result = productChargeInstanceService.apply(pcInstance, description, offerTemplate, chargeDate, amountWithoutTax, amountWithTax, 
-    			criteria1, criteria2, criteria3,user,persist);
-    	return result;
-    }
+	public List<WalletOperation> applyProduct(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date chargeDate, String description,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax, OfferTemplate offerTemplate, String criteria1, String criteria2, String criteria3, User user, boolean persist)
+			throws BusinessException {
+		List<WalletOperation> result = new ArrayList<>();
+		ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, UUID.randomUUID().toString(), description, user);
+		if (persist) {
+			create(productInstance, user);
+		}
+		for (ProductChargeTemplate productChargeTemplate : productTemplate.getProductChargeTemplates()) {
+			ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, user);
+			if (persist) {
+				productChargeInstanceService.create(pcInstance, user);
+			}
+			result.add(productChargeInstanceService.apply(pcInstance, description, offerTemplate, chargeDate, amountWithoutTax, amountWithTax, criteria1, criteria2, criteria3,
+					user, persist));
+		}
+		return result;
+	}
 
 }

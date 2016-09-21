@@ -4,6 +4,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.sql.rowset.serial.SerialBlob;
@@ -42,10 +43,18 @@ public class ProductOfferingApi extends BaseApi {
 	private DigitalResourceApi digitalResourceApi;
 
 	protected void processProductChargeTemplateToDto(ProductTemplate productTemplate, ProductTemplateDto productTemplateDto) {
-		ProductChargeTemplate productChargeTemplate = productTemplate.getProductChargeTemplate();
-		if (productChargeTemplate != null) {
-			ProductChargeTemplateDto productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate));
-			productTemplateDto.setProductChargeTemplate(productChargeTemplateDto);
+		Set<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
+		ProductChargeTemplateDto productChargeTemplateDto = null;
+		List<ProductChargeTemplateDto> chargeDtos = new ArrayList<>();
+		if(productChargeTemplates != null) {
+			for(ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
+				if (productChargeTemplate != null) {
+					productChargeTemplate.setProductTemplate(productTemplate);
+					productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate));
+					chargeDtos.add(productChargeTemplateDto);
+				}
+			}
+			productTemplateDto.setProductChargeTemplates(chargeDtos);
 		}
 	}
 
@@ -100,12 +109,32 @@ public class ProductOfferingApi extends BaseApi {
 	}
 
 	protected void processProductChargeTemplate(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws BusinessException, MeveoApiException {
-		ProductChargeTemplateDto productChargeTemplateDto = postData.getProductChargeTemplate();
-		ProductChargeTemplate productChargeTemplate = productChargeTemplateService.findByCode(productChargeTemplateDto.getCode(), provider);
-		if (productChargeTemplate == null) {
-			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, productChargeTemplateDto.getCode());
+		List<ProductChargeTemplate> newProductChargeTemplates = new ArrayList<>();
+		ProductChargeTemplate productChargeTemplate = null;
+		for(ProductChargeTemplateDto productChargeTemplateDto : postData.getProductChargeTemplates()){
+			productChargeTemplate = productChargeTemplateService.findByCode(productChargeTemplateDto.getCode(), provider);
+			if (productChargeTemplate == null) {
+				throw new EntityDoesNotExistsException(ProductChargeTemplate.class, productChargeTemplateDto.getCode());
+			}
+			productChargeTemplate.setProductTemplate(productTemplate);
+			newProductChargeTemplates.add(productChargeTemplate);
 		}
-		productTemplate.setProductChargeTemplate(productChargeTemplate);
+		
+		Set<ProductChargeTemplate> existingProductChargeTemplates = productTemplate.getProductChargeTemplates();
+		boolean hasExistingProductChargeTemplates = existingProductChargeTemplates != null && !existingProductChargeTemplates.isEmpty();
+		boolean hasNewProductChargeTemplates = !newProductChargeTemplates.isEmpty();
+		
+		if(hasNewProductChargeTemplates){
+			if(hasExistingProductChargeTemplates){
+				List<ProductChargeTemplate> productChargeTemplatesForRemoval = new ArrayList<>(existingProductChargeTemplates);
+				productChargeTemplatesForRemoval.removeAll(newProductChargeTemplates);
+				productTemplate.getProductChargeTemplates().removeAll(productChargeTemplatesForRemoval);
+			}
+			newProductChargeTemplates.removeAll(existingProductChargeTemplates);
+			productTemplate.getProductChargeTemplates().addAll(newProductChargeTemplates);
+		} else if (hasExistingProductChargeTemplates) {
+			productTemplate.getProductChargeTemplates().removeAll(existingProductChargeTemplates);
+		}
 	}
 
 }

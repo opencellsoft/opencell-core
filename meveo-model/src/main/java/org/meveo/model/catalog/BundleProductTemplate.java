@@ -110,10 +110,8 @@ public class BundleProductTemplate implements IEntity {
 		BundleProductTemplate that = (BundleProductTemplate) obj;
 
 		ProductTemplate thatProductTemplate = that.getProductTemplate();
-		if (productTemplate == null) {
-			if (thatProductTemplate != null) {
-				return false;
-			}
+		if (productTemplate == null && thatProductTemplate != null) {
+			return false;
 		} else if (!productTemplate.equals(thatProductTemplate)) {
 			return false;
 		}
@@ -127,5 +125,10 @@ public class BundleProductTemplate implements IEntity {
 
 		return true;
 	}
+	
+	@Override
+    public String toString() {
+        return "[BundleTemplate = " + this.bundleTemplate + ", ProductTemplate = " + this.productTemplate + "]";
+    }
 
 }

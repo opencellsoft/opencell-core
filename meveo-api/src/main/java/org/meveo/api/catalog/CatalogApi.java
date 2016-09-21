@@ -209,43 +209,46 @@ public class CatalogApi extends BaseApi {
 			
 			// load the prices form the product template
 			ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
-			ProductChargeTemplate productChargeTemplate = productTemplate.getProductChargeTemplate();
-			String chargeCode = productChargeTemplate.getCode();
-
+			Set<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
+			
 			Price price = new Price();
 			price.setDutyFreeAmount(new BigDecimal(0));
 			price.setTaxIncludedAmount(new BigDecimal(0));
 
-			if (productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
-					&& productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-				price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-			}
-			
-			List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode, currentUser.getProvider());
-
-			if (offerPricePlans != null && offerPricePlans.size() > 0) {
-				price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
-				if (!currentUser.getProvider().isEntreprise()) {
-					price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
+			String chargeCode = null;
+			for(ProductChargeTemplate productChargeTemplate : productChargeTemplates){
+				chargeCode = productChargeTemplate.getCode();
+				if (productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
+						&& productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+					price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
 				}
-			} else {
-				List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode(), currentUser.getProvider());
-				if (pricePlans != null && pricePlans.size() > 0) {
-					price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
+				
+				List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode, currentUser.getProvider());
+
+				if (offerPricePlans != null && offerPricePlans.size() > 0) {
+					price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
 					if (!currentUser.getProvider().isEntreprise()) {
-						price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
+						price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
+					}
+				} else {
+					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode(), currentUser.getProvider());
+					if (pricePlans != null && pricePlans.size() > 0) {
+						price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
+						if (!currentUser.getProvider().isEntreprise()) {
+							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
+						}
 					}
 				}
-			}
 
-			if (currentUser.getProvider().isEntreprise()) {
-				if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-					BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-					price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-				} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-					price.setTaxIncludedAmount(price.getDutyFreeAmount());
-				} else {
-					price.setTaxIncludedAmount(new BigDecimal(0));
+				if (currentUser.getProvider().isEntreprise()) {
+					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
+						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
+						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
+					} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
+						price.setTaxIncludedAmount(price.getDutyFreeAmount());
+					} else {
+						price.setTaxIncludedAmount(new BigDecimal(0));
+					}
 				}
 			}
 
