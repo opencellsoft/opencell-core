@@ -136,7 +136,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+        String fullClassName = getFullClassname(script.getScript());
+        if (isExistedFullClassName(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid"));
+        }
+        script.setCode(fullClassName);
 
         super.create(script, creator);
         compileScript(script, false);
@@ -149,13 +153,31 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+
+        String fullClassName = getFullClassname(script.getScript());
+        if (isExistedFullClassName(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid"));
+        }
+
+        script.setCode(fullClassName);
 
         script = super.update(script, updater);
 
         compileScript(script, false);
 
         return script;
+    }
+
+    /**
+     * Check full class name is existed or not
+     */
+    private boolean isExistedFullClassName(String fullClassName) {
+        try {
+            Class.forName(fullClassName);
+            return true;
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
     }
 
     /**
