@@ -55,10 +55,14 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TAX_ID")
 	private Tax tax;
-	
+
 	@Column(name = "FILTER_EL", length = 2000)
 	@Size(max = 2000)
 	private String filterEL;
+
+	@Column(name = "TAX_CODE_EL", length = 2000)
+	@Size(max = 2000)
+	private String taxCodeEL;
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
@@ -93,7 +97,13 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 		this.tax = tax;
 	}
 	
-	
+	public String getTaxCodeEL() {
+		return taxCodeEL;
+	}
+
+	public void setTaxCodeEL(String taxCodeEL) {
+		this.taxCodeEL = taxCodeEL;
+	}
 
 	public String getFilterEL() {
 		return filterEL;

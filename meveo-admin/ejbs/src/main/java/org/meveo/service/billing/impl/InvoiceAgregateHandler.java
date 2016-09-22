@@ -23,6 +23,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,10 @@ public class InvoiceAgregateHandler {
 	BigDecimal invoiceAmountTax = BigDecimal.ZERO;
 	BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
 
-	public InvoiceAgregateHandler() {
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
+	public InvoiceAgregateHandler(InvoiceSubCategoryService invoiceSubCategoryService) {
+		this.invoiceSubCategoryService=invoiceSubCategoryService;
 	}
 
 	/**
@@ -282,8 +286,12 @@ public class InvoiceAgregateHandler {
                  && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
 					&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
 
-				currentTax = invoicesubcatCountry.getTax();
 
+				if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+					currentTax = invoicesubcatCountry.getTax();
+				} else {
+					currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, null);
+				}
 				if (currentTax != null) {
 					return currentTax;
 				}

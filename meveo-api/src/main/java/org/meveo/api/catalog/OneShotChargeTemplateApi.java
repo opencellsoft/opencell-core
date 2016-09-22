@@ -362,7 +362,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
                 try {
-                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(provider, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
+                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(provider, seller,null, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
                         null, null, null, true);
                     if (unitPrice != null) {
                         oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());

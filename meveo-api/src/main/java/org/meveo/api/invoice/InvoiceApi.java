@@ -216,10 +216,19 @@ public class InvoiceApi extends BaseApi {
                     		invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
                             && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
 						if (!taxes.contains(invoicesubcatCountry.getTax())) {
-							taxes.add(invoicesubcatCountry.getTax());
+							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+								taxes.add(invoicesubcatCountry.getTax());
+							} else {
+								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice));
+							}
 						}
 						if(currentTax == null){
 							currentTax = invoicesubcatCountry.getTax();
+							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+								currentTax = invoicesubcatCountry.getTax();
+							} else {
+								currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice);
+							}
 						}
 					}
 				}

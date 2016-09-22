@@ -123,6 +123,9 @@
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
 								field="tax.code" />
+							<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}"
+								field="taxCodeEL" />
 							<p:column styleClass="actions-column"
 								rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">
@@ -170,8 +173,11 @@
 
 									<hftl:formField id="taxSelectedId"
 										label="#{messages['invoiceSubCategoryCountry.taxe']}"
-										field="tax" valueLabelField="code" required="true" listBean="#{taxBean}"/>
+										field="tax" valueLabelField="code" required="false" listBean="#{taxBean}"/>
 <!--                                         popup="true" popupId="invSubCatCountTaxPopup" required="true" /> -->
+									
+									<hftl:formField label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}"
+			        				field="taxCodeEL" textArea="true" rows="1" maxlength="2000" required="false"/>	
 										
 									<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 			        				field="filterEL" textArea="true" rows="1" maxlength="2000" required="false"/>	

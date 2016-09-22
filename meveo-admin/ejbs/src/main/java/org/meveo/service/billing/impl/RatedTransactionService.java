@@ -315,8 +315,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			                     && invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
 			                 && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
 					    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
-							
-							taxes.add(invoicesubcatCountry.getTax());
+							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+								taxes.add(invoicesubcatCountry.getTax());
+							} else {
+								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice));
+							}
 						}
 					}
 

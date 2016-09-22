@@ -60,6 +60,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.Script;
@@ -103,6 +104,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+	
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -711,7 +715,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 				Tax tax = invoiceSubcategoryCountry.getTax();
 				if (tax == null) {
-					throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), operation.getBillingAccount(), null);
+					if (tax == null) {
+						throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					}
 				}
 								
 				operation.setTaxPercent(tax.getPercent());
