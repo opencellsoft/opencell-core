@@ -108,7 +108,12 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 						
 						for (InvoiceSubcategoryCountry isc: beanInvoiceSubcategoryCountries) {
 							if (isc.getTax().getCode().equals(invoiceSubcategoryCountry.getTax().getCode()) &&
-									isc.getTradingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getTradingCountry().getCountryCode())) {
+									((isc.getSellingCountry()==null && invoiceSubcategoryCountry.getSellingCountry()==null) ||
+									 (isc.getSellingCountry()!=null && invoiceSubcategoryCountry.getSellingCountry()!=null &&
+									  isc.getSellingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getSellingCountry().getCountryCode()))) &&
+									((isc.getTradingCountry()==null && invoiceSubcategoryCountry.getTradingCountry()==null) ||
+									 (isc.getTradingCountry()!=null && invoiceSubcategoryCountry.getTradingCountry()!=null &&
+									  isc.getTradingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getTradingCountry().getCountryCode())))) {
 								found = true;
 								break;
 							}

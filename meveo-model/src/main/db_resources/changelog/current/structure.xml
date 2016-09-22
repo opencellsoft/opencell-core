@@ -1184,5 +1184,11 @@
             update WF_TRANSITION set FROM_STATUS = 'ACKNOWLEDGED', TO_STATUS = 'IN_PROGRESS' where FROM_STATUS is NULL and TO_STATUS is NULL and WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF');
         </sql>
     </changeSet>
+    
+    <changeSet id="#sellerTax_20160922" author="smichea">
+        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+            <column name="SELLING_COUNTRY_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

@@ -209,7 +209,11 @@ public class InvoiceApi extends BaseApi {
 				List<Tax> taxes = new ArrayList<Tax>();
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode(), provider);
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-                    if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+                    if ((invoicesubcatCountry.getSellingCountry()==null || 
+                    		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
+                    		&& invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
+                         && (invoicesubcatCountry.getTradingCountry()==null ||
+                    		invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
                             && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
 						if (!taxes.contains(invoicesubcatCountry.getTax())) {
 							taxes.add(invoicesubcatCountry.getTax());

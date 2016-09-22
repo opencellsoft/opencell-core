@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 
-/**
- * @author Edward P. Legaspi
- **/
 @XmlRootElement(name = "InvoiceSubCategoryCountry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubCategoryCountryDto extends BaseDto {
@@ -19,7 +16,10 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 	@XmlElement(required = true)
 	private String invoiceSubCategory;
 
-	@XmlElement(required = true)
+	@XmlElement(required = false)
+	private String sellingCountry;
+	
+	@XmlElement(required = false)
 	private String country;
 
 	@XmlElement(required = true)
@@ -36,6 +36,7 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
 		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
+		sellingCountry = invoiceSubcategoryCountry.getSellingCountry().getCountryCode();
 		country = invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
 		tax = invoiceSubcategoryCountry.getTax().getCode();
 		filterEL=invoiceSubcategoryCountry.getFilterEL();
@@ -47,6 +48,14 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	public void setInvoiceSubCategory(String invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public String getSellingCountry() {
+		return sellingCountry;
+	}
+
+	public void setSellingCountry(String sellingCountry) {
+		this.sellingCountry = sellingCountry;
 	}
 
 	public String getCountry() {

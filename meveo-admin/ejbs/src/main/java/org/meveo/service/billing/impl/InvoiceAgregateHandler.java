@@ -276,7 +276,11 @@ public class InvoiceAgregateHandler {
 	private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount) throws BusinessException {
 		Tax currentTax = null;
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-			if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
+			if ((invoicesubcatCountry.getSellingCountry()==null || 
+            		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
+                     && invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
+                 && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
+					&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
 
 				currentTax = invoicesubcatCountry.getTax();
 

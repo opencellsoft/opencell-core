@@ -115,6 +115,9 @@
 							dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
 							resultsId="invoiceSubCategoryCountries_results" exportToXml="false">
 							<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.sellingCountryCode']}"
+								field="sellingCountry.countryCode" />
+							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
 								field="tradingCountry.countryCode" />
 							<hftl:column
@@ -154,10 +157,15 @@
 									backingBean="#{invoiceSubCategoryBean}"
 									entity="#{invoiceSubCategoryBean.invoiceSubcategoryCountry}" showFormButtons="false"
 									ajaxSubmit="true">
+									
+
+									<hftl:formField id="sellingCountrySelectedId"
+										label="#{messages['invoiceSubCategoryCountry.sellingCountryCode']}" field="sellingCountry"
+										valueLabelField="countryCode" required="false" listBean="#{tradingCountryBean}" />
 
 									<hftl:formField id="countrySelectedId"
-										label="#{messages['address.country']}" field="tradingCountry"
-										valueLabelField="countryCode" required="true" listBean="#{tradingCountryBean}" />
+										label="#{messages['invoiceSubCategoryCountry.countryCode']}" field="tradingCountry"
+										valueLabelField="countryCode" required="false" listBean="#{tradingCountryBean}" />
 <!--                                         popup="true" popupId="invSubCatCountryPopup" /> -->
 
 									<hftl:formField id="taxSelectedId"
