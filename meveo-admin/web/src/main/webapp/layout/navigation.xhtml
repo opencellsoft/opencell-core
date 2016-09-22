@@ -181,54 +181,41 @@
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				outcome="meveoProperties" value="#{messages['menu.properties']}" />
 
-        </p:submenu>
+			<p:menuitem id="channels" outcome="channels"
+				value="#{messages['menu.channels']}" />
+
+		</p:submenu>
 
 		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
 			rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
 
-			<p:menuitem id="offerTemplateCategories"
-				outcome="offerTemplateCategories"
-				value="#{messages['menu.offerTemplateCategories']}" />			
-
-			<p:submenu id="offerAndServices"
-				label="#{messages['menu.offerAndServices']}">
+			<p:submenu id="offerManagement"
+				label="#{messages['menu.catalog.offerManagement']}">
 				<p:menuitem id="offerTemplates" outcome="offerTemplates"
 					value="#{messages['menu.offers']}" />
-				
-				<p:submenu id="marketingManager" label="#{messages['menu.marketingManager']}">
-					
-					<p:menuitem id="mmCatalogView" outcome="mm_offers" value="#{messages['menu.marketingManager.catalogView']}" />
-					
-					<p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories" value="#{messages['menu.marketingManager.offerCategories']}" />
-					
-				</p:submenu>
+				<p:menuitem id="offerTemplateCategories"
+					outcome="offerTemplateCategories"
+					value="#{messages['menu.offerTemplateCategories']}" />
+			</p:submenu>
 
-				<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates"
-					value="#{messages['menu.productTemplates.view']}" />
-
-				<p:separator />
-
+			<p:submenu id="serviceManagement"
+				label="#{messages['menu.catalog.serviceManagement']}">
 				<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
 					value="#{messages['menu.serviceTemplates']}" />
-
 				<p:submenu id="charges" label="#{messages['menu.charges']}">
-
 					<p:menuitem id="chargeTemplates" outcome="chargeTemplates"
 						value="#{messages['menu.chargeTemplates']}" />
-
 					<p:menuitem id="recurringChargeTemplate"
 						outcome="recurringChargeTemplates"
 						value="#{messages['menu.recurringChargeTemplates']}" />
-
 					<p:menuitem id="oneShotChargeTemplates"
 						outcome="oneShotChargeTemplates"
 						value="#{messages['menu.oneShotChargeTemplates']}" />
-
 					<p:menuitem id="usageChargeTemplates"
 						outcome="usageChargeTemplates"
 						value="#{messages['menu.usageChargeTemplates']}" />
 				</p:submenu>
-
+				
 				<p:menuitem id="walletTemplates" outcome="walletTemplates"
 					value="#{messages['menu.wallets']}" />
 
@@ -238,28 +225,28 @@
 				<p:menuitem id="triggeredEdrTemplates"
 					outcome="triggeredEdrTemplates"
 					value="#{messages['menu.triggeredEdrTemplates']}" />
+			</p:submenu>
 
+			<p:submenu id="productManagement"
+				label="#{messages['menu.catalog.productManagement']}">
+				<p:menuitem id="productTemplates" outcome="productTemplates"
+					value="#{messages['menu.productTemplates']}" />
+				<p:menuitem id="productChargeTemplates"
+					outcome="productChargeTemplates"
+					value="#{messages['menu.productChargeTemplates']}" />
+				<p:menuitem id="bundleTemplates" outcome="bundleTemplates"
+					value="#{messages['menu.bundleTemplates']}" />
+			</p:submenu>
+
+			<p:submenu id="models" label="#{messages['menu.catalog.models']}">
+				<p:menuitem id="businessOfferModels" outcome="businessOfferModels"
+					value="#{messages['menu.businessOffers']}" />
 				<p:menuitem id="businessServiceModels"
 					outcome="businessServiceModels"
 					value="#{messages['menu.businessServiceModels']}" />
-
-				<p:menuitem id="businessOfferModels" outcome="businessOfferModels"
-					value="#{messages['menu.businessOffers']}" />
-			</p:submenu>
-
-			<p:submenu label="#{messages['productTemplate.product']}">
-				<p:menuitem id="businessProductModels" outcome="businessProductModels"
+				<p:menuitem id="businessProductModels"
+					outcome="businessProductModels"
 					value="#{messages['menu.businessProductModels']}" />
-				<p:menuitem id="digitalResources" outcome="digitalResources"
-					value="#{messages['menu.digitalResources']}" />
-				<p:menuitem id="channels" outcome="channels"
-					value="#{messages['menu.channels']}" />
-				<p:menuitem id="productChargeTemplates" outcome="productChargeTemplates"
-					value="#{messages['menu.productChargeTemplates']}" />
-				<p:menuitem id="productTemplates" outcome="productTemplates"
-					value="#{messages['menu.productTemplates']}" />
-				<p:menuitem id="bundleTemplates" outcome="bundleTemplates"
-					value="#{messages['menu.bundleTemplates']}" />
 			</p:submenu>
 
 		</p:submenu>
