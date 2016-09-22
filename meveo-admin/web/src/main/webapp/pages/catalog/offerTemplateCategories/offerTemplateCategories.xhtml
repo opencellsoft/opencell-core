@@ -21,7 +21,7 @@
                 <p:panel header="#{messages['offerTemplateCategory.offerTemplateCategories']}">
                     <p:outputPanel style="height: 100%;overflow: auto;display: block">
                         <p:tree style="height: 450px; width: 95%" value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}" var="offerTemplateCategory" selectionMode="single" rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount>0}">
-                            <p:ajax event="select" listener="#{offerTemplateCategoryBean.onNodeSelect}" update="offerTemplateCategoryDetailPanel" />
+                            <p:ajax event="select" listener="#{offerTemplateCategoryBean.onNodeSelect}" update="offerTemplateCategoryDetailPanel buttons" />
                             <p:treeNode>
                                 <h:outputText value="#{offerTemplateCategory.descriptionOrCode}" />
                             </p:treeNode>
@@ -35,29 +35,29 @@
                     <h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
                         <h:panelGrid columns="2">
                             <p:commandButton id="addOfferTemplateCategoryRootBtn" icon="fa fa-home" action="#{offerTemplateCategoryBean.newOfferTemplateCategoryRoot()}"
-                                             update="messages offerTemplateCategoryDetailPanel" style="padding-right:5px" >
+                                             update="messages offerTemplateCategoryDetailPanel buttons" style="padding-right:5px" >
                             </p:commandButton>
                             <p:outputLabel value="#{messages['offerTemplateCategory.addOfferTemplateCategoryRoot']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                             <p:commandButton id="addOfferTemplateCategoryBtn" icon="fa fa-plus" action="#{offerTemplateCategoryBean.newOfferTemplateCategory()}"
-                                             update="messages offerTemplateCategoryDetailPanel">
+                                             update="messages offerTemplateCategoryDetailPanel buttons">
                             </p:commandButton>
                             <p:outputLabel  value="#{messages['offerTemplateCategory.addOfferTemplateCategory']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                             <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}"
                                              update="messages offerCategoryPanel buttons" ajax="true" />
                             <p:outputLabel  value="#{messages['offerTemplateCategory.moveUp']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                             <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}"
                                              update="messages offerCategoryPanel buttons" ajax="true" />
                             <p:outputLabel  value="#{messages['offerTemplateCategory.moveDown']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                             <p:commandButton id="deleteOfferTemplateCategory" icon="ui-icon-trash" action="#{offerTemplateCategoryBean.removeOfferTemplateCategory()}"
-                                             update="messages offerCategoryPanel buttons" ajax="true">
+                                             update="messages offerCategoryPanel offerTemplateCategoryDetailPanel buttons" ajax="true">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['offerTemplateCategory.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
                             <p:outputLabel value="#{messages['offerTemplateCategory.deleteOfferTemplateCategory']}"/>
@@ -67,7 +67,7 @@
                             <hftl:formPanel ajaxSubmit="true"
                                             submitPartialProcess=":formId:tabView"
                                             label="" showBackButton="false" showDeleteButton="false"
-                                            submitUpdate="@form offerCategoryPanel messages"
+                                            submitUpdate="@form offerCategoryPanel messages buttons"
                                             backingBean="#{offerTemplateCategoryBean}" showMessages="false"
                                             showEnableDisableButton="true" enctype="multipart/form-data">
 

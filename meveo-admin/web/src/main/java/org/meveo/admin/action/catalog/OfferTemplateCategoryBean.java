@@ -169,6 +169,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             } else {
                 offerTemplateCategory.setLevel(1);
             }
+            selectedOfferTemplateCategory = null;
         }
     }
 
