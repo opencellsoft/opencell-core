@@ -90,6 +90,53 @@ public class ValueExpressionWrapper {
             return false;
         }
     }
+    
+    
+    /**
+     * Evaluate expression to a String value ignoring exceptions. Converting to string if necessary
+     * 
+     * @param expression Expression to evaluate
+     * @param variableName Variable name to give to a variable in context
+     * @param variable Variable to make available in context
+     * @return A boolean value expression evaluates to. An empty expression evaluates to true. Failure to evaluate, return false;
+     */
+    public static String evaluateToStringIgnoreErrors(String expression, String variableName, Object variable) {
+        try {
+            return evaluateToStringMultiVariable(expression, variableName, variable);
+        } catch (BusinessException e) {
+            log.error("Failed to evaluate expression {} on variable {}/{}", expression, variableName, variable, e);
+            return null;
+        }
+    }
+    
+    /**
+     * Evaluate expression to a string value, converting to string if necessary
+     * 
+     * @param expression Expression to evaluate
+     * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
+     * @return A boolean value expression evaluates to. An empty expression evaluates to true;
+     * @throws BusinessException
+     */
+    public static String evaluateToStringMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+
+        Map<Object, Object> contextMap = new HashMap<Object, Object>();
+        if (contextVarNameAndValue != null) {
+            for (int i = 0; i < contextVarNameAndValue.length; i = i + 2) {
+                contextMap.put(contextVarNameAndValue[i], contextVarNameAndValue[i + 1]);
+            }
+        }
+        Object value = evaluateExpression(expression, contextMap, String.class);
+        if (value instanceof String) {
+            return (String) value;
+        } else if (value != null) {
+            return value.toString();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Evaluate expression

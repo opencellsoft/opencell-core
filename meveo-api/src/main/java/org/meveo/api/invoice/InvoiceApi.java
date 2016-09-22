@@ -122,6 +122,7 @@ public class InvoiceApi extends BaseApi {
 	
 	/**
 	 * Create an invoice based on the DTO object data and current user
+     * 
 	 * @param invoiceDTO invoice DTO
 	 * @param currentUser current logged user
 	 * @return CreateInvoiceResponseDto
@@ -131,7 +132,7 @@ public class InvoiceApi extends BaseApi {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
-		log.debug("InvoiceDto:"+JsonUtils.toJson(invoiceDTO));
+        log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
 		validateInvoiceDto(invoiceDTO, currentUser);						 
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
@@ -208,7 +209,8 @@ public class InvoiceApi extends BaseApi {
 				List<Tax> taxes = new ArrayList<Tax>();
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode(), provider);
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-					if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
+                    if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+                            && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
 						if (!taxes.contains(invoicesubcatCountry.getTax())) {
 							taxes.add(invoicesubcatCountry.getTax());
 						}
@@ -227,9 +229,8 @@ public class InvoiceApi extends BaseApi {
 					BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
 					
 					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
-							ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax,
-							amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount,
-							invoiceSubCategory, null, null, null, null, null, null, null);
+                        ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax, amountWithTax, amountTax,
+                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null, null);
 					meveoRatedTransaction.setCode(ratedTransaction.getCode());
 					meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 					meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
@@ -330,8 +331,8 @@ public class InvoiceApi extends BaseApi {
 		
 		BigDecimal netToPay = invoice.getAmountWithTax();
 		if (!provider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
-			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
-					.getCustomerAccount().getCode(), invoice.getDueDate(), invoice.getProvider());
+            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate(),
+                invoice.getProvider());
 
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");
@@ -369,6 +370,7 @@ public class InvoiceApi extends BaseApi {
 	
 	/**
 	 * list invoices based on a customer account and a provider
+     * 
 	 * @param customerAccountCode customer account code
 	 * @param provider provider
 	 * @return list of invoice DTOs
@@ -425,7 +427,6 @@ public class InvoiceApi extends BaseApi {
                 customerInvoiceDto.setPdf(invoice.getPdf());
                 customerInvoiceDto.setInvoiceId(invoice.getId());
                 
-
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
                 CategoryInvoiceAgregateDto  categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
 
@@ -455,8 +456,7 @@ public class InvoiceApi extends BaseApi {
                     
                     boolean agregateAlreadyExists = false;
                     for(CategoryInvoiceAgregateDto ciadto : customerInvoiceDto.getCategoryInvoiceAgregates()) {
-                		if(ciadto.getCategoryInvoiceCode() != null  
-                				&&  ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
+                        if (ciadto.getCategoryInvoiceCode() != null && ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
                 			agregateAlreadyExists = true;
                 			break;
                 		}
@@ -487,12 +487,15 @@ public class InvoiceApi extends BaseApi {
 	 * @throws BusinessApiException
 	 * @throws Exception
 	 */
-	public BillingRun launchExceptionalInvoicing(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser, List<Long> BAids) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
-		return billingRunService.launchExceptionalInvoicing(BAids, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(), BillingProcessTypesEnum.AUTOMATIC, currentUser);
+    public BillingRun launchExceptionalInvoicing(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser, List<Long> BAids) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
+        return billingRunService.launchExceptionalInvoicing(BAids, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(),
+            BillingProcessTypesEnum.AUTOMATIC, currentUser);
 	}
 
 	/**
 	 * Update total amounts for a billing account
+     * 
 	 * @param billingAccount the billing account
 	 * @param billingRun the billing run
 	 * @param currentUser current logged user
@@ -504,6 +507,7 @@ public class InvoiceApi extends BaseApi {
 
 	/**
 	 * Create a rated transaction
+     * 
 	 * @param billingAccountId billing account id
 	 * @param currentUser current logged user
 	 * @param invoicingDate invoicing date
@@ -515,6 +519,7 @@ public class InvoiceApi extends BaseApi {
 
 	/**
 	 * Update the billing run
+     * 
 	 * @param billingRun billing run
 	 * @param status status of billing run
 	 * @param billingAccountNumber billing account number
@@ -523,7 +528,8 @@ public class InvoiceApi extends BaseApi {
 	 * @return the billing run
 	 * @throws BusinessException Business exception
 	 */
-	public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber, User currentUser) throws BusinessException {
+    public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber, User currentUser)
+            throws BusinessException {
 		billingRun.setStatus(status);
 		if (billingAccountNumber != null) {
 			billingRun.setBillingAccountNumber(billingAccountNumber);
@@ -536,6 +542,7 @@ public class InvoiceApi extends BaseApi {
 	
 	/**
 	 * Validate the Billing run
+     * 
 	 * @param billingRun billing run to validate
 	 * @param user current logged user
 	 * @throws BusinessException business exception
@@ -557,10 +564,8 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	/**
-	 * Launch all the invoicing process for a given billingAccount, that's mean
-	 * : <lu> Create rated transactions <li>Create an exeptionnal billingRun
-	 * with given dates <li>Validate the preinvoicing resport <li>Validate the
-	 * postinvoicing report <li>Vaidate the BillingRun </lu>
+     * Launch all the invoicing process for a given billingAccount, that's mean : <lu> Create rated transactions <li>Create an exeptionnal billingRun with given dates <li>Validate
+     * the preinvoicing resport <li>Validate the postinvoicing report <li>Vaidate the BillingRun </lu>
 	 * 
 	 * @param generateInvoiceRequestDto
 	 * @param currentUser
@@ -572,7 +577,8 @@ public class InvoiceApi extends BaseApi {
 	 * @throws Exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -596,7 +602,10 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
 		}
 
-		if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW) || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
+        if (billingAccount.getBillingRun() != null
+                && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
+                        || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) || billingAccount.getBillingRun().getStatus()
+                    .equals(BillingRunStatusEnum.POSTVALIDATED))) {
 
 			throw new BusinessApiException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
 		}
@@ -641,7 +650,8 @@ public class InvoiceApi extends BaseApi {
 		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial(currentUser).getCode(), currentUser);
 	}
 
-	public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode, User currentUser) throws FileNotFoundException, MissingParameterException,
+            EntityDoesNotExistsException, BusinessException {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
@@ -863,8 +873,8 @@ public class InvoiceApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, Provider provider) 
-			throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, Provider provider) throws MissingParameterException, EntityDoesNotExistsException,
+            MeveoApiException, BusinessException {
 		boolean searchById = true;
 		
         if (StringUtils.isBlank(id)) {
@@ -880,7 +890,6 @@ public class InvoiceApi extends BaseApi {
         InvoiceDto result = new InvoiceDto();
         Invoice invoice = null;
         
-		
         if(searchById) {
         	invoice = invoiceService.findById(id, provider);
         } else {
@@ -902,7 +911,6 @@ public class InvoiceApi extends BaseApi {
 
         return result;
     }
-	
 	
 	/**
 	 * 

@@ -1,6 +1,7 @@
 package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
+
 import org.tmf.dsmapi.commons.Utilities;
 
 /**

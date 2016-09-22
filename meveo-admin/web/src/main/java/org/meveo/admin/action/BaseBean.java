@@ -73,7 +73,10 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -132,6 +135,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+
+    @Inject
+    private ElasticClient elasticClient;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -529,10 +535,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * TODO
+     * Get navigation view link name for a current entity class
      */
     public String getEditViewName() {
-        String className = clazz.getSimpleName();
+        return BaseBean.getEditViewName(clazz);
+    }
+
+    /**
+     * Convert entity class to a detail view name
+     * 
+     * @param clazz Entity class
+     * @return Navigation view link name
+     */
+    @SuppressWarnings("rawtypes")
+    public static String getEditViewName(Class clazz) {
+        String className = ReflectionUtils.getCleanClassName(clazz.getSimpleName());
         StringBuilder sb = new StringBuilder(className);
         sb.append("Detail");
         char[] dst = new char[1];
@@ -851,6 +868,25 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 protected List<String> getListFieldsToFetchImpl() {
                     return getListFieldsToFetch();
                 }
+
+                @Override
+                protected ElasticClient getElasticClientImpl() {
+                    return elasticClient;
+                }
+
+                @Override
+                public User getCurrentUser() {
+                    return BaseBean.this.getCurrentUser();
+                }
+                
+                @Override
+                protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
+                    String fullTextValue = super.getFullTextSearchValue(loadingFilters);
+                    if (fullTextValue == null) {
+                        return (String) filters.get(ESBasedDataModel.FILTER_FULL_TEXT);
+                    }
+                    return fullTextValue;
+                }            
             };
         }
 

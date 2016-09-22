@@ -1,15 +1,17 @@
 package org.meveo.model.crm.custom;
 
 public enum CustomFieldMapKeyEnum {
-    STRING("customFieldMapKeyTypeEnum.STRING"), RON("customFieldMapKeyTypeEnum.RON");
+    /**
+     * String
+     */
+    STRING,
 
-    private String label;
-
-    CustomFieldMapKeyEnum(String label) {
-        this.label = label;
-    }
+    /**
+     * Range of numbers
+     */
+    RON;
 
     public String getLabel() {
-        return this.label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 }

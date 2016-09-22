@@ -262,5 +262,9 @@
 		<constraint>currentUser.hasPermission('billing','billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasPermission('billing','billingVisualization')</constraint>
 	</page>
+    
+    <page view-id=".+\/index\/.+">
+        <constraint>currentUser.hasPermission('administration','administrationManagement')</constraint>
+    </page>
 	
 </page-access>
