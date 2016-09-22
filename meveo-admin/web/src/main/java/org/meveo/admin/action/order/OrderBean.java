@@ -53,6 +53,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -62,6 +63,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
+import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
 import org.omnifaces.cdi.ViewScoped;
@@ -103,6 +105,9 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private CustomFieldDataEntryBean customFieldDataEntryBean;
+
+    @Inject
+    private UserHierarchyLevelService userHierarchyLevelService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -337,6 +342,13 @@ public class OrderBean extends CustomFieldBean<Order> {
             messages.error(new BundleKey("messages", "order.orderItemSaved.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
+    }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        String result = super.saveOrUpdate(killConversation);
+        entity = orderApi.initiateWorkflow(entity, getCurrentUser());
+        return result;
     }
 
     /**
@@ -757,7 +769,8 @@ public class OrderBean extends CustomFieldBean<Order> {
         boolean editable = entity.getStatus() != OrderStatusEnum.CANCELLED && entity.getStatus() != OrderStatusEnum.COMPLETED && entity.getStatus() != OrderStatusEnum.REJECTED;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            editable = editable && entity.getRoutedToUserGroup().isUserBelongsHereOrHigher(getCurrentUser());
+            UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
+            editable = userGroup.isUserBelongsHereOrHigher(getCurrentUser());
         }
 
         return editable;

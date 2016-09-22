@@ -38,7 +38,7 @@
                         <p:outputPanel id="dunningPlanTransition_panel">
                             <p:messages id="messages" rendered="#{!workflowBean.showDetailPage}" />
                             <hftl:dataList backingBean="#{wfTransitionBean}" dataModel="#{workflowBean.entity.transitions}" sortBy="fromStatus"
-                                resultsId="dunningPlanTransitions_results">
+                                resultsId="dunningPlanTransitions_results" exportXlsxButton="false">
                                 <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
                                 <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
                                 <hftl:column label="#{messages['businessEntity.description']}" field="description" />

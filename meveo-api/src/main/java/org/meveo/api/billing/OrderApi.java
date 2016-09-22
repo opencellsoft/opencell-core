@@ -297,7 +297,7 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order {}", order.getCode());
 
-        order = orderService.refreshOrRetrieve(order);
+        // order = orderService.refreshOrRetrieve(order);
 
         order.setStartDate(new Date());
 
@@ -561,14 +561,14 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        
+
         List<ProductChargeInstance> list = new ArrayList<>();
         ProductChargeInstance pcInstance = null;
-        for(ProductChargeTemplate productChargeTemplate: productTemplate.getProductChargeTemplates()){
-        	pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
-        	list.add(pcInstance);
+        for (ProductChargeTemplate productChargeTemplate : productTemplate.getProductChargeTemplates()) {
+            pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
+            list.add(pcInstance);
         }
-        
+
         productInstance.setProductChargeInstances(list);
         productInstanceService.create(productInstance, currentUser);
         productChargeInstanceService.apply(pcInstance, null, offerTemplate, chargeDate, null, null, null, null, null, currentUser, true);

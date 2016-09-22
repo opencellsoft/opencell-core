@@ -364,8 +364,8 @@
             <ui:define name="buttons">
 
 
-                <p:commandButton value="Send to process" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
-                    rendered="#{!orderBean.entity.transient and orderBean.orderEditable}" />
+                <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
+                    rendered="#{!orderBean.entity.transient and entity.status==OrderStatusEnum.IN_CREATION}" />
             </ui:define>
 
         </hftl:formPanel>
