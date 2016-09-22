@@ -132,7 +132,7 @@ public class RealtimeChargingService {
 
 		op.setDescription("");
 		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
-		op.setTaxPercent(tax.getPercent());
+		op.setTaxPercent(tax==null?BigDecimal.ZERO:tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
 		op.setEndDate(null);
