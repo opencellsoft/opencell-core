@@ -24,10 +24,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -36,10 +35,9 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.validation.constraint.ClassName;
 
 @Entity
-@ExportIdentifier({ "code", "provider", "wfType" })
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_WORKFLOW_SEQ")
 public class Workflow extends BusinessEntity {
@@ -49,18 +47,12 @@ public class Workflow extends BusinessEntity {
 	@Column(name = "WF_TYPE")
 	@NotNull
     @Size(max = 255)
-    @ClassName
 	String wfType = null;
 	
 	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
+    @OrderBy("priority ASC")
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private WorkflowStatusEnum status;
 	
-	@Column(name = "EXPORT_LOT")
-	boolean exportLot;
 	
 	@Column(name = "ENABLE_HOSTORY")
 	boolean enableHistory;
@@ -94,34 +86,6 @@ public class Workflow extends BusinessEntity {
 	}
 
 	/**
-	 * @return the status
-	 */
-	public WorkflowStatusEnum getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(WorkflowStatusEnum status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the exportLot
-	 */
-	public boolean isExportLot() {
-		return exportLot;
-	}
-
-	/**
-	 * @param exportLot the exportLot to set
-	 */
-	public void setExportLot(boolean exportLot) {
-		this.exportLot = exportLot;
-	}
-
-	/**
 	 * @return the enbaleHistory
 	 */
 	public boolean isEnableHistory() {
@@ -134,8 +98,10 @@ public class Workflow extends BusinessEntity {
 	public void setEnableHistory(boolean enbaleHistory) {
 		this.enableHistory = enbaleHistory;
 	}
-	
-	
-
+		
+	@Override
+	public String toString() {
+		return "Workflow [code=" + code + ", description=" + description + "]";
+	}
 
 }

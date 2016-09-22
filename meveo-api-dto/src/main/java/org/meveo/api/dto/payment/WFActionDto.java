@@ -31,42 +31,53 @@ import org.meveo.model.wf.WFAction;
 @XmlType(name = "WFAction")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFActionDto extends BaseDto {
-	private static final long serialVersionUID = 8309866046667741458L;  
-	
-	@XmlElement(required = false)
+	private static final long serialVersionUID = 8309866046667741458L;
+
+    @XmlElement(required = false)
+    private String uuid;
+
+	@XmlElement(required = true)
 	private String actionEl;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private Integer priority;
 	
-	@XmlElement(required = true)
+	@XmlElement(required = false)
 	private String conditionEl;
-	
-	@XmlTransient
-	private WFTransitionDto wfTransitionDto;
 	
 	public WFActionDto(){
 	}
 	
-	public WFActionDto(WFAction wfAction) {		
+	public WFActionDto(WFAction wfAction) {
+        this.uuid = wfAction.getUuid();
 		this.actionEl = wfAction.getActionEl();
 		this.priority = wfAction.getPriority();
 		this.conditionEl = wfAction.getConditionEl();
-		this.wfTransitionDto = new WFTransitionDto();
-		this.wfTransitionDto.setConditionEl(wfAction.getWfTransition().getConditionEl());
-		this.wfTransitionDto.setFromStatus(wfAction.getWfTransition().getFromStatus());
-		this.wfTransitionDto.setToStatus(wfAction.getWfTransition().getToStatus());
-		this.wfTransitionDto.setWorkflowCode(wfAction.getWfTransition().getWorkflow().getCode());
 	}
 	
 	public WFAction fromDto(WFAction wfAction) {
 		if(wfAction == null)
 			wfAction = new WFAction();
+        wfAction.setUuid(getUuid());
 		wfAction.setActionEl(getActionEl());
 		wfAction.setPriority(getPriority());
 		wfAction.setConditionEl(getConditionEl());				
 		return wfAction;
 	}
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
 	/**
 	 * @return the actionEl
@@ -108,14 +119,6 @@ public class WFActionDto extends BaseDto {
 	 */
 	public void setConditionEl(String conditionEl) {
 		this.conditionEl = conditionEl;
-	}
-	
-	public WFTransitionDto getWfTransitionDto() {
-		return wfTransitionDto;
-	}
-	
-	public void setWfTransitionDto(WFTransitionDto wfTransitionDto) {
-		this.wfTransitionDto = wfTransitionDto;
 	}
 	
 	@Override

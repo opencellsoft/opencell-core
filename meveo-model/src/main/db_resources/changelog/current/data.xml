@@ -18,6 +18,17 @@
             <column name="permission_id" valueNumeric="17" />
         </insert>   
 	</changeSet>
-		
-        
+
+    <changeSet id="#1861_20160817" author="pbach">
+        <sql>
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
+            ALTER SEQUENCE wf_decision_rule_seq RESTART WITH 10;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

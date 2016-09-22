@@ -18,7 +18,6 @@
  */
 package org.meveo.service.wf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -32,34 +31,24 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WFActionService extends PersistenceService<WFAction> {
 
-	@SuppressWarnings("unchecked")
-	public List<WFAction> findByTransition(WFTransition wfTransition,Provider provider) {
-		List<WFAction> wfActions = new ArrayList<WFAction>();
-		try {
-			wfActions = (List<WFAction>) getEntityManager()
-					.createQuery(
-							"from "+ WFAction.class.getSimpleName() + " where wfTransition=:wfTransition  and provider=:provider order by priority")
-					.setParameter("wfTransition", wfTransition)		
-					.setParameter("provider", provider)
-					.getResultList();
-		} catch (Exception e) {
-		}
-		return wfActions;
-	}
-	
-	public WFAction findByPriorityAndTransition(WFTransition wfTransition,Integer priority,Provider provider) {
+
+	public WFAction findWFActionByUUID(String uuid, Provider provider) {
 		WFAction wfAction = null;
-		try {			
+		try {
 			QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
-			qb.addCriterion("a.priority", "=", priority, true);
-			qb.addCriterionEntity("a.wfTransition", wfTransition);
-			
+			qb.addCriterion("a.uuid", "=", uuid, true);
 			wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (Exception e) {
 		}
 		return wfAction;
 	}
-	
-	
+
+	public List<WFAction> listByTransition(WFTransition wfTransition) {		
+		List<WFAction> wfTransitions =  (List<WFAction>) getEntityManager()
+				.createNamedQuery("WFAction.listByTransition", WFAction.class)
+				.setParameter("wfTransition", wfTransition)
+				.getResultList();
+		return wfTransitions;
+	}
 
 }

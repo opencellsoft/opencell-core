@@ -183,10 +183,15 @@ public class ReflectionUtils {
         return entityClass;
     }
     
-    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
-        Reflections reflections = new Reflections("org.meveo.model");
+    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {       
+        return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
+    }
+    
+    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass,String prefix) {
+        Reflections reflections = new Reflections(prefix);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
     }
+    
     
 }
