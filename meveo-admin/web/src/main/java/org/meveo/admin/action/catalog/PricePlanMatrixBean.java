@@ -78,10 +78,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-	@Inject
-	@RequestParam
-	private Instance<String> backView;
 	
 	@Inject
 	@RequestParam

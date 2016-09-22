@@ -8,6 +8,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{usageChargeTemplateBean.objectId}" />
+            <f:viewParam name="objectId" value="#{chargeTemplateBean.objectId}" />
             <f:viewParam name="tab" value="#{usageChargeTemplateBean.activeTab}" />
         </f:metadata>
     </ui:define>
@@ -96,7 +97,7 @@
 
 				<hftl:customFields backingBean="#{usageChargeTemplateBean}" messagesId=":usageChargeId:messages"/>
 				
-				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
+				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}" >  
                     <p:panel>
 						<hftl:decorateFormField fieldId="usageChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="usageChargeCode"

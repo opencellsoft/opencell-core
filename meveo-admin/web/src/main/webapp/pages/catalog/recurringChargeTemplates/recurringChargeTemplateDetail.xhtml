@@ -8,6 +8,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{recurringChargeTemplateBean.objectId}" />	
+            <f:viewParam name="objectId" value="#{chargeTemplateBean.objectId}" />
             <f:viewParam name="tab" value="#{recurringChargeTemplateBean.activeTab}" />
         </f:metadata>
     </ui:define>
@@ -103,7 +104,7 @@
 
 				<hftl:customFields backingBean="#{recurringChargeTemplateBean}" messagesId=":reccuringChargeId:messages"/>
 				
-				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
+				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}" >  
                     <p:panel>
 						<hftl:decorateFormField fieldId="recurringChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="recurringChargeCode"
