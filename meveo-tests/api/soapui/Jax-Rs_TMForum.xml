@@ -14884,7 +14884,9 @@
             <name>PRODUCT 1</name>
             <validFrom>2016-06-01</validFrom>
             <validTo>2016-12-30</validTo>
-            <productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG1" />
+            <productChargeTemplates>
+            	<productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG1" />
+            </productChargeTemplates>
             <lifeCycleStatus>IN_DESIGN</lifeCycleStatus>
          </productTemplate>
       </ws:createOrUpdateProductTemplate>
@@ -14932,7 +14934,9 @@
             <name>PRODUCT 2</name>
             <validFrom>2016-07-01</validFrom>
             <validTo>2016-12-30</validTo>
-            <productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG2" />
+            <productChargeTemplates>
+            	<productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG2" />
+            </productChargeTemplates>
             <lifeCycleStatus>ACTIVE</lifeCycleStatus>
          </productTemplate>
       </ws:createOrUpdateProductTemplate>
