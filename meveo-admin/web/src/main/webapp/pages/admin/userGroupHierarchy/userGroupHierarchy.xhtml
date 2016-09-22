@@ -27,29 +27,29 @@
                     <h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
                         <h:panelGrid columns="2">
                             <p:commandButton id="addUserHierarchyRootBtn" icon="fa fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}"
-                                            update="messages userGroupLevelDetailPanel" style="padding-right:5px" >
+                                            update="messages userGroupLevelDetailPanel buttons" style="padding-right:5px" >
                             </p:commandButton>
                             <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupRoot']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                             <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}"
-                                             update="messages userGroupLevelDetailPanel">
+                                             update="messages userGroupLevelDetailPanel buttons">
                             </p:commandButton>
                             <p:outputLabel  value="#{messages['userGroupHierarchy.addUserGroupLevel']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                             <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}"
                                              update="messages userGroupPanel buttons" ajax="true" />
                             <p:outputLabel  value="#{messages['userGroupHierarchy.moveUp']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                             <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}"
                                              update="messages userGroupPanel buttons" ajax="true" />
                             <p:outputLabel  value="#{messages['userGroupHierarchy.moveDown']}"/>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                             <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}"
-                                             update="messages userGroupPanel buttons" ajax="true">
+                                             update="messages userGroupPanel buttons userGroupLevelDetailPanel" ajax="true">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['userGroupHierarchy.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
                             <p:outputLabel value="#{messages['userGroupHierarchy.deleteUserGroupLevel']}"/>
@@ -59,7 +59,7 @@
                     <p:fieldset legend="#{messages['userGroupHierarchy.configureUserGroupLevel']}" styleClass="clearLeft">
                         <h:panelGroup id="userGroupLevelDetailPanel">
                             <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false"
-                                ajaxSubmit="true" submitUpdate="@form userGroupPanel messages" showMessages="false">
+                                ajaxSubmit="true" submitUpdate="@form userGroupPanel messages buttons" showMessages="false">
                                 <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" size="50" />
                                 <hftl:formField label="#{messages['businessEntity.description']}" field="description" newLine="true" size="80"/>
                             </hftl:formPanel>
