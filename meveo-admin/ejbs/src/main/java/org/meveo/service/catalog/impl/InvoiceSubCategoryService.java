@@ -18,6 +18,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,7 +162,9 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		}
 		if (expression.indexOf("iv") >= 0) {
 			userMap.put("iv", invoice);
-
+		}
+		if(expression.indexOf("date") >=0){
+			userMap.put("date", invoice==null?new Date():invoice.getInvoiceDate());
 		}
 		String taxCode=null;
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
