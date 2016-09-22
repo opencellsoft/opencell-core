@@ -17,7 +17,7 @@
                 <p:fileUpload id="productImageUpload" auto="false" skinSimple="true" mode="simple" value="#{mainBackingBean.uploadedFile}" />
             </hftl:decorateFormField>
             <hftl:decorateFormField fieldId="productImage" rendered="#{not mainBackingBean.entity.transient}" label="#{messages['commons.image']}">
-                <p:outputPanel autoUpdate="true">
+                <p:outputPanel autoUpdate="false">
                     <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="150" width="150">
                         <f:param name="id" value="#{mainBackingBean.entity.id}"></f:param>
                     </p:graphicImage>

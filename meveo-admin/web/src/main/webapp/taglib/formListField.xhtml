@@ -136,7 +136,8 @@
                     	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}" />
 						<s:objectConverter />
-						<p:ajax update="#{id}_selectedItemPanel"></p:ajax>
+						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 					</p:selectCheckboxMenu>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
@@ -144,7 +145,8 @@
 					 	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
 						<s:objectConverter />
-						<p:ajax update="#{id}_selectedItemPanel"></p:ajax>
+						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 					</p:selectCheckboxMenu>
 				</c:if>
 				

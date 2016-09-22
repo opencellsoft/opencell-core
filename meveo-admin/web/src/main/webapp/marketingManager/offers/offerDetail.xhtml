@@ -45,7 +45,7 @@
 					<hftl:decorateFormField fieldId="offerImage"
 						rendered="#{not offerTemplateBean.entity.transient}"
 						label="#{messages['commons.image']}">
-						<p:outputPanel autoUpdate="true" style="border: 1px solid #ddd;">
+						<p:outputPanel autoUpdate="false" style="border: 1px solid #ddd;">
 							<p:graphicImage id="offerImage" cache="false"
 								value="#{offerTemplateImageStreamer.image}" height="150"
 								width="150">
