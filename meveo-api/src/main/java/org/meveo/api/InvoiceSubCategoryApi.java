@@ -157,10 +157,17 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 }
 
                 // create cat messages
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                    catMessagesService.create(catMsg, currentUser);
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {                   
+                    CatMessages catMsg = catMessagesService.getCatMessages( invoiceSubCategory.getCode(),InvoiceSubCategory.class.getSimpleName(), ld.getLanguageCode(),provider);
+                    
+                    if (catMsg != null) {
+                        catMsg.setDescription(ld.getDescription());
+                        catMessagesService.update(catMsg, currentUser);
+                    } else {
+                        CatMessages catMessages = new CatMessages(InvoiceSubCategory.class.getSimpleName() , invoiceSubCategory.getCode(), ld.getLanguageCode(),
+                            ld.getDescription());
+                        catMessagesService.create(catMessages, currentUser);
+                    }
                 }
             }
         }

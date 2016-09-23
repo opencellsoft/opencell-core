@@ -14,7 +14,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.notification.Notification;
@@ -40,17 +39,17 @@ public class NotificationCacheContainerProvider {
     /**
      * Contains association between event type, entity class and notifications. Key format: <provider id>_<eventTypeFilter>
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-notification-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-notification-cache")
     private BasicCache<String, HashMap<Class<BusinessEntity>, List<Notification>>> eventNotificationCache;
 
-    @Resource(name = "java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;
+    // @Resource(name = "java:jboss/infinispan/container/meveo")
+    // private CacheContainer meveoContainer;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("NotificationCacheContainerProvider initializing...");
-            eventNotificationCache = meveoContainer.getCache("meveo-notification-cache");
+            // eventNotificationCache = meveoContainer.getCache("meveo-notification-cache");
 
             populateNotificationCache();
 
@@ -58,6 +57,7 @@ public class NotificationCacheContainerProvider {
 
         } catch (Exception e) {
             log.error("NotificationCacheContainerProvider init() error", e);
+            throw e;
         }
     }
 

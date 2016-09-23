@@ -923,6 +923,32 @@
     		<column name="provider_id"></column>
     	</createIndex>
     </changeSet>  
+    
+    <changeSet id="#1637_20160819_2" author="TyshanShi">
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
+				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
+				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
+				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
+		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
+				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
+		<sql>alter table ADM_MESSAGES drop column code</sql>
+	</changeSet>
+    	
     <changeSet author="pbach (generated)" id="#1861_16082016-165">
         <createTable tableName="wf_transition_rule">
             <column name="id" type="BIGINT">
@@ -991,12 +1017,6 @@
     </changeSet>
 
 
-    <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
-        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
-            <column name="INDEX_TYPE" type="varchar(10)"/>
-        </addColumn>
-    </changeSet>
-
     <changeSet author="pbach (generated)" id="#1861_26082016-166">
         <addColumn tableName="wf_transition">
             <column name="priority" type="INT4" />
@@ -1023,30 +1043,6 @@
 		<dropColumn tableName="cat_bundle_product_template" columnName="provider_id"/>
 	</changeSet>
 	
- <!--   <changeSet id="#1637_20160819_2" author="TyshanShi">
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
-                id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
-                'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
-                (select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
-                (select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
-                (select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
-                (select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
-                (select cast(substring(code, position('_' in code)+1) as bigint) from 
-                ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
-        <sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
-                ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
-        <sql>alter table ADM_MESSAGES drop column code</sql>
-    </changeSet> -->
 
     <changeSet author="pbach (generated)" id="#1861_05092016-167">
         <createTable tableName="wf_decision_rule">
@@ -1147,6 +1143,12 @@
     <changeSet author="anasseh" id="#2007_10092016">
   	   <dropColumn tableName="WF_WORKFLOW" columnName="EXPORT_LOT"/>
     </changeSet>
+
+    <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
+            <column name="INDEX_TYPE" type="varchar(10)"/>
+        </addColumn>
+    </changeSet> 
 
     <changeSet id="#1844_20160903" author="pbach">
         <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>

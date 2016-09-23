@@ -15,6 +15,7 @@
         </exclusions>
         <dependencies>
           <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" />
+          <module name="org.infinispan" />
         </dependencies>          
 	</deployment>
 </jboss-deployment-structure>

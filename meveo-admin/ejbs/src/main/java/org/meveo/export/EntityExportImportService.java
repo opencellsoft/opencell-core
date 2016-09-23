@@ -90,6 +90,7 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -100,6 +101,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -116,6 +118,7 @@ import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.DataHolder;
 import com.thoughtworks.xstream.core.ReferenceByIdMarshaller;
 import com.thoughtworks.xstream.core.ReferenceByIdUnmarshaller;
+import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
@@ -144,7 +147,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-
+    
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -654,6 +657,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
                 xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true, null), XStream.PRIORITY_LOW);
 
+                xstream.processAnnotations(ScriptInstance.class);
                 // Indicate XStream to omit certain attributes except ones matching the classes to be exported fully (except the root class)
                 applyAttributesToOmit(xstream, exportTemplate.getClassesToExportAsFull());
 
@@ -2036,6 +2040,17 @@ public class EntityExportImportService implements Serializable {
         }
 
         @Override
+		protected void writeText(QuickWriter writer, String text) {
+        	if(text==null){
+        		writer.write("");
+        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
+        		writer.write(text);
+        	}else{
+        		super.writeText(writer, text);
+        	}
+		}
+
+		@Override
         public void endNode() {
             super.endNode();
             attributeClassAdded = false;

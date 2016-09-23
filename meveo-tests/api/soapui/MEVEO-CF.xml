@@ -9999,7 +9999,7 @@ public class Action1 extends Script {
                   <customers>\r
                      <customer code="${#Project#entityPrefix}_${#TestSuite#index}_H_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_H_CUST">\r
                         <name>\r
-                           <title>Mr</title>\r
+                           <title>M</title>\r
                            <firstName/>\r
                            <lastName>Opener</lastName>\r
                         </name>\r
@@ -10035,7 +10035,7 @@ public class Action1 extends Script {
                         <customerAccounts>\r
                            <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_H_CA" description="${#Project#entityPrefix}_${#TestSuite#index}_H_CA">\r
                               <name>\r
-                                 <title>Mr</title>\r
+                                 <title>M</title>\r
                                  <firstName/>\r
                                  <lastName>Opener</lastName>\r
                               </name>\r
@@ -10064,7 +10064,7 @@ public class Action1 extends Script {
                               <billingAccounts>\r
                                  <billingAccount code="${#Project#entityPrefix}_${#TestSuite#index}_H_BA" description="${#Project#entityPrefix}_${#TestSuite#index}_H_BA">\r
                                     <name>\r
-                                       <title>Mr</title>\r
+                                       <title>M</title>\r
                                        <firstName/>\r
                                        <lastName>Opener</lastName>\r
                                     </name>\r
@@ -19332,7 +19332,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>239</con:value>
+        <con:value>243</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -22434,7 +22434,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>37</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -23987,20 +23987,13 @@ public class Action1 extends Script {
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:properties/>
-    <con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
-import com.eviware.soapui.support.types.*;
-
-StringToStringMap headers = new StringToStringMap();
-headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
-
-for( testCase in testSuite.getTestCaseList() ) {
-    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
-    for( testStep in testCase.getTestStepList() ) {
-        testStep.getTestRequest().setPreemptive(true);
-        testStep.getTestRequest().setRequestHeaders(headers);
-    }
-}</con:setupScript>
+    <con:properties>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>2</con:value>
+      </con:property>
+    </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite name="create  tax,billingCycle with CF and generate invoice xml" id="3506cbc1-c56d-41fc-be08-318478f0383e">
     <con:settings/>
@@ -25199,6 +25192,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -25230,6 +25224,7 @@ for( testCase in testSuite.getTestCaseList() ) {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -25241,20 +25236,13 @@ for( testCase in testSuite.getTestCaseList() ) {
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:properties/>
-    <con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
-import com.eviware.soapui.support.types.*;
-
-StringToStringMap headers = new StringToStringMap();
-headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
-
-for( testCase in testSuite.getTestCaseList() ) {
-    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
-    for( testStep in testCase.getTestStepList() ) {
-        testStep.getTestRequest().setPreemptive(true);
-        testStep.getTestRequest().setRequestHeaders(headers);
-    }
-}</con:setupScript>
+    <con:properties>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>2</con:value>
+      </con:property>
+    </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint>

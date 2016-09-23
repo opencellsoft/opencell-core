@@ -235,7 +235,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                             entity = baseEntityService.findById((Long) entity.getId());
                         }
                     }
-                    wfType.changeStatus(wfTransition.getToStatus());
+                    wfType.changeStatus(wfTransition.getToStatus(), currentUser);
 
                     log.trace("Entity status will be updated to {}. Entity {}", entity, wfTransition.getToStatus());
                     entity = baseEntityService.update(entity, currentUser);

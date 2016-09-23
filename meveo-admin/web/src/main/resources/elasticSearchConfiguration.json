@@ -8,7 +8,7 @@
 		"Seller": {
 			"index": "accounts"
 		},
-		"ProductOffering,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
+		"OfferTemplate,BundleTemplate,ProductTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
 			"index": "catalog"
 		},
 		"ChargeTemplate": {

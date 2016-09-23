@@ -25,7 +25,7 @@ public class BusinessOfferApi extends BaseApi {
 	private BusinessOfferModelService businessOfferModelService;
 
 	public Long createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
-		validate(postData);
+
 
 		if (StringUtils.isBlank(postData.getBomCode())) {
 			missingParameters.add("bomCode");
@@ -33,6 +33,8 @@ public class BusinessOfferApi extends BaseApi {
 
 		handleMissingParameters();
 
+	    validate(postData);
+	      
 		// find bom
 		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
 		if (businessOfferModel == null) {

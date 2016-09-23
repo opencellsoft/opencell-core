@@ -1,20 +1,32 @@
 package org.meveo.admin.wf;
 
-import java.util.List;
-
 import org.meveo.model.BaseEntity;
 
-public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType<E>{
-	protected E entity;
-	public WorkflowType() {}
+public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType<E> {
+    protected E entity;
 
-	public WorkflowType(E e){
-		entity = e;
-	}
-	public abstract List<String> getStatusList();
-    public abstract void changeStatus(String newStatus);
-    public abstract String getActualStatus();    
-    public E getEntity(){
-    	return entity;
-    }    
+    public WorkflowType() {
+    }
+
+    public WorkflowType(E e) {
+        entity = e;
+    }
+
+    /**
+     * Get current entity
+     * 
+     * @return Current entity
+     */
+    public E getEntity() {
+        return entity;
+    }
+
+    /**
+     * Update current entity
+     * 
+     * @param entity Entity
+     */
+    public void setEntity(E entity) {
+        this.entity = entity;
+    }
 }
