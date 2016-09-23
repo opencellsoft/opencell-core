@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+    template="/layout/template.xhtml">
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{wfTransitionBean.objectId}" />
@@ -62,7 +63,7 @@
 
                         <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
                             rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}" componentWidth="20">
-                            <p:spinner id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" required="true" />
+                            <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" required="true" converter="javax.faces.BigDecimal"/>
                         </hftl:decorateFormField>
 
                         <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.string']}"
@@ -80,12 +81,14 @@
                         </h:panelGroup>
 
                         <hftl:decorateFormField fieldId="decisionRuleFromNumberValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.number']}"
-                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}" componentWidth="20">
+                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}" componentWidth="30">
                             <h:panelGrid columns="4">
                                 <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
-                                <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" />
+                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                    converter="javax.faces.BigDecimal" />
                                 <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
-                                <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10" maxlength="10" />
+                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10" maxlength="10"
+                                    converter="javax.faces.BigDecimal" />
                             </h:panelGrid>
                         </hftl:decorateFormField>
 
@@ -112,7 +115,7 @@
             <p:panel styleClass="clearLeft" style="border-bottom: solid">
                 <p:tooltip for="addCriteriaBtn" value="#{messages['mmTransition.addCriteria']}" showEffect="slide" hideEffect="slide" />
                 <p:commandButton id="addCriteriaBtn" action="#{wfTransitionBean.addNewRule()}" process="@this,decisionRulesPanel" value="#{messages['mmTransition.addCriteria']}"
-                    ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus" update=":formDunningPlanTransition:decisionRulesPanel" />
+                    ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus" update=":formDunningPlanTransition:decisionRulesPanel :formDunningPlanTransition:messages" />
             </p:panel>
 
             <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="20">

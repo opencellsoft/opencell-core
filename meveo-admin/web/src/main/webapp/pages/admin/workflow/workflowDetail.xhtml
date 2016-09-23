@@ -139,8 +139,8 @@
                                                             <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}"
                                                                 label="#{messages['decisionRuleNewValue.value']}"
                                                                 rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}">
-                                                                <p:spinner id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
-                                                                    required="true"/>
+                                                                <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                                                    required="true" converter="javax.faces.BigDecimal"/>
                                                             </hftl:decorateFormField>
 
                                                             <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}"
@@ -169,11 +169,11 @@
                                                                 <h:panelGrid columns="4">
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}"
                                                                         value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
-                                                                    <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" />
+                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" converter="javax.faces.BigDecimal"/>                                                                    
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange"
                                                                         value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
-                                                                    <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
-                                                                        maxlength="10" />
+                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
+                                                                        maxlength="10" converter="javax.faces.BigDecimal" />
                                                                 </h:panelGrid>
                                                             </hftl:decorateFormField>
 
@@ -209,7 +209,7 @@
                                                     <p:tooltip for="addCriteriaBtn" value="#{messages['decisionRule.add']}" showEffect="slide" hideEffect="slide" />
                                                     <p:commandButton id="addCriteriaBtn" action="#{workflowBean.addNewRule()}" process="@this,decisionRulesPanel"
                                                         value="#{messages['decisionRule.add']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
-                                                        update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" />
+                                                        update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel :tabView:formDunningPlanTransition:messages" />
                                                 </p:panel>
                                             </p:tab>
                                             <p:tab title="#{messages['dunningPlan.actions']}">
