@@ -1,6 +1,5 @@
 package org.meveo.service.script.wf;
 
-import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -11,47 +10,24 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 
 @WorkflowTypeClass
-public class WFTypeScript<E extends BaseEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
+public abstract class WFTypeScript<E extends BaseEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
 
-	public WFTypeScript() {
-		super();
-	}
+    @Override
+    public void init(Map<String, Object> methodContext, User user) throws BusinessException {
+        throw new UnsupportedOperationException();
 
-	public WFTypeScript(E e) {
-		super(e);
-	}
+    }
 
-	@Override
-	public void init(Map<String, Object> methodContext, User user) throws BusinessException {
-		throw new UnsupportedOperationException();
+    @Override
+    public void execute(Map<String, Object> methodContext, User user) throws BusinessException {
+        throw new UnsupportedOperationException();
 
-	}
+    }
 
-	@Override
-	public void execute(Map<String, Object> methodContext, User user) throws BusinessException {
-		throw new UnsupportedOperationException();
-
-	}
-
-	@Override
-	public void finalize(Map<String, Object> methodContext, User user) throws BusinessException {
-		throw new UnsupportedOperationException();
-
-	}
-
-	@Override
-	public List<String> getStatusList() {
-		return null;
-	}
-
-	@Override
-	public void changeStatus(String newStatus) {
-	}
-
-	@Override
-	public String getActualStatus() {
-		return null;
-	}
+    @Override
+    public void finalize(Map<String, Object> methodContext, User user) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
 
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);

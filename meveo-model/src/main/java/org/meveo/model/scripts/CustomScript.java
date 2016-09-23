@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @ExportIdentifier({ "code", "provider" })
 @MappedSuperclass
@@ -22,6 +24,7 @@ public abstract class CustomScript extends BusinessEntity {
 
     @Column(name = "SCRIPT", nullable = false, columnDefinition = "TEXT")
     @NotNull
+    @XStreamConverter(XStreamCDATAConverter.class)
     private String script;
 
     @Enumerated(EnumType.STRING)

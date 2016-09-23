@@ -87,10 +87,7 @@
             INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
             INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
             INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (6, 0, false, '2016-08-15 08:11:26.359', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '200|300', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (7, 0, false, '2016-08-15 08:11:49.716', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', '300|500', 1, 1, NULL, false);
             INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (9, 0, false, '2016-08-16 08:43:11.128', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Medium Account', 1, 1, NULL, false);
             ALTER SEQUENCE wf_decision_rule_seq RESTART WITH 10;
         </sql>
     </changeSet>
@@ -100,24 +97,11 @@
             INSERT INTO wf_workflow (id, version, disabled, created, updated, code, description, enable_hostory, wf_type, provider_id, creator_id, updater_id) VALUES (nextval('wf_workflow_seq'), 0, false, '2016-08-25 03:31:25.742', '2016-08-25 03:32:39.111', 'Customer Care Assignation of Orders', NULL, false, 'org.meveo.admin.wf.types.OrderWF', 1, 1, 1);
         </sql>
     </changeSet>
-    <changeSet id="#1861_20160826" author="pbach">
-        <sql>
-            delete from wf_transition_decision_rule;
-            delete from wf_decision_rule where id in (6,7,9);
-        </sql>
-    </changeSet>
     <changeSet id="#1839_20160827" author="pbach">
         <sql>
             INSERT INTO wf_transition (id, uuid, version, disabled, created, updated, condition_el, from_status, to_status, provider_id, creator_id, updater_id, workflow_id, priority, description) VALUES (nextval('wf_transition_seq'), 'WFTransition' || nextval('wf_transition_seq'), 3, false, '2016-08-26 22:37:48.91', '2016-08-27 00:32:49.271', NULL, NULL, NULL, 1, 1, 1, (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF'), 100, 'Catch all');
         </sql>
     </changeSet>
-    <changeSet id="#1839_20160830" author="pbach">
-        <sql>
-            delete from wf_action;
-            UPDATE wf_transition set priority = 0 where priority is NULL;
-        </sql>
-    </changeSet>
-    
     <changeSet id="#1839_20160901" author="AndriusKarpavicius">
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="5" />
@@ -138,7 +122,7 @@
 		<sql><![CDATA[DELETE FROM dwh_measurable_quant WHERE code IN ('MRR2', 'CHURN2');]]></sql>
 
 		<insert tableName="meveo_timer">
-			<column name="id" value="2" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="Last" />
 			<column name="sc_d_o_week" value="0" />
