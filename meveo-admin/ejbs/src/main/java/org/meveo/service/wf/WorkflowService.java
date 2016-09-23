@@ -39,6 +39,7 @@ import org.meveo.admin.wf.IWorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -229,12 +230,14 @@ public class WorkflowService extends BusinessService<Workflow> {
                     for (WFAction wfAction : listWFAction) {
                         if (matchExpression(wfAction.getConditionEl(), entity)) {
                             log.debug("Processing action: {} on entity {}", wfAction);
-                            executeExpression(wfAction.getActionEl(), entity);
-                            log.trace("Workflow action executed, entity will be refreshed. Action {}, entity {}", wfAction, entity);
-                            baseEntityService.setEntityClass((Class<IEntity>) entity.getClass());
-                            entity = baseEntityService.findById((Long) entity.getId());
+                            Object actionResult = executeExpression(wfAction.getActionEl(), entity);
+                            log.trace("Workflow action executed. Action {}, entity {}", wfAction, entity);
+                            if (entity.equals(actionResult)){
+                                entity = (IEntity) actionResult;
+                            }
                         }
                     }
+                    wfType.setEntity((BaseEntity) entity);
                     wfType.changeStatus(wfTransition.getToStatus(), currentUser);
 
                     log.trace("Entity status will be updated to {}. Entity {}", entity, wfTransition.getToStatus());
@@ -290,12 +293,12 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     }
 
-    private void executeExpression(String expression, Object object) throws BusinessException {
+    private Object executeExpression(String expression, Object object) throws BusinessException {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("entity", object);
 
-        ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
     }
 
 }

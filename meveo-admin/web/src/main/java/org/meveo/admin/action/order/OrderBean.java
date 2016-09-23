@@ -347,7 +347,11 @@ public class OrderBean extends CustomFieldBean<Order> {
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = super.saveOrUpdate(killConversation);
-        entity = orderApi.initiateWorkflow(entity, getCurrentUser());
+        
+        // Execute workflow with every update
+        if (entity.getStatus() != OrderStatusEnum.IN_CREATION) {
+            entity = orderApi.initiateWorkflow(entity, getCurrentUser());
+        }
         return result;
     }
 

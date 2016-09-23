@@ -295,6 +295,11 @@ public class OrderApi extends BaseApi {
      */
     public Order processOrder(Order order, User currentUser) throws BusinessException, MeveoApiException {
 
+        // Nothing to process in final state
+        if (order.getStatus() == OrderStatusEnum.COMPLETED) {
+            return order;
+        }
+
         log.info("Processing order {}", order.getCode());
 
         // order = orderService.refreshOrRetrieve(order);

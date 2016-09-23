@@ -365,7 +365,7 @@
 
 
                 <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
-                    rendered="#{!orderBean.entity.transient and entity.status==OrderStatusEnum.IN_CREATION}" />
+                    rendered="#{!orderBean.entity.transient and orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
             </ui:define>
 
         </hftl:formPanel>
