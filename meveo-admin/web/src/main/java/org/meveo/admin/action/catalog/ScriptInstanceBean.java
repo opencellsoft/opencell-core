@@ -160,8 +160,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        // check duplicate script
         String code = CustomScriptService.getFullClassname(entity.getScript());
+
+        // check script existed full class name in class path
+        if (CustomScriptService.isOverwritesJavaClass(code)) {
+            messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
+            return null;
+        }
+
+        // check duplicate script
         CustomScript scriptDuplicate = genericScriptService.findByCode(code, getCurrentProvider());
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
@@ -209,9 +216,25 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public void testCompilation() {
+
+        // check script existed full class name in class path
+        String code = CustomScriptService.getFullClassname(entity.getScript());
+        if (CustomScriptService.isOverwritesJavaClass(code)) {
+            messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
+            return;
+        }
+
+        // check duplicate script
+        CustomScript scriptDuplicate = genericScriptService.findByCode(code, getCurrentProvider());
+        if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
+            return;
+        }
+
         scriptInstanceService.compileScript(entity, true);
         if (!entity.isError()) {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
+
 }

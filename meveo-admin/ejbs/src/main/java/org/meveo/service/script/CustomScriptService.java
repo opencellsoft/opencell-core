@@ -114,21 +114,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return result;
     }
 
-    public boolean isExistsCode(String code, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
-        qb.addCriterion("code", "=", code, true);
-
-        try {
-            if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
-                return true;
-            }
-        } catch (NoResultException e) {
-
-        }
-
-        return false;
-    }
-
     @Override
     public void create(T script, User creator) throws BusinessException {
 
@@ -137,8 +122,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
         String fullClassName = getFullClassname(script.getScript());
-        if (isExistedFullClassName(fullClassName)) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid"));
+
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
         }
         script.setCode(fullClassName);
 
@@ -155,8 +141,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
 
         String fullClassName = getFullClassname(script.getScript());
-        if (isExistedFullClassName(fullClassName)) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid"));
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
         }
 
         script.setCode(fullClassName);
@@ -169,9 +155,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Check full class name is existed or not
+     * Check full class name is existed class path or not
      */
-    private boolean isExistedFullClassName(String fullClassName) {
+    public static boolean isOverwritesJavaClass(String fullClassName) {
         try {
             Class.forName(fullClassName);
             return true;
@@ -500,7 +486,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param parameters Additional parameters
+     * @param context Additional parameters
      * @param currentUser Current user
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
