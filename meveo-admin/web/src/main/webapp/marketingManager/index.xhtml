@@ -23,7 +23,7 @@
                         </p:panel>
                     </c:forEach>
                 </p:panelGrid> -->
-				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
+				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius Wid50 Responsive100">
 					<div class="box-title">#{chartBean.churn.description}</div>
 					<p:outputPanel rendered="#{chartBean.churn.value eq 0}">
 						<div class="box-percentage">#{chartBean.churn.value}</div>
@@ -46,7 +46,7 @@
 					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.churn.lastUpdateFormatted}</div>
 				</p:panel>
 
-				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius">
+				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius Wid50 Responsive100">
 					<div class="box-title">#{messages['marketingManager.catalog.newOrders']}</div>
 					<p:outputPanel rendered="#{chartBean.newOrderStats.value eq 0}">
 						<div class="box-percentage">#{chartBean.newOrderStats.value}</div>
@@ -71,7 +71,7 @@
 			</p:panel>
 
 			<p:panel styleClass="clearfix">
-				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius">
+				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius Wid50 Responsive100">
 					<div class="box-title">#{chartBean.MRR.description}</div>
 					<p:outputPanel rendered="#{chartBean.MRR.value eq 0}">
 						<div class="box-percentage">#{chartBean.MRR.value}</div>
@@ -94,7 +94,7 @@
 					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.MRR.lastUpdateFormatted}</div>
 				</p:panel>
 
-				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius">
+				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius Wid50 Responsive100">
 					<div class="box-title">#{messages['marketingManager.catalog.pendingOrders']}</div>
 					<p:outputPanel rendered="#{chartBean.pendingOrderStats.value eq 0}">
 						<div class="box-percentage">#{chartBean.pendingOrderStats.value}</div>
