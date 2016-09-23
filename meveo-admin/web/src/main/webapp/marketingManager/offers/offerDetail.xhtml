@@ -241,56 +241,42 @@
 				<f:facet name="header">#{messages['marketingManager.catalog.servicesToInclude']}</f:facet>
 
 				<p:panel>
-					<c:set var="index" value="${0}"></c:set>
 
 					<h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank"
 						columnClasses="Responsive Wid2, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
 
-						<c:forEach
-							items="#{offerTemplateBean.entity.offerServiceTemplates}"
-							var="ost">
+                        <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost" varStatus="loopStatus">
 
-							<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
-								rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
-								<p:ajax update="serviceCf_panel_#{index}"></p:ajax>
-							</p:selectBooleanCheckbox>
+                            <p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+                                <p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
+                            </p:selectBooleanCheckbox>
 
-							<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+                            <h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 
-							<p:outputPanel id="serviceCf_panel_#{index}">
-								<p:panel rendered="#{ost.serviceTemplate.selected}">
-									<f:facet name="header">
-										<p:panel styleClass="TexAlLeft">
-											<h:outputText
-												value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}"
-												styleClass="SubHeader" />
-										</p:panel>
-									</f:facet>
-									<!-- custom fields -->
-									<c:if
-										test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
-										<hftl:customFields backingBean="#{serviceTemplateBean}"
-											entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
-											defaultTabLabel="#{messages['commons.parameters']}"
-											prefix="cf_#{index}" />
-									</c:if>
-									<c:if
-										test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
-										<p:tabView>
-											<hftl:customFields backingBean="#{serviceTemplateBean}"
-												entity="#{ost.serviceTemplate}"
-												messagesId=":formId:messages"
-												defaultTabLabel="#{messages['commons.parameters']}"
-												prefix="cf_#{index}" />
-										</p:tabView>
-									</c:if>
-								</p:panel>
-							</p:outputPanel>
+                            <p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
+                                <p:panel rendered="#{ost.serviceTemplate.selected}">
+                                    <f:facet name="header">
+                                        <p:panel styleClass="TexAlLeft">
+                                            <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
+                                        </p:panel>
+                                    </f:facet>
+                                    <!-- custom fields -->
+                                    <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
+                                        <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                    </c:if>
+                                    <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
+                                        <p:tabView>
+                                            <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                        </p:tabView>
+                                    </c:if>
+                                </p:panel>
+                            </p:outputPanel>
 
-							<c:set var="index" value="${index + 1}"></c:set>
-						</c:forEach>
+                        </c:forEach>
 
-					</h:panelGrid>
+                    </h:panelGrid>
 
 				</p:panel>
 			</p:panel>
