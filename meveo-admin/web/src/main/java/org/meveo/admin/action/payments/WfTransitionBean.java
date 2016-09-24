@@ -111,6 +111,8 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private WFTransition catchAll;
 
+    private boolean disabledOrderWF = false;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -206,9 +208,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     public Workflow getWorkflowOrder() throws BusinessException {
         if (workflowOrder == null) {
-            List<Workflow> list = wfService.findByWFType(OrderWF.class.getName(), getCurrentUser().getProvider());
+            List<Workflow> list = wfService.findByWFTypeWithoutStatus(OrderWF.class.getName(), getCurrentUser().getProvider());
             if (CollectionUtils.isNotEmpty(list)) {
                 workflowOrder = list.get(0);
+                if (workflowOrder.isDisabled()) {
+                    disabledOrderWF = true;
+                }
             } else {
                 workflowOrder = new Workflow();
                 workflowOrder.setWfType(OrderWF.class.getName());
@@ -219,7 +224,8 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             }
         }
         if (workflowOrder != null) {
-            operationList = workflowOrder.getTransitions();
+            operationList = wfTransitionService.listWFTransitionByStatusWorkFlow(OrderStatusEnum.ACKNOWLEDGED.toString(),
+                    OrderStatusEnum.IN_PROGRESS.toString(), workflowOrder, getCurrentProvider());
             if (CollectionUtils.isNotEmpty(operationList)) {
                 Collections.sort(operationList);
                 int indexCatchAll = operationList.size() - 1;
@@ -523,6 +529,14 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             Collections.swap(operationList, index, index + 1);
             messages.info(new BundleKey("messages", "update.successful"));
         }
+    }
+
+    public boolean isDisabledOrderWF() {
+        return disabledOrderWF;
+    }
+
+    public void setDisabledOrderWF(boolean disabledOrderWF) {
+        this.disabledOrderWF = disabledOrderWF;
     }
 
     @Override

@@ -78,6 +78,11 @@ public class WorkflowService extends BusinessService<Workflow> {
             .setParameter("disabled", false).setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
     }
 
+    public List<Workflow> findByWFTypeWithoutStatus(String wfType, Provider provider) {
+        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType and provider=:provider")
+            .setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
+    }
+
     /**
      * Return all workflowType classes
      * 

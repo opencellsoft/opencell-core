@@ -17,6 +17,13 @@
             </p:breadCrumb>
         </h:form>
 
+        <p:panel styleClass="no-border-radius" rendered="#{wfTransitionBean.disabledOrderWF}">
+            <div>
+                <i class="fa fa-warning text-red"></i>
+                <h:outputText value="#{messages['mmTransition.orderWFDisabled']}" />
+            </div>
+        </p:panel>
+
         <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}" ajaxSubmit="true" showDeleteButton="false">
             <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="50">

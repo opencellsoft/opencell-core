@@ -61,4 +61,19 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
         return wfTransition;
     }
 
+    public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow, Provider provider){
+        List<WFTransition> wfTransitions =  (List<WFTransition>) getEntityManager()
+                .createQuery(
+                        "from "
+                                + WFTransition.class
+                                .getSimpleName()
+                                + " where fromStatus=:fromStatus and toStatus=:toStatus and workflow=:workflow and provider=:provider order by priority ASC")
+                .setParameter("fromStatus", fromStatus)
+                .setParameter("toStatus", toStatus)
+                .setParameter("workflow", workflow)
+                .setParameter("provider", provider)
+                .getResultList();
+        return wfTransitions;
+    }
+
 }
