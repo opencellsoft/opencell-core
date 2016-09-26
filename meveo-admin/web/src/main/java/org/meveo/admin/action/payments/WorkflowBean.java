@@ -225,9 +225,11 @@ public class WorkflowBean extends BaseBean<Workflow> {
      */ 
     public List<String> autocompleteClassNames(String query) {
     	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
-    	 List<String> classNames = new ArrayList<String>();
-    	for(Class<?> clazz :allWFType ){    		
-    			classNames.add(clazz.getName());    		
+    	List<String> classNames = new ArrayList<String>();
+    	for (Class<?> clazz :allWFType ){
+            if (clazz.getName().contains(query)) {
+                classNames.add(clazz.getName());
+            }
     	}    	
         Collections.sort(classNames);
         return classNames;

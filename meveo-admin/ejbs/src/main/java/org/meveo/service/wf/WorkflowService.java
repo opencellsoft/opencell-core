@@ -19,6 +19,7 @@
 package org.meveo.service.wf;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
@@ -93,7 +95,13 @@ public class WorkflowService extends BusinessService<Workflow> {
         Set<Class<?>> classes = null;
         List<Class<?>> result = new ArrayList<Class<?>>();
         classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
-        result.addAll(classes);
+        if (CollectionUtils.isNotEmpty(classes)) {
+            for (Class<?> cls : classes) {
+                if (!Modifier.isAbstract(cls.getModifiers())) {
+                    result.add(cls);
+                }
+            }
+        }
         Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces(provider);
 
         if (mmap != null) {
@@ -187,7 +195,6 @@ public class WorkflowService extends BusinessService<Workflow> {
      * Execute all matching workflows on the given entity
      * 
      * @param entity Entity to execute worklows on
-     * @param workflowCode A concrete worklfow to execute (optional)
      * @param currentUser Current user
      * @return Updated entity
      * @throws BusinessException
