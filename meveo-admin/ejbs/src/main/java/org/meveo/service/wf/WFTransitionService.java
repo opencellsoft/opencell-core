@@ -21,6 +21,7 @@ package org.meveo.service.wf;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
@@ -29,25 +30,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WFTransitionService extends PersistenceService<WFTransition> {
-
-	public WFTransition findWFTransition(String fromStatus,String toStatus,String workflowCode,Provider provider) {
-		WFTransition wfTransition = null;
-		try {
-			wfTransition = (WFTransition) getEntityManager()
-					.createQuery(
-							"from "
-									+ WFTransition.class
-											.getSimpleName()
-									+ " where fromStatus=:fromStatus and  toStatus=:toStatus and workflow.code=:workflowCode and provider=:provider")
-					.setParameter("fromStatus", fromStatus)		
-					.setParameter("toStatus", toStatus)		
-					.setParameter("workflowCode", workflowCode)
-					.setParameter("provider", provider)
-					.getSingleResult();
-		} catch (Exception e) {
-		}
-		return wfTransition;
-	}
 	
 	public List<WFTransition> listByFromStatus(String fromStatus ,Workflow workflow){
 		if("*".equals(fromStatus)){
@@ -60,5 +42,23 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
  				.getResultList();
 		 return wfTransitions;
 	}
+
+    public WFTransition findWFTransitionByUUID(String uuid, Provider provider) {
+        WFTransition wfTransition = null;
+        try {
+            wfTransition = (WFTransition) getEntityManager()
+                    .createQuery(
+                            "from "
+                                    + WFTransition.class
+                                    .getSimpleName()
+                                    + " where uuid=:uuid and provider=:provider")
+                    .setParameter("uuid", uuid)
+                    .setParameter("provider", provider)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.error("failed to find WFTransition", e);
+        }
+        return wfTransition;
+    }
 
 }

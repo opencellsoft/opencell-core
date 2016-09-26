@@ -266,7 +266,7 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>	  
+    </changeSet>
     
     <changeSet id="#1885_20160815_service_entity" author="EdwardPLegaspi">
     	<addColumn tableName="cat_service_template">
@@ -398,4 +398,187 @@
 		<sql>alter table ADM_MESSAGES drop column code</sql>
 	</changeSet>
     	
+    <changeSet author="pbach (generated)" id="#1861_16082016-165">
+        <createTable tableName="wf_transition_rule">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="priority" type="INT4"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="model" type="BOOL"/>
+        </createTable>
+
+        <addPrimaryKey columnNames="id" constraintName="wf_wf_transition_rule_pkey"
+                       tableName="wf_transition_rule" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="wf_transition_rule" constraintName="fk_provider_wf_transition_rule_crm_provider"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="wf_transition_rule" constraintName="fk_creator_wf_transition_rule_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+                                 baseTableName="wf_transition_rule" constraintName="fk_updater_wf_transition_rule_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_transition_rule" />
+
+        <createTable tableName="wf_transition_transition_rule">
+            <column name="transition_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="transition_rule_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="transition_id"
+                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_id_wf_transition"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
+
+        <addForeignKeyConstraint baseColumnNames="transition_rule_id"
+                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_rule_id_transition_rule"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition_rule" />
+
+        <createSequence sequenceName="wf_transition_rule_seq" />
+    </changeSet>
+
+    <changeSet author="pbach (generated)" id="#1861_26082016-166">
+        <addColumn tableName="wf_transition">
+            <column name="priority" type="INT4" />
+        </addColumn>
+        <addColumn tableName="wf_transition">
+            <column name="description" type="VARCHAR(100)"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" />
+
+        <addUniqueConstraint columnNames="from_status, to_status, priority, workflow_id, provider_id" constraintName="uk_from_status_to_status_priority_workflow_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
+    </changeSet>
+
+    <changeSet author="pbach (generated)" id="#1861_05092016-167">
+        <createTable tableName="wf_decision_rule">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="model" type="BOOL"/>
+        </createTable>
+
+        <addPrimaryKey columnNames="id" constraintName="wf_wf_decision_rule_pkey"
+                       tableName="wf_decision_rule" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="wf_decision_rule" constraintName="fk_provider_wf_decision_rule_crm_provider"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="wf_decision_rule" constraintName="fk_creator_wf_decision_rule_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+                                 baseTableName="wf_decision_rule" constraintName="fk_updater_wf_decision_rule_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_decision_rule_name_value_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_decision_rule" />
+
+        <createTable tableName="wf_transition_decision_rule">
+            <column name="transition_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="decision_rule_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="transition_id"
+                                 baseTableName="wf_transition_decision_rule" constraintName="fk_transition_id_wf_transition"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
+
+        <addForeignKeyConstraint baseColumnNames="decision_rule_id"
+                                 baseTableName="wf_transition_decision_rule" constraintName="fk_decision_rule_id_decision_rule"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />
+
+        <createSequence sequenceName="wf_decision_rule_seq" />
+
+        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_from_status_to_status_priority_workflow_provider" />
+        <dropUniqueConstraint tableName="wf_action" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" />
+        <addColumn tableName="wf_transition">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <addColumn tableName="wf_action">
+            <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+        <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_transition_uuid_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_transition" />
+        <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_action" />
+        <sql>
+            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
+            value, provider_id, creator_id, updater_id, type, model
+            FROM wf_transition_rule;
+            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
+            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
+            update wf_transition set UUID='TRANSITION-'||id where UUID is null;
+            update wf_action set UUID='ACTION-'||id where UUID is null;
+        </sql>
+
+        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID"/>
+        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID"/>
+
+        <dropTable tableName="wf_transition_transition_rule"/>
+        <dropTable tableName="wf_transition_rule"/>
+        <dropSequence sequenceName="wf_transition_rule_seq"/>
+    </changeSet>
+    
+    <changeSet author="anasseh" id="#2007_10092016">
+  	   <dropColumn tableName="WF_WORKFLOW" columnName="EXPORT_LOT"/>
+    </changeSet>
+    
+    <changeSet author="Andrius Karpavicius" id="#1819-2016-08-05">       
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL" >
+            <column name="INDEX_TYPE" type="varchar(10)"/>
+        </addColumn>
+    </changeSet> 
 </databaseChangeLog>

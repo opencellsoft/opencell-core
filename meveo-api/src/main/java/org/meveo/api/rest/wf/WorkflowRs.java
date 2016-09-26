@@ -1,5 +1,7 @@
 package org.meveo.api.rest.wf;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,5 +49,14 @@ public interface WorkflowRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(WorkflowDto workflowDto);
+    
+    @POST
+    @Path("/execute")
+    ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("baseEntityInstanceId") Long baseEntityInstanceId,@QueryParam("workflowCode") String workflowCode);
+    
+    @GET
+    @Path("/findByEntity")
+    WorkflowsResponseDto findByEntity(@QueryParam("baseEntityName") String baseEntityName);
+    
 }
 

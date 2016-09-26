@@ -962,4 +962,8 @@ public class CustomFieldValue implements Serializable {
         builder.append("]");
         return builder.toString();
     }
+
+    public String getSerializedValue() {
+        return serializedValue;
+    }
 }

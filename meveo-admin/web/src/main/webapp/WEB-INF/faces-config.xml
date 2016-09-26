@@ -435,6 +435,12 @@
             <redirect include-view-params="true"/>
         </navigation-case>
         <navigation-case>
+            <from-outcome>customEntityInstanceDetail</from-outcome>
+            <to-view-id>/pages/admin/customEntities/customEntityDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>meveoModules</from-outcome>
             <to-view-id>/pages/admin/module/modules.xhtml
             </to-view-id>
@@ -1075,31 +1081,7 @@
 			<from-outcome>workflowDetail</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
 			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>wfTransitions</from-outcome>
-			<to-view-id>/pages/admin/workflow/wfTransitions.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>wfTransitionDetail</from-outcome>
-			<to-view-id>/pages/admin/workflow/wfTransitionDetail.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionPlanItems</from-outcome>
-			<to-view-id>/pages/admin/workflow/actionPlanItems.xhtml
-			</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionPlanItemDetail</from-outcome>
-			<to-view-id>/pages/admin/workflow/actionPlanItemDetail.xhtml
-			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>matchingCodes</from-outcome>
@@ -1928,8 +1910,17 @@
 			</to-view-id>
 			<redirect include-view-params="true"/>
 		</navigation-case>
-		
-		
+		<navigation-case>
+            <from-outcome>indexing</from-outcome>
+            <to-view-id>/pages/index/index.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>fullTextSearch</from-outcome>
+            <to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>		
 	</navigation-rule>
 
 	<navigation-rule>

@@ -1,16 +1,19 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -32,12 +35,10 @@ import org.tmf.dsmapi.commons.Utilities;
  * }
  *
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(value=Include.NON_NULL)
 @Embeddable
 public class ProductOfferPriceAlteration implements Serializable {
     private final static long serialVersionUID = 1L;
-
-    private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
 
     @Column(name = "PRICE_ALT_NAME", nullable = true)
     private String name;

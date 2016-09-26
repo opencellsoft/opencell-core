@@ -24,6 +24,7 @@ import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.wf.WFAction;
@@ -42,6 +43,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@ViewBean
 public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;
@@ -58,8 +60,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     @Inject
     private WFActionService wfActionService;
 
-    /** Entity to edit. */
-    @Inject
     private Workflow workflow;
     
     private transient WFAction wfAction = new WFAction();
@@ -116,8 +116,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         try {
             entity = getPersistenceService().findById(id);
             log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
-           // entity.getDunningPlan().getTransitions().remove(entity);
-          //  getPersistenceService().remove(id);
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
