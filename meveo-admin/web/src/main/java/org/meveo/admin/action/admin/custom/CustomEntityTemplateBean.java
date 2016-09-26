@@ -119,6 +119,21 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
 
     /**
+     * Prepare to show entity customozation for a particular class - To be used from GUI action button/link
+     * 
+     * @param clazz Entity class
+     */
+    public void initCustomization(String entityClassName) {
+        customizedEntity = null;
+        this.entityClassName = entityClassName;
+        try {
+            getCustomizedEntity();
+        } catch (ClassNotFoundException e) {
+            log.error("Failed to initialize entity customization for a class {}", entityClassName);
+        }
+    }
+
+    /**
      * Construct customizedEntity instance which is a representation of customizable class (e.g. Customer)
      * 
      * @return
