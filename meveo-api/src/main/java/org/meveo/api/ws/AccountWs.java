@@ -7,6 +7,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -39,6 +40,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.ParentEntitiesResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
@@ -315,4 +317,6 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@WebParam(name = "userAccountCode") String userAccountCode, @WebParam(name = "date") Date date);
 
+    @WebMethod
+    ParentEntitiesResponseDto findParents(@WebParam(name = "parentSearchDto") CRMAccountTypeSearchDto searchDto);
 }
