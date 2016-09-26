@@ -155,7 +155,7 @@ public class ScriptInstanceApi extends BaseApi {
 
         // check script existed full class name in class path
         if (CustomScriptService.isOverwritesJavaClass(scriptCode)) {
-            throw new InvalidParameterException("The class have already existed in classpath");
+            throw new InvalidParameterException("The class with such name already exists");
         }
 
         dto.setCode(scriptCode);
