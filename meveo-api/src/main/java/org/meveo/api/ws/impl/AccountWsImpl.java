@@ -2,7 +2,6 @@ package org.meveo.api.ws.impl;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -18,6 +17,7 @@ import org.meveo.api.account.TitleApi;
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -52,6 +52,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.ParentEntitiesResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
@@ -1600,5 +1601,24 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
         return result;
 	}
+
+    public ParentEntitiesResponseDto findParents(CRMAccountTypeSearchDto searchDto) {
+        ParentEntitiesResponseDto result = new ParentEntitiesResponseDto();
+
+        try {
+            result.setParentEntities(accountHierarchyApi.getParentList(searchDto, getCurrentUser()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
 
 }

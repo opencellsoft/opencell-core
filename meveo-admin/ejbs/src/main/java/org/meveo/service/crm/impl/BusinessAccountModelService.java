@@ -1,12 +1,14 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
@@ -34,6 +36,19 @@ public class BusinessAccountModelService extends BusinessService<BusinessAccount
 		QueryBuilder queryBuilder = new QueryBuilder(BusinessAccountModel.class, "a", null, provider);
 		queryBuilder.addBooleanCriterion("disabled", false);
 		queryBuilder.addBooleanCriterion("installed", true);
+
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BusinessEntity> listParents(String searchTerm, Class<? extends BusinessEntity> parentClass, PaginationConfiguration paginationConfiguration, Provider provider) {
+		QueryBuilder queryBuilder = new QueryBuilder(parentClass, "p", null, provider);
+		queryBuilder.addCriterionEntity("p.provider", provider);
+		if(!StringUtils.isBlank(searchTerm)){
+			queryBuilder.like("p.description", searchTerm, QueryBuilder.QueryLikeStyleEnum.MATCH_ANYWHERE, true);
+		}
+		queryBuilder.addPaginationConfiguration(paginationConfiguration);
 
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
