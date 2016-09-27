@@ -293,11 +293,11 @@ input[type="text"] .ui-button-text,
   text-shadow:none;
 }
 
-.ui-state-disabled,
-.ui-widget-content .ui-state-disabled,
-.ui-widget-header .ui-state-disabled {
-  padding: 4px 4px;
-}
+/* .ui-state-disabled, */
+/* .ui-widget-content .ui-state-disabled, */
+/* .ui-widget-header .ui-state-disabled { */
+/*   padding: 4px 4px; */
+/* } */
 
 .ui-datatable,
 .ui-treetable {
@@ -464,7 +464,6 @@ input[type="text"] {
 
 .ui-paginator {
   background: #eee;
-  padding: 15px;
 }
 
 .ui-inputswitch {

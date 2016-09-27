@@ -323,6 +323,7 @@ div.body > table > thead,
 	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(235,235,235,1) 50%,rgba(219,219,219,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dbdbdb',GradientType=0 ); /* IE6-9 */
+	padding: 10px;
 }
 .ui-paginator-top,
 .ui-paginator-bottom { border : none; }
@@ -691,7 +692,7 @@ form.formNoBottomBorder {
 .Wid25{ width:25%;}
 .Wid20{ width:20%;}
 .Wid10{ width:10%;}
-.custom-grid .ui-paginator, .dataGrid .ui-paginator { margin-left: auto; width: 250px !important; }
+.custom-grid .ui-paginator, .dataGrid .ui-paginator { margin-left: auto; width: 300px !important; }
 .custom-grid .ui-paginator > select, .dataGrid .ui-paginator > select { margin-left: 0; }
 .dataGrid .ui-paginator span { text-align: left !important; }
 .ui-datagrid-blank .ui-datagrid-content { border: none !important; }

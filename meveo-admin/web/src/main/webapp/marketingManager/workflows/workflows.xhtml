@@ -15,12 +15,16 @@
             </p:breadCrumb>
         </h:form>
 
-        <p:panel styleClass="no-border-radius" rendered="#{wfTransitionBean.disabledOrderWF}">
-            <div>
-                <i class="fa fa-warning text-red"></i>
-                <h:outputText value="#{messages['mmTransition.orderWFDisabled']}" />
+        <h:panelGroup rendered="#{wfTransitionBean.disabledOrderWF}">
+            <div class="ui-messages ui-widget">
+                <div class="ui-messages-warn ui-corner-all">
+                    <span class="ui-messages-info-warn"></span>
+                    <ul>
+                        <li><h:outputText value="#{messages['mmTransition.orderWFDisabled']}" styleClass="ui-messages-warn-summary" /></li>
+                    </ul>
+                </div>
             </div>
-        </p:panel>
+        </h:panelGroup>
 
         <p:panel styleClass="clearLeft">
             <p:panel style="width: 16%">

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
@@ -222,15 +223,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
      * 
      * @param query A partial class name (including a package)
      * @return A list of classnames
-     */ 
+     */
     public List<String> autocompleteClassNames(String query) {
-    	List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
-    	List<String> classNames = new ArrayList<String>();
-    	for (Class<?> clazz :allWFType ){
-            if (clazz.getName().contains(query)) {
+        List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
+        List<String> classNames = new ArrayList<String>();
+        for (Class<?> clazz : allWFType) {
+            if (StringUtils.isBlank(query)) {
+                classNames.add(clazz.getName());
+            } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
                 classNames.add(clazz.getName());
             }
-    	}    	
+        }
         Collections.sort(classNames);
         return classNames;
     }

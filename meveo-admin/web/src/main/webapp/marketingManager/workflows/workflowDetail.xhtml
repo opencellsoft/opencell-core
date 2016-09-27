@@ -17,17 +17,21 @@
             </p:breadCrumb>
         </h:form>
 
-        <p:panel styleClass="no-border-radius" rendered="#{wfTransitionBean.disabledOrderWF}">
-            <div>
-                <i class="fa fa-warning text-red"></i>
-                <h:outputText value="#{messages['mmTransition.orderWFDisabled']}" />
+        <h:panelGroup rendered="#{wfTransitionBean.disabledOrderWF}">
+            <div class="ui-messages ui-widget">
+                <div class="ui-messages-warn ui-corner-all">
+                    <span class="ui-messages-info-warn"></span>
+                    <ul>
+                        <li><h:outputText value="#{messages['mmTransition.orderWFDisabled']}" styleClass="ui-messages-warn-summary" /></li>
+                    </ul>
+                </div>
             </div>
-        </p:panel>
+        </h:panelGroup>
 
         <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" backingBean="#{wfTransitionBean}"
             entity="#{wfTransitionBean.wfTransition}" ajaxSubmit="true">
             <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true" field="description" size="50" maxlength="100" required="true"
-                edit="#{wfTransitionBean.edit}" />
+                edit="#{wfTransitionBean.edit}" labelWidth="25"/>
             <p:panel styleClass="clearLeft">
                 <p:separator />
             </p:panel>
@@ -125,7 +129,7 @@
                     ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus" update=":formDunningPlanTransition:decisionRulesPanel :formDunningPlanTransition:messages" />
             </p:panel>
 
-            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="20">
+            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="50">
                 <h:panelGrid columns="2">
                     <p:panel>
                         <p:outputLabel value="#{messages['mmTransition.assignedTeam']} *" style="padding-right:5px" />
