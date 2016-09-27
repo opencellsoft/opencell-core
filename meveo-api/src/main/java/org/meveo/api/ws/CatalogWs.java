@@ -6,9 +6,12 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -16,22 +19,29 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
+import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetProductChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
@@ -271,7 +281,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
-
+    
     // discount Plan item
     @WebMethod
     ActionStatus createDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
@@ -290,4 +300,80 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
+    @WebMethod
+    ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus updateProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
+
+    @WebMethod
+    ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code);
+
+    @WebMethod
+    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code);
+    
+    @WebMethod
+    ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus updateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+
+    @WebMethod
+    ActionStatus removeDigitalResource(@WebParam(name = "digitalResourceCode") String code);
+
+    @WebMethod
+    GetDigitalResourceResponseDto findDigitalResource(@WebParam(name = "digitalResourceCode") String code);
+    
+    @WebMethod
+    public ActionStatus createOrUpdateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public ActionStatus createProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public ActionStatus updateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
+
+    @WebMethod
+    public GetProductChargeTemplateResponseDto findProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
+
+    @WebMethod
+    public ActionStatus removeProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
+    
+    @WebMethod
+    ActionStatus createBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus updateBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
+
+    @WebMethod
+    ActionStatus removeBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+
+    @WebMethod
+    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+
+
+    @WebMethod
+    ActionStatus createChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus updateChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus createOrUpdateChannel(@WebParam(name = "channel") ChannelDto postData);
+
+    @WebMethod
+    ActionStatus removeChannel(@WebParam(name = "channel") String code);
+
+    @WebMethod
+    GetChannelResponseDto findChannel(@WebParam(name = "channel") String code);
+
 }

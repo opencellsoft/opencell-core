@@ -82,12 +82,9 @@ public abstract class BaseApi {
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      * @throws MeveoApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws IllegalArgumentException,
-            IllegalAccessException, MeveoApiException {
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws MeveoApiException {
         populateCustomFields(customFieldsDto, entity, isNewEntity, currentUser, true);
     }
 
@@ -99,12 +96,10 @@ public abstract class BaseApi {
      * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
      * @param checkCustomField Should a check be made if CF field is required
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      * @throws MeveoApiException
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField)
-            throws IllegalArgumentException, IllegalAccessException, MeveoApiException {
+            throws MeveoApiException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
@@ -133,7 +128,7 @@ public abstract class BaseApi {
      */
     @SuppressWarnings("unchecked")
     private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            User currentUser, boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MeveoApiException {
+            User currentUser, boolean checkCustomFields) throws MeveoApiException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -210,13 +205,18 @@ public abstract class BaseApi {
 
         // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
-
+        if(entity.getParentCFEntities() != null){
+	        for(ICustomFieldEntity entityParent :entity.getParentCFEntities()){
+	        	 cfisAsMap.putAll(customFieldInstanceService.getCustomFieldInstances(entityParent));
+	        }
+        }
+               
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
             }
-            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
+            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {            	 
                 missingParameters.add(cft.getCode());
             } else {
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
@@ -438,4 +438,11 @@ public abstract class BaseApi {
         }
         return null;
     }
+    
+    protected <T> T keepOldValueIfNull(T newValue, T oldValue) {
+		if (newValue == null) {
+			return oldValue;
+		}
+		return newValue;
+	}
 }

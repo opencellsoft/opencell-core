@@ -30,6 +30,19 @@
 		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
 	</application>
 	
+	<component>
+        <component-type>org.primefaces.component.OpencellMenu</component-type>
+        <component-class>org.meveo.util.view.composite.OpencellMenu</component-class>
+    </component>
+    
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.OpencellMenuRenderer</renderer-type>
+            <renderer-class>org.meveo.util.view.composite.OpencellMenuRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+	
 	<lifecycle>
 		<phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener>
 	</lifecycle>
@@ -46,23 +59,17 @@
 			<to-view-id>/errors/404.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-	
+		
 		<navigation-case>
 			<from-action>#{identity.login}</from-action>
 			<if>#{identity.loggedIn}</if>
-			<to-view-id>/home.xhtml</to-view-id>
-<!-- 			<redirect> -->
-<!-- 				<view-param> -->
-<!-- 					<name>chooseProvider</name> -->
-<!-- 					<value>true</value> -->
-<!-- 				</view-param> -->
-<!-- 			</redirect> -->
+			<to-view-id>/loginRedirect.xhtml</to-view-id>
 		</navigation-case>
 
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>
 			<if>#{not(identity.loggedIn)}</if>
-			<to-view-id>/loginInternal.xhtml</to-view-id>
+			<to-view-id>/login.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 
@@ -1921,24 +1928,202 @@
             <to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
             <redirect include-view-params="true"/>
         </navigation-case>		
-	</navigation-rule>
+        <navigation-case>
+            <from-outcome>orderDetail</from-outcome>
+            <to-view-id>/pages/order/orders/orderDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>orders</from-outcome>
+            <to-view-id>/pages/order/orders/orders.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>    
 
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>mmCatalogView</from-outcome>
-			<to-view-id>/pages/catalog/marketingManager/catalogView.xhtml
-			</to-view-id>
-			<redirect include-view-params="true" />
-		</navigation-case>
-	</navigation-rule>
-
-    <navigation-rule>
+        <navigation-case>
+            <from-outcome>productTemplates</from-outcome>
+            <to-view-id>/pages/catalog/productTemplates/productTemplates.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>productTemplateDetail</from-outcome>
+            <to-view-id>/pages/catalog/productTemplates/productTemplateDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bundleTemplates</from-outcome>
+            <to-view-id>/pages/catalog/bundleTemplates/bundleTemplates.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bundleTemplateDetail</from-outcome>
+            <to-view-id>/pages/catalog/bundleTemplates/bundleTemplateDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>channels</from-outcome>
+            <to-view-id>/pages/catalog/channels/channels.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>channelDetail</from-outcome>
+            <to-view-id>/pages/catalog/channels/channelDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>digitalResources</from-outcome>
+            <to-view-id>/pages/catalog/digitalResources/digitalResources.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>digitalResourceDetail</from-outcome>
+            <to-view-id>/pages/catalog/digitalResources/digitalResourceDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>businessProductModels</from-outcome>
+            <to-view-id>/pages/catalog/businessProductModels/businessProductModels.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>businessProductModelDetail</from-outcome>
+            <to-view-id>/pages/catalog/businessProductModels/businessProductModelDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>productChargeTemplates</from-outcome>
+            <to-view-id>/pages/catalog/productChargeTemplates/productChargeTemplates.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>productChargeTemplateDetail</from-outcome>
+            <to-view-id>/pages/catalog/productChargeTemplates/productChargeTemplateDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>        
         <navigation-case>
             <from-outcome>userGroupHierarchy</from-outcome>
             <to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
             <redirect />
         </navigation-case>
-    </navigation-rule>
+        <navigation-case>
+            <from-outcome>userHierarchyLevelDetail</from-outcome>
+            <to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>           
+	</navigation-rule>
+
+    <!--  Navigation rules for Marketing Manager pages -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mm_home</from-outcome>
+			<to-view-id>/marketingManager/index.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_offerTemplates</from-outcome>
+			<to-view-id>/marketingManager/offers/offerTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_offers</from-outcome>
+			<to-view-id>/marketingManager/offers/offers.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+        <navigation-case>
+            <from-outcome>mm_offerTemplateDetail</from-outcome>
+            <to-view-id>/marketingManager/offers/offerDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>        
+		<navigation-case>
+			<from-outcome>mm_offerTemplateCategories</from-outcome>
+			<to-view-id>/marketingManager/offers/offerTemplateCategories.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+        <navigation-case>
+            <from-outcome>mm_offerTemplateCategoryDetail</from-outcome>
+            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategoryDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>        
+		<navigation-case>
+			<from-outcome>mm_productTemplates</from-outcome>
+			<to-view-id>/marketingManager/products/productTemplates.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_productTemplateDetail</from-outcome>
+			<to-view-id>/marketingManager/products/productTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_bundleTemplateDetail</from-outcome>
+			<to-view-id>/marketingManager/products/bundleTemplateDetail.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_bundleTemplateSelectProduct</from-outcome>
+			<to-view-id>/marketingManager/products/selectProduct.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mm_workflows</from-outcome>
+			<to-view-id>/marketingManager/workflows/workflows.xhtml
+			</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+        <navigation-case>
+            <from-outcome>mm_workflowDetail</from-outcome>
+            <to-view-id>/marketingManager/workflows/workflowDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>mm_workflowDefault</from-outcome>
+            <to-view-id>/marketingManager/workflows/workflowDefault.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>mm_userHierarchyLevelDetail</from-outcome>
+            <to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>         
+        <navigation-case>
+            <from-outcome>mm_userDetail</from-outcome>
+            <to-view-id>/pages/admin/meveoUsers/userDetail.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>  
+
+        <navigation-case>
+            <from-outcome>mm_fullTextSearch</from-outcome>
+            <to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>         
+         
+	</navigation-rule>
+
 
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->

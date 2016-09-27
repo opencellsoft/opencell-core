@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -32,8 +33,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE",
-		"PROVIDER_ID" }))
+@Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
 public class OfferTemplateCategory extends BusinessCFEntity {
 
@@ -59,6 +59,9 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "offerTemplateCategory")
 	private List<OfferTemplateCategory> children;
+
+	@ManyToMany(mappedBy = "offerTemplateCategories")
+	private List<ProductOffering> productOffering;
 
 	@Column(name = "LEVEL")
 	private int level = 1;
@@ -141,6 +144,14 @@ public class OfferTemplateCategory extends BusinessCFEntity {
 
 	public void setChildren(List<OfferTemplateCategory> children) {
 		this.children = children;
+	}
+
+	public List<ProductOffering> getProductOffering() {
+		return productOffering;
+	}
+
+	public void setProductOffering(List<ProductOffering> productOffering) {
+		this.productOffering = productOffering;
 	}
 
 }

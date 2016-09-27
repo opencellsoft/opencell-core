@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,12 +29,14 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
@@ -80,6 +85,27 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 		return chargeTemplateService;
 	}
 	
+
+	public LazyDataModel<ChargeTemplate> getChargeTemplates() {
+		StringBuilder chargeList = new StringBuilder();
+		List<Long> chargeTemplatesIds=new ArrayList<Long>();
+		String sep=""; 
+		for(ChargeTemplate charge :chargeTemplateService.list()){
+			if(!(charge instanceof ProductChargeTemplate)){
+				chargeTemplatesIds.add(charge.getId());
+			}
+		}
+		if(chargeTemplatesIds.size()>0){
+			for(Long ids:chargeTemplatesIds){
+				chargeList.append(sep);
+				chargeList.append(ids.toString());
+				sep=",";
+			} 
+			filters.put("inList-id", chargeList);
+		}
+		return getLazyDataModel();
+	}
+		
 	public String getChargeTemplateDetail(ChargeTemplate chargeTemplate) {
 		if(chargeTemplate!=null){
 		if(chargeTemplate instanceof RecurringChargeTemplate){

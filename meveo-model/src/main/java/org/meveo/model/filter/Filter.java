@@ -99,11 +99,6 @@ public class Filter extends BusinessCFEntity {
 		this.shared = shared;
 	}
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
-	}
-	
 	public String getAppliesTo() {
 		return FILTER_CODE_PREFIX + getCode();
 	}

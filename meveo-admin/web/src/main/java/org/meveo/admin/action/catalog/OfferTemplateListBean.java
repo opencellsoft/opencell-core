@@ -18,21 +18,124 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
 public class OfferTemplateListBean extends OfferTemplateBean {
 
-    private static final long serialVersionUID = -3037867704912788024L;
+	private static final long serialVersionUID = -3037867704912788024L;
 
-    public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
-        filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
-        return getLazyDataModel(filters, listFiltered);
+	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
+	private List<OfferTemplateCategory> selOfferTemplateCategories;
+	private MeveoInstance meveoInstance = new MeveoInstance();
+
+    private long activeCount = 0;
+
+    private long inactiveCount = 0;
+
+    private long almostExpiredCount = 0;
+
+    @Override
+    public void preRenderView() {
+        activeCount = offerTemplateService.countActive(getCurrentProvider());
+        inactiveCount = offerTemplateService.countDisabled(getCurrentProvider());
+        almostExpiredCount = offerTemplateService.countExpiring(getCurrentProvider());
+        super.preRenderView();
+    }
+	
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("offerTemplateCategories");
+	}
+
+	public LazyDataModel<OfferTemplate> getLazyDataModelNoBSM() {
+		filters.put("businessOfferModel", PersistenceService.SEARCH_IS_NULL);
+		return getLazyDataModel(filters, listFiltered);
+	}
+
+	public void addForExport(OfferTemplate offerTemplate) {
+		if (!selectedOfferTemplates.contains(offerTemplate)) {
+			selectedOfferTemplates.add(offerTemplate);
+		}
+	}
+
+	public void deleteForExport(OfferTemplate offerTemplate) {
+		if (selectedOfferTemplates.contains(offerTemplate)) {
+			selectedOfferTemplates.remove(offerTemplate);
+		}
+	}
+
+	public void showSelectedOffersForExport() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("resizable", false);
+		options.put("draggable", false);
+		options.put("modal", true);
+		RequestContext.getCurrentInstance().openDialog("selectedOffersForExport", options, null);
+	}
+
+
+	public LazyDataModel<OfferTemplate> listFromBOM() {
+		// filters.put("businessOfferModel",
+		// PersistenceService.SEARCH_IS_NOT_NULL);
+		if (selOfferTemplateCategories != null && selOfferTemplateCategories.size() > 0) {
+			List<Long> offerTemplateCatIds = new ArrayList<>();
+			for (OfferTemplateCategory otc : selOfferTemplateCategories) {
+				offerTemplateCatIds.add(otc.getId());
+			}
+			filters.put("inList-offerTemplateCategories.id", offerTemplateCatIds);
+		}
+
+		return getLazyDataModel();
+	}
+
+	public List<OfferTemplate> getSelectedOfferTemplates() {
+		return selectedOfferTemplates;
+	}
+
+	public void setSelectedOfferTemplates(List<OfferTemplate> selectedOfferTemplates) {
+		this.selectedOfferTemplates = selectedOfferTemplates;
+	}
+
+	public List<OfferTemplateCategory> getSelOfferTemplateCategories() {
+		return selOfferTemplateCategories;
+	}
+
+	public void setSelOfferTemplateCategories(List<OfferTemplateCategory> selOfferTemplateCategories) {
+		this.selOfferTemplateCategories = selOfferTemplateCategories;
+	}
+
+	public MeveoInstance getMeveoInstance() {
+		return meveoInstance;
+	}
+
+	public void setMeveoInstance(MeveoInstance meveoInstance) {
+		this.meveoInstance = meveoInstance;
+	}
+
+	public long getActiveCount() {
+        return activeCount;
+    }
+	
+	public long getInactiveCount() {
+        return inactiveCount;
+    }
+	
+	public long getAlmostExpiredCount() {
+        return almostExpiredCount;
     }
 }

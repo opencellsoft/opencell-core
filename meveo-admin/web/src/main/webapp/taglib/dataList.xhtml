@@ -26,6 +26,15 @@
         sortBy and sortOrder - a default field to sort by and a default sort order
         rowsPerPage - possible paging sizes separated by a comma
         showFullTextSearch - shall a "global search" filter be visible in the header
+        paginatorPosition - allows to specify if the paginator appears on the table's top, bottom or both
+        prePaginatorControls - allows to set custom controls that appear just before the paginator.  To set it up correctly, enter a facet name e.g.
+        styleClass = custom style for the datalist
+        		<hftl:dataList prePaginatorControls="{CustomControls}">
+        			<f:facet name="{CustomControls}">
+        				...
+        			</f:facet>
+        			...
+        		</hftl:datalist>
          
 -->
 
@@ -44,6 +53,9 @@
         <c:if test="${empty editMode}">
             <c:set var="editMode" value="cell" />
         </c:if>
+    </c:if>
+    <c:if test="${empty styleClass}">
+        <c:set var="styleClass" value=" " />
     </c:if>
     <!-- 	<c:if test="${empty edit}"> -->
     <!-- 		<c:set var="edit" value="true" /> -->
@@ -108,15 +120,19 @@
     <c:if test="${empty showFullTextSearch}">
         <c:set var="showFullTextSearch" value="false" />
     </c:if>
+    
+    <c:if test="${empty paginatorPosition}">
+        <c:set var="paginatorPosition" value="both" />
+    </c:if>
 
     <p:panel id="#{resultsId}_panel" width="100">
 
         <h:form id="#{formId}" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
             <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}"
                 editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
-                sortOrder="#{sortOrder}" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid" rowKey="#{entity.id}"
-                first="#{backingBean.dataTableFirstAttribute}" reflow="true">
+                sortOrder="#{sortOrder}" paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}"
+                first="#{backingBean.dataTableFirstAttribute}" reflow="true" paginatorPosition="#{paginatorPosition}">
                 <p:ajax event="page" listener="#{backingBean.onPageChange}" />
                 <p:ajax event="toggleSelect" update="@this" process="@this" />
                 <p:ajax event="rowSelectCheckbox" />
@@ -124,7 +140,7 @@
                 <p:ajax event="rowSelect" />
                 <p:ajax event="rowUnselect" />
                 <c:if test="#{editable}">
-                    <p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}" />
+                	<p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}"/>
                 </c:if>
 
                 <c:if test="${showFullTextSearch}">
@@ -159,7 +175,7 @@
                         oncomplete="PF('exportParametersDialog').show()">
                         <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
-                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />                        
                     </p:commandButton>
                 </c:if>
 

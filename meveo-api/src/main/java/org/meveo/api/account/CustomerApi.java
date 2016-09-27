@@ -20,7 +20,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.AccountDtoListFilter;
-import org.meveo.api.security.parameter.ObjectPropertyParser;
+import org.meveo.api.security.parameter.NullParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
@@ -124,10 +124,10 @@ public class CustomerApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customer, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customer;
 	}
@@ -220,10 +220,10 @@ public class CustomerApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customer, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customer;
 	}
@@ -267,7 +267,7 @@ public class CustomerApi extends AccountApi {
 
 	@SecuredBusinessEntityMethod(
 			resultFilter = AccountDtoListFilter.class, 
-			validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entity = Customer.class), 
+			validate = @SecureMethodParameter(parser = NullParser.class),
 			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomersDto filterCustomer(CustomerDto postData, User currentUser) throws MeveoApiException {
 		Provider provider = currentUser.getProvider();

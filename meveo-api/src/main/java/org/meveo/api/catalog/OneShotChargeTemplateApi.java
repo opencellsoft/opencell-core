@@ -168,9 +168,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         // create cat messages
@@ -285,9 +285,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 
@@ -330,9 +330,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode(),provider);
-
         oneShotChargeTemplateService.remove(chargeTemplate);
 
     }
@@ -365,7 +362,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
                 try {
-                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(provider, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
+                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(currentUser, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
                         null, null, null, true);
                     if (unitPrice != null) {
                         oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());

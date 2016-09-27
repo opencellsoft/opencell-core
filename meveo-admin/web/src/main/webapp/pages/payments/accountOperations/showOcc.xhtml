@@ -5,17 +5,13 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
-
+	
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{accountOperationBean.objectId}" />
             <f:viewParam name="tab" value="#{accountOperationBean.activeTab}" />
         </f:metadata>
     </ui:define>
-    
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
 	
     <ui:define name="body">
 	

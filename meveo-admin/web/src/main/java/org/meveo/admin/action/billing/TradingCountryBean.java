@@ -37,7 +37,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -70,7 +69,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 		super(TradingCountry.class);
 	}
 
-	public void onRowSelect(SelectEvent event) {
+	public void onCountrySelect(SelectEvent event) {
 		if (event.getObject() instanceof Country) {
 			Country country = (Country) event.getObject();
 			log.info("populatCountries country",

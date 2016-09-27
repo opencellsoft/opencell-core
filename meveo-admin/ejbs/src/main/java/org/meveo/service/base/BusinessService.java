@@ -91,18 +91,22 @@ public abstract class BusinessService<P extends BusinessEntity> extends
 		return e;
 	}
 	
-	public String findDuplicateCode(BusinessEntity entity,User currentUser){
-		String code=entity.getCode()+" - Copy";
-		int id=1;
-		String criteria=code;
-		BusinessEntity temp=null;
-		while(true){
-			temp=findByCode(criteria, currentUser.getProvider());
-			if(temp==null){
+	public String findDuplicateCode(BusinessEntity entity, User currentUser) {
+		return findDuplicateCode(entity, " - Copy", currentUser);
+	}
+
+	public String findDuplicateCode(BusinessEntity entity, String suffix, User currentUser) {
+		String code = entity.getCode() + suffix;
+		int id = 1;
+		String criteria = code;
+		BusinessEntity temp = null;
+		while (true) {
+			temp = findByCode(criteria, currentUser.getProvider());
+			if (temp == null) {
 				break;
 			}
 			id++;
-			criteria=code+" "+id;
+			criteria = code + " " + id;
 		}
 		return criteria;
 	}

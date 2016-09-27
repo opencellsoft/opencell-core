@@ -11,11 +11,7 @@
                 listener="#{otherCreditAndChargeListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
+        
     <ui:define name="body">
     	
     		<hftl:searchPanel label="#{messages['accountOperation.search']}"  backingBean="#{otherCreditAndChargeListBean}" newButtonView="/pages/payments/accountOperations/accountOperationDetail.xhtml">    			    			    				

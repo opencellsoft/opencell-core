@@ -1,0 +1,187 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{offerTemplateListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers" />
+				<p:menuitem value="#{messages['menu.catalog.newOffer']}"
+					disabled="true" />
+			</p:breadCrumb>
+		</h:form>
+
+		<div class="ui-fluid">
+			<p:panel>
+				<h:form>
+					<h:panelGrid
+						styleClass="VAlignTop Wid20 Responsive100 ui-panelgrid-blank NoPadding FRight"
+						columnClasses="Wid95, Wid5" columns="2">
+						<p:inputText placeholder="#{messages['action.search']}"
+							syle="float:right;"
+							value="#{businessOfferModelListBean.filters['FIELD1_OR_FIELD2 offerTemplate.name offerTemplate.description']}" />
+						<p:commandLink styleClass="Padding3 fa fa-search"
+							update=":mainForm:dataGrid"></p:commandLink>
+					</h:panelGrid>					
+				</h:form>
+				
+				<div class="Padding3 clearBoth"></div>
+				
+				<h:form id="mainForm">
+					<p:dataGrid id="dataGrid"
+						value="#{businessOfferModelListBean.listInstalled()}" var="entity"
+						paginator="true" rows="10" columns="1" layout="grid"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
+						rowsPerPageTemplate="10,15,20,50" rowKey="#{entity.id}">
+
+						<div class="Container40 Responsive100 VAlignTop">
+							<p:panel styleClass="Wid25 Responsive100">
+								<p:graphicImage id="offerImage" cache="false"
+									rendered="#{entity.offerTemplate ne null}"
+									value="#{offerTemplateImageStreamer.image}" height="100"
+									width="100">
+									<f:param name="id" value="#{entity.offerTemplate.id}"></f:param>
+								</p:graphicImage>
+							</p:panel>
+
+							<p:panel styleClass="Wid75 Responsive100 VAlignTop">
+								<p>
+									<h:outputText styleClass="FontBold" id="name" value="#{entity.offerTemplate.nameOrCode}"></h:outputText>
+								</p>
+								<p>
+									<ui:repeat
+										value="#{entity.offerTemplate.offerTemplateCategories.toArray()}"
+										var="c" varStatus="status">
+										<c:set var="valueLabel" value="#{c}" />
+										<c:set var="valueLabel"
+											value="#{valueLabel['descriptionOrCode']}" />
+										<h:outputText value="#{valueLabel}" />
+										<h:outputText value=", " rendered="#{not status.last}" />
+									</ui:repeat>
+								</p>
+								<p:separator></p:separator>
+								<p>
+									<h:outputText value="#{entity.offerTemplate.description}"></h:outputText>
+								</p>
+							</p:panel>
+						</div>
+
+						<p:panel styleClass="Wid50 Responsive100 VAlignTop Padding10">
+							<p:panel
+								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['marketingManager.catalog.OneTimeFee']}"
+										rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
+								</f:facet>
+
+								<p:dataList styleClass="dataList" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false"
+									value="#{entity.offerTemplate.serviceTemplatesByChargeType['SUBSCRIPTION']}"
+									var="service" type="ordered"
+									rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
+									<h:outputText value="#{service.descriptionOrCode}"
+										styleClass="text-bold" />
+									<h:panelGroup layout="block">
+										<ul class="no-list-style">
+											<ui:repeat var="charge"
+												value="#{service.serviceSubscriptionCharges}">
+												<li><h:outputText
+														value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+											</ui:repeat>
+										</ul>
+									</h:panelGroup>
+								</p:dataList>
+							</p:panel>
+							<p:panel
+								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['marketingManager.catalog.recurringFee']}"
+										rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['RECURRING']!=null}" />
+								</f:facet>
+								<p:dataList styleClass="dataList" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false"
+									value="#{entity.offerTemplate.serviceTemplatesByChargeType['RECURRING']}"
+									var="service" type="ordered"
+									rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['RECURRING']!=null}">
+									<h:outputText value="#{service.descriptionOrCode}"
+										styleClass="text-bold" />
+									<h:panelGroup layout="block">
+										<ul class="no-list-style">
+											<ui:repeat var="charge"
+												value="#{service.serviceRecurringCharges}">
+												<li><h:outputText
+														value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+											</ui:repeat>
+										</ul>
+									</h:panelGroup>
+								</p:dataList>
+							</p:panel>
+							<p:panel
+								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['marketingManager.catalog.usageFee']}"
+										rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['USAGE']!=null}" />
+								</f:facet>
+								<p:dataList styleClass="dataList" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false"
+									value="#{entity.offerTemplate.serviceTemplatesByChargeType['USAGE']}"
+									var="service" type="ordered"
+									rendered="#{entity.offerTemplate.serviceTemplatesByChargeType['USAGE']!=null}">
+									<h:outputText value="#{service.descriptionOrCode}"
+										styleClass="text-bold" />
+									<h:panelGroup layout="block">
+										<ul class="no-list-style">
+											<ui:repeat var="charge"
+												value="#{service.serviceUsageCharges}">
+												<li><h:outputText
+														value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+											</ui:repeat>
+										</ul>
+									</h:panelGroup>
+								</p:dataList>
+							</p:panel>
+						</p:panel>
+
+						<p:panel styleClass="Wid10 Responsive100 TexAlCenter">
+							<div class="Container100">
+								<p:panel header="#{messages['action.startWithThisTemplate']}">
+									<p:link
+										styleClass="fa fa-2x fa-play no-text-decoration text-red"
+										outcome="mm_offerTemplateDetail" value="">
+										<f:param name="bomId" value="#{entity.id}"></f:param>
+										<f:param name="objectId" value="#{entity.offerTemplate.id}"></f:param>
+										<f:param name="edit" value="true"></f:param>
+										<f:param name="backView" value="mm_offers"></f:param>
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</p:link>
+								</p:panel>
+							</div>
+						</p:panel>
+					</p:dataGrid>
+				</h:form>
+
+			</p:panel>
+		</div>
+
+	</ui:define>
+</ui:composition>

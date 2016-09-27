@@ -8,10 +8,13 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -30,6 +33,9 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
 
     @Inject
     private ModuleApi moduleApi;
+
+    @Inject
+    AccountHierarchyApi accountHierarchyApi;
 
     @Override
     public ActionStatus create(BusinessAccountModelDto postData) {
@@ -150,6 +156,26 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
             result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ParentListResponse findParents(CRMAccountTypeSearchDto searchDto) {
+        ParentListResponse result = new ParentListResponse();
+
+        try {
+            result.setParents(accountHierarchyApi.getParentList(searchDto, getCurrentUser()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
         }
 
         return result;

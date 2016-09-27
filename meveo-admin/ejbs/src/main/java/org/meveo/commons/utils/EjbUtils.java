@@ -91,17 +91,19 @@ public class EjbUtils {
     }
     
     /**
-     * @param serviceInterfaceName
-     * @return
+     * Return a service
+     * 
+     * @param serviceInterfaceName A simple name of a service (NOT a full classname). E.g. WorkflowService
+     * @return Service instance
      */
-	public static Object getServiceInterface(String serviceInterfaceName){
-		try {
-			InitialContext ic = new InitialContext();
-			return ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/"+serviceInterfaceName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
+    public static Object getServiceInterface(String serviceInterfaceName) {
+        try {
+            InitialContext ic = new InitialContext();
+            return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + "/" + serviceInterfaceName);
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(EjbUtils.class);
+            log.error("Failed to obtain service interface for {}", serviceInterfaceName, e);
+        }
+        return null;
+    }
 }

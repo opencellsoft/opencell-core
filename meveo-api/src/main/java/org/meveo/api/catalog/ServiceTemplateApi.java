@@ -269,9 +269,9 @@ public class ServiceTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         // check for recurring charges
@@ -328,9 +328,9 @@ public class ServiceTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);

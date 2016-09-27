@@ -1,53 +1,42 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml" xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{offerTemplateCategoryListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{offerTemplateCategoryListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['offerTemplateCategory.search']}"
-			backingBean="#{offerTemplateCategoryListBean}">
-			<hftl:searchField label="#{messages['BusinessEntity.code']}"
-				field="code" />
-			<hftl:searchField label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:searchField label="#{messages['enableEntity.disabled']}"
-				field="disabled" />
-		</hftl:searchPanel>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.catalog.offerCategories']}" outcome="offerTemplateCategories" />
+            </p:breadCrumb>
+        </h:form>
 
-		<h:form prependId="false">
-			<p:panel id="results_panel" width="100">
-				<p:treeTable value="#{offerTemplateCategoryListBean.hierarchy}"
-					var="entity" resizableColumns="true">
-					<hftl:column backingBean="#{offerTemplateCategoryBean}"
-						label="#{messages['BusinessEntity.code']}" field="code" />
-					<hftl:column label="#{messages['commons.name']}" field="name" />
-					<hftl:column label="#{messages['BusinessEntity.description']}"
-						field="description" />
-					<hftl:column label="#{messages['enableEntity.active']}"
-						field="active" isMessage="true" />
+        <hftl:searchPanel backingBean="#{offerTemplateCategoryListBean}">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+        </hftl:searchPanel>
 
-					<hftl:actionsColumn width="100"
-						permission="#{identity.hasPermission('catalog','catalogManagement')}"
-						renderEnableLink="true" renderDuplicateLink="false"
-						backingBean="#{offerTemplateCategoryBean}" />
-				</p:treeTable>
-			</p:panel>
-		</h:form>
+        <h:form prependId="false">
+            <p:panel id="results_panel" width="100">
+                <p:treeTable value="#{offerTemplateCategoryListBean.hierarchy}" var="entity" resizableColumns="true">
+                    <hftl:column backingBean="#{offerTemplateCategoryBean}" label="#{messages['BusinessEntity.code']}" field="code" />
+                    <hftl:column label="#{messages['commons.name']}" field="name" />
+                    <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+                    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 
-	</ui:define>
+                    <hftl:actionsColumn width="100" permission="#{identity.hasPermission('catalog','catalogManagement')}" renderEnableLink="true" renderDuplicateLink="false"
+                        backingBean="#{offerTemplateCategoryBean}" />
+                </p:treeTable>
+            </p:panel>
+        </h:form>
+
+    </ui:define>
 
 </ui:composition>

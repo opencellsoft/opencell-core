@@ -9,9 +9,6 @@
 				listener="#{offerTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
 
 	<ui:define name="body">
 
@@ -21,6 +18,8 @@
 				field="code" />
 			<hftl:searchField label="#{messages['offerTemplate.description']}"
 				field="description" />
+			<hftl:searchField label="#{messages['offerTemplate.name']}"
+				field="name" />
 			<hftl:searchField label="#{messages['commons.status']}"
 				field="status" />
 			<hftl:searchField label="#{messages['offerTemplate.template']}"
@@ -38,10 +37,13 @@
 			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['offerTemplate.description']}"
 				field="description" />
+			<hftl:column label="#{messages['offerTemplate.name']}" field="name" />
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}"
 				field="offerServiceTemplates" isList="true"
 				valueLabelField="serviceTemplate.code"
 				valueIdField="serviceTemplate.id" entityView="serviceTemplateDetail" />
+			<hftl:column label="#{messages['businessOffer.title']}"
+				field="businessOfferModel.code" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn

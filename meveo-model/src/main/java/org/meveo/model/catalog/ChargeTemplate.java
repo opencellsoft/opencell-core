@@ -44,7 +44,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -173,11 +172,6 @@ public class ChargeTemplate extends BusinessCFEntity {
 	public void setUnitNbDecimal(int unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
 	}
-
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
-    }
 
 	/**
 	 * @return the roundingMode

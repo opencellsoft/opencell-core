@@ -8,23 +8,20 @@
 			<f:viewParam name="tab" value="#{automatedPaymentBean.activeTab}" />
 		</f:metadata>
 	</ui:define>
-    
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+
     <ui:define name="body">
         <hftl:formPanel  edit="#{true}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}" showDeleteButton="false" showEditButton="true" showBackButton="false" formId="apFormId">
 				<p:tabView id="tabView" activeIndex="#{automatedPaymentBean.activeTab}"  >
 				<p:tab title="#{messages['customer.tab.information']}"> 
-                    <hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.depositDate']}" field="depositDate" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.dueDate']}" field="dueDate" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" isMessage="true" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" maxlength="50" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" disabled="true" />
-                    <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
-                 </p:tab>
+            <hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.depositDate']}" field="depositDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.dueDate']}" field="dueDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" isMessage="true" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" maxlength="50" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
+         </p:tab>
 				<hftl:customFields backingBean="#{automatedPaymentBean}" messagesId=":apFormId:messages" />
 			</p:tabView>
         </hftl:formPanel>  

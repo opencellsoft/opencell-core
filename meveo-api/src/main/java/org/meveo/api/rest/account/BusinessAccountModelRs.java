@@ -12,7 +12,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
+import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -50,4 +52,14 @@ public interface BusinessAccountModelRs extends IBaseRs {
     @PUT
     @Path("/install")
     public ActionStatus install(BusinessAccountModelDto moduleDto);
+
+    /**
+     * Find parent entities based on account hierarchy code.
+     *
+     * @param searchDto
+     * @return
+     */
+    @POST
+    @Path("/findParents")
+    ParentListResponse findParents(CRMAccountTypeSearchDto searchDto);
 }

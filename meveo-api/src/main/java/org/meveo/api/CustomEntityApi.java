@@ -179,11 +179,10 @@ public class CustomEntityApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
-
     }
 
     public void updateEntityInstance(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
@@ -214,11 +213,10 @@ public class CustomEntityApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
-
     }
 
     public void removeEntityInstance(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {

@@ -58,6 +58,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
@@ -66,6 +67,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
@@ -83,6 +85,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
+    public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
 
     @Inject
     @MeveoJpa
@@ -124,6 +127,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @EJB
+    private CatMessagesService catMessagesService;
+    
     /**
      * Constructor.
      */
@@ -353,6 +359,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
         }
 
+        // Remove description translations
+        if (e instanceof BusinessEntity && e.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
+            catMessagesService.batchRemove((BusinessEntity) e);
+        }
+        
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
     }
 
@@ -635,10 +646,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key) || SEARCH_CURRENT_PROVIDER.equals(key) || SEARCH_CURRENT_USER.equals(key)) {
                         continue;
                     }
-
+                                        
+                    // condition field1 field2
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                    String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
 
                     Object filter = filters.get(key);
                     if (filter != null) {
@@ -748,6 +761,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.endOrClause();
 
                             // if not ranged search
+                        } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
+                        	queryBuilder.startOrClause();
+                            queryBuilder.addSql("a." + fieldName + " like '%" + filter + "%'");
+                            queryBuilder.addSql("a." + fieldName2 + " like '%" + filter + "%'");
+                            queryBuilder.endOrClause();
                         } else {
                             if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
                                 queryBuilder.addSql("a." + fieldName + " is null ");

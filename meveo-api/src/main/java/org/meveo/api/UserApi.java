@@ -46,11 +46,11 @@ public class UserApi extends BaseApi {
 	@Inject
 	private UserService userService;
 
-	@Inject
+    @Inject
 	private SecuredBusinessEntityService securedBusinessEntityService;
     
 	@Inject
-	private UserHierarchyLevelService userHierarchyLevelService;
+    private UserHierarchyLevelService userHierarchyLevelService;
 
 	public void create(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -74,7 +74,8 @@ public class UserApi extends BaseApi {
 			postData.getRoles().add(postData.getRole());
 		}
 
-        // Find provider and check if user has access to manage that provider data
+		// Find provider and check if user has access to manage that provider
+		// data
 		Provider provider = null;
 		if (!StringUtils.isBlank(postData.getProvider())) {
 			provider = providerService.findByCode(postData.getProvider());
@@ -85,8 +86,7 @@ public class UserApi extends BaseApi {
 			provider = currentUser.getProvider();
 		}
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
-            .equals(currentUser.getProvider())))) {
+		if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.equals(currentUser.getProvider())))) {
 			throw new LoginException("User has no permission to manage users for provider " + provider.getCode());
 		}
 
@@ -127,19 +127,12 @@ public class UserApi extends BaseApi {
 	}
 
 	public void update(UserDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
 		if (StringUtils.isBlank(postData.getUsername())) {
 			missingParameters.add("username");
 		}
-		if (StringUtils.isBlank(postData.getEmail())) {
-			missingParameters.add("email");
-		}
-		if ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole())) {
-			missingParameters.add("roles");
-		}
-
 		handleMissingParameters();
-
+		
+		//we support old dto that containt only one role
 		if (!StringUtils.isBlank(postData.getRole())) {
 			if (postData.getRoles() == null) {
 				postData.setRoles(new ArrayList<String>());
@@ -173,13 +166,24 @@ public class UserApi extends BaseApi {
         }
 
 		user.setUserName(postData.getUsername());
-		user.setEmail((postData.getEmail()));
-		user.setNewPassword(postData.getPassword());
+		if (!StringUtils.isBlank(postData.getEmail())) {
+			user.setEmail(postData.getEmail());
+		}
+		if (!StringUtils.isBlank(postData.getPassword())) {
+			user.setNewPassword(postData.getPassword());
+		}
 		Name name = new Name();
-		name.setLastName(postData.getLastName());
-		name.setFirstName(postData.getFirstName());
-		user.setName(name);
-		user.setRoles(roles);
+		if (!StringUtils.isBlank(postData.getLastName())) {
+			name.setLastName(postData.getLastName());
+			user.setName(name);
+		}
+		if (!StringUtils.isBlank(postData.getFirstName())) {
+			name.setFirstName(postData.getFirstName());
+			user.setName(name);
+		}
+		if (!roles.isEmpty()) {
+			user.setRoles(roles);
+		}
 		user.setSecuredEntities(securedEntities);
         user.setUserLevel(userHierarchyLevel);
 
@@ -188,6 +192,9 @@ public class UserApi extends BaseApi {
 
 	private Set<Role> extractRoles(UserDto postData, Provider provider) throws EntityDoesNotExistsException {
 		Set<Role> roles = new HashSet<Role>();
+		if(postData.getRoles() == null){
+			return roles;
+		}
 		for (String rl : postData.getRoles()) {
 			Role role = roleService.findByName(rl, provider);
 			if (role == null) {

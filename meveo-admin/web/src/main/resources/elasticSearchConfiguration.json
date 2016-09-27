@@ -8,7 +8,7 @@
 		"Seller": {
 			"index": "accounts"
 		},
-		"OfferTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
+		"OfferTemplate,BundleTemplate,ProductTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
 			"index": "catalog"
 		},
 		"ChargeTemplate": {
@@ -21,6 +21,9 @@
 		"CustomEntityInstance": {
 			"index": "custom",
 			"type": "#{cetCode}"
+		},
+		"UserHierarchyLevel": {
+			"index": "users"
 		}
 	},
 	"entityFieldMapping": {
@@ -36,6 +39,12 @@
 		},
 		"ChargeTemplate": {
 			"chargeType": "getClass().getSimpleName()"
+		},
+		"ProductOffering": {
+			"name": "name"
+		},
+		"OfferTemplateCategory": {
+			"name": "name"
 		}
 	},
 	"customFieldTemplates": {
@@ -108,6 +117,32 @@
 				}
 			}
 		},
+		"<provider>_users_v1": {
+			"settings": {
+				"index": {
+					"number_of_shards": "5",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_users": {
+					
+				}
+			},
+			"mappings": {
+				"UserHierarchyLevel": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
 		"<provider>_catalog_v1": {
 			"settings": {
 				"index": {
@@ -121,6 +156,20 @@
 				}
 			},
 			"mappings": {
+				"ProductTemplate": {
+					"properties": {
+						"code": {
+							"type": "string",
+							"index": "not_analyzed"
+						},
+						"description": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						}
+					}
+				},
 				"OfferTemplate": {
 					"properties": {
 						"code": {
@@ -128,6 +177,9 @@
 							"index": "not_analyzed"
 						},
 						"description": {
+							"type": "string"
+						},
+						"name": {
 							"type": "string"
 						}
 					}
@@ -161,6 +213,9 @@
 							"index": "not_analyzed"
 						},
 						"description": {
+							"type": "string"
+						},
+						"name": {
 							"type": "string"
 						}
 					}

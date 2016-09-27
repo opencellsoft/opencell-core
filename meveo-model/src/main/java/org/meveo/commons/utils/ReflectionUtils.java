@@ -183,7 +183,7 @@ public class ReflectionUtils {
         return entityClass;
     }
     
-    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {       
+    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
         return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
     }
     
@@ -192,7 +192,7 @@ public class ReflectionUtils {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
     }
-    
+
     /**
      * Find a class by its simple name that is a subclass of a certain class
      * 

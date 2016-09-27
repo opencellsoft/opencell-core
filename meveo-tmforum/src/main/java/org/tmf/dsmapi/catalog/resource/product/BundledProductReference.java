@@ -164,7 +164,8 @@ public class BundledProductReference extends AbstractEntityReference implements 
         return "BundledProductReference{" + "referencedId=" + referencedId + ", referencedHref=" + referencedHref + ", referencedName=" + referencedName + ", referencedLifecycleStatus=" + referencedLifecycleStatus + ", entity=" + entity + '}';
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void fetchEntity(Class theClass, int depth) {
 //        entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
     }

@@ -29,61 +29,66 @@ import javax.validation.constraints.Size;
 @Embeddable
 public class Name implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne()
-	@JoinColumn(name = "TITLE_ID")
-	private Title title;
+    @ManyToOne()
+    @JoinColumn(name = "TITLE_ID")
+    private Title title;
 
-	@Column(name = "FIRSTNAME", length = 50)
-	@Size(max = 50)
-	protected String firstName;
+    @Column(name = "FIRSTNAME", length = 50)
+    @Size(max = 50)
+    protected String firstName;
 
-	@Column(name = "LASTNAME", length = 50)
-	@Size(max = 50)
-	protected String lastName;
+    @Column(name = "LASTNAME", length = 50)
+    @Size(max = 50)
+    protected String lastName;
 
-	public Name() {
-	}
+    public Name() {
+    }
 
-	public Name(Title title, String firstName, String lastName) {
-		this.title = title;
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
+    public Name(Title title, String firstName, String lastName) {
+        this.title = title;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
-	public Title getTitle() {
-		return title;
-	}
+    public Title getTitle() {
+        return title;
+    }
 
-	public void setTitle(Title title) {
-		this.title = title;
-	}
+    public void setTitle(Title title) {
+        this.title = title;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return (title != null ? ((title.getDescription() != null ? title.getDescription() : title.getCode()) + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
                 + lastName : "")) : "");
     }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    public String getFullName() {
+        return (title != null ? ((title.getDescription() != null ? title.getDescription() : title.getCode()) + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
+                + lastName : "")) : "");
+    }
 }

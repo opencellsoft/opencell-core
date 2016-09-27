@@ -95,9 +95,9 @@ public class JobInstanceApi extends BaseApi {
 		// Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
 	}
@@ -161,9 +161,9 @@ public class JobInstanceApi extends BaseApi {
             // Populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), jobInstance, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                throw e;
             }
 			
 		}

@@ -30,7 +30,7 @@
     <cc:attribute name="messagesId" required="true" />
     <cc:attribute name="prefix" required="true" />
     <cc:attribute name="disabled" default="#{!cc.attrs.entity.transient and !cc.attrs.cft.allowEdit}" />
-    <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldsValuesByUUID(cc.attrs.entity.uuid)}" />
+    <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldValueHolderByUUID(cc.attrs.entity.uuid)}" />
 </cc:interface>
 
 <cc:implementation>

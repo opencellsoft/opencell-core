@@ -8,10 +8,6 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
         <p:panel>
             <h:form id="crumbmenuForm">
@@ -42,9 +38,10 @@
                         <p:outputPanel id="dunningPlanTransition_panel">
                             <p:messages id="messages" rendered="#{!workflowBean.showDetailPage}" />
                             <hftl:dataList backingBean="#{wfTransitionBean}" dataModel="#{workflowBean.entity.transitions}" sortBy="fromStatus"
-                                resultsId="dunningPlanTransitions_results">
+                                resultsId="dunningPlanTransitions_results" exportXlsxButton="false">
                                 <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
                                 <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
+                                <hftl:column label="#{messages['businessEntity.description']}" field="description" />
                                 <hftl:column label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" />
 
                                 <p:column styleClass="actions-column" rendered="#{workflowBean.edit}">
@@ -109,7 +106,7 @@
                                                                         update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" event="valueChange">
                                                                     </p:ajax>
                                                                     <f:selectItem itemLabel="#{messages['transition.selectRule']}" itemValue="" noSelectionOption="true" />
-                                                                    <f:selectItems value="#{workflowBean.wfTransitionRulesName}" />
+                                                                    <f:selectItems value="#{workflowBean.wfDecisionRulesName}" />
                                                                 </p:selectOneMenu>
                                                             </hftl:decorateFormField>
 
@@ -142,8 +139,8 @@
                                                             <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}"
                                                                 label="#{messages['decisionRuleNewValue.value']}"
                                                                 rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}">
-                                                                <p:spinner id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
-                                                                    required="true" />
+                                                                <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                                                    required="true" converter="javax.faces.BigDecimal"/>
                                                             </hftl:decorateFormField>
 
                                                             <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}"
@@ -172,11 +169,11 @@
                                                                 <h:panelGrid columns="4">
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}"
                                                                         value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
-                                                                    <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" />
+                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" converter="javax.faces.BigDecimal"/>                                                                    
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange"
                                                                         value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
-                                                                    <p:spinner id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
-                                                                        maxlength="10" />
+                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
+                                                                        maxlength="10" converter="javax.faces.BigDecimal" />
                                                                 </h:panelGrid>
                                                             </hftl:decorateFormField>
 
@@ -212,7 +209,7 @@
                                                     <p:tooltip for="addCriteriaBtn" value="#{messages['decisionRule.add']}" showEffect="slide" hideEffect="slide" />
                                                     <p:commandButton id="addCriteriaBtn" action="#{workflowBean.addNewRule()}" process="@this,decisionRulesPanel"
                                                         value="#{messages['decisionRule.add']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
-                                                        update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" />
+                                                        update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel :tabView:formDunningPlanTransition:messages" />
                                                 </p:panel>
                                             </p:tab>
                                             <p:tab title="#{messages['dunningPlan.actions']}">
@@ -239,12 +236,12 @@
 
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}">
+                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}" componentWidth="75">
                                                                 <p:inputTextarea id="actionEl#{actionIndex.index}" value="#{action.actionEl}" required="true" autoResize="true" style="width:100%;"
                                                                     maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}">
+                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}" componentWidth="75">
                                                                 <p:inputTextarea id="conditionElAction#{actionIndex.index}" value="#{action.conditionEl}" autoResize="true"
                                                                     style="width:100%;" maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>

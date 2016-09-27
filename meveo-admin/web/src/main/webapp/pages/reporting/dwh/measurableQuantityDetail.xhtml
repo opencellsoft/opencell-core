@@ -1,18 +1,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
+	<ui:define name="metadata">
+		<f:metadata>
             <f:viewParam name="objectId" value="#{measurableQuantityBean.objectId}" />
-        </f:metadata>
-    </ui:define>
-
-    <ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
+		</f:metadata>
 	</ui:define>
 
 	<ui:define name="body">
@@ -26,10 +21,12 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel
-			backingBean="#{measurableQuantityBean}" columns="1">
+		<hftl:formPanel backingBean="#{measurableQuantityBean}" columns="1">
 			<hftl:formField label="#{messages['entity.measurablequantity.code']}"
 				field="code" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.description']}"
+				field="description" />
 			<hftl:formField
 				label="#{messages['entity.measurablequantity.dimension1']}"
 				field="dimension1" />
@@ -44,10 +41,11 @@
 				field="dimension4" />
 			<hftl:formField
 				label="#{messages['entity.measurablequantity.sqlQuery']}"
-				field="sqlQuery" textArea="true" maxlength="2000" componentWidth="100"/>
+				field="sqlQuery" textArea="true" maxlength="2000"
+				componentWidth="100" />
 			<hftl:formField
 				label="#{messages['entity.measuredvalue.measurementPeriod']}"
-				field="measurementPeriod" required="true"/>
+				field="measurementPeriod" required="true" />
 			<hftl:formField
 				label="#{messages['entity.measurablequantity.lastMeasureDate']}"
 				field="lastMeasureDate" />
@@ -57,10 +55,13 @@
 			<hftl:formField
 				label="#{messages['entity.measurablequantity.additive']}"
 				field="additive" />
-			<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!measurableQuantityBean.entity.transient}" newLine="true">
-                <h:outputText value="#{measurableQuantityBean.getPartOfModules()}" />
-            </hftl:decorateFormField>
-			
+			<hftl:decorateFormField
+				label="#{messages['meveoModule.partOfModules']}"
+				rendered="#{!measurableQuantityBean.entity.transient}"
+				newLine="true">
+				<h:outputText value="#{measurableQuantityBean.getPartOfModules()}" />
+			</hftl:decorateFormField>
+
 		</hftl:formPanel>
 
 	</ui:define>

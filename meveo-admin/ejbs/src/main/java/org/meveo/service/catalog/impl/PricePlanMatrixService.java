@@ -730,4 +730,17 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<PricePlanMatrix> listByEventCodeWithOrder(String eventCode, Provider provider, String priority) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p", null, provider);
+		qb.addCriterion("eventCode", "=", eventCode, true);
+		qb.addOrderCriterion(priority, true);
+
+		try {
+			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 }

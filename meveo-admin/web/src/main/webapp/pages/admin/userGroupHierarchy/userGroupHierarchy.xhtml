@@ -2,15 +2,21 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
-        <p:panel header="#{messages['userGroupHierarchy.panel']}">
+
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem value="#{messages['menu.userGroupHierarchy']}" outcome="users" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+
+        <p:panel>
             <p:messages id="messages" />
             <h:panelGroup layout="block" styleClass="col2-set">
-                <h:panelGroup id="userGroupPanel" layout="block" styleClass="col1">
+                <h:panelGroup id="userGroupPanel" layout="block" styleClass="col1 Responsive100">
                     <p:panel header="#{messages['userGroupHierarchy.userGroupLevelHierarchy']}">
                         <p:tree value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel" selectionMode="single" rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
                             <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update="messages buttons userGroupLevelDetailPanel" />
@@ -21,7 +27,7 @@
                         <h:outputText value="#{messages['userGroupHierarchy.noGroups']}" rendered="#{userHierarchyLevelBean.rootNode.childCount==0}" />
                     </p:panel>
                 </h:panelGroup>
-                <h:panelGroup layout="block" styleClass="col2">
+                <h:panelGroup layout="block" styleClass="col2 Responsive">
                     <p:panel header="#{messages['userGroupHierarchy.userGroupLevel']}" styleClass="form-panel">
                         <h:panelGroup layout="block" id="buttons" styleClass="form-panel">
                             <p:tooltip for="addUserHierarchyRootBtn" value="#{messages['userGroupHierarchy.addUserGroupRoot']}" showEffect="slide" hideEffect="slide" />
@@ -54,7 +60,7 @@
                                 <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false"
                                     ajaxSubmit="true" submitUpdate="@form userGroupPanel buttons">
                                     <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
-                                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" newLine="true" />
+                                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" newLine="true" inputStyle="width: 80%" />
                                 </hftl:formPanel>
                             </h:panelGroup>
                         </h:panelGroup>

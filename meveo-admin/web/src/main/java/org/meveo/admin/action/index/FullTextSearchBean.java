@@ -15,6 +15,11 @@ import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
 import org.meveo.service.wf.BaseEntityService;
@@ -81,6 +86,17 @@ public class FullTextSearchBean implements Serializable {
                 public User getCurrentUser() {
                     return FullTextSearchBean.this.getCurrentUser();
                 }
+
+                @Override
+                public String[] getSearchScope() {
+
+                    // Limit search scope to offers, product, offer template categories, user groups for marketing manager application
+                    if (FullTextSearchBean.this.getCurrentUser().hasRole("MARKETING_MANAGER")) {
+                        return new String[] { OfferTemplate.class.getName(), ProductTemplate.class.getName(), BundleTemplate.class.getName(),
+                                OfferTemplateCategory.class.getName(), UserHierarchyLevel.class.getName() };
+                    }
+                    return null;
+                }
             };
         }
 
@@ -139,6 +155,10 @@ public class FullTextSearchBean implements Serializable {
             BusinessEntity entity = results.get(0);
             viewInfo[0] = BaseBean.getEditViewName(entity.getClass());
             viewInfo[1] = entity.getId().toString();
+
+            if (getCurrentUser().hasRole("MARKETING_MANAGER")) {
+                viewInfo[0] = "mm_" + viewInfo[0];
+            }
 
         } else {
             log.warn("Could not resolve view and ID for {} {}", esType, code);

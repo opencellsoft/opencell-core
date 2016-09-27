@@ -6,10 +6,6 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{creationInvoiceBean.preRenderView}" />
@@ -36,7 +32,7 @@
 				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs"
 				selection="#{creationInvoiceBean.invoiceToAdd}"
 				dataModel="#{creationInvoiceBean.getInvoicesByTypeAndBA()}"
-				backingBean="#{creationInvoiceBean}"
+				backingBean="#{creationInvoiceBean}" selectionListenerBean="#{creationInvoiceBean}" selectionListenerMethod="onInvoiceSelect"
 				searchField1Label="#{messages['invoice.invoiceNumber']}"
 				searchField1="invoiceNumber"
 				column1Label="#{messages['invoice.invoiceNumber']}"

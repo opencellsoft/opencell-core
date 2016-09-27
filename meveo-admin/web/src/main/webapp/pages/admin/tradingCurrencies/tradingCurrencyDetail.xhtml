@@ -15,9 +15,6 @@
         </f:metadata>
     </ui:define>
     
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
 
 	<ui:define name="body">
 
@@ -32,7 +29,7 @@
 				column1Label="#{messages['currency.currencyCode']}"
 				column1="currencyCode"
 				column2Label="#{messages['tradingCurrency.prDescription']}"
-				column2="descriptionEn" eventBackingBean="#{tradingCurrencyBean}">
+				column2="descriptionEn" selectionListenerBean="#{tradingCurrencyBean}" selectionListenerMethod="onCurrencySelect">
 			</hftl:entityPopup>
 		</c:if>
 		<p:panel>

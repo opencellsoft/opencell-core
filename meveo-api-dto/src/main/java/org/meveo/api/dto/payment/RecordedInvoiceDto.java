@@ -8,6 +8,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -36,6 +39,14 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
 
 	public RecordedInvoiceDto() {
 		super.setType("I");
+	}
+
+	public RecordedInvoiceDto(RecordedInvoice recordedInvoice) {
+		super();
+		setMatchingStatus(recordedInvoice.getMatchingStatus());
+		setInvoiceDate(recordedInvoice.getInvoiceDate());
+		setDueDate(recordedInvoice.getDueDate());
+		setReference(recordedInvoice.getReference());
 	}
 
 	public Date getProductionDate() {

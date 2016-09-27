@@ -169,9 +169,9 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;
@@ -325,9 +325,9 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;

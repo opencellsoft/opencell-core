@@ -40,7 +40,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -452,36 +451,32 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 			if (other.seller != null) {
 				return false;
 			}
-		} else if (seller.getId() != other.seller.getId()) {
+		} else if (other.seller == null || (seller.getId() != other.seller.getId())) {
 			return false;
 		}
 		if (scriptInstance == null) {
 			if (other.scriptInstance != null) {
 				return false;
 			}
-		} else if (scriptInstance.getId() != other.scriptInstance.getId()) {
+		} else if (other.scriptInstance == null || (scriptInstance.getId() != other.scriptInstance.getId())) {
 			return false;
 		}
 		if (priority != other.priority) {
 			return false;
 		}
-        if (validityCalendar == null) {
-            if (other.validityCalendar != null) {
-                return false;
-            }
-        } else if (validityCalendar.getId() != other.getValidityCalendar().getId()) {
-            return false;
-        }
+		if (validityCalendar == null) {
+			if (other.validityCalendar != null) {
+				return false;
+			}
+		} else if (other.validityCalendar == null || (validityCalendar.getId() != other.getValidityCalendar().getId())) {
+			return false;
+		}
+		
 		return true;
 	}
 
 	@Override
 	public int compareTo(PricePlanMatrix o) {
 		return this.getPriority()-o.getPriority();
-	}
-
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
 	}
 }

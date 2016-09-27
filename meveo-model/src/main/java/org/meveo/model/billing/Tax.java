@@ -32,7 +32,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 
@@ -89,11 +88,4 @@ public class Tax extends BusinessCFEntity {
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
 	}
-
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

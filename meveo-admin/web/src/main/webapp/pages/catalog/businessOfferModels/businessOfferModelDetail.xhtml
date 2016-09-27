@@ -7,10 +7,6 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
 
         <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":moduleForm:offerSelectId_entity :businessServiceTemplates"
@@ -104,12 +100,12 @@
             </p:panel>
         </h:form>
 
-        <h:panelGroup layout="block" styleClass="form-panel-actions"
-            rendered="#{!businessOfferModelBean.entity.isTransient() and (!businessOfferModelBean.entity.downloaded or businessOfferModelBean.entity.installed)}">
-            <p:commandButton actionListener="#{businessOfferModelBean.createOfferFromBOMPopup()}" icon="ui-icon-extlink" value="#{messages['action.createOfferFromBOM']}">
-                <f:param name="objectId" value="#{businessOfferModelBean.entity.id}"></f:param>
-                <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update=":moduleForm:messages" />
-            </p:commandButton>
-        </h:panelGroup>
+<!--         <h:panelGroup layout="block" styleClass="form-panel-actions" -->
+<!--             rendered="#{!businessOfferModelBean.entity.isTransient() and (!businessOfferModelBean.entity.downloaded or businessOfferModelBean.entity.installed)}"> -->
+<!--             <p:commandButton actionListener="#{businessOfferModelBean.createOfferFromBOMPopup()}" icon="ui-icon-extlink" value="#{messages['action.createOfferFromBOM']}"> -->
+<!--                 <f:param name="objectId" value="#{businessOfferModelBean.entity.id}"></f:param> -->
+<!--                 <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update=":moduleForm:messages" /> -->
+<!--             </p:commandButton> -->
+<!--         </h:panelGroup> -->
     </ui:define>
 </ui:composition>

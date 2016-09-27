@@ -97,9 +97,9 @@ public class TaxApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         return result;
@@ -170,9 +170,9 @@ public class TaxApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         return result;
@@ -217,9 +217,6 @@ public class TaxApi extends BaseApi {
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
-
-        // remove cat messages
-        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getCode(),provider);
 
         taxService.remove(tax);
         return result;

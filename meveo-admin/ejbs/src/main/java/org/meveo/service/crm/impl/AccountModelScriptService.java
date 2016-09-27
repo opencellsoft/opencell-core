@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -17,9 +18,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.account.AccountScript;
 import org.meveo.service.script.account.AccountScriptInterface;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
 @Startup
 public class AccountModelScriptService implements Serializable {
@@ -30,35 +28,39 @@ public class AccountModelScriptService implements Serializable {
     private ScriptInstanceService scriptInstanceService;
 
     // Interface methods
-    public void createAccount(String scriptCode, Seller seller, AccountEntity account, User currentUser) throws BusinessException {
+    public void createAccount(String scriptCode, Seller seller, AccountEntity account, CRMAccountHierarchyDto postData, User currentUser) throws BusinessException {
         AccountScriptInterface scriptInterface = (AccountScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, account);
         scriptContext.put(AccountScript.CONTEXT_SELLER, seller);
+        scriptContext.put(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO,postData);
         scriptInterface.createAccount(scriptContext, currentUser);
     }
 
-    public void updateAccount(String scriptCode, Seller seller, AccountEntity account, User currentUser) throws BusinessException {
+    public void updateAccount(String scriptCode, Seller seller, AccountEntity account,CRMAccountHierarchyDto postData, User currentUser) throws BusinessException {
         AccountScriptInterface scriptInterface = (AccountScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, account);
         scriptContext.put(AccountScript.CONTEXT_SELLER, seller);
+        scriptContext.put(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO,postData);
         scriptInterface.updateAccount(scriptContext, currentUser);
     }
 
-    public void terminateAccount(String scriptCode, Seller seller, AccountEntity account, User currentUser) throws BusinessException {
+    public void terminateAccount(String scriptCode, Seller seller, AccountEntity account,CRMAccountHierarchyDto postData, User currentUser) throws BusinessException {
         AccountScriptInterface scriptInterface = (AccountScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, account);
         scriptContext.put(AccountScript.CONTEXT_SELLER, seller);
+        scriptContext.put(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO,postData);
         scriptInterface.terminateAccount(scriptContext, currentUser);
     }
 
-    public void closeAccount(String scriptCode, Seller seller, AccountEntity account, User currentUser) throws BusinessException {
+    public void closeAccount(String scriptCode, Seller seller, AccountEntity account,CRMAccountHierarchyDto postData, User currentUser) throws BusinessException {
         AccountScriptInterface scriptInterface = (AccountScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, account);
         scriptContext.put(AccountScript.CONTEXT_SELLER, seller);
+        scriptContext.put(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO,postData);
         scriptInterface.closeAccount(scriptContext, currentUser);
     }
 

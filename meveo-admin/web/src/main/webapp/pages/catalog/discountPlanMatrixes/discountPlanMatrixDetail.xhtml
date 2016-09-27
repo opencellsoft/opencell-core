@@ -6,21 +6,17 @@
             <f:viewParam name="objectId" value="#{discountPlanMatrixBean.objectId}" />
         </f:metadata>
     </ui:define>
-    
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
 
     <ui:define name="body">
 
         <hftl:entityPopup id="discountPlanMatChargePopup" header="#{messages['charge.popup.header']}" backingBean="#{chargeTemplateBean}"
             searchField1Label="#{messages['charge.code']}" searchField1="code" column1Label="#{messages['charge.description']}" column1="code"
-            column2Label="#{messages['businessEntity.description']}" column2="description" eventBackingBean="#{discountPlanMatrixBean}"
+            column2Label="#{messages['businessEntity.description']}" column2="description"
             updateField="hftl::formDiscountPlan:chargeSelectId">
             <!-- 			selection="#{chargeTemplateBean.entity}" -->
         </hftl:entityPopup>
 
-        <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{offerTemplateBean}" eventBackingBean="#{discountPlanMatrixBean}"
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{offerTemplateBean}" 
             searchField1Label="#{messages['offerTemplate.code']}" searchField1="code" searchField2Label="#{messages['offerTemplate.description']}" searchField2="description"
             column1Label="#{messages['offerTemplate.code']}" column1="code" column2Label="#{messages['offerTemplate.description']}" column2="description"
             selection="#{discountPlanMatrixBean.entity.offerTemplate}" lazy="false" dataModel="#{offerTemplateBean.listActive}" updateField="hftl::formDiscountPlan:offerSelectId">

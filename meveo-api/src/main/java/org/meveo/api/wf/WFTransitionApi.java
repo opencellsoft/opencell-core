@@ -166,8 +166,11 @@ public class WFTransitionApi extends BaseApi {
 	 */
 	public void createOrUpdate(Workflow workflow, WFTransitionDto wfTransitionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
                               EntityAlreadyExistsException, BusinessException, BusinessApiException {
-		WFTransition wfTransition  = wfTransitionService.findWFTransitionByUUID(wfTransitionDto.getUuid(), currentUser.getProvider());
-		if(wfTransition == null) {
+        WFTransition wfTransition = null;
+        if (wfTransitionDto.getUuid() != null) {
+            wfTransition = wfTransitionService.findWFTransitionByUUID(wfTransitionDto.getUuid(), currentUser.getProvider());
+        }
+		if (wfTransition == null) {
 			create(workflow, wfTransitionDto, currentUser);
 		} else {
 			update(workflow, wfTransitionDto, currentUser);

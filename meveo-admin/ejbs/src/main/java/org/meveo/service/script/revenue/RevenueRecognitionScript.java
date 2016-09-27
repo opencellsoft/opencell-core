@@ -47,7 +47,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		                 return c0.getRevenueDate().compareTo(c1.getRevenueDate());
 		             }
 		        });
-				BillingAccount billingAccount= chargeInstance.getSubscription().getUserAccount()
+				BillingAccount billingAccount= chargeInstance.getUserAccount()
 						.getBillingAccount();
 				BillingCycle billingCycle = billingAccount.getBillingCycle();
 		        List<Date> invoicingDates = new ArrayList<>();

@@ -6,20 +6,26 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -31,6 +37,8 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.offer.OfferModelScriptService;
@@ -83,22 +91,29 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 	@Inject
 	private ServiceModelScriptService serviceModelScriptService;
-	
+
 	@Inject
 	private OfferModelScriptService offerModelScriptService;
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String prefix, String offerDescription, List<ServiceConfigurationDto> serviceCodes,
-			User currentUser) throws BusinessException {
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
+			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
+		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, currentUser);
+	}
+
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name,
+			String offerDescription, List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams,
+			List<OfferTemplateCategory> offerTemplateCategories, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
+		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
 		// 1 create offer
 		OfferTemplate newOfferTemplate = new OfferTemplate();
 
 		// check if offer already exists
-		if (offerTemplateService.findByCode(prefix + bomOffer.getCode(), currentUser.getProvider()) != null) {
+		if (offerTemplateService.findByCode(code, currentUser.getProvider()) != null) {
 			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 		}
-		
+
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
 			try {
 				offerModelScriptService.beforeCreateOfferFromBOM(customFields, businessOfferModel.getScript().getCode(), currentUser);
@@ -106,15 +121,37 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 				log.error("Failed to execute a script {}", businessOfferModel.getScript().getCode(), e);
 			}
 		}
-
-		newOfferTemplate.setCode(prefix);
+		
+		newOfferTemplate.setCode(code);		
+		
 		newOfferTemplate.setDescription(offerDescription);
-
+		if (StringUtils.isBlank(name)) {
+			newOfferTemplate.setName(bomOffer.getName());
+		} else {
+			newOfferTemplate.setName(name);
+		}
+		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
+		newOfferTemplate.setValidTo(bomOffer.getValidTo());
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
+		newOfferTemplate.setImage(bomOffer.getImage());
+		if (bomOffer.getAttachments() != null) {
+			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
+		}
+		if (offerTemplateCategories != null) {
+			newOfferTemplate.getOfferTemplateCategories().addAll(offerTemplateCategories);
+		}
+		if (channels != null) {
+			newOfferTemplate.getChannels().addAll(channels);
+		}
+		if (bams != null) {
+			newOfferTemplate.getBusinessAccountModels().addAll(bams);
+		}
+		newOfferTemplate.setActive(true);
+		newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
 
-		prefix = prefix + "_";
+		String prefix = newOfferTemplate.getId() + "_";
 
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		// 2 create services
@@ -510,16 +547,28 @@ public class BusinessOfferModelService extends BusinessService<BusinessOfferMode
 
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
-		
+
 		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
-				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(),
-						currentUser);
+				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(), currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
 			}
 		}
 
+		// save the cf
+
 		return newOfferTemplate;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BusinessOfferModel> listInstalled(Provider provider) {
+		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b", null, null, provider);
+		qb.addCriterion("installed", "=", true, true);
+		try {
+			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }

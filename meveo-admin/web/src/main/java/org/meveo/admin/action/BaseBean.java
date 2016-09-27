@@ -69,8 +69,6 @@ import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
@@ -79,7 +77,6 @@ import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -117,12 +114,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     protected PermissionService permissionService;
-
-    @Inject
-    protected CustomFieldTemplateService customFieldTemplateService;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private CatMessagesService catMessagesService;
@@ -393,20 +384,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
 
+        // Save description translations
         if (!isMultilanguageEntity()) {
             entity = saveOrUpdate(entity);
 
-        } else {
+        } else if (entity instanceof BusinessEntity) {
             if (entity.getId() != null) {
 
-                for (String msgKey : languageMessagesMap.keySet()) {
-                    String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity)entity, msgKey,currentProvider);
+                for (String languageKey : languageMessagesMap.keySet()) {
+                    String description = languageMessagesMap.get(languageKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());
-                    } else if(entity instanceof BusinessEntity){
-                        CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
+                    } else {
+                        CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
                         catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
@@ -418,7 +410,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages((BusinessEntity)entity, msgKey, description);
+                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, msgKey, description);
                     catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
@@ -942,16 +934,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return
      */
-    public boolean isEdit() {
-        return true;
-    }
+	public boolean isEdit() {
+		if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit.get())) {
+			return true;
+		}
+
+		return Boolean.valueOf(edit.get());
+	}
 
     protected void clearObjectId() {
         objectId = null;
-    }
-
-    public void onRowSelect(SelectEvent event) {
-
     }
 
     protected User getCurrentUser() {

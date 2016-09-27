@@ -12,11 +12,7 @@
                 listener="#{dunningHistoryListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
+        
     <ui:define name="body">
     	
     	<custom:listPanel label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryListBean}">

@@ -19,6 +19,7 @@
 package org.meveo.service.wf;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
@@ -39,6 +41,7 @@ import org.meveo.admin.wf.IWorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -77,6 +80,11 @@ public class WorkflowService extends BusinessService<Workflow> {
             .setParameter("disabled", false).setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
     }
 
+    public List<Workflow> findByWFTypeWithoutStatus(String wfType, Provider provider) {
+        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType and provider=:provider")
+            .setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
+    }
+
     /**
      * Return all workflowType classes
      * 
@@ -87,7 +95,13 @@ public class WorkflowService extends BusinessService<Workflow> {
         Set<Class<?>> classes = null;
         List<Class<?>> result = new ArrayList<Class<?>>();
         classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
-        result.addAll(classes);
+        if (CollectionUtils.isNotEmpty(classes)) {
+            for (Class<?> cls : classes) {
+                if (!Modifier.isAbstract(cls.getModifiers())) {
+                    result.add(cls);
+                }
+            }
+        }
         Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces(provider);
 
         if (mmap != null) {
@@ -181,7 +195,6 @@ public class WorkflowService extends BusinessService<Workflow> {
      * Execute all matching workflows on the given entity
      * 
      * @param entity Entity to execute worklows on
-     * @param workflowCode A concrete worklfow to execute (optional)
      * @param currentUser Current user
      * @return Updated entity
      * @throws BusinessException
@@ -207,7 +220,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param currentUser Current user
      * @throws BusinessException
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public IEntity executeWorkflow(IEntity entity, Workflow workflow, User currentUser) throws BusinessException {
         try {
 
@@ -229,11 +242,14 @@ public class WorkflowService extends BusinessService<Workflow> {
                     for (WFAction wfAction : listWFAction) {
                         if (matchExpression(wfAction.getConditionEl(), entity)) {
                             log.debug("Processing action: {} on entity {}", wfAction);
-                            executeExpression(wfAction.getActionEl(), entity);
-                            log.trace("Workflow action executed, entity will be refreshed. Action {}, entity {}", wfAction, entity);
-                            // entity = baseEntityService.refreshOrRetrieve(entity);
+                            Object actionResult = executeExpression(wfAction.getActionEl(), entity);
+                            log.trace("Workflow action executed. Action {}, entity {}", wfAction, entity);
+                            if (entity.equals(actionResult)){
+                                entity = (IEntity) actionResult;
+                            }
                         }
                     }
+                    wfType.setEntity((BaseEntity) entity);
                     wfType.changeStatus(wfTransition.getToStatus(), currentUser);
 
                     log.trace("Entity status will be updated to {}. Entity {}", entity, wfTransition.getToStatus());
@@ -289,11 +305,12 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     }
 
-    private void executeExpression(String expression, Object object) throws BusinessException {
+    private Object executeExpression(String expression, Object object) throws BusinessException {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("entity", object);
 
-        ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
     }
+
 }

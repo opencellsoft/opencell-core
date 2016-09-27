@@ -78,12 +78,12 @@ public class PDFParametersConstruction {
 					.getResource("reports/fonts.jar") });
 
 	public Map<String, Object> constructParameters(Invoice invoice, User currentUser) {
-		return constructParameters(invoice.getId(), currentUser, invoice.getProvider());
+		return constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public Map<String, Object> constructParameters(Long invoiceId, User currentUser, Provider provider) {
 		try {
+			provider = currentUser.getProvider();
 			currencyFormat.setMinimumFractionDigits(2);
 			Invoice invoice = invoiceService.findById(invoiceId, provider);
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -213,7 +213,7 @@ public class PDFParametersConstruction {
 		if (customerAccount.getName() != null) {
 		    name="";
 		    if (customerAccount.getName().getTitle() != null){
-		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage,invoice.getProvider())+" ";
+		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage)+" ";
 		    }
 		    
 			name += customerAccount.getName().getFirstName() == null ? ""

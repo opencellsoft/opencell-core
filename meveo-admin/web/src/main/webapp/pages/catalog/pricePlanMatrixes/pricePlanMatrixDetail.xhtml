@@ -4,10 +4,6 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="metadata">
 		<f:metadata>
             <f:viewParam name="objectId" value="#{pricePlanMatrixBean.objectId}" />
@@ -19,7 +15,6 @@
 		<!-- 	   <hftl:entityPopup id="offerPopup" -->
 		<!-- 			header="#{messages['offer.popup.header']}" -->
 		<!-- 			backingBean="#{offerTemplateBean}" -->
-		<!-- 			eventBackingBean="#{pricePlanMatrixBean}" -->
 		<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
 		<!-- 			searchField1="code" -->
 		<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
@@ -39,7 +34,7 @@
 			searchField1Label="#{messages['charge.code']}" searchField1="code"
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
-			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
+			column2="description" selectionListenerBean="#{pricePlanMatrixBean}" selectionListenerMethod="onChargeSelect"
 			updateField=":formPricePlan:tabView:chargeSelectId :formPricePlan:tabView:chargeSelectId_text :formPricePlan:tabView:pricePlanCode">
 		</hftl:entityPopup>
 

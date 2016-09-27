@@ -33,8 +33,8 @@
     <c:if test="${empty(componentWidth)}">
         <c:set var="componentWidth" value="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP?45:100}" />
     </c:if>
-    <c:set var="idPrefix" value="#{inherited?'i':'c'}" />
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="idPrefix" value="#{prefix}_#{inherited?'i':'c'}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
