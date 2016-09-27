@@ -45,7 +45,7 @@ public class FilteringJobBean {
         try {
             scriptInterface.init(variables, currentUser);
 
-            List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, provider);
+            List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, currentUser);
             result.setNbItemsToProcess(xmlEntities.size());
 
             for (Object obj : xmlEntities) {
