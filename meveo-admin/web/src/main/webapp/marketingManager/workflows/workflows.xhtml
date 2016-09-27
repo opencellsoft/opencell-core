@@ -50,18 +50,18 @@
                 <p:panel styleClass="clearLeft">
                     <h:panelGroup layout="block" styleClass="col2-set">
                         <h:panelGroup layout="block" styleClass="col1">
-                            <p:button id="editOperationBtn" icon="ui-icon-document" outcome="mm_workflowDetail">
+                            <p:button id="editOperationBtn" icon="fa fa-edit" outcome="mm_workflowDetail">
                                 <f:param name="objectId" value="#{transition.id}"></f:param>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />
                             </p:button>
-                            <p:commandButton id="deleteOperationBtn" icon="ui-icon-trash" styleClass="no-text-decoration text-blue"
+                            <p:commandButton id="deleteOperationBtn" icon="fa fa-trash-o" styleClass="no-text-decoration text-blue"
                                 action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['mmTransition.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
-                            <p:commandButton id="moveUpBtn" icon="ui-icon-arrowthick-1-n" styleClass="no-text-decoration text-blue"
+                            <p:commandButton id="moveUpBtn" icon="fa fa-arrow-up" styleClass="no-text-decoration text-blue"
                                 action="#{wfTransitionBean.moveUpOperation(transition)}" update="transitions" ajax="true" />
-                            <p:commandButton id="moveDownBtn" icon="ui-icon-arrowthick-1-s" styleClass="no-text-decoration text-blue"
+                            <p:commandButton id="moveDownBtn" icon="fa fa-arrow-down" styleClass="no-text-decoration text-blue"
                                 action="#{wfTransitionBean.moveDownOperation(transition)}" update="transitions" ajax="true" />
                             <p:panel styleClass="clearLeft">
                                 <i class="fa fa-arrow-circle-right text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
