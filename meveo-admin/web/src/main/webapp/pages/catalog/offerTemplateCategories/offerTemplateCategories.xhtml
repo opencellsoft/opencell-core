@@ -20,8 +20,10 @@
             <h:panelGroup id="offerCategoryPanel" layout="block" styleClass="col1">
                 <p:panel header="#{messages['offerTemplateCategory.offerTemplateCategories']}">
                     <p:outputPanel style="height: 100%;overflow: auto;display: block">
-                        <p:tree style="height: 450px; width: 95%" value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}" var="offerTemplateCategory" selectionMode="single" rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount>0}">
+                        <p:tree style="height: 450px; width: 95%" value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}" var="offerTemplateCategory" selectionMode="single"
+                                draggable="true" droppable="true" rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount > 0}">
                             <p:ajax event="select" listener="#{offerTemplateCategoryBean.onNodeSelect}" update="offerTemplateCategoryDetailPanel buttons" />
+                            <p:ajax event="dragdrop" listener="#{offerTemplateCategoryBean.onDragDrop}" update="offerCategoryPanel offerTemplateCategoryDetailPanel buttons" />
                             <p:treeNode>
                                 <h:outputText value="#{offerTemplateCategory.descriptionOrCode}" />
                             </p:treeNode>

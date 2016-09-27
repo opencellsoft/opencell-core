@@ -299,35 +299,31 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
     /**
      * 
-     * @param offerTemplateCategoryId
+     * @param code
      * @param currentUser
      * @return
      * @throws MeveoApiException
      */
-    public OfferTemplateCategoryDto findById(String offerTemplateCategoryId, User currentUser) throws MeveoApiException {
+    public OfferTemplateCategoryDto findByCode(String code, User currentUser) throws MeveoApiException {
         OfferTemplateCategoryDto offerTemplateCategoryDto = null;
 
-        if (!StringUtils.isBlank(offerTemplateCategoryId)) {
-            try {
-                long id = Integer.parseInt(offerTemplateCategoryId);
-                OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(id);
-                if (offerTemplateCategory == null) {
-                    throw new EntityDoesNotExistsException(OfferTemplateCategory.class, id);
-                }
-                offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
-
-            } catch (NumberFormatException nfe) {
-                throw new MeveoApiException("Passed offerTemplateCategoryId is invalid.");
-            }
-
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+            handleMissingParameters();
         }
+
+        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, currentUser.getProvider());
+        if (offerTemplateCategory == null) {
+            throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
+        }
+        offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
 
         return offerTemplateCategoryDto;
     }
 
     /**
      * 
-     * @param offerTemplateCategoryId
+     * @param code
      * @param currentUser
      * @return
      * @throws EntityDoesNotExistsException
@@ -335,26 +331,20 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @throws MissingParameterException
      * @throws MeveoApiException
      */
-    public OfferTemplateCategoryDto findById(String offerTemplateCategoryId, User currentUser, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException,
+    public OfferTemplateCategoryDto findByCode(String code, User currentUser, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException,
             MissingParameterException {
-        OfferTemplateCategoryDto offerTemplateCategoryDto = null;
-
-        if (StringUtils.isBlank(offerTemplateCategoryId)) {
+        if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        try {
-            long id = Integer.parseInt(offerTemplateCategoryId);
-            OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(id);
-            if (offerTemplateCategory == null) {
-                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, id);
-            }
-            offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
+        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, currentUser.getProvider());
 
-        } catch (NumberFormatException nfe) {
-            throw new InvalidParameterException("code", offerTemplateCategoryId);
+        if (offerTemplateCategory == null) {
+            throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
+
+        OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
 
         return offerTemplateCategoryDto;
     }

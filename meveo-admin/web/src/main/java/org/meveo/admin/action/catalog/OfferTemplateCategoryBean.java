@@ -1,8 +1,6 @@
 package org.meveo.admin.action.catalog;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,6 +19,7 @@ import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
@@ -33,8 +32,6 @@ import org.primefaces.model.UploadedFile;
 public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCategory> {
 
 	private static final long serialVersionUID = 1L;
-
-    private static final String ROOT = "Root";
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
@@ -116,7 +113,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
     public SortedTreeNode getRootOfferTemplateCategory() {
         if (rootOfferTemplateCategory == null) {
-            rootOfferTemplateCategory = new SortedTreeNode(ROOT, null);
+            rootOfferTemplateCategory = new SortedTreeNode(new OfferTemplateCategory(), null);
             List<OfferTemplateCategory> roots = null;
             if (entity != null && entity.getProvider() != null) {
                 roots = offerTemplateCategoryService.findRoots(entity.getProvider());
@@ -300,7 +297,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
         OfferTemplateCategory parent = null;
-        if (!ROOT.equals(nodeToUpdate.getData())) {
+        if (((OfferTemplateCategory)nodeToUpdate.getData()).getId() != null) {
             parent = (OfferTemplateCategory) nodeToUpdate.getData();
         }
 
@@ -314,6 +311,33 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
                 offerTemplateCategory.setOfferTemplateCategory(parent);
                 offerTemplateCategory.setLevel(order + 1);
                 offerTemplateCategoryService.update(offerTemplateCategory, getCurrentUser());
+            }
+        }
+    }
+
+    public void onDragDrop(TreeDragDropEvent event) {
+        SortedTreeNode dragNode = (SortedTreeNode) event.getDragNode();
+        SortedTreeNode dropNode = (SortedTreeNode) event.getDropNode();
+        if (dropNode != null) {
+            OfferTemplateCategory dragOfferTemplateCategory = (OfferTemplateCategory) dragNode.getData();
+            OfferTemplateCategory dropOfferTemplateCategory = (OfferTemplateCategory) dropNode.getData();
+            if (dropOfferTemplateCategory.getId() != null) {
+                dragOfferTemplateCategory.setOfferTemplateCategory(dropOfferTemplateCategory);
+            } else {
+                dragOfferTemplateCategory.setOfferTemplateCategory(null);
+            }
+            dragNode.setData(dragOfferTemplateCategory);
+            try {
+                // UnSelected previous selected node to make sure one node selected after drag drop
+                unSelectedAllNode(rootOfferTemplateCategory);
+                updatePositionValue(dropNode);
+                dragNode.setSelected(true);
+                setEntity(offerTemplateCategoryService.refreshOrRetrieve((OfferTemplateCategory) dragNode.getData()));
+                messages.info(new BundleKey("messages", "update.successful"));
+
+            } catch (BusinessException e) {
+                log.error("Failed to drop {}", dragNode, e);
+                messages.error(new BundleKey("messages", "error.unexpected"));
             }
         }
     }
@@ -333,6 +357,22 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             }
         }
         return newNode;
+    }
+
+    /**
+     * UnSelect previous selected node
+     * @param rootNode
+     */
+    private void unSelectedAllNode(TreeNode rootNode) {
+        if (rootNode.getChildCount() == 0) {
+            rootNode.setSelected(false);
+        }
+
+        if (rootNode.getChildCount() > 0) {
+            for (TreeNode childNode : rootNode.getChildren()) {
+                unSelectedAllNode(childNode);
+            }
+        }
     }
 
     public class SortedTreeNode extends DefaultTreeNode {
