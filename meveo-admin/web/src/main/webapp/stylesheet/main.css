@@ -659,17 +659,7 @@ form.formNoBottomBorder {
 .Red { color: #ff0000; }
 
 .ListNoStyle { list-style-type: none; }
-/* Paddings */
-.NoPadding{padding:0px !important;}
-.PaddingTopPercent10{ padding-top: 10%;}
-.Padding1{ padding:1x; box-sizing:border-box;}
-.Padding3{ padding:3px; box-sizing:border-box;}
-.Padding5{ padding:10.2px; box-sizing:border-box;}
-.Padding10{ padding:10px; box-sizing:border-box;}
-.Padding15{ padding:15px; box-sizing:border-box;}
-.Padding20{ padding:20px; box-sizing:border-box;}
-.PadLeftRightZero{padding-left:0px; padding-right:0px;}                     /* NEW */
-.PadTopBottomZero{padding-top:0px; padding-bottom:0px;}
+
 .Wid100, table.Wid100 tbody, table.Wid100 tr { width: 100%; }
 .Wid100{ width:100%;}
 .Wid90{ width:90%;}
@@ -730,6 +720,65 @@ form.formNoBottomBorder {
 .Container20{ width:20%; float:left; padding:12px; box-sizing:border-box; }
 .Container10{ width:10%; float:left; padding:12px; box-sizing:border-box; }
 .Container5{ width:5%; float:left; padding:12px; box-sizing:border-box; }
+
+.SmallIndent{padding:5px;}                                                      /* NEW */
+.NoIndent{display:block; margin:0px auto; padding:0px;}
+
+/* Text Aligns */
+.TexAlCenter{ text-align:center;}
+.TexAlLeft{ text-align:left;}
+.TexAlRight{ text-align:right !important;}
+
+/* Padding With Transparent Border*/
+.NoPadding{padding:0px !important;}
+.PaddingTopPercent10{ padding-top: 10%;}
+.Padding1{ padding:1px; box-sizing:border-box;}
+.Padding3{ padding:3px; box-sizing:border-box;}
+.Padding5{ padding:5px; box-sizing:border-box;}
+.Padding10{ padding:10px; box-sizing:border-box;}
+.Padding15{ padding:15px; box-sizing:border-box;}
+.Padding20{ padding:20px; box-sizing:border-box;}
+.PadLeftRightZero{padding-left:0px; padding-right:0px;}                     /* NEW */
+.PadTopBottomZero{padding-top:0px; padding-bottom:0px;}                     /* NEW */
+
+/* Box Sizing */
+.BoxSizeContent{ box-sizing:content-box; -webkit-box-sizing:content-box; -moz-box-sizing:content-box;}
+.BoxSizeBorder{ box-sizing:border-box; -webkit-box-sizing:border-box; -moz-box-sizing:border-box;}
+
+/* Font Sizes */
+.Fs9{font-size:9px !important;} 
+.Fs10{font-size:10px !important;} 
+.Fs11{font-size:11px !important;} 
+.Fs12{font-size:12px !important;} 
+.Fs13{font-size:13px !important;} 
+.Fs14{font-size:14px !important;} 
+.Fs15{font-size:15px !important;} 
+.Fs16{font-size:16px !important;} 
+.Fs17{font-size:17px !important;} 
+.Fs18{font-size:18px !important;} 
+.Fs19{font-size:19px !important;} 
+.Fs20{font-size:20px !important;} 
+.Fs21{font-size:21px !important;} 
+.Fs22{font-size:22px !important;} 
+.Fs23{font-size:23px !important;} 
+.Fs24{font-size:24px !important;} 
+.Fs25{font-size:25px !important;} 
+.Fs26{font-size:26px !important;} 
+.Fs27{font-size:27px !important;} 
+.Fs28{font-size:28px !important;} 
+.Fs29{font-size:29px !important;} 
+.Fs30{font-size:30px !important;}
+.Fs40{font-size:40px !important;}
+.Fs50{font-size:50px !important;}
+.Fs60{font-size:60px !important;}
+.Fs100{font-size:100px !important;}
+.Fs130{font-size:130px !important;}
+
+/* Font Type */
+.FontBold{ font-weight:bold;}
+.FontLight{ font-weight:lighter;}
+.FontNormal{ font-weight:normal;}
+.FontItalic{font-style:italic;}
 
 .dataGrid .status-wrapper .text-bold { text-align: left; }
 
@@ -933,10 +982,6 @@ form.formNoBottomBorder {
     clear: both;
 }
 
-/* Text Aligns */
-.TexAlCenter{ text-align:center;}
-.TexAlLeft{ text-align:left;}
-.TexAlRight{ text-align:right !important;}
 
 ul.Navigation { list-style-type: none; margin: 0; padding: 0; overflow: hidden; }
 ul.Navigation li { float: left; }
