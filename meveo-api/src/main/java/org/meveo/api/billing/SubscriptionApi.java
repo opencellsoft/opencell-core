@@ -358,7 +358,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
                     if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
-                        ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId());
+                        ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId(), InstanceStatusEnum.INACTIVE);
                         if (chargeInstance == null) {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
