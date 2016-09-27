@@ -1197,8 +1197,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
 	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getLabel()+"]")
 	    for( testStep in testCaseItem.getTestStepList() ) {
+	    	if (! testStep instanceof ManualTestStep){
 	        testStep.getTestRequest().setPreemptive(true);
 	        testStep.getTestRequest().setRequestHeaders(headers);
+	    	}
 	    }
 	}
 }</con:setupScript>
