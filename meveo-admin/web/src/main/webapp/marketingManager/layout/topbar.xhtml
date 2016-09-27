@@ -26,11 +26,9 @@
 									rendered="#{identity.loggedIn}" immediate="true" /></li>
 						</ul></li>
 					<li><a href="#"><i class="fa fa-2x fa-question"></i></a>
-						<ul style="display: none;">
-							<li><h:outputLink value="https://opencellsoft.com/"
-									target="_blank">
-									<h:outputText value="#{messages['menu.aboutUs']}" />
-								</h:outputLink></li>
+						<ul style="display: none; z-index: 1">
+							<li><p:link outcome="about"
+									value="#{messages['menu.aboutUs']}"></p:link></li>
 							<li><h:outputLink target="_blank"
 									value="https://app.assembla.com/spaces/meveo/wiki">
 									<h:outputText value="#{messages['menu.documentation']}" />
