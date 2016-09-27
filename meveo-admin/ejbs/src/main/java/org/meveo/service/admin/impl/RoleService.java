@@ -50,7 +50,7 @@ public class RoleService extends PersistenceService<Role> {
             qb.addCriterion("name", "=", role, true);
             return (Role) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+            log.trace("No role {} in provider {} was found. Reason {}", role, provider, e.getClass().getSimpleName());
             return null;
         }
     }

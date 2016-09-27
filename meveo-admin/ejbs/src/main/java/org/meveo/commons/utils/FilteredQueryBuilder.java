@@ -1,13 +1,19 @@
 package org.meveo.commons.utils;
 
+import java.util.Map;
+
 import org.meveo.admin.exception.FilterException;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.filter.*;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.filter.AndCompositeFilterCondition;
+import org.meveo.model.filter.Filter;
+import org.meveo.model.filter.FilterCondition;
+import org.meveo.model.filter.NativeFilterCondition;
+import org.meveo.model.filter.OrCompositeFilterCondition;
+import org.meveo.model.filter.OrderCondition;
+import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.service.filter.processor.PrimitiveFilterProcessor;
 import org.meveo.service.filter.processor.PrimitiveFilterProcessorFactory;
-
-import java.util.Map;
 
 /**
  * @author Edward P. Legaspi
@@ -21,12 +27,12 @@ public class FilteredQueryBuilder extends QueryBuilder {
 
 	}
 
-	public FilteredQueryBuilder(Filter filter) throws FilterException {
-		this(filter, null, false, true);
+	public FilteredQueryBuilder(Filter filter,Provider currentProvider) throws FilterException {
+		this(filter, null, false, true,currentProvider);
 	}
 
-	public FilteredQueryBuilder(Filter filter, Map<CustomFieldTemplate, Object> parameterMap, boolean export, boolean applyOrder) {
-		super(ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass(), filter.getPrimarySelector().getAlias());
+	public FilteredQueryBuilder(Filter filter, Map<CustomFieldTemplate, Object> parameterMap, boolean export, boolean applyOrder,Provider currentProvider) {
+		super(ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass(), filter.getPrimarySelector().getAlias(),null,currentProvider);
 
 		this.filter = filter;
 		this.parameterMap = parameterMap;
