@@ -78,7 +78,7 @@ public class FilterXmlGenerator {
 		filter.setFilterCondition(andCompositeFilterCondition);
 		filter.setPrimarySelector(filterSelector1);
 
-		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter,null);
 		System.out.println(fq.getSqlString());
 
 		try {
@@ -123,7 +123,7 @@ public class FilterXmlGenerator {
 		// filter.setSecondarySelectors(filterSelectors);
 		filter.setOrderCondition(orderCondition);
 
-		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter,null);
 		System.out.println(fq.getSqlString());
 
 		try {
@@ -225,7 +225,7 @@ public class FilterXmlGenerator {
 		// filter.setSecondarySelectors(filterSelectors);
 		filter.setOrderCondition(orderCondition);
 
-		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter,null);
 		System.out.println(fq.getSqlString());
 
 		try {

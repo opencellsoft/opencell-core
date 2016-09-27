@@ -46,7 +46,7 @@ public class FilteredListApi extends BaseApi {
         }
 
         try {
-            result = filterService.filteredList(filter, firstRow, numberOfRows);
+			result = filterService.filteredList(filter, firstRow, numberOfRows,currentUser);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
@@ -69,7 +69,7 @@ public class FilteredListApi extends BaseApi {
                 }
             }
 
-            result = filterService.filteredList(filter, postData.getFirstRow(), postData.getNumberOfRows());
+			result = filterService.filteredList(filter, postData.getFirstRow(), postData.getNumberOfRows(),currentUser);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
