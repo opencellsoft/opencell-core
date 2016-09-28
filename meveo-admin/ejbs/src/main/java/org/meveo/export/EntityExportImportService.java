@@ -53,6 +53,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
@@ -147,7 +148,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-    
+
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -1678,6 +1679,10 @@ public class EntityExportImportService implements Serializable {
                     if (field.isAnnotationPresent(Transient.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
+                        // This is a workaround to BLOB import issue "blobs may not be accessed after serialization"// TODO need a better solution as field is simply ignored
+                    } else if (field.isAnnotationPresent(Lob.class)) {
+                        attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
+
                     } else if (field.isAnnotationPresent(OneToMany.class)) {
 
                         // Omit attribute only if backward relationship is set
@@ -2040,17 +2045,17 @@ public class EntityExportImportService implements Serializable {
         }
 
         @Override
-		protected void writeText(QuickWriter writer, String text) {
-        	if(text==null){
-        		writer.write("");
-        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
-        		writer.write(text);
-        	}else{
-        		super.writeText(writer, text);
-        	}
-		}
+        protected void writeText(QuickWriter writer, String text) {
+            if (text == null) {
+                writer.write("");
+            } else if (text.indexOf(XStreamCDATAConverter.CDATA_START) >= 0 && text.indexOf(XStreamCDATAConverter.CDATA_END) > 0) {
+                writer.write(text);
+            } else {
+                super.writeText(writer, text);
+            }
+        }
 
-		@Override
+        @Override
         public void endNode() {
             super.endNode();
             attributeClassAdded = false;

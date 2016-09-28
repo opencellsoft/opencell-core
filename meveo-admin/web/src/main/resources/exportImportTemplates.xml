@@ -417,6 +417,7 @@
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
             <template ref="SubscriptionTerminationReason" />
+            <template ref="UserHierarchyLevel" />
         </groupedTemplates>
     </template>
 
@@ -446,7 +447,9 @@
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />
             <template ref="ChargeTemplate" />
+            <template ref="ScriptInstance" />            
             <template ref="MeveoModule" />
+            <template ref="OfferTemplateCategory" />            
             <template ref="ServiceTemplate" />
             <template ref="OfferTemplate" />
             <template ref="PricePlanMatrix" />
