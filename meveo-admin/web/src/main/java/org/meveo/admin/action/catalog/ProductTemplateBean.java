@@ -119,8 +119,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			for (ProductChargeTemplate productChargetemplate : entity.getProductChargeTemplates()) {
 				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(productChargetemplate.getCode(), currentUser.getProvider(), "priority");
 				if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
-					for(PricePlanMatrix ppMatrix : pricePlanMatrixes){
-						if(!StringUtils.isBlank(ppMatrix.getCode()) && ppMatrix.getCode().equals(productChargetemplate.getCode())){
+					for (PricePlanMatrix ppMatrix : pricePlanMatrixes) {
+						if (!StringUtils.isBlank(ppMatrix.getEventCode()) && ppMatrix.getEventCode().equals(productChargetemplate.getCode())) {
 							salesPrice = ppMatrix.getAmountWithoutTax();
 						}
 					}
