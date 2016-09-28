@@ -27,16 +27,7 @@
                     rendered="#{node.type eq 'item'}" />
             </p:column>
             <f:facet name="footer" layout="block">
-                <p:commandButton value="#{messages['meveoModuleItem.addCE']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCustomEntity').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addCF']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCustomField').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addFilter']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchFilter').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addJob']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchJob').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addScript']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchScript').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addNotification']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchNotification').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addSubModule']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchSubModules').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addMeasurableQuantity']}" partialSubmit="true" process="@this"
-                    oncomplete="PF('dlg_searchMeasurableQuantities').show()" />
-                <p:commandButton value="#{messages['meveoModuleItem.addChart']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_searchCharts').show()" />
+                <p:commandButton value="#{messages['meveoModuleItem.add']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_addModuleItem').show()" />
             </f:facet>
         </p:treeTable>
 

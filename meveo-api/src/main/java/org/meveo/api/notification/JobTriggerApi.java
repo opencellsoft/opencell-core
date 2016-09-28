@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -26,7 +26,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Tyshan Shi
  **/
 @Stateless
-public class JobTriggerApi extends BaseApi {
+public class JobTriggerApi extends BaseCrudApi<JobTriggerDto>{
 
     @Inject
     private JobTriggerService jobTriggerService;
@@ -100,11 +100,11 @@ public class JobTriggerApi extends BaseApi {
         jobTriggerService.create(notif, currentUser);
     }
 
-    public JobTriggerDto find(String notificationCode, Provider provider) throws MeveoApiException {
+    public JobTriggerDto find(String notificationCode, User currentUser) throws MeveoApiException {
         JobTriggerDto result = new JobTriggerDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            JobTrigger notif = jobTriggerService.findByCode(notificationCode, provider);
+            JobTrigger notif = jobTriggerService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(JobTrigger.class, notificationCode);

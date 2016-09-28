@@ -13,9 +13,11 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
+@ModuleItem
 @ExportIdentifier({ "code", "appliesTo", "provider" })
 @Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_ACTION_SEQ")

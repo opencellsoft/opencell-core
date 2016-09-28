@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -16,7 +16,7 @@ import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.job.TimerEntityService;
 
 @Stateless
-public class TimerEntityApi extends BaseApi {
+public class TimerEntityApi extends BaseCrudApi<TimerEntityDto>{
 
     @Inject
     private TimerEntityService timerEntityService;

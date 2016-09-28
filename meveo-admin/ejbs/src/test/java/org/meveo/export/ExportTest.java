@@ -27,24 +27,47 @@ public class ExportTest {
 
     private Customer customer1 = null;
 
+    /**
+     * Test equals and hashmap contains/get operations on RelatedEntityToExport class
+     */
     @Test
     public void testExport1() {
 
         Map<RelatedEntityToExport, String> map = new HashMap<RelatedEntityToExport, String>();
 
-        RelatedEntityToExport ree = new RelatedEntityToExport("select * from Customer", null, Customer.class);
-        RelatedEntityToExport ree2 = new RelatedEntityToExport("select * from CustmerAcount", null, CustomerAccount.class);
-        RelatedEntityToExport ree3 = new RelatedEntityToExport("select * from Customer", null, Customer.class);
-        RelatedEntityToExport ree4 = new RelatedEntityToExport("select * from Customerssss", null, Customer.class);
-        map.put(ree, "val1");
+        RelatedEntityToExport ree1 = new RelatedEntityToExport(null, null, "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree2 = new RelatedEntityToExport(null, null, "select * from CustmerAcount", null, CustomerAccount.class);
+        RelatedEntityToExport ree3 = new RelatedEntityToExport(null, null, "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree4 = new RelatedEntityToExport(null, null, "select * from Customerssss", null, Customer.class);
+        RelatedEntityToExport ree5 = new RelatedEntityToExport("address", null, "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree6 = new RelatedEntityToExport("address", null, "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree7 = new RelatedEntityToExport("address", "name==5", "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree8 = new RelatedEntityToExport("address", "name==5", "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree9 = new RelatedEntityToExport("addresses", null, "select * from Customer", null, Customer.class);
+        RelatedEntityToExport ree10 = new RelatedEntityToExport("address", "name==6", "select * from Customer", null, Customer.class);
+        map.put(ree1, "val1");
         map.put(ree2, "val2");
+        map.put(ree5, "val5");
+        map.put(ree7, "val7");
 
-        Assert.assertEquals("val1", map.get(ree));
+        Assert.assertEquals("val1", map.get(ree1));
         Assert.assertEquals("val2", map.get(ree2));
         Assert.assertEquals("val1", map.get(ree3));
         Assert.assertNull(map.get(ree4));
+        Assert.assertEquals("val5", map.get(ree5));
+        Assert.assertEquals("val5", map.get(ree6));
+        Assert.assertEquals("val7", map.get(ree7));
+        Assert.assertEquals("val7", map.get(ree8));
+        Assert.assertNull(map.get(ree9));
+        Assert.assertNull(map.get(ree10));
     }
 
+    /**
+     * Just test/debug on how export/import template is serialized
+     * 
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     // @Test
     public void testExport() throws ClassNotFoundException, IOException {
 

@@ -2,7 +2,7 @@ package org.meveocrm.admin.action.reporting;
 
 import javax.inject.Named;
 
-import org.meveocrm.model.dwh.LineChart;
+import org.meveo.model.dwh.LineChart;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.chart.LineChartModel;
 

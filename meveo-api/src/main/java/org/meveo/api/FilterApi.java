@@ -20,7 +20,7 @@ import org.meveo.service.filter.FilterService;
  * 
  **/
 @Stateless
-public class FilterApi extends BaseApi {
+public class FilterApi extends BaseCrudApi<FilterDto> {
 
     @Inject
     private FilterService filterService;
@@ -37,8 +37,8 @@ public class FilterApi extends BaseApi {
         handleMissingParameters();
 
         try {
-        	Filter filter = new Filter();
-        	mapDtoToFilter(dto, filter);
+            Filter filter = new Filter();
+            mapDtoToFilter(dto, filter);
             filterService.create(filter, currentUser);
 
         } catch (BusinessException e) {
@@ -58,10 +58,10 @@ public class FilterApi extends BaseApi {
         handleMissingParameters();
 
         try {
-            
-        	Provider provider = currentUser.getProvider();
+
+            Provider provider = currentUser.getProvider();
             Filter filter = filterService.findByCode(dto.getCode(), provider);
-            
+
             if (filter == null) {
                 throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
             }
@@ -73,13 +73,13 @@ public class FilterApi extends BaseApi {
             throw new BusinessApiException(e);
         }
     }
-    
-    private void mapDtoToFilter(FilterDto dto, Filter filter){
-    	if(filter.isTransient()){
-        	filter.setCode(dto.getCode());
-        	filter.clearUuid();
+
+    private void mapDtoToFilter(FilterDto dto, Filter filter) {
+        if (filter.isTransient()) {
+            filter.setCode(dto.getCode());
+            filter.clearUuid();
         }
-    	filter.setDescription(dto.getDescription());
+        filter.setDescription(dto.getDescription());
         filter.setInputXml(dto.getInputXml());
         filter.setShared(dto.getShared());
     }
@@ -99,13 +99,13 @@ public class FilterApi extends BaseApi {
         }
     }
 
-    public FilterDto findFilter(String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public FilterDto find(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Filter filter = filterService.findByCode(code, provider);
+        Filter filter = filterService.findByCode(code, currentUser.getProvider());
 
         if (filter == null) {
             throw new EntityDoesNotExistsException(Filter.class, code);

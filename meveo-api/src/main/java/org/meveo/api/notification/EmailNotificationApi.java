@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -27,7 +27,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class EmailNotificationApi extends BaseApi {
+public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
 
     @Inject
     private EmailNotificationService emailNotificationService;
@@ -109,11 +109,11 @@ public class EmailNotificationApi extends BaseApi {
         emailNotificationService.create(notif, currentUser);
     }
 
-    public EmailNotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+    public EmailNotificationDto find(String notificationCode, User currentUser) throws MeveoApiException {
         EmailNotificationDto result = new EmailNotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
+            EmailNotification notif = emailNotificationService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);

@@ -6,26 +6,24 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
+import org.meveo.api.index.FullTextSearchApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.FilteredListWs;
-import org.slf4j.Logger;
 
 @WebService(serviceName = "FilteredListWs", endpointInterface = "org.meveo.api.ws.FilteredListWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
     @Inject
-    private Logger log;
+    private FilteredListApi filteredListApi;
 
     @Inject
-    private FilteredListApi filteredListApi;
+    private FullTextSearchApi fullTextSearchApi;
 
     @Override
     public FilteredListResponseDto list(String filter, Integer firstRow, Integer numberOfRows) {
@@ -34,15 +32,8 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
             String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         return result;
@@ -55,15 +46,8 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
             String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         return result;
@@ -74,41 +58,39 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String response = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             result.setSearchResults(response);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         return result;
     }
-    
+
     @Override
     public FilteredListResponseDto searchByField(String[] classnamesOrCetCodes, Map<String, String> query, Integer from, Integer size) {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String response = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             result.setSearchResults(response);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         return result;
     }
 
+    @Override
+    public ActionStatus reindex() {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            fullTextSearchApi.cleanAndReindex(getCurrentUser("superAdmin", "superAdminManagement"));
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+
+        return result;
+    }
 }

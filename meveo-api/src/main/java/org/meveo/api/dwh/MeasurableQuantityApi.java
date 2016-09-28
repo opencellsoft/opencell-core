@@ -7,21 +7,21 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveocrm.model.dwh.MeasurableQuantity;
+import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 /**
  * @author Andrius Karpavicius
  **/
 @Stateless
-public class MeasurableQuantityApi extends BaseApi {
+public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantityDto>{
 
     @Inject
     private MeasurableQuantityService measurableQuantityService;

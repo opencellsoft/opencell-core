@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -21,7 +21,7 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class CounterTemplateApi extends BaseApi {
+public class CounterTemplateApi extends BaseCrudApi<CounterTemplateDto>{
 
     @Inject
     private CounterTemplateService<CounterTemplate> counterTemplateService;
@@ -107,12 +107,12 @@ public class CounterTemplateApi extends BaseApi {
         counterTemplateService.update(counterTemplate, currentUser);
     }
 
-    public CounterTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    public CounterTemplateDto find(String code, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
             handleMissingParameters();
         }
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, currentUser.getProvider());
         if (counterTemplate == null) {
             throw new EntityDoesNotExistsException(CounterTemplate.class, code);
         }

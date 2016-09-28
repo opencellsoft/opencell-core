@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveocrm.model.dwh.Chart;
+import org.meveo.model.dwh.Chart;
 
 
 /**

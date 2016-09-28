@@ -4,8 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveocrm.model.dwh.LegendPositionEnum;
-import org.meveocrm.model.dwh.LineChart;
+import org.meveo.model.dwh.LegendPositionEnum;
+import org.meveo.model.dwh.LineChart;
 
 /**
  * @author Andrius Karpavicius

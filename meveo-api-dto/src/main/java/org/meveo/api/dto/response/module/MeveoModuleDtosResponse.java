@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -27,18 +27,18 @@ public class MeveoModuleDtosResponse extends BaseResponse {
 
     @XmlElementWrapper(name = "modules")
     @XmlElements({ @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
-            @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), @XmlElement(name = "module", type = ModuleDto.class) })
-    private List<ModuleDto> modules;
+            @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), @XmlElement(name = "module", type = MeveoModuleDto.class) })
+    private List<MeveoModuleDto> modules;
 
     public MeveoModuleDtosResponse() {
         super();
     }
 
-    public List<ModuleDto> getModules() {
+    public List<MeveoModuleDto> getModules() {
         return modules;
     }
 
-    public void setModules(List<ModuleDto> modules) {
+    public void setModules(List<MeveoModuleDto> modules) {
         this.modules = modules;
     }
 

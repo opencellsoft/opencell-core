@@ -52,7 +52,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
@@ -78,7 +78,7 @@ import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -125,7 +125,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	private OfferTemplateCategoryApi offerTemplateCategoryApi;
 
 	@Inject
-	private ModuleApi moduleApi;
+	private MeveoModuleApi moduleApi;
 
     @Inject
     private DiscountPlanItemApi discountPlanItemApi;
@@ -190,7 +190,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
 		try {
-			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));
+			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1119,7 +1119,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
 		try {
-			result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.get(businessOfferModelCode, BusinessOfferModel.class, getCurrentUser()));
+			result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.find(businessOfferModelCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1200,7 +1200,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 		result.getActionStatus().setMessage("");
 		try {
-			List<ModuleDto> dtos = moduleApi.list(BusinessOfferModel.class, getCurrentUser());
+			List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class, getCurrentUser());
 			result.setModules(dtos);
 
 		} catch (MeveoApiException e) {
@@ -1502,7 +1502,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetBusinessServiceModelResponseDto result = new GetBusinessServiceModelResponseDto();
 
 		try {
-			result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.get(businessServiceModelCode, BusinessServiceModel.class, getCurrentUser()));
+			result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.find(businessServiceModelCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1583,7 +1583,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 		result.getActionStatus().setMessage("");
 		try {
-			List<ModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+			List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
 			result.setModules(dtos);
 
 		} catch (MeveoApiException e) {

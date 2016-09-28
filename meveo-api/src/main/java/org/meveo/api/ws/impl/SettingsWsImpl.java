@@ -1454,7 +1454,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
-            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider()));
+            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

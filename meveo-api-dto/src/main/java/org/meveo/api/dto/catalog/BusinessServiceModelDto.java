@@ -6,12 +6,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.model.module.MeveoModule;
 
 @XmlRootElement(name = "BusinessServiceModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessServiceModelDto extends ModuleDto {
+public class BusinessServiceModelDto extends MeveoModuleDto {
 
     private static final long serialVersionUID = -7023791262640948222L;
 

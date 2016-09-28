@@ -6,11 +6,11 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.notification.WebhookNotificationDto;
+import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.notification.WebhookNotificationApi;
+import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.WebHookNotificationRs;
 
@@ -22,10 +22,10 @@ import org.meveo.api.rest.notification.WebHookNotificationRs;
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
 
     @Inject
-    private WebhookNotificationApi webhookNotificationApi;
+    private WebHookApi webhookNotificationApi;
 
     @Override
-    public ActionStatus create(WebhookNotificationDto postData) {
+    public ActionStatus create(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -45,7 +45,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
     }
 
     @Override
-    public ActionStatus update(WebhookNotificationDto postData) {
+    public ActionStatus update(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -69,7 +69,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
         try {
-            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -105,7 +105,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
     }
 
     @Override
-    public ActionStatus createOrUpdate(WebhookNotificationDto postData) {
+    public ActionStatus createOrUpdate(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

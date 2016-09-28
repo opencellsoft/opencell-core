@@ -173,7 +173,7 @@ public class ValueExpressionWrapper {
             log.trace("EL {} => {}", expression, result);
 
         } catch (Exception e) {
-            log.warn("EL {} throw error", expression, e);
+            log.warn("EL {} throw error with variables {}", expression, userMap, e);
             throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
         return result;

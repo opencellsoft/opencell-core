@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.NotificationDto;
-import org.meveo.api.dto.notification.WebhookNotificationDto;
+import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
@@ -20,7 +20,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.notification.NotificationApi;
-import org.meveo.api.notification.WebhookNotificationApi;
+import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.ws.NotificationWs;
 
 /**
@@ -34,7 +34,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     private NotificationApi notificationApi;
 
     @Inject
-    private WebhookNotificationApi webhookNotificationApi;
+    private WebHookApi webhookNotificationApi;
 
     @Inject
     private EmailNotificationApi emailNotificationApi;
@@ -84,7 +84,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetNotificationResponseDto result = new GetNotificationResponseDto();
 
         try {
-            result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser().getProvider()));
+            result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -120,7 +120,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public ActionStatus createWebHookNotification(WebhookNotificationDto postData) {
+    public ActionStatus createWebHookNotification(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -140,7 +140,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public ActionStatus updateWebHookNotification(WebhookNotificationDto postData) {
+    public ActionStatus updateWebHookNotification(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -164,7 +164,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
         try {
-            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -244,7 +244,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
         try {
-            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -359,7 +359,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public ActionStatus createOrUpdateWebHookNotification(WebhookNotificationDto postData) {
+    public ActionStatus createOrUpdateWebHookNotification(WebHookDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

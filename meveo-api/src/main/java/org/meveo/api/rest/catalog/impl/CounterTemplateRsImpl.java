@@ -71,7 +71,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
         try {
-            result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));
+            result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

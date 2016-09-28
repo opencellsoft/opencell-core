@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
@@ -18,11 +18,11 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveocrm.model.dwh.BarChart;
-import org.meveocrm.model.dwh.Chart;
-import org.meveocrm.model.dwh.LineChart;
-import org.meveocrm.model.dwh.MeasurableQuantity;
-import org.meveocrm.model.dwh.PieChart;
+import org.meveo.model.dwh.BarChart;
+import org.meveo.model.dwh.Chart;
+import org.meveo.model.dwh.LineChart;
+import org.meveo.model.dwh.MeasurableQuantity;
+import org.meveo.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 
@@ -30,7 +30,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class ChartApi extends BaseApi {
+public class ChartApi extends BaseCrudApi<ChartDto>{
 
     @Inject
     private ChartService<PieChart> pieChartService;

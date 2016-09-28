@@ -57,7 +57,7 @@ public abstract class BaseApi {
     protected CustomFieldInstanceService customFieldInstanceService;
 
     @EJB
-    private CustomEntityApi customEntityApi;
+    private CustomEntityInstanceApi customEntityInstanceApi;
 
     @Inject
     protected EntityToDtoConverter entityToDtoConverter;
@@ -170,7 +170,7 @@ public abstract class BaseApi {
                         List<EntityReferenceWrapper> childEntityReferences = new ArrayList<>();
 
                         for (CustomEntityInstanceDto ceiDto : ((List<CustomEntityInstanceDto>) valueConverted)) {
-                            customEntityApi.createOrUpdateEntityInstance(ceiDto, currentUser);
+                            customEntityInstanceApi.createOrUpdate(ceiDto, currentUser);
                             childEntityReferences.add(new EntityReferenceWrapper(CustomEntityInstance.class.getName(), ceiDto.getCetCode(), ceiDto.getCode()));
                         }
 
@@ -358,7 +358,7 @@ public abstract class BaseApi {
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition requires.
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
-                        customEntityApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck, currentUser);
+                        customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck, currentUser);
                     }
                 }
             }
@@ -444,5 +444,5 @@ public abstract class BaseApi {
 			return oldValue;
 		}
 		return newValue;
-	}
+	}    
 }

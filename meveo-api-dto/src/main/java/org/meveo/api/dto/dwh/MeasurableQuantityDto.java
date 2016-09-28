@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
-import org.meveocrm.model.dwh.MeasurableQuantity;
-import org.meveocrm.model.dwh.MeasurementPeriodEnum;
+import org.meveo.model.dwh.MeasurableQuantity;
+import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 /**
  * @author Edward P. Legaspi

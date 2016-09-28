@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -29,7 +29,7 @@ import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 
 @Stateless
-public class WorkflowApi extends BaseApi {
+public class WorkflowApi extends BaseCrudApi<WorkflowDto>{
 
 	@Inject
 	private WorkflowService workflowService;
@@ -136,6 +136,7 @@ public class WorkflowApi extends BaseApi {
 	 */
 	public WorkflowDto find(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException{
 		return new WorkflowDto(find(workflowCode, currentUser.getProvider()));
+		
 	}
 
 	/**

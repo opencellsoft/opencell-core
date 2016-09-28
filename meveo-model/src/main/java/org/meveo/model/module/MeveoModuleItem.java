@@ -78,6 +78,14 @@ public class MeveoModuleItem extends BaseProviderlessEntity {
     public void setItemClass(String itemClass) {
         this.itemClass = itemClass;
     }
+    
+    public String getItemClassSimpleName() {
+        if (itemClass != null) {
+            return itemClass.substring(itemClass.lastIndexOf('.') + 1);
+        }
+        return null;
+    }
+    
 
     public String getItemCode() {
         return itemCode;

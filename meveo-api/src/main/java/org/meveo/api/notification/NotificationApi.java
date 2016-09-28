@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.InboundRequestDto;
 import org.meveo.api.dto.notification.InboundRequestsDto;
 import org.meveo.api.dto.notification.NotificationDto;
@@ -35,7 +35,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class NotificationApi extends BaseApi {
+public class NotificationApi extends BaseCrudApi<NotificationDto>{
 
     @Inject
     private NotificationService notificationService;
@@ -104,11 +104,11 @@ public class NotificationApi extends BaseApi {
         notificationService.create(notif, currentUser);
     }
 
-    public NotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+    public NotificationDto find(String notificationCode, User currentUser) throws MeveoApiException {
         NotificationDto result = new NotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
+            ScriptNotification notif = notificationService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
