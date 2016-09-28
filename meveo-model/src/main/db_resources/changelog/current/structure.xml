@@ -1199,5 +1199,10 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
 	</changeSet>
+	
+	<changeSet id="#2058_20160928_remove_product_instance_uk" author="EdwardPLegaspi">
+		<dropUniqueConstraint tableName="billing_product_instance"
+			constraintName="uk_product_instance" />
+	</changeSet>
 
 </databaseChangeLog>

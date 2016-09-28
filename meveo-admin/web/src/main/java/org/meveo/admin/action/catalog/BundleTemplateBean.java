@@ -104,11 +104,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	public BundleTemplate initEntity() {
 		BundleTemplate result = super.initEntity();
-		getOfferTemplateCategoriesDM();
-		getAttachmentsDM();
-		getBamDM();
-		createMissingCustomFields();
 
+		createMissingCustomFields();
 		initPricePlan();
 
 		return result;
@@ -130,8 +127,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			for (ProductChargeTemplate productChargetemplate : entity.getProductChargeTemplates()) {
 				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(productChargetemplate.getCode(), currentUser.getProvider(), "priority");
 				if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
-					for(PricePlanMatrix ppMatrix : pricePlanMatrixes){
-						if(!StringUtils.isBlank(ppMatrix.getCode()) && ppMatrix.getCode().equals(productChargetemplate.getCode())){
+					for (PricePlanMatrix ppMatrix : pricePlanMatrixes) {
+						if (!StringUtils.isBlank(ppMatrix.getEventCode()) && ppMatrix.getEventCode().equals(productChargetemplate.getCode())) {
 							salesPrice = ppMatrix.getAmountWithoutTax();
 						}
 					}
@@ -154,22 +151,23 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (entity.getOfferTemplateCategories() != null) {
+		
+		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
 			entity.getOfferTemplateCategories().clear();
 			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
 		}
 
-		if (entity.getAttachments() != null) {
+		if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
 			entity.getAttachments().clear();
 			entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
 		}
 
-		if (entity.getBusinessAccountModels() != null) {
+		if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
 			entity.getBusinessAccountModels().clear();
 			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
 		}
 
-		if (entity.getChannels() != null) {
+		if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
 			entity.getChannels().clear();
 			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
 		}
@@ -257,7 +255,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 		}
 
-		customFieldInstanceService.setCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, catalogPrice.doubleValue(), getCurrentUser());
+		customFieldInstanceService.setCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, catalogPrice == null ? null : catalogPrice.doubleValue(), getCurrentUser());
 	}
 
 	public BigDecimal getCatalogPrice() {

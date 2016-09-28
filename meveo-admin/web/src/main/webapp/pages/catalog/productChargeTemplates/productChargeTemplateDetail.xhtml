@@ -61,6 +61,9 @@
 						label="#{messages['invoiceSubCategory.description']}"
 						field="invoiceSubCategory" valueLabelField="descriptionOrCode"
 						edit="false" />
+					<hftl:formField id="productTemplate" field="productTemplate"
+						valueLabelField="code" listBean="#{productTemplateListBean}"
+						label="#{messages['productTemplate.title']}" />
 
 					<hftl:formLanguageFields
 						entity="#{productChargeTemplateBean.entity}"

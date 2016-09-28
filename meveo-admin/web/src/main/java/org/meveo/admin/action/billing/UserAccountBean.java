@@ -527,22 +527,34 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			auditable.setCreator(currentUser);
 			productInstance.setAuditable(auditable);
 		}
-		
+
 		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
 		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
-		
+
 		List<ProductChargeInstance> list = new ArrayList<>();
 		ProductChargeInstance productChargeInstance = null;
-		for(ProductChargeTemplate productChargeTemplate: productInstance.getProductTemplate().getProductChargeTemplates()){
+		for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
 			productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
 			list.add(productChargeInstance);
 		}
 		
+		if (list.size() == 0) {
+			messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));
+			return;
+		}
+
 		productInstance.setProductChargeInstances(list);
-		
-		for(ProductChargeInstance pcInstance: list){
+		try {
+			productInstanceService.create(productInstance, currentUser);
+		} catch (BusinessException e) {
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		} catch (Exception e) {
+			log.error("unexpected exception when applying a product! {}", e.getMessage());
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		}
+
+		for (ProductChargeInstance pcInstance : list) {
 			try {
-				productInstanceService.create(productInstance, currentUser);
 				productChargeInstanceService.apply(pcInstance, null, productChargeInstance.getOfferTemplate(), productInstance.getApplicationDate(), null, null, null, null, null,
 						currentUser, true);
 			} catch (BusinessException e) {
@@ -552,7 +564,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 				messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 			}
 		}
-		
+
 		productChargeInstances = null;
 	}
 
