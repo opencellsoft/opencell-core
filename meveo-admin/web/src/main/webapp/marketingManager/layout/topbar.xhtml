@@ -5,12 +5,12 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-    <div id="topbar-wrapper" class="clearfix">
-        <div id="layout-topbar" class="pull-left">
-            <a href="#{request.contextPath}" id="logo-wrapper"> 
-            	<h:graphicImage name="logo.png" library="img" />
-           	</a>
-        </div>
+	<div id="topbar-wrapper" class="clearfix">
+		<div id="layout-topbar" class="pull-left">
+			<a href="#{request.contextPath}" id="logo-wrapper"> <h:graphicImage
+					name="logo.png" library="img" />
+			</a>
+		</div>
 
 		<div id="responsive-menu-button">
 			<a id="menu-button"><i class="fa fa-bars fa-5x"></i> </a>
@@ -26,11 +26,9 @@
 									rendered="#{identity.loggedIn}" immediate="true" /></li>
 						</ul></li>
 					<li><a href="#"><i class="fa fa-2x fa-question"></i></a>
-						<ul style="display: none;">
-							<li><h:outputLink value="https://opencellsoft.com/"
-									target="_blank">
-									<h:outputText value="#{messages['menu.aboutUs']}" />
-								</h:outputLink></li>
+						<ul style="display: none; z-index: 1">
+							<li><p:link outcome="about"
+									value="#{messages['menu.aboutUs']}"></p:link></li>
 							<li><h:outputLink target="_blank"
 									value="https://app.assembla.com/spaces/meveo/wiki">
 									<h:outputText value="#{messages['menu.documentation']}" />
@@ -50,11 +48,13 @@
 					
 				})
 			</script>
-			<ul id="user-info" class="list-inline pull-right"
-				style="margin-right: 40px;">
-				<li>#{identity.user.user.nameOrUsername}</li>
-				<li>#{identity.user.currentProvider.code}</li>
-			</ul>
+			<div class="FRight">
+				<ul id="user-info" class="ListNoStyle Padding10"
+					style="margin: 0 40px 0 0;">
+					<li class="Fs14 FontBold">#{identity.user.user.nameOrUsername}</li>
+					<li class="Fs12 FontBold">#{identity.user.currentProvider.code}</li>
+				</ul>
+			</div>
 			<div class="search-wrapper">
 				<p:inputText id="globalFullTextSearch"
 					value="#{fullTextSearchBean.filters['fullText']}"

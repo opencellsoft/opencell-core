@@ -92,6 +92,11 @@
 			<to-view-id>/home.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>about</from-outcome>
+			<to-view-id>/about.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 		<!-- Admin -->
 		<navigation-case>
 			<from-outcome>systemCurrency</from-outcome>
