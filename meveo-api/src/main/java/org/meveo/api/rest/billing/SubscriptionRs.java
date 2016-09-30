@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -125,4 +126,13 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(SubscriptionDto postData);
+
+    /**
+     * Apply a product on a subscription.
+     * @param ApplyProductRequestDto subscription field must be set
+     * @return
+     */
+    @POST
+    @Path("/applyProduct")
+    ActionStatus applyProduct(ApplyProductRequestDto postData);
 }

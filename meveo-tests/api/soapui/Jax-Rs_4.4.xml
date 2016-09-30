@@ -33,7 +33,7 @@
   </con:settings>
   <con:interface xsi:type="con:RestService" id="2b2a4204-8bbd-481b-bb81-ec2b7b7dc5a1" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080</con:endpoint>
     </con:endpoints>
     <con:resource name="DiscountPlanItem" path="/meveo/api/rest/catalog/discountPlanItem/" id="666ac46a-6ac9-42b2-a221-af8b89bb1447">

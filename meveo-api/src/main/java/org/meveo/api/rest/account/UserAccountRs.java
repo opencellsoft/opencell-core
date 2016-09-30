@@ -78,7 +78,7 @@ public interface UserAccountRs extends IBaseRs {
 
     /**
      * Apply a product on a userAccount.
-     * @param ApplyProductRequestDto if the offer is set (code of an offertemplate for which the user has a subscription) then the product will be charged as if bundled in the offer
+     * @param ApplyProductRequestDto userAccount field must be set
      * @return
      */
     @POST

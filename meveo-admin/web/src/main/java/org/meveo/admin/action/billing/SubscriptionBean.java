@@ -38,9 +38,11 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.Auditable;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -59,12 +61,14 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -128,7 +132,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	@Inject
 	private ProductChargeInstanceService productChargeInstanceService;
 
+    @Inject
+    private ProductInstanceService productInstanceService;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
+    
+    
 	private ServiceInstance selectedServiceInstance;
+	
+	private ProductInstance productInstance;
 
 	private BigDecimal quantity = BigDecimal.ONE;
 
@@ -525,6 +538,37 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
 		}
 	}
+	
+
+	public void applyProduct() {
+		log.debug("applyProduct...");
+		if (productInstance != null) {
+			productInstance.setCode(productInstance.getProductTemplate().getCode());
+			productInstance.setDescription(productInstance.getProductTemplate().getDescription());
+			if (productInstance.getApplicationDate() == null) {
+				productInstance.setApplicationDate(new Date());
+			}
+			Auditable auditable = new Auditable();
+			auditable.setCreated(new Date());
+			auditable.setCreator(currentUser);
+			productInstance.setAuditable(auditable);
+		}
+		productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
+		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity).getUserAccount());
+		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+
+		try {
+			productInstanceService.create(productInstance, currentUser);
+			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+		} catch (BusinessException e) {
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		} catch (Exception e) {
+			log.error("unexpected exception when applying a product! {}", e.getMessage());
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		}
+		productChargeInstances = null;
+	}
+
 
     public void terminateService() {
         try {
