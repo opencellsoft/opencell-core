@@ -264,7 +264,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="76d053cc-cd47-4775-ac93-d2a021485b19">
@@ -393,11 +393,11 @@
           <con:description xsi:nil="true"/>
         </con:representation>
         <con:request name="Request 1" id="1d3da7d0-8ce7-4f62-a536-89c901e3ad13" mediaType="application/json">
-          <con:settings/>
+          <con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings>
           <con:endpoint>http://i.meveo.info</con:endpoint>
           <con:request/>
-          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-          <con:parameters/>
+          <con:originalUri>http://i.meveo.info/api/rest/notification/jobTrigger</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+          <con:jmsPropertyConfig/><con:parameters/>
         </con:request>
       </con:method>
       <con:method name="POST - create" id="77f95490-66c0-4fda-9f65-21f08ea621cc" method="POST">
@@ -16538,14 +16538,10 @@
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
+              <con:configuration><token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
-               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone2}:00</subscriptionDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
               <con:configuration>
@@ -17260,7 +17256,7 @@
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Modify ordered product (product instance)" id="32d69c3a-f934-4704-a724-64b6c4e111be">
+      <con:testStep type="restrequest" name="Modify ordered product (product instance)" id="32d69c3a-f934-4704-a724-64b6c4e111be" disabled="true">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Modify ordered product (product instance)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
@@ -17643,7 +17639,7 @@
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>66</con:value>
+        <con:value>68</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -17659,7 +17655,7 @@
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>+01</con:value>
     </con:property>
     <con:property>
       <con:name>baseEntityPrefix</con:name>
@@ -17671,7 +17667,7 @@
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>+02</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
