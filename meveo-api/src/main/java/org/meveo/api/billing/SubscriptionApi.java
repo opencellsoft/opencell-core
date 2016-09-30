@@ -563,8 +563,8 @@ public class SubscriptionApi extends BaseApi {
 		if (StringUtils.isBlank(postData.getProduct())) {
 			missingParameters.add("product");
 		}
-		if (StringUtils.isBlank(postData.getUserAccount())) {
-			missingParameters.add("userAccount");
+		if (StringUtils.isBlank(postData.getSubscription())) {
+			missingParameters.add("subscription");
 		}
 		if (postData.getOperationDate() == null) {
 			missingParameters.add("operationDate");
@@ -584,8 +584,9 @@ public class SubscriptionApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 		}
 
-		if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) {
-			throw new MeveoApiException("subscription is not ACTIVE.");
+		if ((subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) 
+				&& (subscription.getStatus() != SubscriptionStatusEnum.CREATED)) {
+			throw new MeveoApiException("subscription is not ACTIVE or CREATED: ["+subscription.getStatus()+"]");
 		}
 
 		List<WalletOperation> walletOperations = null;
