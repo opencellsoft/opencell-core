@@ -26,6 +26,7 @@ import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -62,6 +63,10 @@ public class CustomerApi extends AccountApi {
 	}
 
 	public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return create(postData, currentUser, true, null);
+	}
+
+	public Customer create(CustomerDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -119,6 +124,10 @@ public class CustomerApi extends AccountApi {
 			customer.getContactInformation().setFax(postData.getContactInformation().getFax());
 		}
 
+		if(businessAccountModel != null){
+			customer.setBusinessAccountModel(businessAccountModel);
+		}
+
 		customerService.create(customer, currentUser);
 
 		// Validate and populate customFields
@@ -137,6 +146,10 @@ public class CustomerApi extends AccountApi {
 	}
 
 	public Customer update(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return update(postData, currentUser, true, null);
+	}
+
+	public Customer update(CustomerDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -213,6 +226,10 @@ public class CustomerApi extends AccountApi {
 			if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
 				customer.getContactInformation().setFax(postData.getContactInformation().getFax());
 			}
+		}
+
+		if(businessAccountModel != null){
+			customer.setBusinessAccountModel(businessAccountModel);
 		}
 
 		customer = customerService.update(customer, currentUser);

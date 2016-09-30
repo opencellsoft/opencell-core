@@ -23,6 +23,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -32,6 +33,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
@@ -76,6 +78,10 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false, length = 10)
     @Size(max = 10)
     protected String accountType;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "BAM_ID")
+	private BusinessAccountModel businessAccountModel;
         
     public String getExternalRef1() {
 		return externalRef1;
@@ -143,4 +149,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public String getAccountType() {
         return accountType;
     }
+
+	public BusinessAccountModel getBusinessAccountModel() {
+		return businessAccountModel;
+	}
+
+	public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
+		this.businessAccountModel = businessAccountModel;
+	}
 }

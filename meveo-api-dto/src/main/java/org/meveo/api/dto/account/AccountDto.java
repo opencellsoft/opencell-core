@@ -30,6 +30,7 @@ public abstract class AccountDto implements Serializable {
 	private String externalRef2;
 	private NameDto name = new NameDto();
 	private AddressDto address = new AddressDto();
+	private BusinessAccountModelDto businessAccountModel = new BusinessAccountModelDto();
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	@XmlTransient
@@ -105,6 +106,14 @@ public abstract class AccountDto implements Serializable {
 		this.address = address;
 	}
 
+	public BusinessAccountModelDto getBusinessAccountModel() {
+		return businessAccountModel;
+	}
+
+	public void setBusinessAccountModel(BusinessAccountModelDto businessAccountModel) {
+		this.businessAccountModel = businessAccountModel;
+	}
+
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
@@ -151,7 +160,8 @@ public abstract class AccountDto implements Serializable {
 		return "AccountDto [code=" + code + ", description=" + description
 				+ ", externalRef1=" + externalRef1 + ", externalRef2="
 				+ externalRef2 + ", name=" + name + ", address=" + address
-				+ ", customFields=" + customFields + ", loaded=" + loaded + "]";
+				+ ", customFields=" + customFields + ", loaded=" + loaded
+				+ ", businessAccountModel=" + businessAccountModel +  "]";
 	}
 
 }

@@ -33,6 +33,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -80,6 +81,10 @@ public class BillingAccountApi extends AccountApi {
 	}
 
 	public BillingAccount create(BillingAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return create(postData, currentUser, true, null);
+	}
+
+	public BillingAccount create(BillingAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -164,6 +169,10 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
 		}
 
+		if(businessAccountModel != null) {
+			billingAccount.setBusinessAccountModel(businessAccountModel);
+		}
+
 		billingAccountService.createBillingAccount(billingAccount, currentUser);
 
 		// Validate and populate customFields
@@ -182,6 +191,10 @@ public class BillingAccountApi extends AccountApi {
 	}
 
 	public BillingAccount update(BillingAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
+		return update(postData, currentUser, true, null);
+	}
+
+	public BillingAccount update(BillingAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -314,6 +327,10 @@ public class BillingAccountApi extends AccountApi {
 				bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
 			}
 			billingAccount.setBankCoordinates(bankCoordinates);
+		}
+
+		if(businessAccountModel != null){
+			billingAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
 		try {
