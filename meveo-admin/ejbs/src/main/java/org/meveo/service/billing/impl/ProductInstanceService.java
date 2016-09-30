@@ -33,6 +33,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductChargeTemplate;
@@ -83,6 +84,17 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             qb.addCriterionEntity("provider", provider);
             qb.addCriterionEnum("status", status);
             return (List<ProductInstance>) qb.getQuery(em).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<ProductInstance> findBySubscription(Subscription subscription) {
+        QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null, subscription.getProvider());
+        try {
+            qb.addCriterionEntity("subscription", subscription);
+            return (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             return null;
         }
