@@ -209,15 +209,6 @@
 									<hftl:column
 										label="#{messages['oneShotChargeInstance.chargeDate']}"
 										field="chargeDate" />
-									<hftl:column
-										label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-										field="amountWithoutTax" isMessage="false" />
-									<p:column
-										headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-										rendered="#{!subscriptionBean.entity.provider.entreprise}">
-										<h:outputText value="#{entity.amountWithTax}"
-											converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
-									</p:column>
 								</p:dataTable>
 
 								<p:commandButton value="#{messages['action.applyProduct']}"
