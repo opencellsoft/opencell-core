@@ -573,13 +573,16 @@ public class InvoiceApi extends BaseApi {
 		createAgregatesAndInvoice(billingRun.getId(), billingRun.getLastTransactionDate(), currentUser);
 		log.info("createAgregatesAndInvoice ok");
 
-		billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null, currentUser);
-		log.info("update billingRun POSTINVOICED");
+		for (Invoice invoice : billingRun.getInvoices()) {				
+			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
+			invoice.setPdf(null);							
+			invoiceService.update(invoice, currentUser);						
+		}
+		
+		billingRun = updateBR(billingRun, BillingRunStatusEnum.VALIDATED, null, null, currentUser);
+		log.info("update billingRun VALIDATED");
 
-		validateBR(billingRun, currentUser);
-		log.info("billingRunService.validate ok");
-
-		List<Invoice> invoices = invoiceService.getInvoices(billingRun);
+		List<Invoice> invoices = billingRun.getInvoices();
 		log.info((invoices == null) ? "getInvoice is null" : "size=" + invoices.size());
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessApiException("Can't find invoice");
