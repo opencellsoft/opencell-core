@@ -402,7 +402,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
 			em.refresh(billingAccount);
-			currentUser = em.find(currentUser.getClass(), currentUser.getId());
+			currentUser = em.find(User.class, currentUser.getId());
 			em.refresh(currentUser);
 
 			Long startDate = System.currentTimeMillis();

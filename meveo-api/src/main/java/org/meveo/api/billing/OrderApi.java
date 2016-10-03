@@ -23,6 +23,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -143,6 +144,11 @@ public class OrderApi extends BaseApi {
 
         for (OrderItem productOrderItem : productOrder.getOrderItem()) {
 
+        	if (org.meveo.commons.utils.StringUtils.isBlank(productOrderItem.getAction())) {
+				missingParameters.add("orderItem.action");
+				handleMissingParameters();
+			}	
+        	
             // Validate billing account
             if (productOrderItem.getBillingAccount() == null || productOrderItem.getBillingAccount().isEmpty()) {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
@@ -183,7 +189,11 @@ public class OrderApi extends BaseApi {
 
             org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
             orderItem.setItemId(productOrderItem.getId());
-            orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
+            try {
+				orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValueException(OrderItemActionEnum.class.getSimpleName(), productOrderItem.getAction());
+			}
             orderItem.setOrder(order);
             orderItem.setUserAccount(userAccount);
             orderItem.setSource(OrderItem.serializeOrderItem(productOrderItem));
