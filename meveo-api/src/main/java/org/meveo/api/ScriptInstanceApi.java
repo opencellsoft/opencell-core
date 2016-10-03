@@ -32,7 +32,7 @@ import org.meveo.service.script.ScriptInstanceService;
  **/
 
 @Stateless
-public class ScriptInstanceApi extends BaseCrudApi<ScriptInstanceDto>{
+public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanceDto> {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -96,6 +96,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstanceDto>{
         return result;
     }
 
+    @Override
     public ScriptInstanceDto find(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         ScriptInstanceDto scriptInstanceDtoResult = null;
         if (StringUtils.isBlank(scriptInstanceCode)) {
@@ -125,10 +126,14 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstanceDto>{
         scriptInstanceService.remove(scriptInstance);
     }
 
-    public void createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
+    @Override
+    public ScriptInstance createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
         createOrUpdateWithCompile(postData, currentUser);
+
+        ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider());
+        return scriptInstance;
     }
-    
+
     public List<ScriptInstanceErrorDto> createOrUpdateWithCompile(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();

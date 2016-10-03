@@ -2,15 +2,11 @@ package org.meveo.admin.util.pagination;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
-
 
 //import org.ajax4jsf.model.DataVisitor;
 //import org.ajax4jsf.model.ExtendedDataModel;

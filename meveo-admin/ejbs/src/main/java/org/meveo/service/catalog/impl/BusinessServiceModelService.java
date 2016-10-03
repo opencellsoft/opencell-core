@@ -5,13 +5,13 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.admin.impl.GenericModuleService;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BusinessServiceModelService extends BusinessService<BusinessServiceModel> {
+public class BusinessServiceModelService extends GenericModuleService<BusinessServiceModel> {
 
 	public BusinessServiceModel findByBSMAndServiceTemplate(String bsm, String st) {
 		QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "b");

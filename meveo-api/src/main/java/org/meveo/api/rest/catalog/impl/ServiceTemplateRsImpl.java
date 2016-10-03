@@ -71,7 +71,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
         try {
-            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));
+            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

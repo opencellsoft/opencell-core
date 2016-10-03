@@ -27,7 +27,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
+public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNotificationDto> {
 
     @Inject
     private EmailNotificationService emailNotificationService;
@@ -39,7 +39,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public EmailNotification create(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -99,16 +99,19 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
-        
+
         Set<String> emails = new HashSet<String>();
-        for (String email : postData.getSendToMail()) { 
-        	emails.add(email);
+        for (String email : postData.getSendToMail()) {
+            emails.add(email);
         }
         notif.setEmails(emails);
 
         emailNotificationService.create(notif, currentUser);
+
+        return notif;
     }
 
+    @Override
     public EmailNotificationDto find(String notificationCode, User currentUser) throws MeveoApiException {
         EmailNotificationDto result = new EmailNotificationDto();
 
@@ -129,7 +132,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
         return result;
     }
 
-    public void update(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public EmailNotification update(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -188,12 +191,14 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
         Set<String> emails = new HashSet<String>();
-        for (String email : postData.getSendToMail()) { 
-        	emails.add(email);
+        for (String email : postData.getSendToMail()) {
+            emails.add(email);
         }
         notif.setEmails(emails);
 
-        emailNotificationService.update(notif, currentUser);
+        notif = emailNotificationService.update(notif, currentUser);
+
+        return notif;
     }
 
     public void remove(String notificationCode, Provider provider) throws MeveoApiException {
@@ -212,11 +217,12 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotificationDto>{
         }
     }
 
-    public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public EmailNotification createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

@@ -18,23 +18,23 @@ import org.meveo.api.dto.response.BaseResponse;
 public class WorkflowResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = 2492883573757679482L;
-	private WorkflowDto workflowDto;
+	private WorkflowDto workflow;
 	/**
 	 * @return the workflowDto
 	 */
-	public WorkflowDto getWorkflowDto() {
-		return workflowDto;
+	public WorkflowDto getWorkflow() {
+		return workflow;
 	}
 	/**
-	 * @param workflowDto the workflowDto to set
+	 * @param workflow the workflowDto to set
 	 */
-	public void setWorkflowDto(WorkflowDto workflowDto) {
-		this.workflowDto = workflowDto;
+	public void setWorkflow(WorkflowDto workflow) {
+		this.workflow = workflow;
 	}
 
 	@Override
 	public String toString() {
-		return "WorkflowResponseDto [workflowDto=" + workflowDto + "]";
+		return "WorkflowResponseDto [workflow=" + workflow + "]";
 	}
 	
 }

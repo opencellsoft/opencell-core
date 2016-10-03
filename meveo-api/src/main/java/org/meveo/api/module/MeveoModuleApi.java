@@ -39,7 +39,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ModuleItem;
@@ -67,7 +66,7 @@ import org.meveo.service.script.module.ModuleScriptService;
  * 
  **/
 @Stateless
-public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
+public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
     @Inject
     private MeveoModuleService meveoModuleService;
@@ -99,7 +98,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
     @Inject
     private ModuleScriptService moduleScriptService;
 
-    public void create(MeveoModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
+    public MeveoModule create(MeveoModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
             missingParameters.add("code");
@@ -156,9 +155,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
         parseModuleInfoOnlyFromDto(meveoModule, moduleDto, currentUser);
 
         meveoModuleService.create(meveoModule, currentUser);
+
+        return meveoModule;
     }
 
-    public void update(MeveoModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
+    public MeveoModule update(MeveoModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
             missingParameters.add("module code is null");
@@ -219,7 +220,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
             }
         }
         parseModuleInfoOnlyFromDto(meveoModule, moduleDto, currentUser);
-        meveoModuleService.update(meveoModule, currentUser);
+        meveoModule = meveoModuleService.update(meveoModule, currentUser);
+        return meveoModule;
     }
 
     public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
@@ -251,8 +253,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
         List<MeveoModuleDto> result = new ArrayList<MeveoModuleDto>();
         MeveoModuleDto moduleDto = null;
         for (MeveoModule meveoModule : meveoModules) {
-            moduleDto = moduleToDto(meveoModule, currentUser);
-            result.add(moduleDto);
+            try {
+                moduleDto = moduleToDto(meveoModule, currentUser);
+                result.add(moduleDto);
+            } catch (MeveoApiException e) {
+                // Dont care, it was logged earlier in moduleToDto()
+            }
         }
         return result;
     }
@@ -274,14 +280,14 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
         return moduleDto;
     }
 
-    public void createOrUpdate(MeveoModuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public MeveoModule createOrUpdate(MeveoModuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
         MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode(), currentUser.getProvider());
         if (meveoModule == null) {
             // create
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
             // update
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 
@@ -510,17 +516,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
                         throw new RuntimeException("No entity class or @ModuleItem annotation found for " + entityClassName);
                     }
 
-                    // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
-                    // superclasses)
-                    ApiService apiService = (ApiService) EjbUtils.getServiceInterface(entityClassName + "Api");
-                    if (apiService == null) {
-                        String entitySuperClassName = dto.getClass().getSuperclass().getSimpleName()
-                            .substring(0, dto.getClass().getSuperclass().getSimpleName().lastIndexOf("Dto"));
-                        apiService = (ApiService) EjbUtils.getServiceInterface(entitySuperClassName + "Api");
-                    }
-                    if (apiService == null) {
-                        throw new MeveoApiException("Failed to find implementation of API service for class " + dto.getClass());
-                    }
+                    ApiService apiService = getApiService(dto, true);
                     apiService.createOrUpdate(dto, currentUser);
 
                     if (ReflectionUtils.hasField(dto, "appliesTo")) {
@@ -662,18 +658,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModuleDto> {
                     if (item.getItemClass().equals(CustomFieldTemplate.class.getName())) {
                         itemDto = customFieldTemplateApi.find(item.getItemCode(), item.getAppliesTo(), currentUser);
 
+                    } else if (item.getItemClass().equals(EntityCustomAction.class.getName())) {
+                        itemDto = entityCustomActionApi.find(item.getItemCode(), item.getAppliesTo(), currentUser);
+
                     } else {
 
-                        // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
-                        // superclasses)
-                        Class clazz = Class.forName(item.getItemClass());
-                        ApiService apiService = (ApiService) EjbUtils.getServiceInterface(clazz.getSimpleName() + "Api");
-                        if (apiService == null) {
-                            apiService = (ApiService) EjbUtils.getServiceInterface(clazz.getSuperclass().getSimpleName() + "Api");
-                        }
-                        if (apiService == null) {
-                            throw new RuntimeException("Failed to find implementation of API service for class " + item.getItemClass());
-                        }
+                        ApiService apiService = getApiService(item.getItemClass(), true);
                         itemDto = apiService.find(item.getItemCode(), currentUser);
 
                     }

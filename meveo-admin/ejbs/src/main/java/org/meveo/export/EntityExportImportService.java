@@ -150,7 +150,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-    
+
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -681,8 +681,7 @@ public class EntityExportImportService implements Serializable {
                     // Serialize related entities with their own export template node
                     if (pagesProcessedByXstream > -1 && !relatedEntitiesByTemplate.isEmpty()) {
                         for (Entry<RelatedEntityToExport, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
-                            serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(),
-                                exportStats, writer);
+                            serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
                         }
                         relatedEntitiesByTemplate.clear();
                     }
@@ -726,8 +725,7 @@ public class EntityExportImportService implements Serializable {
         // Serialize related entities with their own export template node if there were any left after the last iteration
         if (!relatedEntitiesByTemplate.isEmpty()) {
             for (Entry<RelatedEntityToExport, List<IEntity>> relatedEntityInfo : relatedEntitiesByTemplate.entrySet()) {
-                serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats,
-                    writer);
+                serializeEntities(getExportImportTemplate(relatedEntityInfo.getKey()), parameters, null, relatedEntityInfo.getValue(), exportStats, writer);
             }
             relatedEntitiesByTemplate.clear();
         }
@@ -1974,7 +1972,7 @@ public class EntityExportImportService implements Serializable {
                         // Handle case when related entities are related to main class/entity fields
                     } else {
                         List<IEntity> resolvedEntities = resolvePathToEntityRelatedTo(exportTemplate.getName(), entity, relatedEntityInfo.getPathToEntityRelatedTo());
-                        log.error("Akk resolved {} to {}", relatedEntityInfo.getPathToEntityRelatedTo(), resolvedEntities);
+                        // log.error("Akk resolved {} to {}", relatedEntityInfo.getPathToEntityRelatedTo(), resolvedEntities);
                         if (resolvedEntities != null) {
                             for (IEntity resolvedEntity : resolvedEntities) {
                                 retrievedEntities.addReletedEntities(relatedEntityInfo,
@@ -2051,7 +2049,7 @@ public class EntityExportImportService implements Serializable {
         } else {
 
             Object value = FieldUtils.readField(entity, pathToEntityRelatedTo, true);
-            log.error("AKK read {} of {} to {}", pathToEntityRelatedTo, entity, value);
+            // log.error("AKK read {} of {} to {}", pathToEntityRelatedTo, entity, value);
             if (value != null) {
                 if (value instanceof IEntity) {
                     resolvedEntities.add((IEntity) value);
@@ -2188,17 +2186,17 @@ public class EntityExportImportService implements Serializable {
         }
 
         @Override
-		protected void writeText(QuickWriter writer, String text) {
-        	if(text==null){
-        		writer.write("");
-        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
-        		writer.write(text);
-        	}else{
-        		super.writeText(writer, text);
-        	}
-		}
+        protected void writeText(QuickWriter writer, String text) {
+            if (text == null) {
+                writer.write("");
+            } else if (text.indexOf(XStreamCDATAConverter.CDATA_START) >= 0 && text.indexOf(XStreamCDATAConverter.CDATA_END) > 0) {
+                writer.write(text);
+            } else {
+                super.writeText(writer, text);
+            }
+        }
 
-		@Override
+        @Override
         public void endNode() {
             super.endNode();
             attributeClassAdded = false;
@@ -2569,7 +2567,7 @@ public class EntityExportImportService implements Serializable {
                     try {
                         RelatedEntityToExport relatedEntityForEntity = (RelatedEntityToExport) BeanUtilsBean.getInstance().cloneBean(relatedEntity);
                         relatedEntityForEntity.setEntityClass(PersistenceUtils.getClassForHibernateObject(entity));
-log.error("AKK class calculated is {}", relatedEntityForEntity.getEntityClass());
+                        // log.error("AKK class calculated is {}", relatedEntityForEntity.getEntityClass());
                         if (!relatedEntities.containsKey(relatedEntityForEntity)) {
                             relatedEntities.put(relatedEntityForEntity, new ArrayList<IEntity>());
                         }

@@ -6,10 +6,10 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.catalog.PricePlanApi;
+import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -25,10 +25,10 @@ import org.meveo.api.rest.impl.BaseRs;
 public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
     @Inject
-    private PricePlanApi pricePlanApi;
+    private PricePlanMatrixApi pricePlanApi;
 
     @Override
-    public ActionStatus create(PricePlanDto postData) {
+    public ActionStatus create(PricePlanMatrixDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -48,7 +48,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
     @Override
-    public ActionStatus update(PricePlanDto postData) {
+    public ActionStatus update(PricePlanMatrixDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -72,7 +72,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
         try {
-            result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));
+            result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -128,7 +128,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(PricePlanDto postData) {
+    public ActionStatus createOrUpdate(PricePlanMatrixDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

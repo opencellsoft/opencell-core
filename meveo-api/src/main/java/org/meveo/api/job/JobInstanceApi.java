@@ -9,7 +9,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
-import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,7 +25,7 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.job.TimerEntityService;
 
 @Stateless
-public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
+public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
     @Inject
     private JobInstanceService jobInstanceService;
@@ -37,7 +36,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    public void create(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public JobInstance create(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getJobTemplate()) || StringUtils.isBlank(postData.getCode())) {
 
             if (StringUtils.isBlank(postData.getJobTemplate())) {
@@ -102,6 +101,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
             throw e;
         }
 
+        return jobInstance;
     }
 
     /**
@@ -112,7 +112,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void update(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public JobInstance update(JobInstanceDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
         Provider provider = currentUser.getProvider();
@@ -121,56 +121,56 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
             missingParameters.add("code");
             handleMissingParameters();
 
-        } else {
-
-            JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode, provider);
-
-            if (jobInstance == null) {
-                throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
-            }
-
-            Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
-            JobCategoryEnum jobCategory = job.getJobCategory();
-
-            jobInstance.setJobTemplate(postData.getJobTemplate());
-            jobInstance.setParametres(postData.getParameter()); // TODO setParametres should be renamed
-            jobInstance.setActive(postData.isActive());
-            jobInstance.setJobCategoryEnum(jobCategory);
-            jobInstance.setDescription(postData.getDescription());
-
-            if (!StringUtils.isBlank(postData.getTimerCode())) {
-                TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(), provider);
-                jobInstance.setTimerEntity(timerEntity);
-                if (timerEntity == null) {
-                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
-                }
-            }
-
-            if (!StringUtils.isBlank(postData.getFollowingJob())) {
-                JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(), provider);
-                jobInstance.setFollowingJob(nextJob);
-                if (nextJob == null) {
-                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
-                }
-            }
-
-            // Create any missing CFT for a given provider and job
-            Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-            if (jobCustomFields != null) {
-                customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), currentUser);
-            }
-
-            jobInstance = jobInstanceService.update(jobInstance, currentUser);
-
-            // Populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), jobInstance, false, currentUser);
-            } catch (Exception e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw e;
-            }
-
         }
+
+        JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode, provider);
+
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
+        }
+
+        Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+        JobCategoryEnum jobCategory = job.getJobCategory();
+
+        jobInstance.setJobTemplate(postData.getJobTemplate());
+        jobInstance.setParametres(postData.getParameter()); // TODO setParametres should be renamed
+        jobInstance.setActive(postData.isActive());
+        jobInstance.setJobCategoryEnum(jobCategory);
+        jobInstance.setDescription(postData.getDescription());
+
+        if (!StringUtils.isBlank(postData.getTimerCode())) {
+            TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(), provider);
+            jobInstance.setTimerEntity(timerEntity);
+            if (timerEntity == null) {
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(postData.getFollowingJob())) {
+            JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(), provider);
+            jobInstance.setFollowingJob(nextJob);
+            if (nextJob == null) {
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+            }
+        }
+
+        // Create any missing CFT for a given provider and job
+        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+        if (jobCustomFields != null) {
+            customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), currentUser);
+        }
+
+        jobInstance = jobInstanceService.update(jobInstance, currentUser);
+
+        // Populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), jobInstance, false, currentUser);
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
+        return jobInstance;
     }
 
     /**
@@ -181,11 +181,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void createOrUpdate(JobInstanceDto jobInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
+    public JobInstance createOrUpdate(JobInstanceDto jobInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
         if (jobInstanceService.findByCode(jobInstanceDto.getCode(), currentUser.getProvider()) == null) {
-            create(jobInstanceDto, currentUser);
+            return create(jobInstanceDto, currentUser);
         } else {
-            update(jobInstanceDto, currentUser);
+            return update(jobInstanceDto, currentUser);
         }
     }
 
@@ -248,14 +248,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstanceDto> {
 
         if (jobInstance.getTimerEntity() != null) {
             dto.setTimerCode(jobInstance.getTimerEntity().getCode());
-            dto.setTimer(new TimerEntityDto(jobInstance.getTimerEntity()));
         }
 
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance));
 
         if (jobInstance.getFollowingJob() != null) {
             dto.setFollowingJob(jobInstance.getFollowingJob().getCode());
-            dto.setNextJob(jobInstanceToDto(jobInstance.getFollowingJob()));
         }
 
         return dto;

@@ -30,7 +30,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class ChartApi extends BaseCrudApi<ChartDto>{
+public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
     @Inject
     private ChartService<PieChart> pieChartService;
@@ -50,7 +50,7 @@ public class ChartApi extends BaseCrudApi<ChartDto>{
     @Inject
     private ChartService<Chart> chartService;
 
-    public void create(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Chart create(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -69,21 +69,24 @@ public class ChartApi extends BaseCrudApi<ChartDto>{
         if (postData instanceof PieChartDto) {
             PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, null);
             pieChartService.create(pieChart, currentUser);
+            return pieChart;
 
         } else if (postData instanceof LineChartDto) {
             LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, null);
             lineChartService.create(lineChart, currentUser);
+            return lineChart;
 
         } else if (postData instanceof BarChartDto) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
             barChartService.create(barChart, currentUser);
-        
+            return barChart;
+
         } else {
             throw new InvalidParameterException();
         }
     }
 
-    public void update(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Chart update(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -101,16 +104,19 @@ public class ChartApi extends BaseCrudApi<ChartDto>{
 
         if (chart instanceof PieChart) {
             PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, (PieChart) chart);
-            pieChartService.update(pieChart, currentUser);
+            pieChart = pieChartService.update(pieChart, currentUser);
+            return pieChart;
 
         } else if (chart instanceof LineChart) {
             LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, (LineChart) chart);
-            lineChartService.update(lineChart, currentUser);
+            lineChart = lineChartService.update(lineChart, currentUser);
+            return lineChart;
 
         } else if (chart instanceof BarChart) {
             BarChart barChart = fromDTO((BarChartDto) postData, currentUser, (BarChart) chart);
-            barChartService.update(barChart, currentUser);
-            
+            barChart = barChartService.update(barChart, currentUser);
+            return barChart;
+
         } else {
             throw new InvalidParameterException();
         }
@@ -157,14 +163,14 @@ public class ChartApi extends BaseCrudApi<ChartDto>{
         chartService.remove(chart);
     }
 
-    public void createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Chart createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
         Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
         if (chart == null) {
             // create
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
             // update
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 

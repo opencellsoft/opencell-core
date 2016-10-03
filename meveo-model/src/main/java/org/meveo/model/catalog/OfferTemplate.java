@@ -39,20 +39,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.MultilanguageEntity;
-
-import org.meveo.model.ObservableEntity;
 
 @Entity
-@ObservableEntity
-@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
-// @ExportIdentifier({ "code", "provider" })
-// @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints =
-// @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @DiscriminatorValue("OFFER")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "CAT_OFFER_TEMPLATE_SEQ")
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
 		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
 		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })

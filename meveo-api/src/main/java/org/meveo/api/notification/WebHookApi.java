@@ -24,7 +24,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class WebHookApi extends BaseCrudApi<WebHookDto> {
+public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
     @Inject
     private WebHookService webHookService;
@@ -36,7 +36,7 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public WebHook create(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -108,8 +108,11 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
         }
 
         webHookService.create(webHook, currentUser);
+
+        return webHook;
     }
 
+    @Override
     public WebHookDto find(String notificationCode, User currentUser) throws MeveoApiException {
         WebHookDto result = new WebHookDto();
 
@@ -130,7 +133,7 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
         return result;
     }
 
-    public void update(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public WebHook update(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -138,7 +141,7 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
-        if (postData.getEventTypeFilter()==null) {
+        if (postData.getEventTypeFilter() == null) {
             missingParameters.add("eventTypeFilter");
         }
         if (StringUtils.isBlank(postData.getHost())) {
@@ -147,61 +150,63 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
         if (StringUtils.isBlank(postData.getPage())) {
             missingParameters.add("page");
         }
-        if (postData.getHttpMethod()==null) {
+        if (postData.getHttpMethod() == null) {
             missingParameters.add("httpMethod");
         }
 
         handleMissingParameters();
-        
-     WebHook webHook = webHookService.findByCode(postData.getCode(), currentUser.getProvider());
-            if (webHook == null) {
-                throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
-            }
 
-            ScriptInstance scriptInstance = null;
-            if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-                scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
-                if (scriptInstance == null) {
-                    throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-                }
-            }
+        WebHook webHook = webHookService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (webHook == null) {
+            throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
+        }
 
-            // check class
-            try {
-                Class.forName(postData.getClassNameFilter());
-            } catch (Exception e) {
-                throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
             }
+        }
 
-            CounterTemplate counterTemplate = null;
-            if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-                counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-                if (counterTemplate == null) {
-                    throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
-                }
+        // check class
+        try {
+            Class.forName(postData.getClassNameFilter());
+        } catch (Exception e) {
+            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
+        }
+
+        CounterTemplate counterTemplate = null;
+        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            if (counterTemplate == null) {
+                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
+        }
 
-            webHook.setClassNameFilter(postData.getClassNameFilter());
-            webHook.setEventTypeFilter(postData.getEventTypeFilter());
-            webHook.setScriptInstance(scriptInstance);
-            webHook.setParams(postData.getScriptParams());
-            webHook.setElFilter(postData.getElFilter());
-            webHook.setCounterTemplate(counterTemplate);
+        webHook.setClassNameFilter(postData.getClassNameFilter());
+        webHook.setEventTypeFilter(postData.getEventTypeFilter());
+        webHook.setScriptInstance(scriptInstance);
+        webHook.setParams(postData.getScriptParams());
+        webHook.setElFilter(postData.getElFilter());
+        webHook.setCounterTemplate(counterTemplate);
 
-            webHook.setHost(postData.getHost());
-            webHook.setPort(postData.getPort());
-            webHook.setPage(postData.getPage());
-            webHook.setHttpMethod(postData.getHttpMethod());
-            webHook.setUsername(postData.getUsername());
-            webHook.setPassword(postData.getPassword());
-            if (postData.getHeaders() != null) {
-                webHook.getHeaders().putAll(postData.getHeaders());
-            }
-            if (postData.getParams() != null) {
-                webHook.getWebhookParams().putAll(postData.getParams());
-            }
+        webHook.setHost(postData.getHost());
+        webHook.setPort(postData.getPort());
+        webHook.setPage(postData.getPage());
+        webHook.setHttpMethod(postData.getHttpMethod());
+        webHook.setUsername(postData.getUsername());
+        webHook.setPassword(postData.getPassword());
+        if (postData.getHeaders() != null) {
+            webHook.getHeaders().putAll(postData.getHeaders());
+        }
+        if (postData.getParams() != null) {
+            webHook.getWebhookParams().putAll(postData.getParams());
+        }
 
-            webHookService.update(webHook, currentUser);
+        webHook = webHookService.update(webHook, currentUser);
+
+        return webHook;
     }
 
     public void remove(String notificationCode, Provider provider) throws MeveoApiException {
@@ -220,11 +225,12 @@ public class WebHookApi extends BaseCrudApi<WebHookDto> {
         }
     }
 
-    public void createOrUpdate(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public WebHook createOrUpdate(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

@@ -21,12 +21,12 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
  * @author Andrius Karpavicius
  **/
 @Stateless
-public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantityDto>{
+public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, MeasurableQuantityDto> {
 
     @Inject
     private MeasurableQuantityService measurableQuantityService;
 
-    public void create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public MeasurableQuantity create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -40,9 +40,10 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantityDto>{
         MeasurableQuantity measurableQuantity = fromDTO(postData, currentUser, null);
         measurableQuantityService.create(measurableQuantity, currentUser);
 
+        return measurableQuantity;
     }
 
-    public void update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public MeasurableQuantity update(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("measurableQuantityCode");
             handleMissingParameters();
@@ -54,7 +55,9 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantityDto>{
         }
 
         measurableQuantity = fromDTO(postData, currentUser, measurableQuantity);
-        measurableQuantityService.update(measurableQuantity, currentUser);
+        measurableQuantity = measurableQuantityService.update(measurableQuantity, currentUser);
+
+        return measurableQuantity;
 
     }
 
@@ -90,14 +93,15 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantityDto>{
         measurableQuantityService.remove(measurableQuantity);
     }
 
-    public void createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public MeasurableQuantity createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode(), currentUser.getProvider());
         if (measurableQuantity == null) {
             // create
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
             // update
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 

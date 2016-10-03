@@ -120,7 +120,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
         try {
-            result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser().getProvider()));
+            result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

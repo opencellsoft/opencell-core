@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -16,13 +16,13 @@ public class GetPricePlanResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = 9135612368906230878L;
 
-	private PricePlanDto pricePlan;
+	private PricePlanMatrixDto pricePlan;
 
-	public PricePlanDto getPricePlan() {
+	public PricePlanMatrixDto getPricePlan() {
 		return pricePlan;
 	}
 
-	public void setPricePlan(PricePlanDto pricePlan) {
+	public void setPricePlan(PricePlanMatrixDto pricePlan) {
 		this.pricePlan = pricePlan;
 	}
 

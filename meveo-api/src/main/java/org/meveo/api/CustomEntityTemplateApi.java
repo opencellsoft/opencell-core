@@ -30,7 +30,7 @@ import org.meveo.util.EntityCustomizationUtils;
  * @author Andrius Karpavicius
  **/
 @Stateless
-public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto> {
+public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, CustomEntityTemplateDto> {
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
@@ -47,7 +47,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
 
-    public void create(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public CustomEntityTemplate create(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -76,9 +76,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
                 entityCustomActionApi.createOrUpdate(actionDto, cet.getAppliesTo(), currentUser);
             }
         }
+
+        return cet;
     }
 
-    public void updateEntityTemplate(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public CustomEntityTemplate updateEntityTemplate(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -99,6 +101,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
 
         synchronizeCustomFieldsAndActions(cet.getAppliesTo(), dto.getFields(), dto.getActions(), currentUser);
 
+        return cet;
     }
 
     public void removeEntityTemplate(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
@@ -117,6 +120,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
         }
     }
 
+    @Override
     public CustomEntityTemplateDto find(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("customEntityTemplateCode");
@@ -136,12 +140,13 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
         return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
     }
 
-    public void createOrUpdate(CustomEntityTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public CustomEntityTemplate createOrUpdate(CustomEntityTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
         if (cet == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            updateEntityTemplate(postData, currentUser);
+            return updateEntityTemplate(postData, currentUser);
         }
     }
 
@@ -233,7 +238,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplateDto
             for (EntityCustomAction action : cetActions.values()) {
                 boolean found = false;
                 for (EntityCustomActionDto actionDto : actions) {
-                    if (actionDto.getCode().equals(action.getLocalCodeForRead())) {
+                    if (actionDto.getCode().equals(action.getCode())) {
                         found = true;
                         break;
                     }

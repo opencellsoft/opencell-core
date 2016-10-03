@@ -1,6 +1,7 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -11,13 +12,13 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.admin.impl.GenericModuleService;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BusinessAccountModelService extends BusinessService<BusinessAccountModel> {
+public class BusinessAccountModelService extends GenericModuleService<BusinessAccountModel> {
 
 	@SuppressWarnings("unchecked")
 	public List<BusinessAccountModel> findByScriptId(Long id) {

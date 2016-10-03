@@ -192,10 +192,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(code, appliesTo, provider);
 
         if (cft == null) {
-            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo+"-"+provider);
+            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo);
         }
         return new CustomFieldTemplateDto(cft);
     }

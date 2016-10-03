@@ -6,7 +6,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -25,14 +24,6 @@ public class EntityCustomAction extends BusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;
 
-    private static String CODE_SEPARATOR = "|";
-
-    /**
-     * Code value without the appliesTo part. Code field consists of <localCode>_<appliesTo>
-     */
-    @Transient
-    private String localCode;
-
     @Column(name = "APPLIES_TO", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
@@ -50,28 +41,7 @@ public class EntityCustomAction extends BusinessEntity {
     @JoinColumn(name = "SCRIPT_INSTANCE_ID")
     private ScriptInstance script;
 
-    public void setCode(String localCode, String appliesTo) {
-        super.setCode(EntityCustomAction.composeCode(localCode, appliesTo));
-        this.localCode = localCode;
-    }
-
-    public String getLocalCode() {
-        return localCode;
-    }
-
-    public String getLocalCodeForRead() {
-        // Parse code, which consists of <localCode>|<appliesTo> to determine localCode value
-        if (localCode == null && code != null) {
-            localCode = code.split("\\" + CODE_SEPARATOR)[0];
-        }
-        return localCode;
-    }
-
-    public void setLocalCode(String localCode) {
-        this.localCode = localCode;
-    }
-
-    public String getAppliesTo() {
+      public String getAppliesTo() {
         return appliesTo;
     }
 
@@ -137,9 +107,5 @@ public class EntityCustomAction extends BusinessEntity {
     @Override
     public String toString() {
         return String.format("EntityActionScript [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
-    }
-
-    public static String composeCode(String scriptCode, String appliesTo) {
-        return scriptCode + CODE_SEPARATOR + appliesTo;
     }
 }

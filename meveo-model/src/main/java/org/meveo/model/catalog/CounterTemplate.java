@@ -38,11 +38,13 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ModuleItem
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_TEMPLATE_SEQ")
 @NamedQueries({			

@@ -27,8 +27,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -42,39 +40,30 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ApiService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.BusinessAccountModelDto;
-import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.api.EntityToDtoConverter;
-import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.module.ModuleScriptService;
 
 @Stateless
-public class MeveoModuleService extends BusinessService<MeveoModule> {
-
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
+public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
     @Inject
     protected EntityToDtoConverter entityToDtoConverter;
@@ -156,8 +145,9 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         final String url = "api/rest/module/createOrUpdate";
 
         try {
-            ApiService<MeveoModuleDto> moduleApi = (ApiService<MeveoModuleDto>) EjbUtils.getServiceInterface("ModuleApi");
+            ApiService<MeveoModule, MeveoModuleDto> moduleApi = (ApiService<MeveoModule, MeveoModuleDto>) EjbUtils.getServiceInterface("MeveoModuleApi");
             MeveoModuleDto moduleDto = moduleApi.find(module.getCode(), currentUser);
+
             log.debug("Export module dto {}", moduleDto);
             Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
@@ -327,33 +317,6 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     // moduleDto.addModuleItem(dto);
     // }
 
-    public void loadModuleItem(MeveoModuleItem item, Provider provider) {
-
-        BusinessEntity entity = null;
-        if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), provider);
-
-        } else {
-
-            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code and mi.provider=:provider";
-            TypedQuery<BusinessEntity> query = getEntityManager().createQuery(sql, BusinessEntity.class);
-            query.setParameter("code", item.getItemCode());
-            query.setParameter("provider", provider);
-            try {
-                entity = query.getSingleResult();
-
-            } catch (NoResultException | NonUniqueResultException e) {
-                log.error("Failed to find a module item {}. Reason: {}", item, e.getClass().getSimpleName());
-                return;
-            } catch (Exception e) {
-                log.error("Failed to find a module item {}", item, e);
-                return;
-            }
-        }
-        item.setItemEntity(entity);
-
-    }
-
     @SuppressWarnings("unchecked")
     public List<MeveoModuleItem> findByCodeAndItemType(String code, String className) {
         QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "m");
@@ -367,15 +330,10 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static MeveoModuleDto moduleSourceToDto(MeveoModule module) throws JAXBException {
-        Class<? extends MeveoModuleDto> dtoClass = MeveoModuleDto.class;
-        if (module instanceof BusinessServiceModel) {
-            dtoClass = BusinessServiceModelDto.class;
-        } else if (module instanceof BusinessOfferModel) {
-            dtoClass = BusinessOfferModelDto.class;
-        } else if (module instanceof BusinessAccountModel) {
-            dtoClass = BusinessAccountModelDto.class;
-        }
+        Class<? extends MeveoModuleDto> dtoClass = (Class<? extends MeveoModuleDto>) ReflectionUtils.getClassBySimpleNameAndParentClass(module.getClass().getSimpleName() + "Dto",
+            MeveoModuleDto.class);
 
         MeveoModuleDto moduleDto = (MeveoModuleDto) JAXBContext.newInstance(dtoClass).createUnmarshaller().unmarshal(new StringReader(module.getModuleSource()));
 
@@ -450,142 +408,6 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             module.getModuleItems().clear();
             return update(module, currentUser);
         }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public MeveoModule disable(MeveoModule module, User currentUser) throws BusinessException {
-
-        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
-        if (!module.isDownloaded()) {
-            return super.disable(module, currentUser);
-        }
-
-        if (!module.isInstalled()) {
-            // throw new BusinessException("Module is not installed");
-            return module;
-        }
-
-        if (module.getScript() != null) {
-            moduleScriptService.preDisableModule(module.getScript().getCode(), module, currentUser);
-        }
-
-        if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
-        } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
-        }
-
-        for (MeveoModuleItem item : module.getModuleItems()) {
-            loadModuleItem(item, currentUser.getProvider());
-            BusinessEntity itemEntity = item.getItemEntity();
-            if (itemEntity == null) {
-                continue;
-            }
-
-            try {
-                // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
-                // superclasses)
-                Class clazz = Class.forName(item.getItemClass());
-                PersistenceService persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSimpleName() + "Service");
-                if (persistenceServiceForItem == null) {
-                    persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSuperclass().getSimpleName() + "Service");
-                }
-                if (persistenceServiceForItem == null) {
-                    log.error("Failed to find implementation of persistence service for class {}", item.getItemClass());
-                    continue;
-                }
-
-                persistenceServiceForItem.disable(itemEntity, currentUser);
-
-            } catch (Exception e) {
-                log.error("Failed to disable module item. Module item {}", item, e);
-            }
-        }
-
-        if (module.getScript() != null) {
-            moduleScriptService.postDisableModule(module.getScript().getCode(), module, currentUser);
-        }
-
-        return super.disable(module, currentUser);
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public MeveoModule enable(MeveoModule module, User currentUser) throws BusinessException {
-
-        // if module is local module (was not downloaded) just disable as any other entity without iterating module items
-        if (!module.isDownloaded()) {
-            return super.enable(module, currentUser);
-        }
-
-        if (!module.isInstalled()) {
-            // throw new BusinessException("Module is not installed");
-            return module;
-        }
-
-        if (module.getScript() != null) {
-            moduleScriptService.preEnableModule(module.getScript().getCode(), module, currentUser);
-        }
-
-        if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
-        } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
-        }
-
-        for (MeveoModuleItem item : module.getModuleItems()) {
-            loadModuleItem(item, currentUser.getProvider());
-            BusinessEntity itemEntity = item.getItemEntity();
-            if (itemEntity == null) {
-                continue;
-            }
-
-            try {
-                // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
-                // superclasses)
-                Class clazz = Class.forName(item.getItemClass());
-                PersistenceService persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSimpleName() + "Service");
-                if (persistenceServiceForItem == null) {
-                    persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSuperclass().getSimpleName() + "Service");
-                }
-                if (persistenceServiceForItem == null) {
-                    log.error("Failed to find implementation of persistence service for class {}", item.getItemClass());
-                    continue;
-                }
-
-                persistenceServiceForItem.enable(itemEntity, currentUser);
-
-            } catch (Exception e) {
-                log.error("Failed to enable module item. Module item {}", item, e);
-            }
-        }
-
-        if (module.getScript() != null) {
-            moduleScriptService.postEnableModule(module.getScript().getCode(), module, currentUser);
-        }
-
-        return super.enable(module, currentUser);
-    }
-
-    @Override
-    public void remove(MeveoModule module) {
-
-        // If module was downloaded, remove all submodules as well
-        if (module.isDownloaded() && module.getModuleItems() != null) {
-
-            for (MeveoModuleItem item : module.getModuleItems()) {
-                try {
-                    if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
-                        loadModuleItem(item, module.getProvider());
-                        MeveoModule itemModule = (MeveoModule) item.getItemEntity();
-                        remove(itemModule);
-                    }
-                } catch (Exception e) {
-                    log.error("Failed to delete a submodule", e);
-                }
-            }
-        }
-
-        super.remove(module);
     }
 
     @SuppressWarnings("unchecked")

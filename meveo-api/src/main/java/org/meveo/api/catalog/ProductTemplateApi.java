@@ -2,6 +2,7 @@ package org.meveo.api.catalog;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -17,7 +18,8 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
-public class ProductTemplateApi extends ProductOfferingApi {
+@Stateless
+public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, ProductTemplateDto> {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
@@ -41,17 +43,17 @@ public class ProductTemplateApi extends ProductOfferingApi {
 		return productTemplateDto;
 	}
 
-	public void createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
 		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
 
 		if (productTemplate == null) {
-			create(productTemplateDto, currentUser);
+			return create(productTemplateDto, currentUser);
 		} else {
-			update(productTemplateDto, currentUser);
+			return update(productTemplateDto, currentUser);
 		}
 	}
 
-	public void create(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate create(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -94,9 +96,10 @@ public class ProductTemplateApi extends ProductOfferingApi {
 
 		productTemplateService.update(productTemplate, currentUser);
 
+		return productTemplate;
 	}
 
-	public void update(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate update(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -125,8 +128,9 @@ public class ProductTemplateApi extends ProductOfferingApi {
 
 		processDigitalResources(postData, productTemplate, currentUser);
 
-		productTemplateService.update(productTemplate, currentUser);
+		productTemplate= productTemplateService.update(productTemplate, currentUser);
 
+		return productTemplate;
 	}
 
 	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {

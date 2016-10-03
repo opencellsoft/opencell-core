@@ -16,13 +16,13 @@ public class PricePlansDto implements Serializable {
 
 	private static final long serialVersionUID = 4354099345909112263L;
 
-	private List<PricePlanDto> pricePlanMatrix;
+	private List<PricePlanMatrixDto> pricePlanMatrix;
 
-	public List<PricePlanDto> getPricePlanMatrix() {
+	public List<PricePlanMatrixDto> getPricePlanMatrix() {
 		return pricePlanMatrix;
 	}
 
-	public void setPricePlanMatrix(List<PricePlanDto> pricePlanMatrix) {
+	public void setPricePlanMatrix(List<PricePlanMatrixDto> pricePlanMatrix) {
 		this.pricePlanMatrix = pricePlanMatrix;
 	}
 

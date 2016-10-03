@@ -70,7 +70,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
     public WorkflowResponseDto find(String workflowCode) {
         WorkflowResponseDto workflowResponseDto = new WorkflowResponseDto();
         try {
-            workflowResponseDto.setWorkflowDto(workflowApi.find(workflowCode, getCurrentUser()));
+            workflowResponseDto.setWorkflow(workflowApi.find(workflowCode, getCurrentUser()));
         } catch (Exception e) {
             super.processException(e, workflowResponseDto.getActionStatus());
         }
@@ -81,7 +81,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
     public WorkflowsResponseDto list() {
         WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
         try {
-            workflowsResponseDto.setListWorkflowDto(workflowApi.list(getCurrentUser()));
+            workflowsResponseDto.setWorkflows(workflowApi.list(getCurrentUser()));
         } catch (Exception e) {
             super.processException(e, workflowsResponseDto.getActionStatus());
         }
@@ -104,7 +104,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
     public WorkflowsResponseDto findByEntity(String baseEntityName) {
         WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
         try {
-            workflowsResponseDto.setListWorkflowDto(workflowApi.findByEntity(baseEntityName, getCurrentUser()));
+            workflowsResponseDto.setWorkflows(workflowApi.findByEntity(baseEntityName, getCurrentUser()));
         } catch (Exception e) {
             super.processException(e, workflowsResponseDto.getActionStatus());
         }

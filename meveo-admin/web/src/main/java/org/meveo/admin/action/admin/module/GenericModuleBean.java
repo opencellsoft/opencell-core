@@ -170,7 +170,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     }
 
     public void setModuleItemEntity(BusinessEntity itemEntity) {
-        if (itemEntity != null) {
+        if (itemEntity != null && !entity.equals(itemEntity)) {
             MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);

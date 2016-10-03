@@ -19,7 +19,6 @@
 package org.meveo.admin.dunning;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,22 +27,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DunningActionStatusEnum;
-import org.meveo.model.payments.DunningActionTypeEnum;
-import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
-import org.meveo.model.wf.Workflow;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.payments.impl.ActionDunningService;

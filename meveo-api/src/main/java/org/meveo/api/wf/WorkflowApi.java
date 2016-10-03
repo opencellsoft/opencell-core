@@ -29,71 +29,79 @@ import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 
 @Stateless
-public class WorkflowApi extends BaseCrudApi<WorkflowDto>{
+public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
-	@Inject
-	private WorkflowService workflowService;
+    @Inject
+    private WorkflowService workflowService;
 
-	@Inject
-	private WFTransitionApi wfTransitionApi;
+    @Inject
+    private WFTransitionApi wfTransitionApi;
 
     @Inject
     private WFTransitionService wfTransitionService;
-    
-	@Inject
-	private BaseEntityService baseEntityService;
-	
-	/**
-	 * 
-	 * @param workflowDto
-	 * @param currentUser
-	 * @throws EntityAlreadyExistsException
-	 * @throws BusinessException
-	 * @throws MissingParameterException 
-	 * @throws EntityDoesNotExistsException 
-	 */
-	public void create(WorkflowDto workflowDto, User currentUser) throws EntityAlreadyExistsException, BusinessException, MissingParameterException, EntityDoesNotExistsException  {
-		validateDto(workflowDto, false);
-		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
-		if(workflow != null) {
-			throw new EntityAlreadyExistsException(Workflow.class, workflowDto.getCode());
-		}		
-		workflow = fromDTO(workflowDto, null);
-		workflowService.create(workflow, currentUser);		
-		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
+
+    @Inject
+    private BaseEntityService baseEntityService;
+
+    /**
+     * 
+     * @param workflowDto
+     * @param currentUser
+     * @throws EntityAlreadyExistsException
+     * @throws BusinessException
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     */
+    public Workflow create(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
+
+        validateDto(workflowDto, false);
+
+        Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
+        if (workflow != null) {
+            throw new EntityAlreadyExistsException(Workflow.class, workflowDto.getCode());
+        }
+        
+        workflow = fromDTO(workflowDto, null);
+        workflowService.create(workflow, currentUser);
+
+        if (workflowDto.getListWFTransitionDto() != null && !workflowDto.getListWFTransitionDto().isEmpty()) {
             int priority = 1;
-		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
+            for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
                 wfTransitionDto.setPriority(priority);
-		    	wfTransitionApi.create(workflow, wfTransitionDto, currentUser);
+                wfTransitionApi.create(workflow, wfTransitionDto, currentUser);
                 priority++;
-		    }
-		}		
-	}
+            }
+        }
 
-	/**
-	 * 
-	 * @param workflowDto
-	 * @param currentUser
-	 * @throws EntityDoesNotExistsException 
-	 * @throws MeveoApiException
-	 * @throws BusinessException
-	 * @throws MissingParameterException 
-	 * @throws EntityAlreadyExistsException 
-	 */
-	public void update(WorkflowDto workflowDto, User currentUser) throws EntityDoesNotExistsException, BusinessException, MissingParameterException,
-               EntityAlreadyExistsException, BusinessApiException {
-		validateDto(workflowDto, true);
-		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider(), Arrays.asList("transitions"));
-		if (workflow == null) {
-			throw new EntityDoesNotExistsException(Workflow.class, workflowDto.getCode());
-		} 
+        return workflow;
+    }
 
-        if (workflowDto.getWfType()!= null && !workflow.getWfType().equals(workflowDto.getWfType())) {
+    /**
+     * 
+     * @param workflowDto
+     * @param currentUser
+     * @throws EntityDoesNotExistsException
+     * @throws MeveoApiException
+     * @throws BusinessException
+     * @throws MissingParameterException
+     * @throws EntityAlreadyExistsException
+     */
+    public Workflow update(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
+
+        validateDto(workflowDto, true);
+
+        Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider(), Arrays.asList("transitions"));
+        if (workflow == null) {
+            throw new EntityDoesNotExistsException(Workflow.class, workflowDto.getCode());
+        }
+
+        if (workflowDto.getWfType() != null && !workflow.getWfType().equals(workflowDto.getWfType())) {
             throw new BusinessApiException();
         }
 
-		workflow = fromDTO(workflowDto, workflow);
-		workflowService.update(workflow, currentUser);
+        workflow = fromDTO(workflowDto, workflow);
+        workflow = workflowService.update(workflow, currentUser);
+
         List<WFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(workflowDto.getListWFTransitionDto())) {
             for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
@@ -115,76 +123,79 @@ public class WorkflowApi extends BaseCrudApi<WorkflowDto>{
                 }
             }
         }
-		if (workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()) {
+        if (workflowDto.getListWFTransitionDto() != null && !workflowDto.getListWFTransitionDto().isEmpty()) {
             int priority = 1;
-		    for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
+            for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
                 wfTransitionDto.setPriority(priority);
-		    	wfTransitionApi.createOrUpdate(workflow, wfTransitionDto, currentUser);
+                wfTransitionApi.createOrUpdate(workflow, wfTransitionDto, currentUser);
                 priority++;
 
-		    }
-		}
-	}
+            }
+        }
 
-	/**
-	 * 
-	 * @param workflowCode
-	 * @param currentUser
-	 * @return
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 */
-	public WorkflowDto find(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException{
-		return new WorkflowDto(find(workflowCode, currentUser.getProvider()));
-		
-	}
+        return workflow;
+    }
 
-	/**
-	 * 
-	 * @param workflowCode
-	 * @param currentUser
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 */
-	public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
-		workflowService.remove(find(workflowCode, currentUser.getProvider())); 
-	}
+    /**
+     * 
+     * @param workflowCode
+     * @param currentUser
+     * @return
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     */
+    @Override
+    public WorkflowDto find(String workflowCode, User currentUser) throws MeveoApiException {
+        return new WorkflowDto(find(workflowCode, currentUser.getProvider()));
 
-	/**
-	 * 
-	 * @param currentUser
-	 * @return
-     *
-	 */
-	public List<WorkflowDto> list(User currentUser){
+    }
+
+    /**
+     * 
+     * @param workflowCode
+     * @param currentUser
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     */
+    public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
+        workflowService.remove(find(workflowCode, currentUser.getProvider()));
+    }
+
+    /**
+     * 
+     * @param currentUser
+     * @return
+     * 
+     */
+    public List<WorkflowDto> list(User currentUser) {
         List<WorkflowDto> result = new ArrayList<>();
-		List<Workflow> workflows =  workflowService.list(currentUser.getProvider());
-		if (workflows != null){
-			for(Workflow workflow : workflows){
+        List<Workflow> workflows = workflowService.list(currentUser.getProvider());
+        if (workflows != null) {
+            for (Workflow workflow : workflows) {
                 result.add(new WorkflowDto(workflow));
-			}
-		}
-		return result;
-	}
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * 
-	 * @param workflowDto
-	 * @param currentUser
-	 * @throws EntityAlreadyExistsException
-	 * @throws BusinessException
-	 * @throws EntityDoesNotExistsException
-	 * @throws MissingParameterException 
-	 */
-	public void createOrUpdate(WorkflowDto workflowDto, User currentUser) throws EntityAlreadyExistsException, BusinessException,
-            EntityDoesNotExistsException, MissingParameterException, BusinessApiException {
-		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
-		if(workflow == null){
-			create(workflowDto, currentUser);
-		}else{
-			update(workflowDto, currentUser);
-		}
-	}
+    /**
+     * 
+     * @param workflowDto
+     * @param currentUser
+     * @throws EntityAlreadyExistsException
+     * @throws BusinessException
+     * @throws EntityDoesNotExistsException
+     * @throws MissingParameterException
+     */
+    @Override
+    public Workflow createOrUpdate(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
+        Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
+        if (workflow == null) {
+            return create(workflowDto, currentUser);
+        } else {
+            return update(workflowDto, currentUser);
+        }
+    }
 
     protected Workflow fromDTO(WorkflowDto dto, Workflow workflowToUpdate) {
         Workflow workflow = new Workflow();
@@ -197,50 +208,50 @@ public class WorkflowApi extends BaseCrudApi<WorkflowDto>{
         workflow.setCode(dto.getCode());
         workflow.setDescription(dto.getDescription());
         workflow.setEnableHistory(dto.getEnableHistory());
-   
+
         return workflow;
     }
-	
-	/**
-	 * 
-	 * @param workflowDto
-	 * @throws MissingParameterException
-	 */
-	public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException{
-		if (StringUtils.isBlank(workflowDto.getCode())) {
-			missingParameters.add("code");
-		}
-		if (!isUpdate && StringUtils.isBlank(workflowDto.getWfType())) {
-			missingParameters.add("WFType");
-		} 		
-		handleMissingParameters();
-	}
-	
-	private Workflow find(String workflowCode,Provider provider) throws MissingParameterException, EntityDoesNotExistsException{
-		if(StringUtils.isBlank(workflowCode)){
-			missingParameters.add("workflowCode");
-			handleMissingParameters();
-		}
-		Workflow workflow = workflowService.findByCode(workflowCode, provider);
-		if(workflow == null){
-			throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
-		}
-		return workflow;
-	}
-	
-	/**
-	 * Find a Workflow by an Entity
-	 * 
-	 * @param baseEntityName
-	 * @param currentUser
-	 * @return
-	 * @throws MeveoApiException
-	 */
-	@SuppressWarnings("unchecked")
+
+    /**
+     * 
+     * @param workflowDto
+     * @throws MissingParameterException
+     */
+    public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException {
+        if (StringUtils.isBlank(workflowDto.getCode())) {
+            missingParameters.add("code");
+        }
+        if (!isUpdate && StringUtils.isBlank(workflowDto.getWfType())) {
+            missingParameters.add("WFType");
+        }
+        handleMissingParameters();
+    }
+
+    private Workflow find(String workflowCode, Provider provider) throws MissingParameterException, EntityDoesNotExistsException {
+        if (StringUtils.isBlank(workflowCode)) {
+            missingParameters.add("workflowCode");
+            handleMissingParameters();
+        }
+        Workflow workflow = workflowService.findByCode(workflowCode, provider);
+        if (workflow == null) {
+            throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
+        }
+        return workflow;
+    }
+
+    /**
+     * Find a Workflow by an Entity
+     * 
+     * @param baseEntityName
+     * @param currentUser
+     * @return
+     * @throws MeveoApiException
+     */
+    @SuppressWarnings("unchecked")
     public List<WorkflowDto> findByEntity(String baseEntityName, User currentUser) throws MeveoApiException {
-		if(StringUtils.isBlank(baseEntityName)){
-			missingParameters.add("baseEntityName");
-			handleMissingParameters();
+        if (StringUtils.isBlank(baseEntityName)) {
+            missingParameters.add("baseEntityName");
+            handleMissingParameters();
         }
         Class<? extends IEntity> clazz = null;
         try {
@@ -248,51 +259,49 @@ public class WorkflowApi extends BaseCrudApi<WorkflowDto>{
         } catch (Exception e) {
             throw new MeveoApiException("Cant find class for baseEntityName");
         }
-		List<WorkflowDto>  listWfDto = new ArrayList<WorkflowDto>();
-		List<Workflow> listWF = workflowService.findByEntity(clazz, currentUser.getProvider());
-		for(Workflow wf : listWF){
-			listWfDto.add(new WorkflowDto(wf));
-		}
-		return listWfDto;
-	}
-	
-	/**
-	 * 
-	 * @param baseEntityName
-	 * @param baseEntityInstanceId
-	 * @param workflowCode
-	 * @param currentUser
-	 * @throws BusinessException
-	 * @throws MeveoApiException
-	 */
-	@SuppressWarnings("unchecked")
+        List<WorkflowDto> listWfDto = new ArrayList<WorkflowDto>();
+        List<Workflow> listWF = workflowService.findByEntity(clazz, currentUser.getProvider());
+        for (Workflow wf : listWF) {
+            listWfDto.add(new WorkflowDto(wf));
+        }
+        return listWfDto;
+    }
+
+    /**
+     * 
+     * @param baseEntityName
+     * @param baseEntityInstanceId
+     * @param workflowCode
+     * @param currentUser
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    @SuppressWarnings("unchecked")
     public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws BusinessException, MeveoApiException {
-		if(StringUtils.isBlank(baseEntityName)){
-			missingParameters.add("baseEntityName");
-			handleMissingParameters();
-		}
-		
-		if(StringUtils.isBlank(baseEntityInstanceId)){
-			missingParameters.add("baseEntityInstanceId");
-			handleMissingParameters();
-		}
-		
-		Class<IEntity> clazz = null;
-		try{
-			clazz = (Class<IEntity>) Class.forName(baseEntityName);
-		}catch(Exception e){
-			throw new MeveoApiException("Cant find class for baseEntityName");
-		}
-		baseEntityService.setEntityClass(clazz);
-		
-		IEntity baseEntity = baseEntityService.findById(baseEntityInstanceId);	
-		if(baseEntity == null){
-			throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
-		}
-		log.debug("baseEntity.getId() : "+baseEntity.getId());
-		
-		workflowService.executeWorkflow(baseEntity, workflowCode, currentUser);
-	}
+        if (StringUtils.isBlank(baseEntityName)) {
+            missingParameters.add("baseEntityName");
+            handleMissingParameters();
+        }
+
+        if (StringUtils.isBlank(baseEntityInstanceId)) {
+            missingParameters.add("baseEntityInstanceId");
+            handleMissingParameters();
+        }
+
+        Class<IEntity> clazz = null;
+        try {
+            clazz = (Class<IEntity>) Class.forName(baseEntityName);
+        } catch (Exception e) {
+            throw new MeveoApiException("Cant find class for baseEntityName");
+        }
+        baseEntityService.setEntityClass(clazz);
+
+        IEntity baseEntity = baseEntityService.findById(baseEntityInstanceId);
+        if (baseEntity == null) {
+            throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
+        }
+        log.debug("baseEntity.getId() : " + baseEntity.getId());
+
+        workflowService.executeWorkflow(baseEntity, workflowCode, currentUser);
+    }
 }
-
-

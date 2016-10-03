@@ -41,15 +41,9 @@ public class JobInstanceDto extends BaseDto {
     private String description;
 
     /**
-     * Use nextJob instead
-     */
-    @Deprecated
-    private String followingJob;
-
-    /**
      * Following job to execute
      */
-    private JobInstanceDto nextJob;
+    private String followingJob;
 
     /**
      * Parameter to job execution
@@ -68,16 +62,10 @@ public class JobInstanceDto extends BaseDto {
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
     /**
-     * Job scheduling timer code. Use Timer instead
+     * Job scheduling timer code
      */
-    @Deprecated
     @XmlAttribute(required = false)
     private String timerCode;
-
-    /**
-     * Timer for job scheduling
-     */
-    private TimerEntityDto timer;
 
     public JobCategoryEnum getJobCategory() {
         return jobCategory;
@@ -151,27 +139,11 @@ public class JobInstanceDto extends BaseDto {
         this.timerCode = timerCode;
     }
 
-    public JobInstanceDto getNextJob() {
-        return nextJob;
-    }
-
-    public void setNextJob(JobInstanceDto nextJob) {
-        this.nextJob = nextJob;
-    }
-
-    public TimerEntityDto getTimer() {
-        return timer;
-    }
-
-    public void setTimer(TimerEntityDto timer) {
-        this.timer = timer;
-    }
-
     @Override
     public String toString() {
         return String
             .format(
-                "JobInstanceDto [code=%s, description=%s, jobCategory=%s, jobTemplate=%s, followingJob=%s, nextJob=%s, parameter=%s, active=%s, customFields=%s, timerCode=%s, timer=%s]",
-                code, description, jobCategory, jobTemplate, followingJob, nextJob, parameter, active, customFields, timerCode, timer);
+                "JobInstanceDto [code=%s, description=%s, jobCategory=%s, jobTemplate=%s, followingJob=%s,  parameter=%s, active=%s, customFields=%s, timerCode=%s]",
+                code, description, jobCategory, jobTemplate, followingJob, parameter, active, customFields, timerCode);
     }
 }

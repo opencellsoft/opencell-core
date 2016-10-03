@@ -1,8 +1,10 @@
 package org.meveo.admin.action.admin;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
@@ -22,10 +24,9 @@ public class GenericEntityPickerBean extends BaseBean<IEntity> {
     private static final long serialVersionUID = 115130709397837651L;
 
     private Class<? extends IEntity> selectedEntityClass;
-    
+
     @Inject
     private BaseEntityService baseEntityService;
-    
 
     /**
      * Get a list of classes that contain the given annotation
@@ -34,11 +35,21 @@ public class GenericEntityPickerBean extends BaseBean<IEntity> {
      * @return A list of classes
      */
     @SuppressWarnings("unchecked")
-    public Set<Class<?>> getEntityClasses(String annotation) {
+    public List<Class<?>> getEntityClasses(String annotation) {
         try {
-            return ReflectionUtils.getClassesAnnotatedWith((Class<? extends Annotation>) Class.forName(annotation));
+
+            List<Class<?>> classes = new ArrayList<>(ReflectionUtils.getClassesAnnotatedWith((Class<? extends Annotation>) Class.forName(annotation)));
+
+            Collections.sort(classes, new Comparator<Class<?>>() {
+                @Override
+                public int compare(Class<?> clazz1, Class<?> clazz2) {
+                    return clazz1.getName().compareTo(clazz2.getName());
+                }
+            });
+            return classes;
+
         } catch (ClassNotFoundException e) {
-            return new HashSet<Class<?>>();
+            return new ArrayList<Class<?>>();
         }
     }
 
@@ -66,7 +77,7 @@ public class GenericEntityPickerBean extends BaseBean<IEntity> {
             return super.getLazyDataModel();
         }
     }
-    
+
     @Override
     protected String getDefaultSort() {
         return "code";

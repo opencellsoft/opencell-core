@@ -51,7 +51,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
         GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
         try {
-            result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser().getProvider()));
+            result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

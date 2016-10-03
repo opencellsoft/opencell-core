@@ -23,7 +23,7 @@ import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
-import org.meveo.api.catalog.PricePlanApi;
+import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.ProductChargeTemplateApi;
 import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.catalog.RecurringChargeTemplateApi;
@@ -45,7 +45,7 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -107,7 +107,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	private OneShotChargeTemplateApi oneShotChargeTemplateApi;
 
 	@Inject
-	private PricePlanApi pricePlanApi;
+	private PricePlanMatrixApi pricePlanApi;
 
 	@Inject
 	private RecurringChargeTemplateApi recurringChargeTemplateApi;
@@ -270,7 +270,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
 		try {
-			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser().getProvider()));
+			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -350,7 +350,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
 		try {
-			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -408,7 +408,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createPricePlan(PricePlanDto postData) {
+	public ActionStatus createPricePlan(PricePlanMatrixDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -428,7 +428,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updatePricePlan(PricePlanDto postData) {
+	public ActionStatus updatePricePlan(PricePlanMatrixDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -452,7 +452,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
 		try {
-			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));
+			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -532,7 +532,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
 		try {
-			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -632,7 +632,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
 		try {
-			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));
+			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -756,7 +756,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
 		try {
-			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1015,7 +1015,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createOrUpdatePricePlan(PricePlanDto postData) {
+	public ActionStatus createOrUpdatePricePlan(PricePlanMatrixDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -1995,7 +1995,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetProductChargeTemplateResponseDto result = new GetProductChargeTemplateResponseDto();
 
 		try {
-			result.setProductChargeTemplate(productChargeTemplateApi.find(productChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setProductChargeTemplate(productChargeTemplateApi.find(productChargeTemplateCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

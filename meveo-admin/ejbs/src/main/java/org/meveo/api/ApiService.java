@@ -3,6 +3,7 @@ package org.meveo.api;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 
 /**
@@ -10,9 +11,10 @@ import org.meveo.model.admin.User;
  * 
  * @author Andrius Karpavicius
  * 
+ * @param <E> Entity class
  * @param <T> Dto class
  */
-public interface ApiService<T extends BaseDto> {
+public interface ApiService<E extends IEntity, T extends BaseDto> {
 
     /**
      * Find entity identified by code
@@ -32,6 +34,6 @@ public interface ApiService<T extends BaseDto> {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void createOrUpdate(T dtoData, User currentUser) throws MeveoApiException, BusinessException;
+    public E createOrUpdate(T dtoData, User currentUser) throws MeveoApiException, BusinessException;
 
 }

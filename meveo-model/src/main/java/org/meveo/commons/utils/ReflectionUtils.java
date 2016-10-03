@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.reflections.Reflections;
@@ -169,6 +173,21 @@ public class ReflectionUtils {
         return field != null;
     }
     
+    /**
+     * Check if class has a field
+     * 
+     * @param object Object to check
+     * @param fieldName Name of a field to check
+     * @return True if object has a field
+     */
+    public static boolean isClassHasField(Class<?> clazz, String fieldName) {
+        if (clazz == null) {
+            return false;
+        }
+        Field field = FieldUtils.getField(clazz, fieldName, true);
+        return field != null;
+    }
+
     public static Class<?> getClassBySimpleNameAndAnnotation(String className, Class<? extends Annotation> annotationClass) {
         Class<?> entityClass = null;
         if (!StringUtils.isBlank(className)) {
@@ -182,12 +201,12 @@ public class ReflectionUtils {
         }
         return entityClass;
     }
-    
+
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
         return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
     }
-    
-    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass,String prefix) {
+
+    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass, String prefix) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
@@ -204,7 +223,10 @@ public class ReflectionUtils {
     public static Class<?> getClassBySimpleNameAndParentClass(String className, Class parentClass) {
         Class<?> entityClass = null;
         if (!StringUtils.isBlank(className)) {
-            Reflections reflections = new Reflections("org.meveo.model");
+            Reflections reflections = new Reflections("org.meveo");
+            if (parentClass.getSimpleName().equals(className)){
+                return parentClass;
+            }
             Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
             for (Class<?> clazz : classes) {
                 if (className.equals(clazz.getSimpleName())) {
@@ -214,5 +236,15 @@ public class ReflectionUtils {
             }
         }
         return entityClass;
+    }
+
+    /**
+     * A check if class represents a DTO or entity class
+     * 
+     * @param clazz Class to check
+     * @return True if class is annotated with @Entity, @Embeddable or @XmlRootElement
+     */
+    public static boolean isDtoOrEntityType(Class<?> clazz) {
+        return clazz.isAnnotationPresent(Entity.class) || clazz.isAnnotationPresent(Embeddable.class) || clazz.isAnnotationPresent(XmlRootElement.class);
     }
 }

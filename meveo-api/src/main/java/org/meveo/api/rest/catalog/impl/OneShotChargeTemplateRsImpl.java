@@ -98,7 +98,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
         try {
-            result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser().getProvider()));
+            result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

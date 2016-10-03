@@ -10,7 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
@@ -47,7 +47,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 
 @Stateless
-public class OneShotChargeTemplateApi extends BaseApi {
+public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
 
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
@@ -79,7 +79,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
-    public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OneShotChargeTemplate create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -181,9 +181,11 @@ public class OneShotChargeTemplateApi extends BaseApi {
                 catMessagesService.create(catMsg, currentUser);
             }
         }
+        
+        return chargeTemplate;
     }
 
-    public void update(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OneShotChargeTemplate update(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -289,9 +291,11 @@ public class OneShotChargeTemplateApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        return chargeTemplate;
     }
 
-    public OneShotChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    public OneShotChargeTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
@@ -301,7 +305,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         OneShotChargeTemplateDto result = new OneShotChargeTemplateDto();
 
         // check if code already exists
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
@@ -309,7 +313,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),currentUser.getProvider())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -379,11 +383,11 @@ public class OneShotChargeTemplateApi extends BaseApi {
         return oneShotChargeTemplatesWPrice;
     }
 
-    public void createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

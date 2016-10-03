@@ -31,12 +31,18 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.MultilanguageEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.BusinessAccountModel;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
+@ModuleItem
+@ObservableEntity
+@MultilanguageEntity
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")

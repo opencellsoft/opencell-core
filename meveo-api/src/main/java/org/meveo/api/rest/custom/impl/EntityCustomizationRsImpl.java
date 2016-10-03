@@ -358,7 +358,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.removeEntityAction(actionCode, appliesTo, getCurrentUser());
+            entityCustomActionApi.remove(actionCode, appliesTo, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -380,7 +380,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         EntityCustomActionResponseDto result = new EntityCustomActionResponseDto();
 
         try {
-            result.setEntityAction(entityCustomActionApi.findEntityAction(actionCode, appliesTo, getCurrentUser()));
+            result.setEntityAction(entityCustomActionApi.find(actionCode, appliesTo, getCurrentUser()));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
