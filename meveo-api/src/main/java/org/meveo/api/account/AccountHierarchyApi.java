@@ -543,9 +543,11 @@ public class AccountHierarchyApi extends BaseApi {
 			customerCodeOrId = postData.getCustomerId();
 		}
 		
-		if(!customerCodeOrId.startsWith(CUSTOMER_PREFIX)) {
-			customerCodeOrId = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);	
-		}
+		if(postData.getUsePrefix() != null && postData.getUsePrefix()){
+			if(!customerCodeOrId.startsWith(CUSTOMER_PREFIX)) {
+				customerCodeOrId = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);	
+			}
+	    }
 
 		if (!StringUtils.isBlank(customerCodeOrId)) {
 			customerCodeOrId=StringUtils.normalizeHierarchyCode(customerCodeOrId);

@@ -156,7 +156,7 @@
         <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
         <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
 
-			<hftl:column label="#{messages['businessEntity.code']}"
+			<hftl:column label="#{messages['businessEntity.code']}" objectIdParamName="billingAccountId"
 				field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
 			<p:column width="100">
 				<f:facet name="header">
