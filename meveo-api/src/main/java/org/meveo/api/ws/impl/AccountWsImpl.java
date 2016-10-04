@@ -67,9 +67,6 @@ import org.meveo.api.ws.AccountWs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {

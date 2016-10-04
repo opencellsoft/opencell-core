@@ -25,14 +25,12 @@ public class ChargeInstanceDto {
 	private BigDecimal amountWithoutTax;
 	private String sellerCode;
 	private String userAccountCode;
-	private String offerTemplateCode;
 	
 	public ChargeInstanceDto() {
 		
 	}
 
-	public ChargeInstanceDto(String code, String description, String status, BigDecimal amountWithTax, BigDecimal amountWithoutTax, String sellerCode, String userAccountCode,
-			String offerTemplateCode) {
+	public ChargeInstanceDto(String code, String description, String status, BigDecimal amountWithTax, BigDecimal amountWithoutTax, String sellerCode, String userAccountCode) {
 		super();
 		this.code = code;
 		this.description = description;
@@ -41,7 +39,6 @@ public class ChargeInstanceDto {
 		this.amountWithoutTax = amountWithoutTax;
 		this.sellerCode = sellerCode;
 		this.userAccountCode = userAccountCode;
-		this.offerTemplateCode = offerTemplateCode;
 	}
 
 	public String getCode() {
@@ -100,18 +97,10 @@ public class ChargeInstanceDto {
 		this.userAccountCode = userAccountCode;
 	}
 
-	public String getOfferTemplateCode() {
-		return offerTemplateCode;
-	}
-
-	public void setOfferTemplateCode(String offerTemplateCode) {
-		this.offerTemplateCode = offerTemplateCode;
-	}
-
 	@Override
 	public String toString() {
 		return "ChargeInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", amountWithTax=" + amountWithTax + ", amountWithoutTax="
-				+ amountWithoutTax + ", sellerCode=" + sellerCode + ", userAccountCode=" + userAccountCode + ", offerTemplateCode=" + offerTemplateCode + "]";
+				+ amountWithoutTax + ", sellerCode=" + sellerCode + ", userAccountCode=" + userAccountCode + "]";
 	}
 
 }

@@ -24,9 +24,6 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.shared.DateUtils;
 
-/**
- * @author Edward P. Legaspi
- **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class UserAccountRsImpl extends BaseRs implements UserAccountRs {

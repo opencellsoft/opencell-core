@@ -277,7 +277,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
 		}
 
-		WalletOperation result = prerateChargeApplication(code, subscriptionDate, chargeInstance.getOfferTemplate() == null ? null : chargeInstance.getOfferTemplate().getCode(),
+		WalletOperation result = prerateChargeApplication(code, subscriptionDate, chargeInstance.getSubscription() == null ? null : chargeInstance.getSubscription().getOffer().getCode(),
 				chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, taxPercent, discountPercent,
 				nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate, mode,currentUser);
 

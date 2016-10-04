@@ -1205,4 +1205,12 @@
 			constraintName="uk_product_instance" />
 	</changeSet>
 
+	<changeSet id="#2060_20160928_remove_offer_template"
+		author="SebastienMichea">
+		<dropColumn tableName="billing_charge_instance" columnName="offer_template_id"/>
+		<addColumn tableName="billing_product_instance">
+			<column name="subscription_id" type="BIGINT" />
+		</addColumn>
+		
+	</changeSet>
 </databaseChangeLog>
