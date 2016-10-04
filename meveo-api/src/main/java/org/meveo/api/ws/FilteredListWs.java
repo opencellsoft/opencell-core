@@ -6,17 +6,33 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 
 @WebService
 public interface FilteredListWs extends IBaseWs {
 
+	/**
+     * Execute a filter to retrieve a list of entities
+     * 
+     * @param filter - if the code is set we lookup the filter in DB, else we parse the inputXml to create a transient filter
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @return
+     */
     @WebMethod
+    public FilteredListResponseDto listByFilter(@WebParam(name = "filter") FilterDto filter, @WebParam(name = "from") Integer from,
+    		@WebParam(name = "size") Integer size);
+    
+    
+    @WebMethod
+    @Deprecated//since 4.4
     public FilteredListResponseDto list(@WebParam(name = "filter") String filter, @WebParam(name = "firstRow") Integer firstRow,
             @WebParam(name = "numberOfRows") Integer numberOfRows);
 
     @WebMethod
+    @Deprecated//since 4.4
     public FilteredListResponseDto listByXmlInput(@WebParam(name = "filter") FilteredListDto postData);
 
     /**

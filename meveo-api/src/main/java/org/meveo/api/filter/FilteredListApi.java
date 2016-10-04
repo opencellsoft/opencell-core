@@ -8,10 +8,12 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
@@ -30,6 +32,7 @@ public class FilteredListApi extends BaseApi {
     @Inject
     private ElasticClient elasticClient;
 
+    @Deprecated //in 4.4
     public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException {
         String result = "";
 
@@ -54,6 +57,7 @@ public class FilteredListApi extends BaseApi {
         return result;
     }
 
+    @Deprecated //in 4.4
     public String listByXmlInput(FilteredListDto postData, User currentUser) throws MeveoApiException {
         String result = "";
 
@@ -76,7 +80,43 @@ public class FilteredListApi extends BaseApi {
 
         return result;
     }
+    
+    public Filter getFilterFromDto(FilterDto filter, User currentUser) throws MeveoApiException {
+    	Filter result = null;
+        if(StringUtils.isBlank(filter.getCode())&&StringUtils.isBlank(filter.getInputXml())){
+        	throw new MissingParameterException("code or inputXml");
+        }
+        if(!StringUtils.isBlank(filter.getCode())){
+        	result = filterService.findByCode(filter.getCode(), currentUser.getProvider());
+        	if(result==null && StringUtils.isBlank(filter.getInputXml())){
+                throw new EntityDoesNotExistsException(Filter.class, filter.getCode());
+        	}
+        	 // check if user own the filter
+            if (result.getShared() == null || !result.getShared()) {
+                if (result.getAuditable().getCreator().getId() != currentUser.getId()) {
+                    throw new MeveoApiException("INVALID_FILTER_OWNER");
+                }
+            }
+        }
+        if (result == null) {
+        	result = filterService.parse(filter.getInputXml());
+        } 
+        return result;
+    }
 
+    public String listByFilter(FilterDto filter,int firstRow, int numberOfRows, User currentUser)  throws MeveoApiException {
+        String result = "";
+        Filter filterEntity = getFilterFromDto(filter,currentUser);
+        try {
+			result = filterService.filteredList(filterEntity, firstRow, numberOfRows,currentUser);
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }
+        return result;    	
+    }
+    
+    
+    
     public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {

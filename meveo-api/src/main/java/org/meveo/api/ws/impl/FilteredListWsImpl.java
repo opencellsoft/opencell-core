@@ -9,6 +9,7 @@ import javax.jws.WebService;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,8 +27,30 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
     @Inject
     private FilteredListApi filteredListApi;
-
+    
     @Override
+    public FilteredListResponseDto listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) {
+        FilteredListResponseDto result = new FilteredListResponseDto();
+        try {
+            String response = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser());
+            result.getActionStatus().setMessage(response);
+            result.setSearchResults(response);
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+    
+    @Override
+    @Deprecated//since 4.4
     public FilteredListResponseDto list(String filter, Integer firstRow, Integer numberOfRows) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
@@ -49,6 +72,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     }
 
     @Override
+    @Deprecated//since 4.4
     public FilteredListResponseDto listByXmlInput(FilteredListDto postData) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
