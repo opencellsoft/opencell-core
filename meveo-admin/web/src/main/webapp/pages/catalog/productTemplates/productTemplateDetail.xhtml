@@ -7,8 +7,8 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-            <f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
-        </f:metadata>
+			<f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
+		</f:metadata>
 	</ui:define>
 
 	<ui:define name="body">
@@ -26,10 +26,26 @@
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{productTemplateBean}" showEnableDisableButton="true">
 
-			<ui:include src="productTemplateDetailCommon.xhtml">
-				<ui:param name="backingBean" value="#{productTemplateBean}" />
-				<ui:param name="mode" value="PRODUCT" />
-			</ui:include>
+			<p:tabView id="tabView"
+				activeIndex="#{productTemplateBean.activeTab}">
+				<p:tab tab="information" title="#{messages['commons.information']}">
+					<ui:include src="productTemplateDetailCommon.xhtml">
+						<ui:param name="backingBean" value="#{productTemplateBean}" />
+						<ui:param name="mode" value="PRODUCT" />
+					</ui:include>
+				</p:tab>
+				<p:tab tab="productCharges"
+					title="#{messages['productTemplate.productCharges']}">
+					<hftl:dataList backingBean="#{productTemplateBean}"
+						dataModel="#{productTemplateBean.entity.productChargeTemplates}">
+						<hftl:column label="#{messages['BusinessEntity.code']}"
+							field="code" editView="productChargeTemplateDetail"
+							valueIdField="id" backView="productTemplates" />
+						<hftl:column field="description"
+							label="#{messages['BusinessEntity.description']}" />
+					</hftl:dataList>
+				</p:tab>
+			</p:tabView>
 
 		</hftl:formPanel>
 

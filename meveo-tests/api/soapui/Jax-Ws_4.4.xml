@@ -3,7 +3,7 @@
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="6ddda25e-c147-4f11-8eac-49dbbb878abe" wsaVersion="NONE" name="ScriptWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://carbuncle:8080/meveo/ScriptWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ScriptWs</con:endpoint>
     </con:endpoints>
@@ -76,7 +76,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" id="ac13a91e-84cd-4ee5-874c-c2fe7ba33cd6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
@@ -309,7 +309,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SettingsWs?wsdl" id="3a4f2982-ba89-440d-99f7-8da28f5aa27e" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://127.0.0.1:8080/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://carbuncle:8080/meveo/SettingsWs</con:endpoint>
@@ -643,7 +643,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/JobWs?wsdl" id="d3c22af2-6bf5-4dff-888b-056d73a0b994" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://127.0.0.1:8080/meveo/JobWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/JobWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint>
@@ -692,7 +692,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="7582df2f-7b3f-4b2c-bf36-30d8ce1adef8" wsaVersion="NONE" name="FinanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FinanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/FinanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/FinanceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/FinanceWs</con:endpoint>
     </con:endpoints>
@@ -720,7 +720,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="87a2698b-d02e-41fb-9616-2efed1dbc5fa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://salesforce.i.opencellsoft.com/meveo/CatalogWs</con:endpoint>
@@ -938,7 +938,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/InvoiceWs?wsdl" id="2faf849c-ec21-4c8d-bc7e-8aae933b8b8a" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
@@ -982,7 +982,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/MediationWs?wsdl" id="607fcb09-1e71-445d-8453-799ac5169124" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint>
       <con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/MediationWs</con:endpoint>
@@ -1008,7 +1008,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/InvoicingWs?wsdl" id="a0c81a47-2992-4a4a-a3ed-02ca9ba5a5e8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#meveoUrl}/InvoicingWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
@@ -1042,7 +1042,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SubscriptionWs?wsdl" id="4d3f08ff-c929-4001-b808-8f41ded95d27" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
       <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
       <con:endpoint>http://192.168.10.14:8080/meveo/SubscriptionWs</con:endpoint>
@@ -1083,7 +1083,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b7cb6f76-2581-4f55-a250-9d6db51600be" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="78a8eead-4688-4e6e-8cb8-709fc81b0743" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1158,7 +1158,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6a1a2dcc-3af4-4284-8709-07ed19a4e739" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://192.168.10.14:8080/meveo/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ScriptInstanceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>

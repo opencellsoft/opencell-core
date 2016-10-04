@@ -156,7 +156,7 @@ public class UsageRatingService {
     
 	public void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal deducedQuantity, CachedUsageChargeInstance chargeCache,
 			UsageChargeInstance chargeInstance, User currentUser) throws BusinessException {		
-		walletOperation.setSubscriptionDate(null);
+		walletOperation.setSubscriptionDate(edr.getSubscription().getSubscriptionDate());
 		walletOperation.setOperationDate(edr.getEventDate());
 		walletOperation.setParameter1(edr.getParameter1());
 		walletOperation.setParameter2(edr.getParameter2());
@@ -211,7 +211,7 @@ public class UsageRatingService {
 			walletOperation.setCounter(chargeInstance.getCounter());
 		}
 
-		walletOperation.setOfferCode(chargeInstance.getOfferTemplate()==null?null:chargeInstance.getOfferTemplate().getCode());
+		walletOperation.setOfferCode(chargeInstance.getSubscription()==null?null:chargeInstance.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 		
 		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(),
@@ -486,7 +486,7 @@ public class UsageRatingService {
 			edr.setRejectReason("NULL_SUBSCRIPTION");
 		} else {
 			boolean edrIsRated = false;
-
+			
 			try {
 				if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id

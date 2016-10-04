@@ -29,13 +29,11 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -46,7 +44,6 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -81,9 +78,6 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
-
-    @Inject
-    private ProductChargeInstanceService productChargeInstanceService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -347,8 +341,8 @@ public class OrderApi extends BaseApi {
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
-                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), null, orderItem, productOrderItem,
-                    currentUser);
+                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
+                    null,currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -373,22 +367,23 @@ public class OrderApi extends BaseApi {
                     }
                 }
 
+          
+                // Instantiate a service
+                Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, productOrderItem.getProduct(), services, orderItem, productOrderItem,
+                    currentUser);
+                orderItem.setSubscription(subscription);
                 // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
-                    ProductInstance productInstance = instantiateProduct(productOffering, product, (OfferTemplate) primaryOffering, orderItem, productOrderItem, currentUser);
+                    ProductInstance productInstance = instantiateProduct(productOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
+                    		subscription,currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
                     }
                     index++;
                 }
-
-                // Instantiate a service
-                Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, productOrderItem.getProduct(), services, orderItem, productOrderItem,
-                    currentUser);
-                orderItem.setSubscription(subscription);
                 productOrderItem.getProduct().setId(subscription.getCode());
 
             }
@@ -546,8 +541,8 @@ public class OrderApi extends BaseApi {
         return subscription;
     }
 
-    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem, User currentUser) throws BusinessException {
+    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem,
+            OrderItem productOrderItem,Subscription subscription, User currentUser) throws BusinessException {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -558,35 +553,18 @@ public class OrderApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
-
-        if (productInstanceService.findByCode(code, currentUser.getProvider()) != null) {
-            throw new BusinessException("Product instance with code " + code + " already exists");
-        }
-
-        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
-            currentUser);
-        productInstance.setProvider(currentUser.getProvider());
+        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(),subscription, productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
+                currentUser);
+            productInstance.setProvider(currentUser.getProvider());
 
         try {
-            CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
-
+        	CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
             populateCustomFields(customFields, productInstance, true, currentUser, true);
-
         } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        }
-
-        List<ProductChargeInstance> list = new ArrayList<>();
-        ProductChargeInstance pcInstance = null;
-        for (ProductChargeTemplate productChargeTemplate : productTemplate.getProductChargeTemplates()) {
-            pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, currentUser);
-            list.add(pcInstance);
-        }
-
-        productInstance.setProductChargeInstances(list);
-        productInstanceService.create(productInstance, currentUser);
-        productChargeInstanceService.apply(pcInstance, null, offerTemplate, chargeDate, null, null, null, null, null, currentUser, true);
+           log.error("Failed to associate custom field instance to an entity", e);
+           throw new BusinessException("Failed to associate custom field instance to an entity", e);
+        }    
+        productInstanceService.applyProductInstance(productInstance,null,null,null,currentUser, true);
         return productInstance;
     }
 

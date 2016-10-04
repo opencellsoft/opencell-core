@@ -41,7 +41,11 @@
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}"
 				field="offerServiceTemplates" isList="true"
 				valueLabelField="serviceTemplate.code"
-				valueIdField="serviceTemplate.id" entityView="serviceTemplateDetail" />
+				valueIdField="serviceTemplate.id" entityView="serviceTemplateDetail" backView="offerTemplates" />
+			<hftl:column label="#{messages['menu.productTemplates']}"
+				field="offerProductTemplates" isList="true"
+				valueLabelField="productTemplate.code"
+				valueIdField="productTemplate.id" entityView="productTemplateDetail" backView="offerTemplates" />
 			<hftl:column label="#{messages['businessOffer.title']}"
 				field="businessOfferModel.code" />
 			<hftl:column label="#{messages['enableEntity.active']}"
