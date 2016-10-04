@@ -237,7 +237,7 @@ public class RoleApi extends BaseApi {
         return roleDto;
     }
 
-    public void remove(String name, String providerCode, User currentUser) throws MeveoApiException {
+    public void remove(String name, String providerCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(name)) {
             missingParameters.add("role");
         }
@@ -265,7 +265,7 @@ public class RoleApi extends BaseApi {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
         role.setPermissions(null);
-        roleService.remove(role);
+        roleService.remove(role, currentUser);
     }
 
     public Role createOrUpdate(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {

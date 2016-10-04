@@ -210,7 +210,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			counterTemplateApi.remove(counterTemplateCode, getCurrentUser().getProvider());
+			counterTemplateApi.remove(counterTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -290,7 +290,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			offerTemplateApi.remove(offerTemplateCode, getCurrentUser().getProvider());
+			offerTemplateApi.remove(offerTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -392,7 +392,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode, getCurrentUser().getProvider());
+			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -472,7 +472,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			pricePlanApi.remove(pricePlanCode, getCurrentUser().getProvider());
+			pricePlanApi.remove(pricePlanCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -572,7 +572,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser().getProvider());
+			recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -652,7 +652,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceTemplateApi.remove(serviceTemplateCode, getCurrentUser().getProvider());
+			serviceTemplateApi.remove(serviceTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -776,7 +776,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser().getProvider());
+			usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -856,7 +856,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser().getProvider());
+			triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1302,7 +1302,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			discountPlanApi.remove(discountPlanCode, getCurrentUser().getProvider());
+			discountPlanApi.remove(discountPlanCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1422,7 +1422,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			offerTemplateCategoryApi.remove(offerTemplateCategoryCode, getCurrentUser().getProvider());
+			offerTemplateCategoryApi.remove(offerTemplateCategoryCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1707,7 +1707,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	            discountPlanItemApi.remove(discountPlanItemCode, getCurrentUser().getProvider());
+	            discountPlanItemApi.remove(discountPlanItemCode, getCurrentUser());
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);
@@ -2015,7 +2015,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			productChargeTemplateApi.remove(productChargeTemplateCode, getCurrentUser().getProvider());
+			productChargeTemplateApi.remove(productChargeTemplateCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

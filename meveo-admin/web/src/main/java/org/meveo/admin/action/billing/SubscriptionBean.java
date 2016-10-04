@@ -764,7 +764,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
             serviceTemplates.add(serviceInstance.getServiceTemplate());
-            serviceInstanceService.remove(serviceInstance.getId());
+            serviceInstanceService.remove(serviceInstance.getId(), getCurrentUser());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "delete.successful"));

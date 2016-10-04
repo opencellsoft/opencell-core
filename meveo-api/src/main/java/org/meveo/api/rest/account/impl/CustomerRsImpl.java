@@ -94,7 +94,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.remove(customerCode, getCurrentUser().getProvider());
+            customerApi.remove(customerCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -214,7 +214,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.removeBrand(brandCode, getCurrentUser().getProvider());
+            customerApi.removeBrand(brandCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -234,7 +234,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.removeCategory(categoryCode, getCurrentUser().getProvider());
+            customerApi.removeCategory(categoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

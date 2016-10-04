@@ -176,19 +176,19 @@ public class InvoiceCategoryApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceCategoryCode");
             handleMissingParameters();
         }
 
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, provider);
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, currentUser.getProvider());
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
 
-        invoiceCategoryService.remove(invoiceCategory);
+        invoiceCategoryService.remove(invoiceCategory, currentUser);
     }
 
     /**

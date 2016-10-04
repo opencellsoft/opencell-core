@@ -108,8 +108,9 @@ public class TitleApi extends BaseApi {
      * @param postData
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void remove(String titleCode, User currentUser) throws MeveoApiException {
+    public void remove(String titleCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(titleCode)) {
             missingParameters.add("titleCode");
@@ -119,7 +120,7 @@ public class TitleApi extends BaseApi {
 
         Title title = titleService.findByCode(titleCode, currentUser.getProvider());
         if (title != null) {
-            titleService.remove(title);
+            titleService.remove(title, currentUser);
         } else {
             throw new EntityDoesNotExistsException(Title.class, titleCode);
         }

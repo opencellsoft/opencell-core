@@ -180,15 +180,15 @@ public class JobTriggerApi extends BaseApi {
 
     }
 
-    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            JobTrigger notif = jobTriggerService.findByCode(notificationCode, provider);
+            JobTrigger notif = jobTriggerService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(JobTrigger.class, notificationCode);
             }
 
-            jobTriggerService.remove(notif);
+            jobTriggerService.remove(notif, currentUser);
         } else {
             missingParameters.add("code");
 

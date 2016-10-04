@@ -511,7 +511,6 @@ input[type="text"] {
 }
 
 .ui-breadcrumb ul li a {
-  margin-top: 4px !important;
   text-decoration: none;
 }
 
@@ -520,9 +519,12 @@ input[type="text"] {
 }
 
 .ui-breadcrumb ul li .ui-menuitem-link {
-  margin-top: 0;
+  margin-top: 2px;
 }
 
+.ui-breadcrumb  .ui-breadcrumb-chevron {
+  margin-top: 1px;
+}
 
 /*--------- */
 #topbar-wrapper {

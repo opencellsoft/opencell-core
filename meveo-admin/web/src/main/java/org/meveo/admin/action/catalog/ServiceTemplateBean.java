@@ -296,7 +296,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		ServiceChargeTemplateSubscription subscription=serviceChargeTemplateSubscriptionService.findById(id);
 		entity.getServiceSubscriptionCharges().remove(subscription);
 		entity=getPersistenceService().update(entity,getCurrentUser());
-		serviceChargeTemplateSubscriptionService.remove(subscription);
+		serviceChargeTemplateSubscriptionService.remove(subscription, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -347,7 +347,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		ServiceChargeTemplateTermination termination=serviceChargeTemplateTerminationService.findById(id);
 		entity.getServiceTerminationCharges().remove(termination);
 		entity=getPersistenceService().update(entity,getCurrentUser());
-		serviceChargeTemplateTerminationService.remove(termination);
+		serviceChargeTemplateTerminationService.remove(termination, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -398,7 +398,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		ServiceChargeTemplateRecurring recurring=serviceChargeTemplateRecurringService.findById(id);
 		entity.getServiceRecurringCharges().remove(recurring);
 		entity=getPersistenceService().update(entity, getCurrentUser());
-		serviceChargeTemplateRecurringService.remove(recurring);
+		serviceChargeTemplateRecurringService.remove(recurring, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -459,7 +459,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		ServiceChargeTemplateUsage usage=serviceChargeTemplateUsageService.findById(id);
 		entity.getServiceUsageCharges().remove(usage);
 		entity=getPersistenceService().update(entity, getCurrentUser());
-		serviceChargeTemplateUsageService.remove(usage);
+		serviceChargeTemplateUsageService.remove(usage, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 

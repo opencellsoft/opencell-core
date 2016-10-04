@@ -91,7 +91,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingCycleApi.remove(billingCycleCode, getCurrentUser().getProvider());
+            billingCycleApi.remove(billingCycleCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

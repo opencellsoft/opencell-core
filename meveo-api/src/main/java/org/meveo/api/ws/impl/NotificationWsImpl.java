@@ -104,7 +104,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            notificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -184,7 +184,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            webhookNotificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -264,7 +264,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            emailNotificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

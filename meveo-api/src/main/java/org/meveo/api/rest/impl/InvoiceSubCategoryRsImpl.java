@@ -90,7 +90,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryApi.remove(invoiceSubCategoryCode, getCurrentUser().getProvider());
+            invoiceSubCategoryApi.remove(invoiceSubCategoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

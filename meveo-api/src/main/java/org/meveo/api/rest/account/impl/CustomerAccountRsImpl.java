@@ -96,7 +96,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.remove(customerAccountCode, getCurrentUser().getProvider());
+            customerAccountApi.remove(customerAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -175,7 +175,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.removeCreditCategory(creditCategoryCode, getCurrentUser().getProvider());
+            customerAccountApi.removeCreditCategory(creditCategoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

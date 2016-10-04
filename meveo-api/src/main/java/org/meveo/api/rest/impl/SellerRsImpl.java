@@ -92,7 +92,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.remove(sellerCode, getCurrentUser().getProvider());
+            sellerApi.remove(sellerCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

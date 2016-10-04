@@ -27,8 +27,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ExistsRelatedEntityException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -56,10 +59,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
 
     @SuppressWarnings("unchecked")
     public List<UserHierarchyLevel> findRoots() {
-        Query query = getEntityManager()
-                .createQuery(
-                        "from " + UserHierarchyLevel.class.getSimpleName()
-                                + " where parentLevel.id IS NULL");
+        Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " where parentLevel.id IS NULL");
         if (query.getResultList().size() == 0) {
             return null;
         }
@@ -69,10 +69,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
 
     @SuppressWarnings("unchecked")
     public List<UserHierarchyLevel> findRoots(Provider provider) {
-        Query query = getEntityManager()
-                .createQuery(
-                        "from " + UserHierarchyLevel.class.getSimpleName()
-                                + " where parentLevel.id IS NULL and provider=:provider");
+        Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " where parentLevel.id IS NULL and provider=:provider");
         query.setParameter("provider", provider);
         if (query.getResultList().size() == 0) {
             return null;
@@ -87,10 +84,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
             return null;
         }
         try {
-            Query query = getEntityManager()
-                    .createQuery(
-                            "from " + UserHierarchyLevel.class.getSimpleName()
-                                    + " uhl where uhl.code =:code and uhl.provider=:provider");
+            Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " uhl where uhl.code =:code and uhl.provider=:provider");
             query.setParameter("code", code);
             query.setParameter("provider", provider);
             userHierarchyLevel = (UserHierarchyLevel) query.getSingleResult();
@@ -100,10 +94,8 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         return userHierarchyLevel;
     }
 
-    public UserHierarchyLevel findByCode(String code, Provider provider,
-                             List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(UserHierarchyLevel.class, "u", fetchFields,
-                provider);
+    public UserHierarchyLevel findByCode(String code, Provider provider, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(UserHierarchyLevel.class, "u", fetchFields, provider);
 
         qb.addCriterion("u.code", "=", code, true);
         qb.addCriterionEntity("u.provider", provider);
@@ -135,10 +127,20 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
             booleanList.add(Boolean.FALSE);
         }
 
-        if (userHierarchyLevel != null && CollectionUtils.isNotEmpty(userHierarchyLevel.getChildLevels())){
-            for (HierarchyLevel child: userHierarchyLevel.getChildLevels()) {
+        if (userHierarchyLevel != null && CollectionUtils.isNotEmpty(userHierarchyLevel.getChildLevels())) {
+            for (HierarchyLevel child : userHierarchyLevel.getChildLevels()) {
                 userGroupLevelInSubNode(child.getId(), booleanList);
             }
         }
+    }
+
+    @Override
+    public void remove(UserHierarchyLevel entity, User currentUser) throws BusinessException {
+
+        if (!canDeleteUserHierarchyLevel(entity.getId())) {
+            throw new ExistsRelatedEntityException();
+        }
+
+        super.remove(entity, currentUser);
     }
 }

@@ -254,7 +254,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
                     catMsg = catMessagesService.getCatMessages(businessEntity, key);
                     if (catMsg != null) {
                         if (StringUtils.isBlank(description)) {
-                            catMessagesService.remove(catMsg);
+                            catMessagesService.remove(catMsg, getCurrentUser());
                         } else {
                             catMsg.setDescription(description);
                             catMessagesService.update(catMsg, getCurrentUser());

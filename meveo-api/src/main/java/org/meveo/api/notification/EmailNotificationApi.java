@@ -196,15 +196,15 @@ public class EmailNotificationApi extends BaseApi {
         emailNotificationService.update(notif, currentUser);
     }
 
-    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            EmailNotification notif = emailNotificationService.findByCode(notificationCode, provider);
+            EmailNotification notif = emailNotificationService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
             }
 
-            emailNotificationService.remove(notif);
+            emailNotificationService.remove(notif, currentUser);
         } else {
             missingParameters.add("code");
 
