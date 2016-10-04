@@ -175,6 +175,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             } else {
                 userHierarchyLevel.setOrderLevel(1L);
             }
+            selectedNode = null;
         }
     }
 
