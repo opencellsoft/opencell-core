@@ -215,16 +215,10 @@
 						outcome="usageChargeTemplates"
 						value="#{messages['menu.usageChargeTemplates']}" />
 				</p:submenu>
-				
-				<p:menuitem id="walletTemplates" outcome="walletTemplates"
-					value="#{messages['menu.wallets']}" />
 
 				<p:menuitem id="counterTemplates" outcome="counterTemplates"
 					value="#{messages['menu.counterTemplates']}" />
-
-				<p:menuitem id="triggeredEdrTemplates"
-					outcome="triggeredEdrTemplates"
-					value="#{messages['menu.triggeredEdrTemplates']}" />
+				
 			</p:submenu>
 
 			<p:submenu id="productManagement"
@@ -237,6 +231,13 @@
 				<p:menuitem id="bundleTemplates" outcome="bundleTemplates"
 					value="#{messages['menu.bundleTemplates']}" />
 			</p:submenu>
+			
+			<p:menuitem id="triggeredEdrTemplates"
+					outcome="triggeredEdrTemplates"
+					value="#{messages['menu.triggeredEdrTemplates']}" />
+					
+			<p:menuitem id="walletTemplates" outcome="walletTemplates"
+					value="#{messages['menu.wallets']}" />
 
 			<p:submenu id="models" label="#{messages['menu.catalog.models']}">
 				<p:menuitem id="businessOfferModels" outcome="businessOfferModels"
