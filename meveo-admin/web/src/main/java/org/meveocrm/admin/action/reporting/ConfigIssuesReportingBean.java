@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FileUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.commons.utils.ParamBean;
@@ -31,7 +30,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -85,9 +83,6 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private InvoiceService invoiceService;
     
 	private ParamBean paramBean = ParamBean.getInstance();
 
