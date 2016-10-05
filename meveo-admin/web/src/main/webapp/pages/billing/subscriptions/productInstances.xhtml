@@ -30,9 +30,9 @@
 						field="description" />
 					<hftl:column
 						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" />
+						field="applicationDate" isDate="true" />
 					<hftl:column label="#{messages['commons.quantity']}"
-						field="quantity" />
+						field="quantity" converter="bigDecimal4DigitsConverter" />
 				</p:dataTable>
 
 				<p:commandButton value="#{messages['action.applyProduct']}"
