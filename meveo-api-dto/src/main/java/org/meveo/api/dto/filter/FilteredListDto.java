@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "FilteredList")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated //in 4.4
 public class FilteredListDto {
 
 	private String xmlInput;

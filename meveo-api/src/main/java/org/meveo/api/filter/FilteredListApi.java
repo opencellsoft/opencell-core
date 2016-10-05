@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -20,9 +19,6 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
 public class FilteredListApi extends BaseApi {
 
@@ -31,55 +27,6 @@ public class FilteredListApi extends BaseApi {
 
     @Inject
     private ElasticClient elasticClient;
-
-    @Deprecated //in 4.4
-    public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException {
-        String result = "";
-
-        Filter filter = filterService.findByCode(filterCode, currentUser.getProvider());
-        if (filter == null) {
-            throw new EntityDoesNotExistsException(Filter.class, filterCode);
-        }
-
-        // check if user owned the filter
-        if (filter.getShared() == null || !filter.getShared()) {
-            if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
-                throw new MeveoApiException("INVALID_FILTER_OWNER");
-            }
-        }
-
-        try {
-			result = filterService.filteredList(filter, firstRow, numberOfRows,currentUser);
-        } catch (BusinessException e) {
-            throw new MeveoApiException(e.getMessage());
-        }
-
-        return result;
-    }
-
-    @Deprecated //in 4.4
-    public String listByXmlInput(FilteredListDto postData, User currentUser) throws MeveoApiException {
-        String result = "";
-
-        try {
-            Filter filter = filterService.parse(postData.getXmlInput());
-
-            // check if user owned the filter
-            if (filter.getShared() == null || !filter.getShared()) {
-                if (filter.getAuditable() != null) {
-                    if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
-                        throw new MeveoApiException("INVALID_FILTER_OWNER");
-                    }
-                }
-            }
-
-			result = filterService.filteredList(filter, postData.getFirstRow(), postData.getNumberOfRows(),currentUser);
-        } catch (BusinessException e) {
-            throw new MeveoApiException(e.getMessage());
-        }
-
-        return result;
-    }
     
     public Filter getFilterFromDto(FilterDto filter, User currentUser) throws MeveoApiException {
     	Filter result = null;

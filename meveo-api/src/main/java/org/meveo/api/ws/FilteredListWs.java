@@ -25,15 +25,6 @@ public interface FilteredListWs extends IBaseWs {
     public FilteredListResponseDto listByFilter(@WebParam(name = "filter") FilterDto filter, @WebParam(name = "from") Integer from,
     		@WebParam(name = "size") Integer size);
     
-    
-    @WebMethod
-    @Deprecated//since 4.4
-    public FilteredListResponseDto list(@WebParam(name = "filter") String filter, @WebParam(name = "firstRow") Integer firstRow,
-            @WebParam(name = "numberOfRows") Integer numberOfRows);
-
-    @WebMethod
-    @Deprecated//since 4.4
-    public FilteredListResponseDto listByXmlInput(@WebParam(name = "filter") FilteredListDto postData);
 
     /**
      * Execute a search in Elastic Search on all fields (_all field)

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.FilterApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
@@ -115,6 +116,9 @@ public class InvoiceApi extends BaseApi {
 	@Inject
 	private InvoiceCategoryService invoiceCategoryService;
 
+	@Inject
+	private FilterApi filterAPi;
+	
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;

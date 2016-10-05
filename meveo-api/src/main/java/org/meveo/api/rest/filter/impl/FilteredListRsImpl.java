@@ -14,7 +14,6 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
@@ -51,44 +50,6 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 
          return responseBuilder.build();
      }
-    
-    @Override
-    public Response list(String filter, Integer firstRow, Integer numberOfRows) {
-        Response.ResponseBuilder responseBuilder = null;
-        FilteredListResponseDto result = new FilteredListResponseDto();
-
-        try {
-            String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
-            result.getActionStatus().setMessage(response);
-            responseBuilder = Response.ok();
-            responseBuilder.entity(result);
-
-        } catch (Exception e) {
-            log.debug("RESPONSE={}", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-        }
-
-        return responseBuilder.build();
-    }
-
-    @Override
-    public Response listByXmlInput(FilteredListDto postData) {
-        Response.ResponseBuilder responseBuilder = null;
-        FilteredListResponseDto result = new FilteredListResponseDto();
-
-        try {
-            String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
-            result.getActionStatus().setMessage(response);
-            responseBuilder = Response.ok();
-            responseBuilder.entity(result);
-
-        } catch (Exception e) {
-            log.debug("RESPONSE={}", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-        }
-
-        return responseBuilder.build();
-    }
 
     public Response search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) {
         Response.ResponseBuilder responseBuilder = null;

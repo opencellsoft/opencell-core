@@ -34,16 +34,6 @@ public interface FilteredListRs extends IBaseRs {
     @POST
     public Response listByFilter(@QueryParam("filter") FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
-	@Path("/")
-    @GET
-    @Deprecated //since4.4
-    public Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow, @QueryParam("numberOfRows") Integer numberOfRows);
-
-    @Path("/xmlInput")
-    @POST
-    @Deprecated //since4.4
-    public Response listByXmlInput(FilteredListDto postData);
-
     /**
      * Execute a search in Elastic Search on all fields (_all field)
      * 
