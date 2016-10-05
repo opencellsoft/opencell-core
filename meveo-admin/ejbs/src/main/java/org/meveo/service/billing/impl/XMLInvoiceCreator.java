@@ -312,6 +312,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// log.debug("creating ba");
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Element billingAccountTag = doc.createElement("billingAccount");
+			if (billingCycle == null) {
+				billingCycle = billingAccount.getBillingCycle();
+			}
+			String billingCycleCode = billingCycle != null ? billingCycle.getCode() + "" : "";
+			billingAccountTag.setAttribute("billingCycleCode", billingCycleCode);
 			String billingAccountId = billingAccount.getId() + "";
 			String billingAccountCode = billingAccount.getCode() + "";
 			billingAccountTag.setAttribute("id", billingAccountId);
