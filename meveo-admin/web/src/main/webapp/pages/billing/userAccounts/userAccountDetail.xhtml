@@ -208,7 +208,7 @@
 										field="status" />
 									<hftl:column
 										label="#{messages['oneShotChargeInstance.chargeDate']}"
-										field="chargeDate" />
+										field="chargeDate" isDate="true" />
 								</p:dataTable>
 
 								<p:commandButton value="#{messages['action.applyProduct']}"
@@ -317,7 +317,7 @@
                                <h:form>
                                 <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" resizableColumns="true"
                                     value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
-                                    styleClass="verticalSpaceSmall">
+                                    styleClass="verticalSpaceSmall custom-grid">
                                     <p:column>
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['walletOperation.operationDate']}" />
