@@ -78,7 +78,7 @@ public class PDFParametersConstruction {
 					.getResource("reports/fonts.jar") });
 
 	public Map<String, Object> constructParameters(Invoice invoice, User currentUser) {
-		return constructParameters(invoice.getId(), currentUser, invoice.getProvider());
+		return constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 	}
 	
 	@SuppressWarnings("deprecation")
