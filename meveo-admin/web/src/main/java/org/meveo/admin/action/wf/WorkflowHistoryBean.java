@@ -19,7 +19,6 @@
 package org.meveo.admin.action.wf;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,12 +26,10 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.wf.WorkflowHistory;
-import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WorkflowHistoryService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link WorkflowHistory} (extends {@link BaseBean} that provides
@@ -44,9 +41,6 @@ import org.primefaces.model.LazyDataModel;
 @ViewScoped
 public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	private static final long serialVersionUID = 1L;
-	
-	@Inject
-	private WorkflowHistoryActionListBean workflowHistoryActionListBean;
 	
 	/**
 	 * 
@@ -106,19 +100,6 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	@Override
 	protected String getDefaultSort() {
 		return "actionDate";
-	}
-
-	public LazyDataModel<WorkflowHistoryAction> getActionsAndReports(WorkflowHistory workflowHistory) {
-		
-		LazyDataModel<WorkflowHistoryAction> result = null;
-		HashMap<String, Object> filters = new HashMap<String, Object>();
-		log.debug("entity:"+entity);
-		log.debug("workflowHistory:"+workflowHistory);
-		if (workflowHistory != null && workflowHistory.getActionsAndReports() != null) {			
-			filters.put("workflowHistory", workflowHistory);			
-			result = workflowHistoryActionListBean.getLazyDataModel(filters, true);
-		}
-		return result;
 	}
     
 }

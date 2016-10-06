@@ -52,7 +52,7 @@
 			<hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" /> 
 			<hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" /> 
 			<hftl:column label="#{messages['workflow.title']}" field="workflow.code" />            
-			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="35"
+			<hftl:actionsColumn renderViewLink="true" renderDeleteLink="false" width="35"
 				permission="#{identity.hasPermission('billing','billingVisualization')}"/>
 		</hftl:dataList>
 
