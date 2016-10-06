@@ -49,6 +49,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -71,12 +72,14 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
@@ -102,6 +105,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@Inject
 	private CatMessagesService catMessagesService;
+	
+	@Inject
+	private FilterService filterService;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -236,14 +242,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	}
 
-	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser)
+	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,
+			Filter ratedTransactionFilter,Date lastTransactionDate, User currentUser)
 			throws BusinessException {
-		createInvoiceAndAgregates(billingAccount, invoice, lastTransactionDate, currentUser, false);
+		createInvoiceAndAgregates(billingAccount, invoice,ratedTransactionFilter, lastTransactionDate, currentUser, false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment)
+	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,
+			Filter ratedTransactionFilter,Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment)
 			throws BusinessException {
 		billingAccount = getEntityManager().merge(billingAccount);
 		
@@ -253,51 +261,100 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);				
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
-
+		List<? extends IEntity> ratedTransactions =null;
+		if(ratedTransactionFilter!=null){
+		   ratedTransactions = filterService.filteredListAsObjects(ratedTransactionFilter, currentUser);
+		}
 		for (UserAccount userAccount : userAccounts) {
 			WalletInstance wallet = userAccount.getWallet();
-			// TODO : use Named queries
-			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-			Root from = cq.from(RatedTransaction.class);
-			Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory").get("id");
-
-			Expression<BigDecimal> amountWithoutTax = cb.sum(from.get("amountWithoutTax"));
-			Expression<BigDecimal> amountWithTax = cb.sum(from.get("amountWithTax"));
-			Expression<BigDecimal> amountTax = cb.sum(from.get("amountTax"));
-			Expression<BigDecimal> quantity = cb.sum(from.get("quantity"));
-
-			CriteriaQuery<Object[]> select = cq.multiselect(invoiceSubCategoryPath, amountWithoutTax, amountWithTax,
-					amountTax, quantity);
-			// Grouping
-			cq.groupBy(invoiceSubCategoryPath);
-			// Restrictions (I don't really understand what you're querying)
-			Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
-			if (isInvoiceAdjustment) {
-				pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.BILLED);
-			}
-			Predicate pWallet = cb.equal(from.get("wallet"), wallet);
-			Predicate pAmoutWithoutTax = null;
-			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-				pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
-			}
-			Predicate pOldTransaction = cb.lessThan(from.get("usageDate"),lastTransactionDate);
-			Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
-			
-			Predicate pInvoice = cb.isNull(from.get("invoice"));
-			if (isInvoiceAdjustment) {
-				pInvoice = cb.equal(from.get("invoice"), invoice);
-			}
-			
-			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-				cq.where(pStatus, pWallet, pAmoutWithoutTax,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
+			List<Object[]> invoiceSubCats=new ArrayList<>();
+			if(ratedTransactionFilter!=null){
+				if(ratedTransactions!=null && ratedTransactions.size()>0){
+					for(IEntity ent:ratedTransactions){
+						RatedTransaction ratedTransaction = (RatedTransaction) ent;
+						Object[] record = new Object[5];
+						record[0]=ratedTransaction.getInvoiceSubCategory().getId();
+						record[1]=ratedTransaction.getAmountWithoutTax();
+						record[2]=ratedTransaction.getAmountWithTax();
+						record[3]=ratedTransaction.getAmountTax();
+						record[4]=ratedTransaction.getQuantity();
+						boolean recordValid=true;
+						//check status
+						recordValid&=isInvoiceAdjustment?ratedTransaction.getStatus()==RatedTransactionStatusEnum.BILLED:ratedTransaction.getStatus()==RatedTransactionStatusEnum.OPEN;
+						//wallet
+						recordValid&=ratedTransaction.getWallet().getId()==wallet.getId();
+						//amount
+						if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
+							recordValid&=!ratedTransaction.getAmountWithoutTax().equals(BigDecimal.ZERO);
+						}
+						//usageDate
+						recordValid&=ratedTransaction.getUsageDate().before(lastTransactionDate);
+						//invoice not set
+						recordValid&=ratedTransaction.getInvoice()==null;
+						
+						if(recordValid){
+							ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+							boolean foundRecordForSameId=false;
+							for(Object[] existingRecord:invoiceSubCats){
+								if(existingRecord[0].equals(record[0])){
+									foundRecordForSameId=true;
+									existingRecord[1]=((BigDecimal)existingRecord[1]).add((BigDecimal)record[1]);
+									existingRecord[2]=((BigDecimal)existingRecord[2]).add((BigDecimal)record[2]);
+									existingRecord[3]=((BigDecimal)existingRecord[3]).add((BigDecimal)record[3]);
+									existingRecord[4]=((BigDecimal)existingRecord[4]).add((BigDecimal)record[4]);
+									break;
+								}
+							}
+							if(!foundRecordForSameId){
+								invoiceSubCats.add(record);
+							}
+						}
+					}
+				}
 			} else {
-				cq.where(pStatus, pWallet,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
+				// TODO : use Named queries
+				CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+				CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+				Root from = cq.from(RatedTransaction.class);
+				Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory").get("id");
+	
+				Expression<BigDecimal> amountWithoutTax = cb.sum(from.get("amountWithoutTax"));
+				Expression<BigDecimal> amountWithTax = cb.sum(from.get("amountWithTax"));
+				Expression<BigDecimal> amountTax = cb.sum(from.get("amountTax"));
+				Expression<BigDecimal> quantity = cb.sum(from.get("quantity"));
+	
+				CriteriaQuery<Object[]> select = cq.multiselect(invoiceSubCategoryPath, amountWithoutTax, amountWithTax,
+						amountTax, quantity);
+				// Grouping
+				cq.groupBy(invoiceSubCategoryPath);
+				// Restrictions \
+				Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
+				if (isInvoiceAdjustment) {
+					pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.BILLED);
+				}
+				Predicate pWallet = cb.equal(from.get("wallet"), wallet);
+				Predicate pAmoutWithoutTax = null;
+				if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
+					pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
+				}
+				Predicate pOldTransaction = cb.lessThan(from.get("usageDate"),lastTransactionDate);
+				Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
+				
+				Predicate pInvoice = cb.isNull(from.get("invoice"));
+				if (isInvoiceAdjustment) {
+					pInvoice = cb.equal(from.get("invoice"), invoice);
+				}
+				
+				if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
+					cq.where(pStatus, pWallet, pAmoutWithoutTax,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
+				} else {
+					cq.where(pStatus, pWallet,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
+				}
+				invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
 			}
-
+			
 			List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
-			List<Object[]> invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
-
+			
 			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap = new HashMap<Long, CategoryInvoiceAgregate>();
 			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
@@ -547,8 +604,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	public Boolean isBillingAccountBillable(BillingAccount billingAccount,Date lastTransactionDate) {
+		long count = 0;
 		TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced", Long.class);
-		long count = q.setParameter("billingAccount", billingAccount)
+		count = q.setParameter("billingAccount", billingAccount)
 				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
 		log.debug("isBillingAccountBillable code={},lastTransactionDate={}, displayFreeTransac={}) : {}"
 				,billingAccount.getCode(),lastTransactionDate,billingAccount.getProvider().isDisplayFreeTransacInInvoice(),count);
