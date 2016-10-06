@@ -159,12 +159,14 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         return jobs;
     }
 
+    @Override
     public void create(JobInstance jobInstance, User currentUser) throws BusinessException {
 
         super.create(jobInstance, currentUser);
         scheduleUnscheduleJob(jobInstance);
     }
 
+    @Override
     public JobInstance update(JobInstance jobInstance, User currentUser) throws BusinessException {
 
         super.update(jobInstance, currentUser);
@@ -173,7 +175,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         return jobInstance;
     }
 
-    public void remove(JobInstance entity) {// FIXME: throws BusinessException{
+    @Override
+    public void remove(JobInstance entity, User currentUser) throws BusinessException {
         log.info("remove jobInstance {}, id={}", entity.getJobTemplate(), entity.getId());
         if (entity.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
@@ -188,7 +191,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         } else {
             log.info("jobInstance timer not found, cannot remove it");
         }
-        super.remove(entity);
+        super.remove(entity, currentUser);
     }
 
     @Override

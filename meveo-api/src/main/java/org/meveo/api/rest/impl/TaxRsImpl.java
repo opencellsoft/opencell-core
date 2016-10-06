@@ -91,7 +91,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.remove(taxCode, getCurrentUser().getProvider());
+            taxApi.remove(taxCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

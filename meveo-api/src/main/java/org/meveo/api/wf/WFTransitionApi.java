@@ -138,7 +138,7 @@ public class WFTransitionApi extends BaseApi {
             wfActionList.removeAll(updatedActions);
             if (CollectionUtils.isNotEmpty(wfActionList)) {
                 for (WFAction wfAction : wfActionList) {
-                    wfActionService.remove(wfAction);
+                    wfActionService.remove(wfAction, currentUser);
                 }
             }
         }

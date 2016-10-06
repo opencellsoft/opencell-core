@@ -223,7 +223,7 @@ public class UserApi extends BaseApi {
 		return securedEntities;
 	}
 
-	public void remove(String username, User currentUser) throws MeveoApiException {
+	public void remove(String username, User currentUser) throws MeveoApiException, BusinessException {
 		User user = userService.findByUsername(username);
 
 		if (user == null) {
@@ -234,7 +234,7 @@ public class UserApi extends BaseApi {
 			throw new LoginException("User has no permission to manage users for provider " + user.getProvider().getCode());
 		}
 
-		userService.remove(user);
+		userService.remove(user, currentUser);
 	}
 
 	public UserDto find(String username, User currentUser) throws MeveoApiException {

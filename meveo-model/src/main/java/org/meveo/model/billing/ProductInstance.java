@@ -58,6 +58,10 @@ public class ProductInstance extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_TEMPLATE_ID")
@@ -79,21 +83,26 @@ public class ProductInstance extends BusinessCFEntity {
         super();
     }
 
-    public ProductInstance(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code, String description, User user) {
+    public ProductInstance(UserAccount userAccount,Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code, String description, User user) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
         this.productChargeInstances = new ArrayList<>();
         this.productTemplate = productTemplate;
         this.quantity = quantity;
-        this.userAccount = userAccount;
+        this.subscription=subscription;
+        if(subscription==null){
+            this.userAccount = userAccount;
+        } else {
+        	this.userAccount=subscription.getUserAccount();
+        }
         Auditable auditable = new Auditable();
         auditable.setCreated(new Date());
         auditable.setCreator(user);
         this.setAuditable(auditable);
     }
 
-    public ProductTemplate getProductTemplate() {
+	public ProductTemplate getProductTemplate() {
         return productTemplate;
     }
 
@@ -125,7 +134,15 @@ public class ProductInstance extends BusinessCFEntity {
         this.userAccount = userAccount;
     }
 
-    public Date getApplicationDate() {
+    public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public Date getApplicationDate() {
         return applicationDate;
     }
 

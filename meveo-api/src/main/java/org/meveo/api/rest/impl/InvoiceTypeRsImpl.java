@@ -61,7 +61,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	public ActionStatus remove(String invoiceTypeCode) {
 	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	    try {
-			invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser().getProvider());
+			invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser());
 		} catch (Exception e) {
 			super.processException(e, result);
 		}

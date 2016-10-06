@@ -108,16 +108,16 @@ public class ProviderContactApi extends BaseApi {
 		}
 		return new ProviderContactDto(providerContact);
 	}
-	public void remove(String providerContactCode,Provider provider) throws MeveoApiException{
+	public void remove(String providerContactCode, User currentUser) throws MeveoApiException, BusinessException{
 		if(StringUtils.isBlank(providerContactCode)){
 			missingParameters.add("providerContactCode");
 			handleMissingParameters();
 		}
-		ProviderContact providerContact=providerContactService.findByCode(providerContactCode, provider);
+		ProviderContact providerContact=providerContactService.findByCode(providerContactCode, currentUser.getProvider());
 		if(providerContact==null){
 			throw new EntityDoesNotExistsException(ProviderContact.class,providerContactCode);
 		}
-		providerContactService.remove(providerContact);
+		providerContactService.remove(providerContact, currentUser);
 			
 	}
 	public List<ProviderContactDto> list(Provider provider) throws MeveoApiException{

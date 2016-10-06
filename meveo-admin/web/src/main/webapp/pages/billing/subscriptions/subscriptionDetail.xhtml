@@ -41,6 +41,12 @@
 			}			
 		}	
 		</script>
+		
+		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.offerProductTemplates}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{subscriptionBean.productInstance.productTemplate}" 
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text">
+        </hftl:entityPopup>
 
 		<hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
@@ -658,8 +664,7 @@
 														label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 														field="terminationDate" />
 												</hftl:formPanel>
-												<p:outputPanel id="recurringChargeDataPanel"
-													autoUpdate="true">
+												<p:outputPanel id="recurringChargeDataPanel">
 													<h:form id="OS_recurring_results_form" prependId="false">
 														<p:dataTable resizableColumns="true"
 															value="#{subscriptionBean.recurringChargeInstances}"
@@ -769,6 +774,11 @@
 													</p:dataTable>
 												</h:form>
 											</p:tab>
+											
+											<ui:include src="productInstances.xhtml">
+												<ui:param name="backingBean" value="#{subscriptionBean}" />
+											</ui:include>
+											
 											<!-- Access -->
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"

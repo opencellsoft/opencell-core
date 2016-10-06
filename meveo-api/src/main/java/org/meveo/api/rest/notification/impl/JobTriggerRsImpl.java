@@ -89,7 +89,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.remove(notificationCode, getCurrentUser().getProvider());
+            jobTriggerApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

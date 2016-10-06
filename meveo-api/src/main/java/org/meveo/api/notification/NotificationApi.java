@@ -179,15 +179,15 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         return notif;
     }
 
-    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
+            ScriptNotification notif = notificationService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
             }
 
-            notificationService.remove(notif);
+            notificationService.remove(notif, currentUser);
         } else {
             missingParameters.add("code");
 

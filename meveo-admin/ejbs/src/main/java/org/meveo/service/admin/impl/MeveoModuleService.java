@@ -399,7 +399,7 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
         // Remove if it is a child module
         if (childModule) {
-            remove(module);
+            remove(module, currentUser);
             return null;
 
             // Otherwise mark it uninstalled and clear module items

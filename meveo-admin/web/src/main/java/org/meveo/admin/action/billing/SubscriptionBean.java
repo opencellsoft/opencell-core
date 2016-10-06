@@ -38,9 +38,11 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.Auditable;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -50,6 +52,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -59,12 +62,15 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -128,7 +134,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	@Inject
 	private ProductChargeInstanceService productChargeInstanceService;
 
+	@Inject
+	private ProductInstanceService productInstanceService;
+
+	@Inject
+	private ProductTemplateService productTemplateService;
+
+	@Inject
+	private OfferProductTemplateService offerProductTemplateService;
+
 	private ServiceInstance selectedServiceInstance;
+
+	private ProductInstance productInstance;
 
 	private BigDecimal quantity = BigDecimal.ONE;
 
@@ -146,7 +163,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	
 	private String selectedWalletTemplateCode;
 	
-
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
 	 * subscription entry from user account definition window, so default uset
@@ -159,19 +175,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	 * bean for {@link BaseBean}.
 	 */
 
-	private EntityListDataModelPF<ServiceTemplate> serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(
-			new ArrayList<ServiceTemplate>());
+	private EntityListDataModelPF<ServiceTemplate> serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
 
-	private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(
-			new ArrayList<ServiceInstance>());
+	private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
 
     private EntityListDataModelPF<OneShotChargeInstance> oneShotChargeInstances = null;
-
     private EntityListDataModelPF<RecurringChargeInstance> recurringChargeInstances = null;
-
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
-    
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
+	private EntityListDataModelPF<ProductInstance> productInstances = null;
 
 	public SubscriptionBean() {
 		super(Subscription.class);
@@ -227,8 +239,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			boolean alreadyInstanciated = false;
 
 			for (ServiceInstance serviceInstance : serviceInstances) {
-				if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED
-						&& serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+				if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED && serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
 						&& serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
 					if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
 						alreadyInstanciated = true;
@@ -254,7 +265,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
-            return "subscriptionDetailSubscriptionTab"; //getEditViewName(); // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() +
+			return "subscriptionDetailSubscriptionTab"; // getEditViewName(); //
+														// "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId="
+														// + entity.getId() +
                                       // "&faces-redirect=true&includeViewParams=true";
         }
         return null;
@@ -296,7 +309,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
                 oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-                    oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(), getCurrentUser(), true);
+					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(),
+					getCurrentUser(), true);
            
             oneShotChargeInstance = null;
             oneShotChargeInstances = null;
@@ -436,7 +450,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			
 			entity = subscriptionService.attach(entity);
 			
-
 			log.debug("Instantiating serviceTemplates {}", serviceTemplates.getSelectedItemsAsList());
 
 			for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
@@ -526,6 +539,39 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 	}
 
+	public void applyProduct() {
+		log.debug("applyProduct...");
+		if (productInstance != null) {
+			productInstance.setCode(productInstance.getProductTemplate().getCode());
+			productInstance.setDescription(productInstance.getProductTemplate().getDescription());
+			if (productInstance.getApplicationDate() == null) {
+				productInstance.setApplicationDate(new Date());
+			}
+			Auditable auditable = new Auditable();
+			auditable.setCreated(new Date());
+			auditable.setCreator(currentUser);
+			productInstance.setAuditable(auditable);
+		}
+
+		productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
+		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity).getUserAccount());
+		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+
+		try {
+			productInstanceService.create(productInstance, currentUser);
+			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+		} catch (BusinessException e) {
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		} catch (Exception e) {
+			log.error("unexpected exception when applying a product! {}", e.getMessage());
+			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+		}
+		productChargeInstances = null;
+		productInstances = null;
+		productInstance = null;
+		clearObjectId();
+	}
+
     public void terminateService() {
         try {
             Date terminationDate = selectedServiceInstance.getTerminationDate();
@@ -566,9 +612,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     
     public void terminateSubscription() {
     	try { 
-    		log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}", new Object[] {
-    				entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(),
-    				entity.getStatus() });
+			log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
+					new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
     		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), getCurrentUser());
     		messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
     	} catch (BusinessException e1) {
@@ -760,11 +805,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return result;
     }
 	
-	
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
             serviceTemplates.add(serviceInstance.getServiceTemplate());
-            serviceInstanceService.remove(serviceInstance.getId());
+            serviceInstanceService.remove(serviceInstance.getId(), getCurrentUser());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "delete.successful"));
@@ -836,9 +880,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		return (dateFrom == null || filterDate.after(dateFrom) || filterDate.equals(dateFrom)) && (dateTo == null || filterDate.before(dateTo) || filterDate.equals(dateTo));
 	    
     }
+
     public void resetFilters() {
-        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot()
-             .findComponent("recurringWalletForm:recurringWalletOperationTable");
+		DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("recurringWalletForm:recurringWalletOperationTable");
         if (dataTable != null) {
             dataTable.reset();
         }
@@ -855,4 +899,37 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return productChargeInstances;
     }
  
+	public EntityListDataModelPF<ProductInstance> getProductInstances() {
+
+        if (productInstances != null || (entity == null || entity.getId() == null)) {
+            return productInstances;
+        }
+
+        productInstances = new EntityListDataModelPF<ProductInstance>(new ArrayList<ProductInstance>());
+        productInstances.addAll(productInstanceService.findBySubscription(entity));
+        return productInstances;
+    }
+
+	public void initProductInstance() {
+		productInstance = new ProductInstance();
+	}
+
+	public ProductInstance getProductInstance() {
+		return productInstance;
+	}
+
+	public void setProductInstance(ProductInstance productInstance) {
+		this.productInstance = productInstance;
+	}
+
+	public List<ProductTemplate> getOfferProductTemplates() {
+		List<ProductTemplate> result = new ArrayList<>();
+
+		if (entity != null) {
+			result = offerProductTemplateService.listByOfferTemplate(entity.getOffer());
+		}
+
+		return result;
+	}
+
 }

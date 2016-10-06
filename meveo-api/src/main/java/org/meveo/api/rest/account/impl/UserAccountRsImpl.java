@@ -24,9 +24,6 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.shared.DateUtils;
 
-/**
- * @author Edward P. Legaspi
- **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
@@ -99,7 +96,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+            userAccountApi.remove(userAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

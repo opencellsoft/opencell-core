@@ -172,7 +172,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		return bundleTemplate;
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException {
+	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("bundleTemplate code");
@@ -184,7 +184,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 			throw new EntityDoesNotExistsException(BundleTemplate.class, code);
 		}
 
-		bundleTemplateService.remove(bundleTemplate);
+		bundleTemplateService.remove(bundleTemplate, currentUser);
 	}
 
 	private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate, User user) throws MeveoApiException, BusinessException {

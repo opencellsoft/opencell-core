@@ -33,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.admin.wf.types.OrderWF;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -199,7 +200,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         } else if (CollectionUtils.isNotEmpty(actionList)) {
             for (WFAction wfAction : actionList) {
                 WFAction action = wfActionService.findById(wfAction.getId());
-                wfActionService.remove(action);
+                wfActionService.remove(action, getCurrentUser());
             }
         }
 
@@ -331,11 +332,17 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         return true;
     }
 
+    @ActionMethod
     public void deleteWfAction(WFAction wfAction) {
-        WFAction action = wfActionService.findById(wfAction.getId()); 
-        wfActionService.remove(action);
-        entity.getWfActions().remove(wfAction);
-        messages.info(new BundleKey("messages", "delete.successful"));
+        try {
+            WFAction action = wfActionService.findById(wfAction.getId());
+            wfActionService.remove(action, getCurrentUser());
+            entity.getWfActions().remove(wfAction);
+            messages.info(new BundleKey("messages", "delete.successful"));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
     }
     
     public void newWfActionInstance() {
@@ -426,13 +433,18 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     }
 
     public void deleteWfTransition(WFTransition dunningPlanTransition) {
-        WFTransition transition = wfTransitionService.findById(dunningPlanTransition.getId());
-        wfTransitionService.remove(transition);
-        workflowOrder.getTransitions().remove(dunningPlanTransition);
-        wfDecisionRulesByName.clear();
-        selectedRules.clear();
-        wfActions.clear();
-        messages.info(new BundleKey("messages", "delete.successful"));
+        try {
+            WFTransition transition = wfTransitionService.findById(dunningPlanTransition.getId());
+            wfTransitionService.remove(transition, getCurrentUser());
+            workflowOrder.getTransitions().remove(dunningPlanTransition);
+            wfDecisionRulesByName.clear();
+            selectedRules.clear();
+            wfActions.clear();
+            messages.info(new BundleKey("messages", "delete.successful"));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
     }
 
     public TreeNode getUserGroupRootNode() {

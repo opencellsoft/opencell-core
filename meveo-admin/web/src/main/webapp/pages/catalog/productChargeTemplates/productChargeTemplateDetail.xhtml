@@ -8,6 +8,7 @@
 	<ui:define name="metadata">
 		 <f:metadata>
             <f:viewParam name="objectId" value="#{productChargeTemplateBean.objectId}" />
+            <f:viewParam name="objectId" value="#{chargeTemplateBean.objectId}" />
             <f:viewParam name="tab" value="#{productChargeTemplateBean.activeTab}" />
         </f:metadata>
 	</ui:define>
@@ -61,6 +62,9 @@
 						label="#{messages['invoiceSubCategory.description']}"
 						field="invoiceSubCategory" valueLabelField="descriptionOrCode"
 						edit="false" />
+					<hftl:formField id="productTemplate" field="productTemplate"
+						valueLabelField="code" listBean="#{productTemplateListBean}"
+						label="#{messages['productTemplate.title']}" />
 
 					<hftl:formLanguageFields
 						entity="#{productChargeTemplateBean.entity}"
@@ -88,7 +92,7 @@
 					messagesId=":formId:messages" />
 
 				<p:tab title="#{messages['pricePlanMatrix.panel']}"
-					rendered="#{pricePlanMatrixBean.objectId!=null}">
+					rendered="#{chargeTemplateBean.objectId!=null}">
 					<p:panel>
 						<hftl:decorateFormField fieldId="chargeCode"
 							label="#{messages['pricePlanMatrix.eventCode']} :">

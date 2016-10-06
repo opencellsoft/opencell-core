@@ -305,14 +305,14 @@ public class CalendarApi extends BaseApi {
     	return result;
     }
 
-    public void remove(String calendarCode, Provider provider) throws MeveoApiException {
+    public void remove(String calendarCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(calendarCode)) {
-            Calendar calendar = calendarService.findByCode(calendarCode, provider);
+            Calendar calendar = calendarService.findByCode(calendarCode, currentUser.getProvider());
             if (calendar == null) {
                 throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
             }
 
-            calendarService.remove(calendar);
+            calendarService.remove(calendar, currentUser);
         } else {
             if (StringUtils.isBlank(calendarCode)) {
                 missingParameters.add("calendarCode");

@@ -224,14 +224,14 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return meveoModule;
     }
 
-    public void delete(String code, User currentUser) throws EntityDoesNotExistsException {
+    public void delete(String code, User currentUser) throws EntityDoesNotExistsException, BusinessException {
         Provider provider = currentUser.getProvider();
-        MeveoModule meveoModule = meveoModuleService.findByCode(code, provider);
+        MeveoModule meveoModule = meveoModuleService.findByCode(code, currentUser.getProvider());
         if (meveoModule == null) {
             throw new EntityDoesNotExistsException(MeveoModule.class, code);
         }
         String logoPicture = meveoModule.getLogoPicture();
-        meveoModuleService.remove(meveoModule);
+        meveoModuleService.remove(meveoModule, currentUser);
         removeModulePicture(provider.getCode(), logoPicture);
 
     }

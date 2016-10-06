@@ -400,14 +400,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setServiceUsageCharges(listUsages);
     }
 
-    public void remove(String serviceTemplateCode, Provider provider) throws MeveoApiException {
+    public void remove(String serviceTemplateCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(serviceTemplateCode)) {
             missingParameters.add("serviceTemplateCode");
             handleMissingParameters();
         }
 
-        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, currentUser.getProvider());
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
         }
@@ -415,18 +415,18 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         setAllWalletTemplatesToNull(serviceTemplate);
 
         // remove serviceChargeTemplateRecurring
-        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
 
         // remove serviceChargeTemplateSubscription
-        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
 
         // remove serviceChargeTemplateTermination
-        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
 
         // remove serviceUsageChargeTemplate
-        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, provider);
+        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
 
-        serviceTemplateService.remove(serviceTemplate);
+        serviceTemplateService.remove(serviceTemplate, currentUser);
 
     }
 

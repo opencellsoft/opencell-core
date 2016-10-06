@@ -30,16 +30,15 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -61,9 +60,6 @@ public class UserAccountApi extends AccountApi {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
-	
-	@Inject
-	private OfferTemplateService offerTemplateService;
 	
 	@Inject
 	private ProductInstanceService productInstanceService;
@@ -190,19 +186,19 @@ public class UserAccountApi extends AccountApi {
 		return accountHierarchyApi.userAccountToDto(userAccount);
 	}
 
-	public void remove(String userAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String userAccountCode, User currentUser) throws MeveoApiException, BusinessException  {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, currentUser.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
 		try {
-			userAccountService.remove(userAccount);
+			userAccountService.remove(userAccount, currentUser);
 			userAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -351,14 +347,6 @@ public class UserAccountApi extends AccountApi {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
 		}
 
-		OfferTemplate offerTemplate = null;
-		if (!StringUtils.isBlank(postData.getOffer())) {
-			offerTemplate = offerTemplateService.findByCode(postData.getOffer(), provider);
-			if (offerTemplate == null) {
-				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOffer());
-			}
-		}
-
 		UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
@@ -371,9 +359,10 @@ public class UserAccountApi extends AccountApi {
 		List<WalletOperation> walletOperations = null;
 
 		try {
-			walletOperations = productInstanceService.applyProduct(userAccount, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getDescription(),
-					postData.getAmountWithoutTax(), postData.getAmountWithTax(), offerTemplate, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-					currentUser, true);
+			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(),
+					postData.getProduct(), postData.getDescription(), currentUser);
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
+					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}

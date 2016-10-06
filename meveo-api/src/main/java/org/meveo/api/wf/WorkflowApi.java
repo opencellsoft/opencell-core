@@ -119,7 +119,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
             currentWfTransitions.removeAll(listUpdate);
             if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
                 for (WFTransition wfTransition : currentWfTransitions) {
-                    wfTransitionService.remove(wfTransition);
+                    wfTransitionService.remove(wfTransition, currentUser);
                 }
             }
         }
@@ -156,9 +156,10 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * @param currentUser
      * @throws MissingParameterException
      * @throws EntityDoesNotExistsException
+	 * @throws BusinessException 
      */
-    public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
-        workflowService.remove(find(workflowCode, currentUser.getProvider()));
+	public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		workflowService.remove(find(workflowCode, currentUser.getProvider()), currentUser); 
     }
 
     /**

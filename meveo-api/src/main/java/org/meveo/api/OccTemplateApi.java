@@ -96,19 +96,19 @@ public class OccTemplateApi extends BaseApi {
 
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("occTemplateCode");
             handleMissingParameters();
         }
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);
+        OCCTemplate occTemplate = occTemplateService.findByCode(code, currentUser.getProvider());
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, code);
         }
 
-        occTemplateService.remove(occTemplate);
+        occTemplateService.remove(occTemplate, currentUser);
     }
 
     /**

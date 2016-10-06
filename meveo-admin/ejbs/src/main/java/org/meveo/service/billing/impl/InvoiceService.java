@@ -402,7 +402,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
 			em.refresh(billingAccount);
-			currentUser = em.find(currentUser.getClass(), currentUser.getId());
+			currentUser = em.find(User.class, currentUser.getId());
 			em.refresh(currentUser);
 
 			Long startDate = System.currentTimeMillis();
@@ -572,7 +572,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
 				sourceFile = new File(vfPath.getPath());
 				if (!sourceFile.exists()) {
-					throw new BusinessException("embedded jasper report for invoice isn't existed!");
+					throw new BusinessException("embedded jasper report for invoice is missing!");
 				}
 			}
 			FileUtils.copyDirectory(sourceFile, destDir);
@@ -587,7 +587,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
 				sourceFileInvoiceAdjustment = new File(vfPath.getPath());
 				if (!sourceFileInvoiceAdjustment.exists()) {
-					throw new BusinessException("embedded jasper report for invoice isn't existed!");
+					throw new BusinessException("embedded jasper report for invoice is missing!");
 				}
 			}
 			FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);

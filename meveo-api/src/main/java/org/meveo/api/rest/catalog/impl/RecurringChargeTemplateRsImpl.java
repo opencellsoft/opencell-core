@@ -91,7 +91,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser().getProvider());
+            recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

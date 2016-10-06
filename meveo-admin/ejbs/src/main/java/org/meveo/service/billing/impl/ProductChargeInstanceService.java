@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,7 +40,6 @@ import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -72,29 +72,9 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<ProductChargeInstance> findProductChargeInstancesByUserAccountId(Long userAccountId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
-		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-		return qb.getQuery(getEntityManager()).getResultList();
-	}
-
-
-	public WalletOperation apply(ProductChargeInstance productChargeInstance,
-			String description,OfferTemplate offerTemplate,Date effetDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			String criteria1, String criteria2, String criteria3,User user,boolean persist) throws BusinessException {
+	public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance,User user,boolean persist) throws BusinessException {
+		List<WalletOperation> result=null;
 		ChargeTemplate chargeTemplate=productChargeInstance.getProductChargeTemplate();
-		productChargeInstance.setOfferTemplate(offerTemplate);
-		productChargeInstance.setDescription(description==null?productChargeInstance.getDescription():description);
-		productChargeInstance.setAmountWithoutTax(amountWithoutTax);
-		productChargeInstance.setAmountWithTax(amountWithTax);
-		productChargeInstance.setChargeDate(effetDate);
-		productChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
-		productChargeInstance.setCriteria1(criteria1);
-		productChargeInstance.setCriteria2(criteria2);
-		productChargeInstance.setCriteria3(criteria3);
-		productChargeInstance.setProvider(user.getProvider());
 		List<WalletTemplate> walletTemplates = productChargeInstance.getProductInstance().getProductTemplate().getWalletTemplates();
 		productChargeInstance.setPrepaid(false);
 		if (walletTemplates != null && walletTemplates.size() > 0) {
@@ -120,10 +100,13 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
 				chargeTemplate.getRoundingMode());
 		WalletOperation walletOperation =  walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);
-		Set<WalletOperation> walletOperations = new HashSet<>();
-		walletOperations.add(walletOperation);
-		productChargeInstance.setWalletOperations(walletOperations);
-		return walletOperation;
+		if(persist){
+			result=walletOperationService.chargeWalletOperation(walletOperation, user);
+		} else {
+			result = new ArrayList<>();
+			result.add(walletOperation);
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -137,6 +120,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 	public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
 		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
 		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+		qb.addSql("c.subscription is null");
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
 }

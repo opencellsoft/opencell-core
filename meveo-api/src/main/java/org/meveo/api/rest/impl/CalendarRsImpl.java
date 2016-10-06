@@ -115,7 +115,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            calendarApi.remove(calendarCode, getCurrentUser().getProvider());
+            calendarApi.remove(calendarCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

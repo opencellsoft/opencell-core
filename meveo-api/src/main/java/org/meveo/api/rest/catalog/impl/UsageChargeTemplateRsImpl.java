@@ -140,7 +140,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser().getProvider());
+            usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

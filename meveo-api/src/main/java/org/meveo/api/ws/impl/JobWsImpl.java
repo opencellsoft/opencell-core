@@ -197,7 +197,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobInstanceApi.remove(jobInstanceCode, getCurrentUser().getProvider());
+            jobInstanceApi.remove(jobInstanceCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

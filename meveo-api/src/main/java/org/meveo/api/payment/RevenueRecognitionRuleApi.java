@@ -16,7 +16,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
@@ -114,18 +113,18 @@ public class RevenueRecognitionRuleApi extends BaseApi {
         return result;
     }
 
-    public void remove(String revenueRecognitionRuleCode, Provider provider) throws MeveoApiException {
+    public void remove(String revenueRecognitionRuleCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(revenueRecognitionRuleCode)) {
             missingParameters.add("revenueRecognitionRuleCode");
         }
 
         handleMissingParameters();
-        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode, provider);
+        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode, currentUser.getProvider());
         if (rrr == null) {
             throw new EntityDoesNotExistsException(RevenueRecognitionRule.class, revenueRecognitionRuleCode);
         }
 
-        revenueRecognitionRuleService.remove(rrr);
+        revenueRecognitionRuleService.remove(rrr, currentUser);
     }
 
     public void createOrUpdate(RevenueRecognitionRuleDto postData, User currentUser) throws MeveoApiException, BusinessException {

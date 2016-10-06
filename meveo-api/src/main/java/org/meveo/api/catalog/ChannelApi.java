@@ -117,8 +117,9 @@ public class ChannelApi extends BaseApi {
      * @param code
      * @param provider
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void remove(String code, User currentUser) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
@@ -131,7 +132,7 @@ public class ChannelApi extends BaseApi {
             throw new EntityDoesNotExistsException(Channel.class, code);
         }
 
-        channelService.remove(Channel);
+        channelService.remove(Channel, currentUser);
 
     }
 

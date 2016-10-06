@@ -1200,6 +1200,19 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
 	</changeSet>
 
+	<changeSet id="#2058_20160928_remove_product_instance_uk" author="EdwardPLegaspi">
+		<dropUniqueConstraint tableName="billing_product_instance"
+			constraintName="uk_product_instance" />
+	</changeSet>
+
+	<changeSet id="#2060_20160928_remove_offer_template"
+		author="SebastienMichea">
+		<dropColumn tableName="billing_charge_instance" columnName="offer_template_id"/>
+		<addColumn tableName="billing_product_instance">
+			<column name="subscription_id" type="BIGINT" />
+		</addColumn>
+		
+	</changeSet>
     <changeSet id="#2042_20160921" author="AndriusKarpavicius">
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.MeasurableQuantity' where ITEM_TYPE='org.meveocrm.model.dwh.MeasurableQuantity'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.BarChart' where ITEM_TYPE='org.meveocrm.model.dwh.BarChart'</sql>

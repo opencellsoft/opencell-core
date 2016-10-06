@@ -91,7 +91,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            counterTemplateApi.remove(counterTemplateCode, getCurrentUser().getProvider());
+            counterTemplateApi.remove(counterTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

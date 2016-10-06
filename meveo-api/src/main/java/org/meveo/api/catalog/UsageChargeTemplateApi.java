@@ -331,7 +331,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
@@ -339,12 +339,12 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         }
 
         // check if code already exists
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
         
-        usageChargeTemplateService.remove(chargeTemplate);
+        usageChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
     public UsageChargeTemplate createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {

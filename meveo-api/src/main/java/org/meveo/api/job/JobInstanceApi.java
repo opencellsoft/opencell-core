@@ -221,17 +221,18 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
      * @param code
      * @param provider
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
-        JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
+        JobInstance jobInstance = jobInstanceService.findByCode(code, currentUser.getProvider());
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-        jobInstanceService.remove(jobInstance);
+        jobInstanceService.remove(jobInstance, currentUser);
     }
 
     private JobInstanceDto jobInstanceToDto(JobInstance jobInstance) {

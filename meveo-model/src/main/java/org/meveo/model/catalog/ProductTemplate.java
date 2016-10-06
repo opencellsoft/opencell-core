@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class ProductTemplate extends ProductOffering {
 	public static final String CF_CATALOG_PRICE = "CATALOG_PRICE";
 
 	@OneToMany(mappedBy = "productTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ProductChargeTemplate> productChargeTemplates;
+	private Set<ProductChargeTemplate> productChargeTemplates = new HashSet<>();
 
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
@@ -52,7 +53,7 @@ public class ProductTemplate extends ProductOffering {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
 	@OrderColumn(name = "INDX")
-	private List<WalletTemplate> walletTemplates;
+	private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
 
 	public Set<ProductChargeTemplate> getProductChargeTemplates() {
 		if(productChargeTemplates == null){

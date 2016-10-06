@@ -125,17 +125,17 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         return new CounterTemplateDto(counterTemplate);
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
             handleMissingParameters();
         }
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, currentUser.getProvider());
         if (counterTemplate == null) {
             throw new EntityDoesNotExistsException(CounterTemplate.class, code);
         }
 
-        counterTemplateService.remove(counterTemplate);
+        counterTemplateService.remove(counterTemplate, currentUser);
     }
 
     @Override

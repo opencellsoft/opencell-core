@@ -111,7 +111,7 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         return result;
     }
 
-    public void remove(String timerEntityCode, User currentUser) throws MeveoApiException {
+    public void remove(String timerEntityCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");
             handleMissingParameters();
@@ -121,6 +121,6 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
             throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
         }
 
-        timerEntityService.remove(timerEntity);
+        timerEntityService.remove(timerEntity, currentUser);
     }
 }

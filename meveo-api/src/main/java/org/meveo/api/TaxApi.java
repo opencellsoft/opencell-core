@@ -204,7 +204,7 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public ActionStatus remove(String taxCode, Provider provider) throws MeveoApiException {
+    public ActionStatus remove(String taxCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(taxCode)) {
             missingParameters.add("code");
@@ -213,12 +213,12 @@ public class TaxApi extends BaseApi {
 
         ActionStatus result = new ActionStatus();
 
-        Tax tax = taxService.findByCode(taxCode, provider);
+        Tax tax = taxService.findByCode(taxCode, currentUser.getProvider());
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        taxService.remove(tax);
+        taxService.remove(tax, currentUser);
         return result;
     }
 

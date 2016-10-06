@@ -89,8 +89,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@Override
-	public void remove(PricePlanMatrix pricePlan) {
-		super.remove(pricePlan);
+	public void remove(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
+		super.remove(pricePlan, currentUser);
 		ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
 	}
 
@@ -102,24 +102,24 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@SuppressWarnings("unchecked")
-	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+	public void removeByPrefix(EntityManager em, String prefix, User currentUser) throws BusinessException {
 		Query query = em.createQuery(
 				"select m from PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix + "%' AND m.provider=:provider");
-		query.setParameter("provider", provider);
+		query.setParameter("provider", currentUser.getProvider());
 		List<PricePlanMatrix> pricePlans = query.getResultList();
 		for (PricePlanMatrix pricePlan : pricePlans) {
-			remove(pricePlan);
+			remove(pricePlan, currentUser);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void removeByCode(EntityManager em, String code, Provider provider) {
+	public void removeByCode(EntityManager em, String code, User currentUser) throws BusinessException {
 		Query query = em.createQuery("select m PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
 		query.setParameter("code", code);
-		query.setParameter("provider", provider);
+		query.setParameter("provider", currentUser.getProvider());
 		List<PricePlanMatrix> pricePlans = query.getResultList();
 		for (PricePlanMatrix pricePlan : pricePlans) {
-			remove(pricePlan);
+			remove(pricePlan, currentUser);
 		}
 	}
 

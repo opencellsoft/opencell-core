@@ -271,7 +271,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 				if (toBeDeleted.size() > 0) {
 					for (OfferServiceTemplate offerServiceTemplate : toBeDeleted) {
-						offerServiceTemplateService.remove(offerServiceTemplate);
+						offerServiceTemplateService.remove(offerServiceTemplate, currentUser);
 					}
 				}
 
@@ -470,19 +470,19 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 	}
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
+	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("offerTemplateCode");
 			handleMissingParameters();
 		}
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
 
-		offerTemplateService.remove(offerTemplate);
+		offerTemplateService.remove(offerTemplate, currentUser);
 	}
 
 	/**

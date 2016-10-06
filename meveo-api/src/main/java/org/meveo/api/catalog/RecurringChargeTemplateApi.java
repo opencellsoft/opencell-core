@@ -317,7 +317,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
@@ -325,12 +325,12 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider);
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, currentUser.getProvider());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        recurringChargeTemplateService.remove(chargeTemplate);
+        recurringChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
     public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {

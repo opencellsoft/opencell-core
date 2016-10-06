@@ -114,7 +114,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         return scriptInstanceDtoResult;
     }
 
-    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
             handleMissingParameters();
@@ -123,7 +123,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
         }
-        scriptInstanceService.remove(scriptInstance);
+        scriptInstanceService.remove(scriptInstance, currentUser);
     }
 
     @Override
