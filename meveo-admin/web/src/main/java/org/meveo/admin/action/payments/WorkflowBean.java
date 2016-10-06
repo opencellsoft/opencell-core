@@ -606,4 +606,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
             return result;
         }
     }
+    
+	@ActionMethod
+	public void duplicate() {
+		if (entity != null && entity.getId() != null) {
+			try {
+				workflowService.duplicate(entity, getCurrentUser());
+				messages.info(new BundleKey("messages", "save.successful"));
+			} catch (BusinessException e) {
+				log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
+			}
+		}
+	}
 }

@@ -80,7 +80,8 @@ public class WorkflowService extends BusinessService<Workflow> {
             .setParameter("disabled", false).setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
     }
 
-    public List<Workflow> findByWFTypeWithoutStatus(String wfType, Provider provider) {
+    @SuppressWarnings("unchecked")
+	public List<Workflow> findByWFTypeWithoutStatus(String wfType, Provider provider) {
         return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType and provider=:provider")
             .setParameter("wfType", wfType).setParameter("provider", provider).getResultList();
     }
@@ -312,5 +313,33 @@ public class WorkflowService extends BusinessService<Workflow> {
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
     }
+
+	public synchronized void duplicate(Workflow entity, User currentUser) throws BusinessException {
+		entity = refreshOrRetrieve(entity);
+		
+		entity.getTransitions().size();
+		
+		String code = findDuplicateCode(entity, currentUser);
+
+		// Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+		
+		List<WFTransition> wfTransitions = entity.getTransitions();
+		entity.setTransitions(new ArrayList<WFTransition>());
+		
+		entity.setCode(code);
+		create(entity, currentUser);
+		
+		if (wfTransitions != null) {
+			for (WFTransition wfTransition : wfTransitions) {
+				wfTransition = wfTransitionService.duplicate(wfTransition, entity, getCurrentUser());
+				
+				entity.getTransitions().add(wfTransition);
+			}
+		}
+		
+		update(entity, currentUser);
+	}
 
 }
