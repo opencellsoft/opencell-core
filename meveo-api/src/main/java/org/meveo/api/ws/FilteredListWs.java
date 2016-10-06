@@ -7,7 +7,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 
 @WebService
@@ -33,7 +32,7 @@ public interface FilteredListWs extends IBaseWs {
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @return	
      */
     @WebMethod
     public FilteredListResponseDto search(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") String query,

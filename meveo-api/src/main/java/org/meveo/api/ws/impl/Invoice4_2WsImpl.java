@@ -13,13 +13,11 @@ import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.dto.response.CustomerInvoices4_2Response;
-import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.Invoice4_2Api;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.Invoice4_2Ws;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @Deprecated

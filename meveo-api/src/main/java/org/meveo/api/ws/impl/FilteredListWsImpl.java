@@ -10,7 +10,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
