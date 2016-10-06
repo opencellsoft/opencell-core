@@ -14,6 +14,7 @@ import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -23,6 +24,7 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
+import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -111,7 +113,7 @@ public class ScriptInstanceApi extends BaseApi {
         return scriptInstanceDtoResult;
     }
 
-    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
             handleMissingParameters();
@@ -120,7 +122,7 @@ public class ScriptInstanceApi extends BaseApi {
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
         }
-        scriptInstanceService.remove(scriptInstance);
+        scriptInstanceService.remove(scriptInstance, currentUser);
     }
 
     public List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
@@ -138,7 +140,7 @@ public class ScriptInstanceApi extends BaseApi {
         return result;
     }
 
-    public void checkDtoAndUpdateCode(CustomScriptDto dto) throws BusinessApiException, MissingParameterException {
+    public void checkDtoAndUpdateCode(CustomScriptDto dto) throws BusinessApiException, MissingParameterException, InvalidParameterException {
 
         if (StringUtils.isBlank(dto.getScript())) {
             missingParameters.add("script");
@@ -150,6 +152,12 @@ public class ScriptInstanceApi extends BaseApi {
         if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
             throw new BusinessApiException("The code and the canonical script class name must be identical");
         }
+
+        // check script existed full class name in class path
+        if (CustomScriptService.isOverwritesJavaClass(scriptCode)) {
+            throw new InvalidParameterException("The class with such name already exists");
+        }
+
         dto.setCode(scriptCode);
     }
 

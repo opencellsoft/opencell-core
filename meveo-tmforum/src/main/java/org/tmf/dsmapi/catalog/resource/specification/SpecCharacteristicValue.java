@@ -1,9 +1,11 @@
 package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
-import org.codehaus.jackson.annotate.JsonProperty;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *

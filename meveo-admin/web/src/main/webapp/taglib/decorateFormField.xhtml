@@ -44,7 +44,7 @@ JSF tag to display a pair of field label and field entry/output value in a SINGL
         labelWidth - applies only when displayOneLine=true - a percentage (without % sign) that label should occupy. Input would occupy 100-labelWidth percent of space. Default - 20, that is 20% of a component's width.
 
  -->
- 
+
 <ui:composition>
 
     <c:if test="${empty(componentWidth)}">
@@ -67,11 +67,13 @@ JSF tag to display a pair of field label and field entry/output value in a SINGL
         <c:set var="inputWidth" value="#{displayOneLine?(100-labelWidth):100}" />
     </c:if>
 
-    <c:if test="${empty(rendered)}">
-        <c:set var="rendered" value="true" />
-    </c:if>
-    
-    <h:panelGroup layout="block" styleClass="formFieldGroup #{styleClass} #{newLine?'clearLeft':''}" style="width:#{componentWidth}%; #{style} " rendered="#{rendered}">
+    <!--  Commented out as it was always resolved to null in ui:repeat and similar cases. It worked only in c:foreach case. -->
+    <!--     <c:if test="${empty(rendered)}"> -->
+    <!--         <c:set var="rendered" value="true" /> -->
+    <!--     </c:if> -->
+
+    <h:panelGroup layout="block" styleClass="formFieldGroup #{styleClass} #{newLine?'clearLeft':''}" style="width:#{componentWidth}%; #{style} "
+        rendered="#{rendered==null?true:rendered}">
         <p:outputLabel for="#{fieldId}" styleClass="#{labelStyleClass}" style="width:#{labelWidth}%; #{labelStyle}" value="#{label}" rendered="#{label!=null and fieldId!=null}" />
         <p:outputLabel styleClass="#{labelStyleClass}" style="width:#{labelWidth}%; #{labelStyle}" value="#{label}" rendered="#{label!=null and fieldId==null}" />
         <h:panelGroup layout="block" styleClass="#{displayOneLine?'formFieldItem':'formFieldItem2Lines'} #{inputStyleClass}" style="width:#{inputWidth}%;  #{inputStyle}">

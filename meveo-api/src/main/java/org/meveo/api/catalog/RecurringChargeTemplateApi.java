@@ -156,15 +156,15 @@ public class RecurringChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMsg, currentUser);
             }
@@ -248,13 +248,13 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
                         catMessagesService.update(catMsg, currentUser);
                     } else {
-                        CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                        CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
                             ld.getDescription());
                         catMessagesService.create(catMessages, currentUser);
                     }
@@ -282,9 +282,9 @@ public class RecurringChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 
@@ -305,7 +305,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -314,7 +314,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
@@ -322,15 +322,12 @@ public class RecurringChargeTemplateApi extends BaseApi {
         }
 
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider);
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, currentUser.getProvider());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(RecurringChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
-
-        recurringChargeTemplateService.remove(chargeTemplate);
+        recurringChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
     public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {

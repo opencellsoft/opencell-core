@@ -91,7 +91,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            notificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

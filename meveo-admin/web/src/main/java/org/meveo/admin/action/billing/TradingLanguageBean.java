@@ -40,7 +40,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -111,7 +110,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 		return back;
 	}
 
-	public void onRowSelect(SelectEvent event) {
+	public void onLanguageSelect(SelectEvent event) {
 		if (event.getObject() instanceof Language) {
 			Language language = (Language) event.getObject();
 			log.info("populatLanguages language",

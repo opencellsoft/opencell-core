@@ -36,6 +36,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
@@ -43,7 +44,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 
 @Entity
@@ -98,11 +98,14 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@Size(max = 2000)
 	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
 	private String longDescription;
-	
+
 	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
 	@Size(max = 50)
 	private String imageContentType;
 	
+	@Transient
+	private boolean selected;
+
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
 		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
@@ -202,11 +205,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 		this.invoicingCalendar = invoicingCalendar;
 	}
 
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
-	}
-
 	public BusinessServiceModel getBusinessServiceModel() {
 		return businessServiceModel;
 	}
@@ -255,5 +253,13 @@ public class ServiceTemplate extends BusinessCFEntity {
 		this.longDescription = longDescription;
 	}
 
-    
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+
 }

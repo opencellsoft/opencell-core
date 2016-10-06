@@ -33,8 +33,8 @@
     <c:if test="${empty(componentWidth)}">
         <c:set var="componentWidth" value="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP?45:100}" />
     </c:if>
-    <c:set var="idPrefix" value="#{inherited?'i':'c'}" />
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="idPrefix" value="#{prefix}_#{inherited?'i':'c'}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
@@ -135,7 +135,7 @@
                          rowsPerPageTemplate="10,20,30">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
-                <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}">
+                <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}" style="height:25px;">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{mapValues[column.code]}" styleClass="field-value" />

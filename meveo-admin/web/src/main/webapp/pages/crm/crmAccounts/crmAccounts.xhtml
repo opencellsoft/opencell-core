@@ -12,10 +12,6 @@
 		</f:metadata>
 	</ui:define>
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
         <hftl:searchPanel label="#{messages['crmAccount.search']}" backingBean="#{crmAccountBean}" renderNewButton="false">
             <hftl:searchField label="#{messages['crmAccount.account.name']}" field="code" />

@@ -53,7 +53,7 @@ public class OneShotChargeInstance extends ChargeInstance {
 		setChargeDate(chargeDate);
 		setAmountWithoutTax(amountWithoutTax);
 		setAmountWithTax(amount2);
-		this.subscription = subscription;
+		this.setSubscription(subscription);
 		this.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		this.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
 		this.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());

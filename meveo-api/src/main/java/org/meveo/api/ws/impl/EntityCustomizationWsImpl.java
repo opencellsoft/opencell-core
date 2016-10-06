@@ -87,7 +87,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
+            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

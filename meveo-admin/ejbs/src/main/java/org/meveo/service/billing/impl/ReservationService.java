@@ -120,7 +120,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
 				subscriptionDate);
@@ -229,7 +229,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
 				subscriptionDate);
@@ -381,7 +381,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
-				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller,
 				reservation.getUserAccount(), subscriptionDate);

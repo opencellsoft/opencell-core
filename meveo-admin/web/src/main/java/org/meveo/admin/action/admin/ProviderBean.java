@@ -27,13 +27,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.InterBankTitle;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
@@ -81,17 +79,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         	entity.setInterBankTitle(new InterBankTitle());
         }
         return entity;
-    }
-
-    public void onRowSelect(SelectEvent event) {
-        if (event.getObject() instanceof Language) {
-            Language language = (Language) event.getObject();
-            log.info("populateLanguages language", language != null ? language.getLanguageCode() : null);
-            if (language != null) {
-                entity.setLanguage(language);
-            }
-        }
-
     }
 
     /**

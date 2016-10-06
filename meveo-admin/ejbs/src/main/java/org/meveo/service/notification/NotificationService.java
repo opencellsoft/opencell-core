@@ -49,8 +49,8 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     }
 
     @Override
-    public void remove(ScriptNotification scriptNotification) {
-        super.remove(scriptNotification);
+    public void remove(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
+        super.remove(scriptNotification, currentUser);
         notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
     }
 

@@ -143,10 +143,10 @@ public class CustomerAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customerAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customerAccount;
 	}
@@ -252,10 +252,10 @@ public class CustomerAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customerAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customerAccount;
 	}
@@ -289,19 +289,19 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccountDto;
 	}
 
-	public void remove(String customerAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String customerAccountCode, User currentUser) throws MeveoApiException {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
 		}
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 		try {
-			customerAccountService.remove(customerAccount);
+			customerAccountService.remove(customerAccount, currentUser);
 			customerAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -428,17 +428,17 @@ public class CustomerAccountApi extends AccountApi {
 		}
 	}
 
-	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
+	public void removeCreditCategory(String code, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("creditCategoryCode");
 			handleMissingParameters();
 		}
-		CreditCategory creditCategory = creditCategoryService.findByCode(code, provider);
+		CreditCategory creditCategory = creditCategoryService.findByCode(code, currentUser.getProvider());
 		if (creditCategory == null) {
 			throw new EntityDoesNotExistsException(CreditCategory.class, code);
 		}
 		try {
-			creditCategoryService.remove(creditCategory);
+			creditCategoryService.remove(creditCategory, currentUser);
 			creditCategoryService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

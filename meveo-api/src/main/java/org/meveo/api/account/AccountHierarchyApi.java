@@ -12,13 +12,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CountryApi;
+import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDto;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -35,6 +35,8 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.NameDto;
+import org.meveo.api.dto.account.ParentEntitiesDto;
+import org.meveo.api.dto.account.ParentEntityDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
@@ -49,6 +51,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -137,13 +140,16 @@ public class AccountHierarchyApi extends BaseApi {
 	private UserAccountService userAccountService;
 
 	@Inject
+	private TradingCountryService tradingCountryService;
+
+	@Inject
 	private CountryApi countryApi;
 
 	@Inject
 	private LanguageApi languageApi;
 
 	@Inject
-	private TradingCountryService tradingCountryService;
+	private CurrencyApi currencyApi;
 
 	@Inject
 	private SellerService sellerService;
@@ -234,15 +240,10 @@ public class AccountHierarchyApi extends BaseApi {
 			sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSellerCode());
 		}
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
+
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
 		sellerDto.setLanguageCode(postData.getLanguageCode());
@@ -391,16 +392,9 @@ public class AccountHierarchyApi extends BaseApi {
 			sellerDto.setCode(postData.getSellerCode());
 		}
 
-		CountryDto countryDto = new CountryDto();
-		countryDto.setCountryCode(postData.getCountryCode());
-		countryDto.setCurrencyCode(postData.getCurrencyCode());
-		countryApi.createOrUpdate(countryDto, currentUser);
-
-		if (!StringUtils.isBlank(postData.getLanguageCode())) {
-			LanguageDto languageDto = new LanguageDto();
-			languageDto.setCode(postData.getLanguageCode());
-			languageApi.createOrUpdate(languageDto, currentUser);
-		}
+		countryApi.findOrCreate(postData.getCountryCode(),currentUser);
+		currencyApi.findOrCreate(postData.getCurrencyCode(),currentUser);
+		languageApi.findOrCreate(postData.getLanguageCode(),currentUser);
 
 		sellerDto.setCountryCode(postData.getCountryCode());
 		sellerDto.setCurrencyCode(postData.getCurrencyCode());
@@ -541,16 +535,22 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomersDto result = new CustomersDto();
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null, postData.getSortField(), null);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null, null, postData.getSortField(), null);
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
 		String customerCodeOrId = postData.getCustomerCode();
 		if (StringUtils.isBlank(customerCodeOrId)) {
 			customerCodeOrId = postData.getCustomerId();
 		}
+		
+		if(postData.getUsePrefix() != null && postData.getUsePrefix()){
+			if(!customerCodeOrId.startsWith(CUSTOMER_PREFIX)) {
+				customerCodeOrId = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);	
+			}
+	    }
 
 		if (!StringUtils.isBlank(customerCodeOrId)) {
-			customerCodeOrId=CUSTOMER_PREFIX+StringUtils.normalizeHierarchyCode(customerCodeOrId);
+			customerCodeOrId=StringUtils.normalizeHierarchyCode(customerCodeOrId);
 			qb.addCriterion("c.code", "=", customerCodeOrId, true);
 		}
 		if (!StringUtils.isBlank(postData.getSellerCode())) {
@@ -579,7 +579,7 @@ public class AccountHierarchyApi extends BaseApi {
 			if (tradingCountry == null) {
 				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 			}
-			qb.addCriterion("c.address.country", "=", postData.getCountryCode(), true);
+			qb.addCriterion("c.address.country", "=", tradingCountry.getPrDescription(), true);
 		}
 		if (!StringUtils.isBlank(postData.getFirstName())) {
 			qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
@@ -659,17 +659,10 @@ public class AccountHierarchyApi extends BaseApi {
 				missingParameters.add("seller.code");
 				handleMissingParameters();
 			}
-			Provider provider = currentUser.getProvider();
-			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(sellerDto.getCountryCode());
-			countryDto.setCurrencyCode(sellerDto.getCurrencyCode());
-			countryApi.createOrUpdate(countryDto, currentUser);
 
-			if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-				LanguageDto languageDto = new LanguageDto();
-				languageDto.setCode(sellerDto.getLanguageCode());
-				languageApi.createOrUpdate(languageDto, currentUser);
-			}
+			countryApi.findOrCreate(sellerDto.getCountryCode(),currentUser);
+			currencyApi.findOrCreate(sellerDto.getCurrencyCode(),currentUser);
+			languageApi.findOrCreate(sellerDto.getLanguageCode(),currentUser);
 
 			sellerApi.createOrUpdate(sellerDto, currentUser);
 
@@ -1115,7 +1108,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
 			try {
-				accountModelScriptService.createAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
+				accountModelScriptService.createAccount(businessAccountModel.getScript().getCode(), seller, accountEntity,postData, currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
 			}
@@ -1392,7 +1385,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
 			try {
-				accountModelScriptService.updateAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, currentUser);
+				accountModelScriptService.updateAccount(businessAccountModel.getScript().getCode(), seller, accountEntity, postData, currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
 			}
@@ -1822,7 +1815,7 @@ public class AccountHierarchyApi extends BaseApi {
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
 			try {
 				accountModelScriptService.terminateAccount(businessAccountModel.getScript().getCode(), null,
-						(accountEntity1 != null ? accountEntity1 : accountEntity2), currentUser);
+						(accountEntity1 != null ? accountEntity1 : accountEntity2), postData, currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
 			}
@@ -1853,11 +1846,40 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null && customerAccount != null) {
 			try {
-				accountModelScriptService.closeAccount(businessAccountModel.getScript().getCode(), null, customerAccount, currentUser);
+				accountModelScriptService.closeAccount(businessAccountModel.getScript().getCode(), null, customerAccount, postData, currentUser);
 			} catch (BusinessException e) {
 				log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
 			}
 		}
+	}
+
+	public ParentEntitiesDto getParentList(CRMAccountTypeSearchDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		String accountType = postData.getAccountTypeCode();
+		AccountHierarchyTypeEnum hierarchyType = null;
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType, currentUser.getProvider());
+		if (businessAccountModel != null) {
+			hierarchyType = businessAccountModel.getHierarchyType();
+		} else {
+			try {
+				hierarchyType = AccountHierarchyTypeEnum.valueOf(accountType);
+			} catch (Exception e) {
+				throw new MeveoApiException("Account type does not match any BAM or AccountHierarchyTypeEnum");
+			}
+		}
+
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getOffset(), postData.getLimit(), null, null, null, postData.getSortField(), null);
+		List<BusinessEntity> parentList = businessAccountModelService.listParents(postData.getSearchTerm(), hierarchyType.parentClass(), paginationConfiguration, currentUser.getProvider());
+
+		ParentEntityDto parentDto = null;
+		ParentEntitiesDto parentsDto = new ParentEntitiesDto();
+
+		if(parentList != null) {
+			for(BusinessEntity parent : parentList){
+				parentDto = new ParentEntityDto(parent.getCode(), parent.getDescription());
+				parentsDto.getParent().add(parentDto);
+			}
+		}
+		return parentsDto;
 	}
 
 	private void findOrCreateCustomerCategory(String customerCategoryCode, User currentUser) throws BusinessException {

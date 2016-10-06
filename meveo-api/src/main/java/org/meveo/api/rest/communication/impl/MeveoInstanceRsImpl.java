@@ -96,7 +96,7 @@ log.debug("end create meveoInstance");
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            meveoInstanceApi.remove(code, getCurrentUser().getProvider());
+            meveoInstanceApi.remove(code, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

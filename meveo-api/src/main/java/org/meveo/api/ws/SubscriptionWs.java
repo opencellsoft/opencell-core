@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -14,9 +15,6 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService
 public interface SubscriptionWs extends IBaseWs {
 
@@ -35,6 +33,9 @@ public interface SubscriptionWs extends IBaseWs {
 	@WebMethod
 	ActionStatus applyOneShotChargeInstance(@WebParam(name = "applyOneShotChargeInstance") ApplyOneShotChargeInstanceRequestDto postData);
 
+	@WebMethod
+	ActionStatus applyProduct(@WebParam(name = "applyProduct") ApplyProductRequestDto postData);
+	
 	@WebMethod
 	ActionStatus terminateSubscription(@WebParam(name = "terminateSubscription") TerminateSubscriptionRequestDto postData);
 

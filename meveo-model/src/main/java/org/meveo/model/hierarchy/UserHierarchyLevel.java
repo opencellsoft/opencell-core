@@ -20,9 +20,9 @@ package org.meveo.model.hierarchy;
 
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.OneToMany;
 
 import org.meveo.model.admin.User;
@@ -31,12 +31,12 @@ import org.meveo.model.admin.User;
 @DiscriminatorValue(value = "USER_TYPE")
 public class UserHierarchyLevel extends HierarchyLevel<User> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "userLevel", fetch = FetchType.LAZY)
-	private Set<User> users;
+    private Set<User> users;
 
-	public UserHierarchyLevel() {
+    public UserHierarchyLevel() {
     }
 
     public Set<User> getUsers() {
@@ -45,5 +45,44 @@ public class UserHierarchyLevel extends HierarchyLevel<User> {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    /**
+     * Check that user belongs to a current or any of child levels
+     * 
+     * @param userToCheck User to verify
+     * @return True if user belongs to a current or any of child levels
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isUserBelongsHereOrBellow(User userToCheck) {
+        if (users.contains(userToCheck)) {
+            return true;
+        }
+
+        for (HierarchyLevel childLevel : getChildLevels()) {
+            if (((UserHierarchyLevel) childLevel).isUserBelongsHereOrBellow(userToCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check that user belongs to a current or any of parent levels
+     * 
+     * @param userToCheck User to verify
+     * @return True if user belongs to a current or any of child levels
+     */
+    public boolean isUserBelongsHereOrHigher(User userToCheck) {
+           
+        if (getUsers().contains(userToCheck)) {
+            return true;
+        }
+
+        // TODO fix me - throws class cast exception
+        // if (getParentLevel() != null) {
+        // return ((UserHierarchyLevel) getParentLevel()).isUserBelongsHereOrHigher(userToCheck);
+        // }
+        return false;
     }
 }

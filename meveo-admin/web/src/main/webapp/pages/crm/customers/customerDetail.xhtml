@@ -12,13 +12,9 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{customerBean.preRenderView}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />			
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />			
             <f:viewParam name="tab" value="#{customerBean.activeTab}"/>
 		</f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">

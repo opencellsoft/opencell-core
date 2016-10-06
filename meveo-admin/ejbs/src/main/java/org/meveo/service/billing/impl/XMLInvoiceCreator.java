@@ -312,6 +312,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// log.debug("creating ba");
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Element billingAccountTag = doc.createElement("billingAccount");
+			if (billingCycle == null) {
+				billingCycle = billingAccount.getBillingCycle();
+			}
+			String billingCycleCode = billingCycle != null ? billingCycle.getCode() + "" : "";
+			billingAccountTag.setAttribute("billingCycleCode", billingCycleCode);
 			String billingAccountId = billingAccount.getId() + "";
 			String billingAccountCode = billingAccount.getCode() + "";
 			billingAccountTag.setAttribute("id", billingAccountId);
@@ -620,7 +625,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						calendarText = doc.createTextNode("");
 					}
 					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceTemplate, invoice, doc, servicesTag);
+					addCustomFields(serviceTemplate, invoice, doc, serviceTag);
 					servicesTag.appendChild(serviceTag);
 					serviceIds.add(serviceTemplate.getId());
 				}
@@ -677,8 +682,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
-				Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName()
-						.getTitle(), languageCode));
+                Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode));
 				quality.appendChild(qualityTxt);
 			}
 			nameTag.appendChild(quality);
@@ -1032,8 +1036,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						if (ratedTransaction.getPriceplan() != null) {
 							Element pricePlan = doc.createElement("pricePlan");
 							pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
-							pricePlan.setAttribute("description", catMessagesService.getMessageDescription(
-									ratedTransaction.getPriceplan(), languageCode));
+                            pricePlan.setAttribute("description", catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(), languageCode));
 							line.appendChild(pricePlan);
 							if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
 							    addPricePlans(ratedTransaction.getPriceplan(),invoice,doc,invoiceTag);

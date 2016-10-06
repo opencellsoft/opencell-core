@@ -114,21 +114,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return result;
     }
 
-    public boolean isExistsCode(String code, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
-        qb.addCriterion("code", "=", code, true);
-
-        try {
-            if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
-                return true;
-            }
-        } catch (NoResultException e) {
-
-        }
-
-        return false;
-    }
-
     @Override
     public void create(T script, User creator) throws BusinessException {
 
@@ -136,7 +121,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+        String fullClassName = getFullClassname(script.getScript());
+
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+        }
+        script.setCode(fullClassName);
 
         super.create(script, creator);
         compileScript(script, false);
@@ -149,13 +139,31 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+
+        String fullClassName = getFullClassname(script.getScript());
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+        }
+
+        script.setCode(fullClassName);
 
         script = super.update(script, updater);
 
         compileScript(script, false);
 
         return script;
+    }
+
+    /**
+     * Check full class name is existed class path or not
+     */
+    public static boolean isOverwritesJavaClass(String fullClassName) {
+        try {
+            Class.forName(fullClassName);
+            return true;
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
     }
 
     /**
@@ -314,7 +322,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    public Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
 
         if (allScriptInterfaces.containsKey(provider.getCode())) {
@@ -478,7 +486,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param parameters Additional parameters
+     * @param context Additional parameters
      * @param currentUser Current user
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
@@ -565,4 +573,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
         return parameters;
     }
+
+    /**
+     * Get all script interfaces for a given provider
+     * 
+     * @return the allScriptInterfaces
+     */
+    public Map<String, Class<SI>> getAllScriptInterfaces(Provider provider) {
+        return allScriptInterfaces.get(provider.getCode());
+    } 
 }

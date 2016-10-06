@@ -202,17 +202,17 @@ public class InvoiceTypeApi extends BaseApi {
         return result;
     }
 
-    public ActionStatus remove(String invoiceTypeCode, Provider provider) throws MeveoApiException {
+    public ActionStatus remove(String invoiceTypeCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(invoiceTypeCode)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
         ActionStatus result = new ActionStatus();
-        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, provider);
+        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, currentUser.getProvider());
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
         }
-        invoiceTypeService.remove(invoiceType);
+        invoiceTypeService.remove(invoiceType, currentUser);
         return result;
     }
 

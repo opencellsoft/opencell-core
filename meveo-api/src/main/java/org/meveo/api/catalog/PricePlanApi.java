@@ -161,9 +161,9 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrixService.create(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
-            throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
         }
     }
 
@@ -266,9 +266,9 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrixService.update(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("Failed to associate custom field instance to a priceplan entity {}", postData.getCode(), e);
-            throw new MeveoApiException("Failed to associate custom field instance to a priceplan entity " + postData.getCode());
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
         }
     }
 
@@ -286,19 +286,19 @@ public class PricePlanApi extends BaseApi {
         return new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
     }
 
-    public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
+    public void remove(String pricePlanCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
             handleMissingParameters();
         }
 
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, currentUser.getProvider());
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        pricePlanMatrixService.remove(pricePlanMatrix);
+        pricePlanMatrixService.remove(pricePlanMatrix, currentUser);
     }
 
     public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {

@@ -143,7 +143,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				&& !counterTemplate.getId().equals(notification.getCounterInstance().getCounterTemplate().getId())) {
 			CounterInstance ci = notification.getCounterInstance();
 			notification.setCounterInstance(null);
-			remove(ci);
+			remove(ci, creator);
 		}
 
 		// Instantiate counter instance if there is not one yet

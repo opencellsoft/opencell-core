@@ -47,11 +47,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     @Override
     public JobInstance initEntity() {
         super.initEntity();
-        try{
-            createMissingCustomFieldTemplates();
-        } catch (BusinessException e){
-            log.error("Failed to create missing custom field templates", e);
-        }
+        
+        createMissingCustomFieldTemplates();
+          
         return entity;
     }
 
@@ -115,7 +113,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return A map of custom field templates with template code as a key
      * @throws BusinessException 
      */
-    private void createMissingCustomFieldTemplates() throws BusinessException {
+    private void createMissingCustomFieldTemplates() {
 
         if (entity.getJobTemplate() == null) {
             return;
@@ -132,7 +130,12 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } else {
             jobTemplatesFromJob = jobCustomFields.values();
         }
-        customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentUser());
+     
+        try {
+            customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentUser());
+        } catch (BusinessException e) {
+            log.error("Failed to create missing custom field templates", e);
+        }
     }
 
     /**

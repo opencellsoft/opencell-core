@@ -78,10 +78,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-	@Inject
-	@RequestParam
-	private Instance<String> backView;
 	
 	@Inject
 	@RequestParam
@@ -170,7 +166,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	}
 
 	
-	public void onRowSelect(SelectEvent event) {
+	public void onChargeSelect(SelectEvent event) {
 		if (event.getObject() instanceof ChargeTemplate) {
 			ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
 			if (chargeTemplate != null) {

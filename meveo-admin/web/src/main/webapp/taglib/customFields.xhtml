@@ -18,6 +18,7 @@
         datePattern - date pattern for date entry/display
         dateTimePattern - date time pattern for period date display
         messagesId - an ID of messages component for validation messages
+        defaultTabLabel - a default tab label if it was not set during entity customization. If not provided a messages['customFieldTemplate.cfValues'] will be used
         
 -->
 
@@ -44,8 +45,11 @@
     <c:if test="${empty(entity)}">
         <c:set var="entity" value="#{backingBean.entity}" />
     </c:if>
+    <c:if test="${empty(defaultTabLabel)}">
+        <c:set var="defaultTabLabel" value="#{messages['customFieldTemplate.cfValues']}" />
+    </c:if>
     <c:set var="newEntity" value="#{entity.transient}" />
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <c:set var="edit" value="#{edit and backingBean.canUserUpdateEntity()}" />
 
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
@@ -54,9 +58,11 @@
 
     <c:set var="index" value="0" />
 
-    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab">
+    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
 
-        <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
+        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
+
+        <p:tab title="#{tabLabel}">
 
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
                 <c:if test="#{cfFieldOrFg.type == 'field'}">
@@ -68,7 +74,7 @@
                     </c:if>
                 </c:if>
                 <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
-                    <p:panel header="#{cfFieldOrFg.data}">
+                    <p:fieldset legend="#{cfFieldOrFg.data}">
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
                             <c:if
@@ -77,23 +83,23 @@
                                     dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
                             </c:if>
                         </c:forEach>
-                    </p:panel>
+                    </p:fieldset>
                 </c:if>
             </c:forEach>
 
-            <c:if test="#{index==0}">
+            <c:if test="#{cfTabStatus.first}">
                 <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true"
                     modal="true" appendTo="@(body)" width="900">
 
                     <p:panel>
                         <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
-                            <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
-                                <h:outputText id="period_start_date" value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
+                            <hftl:decorateFormField fieldId="#{prefix}period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
+                                <h:outputText id="#{prefix}period_start_date" value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
                                     <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>
-                            <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
-                                <h:outputText id="period_end_date" value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
+                            <hftl:decorateFormField fieldId="#{prefix}period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
+                                <h:outputText id="#{prefix}period_end_date" value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
                                     <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>

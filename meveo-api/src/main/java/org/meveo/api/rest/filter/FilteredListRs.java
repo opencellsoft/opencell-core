@@ -6,8 +6,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.rest.IBaseRs;
@@ -21,15 +23,34 @@ public interface FilteredListRs extends IBaseRs {
 
     @Path("/")
     @GET
-    Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow, @QueryParam("numberOfRows") Integer numberOfRows);
+    public Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow, @QueryParam("numberOfRows") Integer numberOfRows);
 
     @Path("/xmlInput")
     @POST
-    Response listByXmlInput(FilteredListDto postData);
-    
+    public Response listByXmlInput(FilteredListDto postData);
+
+    /**
+     * Execute a search in Elastic Search on all fields (_all field)
+     * 
+     * @param classnamesOrCetCodes Entity classes to match - full class name
+     * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @return
+     */
     @Path("/search")
     @GET
-    Response search(@QueryParam("classnames") String[] classnames,@QueryParam("query") String query);
+    public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
-
+    /**
+     * Execute a search in Elastic Search on given fields for given values. Query values by field are passed in extra query parameters in a form of fieldName=valueToMatch
+     * 
+     * @param classnamesOrCetCodes Entity classes to match - full class name
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @return
+     */
+    @Path("/searchByField")
+    @GET
+    public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size, @Context UriInfo info);
 }

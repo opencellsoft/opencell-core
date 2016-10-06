@@ -39,6 +39,9 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
@@ -47,6 +50,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
 	private WalletService walletService;
+
+	@Inject
+	private ProductInstanceService productInstanceService;
 	
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws BusinessException {

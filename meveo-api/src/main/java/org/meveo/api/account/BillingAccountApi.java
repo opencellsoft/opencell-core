@@ -169,9 +169,9 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;
@@ -325,9 +325,9 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;
@@ -349,17 +349,17 @@ public class BillingAccountApi extends AccountApi {
 		return accountHierarchyApi.billingAccountToDto(billingAccount);
 	}
 
-	public void remove(String billingAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String billingAccountCode, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
 			handleMissingParameters();
 		}
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, currentUser.getProvider());
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 		}
 		try {
-			billingAccountService.remove(billingAccount);
+			billingAccountService.remove(billingAccount, currentUser);
 			billingAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

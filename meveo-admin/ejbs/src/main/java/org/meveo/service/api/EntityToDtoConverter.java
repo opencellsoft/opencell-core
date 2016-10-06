@@ -39,9 +39,13 @@ public class EntityToDtoConverter {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
+	public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
+		Map<String, List<CustomFieldInstance>> customFields = customFieldInstanceService.getCustomFieldInstances(entity);
 
-        Map<String, List<CustomFieldInstance>> customFields = customFieldInstanceService.getCustomFieldInstances(entity);
+		return getCustomFieldsDTO(entity, customFields);
+	}
+
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> customFields) {       
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity, null); // provider will be determined from the entity
 
@@ -50,8 +54,8 @@ public class EntityToDtoConverter {
             if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                 childEntityTypeFields.add(cft.getCode());
             }
-
         }
+        
         return customFieldsToDTO(customFields, childEntityTypeFields);
     }
 

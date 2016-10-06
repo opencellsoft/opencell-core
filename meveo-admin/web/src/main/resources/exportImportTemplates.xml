@@ -308,6 +308,72 @@
             <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
         </classesToExportAsFull>
     </template>
+    <template name="Offers" entityToExport="org.meveo.model.catalog.OfferTemplate">
+		<classesToExportAsFull>
+			<java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
+			<java-class>org.meveo.model.catalog.ServiceTemplate</java-class>
+			<java-class>org.meveo.model.catalog.TriggeredEDRTemplate</java-class>
+			<java-class>org.meveo.model.catalog.CounterTemplate</java-class>
+			<java-class>org.meveo.model.catalog.ChargeTemplate</java-class>
+			<java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
+            <java-class>org.meveo.model.catalog.ServiceChargeTemplateSubscription</java-class>
+            <java-class>org.meveo.model.catalog.ServiceChargeTemplateTermination</java-class>
+            <java-class>org.meveo.model.catalog.ServiceChargeTemplateUsage</java-class>
+            <java-class>org.meveo.model.billing.WalletInstance</java-class>
+			<java-class>org.meveo.model.catalog.DiscountPlan</java-class>
+		</classesToExportAsFull>
+		<relatedEntities>
+			<relatedEntity>
+				<entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
+				<selection>
+					select pp from PricePlanMatrix pp where pp.eventCode in					
+						(
+							select sctr.chargeTemplate.code from ServiceChargeTemplateRecurring sctr where sctr.serviceTemplate in
+							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+						) or pp.eventCode in (
+							select scts.chargeTemplate.code from ServiceChargeTemplateSubscription scts where scts.serviceTemplate in
+							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+						) or pp.eventCode in (						
+							select sctt.chargeTemplate.code from ServiceChargeTemplateTermination sctt where sctt.serviceTemplate in
+							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+						) or pp.eventCode in (
+							select sctu.chargeTemplate.code from ServiceChargeTemplateUsage sctu where sctu.serviceTemplate in
+							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+						)					
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>offerTemplate</string>
+                        <string>#{entity}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+			</relatedEntity>
+		</relatedEntities>
+	</template>
+	<template name="ProductTemplate" entityToExport="org.meveo.model.catalog.ProductTemplate">
+		<classesToExportAsFull>
+			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>			
+		</classesToExportAsFull>
+    </template>
+    <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
+    	<classesToExportAsFull>
+			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
+			<java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
+		</classesToExportAsFull>
+    </template>
+    <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
+    	<classesToExportAsFull>
+			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
+			<java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
+		</classesToExportAsFull>
+    </template>
 
     <template name="Users and roles">
         <parameters>

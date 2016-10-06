@@ -38,13 +38,13 @@ public interface CatalogRs {
     /**
      * Get a single category by its code
      * 
-     * @param id Category id/code
+     * @param code Category code
      * @param info Http request context
      * @return Single category information
      */
     @GET
-    @Path("/category/{id}")
-    public Response getCategory(@PathParam("id") String id, @Context UriInfo info);
+    @Path("/category/{code}")
+    public Response getCategory(@PathParam("code") String code, @Context UriInfo info);
 
     /**
      * Get a list of product offerings optionally filtering by some criteria

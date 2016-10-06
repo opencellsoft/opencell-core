@@ -134,9 +134,9 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
         
         return seller;
@@ -229,9 +229,9 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         return seller;
@@ -260,19 +260,19 @@ public class SellerApi extends BaseApi {
         return result;
     }
 
-    public void remove(String sellerCode, Provider provider) throws MeveoApiException {
+    public void remove(String sellerCode, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
         }
 
-        Seller seller = sellerService.findByCode(sellerCode, provider);
+        Seller seller = sellerService.findByCode(sellerCode, currentUser.getProvider());
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
         try {
-            sellerService.remove(seller);
+            sellerService.remove(seller, currentUser);
             sellerService.commit();
         } catch (Exception e) {
             if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

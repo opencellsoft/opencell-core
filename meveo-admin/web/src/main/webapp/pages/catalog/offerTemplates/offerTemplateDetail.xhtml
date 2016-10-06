@@ -12,10 +12,6 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<hftl:entityPopup id="searchServiceTemplatePopup"
 			header="#{messages['offerServiceTemplate.serviceTemplate']}"
@@ -62,18 +58,32 @@
 						</hftl:decorateFormField>
 						<hftl:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['offerTemplate.name']}"
+							field="name" />
 						<hftl:formField label="#{messages['offerTemplate.description']}"
 							field="description" useConverter="false" id="description" />
-						<hftl:formField label="#{messages['offerTemplate.longDescription']}"
-							field="longDescription" textArea="true" id="longDescription" rows="1" />
-						<hftl:formField id="offerTemplateCategoryId"
+						<hftl:formField
+							label="#{messages['offerTemplate.longDescription']}"
+							field="longDescription" textArea="true" id="longDescription"
+							rows="1" />
+						<hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
-							field="offerTemplateCategory" valueLabelField="code"
-							listElements="#{offerTemplateCategoryBean.listActive}" />
+							field="offerTemplateCategories" listType="pickUpList"
+							valueLabelField="code"
+							dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
 						<hftl:formField label="#{messages['commons.validFrom']}"
 							field="validFrom" />
 						<hftl:formField label="#{messages['commons.validTo']}"
 							field="validTo" />
+						<hftl:formField id="channels"
+							label="#{messages['channels.title']}" field="channels"
+							listType="pickUpList" valueLabelField="code"
+							dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
+						<hftl:formField id="businessAccountModels"
+							label="#{messages['marketingManager.catalog.targetSegment']}"
+							field="businessAccountModels" listType="pickUpList"
+							valueLabelField="code"
+							dualListModel="#{offerTemplateBean.businessAccountModelsDM}" />
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
@@ -186,6 +196,11 @@
 							</ui:define>
 						</hftl:formPanel>
 					</p:panel>
+				</p:tab>
+				<p:tab title="#{messages['menu.productTemplates']}">
+					<ui:include src="productTemplateTab.xhtml">
+						<ui:param name="backingBean" value="#{offerTemplateBean}" />
+					</ui:include>
 				</p:tab>
 			</p:tabView>
 		</p:panel>

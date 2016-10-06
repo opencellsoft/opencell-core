@@ -15,6 +15,7 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -67,6 +68,10 @@ public class InvoiceDto extends BaseDto {
     private boolean returnXml = false;
     private boolean returnPdf = false;
     private boolean includeBalance = false;
+    
+    private RecordedInvoiceDto recordedInvoiceDto ;
+    
+    private BigDecimal netToPay;
     
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
@@ -135,7 +140,14 @@ public class InvoiceDto extends BaseDto {
         for(Invoice inv : invoice.getLinkedInvoices()) {
         	this.getListInvoiceIdToLink().add(inv.getId());
         }
-
+        
+        if(invoice.getRecordedInvoice() != null){
+        	RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
+        	this.recordedInvoiceDto = recordedInvoiceDto;
+        }
+                
+        this.pdf = invoice.getPdf();
+        this.netToPay = invoice.getNetToPay();
     }
 
   
@@ -378,6 +390,34 @@ public class InvoiceDto extends BaseDto {
 	 */
 	public void setIncludeBalance(boolean includeBalance) {
 		this.includeBalance = includeBalance;
+	}
+
+	/**
+	 * @return the recordedInvoiceDto
+	 */
+	public RecordedInvoiceDto getRecordedInvoiceDto() {
+		return recordedInvoiceDto;
+	}
+
+	/**
+	 * @param recordedInvoiceDto the recordedInvoiceDto to set
+	 */
+	public void setRecordedInvoiceDto(RecordedInvoiceDto recordedInvoiceDto) {
+		this.recordedInvoiceDto = recordedInvoiceDto;
+	}
+
+	/**
+	 * @return the netToPay
+	 */
+	public BigDecimal getNetToPay() {
+		return netToPay;
+	}
+
+	/**
+	 * @param netToPay the netToPay to set
+	 */
+	public void setNetToPay(BigDecimal netToPay) {
+		this.netToPay = netToPay;
 	}
 
 	

@@ -25,7 +25,7 @@
 <ui:composition>
 
     <c:set var="newEntity" value="#{entity.transient}" />
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldsValuesByUUID(entity.uuid)}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
 
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 

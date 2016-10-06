@@ -168,18 +168,18 @@ public class MeveoInstanceApi extends BaseApi{
         return new MeveoInstanceDto(meveoInstance);
     }
 
-    public void remove(String meveoInstanceCode, Provider provider) throws MeveoApiException {
+    public void remove(String meveoInstanceCode, User currentUser) throws MeveoApiException, BusinessException {
     	if (StringUtils.isBlank(meveoInstanceCode)) {
             missingParameters.add("meveoInstanceCode");
         }
         handleMissingParameters();
-        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,provider);
+        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,currentUser.getProvider());
 
         if (meveoInstance == null) {
             throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
         }
 
-        meveoInstanceService.remove(meveoInstance);
+        meveoInstanceService.remove(meveoInstance, currentUser);
     }
 
     public List<MeveoInstanceDto> list(Provider provider) throws MeveoApiException {

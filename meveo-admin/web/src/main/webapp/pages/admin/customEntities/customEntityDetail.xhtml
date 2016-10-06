@@ -9,10 +9,6 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="body">
         <p:panel>
             <h:form id="crumbmenuForm">
@@ -24,8 +20,8 @@
         </p:panel>
 
         <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{customEntityInstanceBean.customEntityTemplate.name}"
-            backingBean="#{customEntityInstanceBean}" showEditButton="#{identity.hasPermission(cet.permissionResourceName, 'modify')}"
-            showEnableDisableButton="#{identity.hasPermission(cet.permissionResourceName, 'modify')}">
+            backingBean="#{customEntityInstanceBean}" showEditButton="#{identity.hasPermission(customEntityInstanceBean.customEntityTemplate.permissionResourceName, 'modify')}"
+            showEnableDisableButton="#{identity.hasPermission(customEntityInstanceBean.customEntityTemplate.permissionResourceName, 'modify')}">
 
             <p:tabView id="tabView" activeIndex="#{customEntityInstanceBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">

@@ -9,24 +9,19 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{subscriptionBean.preRenderView}" />
 
-            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectIdFromSet}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
             <f:viewParam name="userAccountId" value="#{subscriptionBean.userAccountId}" />
-            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
             <f:viewParam name="mainTab" value="#{subscriptionBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{subscriptionBean.activeTab}" />
         </f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -46,6 +41,12 @@
 			}			
 		}	
 		</script>
+		
+		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.offerProductTemplates}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{subscriptionBean.productInstance.productTemplate}" 
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text">
+        </hftl:entityPopup>
 
 		<hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
@@ -62,7 +63,6 @@
 <!-- 		<hftl:entityPopup id="offerPopup" -->
 <!-- 			header="#{messages['offer.popup.header']}" -->
 <!-- 			backingBean="#{offerTemplateBean}" -->
-<!-- 			eventBackingBean="#{subscriptionBean}" -->
 <!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
 <!-- 			searchField1="code" -->
 <!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
@@ -440,7 +440,7 @@
 															</p:dataTable>
 														</h:form>
 													</p:outputPanel>
-													<p:panel>
+													<p:panel rendered="false">
 														<h:form>
 															<p:commandButton
 																value="#{messages['subscription.oneShotChgButton']}"
@@ -632,6 +632,13 @@
 													</p:panel>
 												</p:outputPanel>
 											</p:tab>
+											
+<!-- 											<p:tab id="productChargeInstancesTab" title="#{messages['subscription.tab.productChargeInstances']}" rendered="#{not empty subscriptionBean.entity.id}"> -->
+<!-- 												<ui:include src="productChargeInstances.xhtml"> -->
+<!-- 													<ui:param name="backingBean" value="#{subscriptionBean}" /> -->
+<!-- 												</ui:include> -->
+<!-- 											</p:tab> -->
+											
 											<!-- recurring charge instance -->
 											<p:tab id="recurringShotChgTab"
 												title="#{messages['subscription.tab.recurringShotChg']}"
@@ -657,8 +664,7 @@
 														label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 														field="terminationDate" />
 												</hftl:formPanel>
-												<p:outputPanel id="recurringChargeDataPanel"
-													autoUpdate="true">
+												<p:outputPanel id="recurringChargeDataPanel">
 													<h:form id="OS_recurring_results_form" prependId="false">
 														<p:dataTable resizableColumns="true"
 															value="#{subscriptionBean.recurringChargeInstances}"
@@ -768,6 +774,11 @@
 													</p:dataTable>
 												</h:form>
 											</p:tab>
+											
+											<ui:include src="productInstances.xhtml">
+												<ui:param name="backingBean" value="#{subscriptionBean}" />
+											</ui:include>
+											
 											<!-- Access -->
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"

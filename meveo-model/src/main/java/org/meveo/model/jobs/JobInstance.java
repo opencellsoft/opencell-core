@@ -39,7 +39,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ModuleItem;
 
 @Entity
@@ -68,6 +67,7 @@ public class JobInstance extends BusinessCFEntity {
     @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionResultImpl> executionResults = new ArrayList<JobExecutionResultImpl>();
 
+    @JoinColumn(name = "TIMERENTITY_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
 
@@ -170,10 +170,5 @@ public class JobInstance extends BusinessCFEntity {
     public String toString() {
         return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate,
             parametres, jobCategoryEnum, timerEntity, followingJob);
-    }
-
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
     }
 }

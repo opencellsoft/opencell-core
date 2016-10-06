@@ -87,8 +87,9 @@ public class TerminationReasonApi extends BaseApi {
      * @param code
      * @param currentUser
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    public void remove(String code, User currentUser) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
@@ -101,7 +102,7 @@ public class TerminationReasonApi extends BaseApi {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, code);
         }
 
-        terminationReasonService.remove(subscriptionTerminationReason);
+        terminationReasonService.remove(subscriptionTerminationReason, currentUser);
     }
 
     /**

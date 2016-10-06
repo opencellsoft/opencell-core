@@ -8,9 +8,12 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{dunningHistoryBean.objectId}" />
+		</f:metadata>
 	</ui:define>
+    
 	<ui:define name="body">	
 	<p:panel>				
 				<hftl:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">

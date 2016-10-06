@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
@@ -75,4 +76,12 @@ public interface UserAccountRs extends IBaseRs {
 	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
 			@QueryParam("date") String date);
 
+    /**
+     * Apply a product on a userAccount.
+     * @param ApplyProductRequestDto userAccount field must be set
+     * @return
+     */
+    @POST
+    @Path("/applyProduct")
+    ActionStatus applyProduct(ApplyProductRequestDto postData);
 }

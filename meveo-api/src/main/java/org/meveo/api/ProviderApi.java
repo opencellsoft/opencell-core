@@ -153,9 +153,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
     }
@@ -204,9 +204,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 
@@ -444,9 +444,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 

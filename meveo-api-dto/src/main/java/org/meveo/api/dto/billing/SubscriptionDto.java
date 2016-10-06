@@ -14,9 +14,6 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
-/**
- * @author Edward P. Legaspi
- **/
 @XmlRootElement(name = "Subscription")
 @XmlType(name = "Subscription")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,6 +51,9 @@ public class SubscriptionDto extends BaseDto {
 
     @XmlElement(required = false)
     private ServiceInstancesDto services = new ServiceInstancesDto();
+
+    @XmlElement(required = false)
+    private ProductsDto products = new ProductsDto();
 
     private String terminationReason;
 
@@ -156,7 +156,15 @@ public class SubscriptionDto extends BaseDto {
         this.services = services;
     }
 
-    public CustomFieldsDto getCustomFields() {
+    public ProductsDto getProducts() {
+		return products;
+	}
+
+	public void setProducts(ProductsDto products) {
+		this.products = products;
+	}
+
+	public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 

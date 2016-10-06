@@ -136,18 +136,18 @@ public class DiscountPlanItemApi extends BaseApi {
      * @param provider
      * @throws MeveoApiException
      */
-    public void remove(String discountPlanItemCode, Provider provider) throws MeveoApiException {
+    public void remove(String discountPlanItemCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(discountPlanItemCode)) {
             missingParameters.add("discountPlanItemCode");
             handleMissingParameters();
         }
 
-        DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(discountPlanItemCode, provider);
+        DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(discountPlanItemCode, currentUser.getProvider());
         if (discountPlanItem == null) {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, discountPlanItemCode);
         }
-        discountPlanItemService.remove(discountPlanItem);
+        discountPlanItemService.remove(discountPlanItem, currentUser);
     }
 
     /**
