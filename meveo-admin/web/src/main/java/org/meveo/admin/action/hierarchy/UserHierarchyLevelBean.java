@@ -31,6 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ExistsRelatedEntityException;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
@@ -174,6 +175,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             } else {
                 userHierarchyLevel.setOrderLevel(1L);
             }
+            selectedNode = null;
         }
     }
 
@@ -194,17 +196,22 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public void removeUserHierarchyLevel() {
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
         if (userHierarchyLevel != null) {
-            if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
-                messages.error(new BundleKey("messages", "userGroupHierarchy.errorDelete"));
-                return;
-            }
-            userHierarchyLevelService.remove(userHierarchyLevel.getId());
-            selectedNode.getParent().getChildren().remove(selectedNode);
-            selectedNode = null;
-            showUserGroupDetail = false;
-            initEntity();
+            try {
+                userHierarchyLevelService.remove(userHierarchyLevel.getId(), getCurrentUser());
+                selectedNode.getParent().getChildren().remove(selectedNode);
+                selectedNode = null;
+                showUserGroupDetail = false;
+                initEntity();
 
-            messages.info(new BundleKey("messages", "delete.successful"));
+                messages.info(new BundleKey("messages", "delete.successful"));
+
+            } catch (ExistsRelatedEntityException e) {
+                messages.error(new BundleKey("messages", "userGroupHierarchy.errorDelete"));
+
+            } catch (Exception e) {
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+
         }
     }
 

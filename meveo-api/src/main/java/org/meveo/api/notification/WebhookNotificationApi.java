@@ -204,15 +204,15 @@ public class WebhookNotificationApi extends BaseApi {
             webHookService.update(webHook, currentUser);
     }
 
-    public void remove(String notificationCode, Provider provider) throws MeveoApiException {
+    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            WebHook webHook = webHookService.findByCode(notificationCode, provider);
+            WebHook webHook = webHookService.findByCode(notificationCode, currentUser.getProvider());
 
             if (webHook == null) {
                 throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
             }
 
-            webHookService.remove(webHook);
+            webHookService.remove(webHook, currentUser);
         } else {
             missingParameters.add("code");
 

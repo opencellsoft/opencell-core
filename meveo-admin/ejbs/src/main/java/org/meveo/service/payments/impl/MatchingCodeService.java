@@ -98,11 +98,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
 	}
 
-	public void unmatching(Long idMatchingCode, User user) throws BusinessException {
-		log.info("start cancelMatching with id:#0,user:#1", idMatchingCode, user);
+	public void unmatching(Long idMatchingCode, User currentUser) throws BusinessException {
+		log.info("start cancelMatching with id:#0,user:#1", idMatchingCode, currentUser);
 		if (idMatchingCode == null)
 			throw new BusinessException("Error when idMatchingCode is null!");
-		if (user == null || user.getId() == null) {
+		if (currentUser == null || currentUser.getId() == null) {
 			throw new BusinessException("Error when user is null!");
 		}
 		MatchingCode matchingCode = findById(idMatchingCode);
@@ -127,12 +127,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 					operation.setMatchingStatus(MatchingStatusEnum.P);
 				}
 				operation.getMatchingAmounts().remove(matchingAmount);
-				accountOperationService.update(operation, user);
+				accountOperationService.update(operation, currentUser);
 				log.info("cancel one accountOperation!");
 			}
 		}
 		log.info("remove matching code ....");
-		remove(matchingCode);
+		remove(matchingCode, currentUser);
 		log.info("successfully end cancelMatching!");
 	}
 

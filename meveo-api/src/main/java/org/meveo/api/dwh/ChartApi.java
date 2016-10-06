@@ -142,7 +142,7 @@ public class ChartApi extends BaseApi {
         return result;
     }
 
-    public void remove(String chartCode, User currentUser) throws MeveoApiException {
+    public void remove(String chartCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
@@ -154,7 +154,7 @@ public class ChartApi extends BaseApi {
             throw new EntityDoesNotExistsException(Chart.class, chartCode);
         }
 
-        chartService.remove(chart);
+        chartService.remove(chart, currentUser);
     }
 
     public void createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {

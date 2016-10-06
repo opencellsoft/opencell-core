@@ -245,17 +245,17 @@ public class CustomerApi extends AccountApi {
 		return accountHierarchyApi.customerToDto(customer);
 	}
 
-	public void remove(String customerCode, Provider provider) throws MeveoApiException {
+	public void remove(String customerCode, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(customerCode)) {
 			missingParameters.add("customerCode");
 			handleMissingParameters();
 		}
-		Customer customer = customerService.findByCode(customerCode, provider);
+		Customer customer = customerService.findByCode(customerCode, currentUser.getProvider());
 		if (customer == null) {
 			throw new EntityDoesNotExistsException(Customer.class, customerCode);
 		}
 		try {
-			customerService.remove(customer);
+			customerService.remove(customer, currentUser);
 			customerService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -398,18 +398,18 @@ public class CustomerApi extends AccountApi {
 		}
 	}
 
-	public void removeBrand(String code, Provider provider) throws MeveoApiException {
+	public void removeBrand(String code, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("brandCode");
 			handleMissingParameters();
 		}
-		CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);
+		CustomerBrand customerBrand = customerBrandService.findByCode(code, currentUser.getProvider());
 		if (customerBrand == null) {
 			throw new EntityDoesNotExistsException(CustomerBrand.class, code);
 		}
 
 		try {
-			customerBrandService.remove(customerBrand);
+			customerBrandService.remove(customerBrand, currentUser);
 			customerBrandService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -419,17 +419,17 @@ public class CustomerApi extends AccountApi {
 		}
 	}
 
-	public void removeCategory(String code, Provider provider) throws MeveoApiException {
+	public void removeCategory(String code, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("categoryCode");
 			handleMissingParameters();
 		}
-		CustomerCategory customerCategory = customerCategoryService.findByCode(code, provider);
+		CustomerCategory customerCategory = customerCategoryService.findByCode(code, currentUser.getProvider());
 		if (customerCategory == null) {
 			throw new EntityDoesNotExistsException(CustomerCategory.class, code);
 		}
 		try {
-			customerCategoryService.remove(customerCategory);
+			customerCategoryService.remove(customerCategory, currentUser);
 			customerCategoryService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

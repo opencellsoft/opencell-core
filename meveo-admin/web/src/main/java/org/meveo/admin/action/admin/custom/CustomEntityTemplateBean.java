@@ -37,7 +37,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     @Inject
     private CurrentProviderBean currentProviderBean;
-    
+
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -359,19 +359,23 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     public void removeFieldGrouping() {
 
-        for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
-            if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
-                customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
-            } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                for (TreeNode childChildNode : childNode.getChildren()) {
-                    customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
+        try {
+            for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
+                if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId(), getCurrentUser());
+                } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
+                    for (TreeNode childChildNode : childNode.getChildren()) {
+                        customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId(), getCurrentUser());
+                    }
                 }
             }
+
+            selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
+            
+        } catch (BusinessException e) {
+            log.error("Failed to remove field grouping", e);
         }
-
-        selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
         refreshFields();
-
     }
 
     public void moveUp(SortedTreeNode node) {

@@ -582,7 +582,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete(Long id) {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().remove(id);
+            getPersistenceService().remove(id, getCurrentUser());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -602,7 +602,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete() {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
-            getPersistenceService().remove((Long) getEntity().getId());
+            getPersistenceService().remove((Long) getEntity().getId(), getCurrentUser());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -632,7 +632,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
                 log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
 
-                getPersistenceService().remove(idsToDelete);
+                getPersistenceService().remove(idsToDelete, getCurrentUser());
                 getPersistenceService().commit();
                 messages.info(new BundleKey("messages", "delete.entitities.successful"));
             } else {

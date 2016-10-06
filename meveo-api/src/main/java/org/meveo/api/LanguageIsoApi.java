@@ -79,7 +79,7 @@ public class LanguageIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String languageCode) throws MeveoApiException {
+    public void remove(String languageCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
             handleMissingParameters();
@@ -90,7 +90,7 @@ public class LanguageIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Language.class, languageCode);
         }
 
-        languageService.remove(language);
+        languageService.remove(language, currentUser);
     }
 
     public void createOrUpdate(LanguageIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {

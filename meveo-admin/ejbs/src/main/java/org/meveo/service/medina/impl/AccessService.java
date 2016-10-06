@@ -118,19 +118,11 @@ public class AccessService extends PersistenceService<Access> {
     }
 
     @Override
-    public void remove(Access access) {
-        super.remove(access);
+    public void remove(Access access, User currentUser) throws BusinessException {
+        super.remove(access, currentUser);
         cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
     }
     
-    @Override
-    public void remove(Long id) {
-    	Access e = findById(id);
-        if (e != null) {
-            remove(e);
-        }
-    }
-
     @Override
     public Access disable(Access access, User currentUser) throws BusinessException {
         access = super.disable(access, currentUser);

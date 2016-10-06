@@ -156,7 +156,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         return new InvoiceSubCategoryCountryDto(invoiceSubcategoryCountry);
     }
 
-    public void remove(String invoiceSubCategoryCode, String countryCode, Provider provider) throws MeveoApiException {
+    public void remove(String invoiceSubCategoryCode, String countryCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(invoiceSubCategoryCode)) {
             missingParameters.add("invoiceSubCategoryCode");
@@ -167,24 +167,24 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, currentUser.getProvider());
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, currentUser.getProvider());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), provider);
+            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), currentUser.getProvider());
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
                     + " already exists.");
         }
 
-        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry, currentUser);
     }
 
     /**

@@ -121,16 +121,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	@Inject
 	private UsageChargeInstanceService usageChargeInstanceService;
-
+	
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
 	private AccessService accessService;
-
+	
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
-
+	
 	@Inject
 	private ProductChargeInstanceService productChargeInstanceService;
 
@@ -158,11 +158,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
 
 	private WalletTemplate selectedWalletTemplate;
-
+	
 	private boolean showApplyOneShotForm = false;
-
+	
 	private String selectedWalletTemplateCode;
-
+	
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
 	 * subscription entry from user account definition window, so default uset
@@ -179,10 +179,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
 
-	private EntityListDataModelPF<OneShotChargeInstance> oneShotChargeInstances = null;
-	private EntityListDataModelPF<RecurringChargeInstance> recurringChargeInstances = null;
-	private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
-	private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;	
+    private EntityListDataModelPF<OneShotChargeInstance> oneShotChargeInstances = null;
+    private EntityListDataModelPF<RecurringChargeInstance> recurringChargeInstances = null;
+    private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
+    private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
 	private EntityListDataModelPF<ProductInstance> productInstances = null;
 
 	public SubscriptionBean() {
@@ -211,7 +211,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			entity.setSubscriptionDate(calendar.getTime());
-
+			
 		} else {
 			initServiceTemplates();
 			initServiceInstances(entity.getServiceInstances());
@@ -226,16 +226,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
 
 		if (entity.getOffer() == null) {
-			return;
+		    return;
 		}
-
+		
 		List<ServiceInstance> serviceInstances = entity.getServiceInstances();
 		for (OfferServiceTemplate offerServiceTemplate : entity.getOffer().getOfferServiceTemplates()) {
-			ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-			if (serviceTemplate.isDisabled()) {
-				continue;
-			}
-
+			ServiceTemplate serviceTemplate=offerServiceTemplate.getServiceTemplate();
+			if (serviceTemplate.isDisabled()){
+		        continue;
+		    }
+		    
 			boolean alreadyInstanciated = false;
 
 			for (ServiceInstance serviceInstance : serviceInstances) {
@@ -251,7 +251,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				serviceTemplates.add(serviceTemplate);
 			}
 		}
-		log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
+		log.debug("servicetemplates initialized with {} templates ",serviceTemplates.getSize());
 	}
 
 	/*
@@ -260,71 +260,71 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	@ActionMethod
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String outcome = super.saveOrUpdate(killConversation);
 
-		if (outcome != null) {
+        if (outcome != null) {
 			return "subscriptionDetailSubscriptionTab"; // getEditViewName(); //
 														// "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId="
 														// + entity.getId() +
-			// "&faces-redirect=true&includeViewParams=true";
-		}
-		return null;
-	}
+                                      // "&faces-redirect=true&includeViewParams=true";
+        }
+        return null;
+    }
 
 	public void newOneShotChargeInstance() {
 		this.oneShotChargeInstance = new OneShotChargeInstance();
 		selectedWalletTemplate = new WalletTemplate();
-		selectedWalletTemplateCode = null;
+		selectedWalletTemplateCode=null;
 	}
 
 	public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
-		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns);
+		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns); 
 		selectedWalletTemplate = new WalletTemplate();
-		selectedWalletTemplateCode = null;
+		selectedWalletTemplateCode=null;
 	}
 
-	public void saveOneShotChargeIns() {
-		log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
-		try {
-			if (selectedWalletTemplate.getCode() == null) {
-				selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
-			}
-			entity = subscriptionService.attach(entity);
-			String description = oneShotChargeInstance.getDescription();
-			oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
-			oneShotChargeInstance.setDescription(description);
-			if (oneShotChargeInstance.getChargeDate() == null) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
-				calendar.set(Calendar.HOUR_OF_DAY, 0);
-				calendar.set(Calendar.MINUTE, 0);
-				oneShotChargeInstance.setChargeDate(calendar.getTime());
-			}
+    public void saveOneShotChargeIns() {
+        log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
+        try {
+        	if(selectedWalletTemplate.getCode()==null){
+        		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
+        	}
+                entity = subscriptionService.attach(entity);
+                String description = oneShotChargeInstance.getDescription();
+                oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
+                oneShotChargeInstance.setDescription(description);
+                if (oneShotChargeInstance.getChargeDate() == null) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    oneShotChargeInstance.setChargeDate(calendar.getTime());
+                }
 
-			oneShotChargeInstance.setSubscription(entity);
-			oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-			oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
-			oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
-			oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
-					oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
+                oneShotChargeInstance.setSubscription(entity);
+                oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+                oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
+                oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
+                oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
+                    oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
 					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(),
 					getCurrentUser(), true);
+           
+            oneShotChargeInstance = null;
+            oneShotChargeInstances = null;
+            clearObjectId();
 
-			oneShotChargeInstance = null;
-			oneShotChargeInstances = null;
-			clearObjectId();
+            showApplyOneShotForm = false;
 
-			showApplyOneShotForm = false;
+            messages.info(new BundleKey("messages", "save.successful"));
 
-			messages.info(new BundleKey("messages", "save.successful"));
-
-		} catch (Exception e) {
-			log.error("exception when applying one shot charge!", e);
-			messages.error(e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            log.error("exception when applying one shot charge!", e);
+            messages.error(e.getMessage());
+        }
+    }
 
 	public void newRecurringChargeInstance() {
 		this.recurringChargeInstance = new RecurringChargeInstance();
@@ -334,24 +334,24 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		this.recurringChargeInstance = recurringChargeInstanceService.attach(recurringChargeIns);
 	}
 
-	public void saveRecurringChargeIns() {
-		log.debug("saveRecurringChargeIns getObjectId={}", getObjectId());
-		try {
-			if ((recurringChargeInstance != null) && (recurringChargeInstance.getId() != null)) {
-				log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance, recurringChargeInstance.getId());
-				recurringChargeInstanceService.update(recurringChargeInstance, getCurrentUser());
+    public void saveRecurringChargeIns() {
+        log.debug("saveRecurringChargeIns getObjectId={}", getObjectId());
+        try {
+            if ((recurringChargeInstance != null) && (recurringChargeInstance.getId() != null)) {
+                log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance, recurringChargeInstance.getId());
+                recurringChargeInstanceService.update(recurringChargeInstance, getCurrentUser());
 
-				recurringChargeInstance = null;
-				recurringChargeInstances = null;
-				clearObjectId();
+                recurringChargeInstance = null;
+                recurringChargeInstances = null;
+                clearObjectId();
 
-				messages.info(new BundleKey("messages", "save.successful"));
-			}
-		} catch (Exception e) {
-			log.error("exception when applying recurring charge!", e);
-			messages.error(e.getMessage());
-		}
-	}
+                messages.info(new BundleKey("messages", "save.successful"));
+            }
+        } catch (Exception e) {
+            log.error("exception when applying recurring charge!", e);
+            messages.error(e.getMessage());
+        }
+    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -391,18 +391,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		return recurringChargeInstance;
 	}
 
-	public EntityListDataModelPF<OneShotChargeInstance> getOneShotChargeInstances() {
+    public EntityListDataModelPF<OneShotChargeInstance> getOneShotChargeInstances() {
 
-		if (oneShotChargeInstances != null || (entity == null || entity.getId() == null)) {
-			return oneShotChargeInstances;
-		}
+        if (oneShotChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return oneShotChargeInstances;
+        }
 
-		oneShotChargeInstances = new EntityListDataModelPF<OneShotChargeInstance>(new ArrayList<OneShotChargeInstance>());
-		oneShotChargeInstances.addAll(oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId()));
-		return oneShotChargeInstances;
-	}
+        oneShotChargeInstances = new EntityListDataModelPF<OneShotChargeInstance>(new ArrayList<OneShotChargeInstance>());
+        oneShotChargeInstances.addAll(oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId()));
+        return oneShotChargeInstances;
+    }   
 
-	public List<WalletOperation> getOneShotWalletOperations() {
+	public List<WalletOperation> getOneShotWalletOperations() {		
 		if (this.oneShotChargeInstance == null || this.oneShotChargeInstance.getId() == null) {
 			return null;
 		}
@@ -417,27 +417,27 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		return recurringChargeInstance.getWalletOperationsSorted();
 	}
 
-	public EntityListDataModelPF<RecurringChargeInstance> getRecurringChargeInstances() {
+    public EntityListDataModelPF<RecurringChargeInstance> getRecurringChargeInstances() {
 
-		if (recurringChargeInstances != null || (entity == null || entity.getId() == null)) {
-			return recurringChargeInstances;
-		}
+        if (recurringChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return recurringChargeInstances;
+        }
+        
+        recurringChargeInstances = new EntityListDataModelPF<RecurringChargeInstance>(new ArrayList<RecurringChargeInstance>());
+        recurringChargeInstances.addAll(recurringChargeInstanceService.findRecurringChargeInstanceBySubscriptionId(entity.getId()));
+        return recurringChargeInstances;
+    }
 
-		recurringChargeInstances = new EntityListDataModelPF<RecurringChargeInstance>(new ArrayList<RecurringChargeInstance>());
-		recurringChargeInstances.addAll(recurringChargeInstanceService.findRecurringChargeInstanceBySubscriptionId(entity.getId()));
-		return recurringChargeInstances;
-	}
+    public EntityListDataModelPF<UsageChargeInstance> getUsageChargeInstances() {
 
-	public EntityListDataModelPF<UsageChargeInstance> getUsageChargeInstances() {
+        if (usageChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return usageChargeInstances;
+        }
 
-		if (usageChargeInstances != null || (entity == null || entity.getId() == null)) {
-			return usageChargeInstances;
-		}
-
-		usageChargeInstances = new EntityListDataModelPF<UsageChargeInstance>(new ArrayList<UsageChargeInstance>());
-		usageChargeInstances.addAll(usageChargeInstanceService.findUsageChargeInstanceBySubscriptionId(entity.getId()));
-		return usageChargeInstances;
-	}
+        usageChargeInstances = new EntityListDataModelPF<UsageChargeInstance>(new ArrayList<UsageChargeInstance>());
+        usageChargeInstances.addAll(usageChargeInstanceService.findUsageChargeInstanceBySubscriptionId(entity.getId()));
+        return usageChargeInstances;
+    }
 
 	public void instanciateManyServices() {
 		log.debug("instanciateManyServices");
@@ -447,15 +447,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				quantity = BigDecimal.ONE;
 			}
 			boolean isChecked = false;
-
+			
 			entity = subscriptionService.attach(entity);
-
+			
 			log.debug("Instantiating serviceTemplates {}", serviceTemplates.getSelectedItemsAsList());
 
 			for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
-
-				serviceTemplate = serviceTemplateService.attach(serviceTemplate);
-
+			    
+			    serviceTemplate = serviceTemplateService.attach(serviceTemplate);
+			    
 				isChecked = true;
 				log.debug("instanciateManyServices id={} checked, quantity={}", serviceTemplate.getId(), quantity);
 
@@ -465,17 +465,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
 				serviceInstance.setSubscription((Subscription) entity);
-				if (entity.getSubscriptionDate() != null) {
-					serviceInstance.setSubscriptionDate(entity.getSubscriptionDate());
-				} else {
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(new Date());
-					calendar.set(Calendar.HOUR_OF_DAY, 0);
-					calendar.set(Calendar.MINUTE, 0);
-					calendar.set(Calendar.SECOND, 0);
-					calendar.set(Calendar.MILLISECOND, 0);
-					serviceInstance.setSubscriptionDate(calendar.getTime());
-				}
+                if(entity.getSubscriptionDate()!=null){
+                serviceInstance.setSubscriptionDate(entity.getSubscriptionDate());
+			    }else{
+		    	Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				serviceInstance.setSubscriptionDate(calendar.getTime());
+			    }
 				serviceInstance.setQuantity(quantity);
 				serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
 				serviceInstances.add(serviceInstance);
@@ -486,7 +486,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				messages.warn(new BundleKey("messages", "instanciation.selectService"));
 			} else {
 				subscriptionService.refresh(entity);
-				resetChargesDataModels();
+                resetChargesDataModels();
 				messages.info(new BundleKey("messages", "instanciation.instanciateSuccessful"));
 			}
 		} catch (BusinessException e1) {
@@ -502,7 +502,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		try {
 			log.debug("activateService id={} checked", selectedServiceInstance.getId());
 			if (selectedServiceInstance != null) {
-
+			    
 				if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
 					messages.info(new BundleKey("messages", "error.activation.terminatedService"));
 					return;
@@ -514,17 +514,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				// Replace selected service instance with a EM attached entity
 				entity = subscriptionService.attach(entity);
 				selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-				int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-				entity.getServiceInstances().remove(index);
-				entity.getServiceInstances().add(index, selectedServiceInstance);
-
-				log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}", selectedServiceInstance.getRecurringChargeInstances().size());
+                int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
+                entity.getServiceInstances().remove(index);
+                entity.getServiceInstances().add(index, selectedServiceInstance);
+                
+                log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}", selectedServiceInstance.getRecurringChargeInstances().size());
 
 				serviceInstanceService.serviceActivation(selectedServiceInstance, null, null, getCurrentUser());
-
-				initServiceInstances(entity.getServiceInstances());
-				resetChargesDataModels();
-
+				
+	            initServiceInstances(entity.getServiceInstances());
+                resetChargesDataModels();
+                
 			} else {
 				log.error("activateService id=#0 is NOT a serviceInstance");
 			}
@@ -532,7 +532,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
 		} catch (BusinessException e1) {
-			messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e1.getMessage());
+		    messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e1.getMessage());
 		} catch (Exception e) {
 			log.error("unexpected exception when activating service!", e);
 			messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
@@ -572,58 +572,58 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		clearObjectId();
 	}
 
-	public void terminateService() {
-		try {
-			Date terminationDate = selectedServiceInstance.getTerminationDate();
+    public void terminateService() {
+        try {
+            Date terminationDate = selectedServiceInstance.getTerminationDate();
 
-			SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
-			log.debug("selected subscriptionTerminationReason={},terminationDate={},selectedServiceInstanceId={},status={}", new Object[] {
-					newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
-					selectedServiceInstance.getStatus() });
+            SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
+            log.debug("selected subscriptionTerminationReason={},terminationDate={},selectedServiceInstanceId={},status={}", new Object[] {
+                    newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
+                    selectedServiceInstance.getStatus() });
 
-			// Replace selected service instance with a EM attacked entity
-			entity = subscriptionService.attach(entity);
-			selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-			int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-			entity.getServiceInstances().remove(index);
-			entity.getServiceInstances().add(index, selectedServiceInstance);
+            // Replace selected service instance with a EM attacked entity
+            entity = subscriptionService.attach(entity);
+            selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
+            int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
+            entity.getServiceInstances().remove(index);
+            entity.getServiceInstances().add(index, selectedServiceInstance);
+            
+            if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, getCurrentUser());
+            } else {
+                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
+            }           
 
-			if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-				serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, getCurrentUser());
-			} else {
-				serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
-			}
+            initServiceInstances(entity.getServiceInstances());           
+            initServiceTemplates();
+            resetChargesDataModels();
+            
+            selectedServiceInstance = null;
 
-			initServiceInstances(entity.getServiceInstances());
-			initServiceTemplates();
-			resetChargesDataModels();
+            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
-			selectedServiceInstance = null;
-
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-
-		} catch (BusinessException e1) {
-			messages.error(e1.getMessage());
-		} catch (Exception e) {
-			log.error("unexpected exception when terminating service!", e);
-			messages.error(e.getMessage());
-		}
-	}
-
-	public void terminateSubscription() {
-		try {
+        } catch (BusinessException e1) {
+            messages.error(e1.getMessage());
+        } catch (Exception e) {
+            log.error("unexpected exception when terminating service!", e);
+            messages.error(e.getMessage());
+        }
+    }
+    
+    public void terminateSubscription() {
+    	try { 
 			log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
 					new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
-			subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), getCurrentUser());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-		} catch (BusinessException e1) {
-			messages.error(e1.getMessage());
-		} catch (Exception e) {
-			log.error("unexpected exception when terminating service!", e);
-			messages.error(e.getMessage());
-		}
-	}
-
+    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), getCurrentUser());
+    		messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+    	} catch (BusinessException e1) {
+    		messages.error(e1.getMessage());
+    	} catch (Exception e) {
+    		log.error("unexpected exception when terminating service!", e);
+    		messages.error(e.getMessage());
+    	}
+    }
+    
 	public void cancelService() {
 		try {
 
@@ -645,17 +645,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	public void suspendService() {
 		try {
-			// Replace selected service instance with a EM attacked entity
-			entity = subscriptionService.attach(entity);
-			selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-			int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-			entity.getServiceInstances().remove(index);
-			entity.getServiceInstances().add(index, selectedServiceInstance);
-
+            // Replace selected service instance with a EM attacked entity
+		    entity = subscriptionService.attach(entity);
+            selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
+            int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
+            entity.getServiceInstances().remove(index);
+            entity.getServiceInstances().add(index, selectedServiceInstance);
+            
 			serviceInstanceService.serviceSuspension(selectedServiceInstance, new Date(), getCurrentUser());
-
-			initServiceInstances(entity.getServiceInstances());
-
+			
+			initServiceInstances(entity.getServiceInstances()); 
+			
 			selectedServiceInstance = null;
 			messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
@@ -712,7 +712,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public List<Access> getAccess() {
-		if (entity.getId() == null)
+		if(entity.getId() == null)
 			return null;
 		return accessService.listBySubscription(entity);
 	}
@@ -745,78 +745,78 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		log.debug("setting usageChargeIns " + chargeInstance);
 	}
 
-	public void saveUsageChargeIns() {
-		log.debug("saveUsageChargeIns getObjectId={}", getObjectId());
-		try {
-			if (usageChargeInstance != null && usageChargeInstance.getId() != null) {
-				log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
-				usageChargeInstanceService.update(usageChargeInstance, getCurrentUser());
+    public void saveUsageChargeIns() {
+        log.debug("saveUsageChargeIns getObjectId={}", getObjectId());
+        try {
+            if (usageChargeInstance != null && usageChargeInstance.getId() != null) {
+                log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
+                usageChargeInstanceService.update(usageChargeInstance, getCurrentUser());
+                
+                usageChargeInstance = null;
+                usageChargeInstances = null;
+                messages.info(new BundleKey("messages", "save.successful"));
+            }
+        } catch (Exception e) {
+            log.error("Failed saving usage charge!", e);
+            messages.error(e.getMessage());
+        }
+    }
 
-				usageChargeInstance = null;
-				usageChargeInstances = null;
-				messages.info(new BundleKey("messages", "save.successful"));
-			}
-		} catch (Exception e) {
-			log.error("Failed saving usage charge!", e);
-			messages.error(e.getMessage());
-		}
-	}
+    public List<WalletTemplate> findBySubscriptionChargeTemplate() {
 
-	public List<WalletTemplate> findBySubscriptionChargeTemplate() {
+        if (oneShotChargeInstance == null || oneShotChargeInstance.getChargeTemplate() == null) {
+            return null;
+        }
 
-		if (oneShotChargeInstance == null || oneShotChargeInstance.getChargeTemplate() == null) {
-			return null;
-		}
+        List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 
-		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
+        OneShotChargeTemplate oneShotChargeTemplate = null;
 
-		OneShotChargeTemplate oneShotChargeTemplate = null;
+        if (oneShotChargeInstance.getChargeTemplate() instanceof OneShotChargeTemplate) {
+            oneShotChargeTemplate = (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate();
+        } else {
+            oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
+        }
+        
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.attach(oneShotChargeTemplate);
 
-		if (oneShotChargeInstance.getChargeTemplate() instanceof OneShotChargeTemplate) {
-			oneShotChargeTemplate = (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate();
-		} else {
-			oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
-		}
+        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService.findBySubscriptionChargeTemplate(chargeTemplate,
+            getCurrentProvider());
 
-		OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.attach(oneShotChargeTemplate);
+        if (serviceChargeTemplateSubscriptions != null) {
+            for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
+                if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
+                    for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
+                        if (!result.contains(walletTemplate)) {
+                            log.debug("adding wallet={}", walletTemplate);
+                            result.add(walletTemplate);
+                        }
+                    }
+                }
+            }
+        } else {
+            // get principal
+            if (entity.getUserAccount() != null) {
+                log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
+                result.add(entity.getUserAccount().getWallet().getWalletTemplate());
+            }
+        }
 
-		List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService.findBySubscriptionChargeTemplate(chargeTemplate,
-				getCurrentProvider());
-
-		if (serviceChargeTemplateSubscriptions != null) {
-			for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
-				if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
-					for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
-						if (!result.contains(walletTemplate)) {
-							log.debug("adding wallet={}", walletTemplate);
-							result.add(walletTemplate);
-						}
-					}
-				}
-			}
-		} else {
-			// get principal
-			if (entity.getUserAccount() != null) {
-				log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
-				result.add(entity.getUserAccount().getWallet().getWalletTemplate());
-			}
-		}
-
-		return result;
-	}
-
-	public void deleteServiceInstance(ServiceInstance serviceInstance) {
-		try {
-			serviceTemplates.add(serviceInstance.getServiceTemplate());
-			serviceInstanceService.remove(serviceInstance.getId());
-			serviceInstances.remove(serviceInstance);
-			selectedServiceInstance = null;
-			messages.info(new BundleKey("messages", "delete.successful"));
-		} catch (Exception e) {
-			log.error("exception when delete service instance!", e);
-			messages.error(e.getMessage());
-		}
-	}
+        return result;
+    }
+	
+    public void deleteServiceInstance(ServiceInstance serviceInstance) {
+        try {
+            serviceTemplates.add(serviceInstance.getServiceTemplate());
+            serviceInstanceService.remove(serviceInstance.getId(), getCurrentUser());
+            serviceInstances.remove(serviceInstance);
+            selectedServiceInstance = null;
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Exception e) {
+            log.error("exception when delete service instance!", e);
+            messages.error(e.getMessage());
+        }
+    }
 
 	public WalletTemplate getSelectedWalletTemplate() {
 		return selectedWalletTemplate;
@@ -835,8 +835,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public String getSelectedWalletTemplateCode() {
-		if (selectedWalletTemplate != null && selectedWalletTemplate.getCode() != null) {
-			selectedWalletTemplateCode = selectedWalletTemplate.getCode();
+		if(selectedWalletTemplate!=null && selectedWalletTemplate.getCode()!=null){
+		selectedWalletTemplateCode=selectedWalletTemplate.getCode();
 		}
 		return selectedWalletTemplateCode;
 	}
@@ -845,60 +845,60 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		this.selectedWalletTemplateCode = selectedWalletTemplateCode;
 	}
 
-	private void initServiceInstances(List<ServiceInstance> instantiatedServices) {
-		serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
-		serviceInstances.addAll(instantiatedServices);
-
-		log.debug("serviceInstances initialized with {} items", serviceInstances.getSize());
+	private void initServiceInstances(List<ServiceInstance> instantiatedServices){
+	    serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());        
+	    serviceInstances.addAll(instantiatedServices);
+	    
+	    log.debug("serviceInstances initialized with {} items", serviceInstances.getSize());
 	}
 
-	private void resetChargesDataModels() {
-		oneShotChargeInstances = null;
-		recurringChargeInstances = null;
-		usageChargeInstances = null;
-		productChargeInstances = null;
-	}
-
-	public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException {
-		String filterText = (filter == null) ? null : filter.toString().trim();
-		if (filterText == null || filterText.isEmpty()) {
-			return true;
-		}
-		if (value == null) {
-			return false;
-		}
-		Date filterDate;
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		String filterFormat = formatter.format((Date) value);
-		Date dateFrom;
-		Date dateTo;
-		String fromPart = filterText.substring(0, filterText.indexOf("-"));
+    private void resetChargesDataModels() {
+        oneShotChargeInstances = null;
+        recurringChargeInstances = null;
+        usageChargeInstances = null;
+        productChargeInstances = null;
+    }
+     
+    public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException { 
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if (filterText == null || filterText.isEmpty()) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        Date filterDate;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String filterFormat=formatter.format((Date)value);
+        Date dateFrom;
+        Date dateTo;
+        String fromPart = filterText.substring(0, filterText.indexOf("-"));
 		String toPart = filterText.substring(filterText.indexOf("-") + 1);
-		filterDate = DateUtils.parseDateWithPattern(filterFormat, "dd/MM/yyyy");
-		dateFrom = fromPart.isEmpty() ? null : DateUtils.parseDateWithPattern(fromPart, "dd/MM/yyyy");
-		dateTo = toPart.isEmpty() ? null : DateUtils.parseDateWithPattern(toPart, "dd/MM/yyyy");
+		filterDate =    DateUtils.parseDateWithPattern(filterFormat, "dd/MM/yyyy");
+		dateFrom =  fromPart.isEmpty() ? null : DateUtils.parseDateWithPattern(fromPart, "dd/MM/yyyy");
+		dateTo   =  toPart.isEmpty() ? null : DateUtils.parseDateWithPattern(toPart, "dd/MM/yyyy");
 		return (dateFrom == null || filterDate.after(dateFrom) || filterDate.equals(dateFrom)) && (dateTo == null || filterDate.before(dateTo) || filterDate.equals(dateTo));
+	    
+    }
 
-	}
-
-	public void resetFilters() {
+    public void resetFilters() {
 		DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("recurringWalletForm:recurringWalletOperationTable");
-		if (dataTable != null) {
-			dataTable.reset();
-		}
-	}
+        if (dataTable != null) {
+            dataTable.reset();
+        }
+    }
+    
+    public EntityListDataModelPF<ProductChargeInstance> getProductChargeInstances() {
 
-	public EntityListDataModelPF<ProductChargeInstance> getProductChargeInstances() {
+        if (productChargeInstances != null || (entity == null || entity.getId() == null)) {
+            return productChargeInstances;
+        }
 
-		if (productChargeInstances != null || (entity == null || entity.getId() == null)) {
-			return productChargeInstances;
-		}
-
-		productChargeInstances = new EntityListDataModelPF<ProductChargeInstance>(new ArrayList<ProductChargeInstance>());
-		productChargeInstances.addAll(productChargeInstanceService.findBySubscriptionId(entity.getId()));
-		return productChargeInstances;
-	}
-	
+        productChargeInstances = new EntityListDataModelPF<ProductChargeInstance>(new ArrayList<ProductChargeInstance>());
+        productChargeInstances.addAll(productChargeInstanceService.findBySubscriptionId(entity.getId()));
+        return productChargeInstances;
+    }
+ 
 	public EntityListDataModelPF<ProductInstance> getProductInstances() {
 
         if (productInstances != null || (entity == null || entity.getId() == null)) {

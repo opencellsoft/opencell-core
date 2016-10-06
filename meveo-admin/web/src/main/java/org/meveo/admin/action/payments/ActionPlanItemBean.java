@@ -120,7 +120,7 @@ public class ActionPlanItemBean extends BaseBean<WFAction> {
 			log.info(String.format("Deleting entity %s with id = %s", entity
 					.getClass().getName(), id));
 			//entity.getDunningPlan().getActions().remove(entity);
-			getPersistenceService().remove(id);
+			getPersistenceService().remove(id, getCurrentUser());
 			entity = null;
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Throwable t) {

@@ -83,7 +83,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
+            countryApi.remove(countryCode, currencyCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

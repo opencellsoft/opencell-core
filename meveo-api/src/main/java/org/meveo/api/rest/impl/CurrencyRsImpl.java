@@ -72,7 +72,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.remove(languageCode, getCurrentUser().getProvider());
+            currencyApi.remove(languageCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

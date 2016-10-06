@@ -88,7 +88,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateCategoryApi.remove(offerTemplateCategoryCode, getCurrentUser().getProvider());
+            offerTemplateCategoryApi.remove(offerTemplateCategoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

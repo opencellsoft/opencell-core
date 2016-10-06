@@ -286,19 +286,19 @@ public class PricePlanApi extends BaseApi {
         return new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
     }
 
-    public void remove(String pricePlanCode, Provider provider) throws MeveoApiException {
+    public void remove(String pricePlanCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
             handleMissingParameters();
         }
 
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, currentUser.getProvider());
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        pricePlanMatrixService.remove(pricePlanMatrix);
+        pricePlanMatrixService.remove(pricePlanMatrix, currentUser);
     }
 
     public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {

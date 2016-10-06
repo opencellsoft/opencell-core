@@ -75,7 +75,7 @@ public class MeasurableQuantityApi extends BaseApi {
         return result;
     }
 
-    public void remove(String measurableQuantityCode, User currentUser) throws MeveoApiException {
+    public void remove(String measurableQuantityCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(measurableQuantityCode)) {
             missingParameters.add("measurableQuantityCode");
@@ -87,7 +87,7 @@ public class MeasurableQuantityApi extends BaseApi {
             throw new EntityDoesNotExistsException(MeasurableQuantity.class, measurableQuantityCode);
         }
 
-        measurableQuantityService.remove(measurableQuantity);
+        measurableQuantityService.remove(measurableQuantity, currentUser);
     }
 
     public void createOrUpdate(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {

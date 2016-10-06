@@ -96,7 +96,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+            userAccountApi.remove(userAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

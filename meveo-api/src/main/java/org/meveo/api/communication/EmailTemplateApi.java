@@ -100,16 +100,16 @@ public class EmailTemplateApi extends BaseApi {
 		}
 		return new EmailTemplateDto(emailTemplate);
 	}
-	public void remove(String emailTemplateCode,Provider provider) throws MeveoApiException{
+	public void remove(String emailTemplateCode, User currentUser) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateCode)){
 			missingParameters.add("emailTemplateCode");
 		}
 		handleMissingParameters();
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, provider);
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, currentUser.getProvider());
 		if(emailTemplate==null){
 			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
 		}
-		emailTemplateService.remove(emailTemplate);
+		emailTemplateService.remove(emailTemplate, currentUser);
 	}
 	public List<EmailTemplateDto> list(Provider provider) throws MeveoApiException{
 		List<EmailTemplateDto> result=new ArrayList<EmailTemplateDto>();

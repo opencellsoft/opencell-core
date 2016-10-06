@@ -152,12 +152,18 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 		return null;
 	}
 
+    @ActionMethod
     public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = entity.getInvoiceSubcategoryCountries();
-    	invoiceSubcategoryCountries.remove(invoiceSubcategoryCountry);
-        invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
-        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
-        entity.setInvoiceSubcategoryCountries(new ArrayList<>(invoiceSubcategoryCountries));
+        try {
+            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = entity.getInvoiceSubcategoryCountries();
+            invoiceSubcategoryCountries.remove(invoiceSubcategoryCountry);
+            invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
+            invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry, getCurrentUser());
+            entity.setInvoiceSubcategoryCountries(new ArrayList<>(invoiceSubcategoryCountries));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
     }
 
 	public void editInvoiceSubcategoryCountry(

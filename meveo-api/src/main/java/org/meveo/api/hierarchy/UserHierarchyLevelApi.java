@@ -130,8 +130,9 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @param hierarchyLevelCode
      * @param currentUser
      * @throws org.meveo.api.exception.MeveoApiException
+     * @throws BusinessException 
      */
-    public void remove(String hierarchyLevelCode, User currentUser) throws MeveoApiException {
+    public void remove(String hierarchyLevelCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(hierarchyLevelCode)) {
             missingParameters.add("hierarchyLevelCode");
@@ -144,7 +145,7 @@ public class UserHierarchyLevelApi extends BaseApi {
             if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
                 throw new DeleteReferencedEntityException(UserHierarchyLevel.class, hierarchyLevelCode);
             }
-            userHierarchyLevelService.remove(userHierarchyLevel);
+            userHierarchyLevelService.remove(userHierarchyLevel,currentUser);
 
         } else {
             throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);

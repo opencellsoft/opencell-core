@@ -766,12 +766,12 @@ public class OrderApi extends BaseApi {
 
     }
 
-    public void deleteProductOrder(String orderId, User currentUser) throws EntityDoesNotExistsException, ActionForbiddenException {
+    public void deleteProductOrder(String orderId, User currentUser) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
         Order order = orderService.findByCode(orderId, currentUser.getProvider());
 
         if (order.getStatus() == OrderStatusEnum.IN_CREATION || order.getStatus() == OrderStatusEnum.ACKNOWLEDGED) {
-            orderService.remove(order);
+            orderService.remove(order, currentUser);
         }
     }
 

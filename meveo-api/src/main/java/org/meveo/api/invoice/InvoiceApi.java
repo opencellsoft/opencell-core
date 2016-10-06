@@ -700,7 +700,7 @@ public class InvoiceApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void cancelInvoice(Long invoiceId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+	public void cancelInvoice(Long invoiceId, User currentUser) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(invoiceId)) {
 			missingParameters.add("invoiceId");
 		}
@@ -718,11 +718,11 @@ public class InvoiceApi extends BaseApi {
 				rt.setInvoice(null);
 				ratedTransactionService.update(rt,currentUser);
 			}else{
-				ratedTransactionService.remove(rt);
+				ratedTransactionService.remove(rt, currentUser);
 			}
 		}
 				
-		invoiceService.remove(invoice);
+		invoiceService.remove(invoice, currentUser);
 	}
 
 	/**

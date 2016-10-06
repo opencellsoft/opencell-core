@@ -89,8 +89,8 @@ public class CatMessagesApi extends BaseApi {
 		return messageDto;
 	}
 
-	public void remove(String entityClass, String code, String languageCode, Provider provider)
-			throws MeveoApiException {
+	public void remove(String entityClass, String code, String languageCode, User currentUser)
+			throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(entityClass)) {
 			missingParameters.add("entityClass");
@@ -108,7 +108,7 @@ public class CatMessagesApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		BusinessEntity entity = entityService.findByCode(code, provider);
+		BusinessEntity entity = entityService.findByCode(code, currentUser.getProvider());
 
 		if (entity == null) {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
@@ -131,7 +131,7 @@ public class CatMessagesApi extends BaseApi {
 		}
 
 		for (CatMessages message : messages) {
-			catMessagesService.remove(message);
+			catMessagesService.remove(message, currentUser);
 		}
 	}
 
@@ -181,7 +181,8 @@ public class CatMessagesApi extends BaseApi {
 				catMessagesService.update(message, currentUser);
 			} else if (message != null && isBlankDescription) {
 				// message exists and description is blank
-				catMessagesService.remove(message);
+				catMessagesService.remove(message, currentUser);
+				
 			} else if (message == null && !isBlankDescription) {
 				// message does not exist and description is not blank
 				message = new CatMessages(entity,translation.getLanguageCode(), translation.getDescription());

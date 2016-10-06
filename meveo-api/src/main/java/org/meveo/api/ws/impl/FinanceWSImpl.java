@@ -67,7 +67,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 	public ActionStatus deleteRevenueRecognitionRule(String code) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-        	rrrApi.remove(code, getCurrentUser().getProvider());
+        	rrrApi.remove(code, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

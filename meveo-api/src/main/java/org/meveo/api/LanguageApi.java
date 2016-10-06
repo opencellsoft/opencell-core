@@ -72,18 +72,18 @@ public class LanguageApi extends BaseApi {
         tradingLanguageService.create(tradingLanguage, currentUser);
     }
 
-    public void remove(String code, Provider provider) throws MissingParameterException, EntityDoesNotExistsException {
+    public void remove(String code, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, currentUser.getProvider());
         if (tradingLanguage == null) {
             throw new EntityDoesNotExistsException(TradingLanguage.class, code);
         } else {
-            tradingLanguageService.remove(tradingLanguage);
+            tradingLanguageService.remove(tradingLanguage, currentUser);
         }
     }
 

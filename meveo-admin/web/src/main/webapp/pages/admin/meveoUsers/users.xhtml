@@ -13,16 +13,14 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem value="#{messages['menu.users']}" outcome="users" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.users']}" outcome="users" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:searchPanel backingBean="#{userListBean}">
+        <hftl:searchPanel backingBean="#{userListBean}">
 			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
 		</hftl:searchPanel>
 

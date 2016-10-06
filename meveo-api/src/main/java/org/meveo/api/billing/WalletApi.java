@@ -544,19 +544,19 @@ public class WalletApi extends BaseApi {
         return new WalletTemplateDto(wt);
     }
 
-    public void remove(String walletTemplateCode, Provider provider) throws MeveoApiException {
+    public void remove(String walletTemplateCode, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(walletTemplateCode)) {
             missingParameters.add("walletTemplateCode");
             handleMissingParameters();
         }
 
-        WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, provider);
+        WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, currentUser.getProvider());
         if (wt == null) {
             throw new EntityDoesNotExistsException(WalletTemplate.class, walletTemplateCode);
         }
 
-        walletTemplateService.remove(wt);
+        walletTemplateService.remove(wt, currentUser);
     }
 
     /**

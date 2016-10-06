@@ -83,7 +83,7 @@ public class DigitalResourceApi extends BaseApi {
 		digitalResourceService.update(digitalResource, currentUser);
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException {
+	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("digitalResource code");
@@ -95,7 +95,7 @@ public class DigitalResourceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DigitalResource.class, code);
 		}
 
-		digitalResourceService.remove(digitalResource);
+		digitalResourceService.remove(digitalResource, currentUser);
 	}
 
 	public DigitalResource populateDigitalResourceEntity(DigitalResource digitalResource, DigitalResourcesDto digitalResourcesDto, User user) throws MeveoApiException {

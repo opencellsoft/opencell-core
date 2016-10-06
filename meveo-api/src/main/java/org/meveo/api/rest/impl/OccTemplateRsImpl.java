@@ -91,7 +91,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            occTemplateApi.remove(occTemplateCode, getCurrentUser().getProvider());
+            occTemplateApi.remove(occTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

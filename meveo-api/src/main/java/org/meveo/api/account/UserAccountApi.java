@@ -186,19 +186,19 @@ public class UserAccountApi extends AccountApi {
 		return accountHierarchyApi.userAccountToDto(userAccount);
 	}
 
-	public void remove(String userAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String userAccountCode, User currentUser) throws MeveoApiException, BusinessException  {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, currentUser.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
 		try {
-			userAccountService.remove(userAccount);
+			userAccountService.remove(userAccount, currentUser);
 			userAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

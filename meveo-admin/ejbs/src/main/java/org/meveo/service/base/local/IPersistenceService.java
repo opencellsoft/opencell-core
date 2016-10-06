@@ -94,15 +94,6 @@ public interface IPersistenceService<E extends IEntity> {
     public E update(E e, User updater) throws BusinessException;
 
     /**
-     * Delete an entity.
-     * 
-     * @param id Entity id which has to be deleted.
-     * 
-     * @throws BusinessException
-     */
-    public void remove(Long id);
-
-    /**
      * Disable an entity.
      * 
      * @param id Entity id which has to be disabled.
@@ -136,7 +127,7 @@ public interface IPersistenceService<E extends IEntity> {
      * Enable an entity.
      * 
      * @param id Entity to be enabled.
-     * @param currentUser
+     * @param currentUser Current user
      * @throws BusinessException
      */
     public E enable(E e, User currentUser) throws BusinessException;
@@ -144,20 +135,32 @@ public interface IPersistenceService<E extends IEntity> {
     /**
      * Delete an entity.
      * 
-     * @param e Entity to delete.
+     * @param id Entity id which has to be deleted.
+     * @param currentUser Current user
      * 
      * @throws BusinessException
      */
-    public void remove(E e);
+    public void remove(Long id, User currentUser) throws BusinessException;
+
+    /**
+     * Delete an entity.
+     * 
+     * @param e Entity to delete.
+     * @param currentUser Current user
+     * 
+     * @throws BusinessException
+     */
+    public void remove(E e, User currentUser) throws BusinessException;
 
     /**
      * Delete list of entities by provided ids.
      * 
      * @param ids Entities ids to delete.
+     * @param currentUser Current user
      * 
      * @throws BusinessException
      */
-    public void remove(Set<Long> ids);
+    public void remove(Set<Long> ids, User currentUser) throws BusinessException;
 
     /**
      * The entity class which the persistence is managed by the persistence service.
