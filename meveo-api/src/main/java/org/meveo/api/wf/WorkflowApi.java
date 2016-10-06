@@ -19,12 +19,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
-import org.meveo.service.wf.BaseEntityService;
+import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 
@@ -111,7 +112,7 @@ public class WorkflowApi extends BaseApi {
             currentWfTransitions.removeAll(listUpdate);
             if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
                 for (WFTransition wfTransition : currentWfTransitions) {
-                    wfTransitionService.remove(wfTransition);
+                    wfTransitionService.remove(wfTransition, currentUser);
                 }
             }
         }
@@ -144,9 +145,10 @@ public class WorkflowApi extends BaseApi {
 	 * @param currentUser
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
+	 * @throws BusinessException 
 	 */
-	public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
-		workflowService.remove(find(workflowCode, currentUser.getProvider())); 
+	public void remove(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		workflowService.remove(find(workflowCode, currentUser.getProvider()), currentUser); 
 	}
 
 	/**
@@ -265,7 +267,7 @@ public class WorkflowApi extends BaseApi {
 	 * @throws MeveoApiException
 	 */
 	@SuppressWarnings("unchecked")
-    public void execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode, User currentUser) throws BusinessException, MeveoApiException {
+    public void execute(String baseEntityName, String baseEntityInstanceId, String workflowCode, User currentUser) throws BusinessException, MeveoApiException {
 		if(StringUtils.isBlank(baseEntityName)){
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();
@@ -276,21 +278,21 @@ public class WorkflowApi extends BaseApi {
 			handleMissingParameters();
 		}
 		
-		Class<IEntity> clazz = null;
+		Class<BusinessEntity> clazz = null;
 		try{
-			clazz = (Class<IEntity>) Class.forName(baseEntityName);
+			clazz = (Class<BusinessEntity>) Class.forName(baseEntityName);
 		}catch(Exception e){
 			throw new MeveoApiException("Cant find class for baseEntityName");
 		}
 		baseEntityService.setEntityClass(clazz);
 		
-		IEntity baseEntity = baseEntityService.findById(baseEntityInstanceId);	
-		if(baseEntity == null){
+		BusinessEntity businessEntity = baseEntityService.findByCode(baseEntityInstanceId, currentUser.getProvider());	
+		if(businessEntity == null){
 			throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
 		}
-		log.debug("baseEntity.getId() : "+baseEntity.getId());
+		log.debug("businessEntity.getCode() : "+businessEntity.getCode());
 		
-		workflowService.executeWorkflow(baseEntity, workflowCode, currentUser);
+		workflowService.executeWorkflow(businessEntity, workflowCode, currentUser);
 	}
 }
 

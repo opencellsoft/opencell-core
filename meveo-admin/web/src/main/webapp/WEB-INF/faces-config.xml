@@ -686,14 +686,14 @@
 			<from-outcome>offerTemplateCategories</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>offerTemplateCategoryDetail</from-outcome>
-			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategoryDetail.xhtml
-			</to-view-id>
-			<redirect include-view-params="true" />
-		</navigation-case>
+        <navigation-case>
+            <from-outcome>offerTemplateCategoryDetail</from-outcome>
+            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>         
 		<navigation-case>
 			<from-outcome>offerTemplates</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplates.xhtml
@@ -1089,6 +1089,16 @@
 			<to-view-id>/pages/admin/workflow/workflows.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>workflowHistory</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflowHistories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>workflowHistoryDetail</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflowHistoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 		<navigation-case>
 			<from-outcome>workflowDetail</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
@@ -2058,13 +2068,13 @@
         </navigation-case>        
 		<navigation-case>
 			<from-outcome>mm_offerTemplateCategories</from-outcome>
-			<to-view-id>/marketingManager/offers/offerTemplateCategories.xhtml
+			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
         <navigation-case>
             <from-outcome>mm_offerTemplateCategoryDetail</from-outcome>
-            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategoryDetail.xhtml
+            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
         </navigation-case>        
