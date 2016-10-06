@@ -107,10 +107,16 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
         discountPlanItem = new DiscountPlanItem();
     }
 
+    @ActionMethod
     public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
-        getEntity().getDiscountPlanItems().remove(discountPlanItem);
-        discountPlanItemService.remove(discountPlanItem.getId());
-        messages.info(new BundleKey("messages", "delete.successful"));
+        try {
+            getEntity().getDiscountPlanItems().remove(discountPlanItem);
+            discountPlanItemService.remove(discountPlanItem.getId(), getCurrentUser());
+            messages.info(new BundleKey("messages", "delete.successful"));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
     }
 
 }

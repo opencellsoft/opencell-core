@@ -135,7 +135,7 @@ public class CountryIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String countryCode) throws MeveoApiException {
+    public void remove(String countryCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
             handleMissingParameters();
@@ -146,7 +146,7 @@ public class CountryIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Country.class, countryCode);
         }
 
-        countryService.remove(country);
+        countryService.remove(country, currentUser);
     }
 
     public void createOrUpdate(CountryIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {

@@ -33,7 +33,7 @@ public class OfferTemplateCategoryListBean extends OfferTemplateCategoryBean {
 
 		TreeNode root = new DefaultTreeNode(new OfferTemplateCategory(), null);
 		for (OfferTemplateCategory a : result) {
-			if (a.getLevel() == 1) {
+			if (a.getOrderLevel() == 1) {
 				TreeNode level1 = new DefaultTreeNode(a, root);
 				level1.setExpanded(true);
 				if (a.getChildren() != null && a.getChildren().size() > 0) {

@@ -20,14 +20,14 @@ public class ApplyProductRequestDto extends BaseDto {
 	@XmlElement(required = true)
 	private String product;
 
-	@XmlElement(required = true)
+	@XmlElement
 	private String userAccount;
 
+	@XmlElement
+	private String subscription;
 	
 	@XmlElement(required = true)
 	private Date operationDate;
-
-	private String offer;
 
 	private BigDecimal quantity;
 
@@ -72,20 +72,20 @@ public class ApplyProductRequestDto extends BaseDto {
 		this.userAccount = userAccount;
 	}
 
+	public String getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(String subscription) {
+		this.subscription = subscription;
+	}
+
 	public Date getOperationDate() {
 		return operationDate;
 	}
 
 	public void setOperationDate(Date operationDate) {
 		this.operationDate = operationDate;
-	}
-
-	public String getOffer() {
-		return offer;
-	}
-
-	public void setOffer(String offer) {
-		this.offer = offer;
 	}
 
 	public BigDecimal getQuantity() {
@@ -146,7 +146,7 @@ public class ApplyProductRequestDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "ApplyProductRequestDto [product=" + product + ", userAccount=" + userAccount
+		return "ApplyProductRequestDto [product=" + product + ", userAccount=" + userAccount + ", subscription=" + subscription
 				 + ", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
 				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";

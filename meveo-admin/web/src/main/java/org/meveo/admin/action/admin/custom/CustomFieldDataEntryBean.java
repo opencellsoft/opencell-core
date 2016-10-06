@@ -697,7 +697,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
                             || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
                         if (!cfi.isTransient()) {
-                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
+                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity, currentUser);
                             log.trace("Remove empty cfi value {}", cfi);
                         } else {
                             log.trace("Will ommit from saving cfi {}", cfi);
@@ -950,7 +950,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // Remove child entities that are no longer referenced along with its custom field values
         for (CustomEntityInstance ceiNolongerReferenced : previousChildEntities) {
-            customEntityInstanceService.remove(ceiNolongerReferenced);
+            customEntityInstanceService.remove(ceiNolongerReferenced, currentUser);
         }
     }
 

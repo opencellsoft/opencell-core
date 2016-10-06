@@ -92,7 +92,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.remove(pricePlanCode, getCurrentUser().getProvider());
+            pricePlanApi.remove(pricePlanCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

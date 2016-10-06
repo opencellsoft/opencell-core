@@ -77,7 +77,7 @@ import org.meveo.util.MeveoJpaForJobs;
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
-    protected  Class<E> entityClass;
+    protected Class<E> entityClass;
 
     public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
     public static String SEARCH_CURRENT_USER = "currentUser";
@@ -129,7 +129,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CatMessagesService catMessagesService;
-    
+
     /**
      * Constructor.
      */
@@ -340,7 +340,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @Override
-    public void remove(E e) {
+    public void remove(E e, User currentUser) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
         getEntityManager().remove(e);
@@ -356,24 +356,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         // Remove custom field values from cache if applicable
         if (e instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
+            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e, currentUser);
         }
 
         // Remove description translations
         if (e instanceof BusinessEntity && e.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
             catMessagesService.batchRemove((BusinessEntity) e);
         }
-        
+
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
     }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
      */
-    public void remove(Long id) {
+    @Override
+    public void remove(Long id, User currentUser) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            remove(e);
+            remove(e, currentUser);
         }
     }
 
@@ -381,7 +382,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
      */
     @Override
-    public void remove(Set<Long> ids) {
+    public void remove(Set<Long> ids, User currentUser) throws BusinessException {
         Query query = getEntityManager().createQuery("delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
         query.setParameter("ids", ids);
         query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
@@ -639,14 +640,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (filters.containsKey("$FILTER")) {
                 Filter filter = (Filter) filters.get("$FILTER");
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
-                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false,provider);
+                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false, provider);
             } else {
 
                 for (String key : filters.keySet()) {
                     if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key) || SEARCH_CURRENT_PROVIDER.equals(key) || SEARCH_CURRENT_USER.equals(key)) {
                         continue;
                     }
-                                        
+
                     // condition field1 field2
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
@@ -762,7 +763,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                             // if not ranged search
                         } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
-                        	queryBuilder.startOrClause();
+                            queryBuilder.startOrClause();
                             queryBuilder.addSql("a." + fieldName + " like '%" + filter + "%'");
                             queryBuilder.addSql("a." + fieldName2 + " like '%" + filter + "%'");
                             queryBuilder.endOrClause();
@@ -823,8 +824,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             queryBuilder.addPaginationConfiguration(config, "a");
         }
 
-        //        log.trace("Filters is {}", filters);
-        //        log.trace("Query is {}", queryBuilder.getSqlString());
+        // log.trace("Filters is {}", filters);
+        // log.trace("Query is {}", queryBuilder.getSqlString());
         return queryBuilder;
     }
 

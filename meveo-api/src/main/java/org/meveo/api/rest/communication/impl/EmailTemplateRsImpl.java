@@ -89,7 +89,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailTemplateApi.remove(code, getCurrentUser().getProvider());
+            emailTemplateApi.remove(code, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

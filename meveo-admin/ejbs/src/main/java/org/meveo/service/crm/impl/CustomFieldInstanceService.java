@@ -125,9 +125,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     // "CustomFieldInstanceService.remove(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.remove(CustomFieldInstance cfi, ICustomFieldEntity entity) method instead");
     // }
 
-    public void remove(CustomFieldInstance cfi, ICustomFieldEntity entity) {
+    public void remove(CustomFieldInstance cfi, ICustomFieldEntity entity, User currentUser) throws BusinessException {
         customFieldsCacheContainerProvider.removeCustomFieldFromCache(entity, cfi);
-        super.remove(cfi.getId());
+        super.remove(cfi.getId(), currentUser);
     }
 
     /**
@@ -397,7 +397,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * 
      * @param entity Entity
      * @param code Custom field value code
-     * @param value
+     * @param value Value to set
+     * @param currentUser Current user
      * @throws BusinessException
      */
     public CustomFieldInstance setCFValue(ICustomFieldEntity entity, String code, Object value, User currentUser) throws BusinessException {
@@ -520,12 +521,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Remove Custom field instance
      * 
+     * @param currentUser Current user
+     * 
      * @param code Custom field code to remove
      */
-    public void removeCFValue(ICustomFieldEntity entity, String code) {
+    public void removeCFValue(ICustomFieldEntity entity, String code, User currentUser) throws BusinessException {
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code);
         for (CustomFieldInstance cfi : cfis) {
-            super.remove(cfi.getId());
+            super.remove(cfi.getId(), currentUser);
         }
 
         customFieldsCacheContainerProvider.removeCustomFieldFromCache(entity, code);
@@ -534,14 +537,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Remove all custom field values for a given entity
      * 
+     * @param currentUser Current user
+     * 
      * @param entity
      */
-    public void removeCFValues(ICustomFieldEntity entity) {
+    public void removeCFValues(ICustomFieldEntity entity, User currentUser) throws BusinessException {
 
         Map<String, List<CustomFieldInstance>> cfisByCode = getCustomFieldInstances(entity);
         for (Entry<String, List<CustomFieldInstance>> cfisInfo : cfisByCode.entrySet()) {
             for (CustomFieldInstance cfi : cfisInfo.getValue()) {
-                super.remove(cfi.getId());
+                super.remove(cfi.getId(), currentUser);
             }
 
             customFieldsCacheContainerProvider.removeCustomFieldFromCache(entity, cfisInfo.getKey());

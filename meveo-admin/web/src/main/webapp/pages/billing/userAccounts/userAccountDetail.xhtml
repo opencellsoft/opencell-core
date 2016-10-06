@@ -196,7 +196,10 @@
 						<p:outputPanel id="productInstancePanel">
 							<h:form id="productInstanceResultsForm" prependId="false">
 								<p:dataTable resizableColumns="true"
-									value="#{userAccountBean.productChargeInstances}" var="entity">
+									value="#{userAccountBean.productChargeInstances}" var="entity"
+									paginator="true" rows="10" lazy="true"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+									rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid">
 									<hftl:column label="#{messages['chargeInstance.code']}"
 										field="code" />
 									<hftl:column label="#{messages['chargeInstance.description']}"
@@ -205,16 +208,7 @@
 										field="status" />
 									<hftl:column
 										label="#{messages['oneShotChargeInstance.chargeDate']}"
-										field="chargeDate" />
-									<hftl:column
-										label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-										field="amountWithoutTax" isMessage="false" />
-									<p:column
-										headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-										rendered="#{!subscriptionBean.entity.provider.entreprise}">
-										<h:outputText value="#{entity.amountWithTax}"
-											converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
-									</p:column>
+										field="chargeDate" isDate="true" />
 								</p:dataTable>
 
 								<p:commandButton value="#{messages['action.applyProduct']}"
@@ -323,7 +317,7 @@
                                <h:form>
                                 <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" resizableColumns="true"
                                     value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
-                                    styleClass="verticalSpaceSmall">
+                                    styleClass="verticalSpaceSmall custom-grid">
                                     <p:column>
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['walletOperation.operationDate']}" />

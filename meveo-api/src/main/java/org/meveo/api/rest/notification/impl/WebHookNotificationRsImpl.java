@@ -89,7 +89,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            webhookNotificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

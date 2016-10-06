@@ -88,7 +88,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.remove(discountPlanCode, getCurrentUser().getProvider());
+            discountPlanApi.remove(discountPlanCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -109,7 +109,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @Override
     public Workflow initEntity() {
         super.initEntity();
-     //   PersistenceUtils.initializeAndUnproxy(entity.getActions());
+        // PersistenceUtils.initializeAndUnproxy(entity.getActions());
         return entity;
     }
 
@@ -134,7 +134,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         return "workflowDetail";
     }
 
-    public void saveWfTransition() throws BusinessException{
+    public void saveWfTransition() throws BusinessException {
 
         List<WFDecisionRule> wfDecisionRules = new ArrayList<>();
 
@@ -184,15 +184,21 @@ public class WorkflowBean extends BaseBean<Workflow> {
         wfTransition = new WFTransition();
     }
 
+    @ActionMethod
     public void deleteWfTransition(WFTransition transitionToDelete) {
-        WFTransition transition = wFTransitionService.findById(transitionToDelete.getId()); 
-        wFTransitionService.remove(transition);
-        entity.getTransitions().remove(transitionToDelete);
-        wfDecisionRulesByName.clear();
-        selectedRules.clear();
-        wfActions.clear();
-        showDetailPage = false;
-        messages.info(new BundleKey("messages", "delete.successful"));
+        try {
+            WFTransition transition = wFTransitionService.findById(transitionToDelete.getId());
+            wFTransitionService.remove(transition, getCurrentUser());
+            entity.getTransitions().remove(transitionToDelete);
+            wfDecisionRulesByName.clear();
+            selectedRules.clear();
+            wfActions.clear();
+            showDetailPage = false;
+            messages.info(new BundleKey("messages", "delete.successful"));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
     }
 
     public void editWfTransition(WFTransition transitionToEdit) {
@@ -217,7 +223,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         }
         showDetailPage = true;
     }
-    
+
     /**
      * Autocomplete method for class filter field - search entity type classes with @ObservableEntity annotation
      * 
@@ -255,23 +261,23 @@ public class WorkflowBean extends BaseBean<Workflow> {
     protected List<String> getListFieldsToFetch() {
         return Arrays.asList("provider");
     }
-    
+
     @SuppressWarnings({ "unchecked" })
-	public Map<String, String> getTransitionStatusFromWorkflowType() {
-    	try {
-			Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(),getCurrentProvider());    		
-			Object obj = clazz.newInstance();
-			Method testMethod = obj.getClass().getMethod("getStatusList");
-			List<String> statusList = (List<String>) testMethod.invoke(obj);
-			Map<String, String> statusMap = new TreeMap<>();
-			for(String s : statusList) {
-				statusMap.put(s, s);
-			}
-			return statusMap;
-		} catch (Exception e) {
-			log.error("Unable to get/instantiate or retrieve status list for class " + entity.getWfType(), e);
-		} 
-    	return new TreeMap<>();
+    public Map<String, String> getTransitionStatusFromWorkflowType() {
+        try {
+            Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(), getCurrentProvider());
+            Object obj = clazz.newInstance();
+            Method testMethod = obj.getClass().getMethod("getStatusList");
+            List<String> statusList = (List<String>) testMethod.invoke(obj);
+            Map<String, String> statusMap = new TreeMap<>();
+            for (String s : statusList) {
+                statusMap.put(s, s);
+            }
+            return statusMap;
+        } catch (Exception e) {
+            log.error("Unable to get/instantiate or retrieve status list for class " + entity.getWfType(), e);
+        }
+        return new TreeMap<>();
     }
 
     public List<String> getWfDecisionRulesName() {
@@ -397,7 +403,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 deletedActions.removeAll(updatedActions);
             }
             for (WFAction wfAction : deletedActions) {
-                wfActionService.remove(wfAction);
+                wfActionService.remove(wfAction, getCurrentUser());
             }
             for (WFAction wfAction : updatedActions) {
                 wfActionService.update(wfAction, getCurrentUser());
@@ -434,8 +440,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
                         } else if (groupedDecisionRule.getNewDate() == null && groupedDecisionRule.getAnotherDate() != null) {
                             value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(DateUtils.formatDateWithPattern(groupedDecisionRule.getAnotherDate(), datePattern));
                         } else {
-                            value.append(DateUtils.formatDateWithPattern(groupedDecisionRule.getNewDate(), datePattern))
-                                 .append(LESS_SEPARATOR).append(DateUtils.formatDateWithPattern(groupedDecisionRule.getAnotherDate(), datePattern));
+                            value.append(DateUtils.formatDateWithPattern(groupedDecisionRule.getNewDate(), datePattern)).append(LESS_SEPARATOR)
+                                .append(DateUtils.formatDateWithPattern(groupedDecisionRule.getAnotherDate(), datePattern));
                         }
                     } else {
                         if (groupedDecisionRule.getNewValue() != null && groupedDecisionRule.getAnotherValue() == null) {
@@ -443,8 +449,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                         } else if (groupedDecisionRule.getNewValue() == null && groupedDecisionRule.getAnotherValue() != null) {
                             value.append(LESS_SEPARATOR_NO_SPACE_LEFT).append(groupedDecisionRule.getAnotherValue());
                         } else {
-                            value.append(groupedDecisionRule.getNewValue())
-                                 .append(LESS_SEPARATOR).append(groupedDecisionRule.getAnotherValue());
+                            value.append(groupedDecisionRule.getNewValue()).append(LESS_SEPARATOR).append(groupedDecisionRule.getAnotherValue());
                         }
                     }
                     newWFDecisionRule.setValue(value.toString());
@@ -453,17 +458,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 } else {
                     newWFDecisionRule.setValue(groupedDecisionRule.getNewValue());
                 }
-                WFDecisionRule existedDecisionRule = wfDecisionRuleService.getWFDecisionRuleByNameValue(newWFDecisionRule.getName(),
-                        newWFDecisionRule.getValue(), getCurrentProvider());
+                WFDecisionRule existedDecisionRule = wfDecisionRuleService.getWFDecisionRuleByNameValue(newWFDecisionRule.getName(), newWFDecisionRule.getValue(),
+                    getCurrentProvider());
 
                 if (existedDecisionRule != null) {
-                    messages.error(new BundleKey("messages", "decisionRule.uniqueNameValue"), new Object[]{newWFDecisionRule.getName(), newWFDecisionRule.getValue()});
+                    messages.error(new BundleKey("messages", "decisionRule.uniqueNameValue"), new Object[] { newWFDecisionRule.getName(), newWFDecisionRule.getValue() });
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
                 RuleNameValue ruleNameValue = new RuleNameValue(newWFDecisionRule.getName(), newWFDecisionRule.getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
-                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
+                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[] { ruleNameValue.getName(), ruleNameValue.getValue() });
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
@@ -474,7 +479,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
             } else if (groupedDecisionRule.getValue() != null) {
                 RuleNameValue ruleNameValue = new RuleNameValue(groupedDecisionRule.getValue().getName(), groupedDecisionRule.getValue().getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
-                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[]{ruleNameValue.getName(), ruleNameValue.getValue()});
+                    messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[] { ruleNameValue.getName(), ruleNameValue.getValue() });
                     FacesContext.getCurrentInstance().validationFailed();
                     return false;
                 }
@@ -579,13 +584,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             RuleNameValue nameValue = (RuleNameValue) o;
 
-            if (!name.equals(nameValue.name)) return false;
-            if (!value.equals(nameValue.value)) return false;
+            if (!name.equals(nameValue.name))
+                return false;
+            if (!value.equals(nameValue.value))
+                return false;
 
             return true;
         }

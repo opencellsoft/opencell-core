@@ -98,7 +98,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.remove(billingAccountCode, getCurrentUser().getProvider());
+            billingAccountApi.remove(billingAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

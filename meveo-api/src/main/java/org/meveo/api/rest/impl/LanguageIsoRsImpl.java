@@ -70,7 +70,7 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageIsoApi.remove(languageCode);
+            languageIsoApi.remove(languageCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

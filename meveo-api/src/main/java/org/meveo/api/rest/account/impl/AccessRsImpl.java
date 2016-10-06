@@ -92,7 +92,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.remove(accessCode, subscriptionCode, getCurrentUser().getProvider());
+            accessApi.remove(accessCode, subscriptionCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -79,7 +79,7 @@ public class CurrencyIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String currencyCode) throws MeveoApiException {
+    public void remove(String currencyCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(currencyCode)) {
             missingParameters.add("currencyCode");
             handleMissingParameters();
@@ -90,7 +90,7 @@ public class CurrencyIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Currency.class, currencyCode);
         }
 
-        currencyService.remove(currency);
+        currencyService.remove(currency, currentUser);
     }
 
     public void createOrUpdate(CurrencyIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {

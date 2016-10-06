@@ -177,18 +177,18 @@ public class BillingCycleApi extends BaseApi {
         return result;
     }
 
-    public void remove(String billingCycleCode, Provider provider) throws MeveoApiException {
+    public void remove(String billingCycleCode, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(billingCycleCode)) {
             missingParameters.add("billingCycleCode");
             handleMissingParameters();
         }
 
-        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
+        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser.getProvider());
         if (billingCycle == null) {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        billingCycleService.remove(billingCycle);
+        billingCycleService.remove(billingCycle, currentUser);
     }
 
     public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {

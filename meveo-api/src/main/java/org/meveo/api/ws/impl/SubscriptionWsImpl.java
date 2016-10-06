@@ -10,6 +10,7 @@ import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -21,9 +22,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
@@ -130,7 +128,27 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
         return result;
     }
+    
+	@Override
+	public ActionStatus applyProduct(ApplyProductRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        try {
+        	subscriptionApi.applyProduct(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+	
     @Override
     public ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");

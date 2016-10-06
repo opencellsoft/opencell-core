@@ -43,8 +43,8 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     }
 
     @Override
-    public void remove(T notification) {
-        super.remove(notification);
+    public void remove(T notification, User currentUser) throws BusinessException {
+        super.remove(notification, currentUser);
         notificationCacheContainerProvider.removeNotificationFromCache(notification);
     }
 
@@ -72,7 +72,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
 
         // Remove counter instance if counter is no longer associated to a notification
         if (entity.getCounterTemplate() == null && entity.getCounterInstance() != null) {
-            counterInstanceService.remove(entity.getCounterInstance());
+            counterInstanceService.remove(entity.getCounterInstance(), currentUser);
 
             // Instantiate a a counter instance if new template was specified or it was changed
         } else if (entity.getCounterTemplate() != null

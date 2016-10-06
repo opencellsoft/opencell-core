@@ -352,13 +352,13 @@ public class FilterService extends BusinessService<Filter> {
     }
     
     @Override
-    public void remove(Filter filter) {
+    public void remove(Filter filter, User currentUser) throws BusinessException {
     	try {
 			customFieldTemplateService.createMissingTemplates(filter, new ArrayList<CustomFieldTemplate>(), getCurrentUser(), true, true);
 		} catch (BusinessException e) {
 			log.error("Failed to remove custom fields.", e);
 		}
-    	super.remove(filter);
+    	super.remove(filter, currentUser);
     }
 
     private void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {

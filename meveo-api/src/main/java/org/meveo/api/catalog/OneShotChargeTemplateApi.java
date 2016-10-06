@@ -318,19 +318,19 @@ public class OneShotChargeTemplateApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException  {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
             handleMissingParameters();
         }
         // check if code already exists
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider);
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, currentUser.getProvider());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        oneShotChargeTemplateService.remove(chargeTemplate);
+        oneShotChargeTemplateService.remove(chargeTemplate, currentUser);
 
     }
 

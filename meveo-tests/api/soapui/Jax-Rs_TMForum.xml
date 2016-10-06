@@ -393,10 +393,17 @@
           <con:description xsi:nil="true"/>
         </con:representation>
         <con:request name="Request 1" id="1d3da7d0-8ce7-4f62-a536-89c901e3ad13" mediaType="application/json">
-          <con:settings/>
+          <con:settings>
+            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+          </con:settings>
           <con:endpoint>http://i.meveo.info</con:endpoint>
           <con:request/>
+          <con:originalUri>http://i.meveo.info/api/rest/notification/jobTrigger</con:originalUri>
+          <con:credentials>
+            <con:authType>No Authorization</con:authType>
+          </con:credentials>
           <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+          <con:jmsPropertyConfig/>
           <con:parameters/>
         </con:request>
       </con:method>
@@ -16542,7 +16549,7 @@
                 <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
-               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
+               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone2}:00</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -17260,7 +17267,7 @@
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Modify ordered product (product instance)" id="32d69c3a-f934-4704-a724-64b6c4e111be">
+      <con:testStep type="restrequest" name="Modify ordered product (product instance)" id="32d69c3a-f934-4704-a724-64b6c4e111be" disabled="true">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Modify ordered product (product instance)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">

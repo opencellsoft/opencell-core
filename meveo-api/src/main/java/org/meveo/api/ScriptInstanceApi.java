@@ -113,7 +113,7 @@ public class ScriptInstanceApi extends BaseApi {
         return scriptInstanceDtoResult;
     }
 
-    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeScriptInstance(String scriptInstanceCode, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
             handleMissingParameters();
@@ -122,7 +122,7 @@ public class ScriptInstanceApi extends BaseApi {
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
         }
-        scriptInstanceService.remove(scriptInstance);
+        scriptInstanceService.remove(scriptInstance, currentUser);
     }
 
     public List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {

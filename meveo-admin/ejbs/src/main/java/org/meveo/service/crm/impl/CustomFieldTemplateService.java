@@ -199,9 +199,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void remove(CustomFieldTemplate cft) {
+    public void remove(CustomFieldTemplate cft, User currentUser) throws BusinessException {
         customFieldsCache.removeCustomFieldTemplate(cft);
-        super.remove(cft);
+        super.remove(cft, currentUser);
     }
 
     @Override
@@ -368,7 +368,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     }
                 }
                 for (CustomFieldTemplate fieldTemplate : forRemoval) {
-                    remove(fieldTemplate);
+                    remove(fieldTemplate, currentUser);
                 }
             }
         }

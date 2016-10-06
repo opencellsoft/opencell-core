@@ -97,8 +97,8 @@ public class UserService extends PersistenceService<User> {
 
 	@Override
 	@UserDelete
-	public void remove(User user) {
-		super.remove(user);
+	public void remove(User user, User currentUser) throws BusinessException {
+		super.remove(user, currentUser);
 	}
 
 	public User getSystemUser() {

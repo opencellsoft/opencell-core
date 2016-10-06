@@ -686,14 +686,14 @@
 			<from-outcome>offerTemplateCategories</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>offerTemplateCategoryDetail</from-outcome>
-			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategoryDetail.xhtml
-			</to-view-id>
-			<redirect include-view-params="true" />
-		</navigation-case>
+        <navigation-case>
+            <from-outcome>offerTemplateCategoryDetail</from-outcome>
+            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>         
 		<navigation-case>
 			<from-outcome>offerTemplates</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplates.xhtml
@@ -2058,13 +2058,13 @@
         </navigation-case>        
 		<navigation-case>
 			<from-outcome>mm_offerTemplateCategories</from-outcome>
-			<to-view-id>/marketingManager/offers/offerTemplateCategories.xhtml
+			<to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
         <navigation-case>
             <from-outcome>mm_offerTemplateCategoryDetail</from-outcome>
-            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategoryDetail.xhtml
+            <to-view-id>/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
         </navigation-case>        

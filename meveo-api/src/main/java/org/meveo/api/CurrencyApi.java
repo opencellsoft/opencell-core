@@ -10,6 +10,7 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -87,17 +88,17 @@ public class CurrencyApi extends BaseApi {
         throw new EntityDoesNotExistsException(TradingLanguage.class, code);
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
         handleMissingParameters();
 
-        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code, provider);
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code, currentUser.getProvider());
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         } else {
-            tradingCurrencyService.remove(tradingCurrency);
+            tradingCurrencyService.remove(tradingCurrency, currentUser);
         }
     }
 

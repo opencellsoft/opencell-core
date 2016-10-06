@@ -89,7 +89,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.remove(notificationCode, getCurrentUser().getProvider());
+            emailNotificationApi.remove(notificationCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

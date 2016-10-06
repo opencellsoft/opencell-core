@@ -91,7 +91,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser().getProvider());
+            triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

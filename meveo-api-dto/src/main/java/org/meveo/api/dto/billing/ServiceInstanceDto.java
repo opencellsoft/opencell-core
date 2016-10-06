@@ -86,7 +86,7 @@ public class ServiceInstanceDto extends BaseDto {
 
 			for (RecurringChargeInstance ci : e.getRecurringChargeInstances()) {
 				recurringChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode(), ci.getOfferTemplate().getCode()));
+						.getSeller().getCode(), ci.getUserAccount().getCode()));
 			}
 		}
 
@@ -95,7 +95,7 @@ public class ServiceInstanceDto extends BaseDto {
 
 			for (OneShotChargeInstance ci : e.getSubscriptionChargeInstances()) {
 				subscriptionChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode(), ci.getOfferTemplate().getCode()));
+						.getSeller().getCode(), ci.getUserAccount().getCode()));
 			}
 		}
 
@@ -104,7 +104,7 @@ public class ServiceInstanceDto extends BaseDto {
 
 			for (OneShotChargeInstance ci : e.getTerminationChargeInstances()) {
 				terminationChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode(), ci.getOfferTemplate().getCode()));
+						.getSeller().getCode(), ci.getUserAccount().getCode()));
 			}
 		}
 
@@ -113,7 +113,7 @@ public class ServiceInstanceDto extends BaseDto {
 
 			for (UsageChargeInstance ci : e.getUsageChargeInstances()) {
 				usageChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode(), ci.getOfferTemplate().getCode()));
+						.getSeller().getCode(), ci.getUserAccount().getCode()));
 			}
 		}
 

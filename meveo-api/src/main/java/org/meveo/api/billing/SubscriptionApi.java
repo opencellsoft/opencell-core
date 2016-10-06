@@ -27,27 +27,33 @@ import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -55,6 +61,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 @Stateless
@@ -94,8 +101,12 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     private ChargeInstanceService chargeInstanceService;
 
+	@Inject
+	private ProductTemplateService productTemplateService;
+	
     @Inject
-    private UserAccountApi userAccountApi;
+	private ProductInstanceService productInstanceService;
+	
 
     public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -157,7 +168,7 @@ public class SubscriptionApi extends BaseApi {
                     continue;
                 }
                 ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-                userAccountApi.applyProduct(dto, currentUser);
+                applyProduct(dto, currentUser);
             }
         }
     }
@@ -224,7 +235,7 @@ public class SubscriptionApi extends BaseApi {
                     continue;
                 }
                 ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-                userAccountApi.applyProduct(dto, currentUser);
+                applyProduct(dto, currentUser);
             }
         }
 
@@ -546,6 +557,54 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException(e.getMessage());
         }
     }
+    
+	public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		List<WalletOperationDto> result = new ArrayList<>();
+		if (StringUtils.isBlank(postData.getProduct())) {
+			missingParameters.add("product");
+		}
+		if (StringUtils.isBlank(postData.getSubscription())) {
+			missingParameters.add("subscription");
+		}
+		if (postData.getOperationDate() == null) {
+			missingParameters.add("operationDate");
+		}
+
+		handleMissingParameters();
+
+		Provider provider = currentUser.getProvider();
+
+		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), provider);
+		if (productTemplate == null) {
+			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
+		}
+
+		Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+		}
+
+		if ((subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) 
+				&& (subscription.getStatus() != SubscriptionStatusEnum.CREATED)) {
+			throw new MeveoApiException("subscription is not ACTIVE or CREATED: ["+subscription.getStatus()+"]");
+		}
+
+		List<WalletOperation> walletOperations = null;
+
+		try {
+			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(),
+					postData.getProduct(), postData.getDescription(), currentUser);
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
+					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
+			for (WalletOperation walletOperation : walletOperations) {
+				result.add(new WalletOperationDto(walletOperation));
+			}
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+		return result;
+	}
+
 
     public void terminateSubscription(TerminateSubscriptionRequestDto postData, User currentUser) throws MeveoApiException {
 
@@ -864,7 +923,7 @@ public class SubscriptionApi extends BaseApi {
                     continue;
                 }
                 ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-                userAccountApi.applyProduct(dto, currentUser);
+                applyProduct(dto, currentUser);
             }
         }
 

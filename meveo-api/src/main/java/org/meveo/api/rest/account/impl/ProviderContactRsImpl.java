@@ -95,7 +95,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.remove(code, getCurrentUser().getProvider());
+            providerContactApi.remove(code, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

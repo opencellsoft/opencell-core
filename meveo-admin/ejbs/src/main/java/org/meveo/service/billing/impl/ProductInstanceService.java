@@ -18,11 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -36,9 +33,9 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
@@ -53,7 +50,6 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
 
     @Inject
 	private ProductChargeInstanceService productChargeInstanceService;
-
 
     @SuppressWarnings("unchecked")
     public List<ProductInstance> findByCodeUserAccountAndStatus(String code, UserAccount userAccount, InstanceStatusEnum... statuses) {
@@ -70,7 +66,6 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
                 }
             }
             qb.endOrClause();
-
             productInstance = (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by code (code={}). Result found={}.", "ServiceInstance", code, productInstance != null && !productInstance.isEmpty());
         } catch (NoResultException nre) {
@@ -78,44 +73,50 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         } catch (Exception e) {
             log.error("findByCodeUserAccountAndStatus error={} ", e);
         }
-
         return productInstance;
     }
 
     @SuppressWarnings("unchecked")
     public List<ProductInstance> findByProductTemplate(EntityManager em, ProductTemplate productTemplate, Provider provider, InstanceStatusEnum status) {
         QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
-
         try {
             qb.addCriterionEntity("productTemplate", productTemplate);
             qb.addCriterionEntity("provider", provider);
             qb.addCriterionEnum("status", status);
-
             return (List<ProductInstance>) qb.getQuery(em).getResultList();
         } catch (NoResultException e) {
             return null;
         }
     }
     
+    @SuppressWarnings("unchecked")
+	public List<ProductInstance> findBySubscription(Subscription subscription) {
+        QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null, subscription.getProvider());
+        try {
+            qb.addCriterionEntity("subscription", subscription);
+            return (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-    
-	public List<WalletOperation> applyProduct(UserAccount userAccount, ProductTemplate productTemplate, BigDecimal quantity, Date chargeDate, String description,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax, OfferTemplate offerTemplate, String criteria1, String criteria2, String criteria3, User user, boolean persist)
+	public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, User user, boolean persist)
 			throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
-		ProductInstance productInstance = new ProductInstance(userAccount, productTemplate, quantity, chargeDate, UUID.randomUUID().toString(), description, user);
 		if (persist) {
 			create(productInstance, user);
 		}
-		for (ProductChargeTemplate productChargeTemplate : productTemplate.getProductChargeTemplates()) {
+		for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
 			ProductChargeInstance pcInstance = new ProductChargeInstance(productInstance, productChargeTemplate, user);
+			pcInstance.setCriteria1(criteria1);
+			pcInstance.setCriteria1(criteria2);
+			pcInstance.setCriteria1(criteria3);
 			if (persist) {
 				productChargeInstanceService.create(pcInstance, user);
 			}
-			result.add(productChargeInstanceService.apply(pcInstance, description, offerTemplate, chargeDate, amountWithoutTax, amountWithTax, criteria1, criteria2, criteria3,
-					user, persist));
+			result.addAll(productChargeInstanceService.applyProductChargeInstance(pcInstance,user, persist));
 		}
 		return result;
 	}
-
+	
 }

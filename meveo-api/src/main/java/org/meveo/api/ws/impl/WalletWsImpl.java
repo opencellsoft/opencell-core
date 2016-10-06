@@ -275,7 +275,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.remove(walletTemplateCode, getCurrentUser().getProvider());
+            walletApi.remove(walletTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
