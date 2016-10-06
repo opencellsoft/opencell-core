@@ -59,6 +59,7 @@ import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -593,7 +594,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 
 
-	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,Date lastTransactionDate,BillingProcessTypesEnum processType,User currentUser) throws BusinessException{
+	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,
+			Date lastTransactionDate,BillingProcessTypesEnum processType,User currentUser) throws BusinessException{
 		log.info("launchExceptionelInvoicing...");
 		Provider currentProvider = currentUser.getProvider();
 

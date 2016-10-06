@@ -1,8 +1,12 @@
 package org.meveo.api.dto.billing;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.model.billing.Invoice;
 
 @XmlRootElement(name = "GenerateInvoiceResult")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -10,10 +14,29 @@ public class GenerateInvoiceResultDto {
 	
 	private String invoiceNumber;
 	
+	private String invoiceTypeCode; 
+
+	private BigDecimal amount;
+	
+	private BigDecimal amountWithoutTax;
+	
+	private BigDecimal amountWithTax;
+	
+	private BigDecimal amountTax;
+	
 	public GenerateInvoiceResultDto(){
 		
 	}
 
+	public GenerateInvoiceResultDto(Invoice invoice){
+	 this.invoiceNumber=invoice.getInvoiceNumber();
+	 this.invoiceTypeCode=invoice.getInvoiceType().getCode();
+	 this.amount=invoice.getAmount();
+	 this.amountWithoutTax=invoice.getAmountWithoutTax();
+	 this.amountWithTax=invoice.getAmountWithTax();
+	 this.amountTax=invoice.getAmountTax();
+	}
+	
 	/**
 	 * @return the invoiceNumber
 	 */
@@ -26,6 +49,46 @@ public class GenerateInvoiceResultDto {
 	 */
 	public void setInvoiceNumber(String invoiceNumber) {
 		this.invoiceNumber = invoiceNumber;
+	}
+
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
+	}
+
+	public BigDecimal getAmountTax() {
+		return amountTax;
+	}
+
+	public void setAmountTax(BigDecimal amountTax) {
+		this.amountTax = amountTax;
 	}
 
 	/* (non-Javadoc)
