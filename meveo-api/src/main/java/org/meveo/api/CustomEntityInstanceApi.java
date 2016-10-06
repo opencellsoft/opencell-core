@@ -103,7 +103,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
     }
 
-    public void remove(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void remove(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -115,7 +115,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
         if (cei != null) {
-            customEntityInstanceService.remove(cei);
+            customEntityInstanceService.remove(cei, currentUser);
         } else {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, code);
         }

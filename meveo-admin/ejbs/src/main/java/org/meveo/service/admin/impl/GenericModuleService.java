@@ -203,7 +203,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
 
     @SuppressWarnings("unchecked")
     @Override
-    public void remove(T module) {
+    public void remove(T module, User currentUser) throws BusinessException {
 
         // If module was downloaded, remove all submodules as well
         if (module.isDownloaded() && module.getModuleItems() != null) {
@@ -213,7 +213,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
                     if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
                         loadModuleItem(item, module.getProvider());
                         T itemModule = (T) item.getItemEntity();
-                        remove(itemModule);
+                        remove(itemModule, currentUser);
                     }
                 } catch (Exception e) {
                     log.error("Failed to delete a submodule", e);
@@ -221,7 +221,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             }
         }
 
-        super.remove(module);
+        super.remove(module, currentUser);
     }
 
 }
