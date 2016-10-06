@@ -52,7 +52,7 @@ public interface WorkflowRs extends IBaseRs {
     
     @POST
     @Path("/execute")
-    ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("baseEntityInstanceId") Long baseEntityInstanceId,@QueryParam("workflowCode") String workflowCode);
+    ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("entityInstanceCode") String entityInstanceCode,@QueryParam("workflowCode") String workflowCode);
     
     @GET
     @Path("/findByEntity")

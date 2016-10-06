@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.payments;
+package org.meveo.admin.action.wf;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class ActionPlanItemListBean extends ActionPlanItemBean {
+public class WorkflowHistoryListBean extends WorkflowHistoryBean {
 
-    private static final long serialVersionUID = -3037867704912788049L;
+    private static final long serialVersionUID = -3037867704912788052L;
 }

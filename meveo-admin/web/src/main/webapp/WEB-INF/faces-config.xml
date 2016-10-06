@@ -1090,6 +1090,16 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>workflowHistory</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflowHistories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>workflowHistoryDetail</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflowHistoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
+		<navigation-case>
 			<from-outcome>workflowDetail</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
 			</to-view-id>

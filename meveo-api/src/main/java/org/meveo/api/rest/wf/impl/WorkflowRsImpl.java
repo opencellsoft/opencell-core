@@ -90,10 +90,10 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		}
 
 		@Override
-		public ActionStatus execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode) {
+		public ActionStatus execute(String baseEntityName, String entityInstanceCode, String workflowCode) {
 			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 			try {
-				workflowApi.execute( baseEntityName,  baseEntityInstanceId,  workflowCode,getCurrentUser() );
+				workflowApi.execute( baseEntityName,  entityInstanceCode,  workflowCode,getCurrentUser() );
 			} catch (Exception e) {
 	        	super.processException(e, result);
 	        }			

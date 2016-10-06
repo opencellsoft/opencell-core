@@ -16,18 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.wf;
+package org.meveo.admin.action.wf;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
 
-import org.meveo.model.IEntity;
-import org.meveo.service.base.PersistenceService;
+@Named
+@ConversationScoped
+public class WfTransitionListBean extends WfTransitionBean {
 
-@Stateless
-public class BaseEntityService extends PersistenceService<IEntity>{
-
-	
-    public void setEntityClass(Class<IEntity> clazz) {
-   	 this.entityClass = (Class<IEntity>) clazz;
-   }
+    private static final long serialVersionUID = -3037867704912788053L;
 }

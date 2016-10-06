@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.admin.impl;
+package org.meveo.service.wf;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.admin.BayadDunningInputHistory;
+import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * Bayad dunning input History service implementation.
- */
 @Stateless
-public class BayadDunningInputHistoryService extends
-		PersistenceService<BayadDunningInputHistory> {
+public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> {
 
+ 
 }

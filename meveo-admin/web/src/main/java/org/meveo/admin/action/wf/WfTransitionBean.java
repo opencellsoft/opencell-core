@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.payments;
+package org.meveo.admin.action.wf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -284,7 +284,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             entity = getPersistenceService().findById(id);
             log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
            // entity.getDunningPlan().getTransitions().remove(entity);
-          //  getPersistenceService().remove(id);
+            getPersistenceService().remove(id,getCurrentUser());
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {

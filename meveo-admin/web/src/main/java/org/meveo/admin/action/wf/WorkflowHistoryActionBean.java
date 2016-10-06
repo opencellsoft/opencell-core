@@ -16,44 +16,43 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.payments;
+package org.meveo.admin.action.wf;
 
-import javax.enterprise.inject.Produces;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.admin.DunningHistory;
+import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.DunningHistoryService;
+import org.meveo.service.wf.WorkflowHistoryActionService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link DunningHistory} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link WorkflowHistoryAction} (extends {@link BaseBean} that provides
+ * almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF
+ * components.
  */
 @Named
 @ViewScoped
-public class DunningHistoryBean extends BaseBean<DunningHistory> {
-
+public class WorkflowHistoryActionBean extends BaseBean<WorkflowHistoryAction> {
 	private static final long serialVersionUID = 1L;
-
 	/**
-	 * Injected @{link DunningHistory} service. Extends
-	 * {@link PersistenceService}.
+	 * Injected @{link WorkflowHistoryAction} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private DunningHistoryService dunningHistoryService;
+	private WorkflowHistoryActionService workflowHistoryActionService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public DunningHistoryBean() {
-		super(DunningHistory.class);
+	public WorkflowHistoryActionBean() {
+		super(WorkflowHistoryAction.class);		
 	}
 
 	/**
@@ -63,18 +62,39 @@ public class DunningHistoryBean extends BaseBean<DunningHistory> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("dunningHistory")
-	public DunningHistory init() {
-		return initEntity();
+	@Override
+	public WorkflowHistoryAction initEntity() {		
+		WorkflowHistoryAction workflowHistoryAction = super.initEntity();
+		return workflowHistoryAction;
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<DunningHistory> getPersistenceService() {
-		return dunningHistoryService;
+	protected IPersistenceService<WorkflowHistoryAction> getPersistenceService() {
+		return workflowHistoryActionService;
 	}
 
+	
+	@Override
+	protected String getListViewName() {
+		return "workflowHistoryActions";
+	}
+
+	/**
+	 * Fetch customer field so no LazyInitialize exception is thrown when we
+	 * access it from account edit view.
+	 * 
+	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
+	 */
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "action";
+	}
 }

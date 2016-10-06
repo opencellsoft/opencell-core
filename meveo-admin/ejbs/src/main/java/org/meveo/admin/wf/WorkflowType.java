@@ -1,8 +1,8 @@
 package org.meveo.admin.wf;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
-public abstract class WorkflowType<E extends BaseEntity> implements IWorkflowType<E> {
+public abstract class WorkflowType<E extends BusinessEntity> implements IWorkflowType<E> {
     protected E entity;
 
     public WorkflowType() {

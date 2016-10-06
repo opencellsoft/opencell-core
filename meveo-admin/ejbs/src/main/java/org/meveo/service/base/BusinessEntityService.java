@@ -16,14 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.payments;
+package org.meveo.service.base;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+import javax.ejb.Stateless;
 
-@Named
-@ConversationScoped
-public class DunningHistoryListBean extends DunningHistoryBean {
+import org.meveo.model.BusinessEntity;
 
-    private static final long serialVersionUID = -3037867704912788051L;
+@Stateless
+public class BusinessEntityService extends BusinessService<BusinessEntity>{
+
+	
+    public void setEntityClass(Class<BusinessEntity> clazz) {
+   	 this.entityClass = (Class<BusinessEntity>) clazz;
+   }
 }

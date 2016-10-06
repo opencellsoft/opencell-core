@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.payments;
+package org.meveo.admin.action.wf;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -56,7 +56,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Workflow} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * edit, view, delete operations). It works with Manaty custom JSF components .
  */
 @Named
 @ViewScoped
@@ -234,11 +234,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
         List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
         List<String> classNames = new ArrayList<String>();
         for (Class<?> clazz : allWFType) {
-            if (StringUtils.isBlank(query)) {
-                classNames.add(clazz.getName());
-            } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
-                classNames.add(clazz.getName());
-            }
+        	if(!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())){
+	            if (StringUtils.isBlank(query)) {
+	                classNames.add(clazz.getName());
+	            } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
+	                classNames.add(clazz.getName());
+	            }
+        	}
         }
         Collections.sort(classNames);
         return classNames;
@@ -607,7 +609,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         }
     }
     
-	@ActionMethod
+    @ActionMethod
 	public void duplicate() {
 		if (entity != null && entity.getId() != null) {
 			try {

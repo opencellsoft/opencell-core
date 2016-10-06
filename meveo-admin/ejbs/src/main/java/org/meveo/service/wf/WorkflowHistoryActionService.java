@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.admin.impl;
+package org.meveo.service.wf;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.admin.GriegDunningInputHistory;
+import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * GriegDunningInputHistoryService service implementation.
- */
 @Stateless
-public class GriegDunningInputHistoryService extends
-		PersistenceService<GriegDunningInputHistory> {
+public class WorkflowHistoryActionService extends PersistenceService<WorkflowHistoryAction> {
 
+ 
 }
