@@ -43,6 +43,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.filter.Filter;
 
 @Entity
 @Table(name = "BILLING_BILLING_RUN")
@@ -128,7 +129,7 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "LAST_TRANSACTION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
-
+    
 	@Column(name = "REJECTION_REASON", length = 255)
     @Size(max = 255)
 	private String rejectionReason;
@@ -310,7 +311,7 @@ public class BillingRun extends AuditableEntity {
         this.lastTransactionDate = lastTransactionDate;
     }
 
-    public PreInvoicingReportsDTO getPreInvoicingReports() {
+	public PreInvoicingReportsDTO getPreInvoicingReports() {
 		return preInvoicingReports;
 	}
 
