@@ -103,13 +103,13 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
     @Override
-    public Response getCategory(String id, UriInfo info) {
-        log.debug("find category by id {}", id);
+    public Response getCategory(String code, UriInfo info) {
+        log.debug("find category by code {}", code);
 
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser(), uriInfo);
+            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findByCode(code, getCurrentUser(), uriInfo);
 
             Category category = new Category();
             category.setId(String.valueOf(otcd.getId()));

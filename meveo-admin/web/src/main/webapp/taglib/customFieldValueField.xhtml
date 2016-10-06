@@ -31,7 +31,7 @@
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
 
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
-        <h:outputText value="#{field.stringValue}" rendered="#{! edit or disabled}" />
+        <h:outputText value="#{field.stringValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
         <p:inputText value="#{field.stringValue}" required="#{cft.valueRequired}" rendered="#{edit and !disabled}" label="#{cft.description}" size="30" maxlength="#{cft.maxValue}">
             <c:if test="#{cft.regExp!=null}">
                 <f:validateRegex pattern="#{cft.regExp}" />
@@ -39,7 +39,7 @@
         </p:inputText>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
-        <h:outputText value="#{field.stringValue}" rendered="#{! edit or disabled}"></h:outputText>
+        <h:outputText value="#{field.stringValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
         <c:if test="#{empty entity.id and !disabled}">
             <p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
         </c:if>
@@ -49,14 +49,14 @@
         </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
-        <h:outputText value="#{field.dateValue}" rendered="#{! edit or disabled}">
+        <h:outputText value="#{field.dateValue}" styleClass="field-value" rendered="#{! edit or disabled}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />
         </h:outputText>
         <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field.dateValue}" required="#{cft.valueRequired}" rendered="#{edit and !disabled}"
             label="#{cft.description}" />
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
-        <h:outputText value="#{field.doubleValue}" rendered="#{! edit or disabled}"></h:outputText>
+        <h:outputText value="#{field.doubleValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
         <p:inputText value="#{field.doubleValue}" required="#{cft.valueRequired}" rendered="#{edit and !disabled}" label="#{cft.description}">
             <f:convertNumber minFractionDigits="2" />
             <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
@@ -71,7 +71,7 @@
         </p:inputText>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
-        <h:outputText value="#{field.longValue}" rendered="#{! edit or disabled}"></h:outputText>
+        <h:outputText value="#{field.longValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
         <p:inputText value="#{field.longValue}" required="#{cft.valueRequired}" rendered="#{edit and !disabled}" label="#{cft.description}">
             <f:convertNumber integerOnly="true" />
             <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
@@ -86,7 +86,7 @@
         </p:inputText>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
-        <h:outputText value="#{field.entityReferenceValueForGUI.code}" rendered="#{!edit or disabled}" />
+        <h:outputText value="#{field.entityReferenceValueForGUI.code}" styleClass="field-value" rendered="#{!edit or disabled}" />
         <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" label="#{cft.description}"
             converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" var="e" itemLabel="#{e.code}"
             itemValue="#{e}" rendered="#{edit and !disabled}">

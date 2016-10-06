@@ -67,7 +67,7 @@ public class RecurringChargeInstance extends ChargeInstance {
 		this.amountWithTax = amount2;
 		this.chargeTemplate = recurringChargeTemplate;
 		this.serviceInstance = serviceInstance;
-		this.subscription = subscription;
+		this.setSubscription(subscription);
 	}
 
 	public RecurringChargeInstance() {

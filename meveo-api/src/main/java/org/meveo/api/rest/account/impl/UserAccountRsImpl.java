@@ -11,6 +11,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
@@ -23,9 +24,6 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.shared.DateUtils;
 
-/**
- * @author Edward P. Legaspi
- **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
@@ -78,7 +76,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -98,7 +96,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+            userAccountApi.remove(userAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -175,4 +173,23 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     	
     	return result;
     }
+
+	@Override
+	public ActionStatus applyProduct(ApplyProductRequestDto postData) {
+	       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            userAccountApi.applyProduct(postData, getCurrentUser());
+	        } catch (MeveoApiException e) {
+	            result.setErrorCode(e.getErrorCode());
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        } catch (Exception e) {
+	            log.error("Failed to execute API", e);
+	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+	            result.setStatus(ActionStatusEnum.FAIL);
+	            result.setMessage(e.getMessage());
+	        }
+	        return result;
+	}
 }

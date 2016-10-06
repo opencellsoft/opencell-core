@@ -16,11 +16,6 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
-
 	<ui:define name="body">
 
 		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
@@ -36,7 +31,7 @@
 			
 			<h:form>
  				<p:growl id="messages" showDetail="true" />
-				<p:dataTable var="file" value="#{userBean.fileList}" sortBy="#{file.name}">
+				<p:dataTable var="file" value="#{userBean.fileList}" sortBy="#{file.name}" resizableColumns="true">
 				    <f:facet name="header">
 				    	<p:spacer width="8" />
 				    	<p:commandButton icon="fa fa-level-up" value="Up"
@@ -89,6 +84,13 @@
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
 				</p:panel>
+				<p:panel id="downloadZipfile" rendered="#{userBean.selectedFileName==null}">
+					<p:commandButton value="#{messages['fileExplore.downloadZipfile']}" icon="ui-icon-arrowthick-1-s" ajax="false">
+                  		<p:fileDownload value="#{userBean.downloadZipFile}"/>
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+				</p:panel>
 			</h:form>
 			
 			<h:form rendered="#{userBean.selectedFileName!=null and userBean.canUserUpdateEntity()}">
@@ -124,9 +126,12 @@
              </h:form>
              
              <h:form rendered="#{userBean.selectedFileName==null and userBean.canUserUpdateEntity()}">
-                 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
+				<p:selectBooleanCheckbox id="autoUnzip" value="#{userBean.autoUnzipped}"  itemLabel="#{messages['fileExplore.unzipAutomately']}" styleClass="Padding10">
+					<p:ajax/>
+				</p:selectBooleanCheckbox>
+                <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
                      multiple="true" mode="advanced" dragDropSupport="true"
-                     fileLimit="5" update=":fileExplorer" />
+                     fileLimit="5" update=":fileExplorer" styleClass="TexAlCenter"/>
              </h:form>
 		</p:panel>
 	</ui:define>

@@ -12,10 +12,6 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 		<hftl:entityPopup id="searchServiceTemplatePopup"
 			header="#{messages['offerServiceTemplate.serviceTemplate']}"
@@ -43,47 +39,56 @@
 					<hftl:formPanel ajaxSubmit="true"
 						submitPartialProcess=":tabView:formId"
 						backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
-						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
+						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
+						enctype="multipart/form-data">
+						<hftl:decorateFormField fieldId="offerImage"
+							label="#{messages['commons.image']}"
+							rendered="#{not offerTemplateBean.entity.transient}">
+							<p:graphicImage cache="false" id="offerImage"
+								value="#{offerTemplateImageStreamer.image}" height="150"
+								width="150">
+								<f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
+							</p:graphicImage>
+							<p:fileUpload
+								fileUploadListener="#{offerTemplateBean.handleFileUpload}"
+								mode="advanced"
+								update=":tabView:formId:offerImage :tabView:formId:messages"
+								immediate="false" auto="true" sizeLimit="1000000"
+								allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileLimit="1" />
+						</hftl:decorateFormField>
 						<hftl:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
+						<hftl:formField label="#{messages['offerTemplate.name']}"
+							field="name" />
 						<hftl:formField label="#{messages['offerTemplate.description']}"
-							field="description" useConverter="false" id="description"/>
-						<hftl:formField id="offerTemplateCategoryId"
+							field="description" useConverter="false" id="description" />
+						<hftl:formField
+							label="#{messages['offerTemplate.longDescription']}"
+							field="longDescription" textArea="true" id="longDescription"
+							rows="1" />
+						<hftl:formField id="offerTemplateCategories"
 							label="#{messages['offerTemplate.category']}"
-							field="offerTemplateCategory" valueLabelField="code"
-							listElements="#{offerTemplateCategoryBean.listActive}" />
-						<hftl:decorateFormField fieldId="offerImageUpload"
-							rendered="#{offerTemplateBean.entity.transient}"
-							label="#{messages['commons.image']}">
-							<p:fileUpload id="offerImageUpload" auto="false"
-								skinSimple="true" mode="simple"
-								value="#{offerTemplateBean.uploadedFile}" />
-						</hftl:decorateFormField>
-						<hftl:decorateFormField fieldId="offerImage"
-							rendered="#{not offerTemplateBean.entity.transient}"
-							label="#{messages['commons.image']}">
-							<p:outputPanel autoUpdate="true">
-								<p:graphicImage id="offerImage" cache="false"
-									value="#{offerTemplateImageStreamer.image}"
-									height="150" width="150">
-									<f:param name="id"
-										value="#{offerTemplateBean.entity.id}"></f:param>
-								</p:graphicImage>
-								<p:fileUpload
-									fileUploadListener="#{offerTemplateBean.handleFileUpload}"
-									mode="advanced" update=":tabView:formId:messages" auto="true"
-									sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-							</p:outputPanel>
-						</hftl:decorateFormField>
+							field="offerTemplateCategories" listType="pickUpList"
+							valueLabelField="code"
+							dualListModel="#{offerTemplateBean.offerTemplateCategoriesDM}" />
 						<hftl:formField label="#{messages['commons.validFrom']}"
 							field="validFrom" />
 						<hftl:formField label="#{messages['commons.validTo']}"
 							field="validTo" />
+						<hftl:formField id="channels"
+							label="#{messages['channels.title']}" field="channels"
+							listType="pickUpList" valueLabelField="code"
+							dualListModel="#{offerTemplateBean.channelsDM}" newLine="true" />
+						<hftl:formField id="businessAccountModels"
+							label="#{messages['marketingManager.catalog.targetSegment']}"
+							field="businessAccountModels" listType="pickUpList"
+							valueLabelField="code"
+							dualListModel="#{offerTemplateBean.businessAccountModelsDM}" />
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" />
 						<hftl:customFields backingBean="#{offerTemplateBean}"
-								messagesId=":tabView:formId:messages" />
+							messagesId=":tabView:formId:messages" />
 					</hftl:formPanel>
 				</p:tab>
 
@@ -191,6 +196,11 @@
 							</ui:define>
 						</hftl:formPanel>
 					</p:panel>
+				</p:tab>
+				<p:tab title="#{messages['menu.productTemplates']}">
+					<ui:include src="productTemplateTab.xhtml">
+						<ui:param name="backingBean" value="#{offerTemplateBean}" />
+					</ui:include>
 				</p:tab>
 			</p:tabView>
 		</p:panel>

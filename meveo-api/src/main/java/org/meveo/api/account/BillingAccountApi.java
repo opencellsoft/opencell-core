@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -18,6 +19,10 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
@@ -43,6 +48,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  **/
 @SuppressWarnings("deprecation")
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BillingAccountApi extends AccountApi {
 
 	@Inject
@@ -65,7 +71,7 @@ public class BillingAccountApi extends AccountApi {
 
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
-	
+
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
 
@@ -163,9 +169,9 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;
@@ -175,8 +181,7 @@ public class BillingAccountApi extends AccountApi {
 		update(postData, currentUser, true);
 	}
 
-	public BillingAccount update(BillingAccountDto postData, User currentUser, boolean checkCustomFields)
-			throws MeveoApiException, DuplicateDefaultAccountException {
+	public BillingAccount update(BillingAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -320,20 +325,23 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			throw e;
 		}
 
 		return billingAccount;
 	}
 
-	public BillingAccountDto find(String billingAccountCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = BillingAccount.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	public BillingAccountDto find(String billingAccountCode, User user) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
 			handleMissingParameters();
 		}
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, user.getProvider());
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 		}
@@ -341,17 +349,17 @@ public class BillingAccountApi extends AccountApi {
 		return accountHierarchyApi.billingAccountToDto(billingAccount);
 	}
 
-	public void remove(String billingAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String billingAccountCode, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
 			handleMissingParameters();
 		}
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, currentUser.getProvider());
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 		}
 		try {
-			billingAccountService.remove(billingAccount);
+			billingAccountService.remove(billingAccount, currentUser);
 			billingAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -385,7 +393,7 @@ public class BillingAccountApi extends AccountApi {
 					String billingAccountCode = ba.getCode();
 					if (invoices != null && invoices.size() > 0) {
 						for (Invoice i : invoices) {
-							if (invoiceTypeService.getAdjustementCode().equals(  i.getInvoiceType().getCode())) {
+							if (invoiceTypeService.getAdjustementCode().equals(i.getInvoiceType().getCode())) {
 								Invoice4_2Dto invoiceDto = new Invoice4_2Dto(i, billingAccountCode);
 								invoicesDto.add(invoiceDto);
 							}
@@ -439,29 +447,29 @@ public class BillingAccountApi extends AccountApi {
 			log.error("Failed terminating a billingAccount with code={}. {}", postData.getCode(), e.getMessage());
 			throw new MeveoApiException("Failed terminating billingAccount with code=" + postData.getCode());
 		}
-		
+
 		return billingAccount;
 	}
-	
-	public List<CounterInstance> filterCountersByPeriod(String billingAccountCode, Date date, Provider provider) 
-			throws MeveoApiException, BusinessException {
-		
+
+	public List<CounterInstance> filterCountersByPeriod(String billingAccountCode, Date date, Provider provider) throws MeveoApiException, BusinessException {
+
 		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
-		
+
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 		}
-		
-		if(StringUtils.isBlank(date)) {
+
+		if (StringUtils.isBlank(date)) {
 			throw new MeveoApiException("date is null");
 		}
-		
+
 		return new ArrayList<>(billingAccountService.filterCountersByPeriod(billingAccount.getCounters(), date).values());
 	}
-	public void createOrUpdatePartial(BillingAccountDto billingAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+
+	public void createOrUpdatePartial(BillingAccountDto billingAccountDto, User currentUser) throws MeveoApiException, BusinessException {
 		BillingAccountDto existedBillingAccountDto = null;
 		try {
-			existedBillingAccountDto = find(billingAccountDto.getCode(), currentUser.getProvider());
+			existedBillingAccountDto = find(billingAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedBillingAccountDto = null;
 		}
@@ -511,7 +519,7 @@ public class BillingAccountApi extends AccountApi {
 				}
 				//
 				accountHierarchyApi.populateNameAddress(existedBillingAccountDto, billingAccountDto, currentUser);
-				if(!StringUtils.isBlank(billingAccountDto.getCustomFields())){
+				if (!StringUtils.isBlank(billingAccountDto.getCustomFields())) {
 					existedBillingAccountDto.setCustomFields(billingAccountDto.getCustomFields());
 				}
 				update(existedBillingAccountDto, currentUser);

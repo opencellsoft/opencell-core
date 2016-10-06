@@ -118,6 +118,11 @@ public class ChargeInstance extends BusinessEntity {
 	private Seller seller;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USER_ACCOUNT_ID")
+	protected UserAccount userAccount;
+	
+	///Might be null, for productCharges for instance
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	protected Subscription subscription;
 
@@ -280,12 +285,23 @@ public class ChargeInstance extends BusinessEntity {
 		this.seller = seller;
 	}
 
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
 	public Subscription getSubscription() {
 		return subscription;
 	}
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
+		if(subscription.getUserAccount()!=null){
+			this.setUserAccount(subscription.getUserAccount());
+		}
 	}
 
 	public TradingCurrency getCurrency() {
@@ -319,11 +335,5 @@ public class ChargeInstance extends BusinessEntity {
 	public void setPrepaid(Boolean prepaid) {
 		this.prepaid = prepaid;
 	}
-
-
-
-
-
-	
 
 }

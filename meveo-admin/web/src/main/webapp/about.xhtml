@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="layout/template.xhtml" xmlns:hftl="http://hftl.org">
+
+	<ui:define name="body">
+
+		<div style="margin: auto; width: 500px; margin-top: 20px;">
+			<h1 class="TexAlCenter">Opencell Software</h1>
+			<hr style="width: 100%" />
+
+			<h:panelGrid columns="2" style="margin-top: 50px; width: 100%">
+				<h:outputText styleClass="Fs14"
+					value="#{messages['meveoInstance.productVersion']}" />
+				<h:outputText styleClass="Fs14" value="@VERSION_NUMBER@" />
+				<h:outputText styleClass="Fs14"
+					value="#{messages['meveoInstance.buildId']}" />
+				<h:outputText styleClass="Fs14" value="@BUILD_NUMBER@" />
+				<h:outputText styleClass="Fs14"
+					value="#{messages['meveoInstance.lastVersion']}" />
+				<h:outputText styleClass="Fs14"
+					value="#{monitoringBean.getLastVersion()}" />
+				<h:outputText styleClass="Fs14"
+					value="#{messages['commons.creditAndLicenses']}" />
+			</h:panelGrid>
+
+			<div>
+				<p class="Fs14">
+					#{messages['message.about.forMoreInformation']}: <a
+						href="https://opencellsoft.com/about/">https://opencellsoft.com/about/</a>
+				</p>
+			</div>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

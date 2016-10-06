@@ -7,6 +7,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -28,6 +29,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
     @Inject
     protected CustomFieldDataEntryBean customFieldDataEntryBean;
+    
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
 
     public CustomFieldBean() {
     }
@@ -50,5 +54,5 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         String outcome = super.saveOrUpdate(killConversation);
         customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, isNew);
         return outcome;
-    }
+    }    
 }

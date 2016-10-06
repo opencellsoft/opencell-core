@@ -5,9 +5,11 @@
 	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{chartBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
 	<ui:define name="body">
 		<p:panel>
@@ -40,8 +42,7 @@
 			column2="description" />
 
 		<hftl:formPanel id="chartFormPanel" formId="formChat"
-			label="#{messages['chart.panel']}" backingBean="#{chartBean}"
-			columns="2">
+			label="#{messages['chart.panel']}" backingBean="#{chartBean}">
 
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
 

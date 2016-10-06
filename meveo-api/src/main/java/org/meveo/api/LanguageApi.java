@@ -72,18 +72,18 @@ public class LanguageApi extends BaseApi {
         tradingLanguageService.create(tradingLanguage, currentUser);
     }
 
-    public void remove(String code, Provider provider) throws MissingParameterException, EntityDoesNotExistsException {
+    public void remove(String code, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, currentUser.getProvider());
         if (tradingLanguage == null) {
             throw new EntityDoesNotExistsException(TradingLanguage.class, code);
         } else {
-            tradingLanguageService.remove(tradingLanguage);
+            tradingLanguageService.remove(tradingLanguage, currentUser);
         }
     }
 
@@ -153,4 +153,20 @@ public class LanguageApi extends BaseApi {
             update(postData, currentUser);
         }
     }
+    public void findOrCreate(String languageCode, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(languageCode)){
+            return;
+        }
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode, currentUser.getProvider());
+		if (tradingLanguage==null) {
+			Language language = languageService.findByCode(languageCode);
+			if (language==null) {
+				throw new EntityDoesNotExistsException(Language.class, languageCode);
+			}
+			tradingLanguage = new TradingLanguage();
+			tradingLanguage.setLanguage(language);
+			tradingLanguage.setPrDescription(language.getDescriptionEn());
+			tradingLanguageService.create(tradingLanguage, currentUser);
+		}
+	}
 }

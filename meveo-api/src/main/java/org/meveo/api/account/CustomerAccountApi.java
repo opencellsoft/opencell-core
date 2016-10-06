@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
@@ -21,6 +22,10 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
@@ -42,6 +47,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerAccountApi extends AccountApi {
 
 	@Inject
@@ -137,10 +143,10 @@ public class CustomerAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customerAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customerAccount;
 	}
@@ -149,8 +155,7 @@ public class CustomerAccountApi extends AccountApi {
 		update(postData, currentUser, true);
 	}
 
-	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields)
-			throws MeveoApiException, DuplicateDefaultAccountException {
+	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -247,14 +252,17 @@ public class CustomerAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), customerAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return customerAccount;
 	}
 
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
@@ -281,19 +289,19 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccountDto;
 	}
 
-	public void remove(String customerAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String customerAccountCode, User currentUser) throws MeveoApiException {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
 		}
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 		try {
-			customerAccountService.remove(customerAccount);
+			customerAccountService.remove(customerAccount, currentUser);
 			customerAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -420,17 +428,17 @@ public class CustomerAccountApi extends AccountApi {
 		}
 	}
 
-	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
+	public void removeCreditCategory(String code, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("creditCategoryCode");
 			handleMissingParameters();
 		}
-		CreditCategory creditCategory = creditCategoryService.findByCode(code, provider);
+		CreditCategory creditCategory = creditCategoryService.findByCode(code, currentUser.getProvider());
 		if (creditCategory == null) {
 			throw new EntityDoesNotExistsException(CreditCategory.class, code);
 		}
 		try {
-			creditCategoryService.remove(creditCategory);
+			creditCategoryService.remove(creditCategory, currentUser);
 			creditCategoryService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -459,16 +467,17 @@ public class CustomerAccountApi extends AccountApi {
 
 		return customerAccount;
 	}
-	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto,User currentUser) throws MeveoApiException, BusinessException{
+
+	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto, User currentUser) throws MeveoApiException, BusinessException {
 		CustomerAccountDto existedCustomerAccountDto = null;
 		try {
 			existedCustomerAccountDto = find(customerAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedCustomerAccountDto = null;
 		}
-		log.debug("createOrUpdate customerAccount {}",customerAccountDto);
+		log.debug("createOrUpdate customerAccount {}", customerAccountDto);
 		if (existedCustomerAccountDto == null) {// create
-			create(customerAccountDto,currentUser);
+			create(customerAccountDto, currentUser);
 		} else {// update
 
 			if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
@@ -518,10 +527,10 @@ public class CustomerAccountApi extends AccountApi {
 				}
 			}
 			accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto, currentUser);
-			if(StringUtils.isBlank(customerAccountDto.getCustomFields())){
+			if (StringUtils.isBlank(customerAccountDto.getCustomFields())) {
 				existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
 			}
-			update(existedCustomerAccountDto,currentUser);
+			update(existedCustomerAccountDto, currentUser);
 		}
 	}
 }

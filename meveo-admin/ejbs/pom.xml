@@ -12,11 +12,6 @@
     <packaging>jar</packaging>
     <url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
-    <properties>
-        <manaty.seam.version>3.1.0.Final</manaty.seam.version>
-        <elasticsearch.version>2.3.3</elasticsearch.version>
-    </properties>
-
     <build>
 
         <resources>
@@ -156,6 +151,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.meveo</groupId>
             <artifactId>meveo-model</artifactId>
         </dependency>
@@ -246,28 +247,31 @@
                     <groupId>commons-logging</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>lucene-core</artifactId>
-                	<groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-core</artifactId>
+                    <groupId>org.apache.lucene</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>lucene-analyzers-common</artifactId>
-                	<groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-analyzers-common</artifactId>
+                    <groupId>org.apache.lucene</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>lucene-queryparser</artifactId>
-                	<groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-queryparser</artifactId>
+                    <groupId>org.apache.lucene</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
-        
-        
-<dependency>
-    <groupId>org.elasticsearch</groupId>
-    <artifactId>elasticsearch</artifactId>
-    <version>${elasticsearch.version}</version>
-</dependency>
-		
-	    <dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
@@ -481,7 +485,7 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
-		        
+
     </dependencies>
 
     <profiles>

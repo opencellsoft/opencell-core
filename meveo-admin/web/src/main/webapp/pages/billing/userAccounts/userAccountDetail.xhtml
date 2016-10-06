@@ -5,20 +5,16 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:event type="preRenderView" listener="#{userAccountBean.preRenderView}" />
-            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
             <f:viewParam name="billingAccountId" value="#{userAccountBean.billingAccountId}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
             <f:viewParam name="mainTab" value="#{userAccountBean.activeMainTab}" />
             <f:viewParam name="tab" value="#{userAccountBean.activeTab}" />
         </f:metadata>
 
         <o:importConstants type="org.meveo.model.billing.WalletOperationStatusEnum" />
-    </ui:define>
-
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
 
     <ui:define name="body">
@@ -34,6 +30,11 @@
             searchField1Label="#{messages['billingAccount.code']}" searchField1="code" column1Label="#{messages['billingAccount.code']}" column1="code"
             selection="#{userAccountBean.entity.billingAccount}" 
             updateField=":parentTab:userAccountFormId:userAccountTab:billingAccountSelectId :parentTab:userAccountFormId:userAccountTab:billingAccountSelectId_text">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{userAccountBean.productInstance.productTemplate}" 
+            updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text">
         </hftl:entityPopup>
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
@@ -115,7 +116,7 @@
                                         required="true" popup="true" popupId="billingAccountPopup" allowEdit="false" displayOneLine="true" componentWidth="100" />
                                     <p:fieldset legend="#{messages['userAccount.userAccountPanel']}" styleClass="clearLeft">
                                         <!--Creation window fields-->
-                                        <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" validateUnique="true" size="35" required="true" />
+                                        <hftl:formField label="#{messages['businessEntity.code']}" field="code"  validateUnique="true" size="35" required="true" />
                                         <hftl:formField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" valueLabelField="code"
                                             listBean="#{providerContactBean}" />
                                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" useConverter="false" size="70"
@@ -150,8 +151,9 @@
                                         <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" size="80" maxlength="80" />
                                         <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" maxlength="10" size="10" newLine="true" />
                                         <hftl:formField label="#{messages['address.city']}" field="address" childField="city" maxlength="50" />
-                                        <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="true" field="address" childField="country"
-                                            valueLabelField="descriptionEn" valueField="countryCode" listBean="#{countryBean}" />
+                                        <hftl:formField label="#{messages['address.country']}" field="address" childField="country" maxlength="50" />
+<!--                                         <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="true" field="address" childField="country" -->
+<!--                                             valueLabelField="descriptionEn" valueField="countryCode" listBean="#{countryBean}" /> -->
                                     </p:fieldset>
                                 </p:tab>
 
@@ -189,7 +191,65 @@
                         </hftl:formPanel>
                     </p:tab>
 
-                    <c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
+					<p:tab id="productInstancesTab" title="#{messages['userAccount.tab.productInstances']}">
+						<p:messages id="applyProductMessages" />
+						<p:outputPanel id="productInstancePanel">
+							<h:form id="productInstanceResultsForm" prependId="false">
+								<p:dataTable resizableColumns="true"
+									value="#{userAccountBean.productChargeInstances}" var="entity"
+									paginator="true" rows="10" lazy="true"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+									rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid">
+									<hftl:column label="#{messages['chargeInstance.code']}"
+										field="code" />
+									<hftl:column label="#{messages['chargeInstance.description']}"
+										field="description" />
+									<hftl:column label="#{messages['chargeApplication.status']}"
+										field="status" />
+									<hftl:column
+										label="#{messages['oneShotChargeInstance.chargeDate']}"
+										field="chargeDate" isDate="true" />
+								</p:dataTable>
+
+								<p:commandButton value="#{messages['action.applyProduct']}"
+									actionListener="#{userAccountBean.initProductInstance}"
+									 update=":parentTab:applyProductPanel" oncomplete="PF('applyProductPanel').toggle()" />
+							</h:form>
+
+							<p:panel widgetVar="applyProductPanel" id="applyProductPanel"
+								update=":parentTab:applyProductPanel" toggleable="true"
+								collapsed="true">
+								<hftl:formPanel edit="true" backingBean="#{userAccountBean}"
+									entity="#{userAccountBean.productInstance}"
+									styleClass="formPanel" formId="applyProductForm"
+									showFormButtons="false">
+									<hftl:formField label="#{messages['commons.quantity']}"
+										field="quantity" required="true" />
+									<hftl:formField
+										label="#{messages['chargeApplication.applicationDate']}"
+										field="applicationDate" />
+									<hftl:formField id="productTemplateSelectedId"
+										label="#{messages['productTemplate.title']}"
+										field="productTemplate" popup="true" required="true"
+										popupId="productTemplatePopup" valueLabelField="code" />
+									<hftl:formField label="#{messages['offerTemplate.title']}"
+										field="offerTemplate" listBean="#{offerTemplateBean}"
+										entity="#{userAccountBean.productChargeInstance}"
+										valueLabelField="code" />
+
+									<h:panelGroup layout="block" styleClass="form-panel-actions">
+										<p:commandButton value="#{messages['action.save']}"
+											action="#{userAccountBean.applyProduct()}"
+											oncomplete="PF('applyProductPanel').toggle()"
+											update=":parentTab:productInstanceResultsForm :parentTab:applyProductMessages"></p:commandButton>
+									</h:panelGroup>
+								</hftl:formPanel>
+							</p:panel>
+
+						</p:outputPanel>
+					</p:tab>
+
+					<c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
                         <p:tab title="Wallet #{wallet.key}" id="tab#{wallet.key}">
                             <p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
                                 <hftl:decorateFormField label="#{messages['chargeInstance.code']}">
@@ -257,7 +317,7 @@
                                <h:form>
                                 <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" resizableColumns="true"
                                     value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
-                                    styleClass="verticalSpaceSmall">
+                                    styleClass="verticalSpaceSmall custom-grid">
                                     <p:column>
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['walletOperation.operationDate']}" />
@@ -360,7 +420,7 @@
 
             </h:panelGroup>
         </h:panelGroup>
-
+       
         <p:dialog id="userAccountTerminationPopup" header="#{messages['userAccount.accountTermination']}" widgetVar="dlg_userAccountTerminationPopup" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="700">
             <hftl:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}" styleClass="formPanel" formId="termFrm" showFormButtons="false" useCustomIdParam="true">
@@ -379,6 +439,6 @@
             </hftl:formPanel>
         </p:dialog>
 
-    </ui:define>
+	</ui:define>
 
 </ui:composition>

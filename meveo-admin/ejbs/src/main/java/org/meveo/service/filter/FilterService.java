@@ -25,6 +25,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -39,6 +40,7 @@ import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.model.filter.Projector;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldException;
@@ -183,8 +185,13 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     @SuppressWarnings("unchecked")
-    public String filteredList(Filter filter, Provider provider) throws BusinessException {
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+    public String filteredList(Filter filter, User currentUser) throws BusinessException {
+        FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
 
         try {
             Query query = fqb.getQuery(getEntityManager());
@@ -207,10 +214,15 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
+    public List<? extends IEntity> filteredListAsObjects(Filter filter, User currentUser) throws BusinessException {
+    	
     	filter = refreshOrRetrieve(filter);
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
-
+    	FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
         try {
             Query query = fqb.getQuery(getEntityManager());
             log.debug("query={}", fqb.getSqlString());
@@ -230,15 +242,20 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider) throws BusinessException {
-        Filter filter = (Filter) findByCode(filterName, provider);
-        return filteredList(filter, firstRow, numberOfRows);
+    public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, User currentUser) throws BusinessException {
+        Filter filter = (Filter) findByCode(filterName, currentUser.getProvider());
+        return filteredList(filter, firstRow, numberOfRows,currentUser);
     }
 
     @SuppressWarnings("unchecked")
-    public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows) throws BusinessException {
-        FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
-
+    public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows,User currentUser) throws BusinessException {
+    	
+    	FilteredQueryBuilder fqb = null;
+        try{
+        	fqb=getFilteredQueryBuilder(filter,currentUser);
+        }catch(Exception e){
+        	return null;
+        }
         try {
             Query query = fqb.getQuery(getEntityManager());
             log.debug("query={}", fqb.getSqlString());
@@ -335,13 +352,13 @@ public class FilterService extends BusinessService<Filter> {
     }
     
     @Override
-    public void remove(Filter filter) {
+    public void remove(Filter filter, User currentUser) throws BusinessException {
     	try {
 			customFieldTemplateService.createMissingTemplates(filter, new ArrayList<CustomFieldTemplate>(), getCurrentUser(), true, true);
 		} catch (BusinessException e) {
 			log.error("Failed to remove custom fields.", e);
 		}
-    	super.remove(filter);
+    	super.remove(filter, currentUser);
     }
 
     private void persistCustomFieldTemplates(Filter filter, User user) throws BusinessException {
@@ -533,5 +550,32 @@ public class FilterService extends BusinessService<Filter> {
 				throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 			}
 		}
+	}
+	private FilteredQueryBuilder getFilteredQueryBuilder(Filter filter,User currentUser) throws BusinessException{
+		if(filter==null||currentUser==null){
+			throw new BusinessException("filter or currentUser is null");
+		}
+		String clazzName=filter.getPrimarySelector().getTargetEntity();
+		
+		Object obj=ReflectionUtils.createObject(clazzName);
+		Provider provider=null;
+		FilteredQueryBuilder filteredQueryBuilder=null;
+		if(obj==null){
+			throw new BusinessException("Target entity "+clazzName+" is invalid");
+		}
+		if(obj instanceof IProvider||obj instanceof Provider){
+			provider=currentUser.getProvider();
+		}
+		if(obj instanceof User||obj instanceof Role || obj instanceof Provider){
+			if (currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+	            provider=null;
+	        }
+		}
+		
+		filteredQueryBuilder=new FilteredQueryBuilder(filter,provider);
+		if(provider!=null&&obj instanceof Provider){
+			filteredQueryBuilder.addSqlCriterion(filter.getPrimarySelector().getAlias()+"=:provider","provider", currentUser.getProvider());
+		}
+		return filteredQueryBuilder;
 	}
 }

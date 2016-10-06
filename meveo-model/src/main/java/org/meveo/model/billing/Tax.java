@@ -29,13 +29,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "TAX")
 @MultilanguageEntity(key = "menu.taxes", group = "Tax")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
@@ -47,7 +49,7 @@ import org.meveo.model.ObservableEntity;
 				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider")
 
 })
-public class Tax extends BusinessEntity {
+public class Tax extends BusinessCFEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
@@ -86,5 +88,4 @@ public class Tax extends BusinessEntity {
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
 	}
-
 }

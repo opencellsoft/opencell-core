@@ -1,11 +1,14 @@
 package org.meveo.api.ws.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.UsageApi;
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -14,6 +17,9 @@ import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
+import org.meveo.api.dto.usage.CatUsageDto;
+import org.meveo.api.dto.usage.UsageRequestDto;
+import org.meveo.api.dto.usage.UsageResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.InvoicingWs;
@@ -27,6 +33,9 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
 
     @Inject
     InvoicingApi invoicingApi;
+    
+    @Inject
+    private UsageApi usageApi;
 
     @Override
     public ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto) {
@@ -181,5 +190,5 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("cancelBillingRun Response={}", result);
         return result;
     }
-
+    
 }

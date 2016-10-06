@@ -20,14 +20,29 @@ public class EntityCustomizationUtils {
         String appliesToPrefix = null;
         if (Job.class.isAssignableFrom(clazz)) {
             appliesToPrefix = Job.CFT_PREFIX + "_" + ReflectionUtils.getCleanClassName(clazz.getSimpleName());
-            
+
         } else if (CustomEntityTemplate.class.isAssignableFrom(clazz)) {
             appliesToPrefix = CustomEntityTemplate.getAppliesTo(code);
-            
+
         } else {
             appliesToPrefix = ((CustomFieldEntity) clazz.getAnnotation(CustomFieldEntity.class)).cftCodePrefix();
         }
 
         return appliesToPrefix;
+    }
+
+    /**
+     * Get entity code from applies to value. Applicable to CustomEntityTempalate/Instance only
+     * 
+     * @param appliesTo An "appliesTo" value
+     * @return Entity code part of "appliesTo" value
+     */
+    public static String getEntityCode(String appliesTo) {
+        int pos = appliesTo.indexOf("_");
+        if (pos > 0) {
+            return appliesTo.substring(pos + 1);
+        } else {
+            return null;
+        }
     }
 }

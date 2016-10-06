@@ -2,6 +2,7 @@ package org.meveo.admin.action.admin.custom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -43,11 +45,7 @@ import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.index.ElasticClient;
-import org.meveo.model.index.ElasticDocument;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -90,9 +88,6 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-    
-    @Inject
-    private UserService userService;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -116,15 +111,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-    
-    @Inject
-    private EntityToDtoConverter entityToDtoConverter;
-   
-    @Inject
-    private ElasticClient elasticClient;
-    
+
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(this.getClass());    
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
@@ -135,6 +124,18 @@ public class CustomFieldDataEntryBean implements Serializable {
     public void refreshFieldsAndActions(ICustomFieldEntity entity) {
 
         initFields(entity);
+        initCustomActions(entity);
+    }
+
+    /**
+     * Explicitly refresh fields and action definitions while preserving field values. Should be used when entity customization is managed as part of some page that contains CF
+     * data entry and CF fields should be refreshed when entity customization is finished. Job template.
+     * 
+     * @param entity Entity to [re]load definitions and field values for
+     */
+    public void refreshFieldsAndActionsWhilePreserveValues(ICustomFieldEntity entity) {
+
+        refreshFieldsWhilePreservingValues(entity);
         initCustomActions(entity);
     }
 
@@ -178,7 +179,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entityUuid Entity uuid identifier
      * @return Custom field value holder
      */
-    public CustomFieldValueHolder getFieldsValuesByUUID(String entityUuid) {
+    public CustomFieldValueHolder getFieldValueHolderByUUID(String entityUuid) {
         return fieldsValues.get(entityUuid);
     }
 
@@ -219,6 +220,32 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfisAsMap, entity);
         fieldsValues.put(entity.getUuid(), entityFieldsValues);
+    }
+
+    /**
+     * Load available custom fields (templates) while preserving their values for a given entity
+     * 
+     * @param entity Entity to load definitions and field values for
+     */
+    private void refreshFieldsWhilePreservingValues(ICustomFieldEntity entity) {
+
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentProvider);
+        log.trace("Refreshing CFTS while preserving values. Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
+
+        GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
+        groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
+
+        CustomFieldValueHolder entityFieldsValues = fieldsValues.get(entity.getUuid());
+
+        // Populate new value defaults formap, list and matrix fields
+        entityFieldsValues.populateNewValueDefaults(customFieldTemplates.values(), null);
+
+        // Populate new value defaults for simple fields
+        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+            if (entityFieldsValues.getValues(cft) == null && !cft.isVersionable()) {
+                entityFieldsValues.getValues().put(cft.getCode(), Arrays.asList(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity)));
+            }
+        }
     }
 
     /**
@@ -486,7 +513,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             } else if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
-                for (CustomFieldInstance cfi : getFieldsValuesByUUID(entity.getUuid()).getValues(cft)) {
+                for (CustomFieldInstance cfi : getFieldValueHolderByUUID(entity.getUuid()).getValues(cft)) {
 
                     // Fail validation on non empty values
                     if (cfi.isValueEmptyForGui()) {
@@ -641,49 +668,59 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @throws BusinessException
      */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
-
         String uuid = entity.getUuid();
-        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid); 
-        GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
-        if(groupedCustomFields != null) {
-        	for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
-        		for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
-        			// Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
-        			// instantiates automatically)
-        			// Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-        			if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-        					|| ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
-        				if (!cfi.isTransient()) {
-        					customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
-        					log.trace("Remove empty cfi value {}", cfi);
-        				} else {
-        					log.trace("Will ommit from saving cfi {}", cfi);
-        				}
-        				
-        				// Do not update existing CF value if it is not updatable
-        			} else if (!isNewEntity && !cft.isAllowEdit()) {
-        				continue;
-        				
-        				// Existing value update
-        			} else {
-        				serializeFromGUI(entity, cfi.getCfValue(), cft);
-        				if (cfi.isTransient()) {
-        					customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, currentUser);
-        				} else {
-        					customFieldInstanceService.update(cfi, (ICustomFieldEntity) entity, currentUser);
-        				}
-        				saveChildEntities(entity, cfi.getCfValue(), cft);
-        			}
-        		}
-        	}
-        	if(BusinessEntity.class.isAssignableFrom(entity.getClass())){
-        		User creatorUser = userService.attach(((BusinessEntity)entity).getAuditable().getCreator());
-        		ElasticDocument esDoc = new ElasticDocument((BusinessEntity)entity, creatorUser.getUserName());
-        		esDoc.setCustomFieldsDto(entityToDtoConverter.getCustomFieldsDTO(entity)); 
-        		elasticClient.createOrUpdate(esDoc, entity.getClass().getName(), currentProvider.getCode());
-        	}
-        }
+        saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
     }
+
+    /**
+     * Save custom fields for a given entity
+     * 
+     * @param entity Entity, the fields relate to
+     * @param isNewEntity Is it a new entity
+     * @throws BusinessException
+     */
+    public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
+
+        CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);
+        GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
+        if (groupedCustomFields != null) {
+            for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
+                for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
+                    if (duplicateCFI) {
+                        customFieldInstanceService.detach(cfi);
+                        cfi.setId(null);
+                        cfi.setAppliesToEntity(entity.getUuid());
+                    }
+                    // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
+                    // instantiates automatically)
+                    // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
+                    if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+                            || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
+                        if (!cfi.isTransient()) {
+                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity, currentUser);
+                            log.trace("Remove empty cfi value {}", cfi);
+                        } else {
+                            log.trace("Will ommit from saving cfi {}", cfi);
+                        }
+
+                        // Do not update existing CF value if it is not updatable
+                    } else if (!isNewEntity && !cft.isAllowEdit()) {
+                        continue;
+
+                        // Existing value update
+                    } else {
+                        serializeFromGUI(entity, cfi.getCfValue(), cft);
+                        if (cfi.isTransient()) {
+                            customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity, currentUser);
+                        } else {
+                            customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity, currentUser);
+                        }
+                        saveChildEntities(entity, cfi.getCfValue(), cft);
+                    }
+                }
+            }
+            }
+        }
 
     /**
      * Get a child entity column corresponding to a given code
@@ -716,7 +753,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         initFields(cei);
 
-        CustomFieldValueHolder childEntityValueHolder = getFieldsValuesByUUID(cei.getUuid());
+        CustomFieldValueHolder childEntityValueHolder = getFieldValueHolderByUUID(cei.getUuid());
 
         mainEntityValueHolder.setSelectedChildEntity(childEntityValueHolder);
     }
@@ -796,7 +833,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param cft Custom field template
      * @throws BusinessException
      */
-    private void serializeFromGUI(ICustomFieldEntity entity, CustomFieldValue customFieldValue, CustomFieldTemplate cft) throws BusinessException {
+    private void serializeFromGUI(ICustomFieldEntity entity, CustomFieldValue customFieldValue, CustomFieldTemplate cft) {
 
         // Convert JPA object to Entity reference - just Single storage fields
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
@@ -913,7 +950,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // Remove child entities that are no longer referenced along with its custom field values
         for (CustomEntityInstance ceiNolongerReferenced : previousChildEntities) {
-            customEntityInstanceService.remove(ceiNolongerReferenced);
+            customEntityInstanceService.remove(ceiNolongerReferenced, currentUser);
         }
     }
 
@@ -1084,21 +1121,21 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save custom fields for a given entity
-     *
+     * 
      * @param entity Entity, the fields relate to
      * @throws BusinessException
      */
     public Map<CustomFieldTemplate, Object> loadCustomFieldsFromGUI(ICustomFieldEntity entity) throws BusinessException {
         Map<CustomFieldTemplate, Object> fieldMap = new HashMap<>();
         String uuid = entity.getUuid();
-        CustomFieldValueHolder entityFieldsValues = getFieldsValuesByUUID(uuid);
+        CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);
         GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
-        if(groupedCustomFields != null) {
+        if (groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
                 for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
                     CustomFieldValue cfValue = cfi.getCfValue();
                     serializeFromGUI(entity, cfValue, cft);
-                    if(CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())){
+                    if (CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())) {
                         fieldMap.put(cft, cfValue.getEntityReferenceValueForGUI());
                     } else {
                         fieldMap.put(cft, cfValue.getValue());
@@ -1109,4 +1146,62 @@ public class CustomFieldDataEntryBean implements Serializable {
         return fieldMap;
     }
 
+    /**
+     * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value
+     * 
+     * @param entity Entity, the fields relate to
+     * @throws BusinessException
+     */
+    public Map<CustomFieldTemplate, Object> getFieldValuesLatestValue(ICustomFieldEntity entity) throws BusinessException {
+        Map<CustomFieldTemplate, Object> fieldMap = new HashMap<>();
+        String uuid = entity.getUuid();
+        CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);
+        GroupedCustomField groupedCustomFields = groupedFieldTemplates.get(uuid);
+        if (groupedCustomFields != null) {
+            for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
+
+                // TODO instead of looping an preserving the last value only, could figure the latest value right away
+                for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
+                    CustomFieldValue cfValue = cfi.getCfValue();
+                    try {
+                        serializeFromGUI(entity, cfValue, cft);
+                        fieldMap.put(cft, cfValue.getValue());
+
+                    } catch (Exception e) {
+                        log.error("Failed to convert custom field to product characteristic {} {}", cft.getCode(), cfValue);
+                    }
+                }
+            }
+        }
+        return fieldMap;
+    }
+
+    /**
+     * Set values of custom fields
+     * 
+     * @param cfValues A map of custom field values with CFT as a key and CF value as a value
+     * @param entity Entity custom field values apply to
+     */
+    public void setCustomFieldValues(Map<CustomFieldTemplate, Object> cfValues, BusinessCFEntity entity) {
+
+        if (entity == null) {
+            return;
+        }
+
+        if (!groupedFieldTemplates.containsKey(entity.getUuid())) {
+            initFields(entity);
+        }
+
+        CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(entity.getUuid());
+
+        for (Entry<CustomFieldTemplate, Object> cfValueInfo : cfValues.entrySet()) {
+            CustomFieldInstance cfi = entityFieldsValues.getFirstValue(cfValueInfo.getKey().getCode());
+            if (cfi == null) {
+                // log.error("AKK not CFI found in holder for {}", cfValueInfo.getKey().getCode());
+                continue; // TODO - maybe we should add??
+            }
+            cfi.setValue(cfValueInfo.getValue());
+            deserializeForGUI(cfi.getCfValue(), cfValueInfo.getKey());
+        }
+    }
 }

@@ -11,21 +11,17 @@
         <f:metadata>
             <f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
 
-            <f:viewParam name="accessId" value="#{accessBean.objectIdFromSet}" />
+            <f:viewParam name="accessId" value="#{accessBean.objectId}" />
             <f:viewParam name="subscriptionId" value="#{accessBean.subscriptionId}" />
-            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectIdFromSet}" />
-            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
             <f:viewParam name="mainTab" value="#{accessBean.activeMainTab}" />
             <f:viewParam name="tab" value="#{accessBean.activeTab}" />
         </f:metadata>
     </ui:define>
-
-    <ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
 
 	<ui:define name="body">
 		<p:panel>

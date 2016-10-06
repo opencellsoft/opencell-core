@@ -12,22 +12,20 @@ import org.meveo.api.dto.response.BaseResponse;
 public class GetOfferTemplateCategoryResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private OfferTemplateCategoryDto offerTemplateCategory;
 
 	public OfferTemplateCategoryDto getOfferTemplateCategory() {
 		return offerTemplateCategory;
 	}
 
-	public void setOfferTemplateCategory(
-			OfferTemplateCategoryDto offerTemplateCategory) {
+	public void setOfferTemplateCategory(OfferTemplateCategoryDto offerTemplateCategory) {
 		this.offerTemplateCategory = offerTemplateCategory;
 	}
 
 	@Override
 	public String toString() {
-		return "GetOfferTemplateCategoryResponseDto [offerTemplateCategory="
-				+ offerTemplateCategory + "]";
+		return "GetOfferTemplateCategoryResponseDto [offerTemplateCategory=" + offerTemplateCategory + "]";
 	}
 
 }

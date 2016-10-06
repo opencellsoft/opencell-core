@@ -31,22 +31,22 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
-@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false  ") })
+@NamedQueries({
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false  "),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft join fetch cft.provider where cft.disabled=false and cft.indexType is not null and cft.provider=:provider") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -155,6 +155,10 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "CHE_FIELDS", length = 500)
     @Size(max = 500)
     private String childEntityFields;
+
+    @Column(name = "INDEX_TYPE", length = 10)
+    @Enumerated(EnumType.STRING)
+    private CustomFieldIndexTypeEnum indexType;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -322,45 +326,6 @@ public class CustomFieldTemplate extends BusinessEntity {
                 return DateUtils.parseDateWithPattern(defaultValue, DateUtils.DATE_TIME_PATTERN);
             }
         } catch (Exception e) {
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
-     * 
-     * @param valueToConvert Value to convert
-     * @return A value corresponding to custom field data type definition
-     */
-    public Object parseValue(String valueToConvert) {
-
-        if (valueToConvert == null) {
-            return null;
-        }
-
-        try {
-
-            if (storageType == CustomFieldStorageTypeEnum.SINGLE && !fieldType.isStoredSerialized()) {
-                if (fieldType == CustomFieldTypeEnum.DOUBLE) {
-                    return Double.parseDouble(valueToConvert);
-                } else if (fieldType == CustomFieldTypeEnum.LONG) {
-                    return Long.parseLong(valueToConvert);
-                } else if (fieldType == CustomFieldTypeEnum.STRING || fieldType == CustomFieldTypeEnum.LIST || fieldType == CustomFieldTypeEnum.TEXT_AREA) {
-                    return valueToConvert;
-                } else if (fieldType == CustomFieldTypeEnum.DATE) {
-                    return DateUtils.parseDateWithPattern(valueToConvert, DateUtils.DATE_TIME_PATTERN);
-                }
-            } else {
-
-                List<String> matrixColumnNames = getMatrixColumnCodes();
-                return CustomFieldValue.deserializeValue(valueToConvert, fieldType, storageType, matrixColumnNames);
-
-            }
-
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to parse {} for CFT {}", valueToConvert, this, e);
             return null;
         }
         return null;
@@ -535,6 +500,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setChildEntityFieldsAsList(List<String> cheFields) {
         this.childEntityFields = StringUtils.concatenate("|", cheFields);
+    }
+
+    public CustomFieldIndexTypeEnum getIndexType() {
+        return indexType;
+    }
+
+    public void setIndexType(CustomFieldIndexTypeEnum indexType) {
+        this.indexType = indexType;
     }
 
     @Override

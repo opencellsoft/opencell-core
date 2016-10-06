@@ -52,6 +52,7 @@ public class AccountHierarchyDto implements Serializable {
 	private String zipCode;
 	private String state;
 	private String city;
+	private Boolean usePrefix;
 
 	private CustomFieldsDto customFields;
 
@@ -313,6 +314,20 @@ public class AccountHierarchyDto implements Serializable {
 
 	public void setCustomerCode(String customerCode) {
 		this.customerCode = customerCode;
+	}
+
+	/**
+	 * @return the usePrefix
+	 */
+	public Boolean getUsePrefix() {
+		return usePrefix;
+	}
+
+	/**
+	 * @param usePrefix the usePrefix to set
+	 */
+	public void setUsePrefix(Boolean usePrefix) {
+		this.usePrefix = usePrefix;
 	}
 
 }

@@ -1,8 +1,8 @@
-meveo
-=====
+# Opencell
 
-meveo open source billing plateform
+**The open source solution to monetize your digital services**<br/>
+We provide a global solution to manage your subscription and usage revenue.
 
-licence : AGPLv3.0
+Licence : AGPLv3.0
 
-more info on http://meveo.info
+More info on https://opencellsoft.com

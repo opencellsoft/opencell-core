@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{businessProductModelListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['businessProductModel.search']}"
+			backingBean="#{businessProductModelListBean}" columns="1">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['BusinessEntity.description']}"
+				field="description" size="100" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['businessProductModel.title']}"
+			backingBean="#{businessProductModelListBean}" sortBy="code">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code"
+				useCustomIdParam="true" />
+			<hftl:column label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			
+			<p:column headerText="#{messages['commons.status']}">
+				<h:outputText
+					value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+					rendered="#{entity.downloaded}" />
+				<h:outputText
+					value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}"
+					rendered="#{!entity.downloaded}" />
+			</p:column>
+
+			<hftl:actionsColumn useCustomIdParam="true"
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

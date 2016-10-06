@@ -4,9 +4,11 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{lineChartBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
 	<ui:define name="body">
 
@@ -33,7 +35,7 @@
 			column2="description" />
 
 		<hftl:formPanel formId="formChat" label="#{messages['chart.panel']}"
-			backingBean="#{lineChartBean}" columns="2">
+			backingBean="#{lineChartBean}">
 
 			<hftl:formField label="#{messages['businessEntity.code']}"
 				field="code" />

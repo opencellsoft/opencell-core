@@ -9,6 +9,7 @@ import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -102,14 +103,14 @@ public class TriggeredEdrApi extends BaseApi {
         }
     }
 
-    public void remove(String triggeredEdrCode, Provider provider) throws MeveoApiException {
+    public void remove(String triggeredEdrCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (!StringUtils.isBlank(triggeredEdrCode)) {
-            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode, provider);
+            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode, currentUser.getProvider());
             if (edrTemplate == null) {
                 throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrCode);
             }
 
-            triggeredEDRTemplateService.remove(edrTemplate);
+            triggeredEDRTemplateService.remove(edrTemplate, currentUser);
         } else {
             missingParameters.add("code");
 

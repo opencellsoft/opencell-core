@@ -7,32 +7,43 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class UserAccountApi extends AccountApi {
 
 	@Inject
@@ -46,6 +57,13 @@ public class UserAccountApi extends AccountApi {
 
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
+
+	@Inject
+	private ProductTemplateService productTemplateService;
+	
+	@Inject
+	private ProductInstanceService productInstanceService;
+	
 
 	public void create(UserAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		create(postData, currentUser, true);
@@ -86,10 +104,10 @@ public class UserAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), userAccount, true, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return userAccount;
 	}
@@ -142,22 +160,25 @@ public class UserAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), userAccount, false, currentUser, checkCustomFields);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return userAccount;
 	}
 
-	public UserAccountDto find(String userAccountCode, Provider provider) throws MeveoApiException {
+	@SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter(entity = UserAccount.class), 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+	public UserAccountDto find(String userAccountCode, User user) throws MeveoApiException {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, user.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
@@ -165,19 +186,19 @@ public class UserAccountApi extends AccountApi {
 		return accountHierarchyApi.userAccountToDto(userAccount);
 	}
 
-	public void remove(String userAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String userAccountCode, User currentUser) throws MeveoApiException, BusinessException  {
 
 		if (StringUtils.isBlank(userAccountCode)) {
 			missingParameters.add("userAccountCode");
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, currentUser.getProvider());
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
 		try {
-			userAccountService.remove(userAccount);
+			userAccountService.remove(userAccount, currentUser);
 			userAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -271,7 +292,7 @@ public class UserAccountApi extends AccountApi {
 	public void createOrUpdatePartial(UserAccountDto userAccountDto,User currentUser) throws MeveoApiException, BusinessException{
 		UserAccountDto existedUserAccountDto = null;
 		try {
-			existedUserAccountDto = find(userAccountDto.getCode(), currentUser.getProvider());
+			existedUserAccountDto = find(userAccountDto.getCode(), currentUser);
 		} catch (Exception e) {
 			existedUserAccountDto = null;
 		}
@@ -303,5 +324,51 @@ public class UserAccountApi extends AccountApi {
 				update(existedUserAccountDto, currentUser);
 			}
 		}
+	}
+
+	public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		List<WalletOperationDto> result = new ArrayList<>();
+		if (StringUtils.isBlank(postData.getProduct())) {
+			missingParameters.add("product");
+		}
+		if (StringUtils.isBlank(postData.getUserAccount())) {
+			missingParameters.add("userAccount");
+		}
+		if (postData.getOperationDate() == null) {
+			missingParameters.add("operationDate");
+		}
+
+		handleMissingParameters();
+
+		Provider provider = currentUser.getProvider();
+
+		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), provider);
+		if (productTemplate == null) {
+			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
+		}
+
+		UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
+		if (userAccount == null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
+		}
+
+		if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+			throw new MeveoApiException("User account is not ACTIVE.");
+		}
+
+		List<WalletOperation> walletOperations = null;
+
+		try {
+			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(),
+					postData.getProduct(), postData.getDescription(), currentUser);
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
+					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
+			for (WalletOperation walletOperation : walletOperations) {
+				result.add(new WalletOperationDto(walletOperation));
+			}
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+		return result;
 	}
 }

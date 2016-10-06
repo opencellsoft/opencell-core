@@ -36,6 +36,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.index.ElasticClient;
 
 @Stateless
 public class CustomEntityTemplateService extends BusinessService<CustomEntityTemplate> {
@@ -49,12 +50,17 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
 
+    @Inject
+    private ElasticClient elasticClient;
+
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
     public void create(CustomEntityTemplate cet, User creator) throws BusinessException {
         super.create(cet, creator);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
+
+        elasticClient.createCETMapping(cet);
 
         try {
             permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
@@ -82,16 +88,16 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(Long id, User currentUser) throws BusinessException {
 
         CustomEntityTemplate cet = findById(id);
 
         Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), cet.getProvider());
 
         for (CustomFieldTemplate cft : fields.values()) {
-            customFieldTemplateService.remove(cft.getId());
+            customFieldTemplateService.remove(cft.getId(), currentUser);
         }
-        super.remove(id);
+        super.remove(id, currentUser);
 
         customFieldsCache.removeCustomEntityTemplate(cet);
     }
@@ -109,6 +115,10 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         } else {
             return super.list(provider, active);
         }
+    }
+
+    public List<CustomEntityTemplate> listNoCache(Provider provider) {
+        return super.list(provider, null);
     }
 
     @Override

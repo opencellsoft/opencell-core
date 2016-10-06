@@ -6,35 +6,31 @@
 	xmlns:p="http://primefaces.org/ui" 
 	template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-	<ui:define name="navigation">
-		<f:metadata>
-			<f:viewParam name="wfTransitionId" value="#{wfTransitionBean.objectId}" />
-		</f:metadata>
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="wfTransitionId" value="#{wfTransitionBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 	
 						<p:panel id="actionPlanItemsdiv"
 							rendered="#{workflowBean.edit}">
-							
+
 							<p:panel id="transitionSummarypanel" header="#{messages['dunningPlan.transition']}" >
 								<hftl:decorateFormField fieldId="fromStatus"
 								label="#{messages['dunningPlanTransition.fromStatus']}">
 								<h:outputText id="fromStatus" value="#{wfTransitionBean.entity.fromStatus}"
 									disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
-		
+
 								<hftl:decorateFormField fieldId="toStatus"
 									label="#{messages['dunningPlanTransition.toStatus']}">
 									<h:outputText id="toStatus"
 										value="#{wfTransitionBean.entity.toStatus}"
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
-								
+
 								<hftl:decorateFormField fieldId="conditionEl"
 									label="#{messages['dunningPlanTransition.conditionEl']}">
 									<h:outputText id="conditionEl"
@@ -42,7 +38,7 @@
 										disabled="true" style="font-weight:bold;" />
 								</hftl:decorateFormField>
 						    </p:panel>
-							
+
 							<hftl:formPanel
 								formId="formActionPlanItems" edit="#{workflowBean.edit}"
 								label="#{messages['dunningPlan.actions']}"
@@ -58,7 +54,7 @@
 								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" rows="1" maxlength="2000" isMessage="true"
 									edit="#{workflowBean.edit}" />
-									
+
 								<ui:param name="buttons" value="true" />
 			                    <ui:define name="buttons">
 									<p:commandButton rendered="#{wfAction.id==null}"
@@ -84,7 +80,7 @@
 							</hftl:formPanel>
 
 						</p:panel>
-						
+
 						<p:panel id="actionPlanItems_panel">
 							<h:form id="actionItems_form">
 								<hftl:dataList backingBean="#{actionPlanItemBean}"

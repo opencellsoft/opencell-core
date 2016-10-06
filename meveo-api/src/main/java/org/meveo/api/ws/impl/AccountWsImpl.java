@@ -2,7 +2,6 @@ package org.meveo.api.ws.impl;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -18,8 +17,10 @@ import org.meveo.api.account.TitleApi;
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -51,6 +52,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.ParentEntitiesResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
@@ -65,9 +67,6 @@ import org.meveo.api.ws.AccountWs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
@@ -144,7 +143,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
-            result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
+            result.setCustomer(customerApi.find(customerCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -164,7 +163,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.remove(customerCode, getCurrentUser().getProvider());
+            customerApi.remove(customerCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -224,7 +223,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.removeBrand(brandCode, getCurrentUser().getProvider());
+            customerApi.removeBrand(brandCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -244,7 +243,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.removeCategory(categoryCode, getCurrentUser().getProvider());
+            customerApi.removeCategory(categoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -324,7 +323,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.remove(customerAccountCode, getCurrentUser().getProvider());
+            customerAccountApi.remove(customerAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -404,7 +403,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.removeCreditCategory(creditCategoryCode, getCurrentUser().getProvider());
+            customerAccountApi.removeCreditCategory(creditCategoryCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -464,7 +463,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser().getProvider()));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -484,7 +483,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.remove(billingAccountCode, getCurrentUser().getProvider());
+            billingAccountApi.remove(billingAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -544,7 +543,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -564,7 +563,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+            userAccountApi.remove(userAccountCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -644,7 +643,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.remove(accessCode, subscriptionCode, getCurrentUser().getProvider());
+            accessApi.remove(accessCode, subscriptionCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -764,7 +763,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         CustomersResponseDto result = new CustomersResponseDto();
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));
+            result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1566,6 +1565,45 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
             for (CounterInstance ci : counters) {
                 result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
             }
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+	@Override
+	public ActionStatus applyProduct(ApplyProductRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+        	userAccountApi.applyProduct(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+	}
+
+    public ParentEntitiesResponseDto findParents(CRMAccountTypeSearchDto searchDto) {
+        ParentEntitiesResponseDto result = new ParentEntitiesResponseDto();
+
+        try {
+            result.setParentEntities(accountHierarchyApi.getParentList(searchDto, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

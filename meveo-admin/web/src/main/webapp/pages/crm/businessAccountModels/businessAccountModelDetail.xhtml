@@ -4,12 +4,8 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="businessAccountModelId" value="#{businessAccountModelBean.objectIdFromSet}" />
+            <f:viewParam name="businessAccountModelId" value="#{businessAccountModelBean.objectId}" />
         </f:metadata>
-    </ui:define>
-
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
 
     <ui:define name="body">

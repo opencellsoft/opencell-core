@@ -11,12 +11,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -106,6 +108,17 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/list")
     SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
 
+    /**
+     * List All Subscriptions with pagination
+     * 
+     * @param pageSize
+     * @param pageNumber
+     * @return
+     */
+    @GET
+    @Path("/listAll")
+    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber);
+
     @GET
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
@@ -113,4 +126,13 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(SubscriptionDto postData);
+
+    /**
+     * Apply a product on a subscription.
+     * @param ApplyProductRequestDto subscription field must be set
+     * @return
+     */
+    @POST
+    @Path("/applyProduct")
+    ActionStatus applyProduct(ApplyProductRequestDto postData);
 }

@@ -69,14 +69,14 @@ import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -116,12 +116,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected PermissionService permissionService;
 
     @Inject
-    protected CustomFieldTemplateService customFieldTemplateService;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     private CatMessagesService catMessagesService;
 
     @Inject
@@ -132,6 +126,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
+
+    @Inject
+    private ElasticClient elasticClient;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -167,13 +164,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backViewSave;
 
     /**
-     * Request parameter. Used for loading in object by its id.
-     */
-    @Inject
-    @RequestParam("objectId")
-    private Instance<Long> objectIdFromParam;
-
-    private Long objectIdFromSet;
+    * Object identifier to load
+    */
+    private Long objectId;
 
     /** Helper field to enter language related field values. */
     protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
@@ -315,13 +308,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private void loadMultiLanguageFields() {
 
-        if (!isMultilanguageEntity()) {
+        if (!isMultilanguageEntity()||!(entity instanceof BusinessEntity)) {
             return;
         }
 
         languageMessagesMap.clear();
+        BusinessEntity businessEntity=(BusinessEntity)entity;
 
-        for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz) ,businessEntity.getCode(),currentProvider)) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
@@ -390,20 +384,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
 
+        // Save description translations
         if (!isMultilanguageEntity()) {
             entity = saveOrUpdate(entity);
 
-        } else {
+        } else if (entity instanceof BusinessEntity) {
             if (entity.getId() != null) {
 
-                for (String msgKey : languageMessagesMap.keySet()) {
-                    String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
+                for (String languageKey : languageMessagesMap.keySet()) {
+                    String description = languageMessagesMap.get(languageKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
                         catMessagesService.update(catMsg, getCurrentUser());
                     } else {
-                        CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                        CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
                         catMessagesService.create(catMessages, getCurrentUser());
                     }
                 }
@@ -415,7 +410,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, msgKey, description);
                     catMessagesService.create(catMessages, getCurrentUser());
                 }
             }
@@ -471,7 +466,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             entity = getPersistenceService().update(entity, getCurrentUser());
         }
 
-        objectIdFromSet = (Long) entity.getId();
+        objectId = (Long) entity.getId();
 
         return entity;
     }
@@ -532,10 +527,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * TODO
+     * Get navigation view link name for a current entity class
      */
     public String getEditViewName() {
-        String className = clazz.getSimpleName();
+        return BaseBean.getEditViewName(clazz);
+    }
+
+    /**
+     * Convert entity class to a detail view name
+     * 
+     * @param clazz Entity class
+     * @return Navigation view link name
+     */
+    @SuppressWarnings("rawtypes")
+    public static String getEditViewName(Class clazz) {
+        String className = ReflectionUtils.getCleanClassName(clazz.getSimpleName());
         StringBuilder sb = new StringBuilder(className);
         sb.append("Detail");
         char[] dst = new char[1];
@@ -576,7 +582,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete(Long id) {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().remove(id);
+            getPersistenceService().remove(id, getCurrentUser());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -596,7 +602,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete() {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
-            getPersistenceService().remove((Long) getEntity().getId());
+            getPersistenceService().remove((Long) getEntity().getId(), getCurrentUser());
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -626,7 +632,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
                 log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
 
-                getPersistenceService().remove(idsToDelete);
+                getPersistenceService().remove(idsToDelete, getCurrentUser());
                 getPersistenceService().commit();
                 messages.info(new BundleKey("messages", "delete.entitities.successful"));
             } else {
@@ -854,6 +860,25 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 protected List<String> getListFieldsToFetchImpl() {
                     return getListFieldsToFetch();
                 }
+
+                @Override
+                protected ElasticClient getElasticClientImpl() {
+                    return elasticClient;
+                }
+
+                @Override
+                public User getCurrentUser() {
+                    return BaseBean.this.getCurrentUser();
+                }
+                
+                @Override
+                protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
+                    String fullTextValue = super.getFullTextSearchValue(loadingFilters);
+                    if (fullTextValue == null) {
+                        return (String) filters.get(ESBasedDataModel.FILTER_FULL_TEXT);
+                    }
+                    return fullTextValue;
+                }            
             };
         }
 
@@ -897,23 +922,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public Long getObjectId() {
-        if (objectIdFromSet == null && objectIdFromParam != null && objectIdFromParam.get() != null) {
-            objectIdFromSet = objectIdFromParam.get();
-        }
-
-        return objectIdFromSet;
+        return objectId;
     }
 
     public void setObjectId(Long objectId) {
-        objectIdFromSet = objectId;
-    }
-
-    public void setObjectIdFromSet(Long objectIdFromSet) {
-        this.objectIdFromSet = objectIdFromSet;
-    }
-
-    public Long getObjectIdFromSet() {
-        return objectIdFromSet;
+        this.objectId = objectId;
     }
 
     /**
@@ -921,17 +934,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return
      */
-    public boolean isEdit() {
-        return true;
-    }
+	public boolean isEdit() {
+		if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit.get())) {
+			return true;
+		}
+
+		return Boolean.valueOf(edit.get());
+	}
 
     protected void clearObjectId() {
-        objectIdFromParam = null;
-        objectIdFromSet = null;
-    }
-
-    public void onRowSelect(SelectEvent event) {
-
+        objectId = null;
     }
 
     protected User getCurrentUser() {

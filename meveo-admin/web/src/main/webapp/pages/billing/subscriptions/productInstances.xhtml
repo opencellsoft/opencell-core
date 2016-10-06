@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition>
+
+	<p:tab id="productInstancesTab"
+		title="#{messages['userAccount.tab.productInstances']}">
+		<p:messages id="applyProductMessages" />
+		<p:outputPanel id="productInstancePanel">
+			<h:form id="productInstanceResultsForm" prependId="false">
+				<p:dataTable resizableColumns="true"
+					value="#{backingBean.getProductInstances()}" var="entity"
+					paginator="true" rows="10" lazy="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid">
+					<hftl:column label="#{messages['chargeInstance.code']}"
+						field="code" noLinkToView="true" />
+					<hftl:column label="#{messages['chargeInstance.description']}"
+						field="description" />
+					<hftl:column
+						label="#{messages['chargeApplication.applicationDate']}"
+						field="applicationDate" isDate="true" />
+					<hftl:column label="#{messages['commons.quantity']}"
+						field="quantity" converter="bigDecimal4DigitsConverter" />
+				</p:dataTable>
+
+				<p:commandButton value="#{messages['action.applyProduct']}"
+					actionListener="#{backingBean.initProductInstance}"
+					update=":subscriptionTab:applyProductPanel"
+					oncomplete="PF('applyProductPanel').toggle()" />
+			</h:form>
+
+			<p:panel widgetVar="applyProductPanel" id="applyProductPanel"
+				update=":subscriptionTab:applyProductPanel" toggleable="true"
+				collapsed="true">
+				<hftl:formPanel edit="true" backingBean="#{backingBean}"
+					entity="#{backingBean.productInstance}" styleClass="formPanel"
+					formId="applyProductForm" showFormButtons="false">
+					<hftl:formField label="#{messages['commons.quantity']}"
+						field="quantity" required="true" />
+					<hftl:formField
+						label="#{messages['chargeApplication.applicationDate']}"
+						field="applicationDate" />
+					<hftl:formField id="productTemplateSelectedId"
+						label="#{messages['productTemplate.title']}"
+						field="productTemplate" popup="true" required="true"
+						popupId="productTemplatePopup" valueLabelField="code" />
+
+					<h:panelGroup layout="block" styleClass="form-panel-actions">
+						<p:commandButton value="#{messages['action.save']}"
+							action="#{backingBean.applyProduct()}"
+							oncomplete="PF('applyProductPanel').toggle()"
+							update=":subscriptionTab:productInstanceResultsForm :subscriptionTab:applyProductMessages"></p:commandButton>
+					</h:panelGroup>
+				</hftl:formPanel>
+			</p:panel>
+		</p:outputPanel>
+	</p:tab>
+
+</ui:composition>
+
+</html>

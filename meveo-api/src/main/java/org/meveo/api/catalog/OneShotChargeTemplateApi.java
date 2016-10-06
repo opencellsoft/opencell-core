@@ -168,15 +168,15 @@ public class OneShotChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMsg = new CatMessages(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMsg, currentUser);
             }
@@ -230,13 +230,13 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages( chargeTemplate.getCode(),OneShotChargeTemplate.class.getSimpleName(), ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
                         catMessagesService.update(catMsg, currentUser);
                     } else {
-                        CatMessages catMessages = new CatMessages(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                        CatMessages catMessages = new CatMessages(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
                             ld.getDescription());
                         catMessagesService.create(catMessages, currentUser);
                     }
@@ -285,9 +285,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 
@@ -309,7 +309,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
         result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -318,22 +318,19 @@ public class OneShotChargeTemplateApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException  {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
             handleMissingParameters();
         }
         // check if code already exists
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider);
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, currentUser.getProvider());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        // remove cat messages
-        catMessagesService.batchRemove(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
-
-        oneShotChargeTemplateService.remove(chargeTemplate);
+        oneShotChargeTemplateService.remove(chargeTemplate, currentUser);
 
     }
 
@@ -365,7 +362,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
                 try {
-                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(provider, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
+                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(currentUser, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
                         null, null, null, true);
                     if (unitPrice != null) {
                         oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());

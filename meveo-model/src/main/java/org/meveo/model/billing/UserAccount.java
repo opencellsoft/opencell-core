@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -214,5 +215,15 @@ public class UserAccount extends AccountEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[]{billingAccount};
+	}
+
+	@Override
+	public BusinessEntity getParentEntity() {
+		return billingAccount;
+	}
+	
+	@Override
+	public Class<? extends BusinessEntity> getParentEntityType() {
+		return BillingAccount.class;
 	}
 }

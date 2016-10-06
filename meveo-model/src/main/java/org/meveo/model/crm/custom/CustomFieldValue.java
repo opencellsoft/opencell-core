@@ -23,6 +23,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +192,7 @@ public class CustomFieldValue implements Serializable {
      */
     public void setEntityReferenceValue(EntityReferenceWrapper entityReferenceValue) {
         this.entityReferenceValue = entityReferenceValue;
-        serializeValue();
+        serializeValue(entityReferenceValue);
     }
 
     // public String getSerializedValue() {
@@ -215,7 +216,7 @@ public class CustomFieldValue implements Serializable {
      */
     public void setListValue(List<Object> listValue) {
         this.listValue = listValue;
-        serializeValue();
+        serializeValue(listValue);
     }
 
     public Map<String, Object> getMapValue() {
@@ -231,7 +232,7 @@ public class CustomFieldValue implements Serializable {
      */
     public void setMapValue(Map<String, Object> mapValue) {
         this.mapValue = mapValue;
-        serializeValue();
+        serializeValue(mapValue);
     }
 
     public void setEntityReferenceValueForGUI(BusinessEntity businessEntity) {
@@ -614,20 +615,43 @@ public class CustomFieldValue implements Serializable {
      * <li>"matrix_"<value classname eg. String>|<key names>|<json representation of Map></li>
      * </ul>
      */
+    protected void serializeValue(Object valueToSerialize) {
+
+        String sValue = CustomFieldValue.serializeValueToString(valueToSerialize);
+
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.trace("Serialized to value {}", sValue);
+        serializedValue = sValue;
+
+    }
+
+    /**
+     * Serialise a reference to an entity, list or map of values to a Json string, stored in serializedValue field in the following format:
+     * <ul>
+     * <li>"entity"|<json representation of EntityReferenceWrapper></li>
+     * <li>"list_"<value classname eg. String>|<json representation of List></li>
+     * <li>"map_"<value classname eg. String>|<json representation of Map></li>
+     * <li>"matrix_"<value classname eg. String>|<key names>|<json representation of Map></li>
+     * </ul>
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected void serializeValue() {
+    public static String serializeValueToString(Object valueToSerialize) {
+
+        if (valueToSerialize == null) {
+            return null;
+        }
 
         GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-dd-MM HH:mm:ss zzz");
         Gson gson = builder.create();
 
         String sValue = null;
-        if (entityReferenceValue != null && !entityReferenceValue.isEmpty()) {
-            sValue = "entity" + SERIALIZATION_SEPARATOR + gson.toJson(entityReferenceValue);
+        if (valueToSerialize instanceof EntityReferenceWrapper && !((EntityReferenceWrapper) valueToSerialize).isEmpty()) {
+            sValue = "entity" + SERIALIZATION_SEPARATOR + gson.toJson(valueToSerialize);
 
-        } else if (listValue != null && !listValue.isEmpty()) {
+        } else if (valueToSerialize instanceof List && !((List) valueToSerialize).isEmpty()) {
 
             // Find the first not null value to determine item class.
-            Iterator iterator = listValue.iterator();
+            Iterator iterator = ((List) valueToSerialize).iterator();
             Object item = iterator.next();
             while (item == null && iterator.hasNext()) {
                 item = iterator.next();
@@ -635,21 +659,21 @@ public class CustomFieldValue implements Serializable {
             // If non found - don't save any value
             if (item != null) {
                 Class itemClass = item.getClass();
-                sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(listValue);
+                sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((List) valueToSerialize));
             } else {
                 sValue = null;
             }
 
-        } else if (mapValue != null && !mapValue.isEmpty()) {
+        } else if (valueToSerialize instanceof Map && !((Map) valueToSerialize).isEmpty()) {
 
             // Handle map that stores matrix type values
-            if (mapValue.containsKey(MAP_KEY)) {
+            if (((Map) valueToSerialize).containsKey(MAP_KEY)) {
 
                 Map<String, Object> mapCopy = new LinkedHashMap<String, Object>();
-                mapCopy.putAll(mapValue);
+                mapCopy.putAll(((Map) valueToSerialize));
                 mapCopy.remove(MAP_KEY);
 
-                Object columnNames = mapValue.get(MAP_KEY);
+                Object columnNames = ((Map) valueToSerialize).get(MAP_KEY);
                 String columnNamesString = null;
                 if (columnNames instanceof String) {
                     columnNamesString = (String) columnNames;
@@ -676,7 +700,7 @@ public class CustomFieldValue implements Serializable {
             } else {
 
                 // Find the first not null value to determine item class.
-                Iterator iterator = mapValue.values().iterator();
+                Iterator iterator = ((Map) valueToSerialize).values().iterator();
                 Object item = iterator.next();
                 while (item == null && iterator.hasNext()) {
                     item = iterator.next();
@@ -684,16 +708,13 @@ public class CustomFieldValue implements Serializable {
                 // If non found - don't save any value
                 if (item != null) {
                     Class itemClass = item.getClass();
-                    sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(mapValue);
+                    sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((Map) valueToSerialize));
                 } else {
                     sValue = null;
                 }
             }
         }
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.trace("Serialized to value {}", sValue);
-        serializedValue = sValue;
-
+        return sValue;
     }
 
     /**
@@ -703,28 +724,34 @@ public class CustomFieldValue implements Serializable {
      * @param fieldType Field type
      * @param storageType Storage type
      */
-    public static Object deserializeValue(String jsonValue, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, List<String> matrixColumnNames) {
+    public static Object deserializeValueFromString(String jsonValue, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, List<String> matrixColumnNames) {
 
         if (jsonValue == null) {
             return null;
         }
 
         String serializedValue = null;
-        if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.ENTITY) {
-            serializedValue = "entity" + SERIALIZATION_SEPARATOR + jsonValue;
+        
+        // Add seralization metadata if it is not available in json string
+        if (!jsonValue.contains(SERIALIZATION_SEPARATOR) || jsonValue.indexOf("{")<  jsonValue.indexOf(SERIALIZATION_SEPARATOR)) {
+            if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.ENTITY) {
+                serializedValue = "entity" + SERIALIZATION_SEPARATOR + jsonValue;
 
-        } else if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.CHILD_ENTITY) {
-            serializedValue = "childEntity" + SERIALIZATION_SEPARATOR + jsonValue;
+            } else if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.CHILD_ENTITY) {
+                serializedValue = "childEntity" + SERIALIZATION_SEPARATOR + jsonValue;
 
-        } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
-            serializedValue = "list_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
+            } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
+                serializedValue = "list_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
 
-        } else if (storageType == CustomFieldStorageTypeEnum.MAP) {
-            serializedValue = "map_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
+            } else if (storageType == CustomFieldStorageTypeEnum.MAP) {
+                serializedValue = "map_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
 
-        } else if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
-            serializedValue = "matrix_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
-                    + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + jsonValue;
+            } else if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
+                serializedValue = "matrix_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
+                        + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + jsonValue;
+            }
+        } else {
+            serializedValue = jsonValue;
         }
 
         Object deserializedValue = CustomFieldValue.deserializeValue(serializedValue);
@@ -961,5 +988,80 @@ public class CustomFieldValue implements Serializable {
         }
         builder.append("]");
         return builder.toString();
+    }
+
+    public String getSerializedValue() {
+        return serializedValue;
+    }
+
+    /**
+     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
+     * 
+     * @param valueToConvert Value to convert
+     * @return A value corresponding to custom field data type definition
+     */
+    public static Object parseValueFromString(CustomFieldTemplate cft, String valueToConvert) {
+
+        if (valueToConvert == null) {
+            return null;
+        }
+
+        try {
+
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && !cft.getFieldType().isStoredSerialized()) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                    return Double.parseDouble(valueToConvert);
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+                    return Long.parseLong(valueToConvert);
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST
+                        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+                    return valueToConvert;
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                    return DateUtils.parseDateWithPattern(valueToConvert, DateUtils.DATE_TIME_PATTERN);
+                }
+            } else {
+
+                List<String> matrixColumnNames = cft.getMatrixColumnCodes();
+                return CustomFieldValue.deserializeValueFromString(valueToConvert, cft.getFieldType(), cft.getStorageType(), matrixColumnNames);
+
+            }
+
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+            log.error("Failed to parse {} for CFT {}", valueToConvert, cft, e);
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Convert (serialize) object according to custom field data type definition to a string value (serialized value in case of list, map, entity, childEntity)
+     * 
+     * @param valueToConvert Value to convert
+     * @return A value corresponding to custom field data type definition
+     */
+    public static String convertValueToString(CustomFieldTemplate cft, Object valueToConvert) {
+
+        if (valueToConvert == null) {
+            return null;
+        }
+
+        try {
+
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && !cft.getFieldType().isStoredSerialized()) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                    return DateUtils.formatDateWithPattern((Date) valueToConvert, DateUtils.DATE_TIME_PATTERN);
+                } else {
+                    return valueToConvert.toString();
+                }
+            } else {
+                return CustomFieldValue.serializeValueToString(valueToConvert);
+            }
+
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+            log.error("Failed to convert {} to String for CFT {}", valueToConvert, cft, e);
+            return null;
+        }
     }
 }

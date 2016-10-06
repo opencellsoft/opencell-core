@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.IEntity;
 
 /**
@@ -63,6 +64,10 @@ public class ExportTemplate {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public String getHumanName(){
+        return ReflectionUtils.getHumanClassName(name);
     }
 
     public Class<? extends IEntity> getEntityToExport() {

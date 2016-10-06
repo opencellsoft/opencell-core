@@ -90,7 +90,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country, getCurrentUser().getProvider());
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

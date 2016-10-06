@@ -13,10 +13,6 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body"> 
 	
 		<hftl:searchPanel label="#{messages['chargeTemplate.search']}" renderNewButton="false"
@@ -29,7 +25,7 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['chargeTemplate.title']}"
-		     backingBean="#{chargeTemplateListBean}" sortBy="code">
+		     backingBean="#{chargeTemplateListBean}" sortBy="code" dataModel="#{chargeTemplateListBean.getChargeTemplates()}">
 			
 			<p:column width="25%">
 			<f:facet name="header">

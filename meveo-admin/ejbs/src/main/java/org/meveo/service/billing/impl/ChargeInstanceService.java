@@ -50,26 +50,43 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	public P findByCodeAndService(String code, Long subscriptionId) {
-		return findByCodeAndService(getEntityManager(), code, subscriptionId);
-	}
-
 	@SuppressWarnings("unchecked")
-	public P findByCodeAndService(EntityManager em, String code, Long subscriptionId) {
+	public P findByCodeAndService(String code, Long subscriptionId) {
 		P chargeInstance = null;
 		try {
 			log.debug("start of find {} by code (code={}) ..", "ChargeInstance", code);
 			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-			chargeInstance = (P) qb.getQuery(em).getSingleResult();
+			chargeInstance = (P) qb.getQuery(getEntityManager()).getSingleResult();
 			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ChargeInstance", code,
 					chargeInstance != null });
 
 		} catch (NoResultException nre) {
 			log.warn("findByCodeAndService : no charges have been found");
 		} catch (Exception e) {
-			log.error("findByCodeAndService error={} ", e);
+			log.error("findByCodeAndService error={} ", e.getMessage());
+		}
+		return chargeInstance;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public P findByCodeAndService(String code, Long subscriptionId, InstanceStatusEnum status) {
+		P chargeInstance = null;
+		try {
+			log.debug("start of find {} by code (code={}) ..", "ChargeInstance", code);
+			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
+			qb.addCriterionEntity("c.status", status);
+			chargeInstance = (P) qb.getQuery(getEntityManager()).getSingleResult();
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ChargeInstance", code,
+					chargeInstance != null });
+
+		} catch (NoResultException nre) {
+			log.warn("findByCodeAndService : no charges have been found");
+		} catch (Exception e) {
+			log.error("findByCodeAndService error={} ", e.getMessage());
 		}
 		return chargeInstance;
 	}

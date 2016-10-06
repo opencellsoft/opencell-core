@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+            <f:viewParam name="objectId" value="#{bundleTemplateBean.objectId}" />
+        </f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="bundleTemplates"
+						value="#{messages['menu.bundleTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hftl:formPanel label="#{messages['menu.bundleTemplates']}"
+			backingBean="#{bundleTemplateBean}" showEnableDisableButton="true">
+
+			<ui:include src="../productTemplates/productTemplateDetailCommon.xhtml">
+				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
+				<ui:param name="mode" value="BUNDLE" />
+			</ui:include>
+			
+		</hftl:formPanel>
+
+	</ui:define>
+</ui:composition>

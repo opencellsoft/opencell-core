@@ -14,15 +14,18 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.service.admin.impl.MeveoModuleService;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.order.OrderService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
+import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
+import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -34,21 +37,26 @@ import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.LineChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 
-public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends ChartEntityModel<T, CM>> extends
-		BaseBean<T> {
+public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends ChartEntityModel<T, CM>> extends BaseBean<T> {
 
 	@Inject
 	protected ChartService<T> chartService;
 
 	@Inject
 	protected MeasuredValueService mvService;
-	
+
+	@Inject
+	protected MeasurableQuantityService mqService;
+
+	@Inject
+	private OrderService orderService;
+
 	protected EM chartEntityModel;
 
 	protected List<EM> chartEntityModels = new ArrayList<EM>();
 
 	private static final long serialVersionUID = 5241132812597358412L;
-	
+
 	public ChartEntityBean() {
 		super();
 	}
@@ -68,16 +76,14 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 	}
 
 	@SuppressWarnings("unchecked")
-	public EM buildChargeEntityModel(Date fromDate, Date toDate, MeasurableQuantity mq, T chart, String dimension1,
-			String dimension2, String dimension3, String dimension4) {
+	public EM buildChargeEntityModel(Date fromDate, Date toDate, MeasurableQuantity mq, T chart, String dimension1, String dimension2, String dimension3, String dimension4) {
 		EM result = null;
 		// log.debug(
 		// "buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
 		// + " dimension3={}, dimension4={}",
 		// mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3,
 		// dimension4);
-		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(mq.getCode(), fromDate, toDate,
-				mq.getMeasurementPeriod(), mq);
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(mq.getCode(), fromDate, toDate, mq.getMeasurementPeriod(), mq);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
 		ChartSeries mvSeries = new ChartSeries();
@@ -96,8 +102,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 				// measuredValue.getDimension1(), measuredValue.getDimension2(),
 				// measuredValue.getDimension3(),
 				// measuredValue.getDimension4());
-				if (measuredValue.getValue() != null
-						&& (StringUtils.isBlank(dimension1) || dimension1.equals(measuredValue.getDimension1()))
+				if (measuredValue.getValue() != null && (StringUtils.isBlank(dimension1) || dimension1.equals(measuredValue.getDimension1()))
 						&& (StringUtils.isBlank(dimension2) || dimension2.equals(measuredValue.getDimension2()))
 						&& (StringUtils.isBlank(dimension3) || dimension3.equals(measuredValue.getDimension3()))
 						&& (StringUtils.isBlank(dimension4) || dimension4.equals(measuredValue.getDimension4()))) {
@@ -131,10 +136,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			Collections.sort(keyList);
 			Collections.reverseOrder();
 			for (String key : keyList) {
-				mvSeries.set(
-						key,
-						additive ? aggregatedValues.get(key) : (aggregatedValues.get(key).divide(new BigDecimal(
-								aggregatedCount.get(key).size()))));
+				mvSeries.set(key, additive ? aggregatedValues.get(key) : (aggregatedValues.get(key).divide(new BigDecimal(aggregatedCount.get(key).size()))));
 			}
 		}
 		if (empty) {
@@ -143,8 +145,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		}
 		boolean isAdmin = chart.getAuditable().getCreator().hasRole("administrateur");
 		boolean equalUser = chart.getAuditable().getCreator().getId() == getCurrentUser().getId();
-		boolean sameRoleWithChart = chart.getRole() != null ? getCurrentUser()
-				.hasRole(chart.getRole().getDescription()) : false;
+		boolean sameRoleWithChart = chart.getRole() != null ? getCurrentUser().hasRole(chart.getRole().getDescription()) : false;
 		chart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 		if (chart instanceof BarChart) {
 			BarChartModel chartModel = new BarChartModel();
@@ -195,8 +196,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 		for (T chart : chartList) {
 			MeasurableQuantity mq = chart.getMeasurableQuantity();
-			EM chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, chart, null, null,
-					null, null);
+			EM chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, chart, null, null, null, null);
 			chartEntityModels.add(chartEntityModel);
 			log.debug("add model {}", mq.getCode());
 		}
@@ -213,8 +213,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 				toDate.setTime(fromDate.getTime());
 				toDate.add(Calendar.MONTH, 1);
 				MeasurableQuantity mq = getEntity().getMeasurableQuantity();
-				chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, entity, null, null,
-						null, null);
+				chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, entity, null, null, null, null);
 			}
 		}
 		return chartEntityModel;
@@ -228,8 +227,8 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		log.debug("setModel index={}", modelIndex);
 		EM curr = chartEntityModels.get(modelIndex);
 		MeasurableQuantity mq = curr.getChart().getMeasurableQuantity();
-		curr.setModel(buildChargeEntityModel(curr.getMinDate(), curr.getMaxDate(), mq, curr.getChart(),
-				curr.getDimension1(), curr.getDimension2(), curr.getDimension3(), curr.getDimension4()).getModel());
+		curr.setModel(buildChargeEntityModel(curr.getMinDate(), curr.getMaxDate(), mq, curr.getChart(), curr.getDimension1(), curr.getDimension2(), curr.getDimension3(),
+				curr.getDimension4()).getModel());
 	}
 
 	public List<EM> getChartEntityModels() {
@@ -362,4 +361,164 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		chartModel.setLegendRows(pieChart.getLegendRows());
 	}
 
+	public List<StatModel> getStats() {
+		List<StatModel> result = new ArrayList<StatModel>();
+		List<MeasurableQuantity> mqList = mqService.list();
+
+		if (mqList.size() > 0) {
+			for (MeasurableQuantity mq : mqList) {
+				StatModel sm = new StatModel();
+				List<MeasuredValue> mvCurrentPeriod = mvService.getByDateAndPeriod(null, null, null, mq.getMeasurementPeriod(), mq, true);
+
+				if (mvCurrentPeriod.size() > 0) {
+					MeasuredValue mv1 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 1);
+					sm.setValue(mv1.getValue().doubleValue());
+					MeasuredValue mv2 = null;
+
+					if (mvCurrentPeriod.size() > 1) {
+						mv2 = mvCurrentPeriod.get(mvCurrentPeriod.size() - 2);
+					} else {
+						mv2 = new MeasuredValue();
+						mv2.setValue(new BigDecimal("0.00"));
+					}
+
+					sm.setDescription(mq.getDescription() != null && mq.getDescription().length() > 0 ? mq.getDescription() : mq.getCode());
+					sm.computeDifference(mv2.getValue().doubleValue());
+
+					sm.setLastUpdated(mv1.getDate());
+					sm.setValue(mv1.getValue().doubleValue());
+					result.add(sm);
+				}
+			}
+		}
+		return result;
+	}
+
+	public StatModel getNewOrderStats() {
+
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		beforeDate.add(Calendar.DATE, -1);
+		beforeDate.set(Calendar.HOUR_OF_DAY, 23);
+		beforeDate.set(Calendar.MINUTE, 59);
+		beforeDate.set(Calendar.SECOND, 59);
+		StatModel result = new StatModel();
+
+		result.setDescription("New Orders");
+		result.setLastUpdated(currentDate.getTime());
+		result.setValue(orderService.countNewOrders(currentDate).doubleValue());
+		result.computeDifference(orderService.countNewOrders(beforeDate).doubleValue());
+
+		return result;
+	}
+
+	public StatModel getPendingOrderStats() {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+		beforeDate.add(Calendar.DATE, -1);
+		StatModel result = new StatModel();
+
+		result.setDescription("Pending Orders");
+		result.setLastUpdated(Calendar.getInstance().getTime());
+		result.setValue(orderService.countPendingOrders(currentDate).doubleValue());
+		result.computeDifference(orderService.countPendingOrders(beforeDate).doubleValue());
+
+		return result;
+	}
+
+	public StatModel getChurn() throws BusinessException {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		currentDate.set(Calendar.DATE, 1);
+		beforeDate.set(Calendar.DATE, 1);
+		beforeDate.add(Calendar.MONTH, -1);
+		StatModel result = new StatModel();
+
+		MeasurableQuantity mq = mqService.findByCode("CHURN", getCurrentProvider());
+
+		if (mq == null) {
+			mq = new MeasurableQuantity();
+			mq.setCode("CHURN");
+			mq.setActive(true);
+			mq.setDescription("Churn");
+			mq.setSqlQuery("WITH acc_new AS (SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id"
+					+ " WHERE ua.subscription_date >= '#{date}' AND ua.subscription_date < '#{nextDate}'"
+					+ " AND (ua.termination_date IS NULL OR ua.termination_date >= '#{nextDate}') AND ae.provider_id = #{provider}), acc_end AS ("
+					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.termination_date >= ' #{date}'"
+					+ " AND ua.termination_date < '#{nextDate}' AND ae.provider_id = #{provider}), acc_period AS ("
+					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date < '#{date}'"
+					+ " AND (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}') AND ae.provider_id = #{provider}" + ") SELECT"
+					+ " CASE WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2)<>0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2) ELSE 0"
+					+ " END as churn FROM acc_new ,acc_end,acc_period");
+			mq.setEditable(true);
+			mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
+			mqService.create(mq, getCurrentUser());
+		}
+
+		List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("CHURN", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+		MeasuredValue currentMV = (currentMVs != null && currentMVs.size() > 0) ? currentMVs.get(0) : new MeasuredValue();
+		Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue() : new Double("0.00");
+
+		List<MeasuredValue> beforeMVs = mvService.getByDateAndPeriod("CHURN", beforeDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+		MeasuredValue beforeMV = (beforeMVs != null && beforeMVs.size() > 0) ? beforeMVs.get(0) : new MeasuredValue();
+		Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue() : new Double("0.00");
+
+		log.info("Current MV : " + currentValue + ", Before MV : " + beforeValue);
+		result.setValue(currentValue);
+		result.setDescription("Churn");
+		result.computeDifference(beforeValue);
+		result.setLastUpdated(currentDate.getTime());
+		return result;
+	}
+
+	public StatModel getMRR() throws BusinessException {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		currentDate.set(Calendar.DATE, 1);
+		beforeDate.set(Calendar.DATE, 1);
+		beforeDate.add(Calendar.MONTH, -1);
+		StatModel result = new StatModel();
+
+		MeasurableQuantity mq = mqService.findByCode("MRR", getCurrentProvider());
+
+		if (mq == null) {
+			mq = new MeasurableQuantity();
+			mq.setCode("MRR");
+			mq.setActive(true);
+			mq.setDescription("Churn");
+			mq.setDimension1("Offer");
+			mq.setDimension2("BA");
+			mq.setDimension3("CA");
+			mq.setDimension4("Cust");
+			mq.setEditable(true);
+			mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
+			mq.setSqlQuery("SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,"
+					+ " wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code FROM billing_wallet_operation wo"
+					+ "	LEFT JOIN crm_provider p ON p.id=wo.provider_id	LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id"
+					+ "	LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id LEFT JOIN billing_wallet w ON w.id=wo.wallet_id"
+					+ "	LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id	LEFT JOIN account_entity ua ON ua.id= uaa.id"
+					+ "	LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id	LEFT JOIN account_entity ba ON ba.id= baa.id"
+					+ "	LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id LEFT JOIN account_entity ca ON ca.id= caa.id"
+					+ "	LEFT JOIN crm_customer custa ON custa.id= caa.customer_id LEFT JOIN account_entity cust ON cust.id= custa.id"
+					+ "	WHERE wo.disabled=FALSE	AND wo.provider_id=#{provider}	AND NOT(wo.end_date IS NULL)"
+					+ "	AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0 AND (wo.start_date <= '#{date}') AND (wo.end_date > '#{date}')");
+			mqService.create(mq, getCurrentUser());
+		}
+
+		List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("MRR", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+		MeasuredValue currentMV = (currentMVs != null && currentMVs.size() > 0) ? currentMVs.get(0) : new MeasuredValue();
+		Double currentValue = currentMV != null && currentMV.getValue() != null ? currentMV.getValue().doubleValue() : new Double("0.00");
+
+		List<MeasuredValue> beforeMVs = mvService.getByDateAndPeriod("MRR", beforeDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
+		MeasuredValue beforeMV = (beforeMVs != null && beforeMVs.size() > 0) ? beforeMVs.get(0) : new MeasuredValue();
+		Double beforeValue = beforeMV != null && beforeMV.getValue() != null ? beforeMV.getValue().doubleValue() : new Double("0.00");
+		result.setValue(currentValue);
+		result.setDescription("MRR");
+		result.computeDifference(beforeValue);
+		result.setLastUpdated(currentDate.getTime());
+		return result;
+	}
 }

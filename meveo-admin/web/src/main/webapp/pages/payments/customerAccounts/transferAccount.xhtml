@@ -8,13 +8,9 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{customerAccountBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
+            <f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{customerAccountBean.objectId}" />
+        </f:metadata>
 	</ui:define>
 
 	<ui:define name="body">
@@ -61,8 +57,7 @@
              <ui:define name="buttons">
                     <p:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}" />
 
-                    <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
-                        <f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+                    <p:button outcome="customerAccountDetailOperationsTab" value="#{messages['action.back']}">
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                     </p:button>
               </ui:define>

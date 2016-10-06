@@ -14,7 +14,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
@@ -46,24 +45,24 @@ public class CdrEdrProcessingCacheContainerProvider {
     /**
      * Contains association between access code and accesses sharing this code. Key format: <provider id>_<Access.accessUserId>
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
     private BasicCache<String, List<Access>> accessCache;
 
-    @Resource(name = "java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;
+    // @Resource(name = "java:jboss/infinispan/container/meveo")
+    // private CacheContainer meveoContainer;
 
     /**
      * Stores a list of processed EDR's. Key format: <provider id>_<originBatch>_<originRecord>
      */
-    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
     private BasicCache<String, Integer> edrCache;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("CdrEdrProcessingCacheContainerProvider initializing...");
-            accessCache = meveoContainer.getCache("meveo-access-cache");
-            edrCache = meveoContainer.getCache("meveo-edr-cache");
+            // accessCache = meveoContainer.getCache("meveo-access-cache");
+            // edrCache = meveoContainer.getCache("meveo-edr-cache");
 
             populateAccessCache();
             populateEdrCache();
@@ -72,6 +71,7 @@ public class CdrEdrProcessingCacheContainerProvider {
 
         } catch (Exception e) {
             log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
+            throw e;
         }
     }
 

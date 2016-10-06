@@ -647,7 +647,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         // Remove if it is a child module
         if (childModule) {
-            remove(module);
+            remove(module, currentUser);
             return null;
 
             // Otherwise mark it uninstalled and clear module items
@@ -821,7 +821,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
     }
 
     @Override
-    public void remove(MeveoModule module) {
+    public void remove(MeveoModule module, User currentUser) throws BusinessException {
 
         // If module was downloaded, remove all submodules as well
         if (module.isDownloaded() && module.getModuleItems() != null) {
@@ -831,7 +831,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                     if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
                         loadModuleItem(item, module.getProvider());
                         MeveoModule itemModule = (MeveoModule) item.getItemEntity();
-                        remove(itemModule);
+                        remove(itemModule, currentUser);
                     }
                 } catch (Exception e) {
                     log.error("Failed to delete a submodule", e);
@@ -839,7 +839,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             }
         }
 
-        super.remove(module);
+        super.remove(module, currentUser);
     }
 
     @SuppressWarnings("unchecked")

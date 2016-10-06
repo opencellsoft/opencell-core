@@ -7,9 +7,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{invoiceTaskBean.objectId}" />
+        </f:metadata>
+    </ui:define>
 
 	<ui:define name="body">
 

@@ -24,8 +24,8 @@ public class BusinessOfferApi extends BaseApi {
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
 
-	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
-		validate(postData);
+	public Long createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
+
 
 		if (StringUtils.isBlank(postData.getBomCode())) {
 			missingParameters.add("bomCode");
@@ -33,6 +33,8 @@ public class BusinessOfferApi extends BaseApi {
 
 		handleMissingParameters();
 
+	    validate(postData);
+	      
 		// find bom
 		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
 		if (businessOfferModel == null) {
@@ -51,8 +53,8 @@ public class BusinessOfferApi extends BaseApi {
 
 		OfferTemplate newOfferTemplate = null;
 		try {
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getPrefix(), postData.getDescription(),
-					postData.getServicesToActivate(), currentUser);
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getCode(), postData.getName(),
+					postData.getDescription(), postData.getServicesToActivate(), currentUser);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -69,8 +71,9 @@ public class BusinessOfferApi extends BaseApi {
 							CustomFieldsDto cfsDto = new CustomFieldsDto();
 							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
 							populateCustomFields(cfsDto, serviceTemplate, true, currentUser);
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							throw new MeveoApiException(e.getMessage());
+						} catch (Exception e) {
+						    log.error("Failed to associate custom field instance to an entity", e);
+							throw e;
 						}
 						break;
 					}
@@ -84,9 +87,12 @@ public class BusinessOfferApi extends BaseApi {
 				CustomFieldsDto cfsDto = new CustomFieldsDto();
 				cfsDto.setCustomField(postData.getCustomFields());
 				populateCustomFields(cfsDto, newOfferTemplate, true, currentUser);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new MeveoApiException(e.getMessage());
+			} catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
 			}
 		}
+		
+		return newOfferTemplate.getId();
 	}
 }

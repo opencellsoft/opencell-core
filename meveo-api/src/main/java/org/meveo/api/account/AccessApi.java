@@ -56,9 +56,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                throw e;
             }
 
         } else {
@@ -95,9 +95,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                throw e;
             }
 
         } else {
@@ -135,9 +135,9 @@ public class AccessApi extends BaseApi {
         return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access));
     }
 
-    public void remove(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
+    public void remove(String accessCode, String subscriptionCode, User currentUser) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(accessCode) && !StringUtils.isBlank(subscriptionCode)) {
-            Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+            Subscription subscription = subscriptionService.findByCode(subscriptionCode, currentUser.getProvider());
             if (subscription == null) {
                 throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
             }
@@ -147,7 +147,7 @@ public class AccessApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Access.class, accessCode);
             }
 
-            accessService.remove(access);
+            accessService.remove(access, currentUser);
         } else {
             if (StringUtils.isBlank(accessCode)) {
                 missingParameters.add("accessCode");

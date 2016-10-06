@@ -59,6 +59,11 @@ public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstan
         if (initResult.getCetCode() == null && customEntityTemplateCode != null) {
             initResult.setCetCode(customEntityTemplateCode);
         }
+        
+        if (customEntityTemplateCode==null && !initResult.isTransient()){
+            customEntityTemplateCode = initResult.getCetCode();
+        }
+        
         return initResult;
     }
 

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -18,6 +19,10 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -36,6 +41,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
  * @author Edward P. Legaspi
  **/
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class SellerApi extends BaseApi {
 
     @Inject
@@ -128,9 +134,9 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
         
         return seller;
@@ -223,16 +229,20 @@ public class SellerApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         return seller;
     }
 
-    public SellerDto find(String sellerCode, Provider provider) throws MeveoApiException {
+    @SecuredBusinessEntityMethod(
+			validate = @SecureMethodParameter, 
+			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+    public SellerDto find(String sellerCode, User currentUser) throws MeveoApiException {
 
+    	Provider provider = currentUser.getProvider();
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
@@ -250,19 +260,19 @@ public class SellerApi extends BaseApi {
         return result;
     }
 
-    public void remove(String sellerCode, Provider provider) throws MeveoApiException {
+    public void remove(String sellerCode, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
         }
 
-        Seller seller = sellerService.findByCode(sellerCode, provider);
+        Seller seller = sellerService.findByCode(sellerCode, currentUser.getProvider());
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
         try {
-            sellerService.remove(seller);
+            sellerService.remove(seller, currentUser);
             sellerService.commit();
         } catch (Exception e) {
             if (e.getMessage().indexOf("ConstraintViolationException") > -1) {

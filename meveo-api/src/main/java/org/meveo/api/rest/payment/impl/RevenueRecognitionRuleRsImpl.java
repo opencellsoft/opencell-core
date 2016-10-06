@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
@@ -98,12 +99,14 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 	public ActionStatus remove(String revenueRecognitionRuleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			revenueRecognitionRuleApi.remove(revenueRecognitionRuleCode,getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
+			revenueRecognitionRuleApi.remove(revenueRecognitionRuleCode, getCurrentUser());
+			
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
-            log.error("Error when remove RevenueRecognitionRule by code {}", revenueRecognitionRuleCode, e);
-		}
+        }
 		return result;
 	}
 
@@ -113,11 +116,12 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
 			result.setRevenueRecognitionRules(revenueRecognitionRuleApi.list(getCurrentUser()));
-		} catch (MeveoApiException e) {
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-            log.error("Error when listing  RevenueRecognitionRules ", e);
-		}
+        }
 		return result;
 	}
 

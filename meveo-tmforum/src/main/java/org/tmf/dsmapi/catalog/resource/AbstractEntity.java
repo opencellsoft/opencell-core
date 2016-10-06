@@ -17,13 +17,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.VersionProperty;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  *
@@ -33,7 +34,9 @@ import org.tmf.dsmapi.serialize.CustomDateSerializer;
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 1821894884787055051L;
+
+	@Id
     @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;

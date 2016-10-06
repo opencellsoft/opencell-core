@@ -1,11 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
-
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
-
     <ui:define name="metadata">
         <f:metadata>
             <f:event type="preRenderView" listener="#{emailNotificationListBean.preRenderView}" />
@@ -17,7 +12,7 @@
 
         <hftl:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
             <hftl:searchField label="#{messages['entity.code']}" field="code" />
-            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}"
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{emailNotificationBean}"
                 autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
             <hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" newLine="true"/>

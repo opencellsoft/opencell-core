@@ -9,24 +9,19 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{subscriptionBean.preRenderView}" />
 
-            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectIdFromSet}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
             <f:viewParam name="userAccountId" value="#{subscriptionBean.userAccountId}" />
-            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
             <f:viewParam name="mainTab" value="#{subscriptionBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{subscriptionBean.activeTab}" />
         </f:metadata>
-	</ui:define>
-
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -46,6 +41,12 @@
 			}			
 		}	
 		</script>
+		
+		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.offerProductTemplates}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{subscriptionBean.productInstance.productTemplate}" 
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text">
+        </hftl:entityPopup>
 
 		<hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
@@ -62,7 +63,6 @@
 <!-- 		<hftl:entityPopup id="offerPopup" -->
 <!-- 			header="#{messages['offer.popup.header']}" -->
 <!-- 			backingBean="#{offerTemplateBean}" -->
-<!-- 			eventBackingBean="#{subscriptionBean}" -->
 <!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
 <!-- 			searchField1="code" -->
 <!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
@@ -338,8 +338,7 @@
 											required="true" modifyOnCreate="true" />
 										<!--                                         popup="true" popupId="offerPopup" -->
 										<hftl:formField label="#{messages['businessEntity.code']}"
-											field="code" required="true" validateUnique="true"
-											maxlength="35" />
+											field="code" required="true" validateUnique="true"/>
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" maxlength="100" />
@@ -408,7 +407,7 @@
 																	field="status" />
 																<hftl:column
 																	label="#{messages['oneShotChargeInstance.chargeDate']}"
-																	field="chargeDate" />
+																	field="chargeDate" isDate="true" />
 																<hftl:column
 																	label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 																	field="amountWithoutTax" isMessage="false" />
@@ -441,7 +440,7 @@
 															</p:dataTable>
 														</h:form>
 													</p:outputPanel>
-													<p:panel>
+													<p:panel rendered="false">
 														<h:form>
 															<p:commandButton
 																value="#{messages['subscription.oneShotChgButton']}"
@@ -577,68 +576,40 @@
 
 																	<hftl:decorateFormField fieldId="quantity"
 																		label="#{messages['serviceInstance.quantity']}">
-																		<h:inputText id="quantity"
+																		<p:inputText id="quantity"
 																			rendered="#{subscriptionBean.edit}"
 																			value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 																			size="5" maxlength="3">
-																		</h:inputText>
+																		</p:inputText>
 																		<!-- 														<h:outputText rendered="#{!subscriptionBean.edit}" -->
 																		<!-- 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"> -->
 																		<!-- 														</h:outputText> -->
 																	</hftl:decorateFormField>
-																	<p:outputPanel id="oneShotWalletOperationsPanel"
-																		rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
+																	<p:panel id="oneShotWalletOperationsPanel" rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
 																		<span style="height: 1px" />
-																		<h:outputText value="#{messages['commons.noItems']}"
-																			rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
-																		<h:panelGroup
-																			rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-																			<h:outputText
-																				value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
-																			<p:dataTable id="oneShotWalletOperationTable"
-																				resizableColumns="true"
-																				value="#{subscriptionBean.oneShotWalletOperations}"
-																				var="oneShotWalletOp" rows="10"
-																				styleClass="custom-grid">
-																				<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
-																				<p:column>
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['chargeApplication.applicationDate']}" />
-																					</f:facet>
-																					<h:outputText
-																						value="#{oneShotWalletOp.operationDate}">
-																						<f:convertDateTime
-																							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-																					</h:outputText>
-																				</p:column>
-
-																				<hftl:column
-																					label="#{messages['chargeApplication.description']}"
-																					field="description" />
-																				<p:column>
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['chargeApplication.amountWithoutTax']}" />
-																					</f:facet>
-																	#{oneShotWalletOp.amountWithoutTax}
-																</p:column>
-
-																				<p:column
-																					rendered="#{!subscriptionBean.entity.provider.entreprise}">
-																					<f:facet name="header">
-																						<h:outputText
-																							value="#{messages['walletOperation.amountWithTax']}" />
-																					</f:facet>
-																	#{oneShotWalletOp.amountWithTax}
-																</p:column>
-
-																				<hftl:column
-																					label="#{messages['chargeApplication.status']}"
-																					field="status" />
-																			</p:dataTable>
+																		<h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
+																		<h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
+<!-- 																			<h:outputText value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" /> -->
+																			<hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value" >
+																					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+																				</h:outputText>
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.description']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.amountWithoutTax']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField rendered="#{!subscriptionBean.entity.provider.entreprise}" 
+																				label="#{messages['walletOperation.amountWithTax']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithTax}" styleClass="field-value" />
+																			</hftl:decorateFormField>
+																			<hftl:decorateFormField label="#{messages['chargeApplication.status']}">
+																				<h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].status}" styleClass="field-value" />
+																			</hftl:decorateFormField>
 																		</h:panelGroup>
-																	</p:outputPanel>
+																	</p:panel>
 																    <ui:param name="buttons" value="true"/>
                                                                     <ui:define name="buttons">    
 
@@ -661,6 +632,13 @@
 													</p:panel>
 												</p:outputPanel>
 											</p:tab>
+											
+<!-- 											<p:tab id="productChargeInstancesTab" title="#{messages['subscription.tab.productChargeInstances']}" rendered="#{not empty subscriptionBean.entity.id}"> -->
+<!-- 												<ui:include src="productChargeInstances.xhtml"> -->
+<!-- 													<ui:param name="backingBean" value="#{subscriptionBean}" /> -->
+<!-- 												</ui:include> -->
+<!-- 											</p:tab> -->
+											
 											<!-- recurring charge instance -->
 											<p:tab id="recurringShotChgTab"
 												title="#{messages['subscription.tab.recurringShotChg']}"
@@ -686,8 +664,7 @@
 														label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 														field="terminationDate" />
 												</hftl:formPanel>
-												<p:outputPanel id="recurringChargeDataPanel"
-													autoUpdate="true">
+												<p:outputPanel id="recurringChargeDataPanel">
 													<h:form id="OS_recurring_results_form" prependId="false">
 														<p:dataTable resizableColumns="true"
 															value="#{subscriptionBean.recurringChargeInstances}"
@@ -797,6 +774,11 @@
 													</p:dataTable>
 												</h:form>
 											</p:tab>
+											
+											<ui:include src="productInstances.xhtml">
+												<ui:param name="backingBean" value="#{subscriptionBean}" />
+											</ui:include>
+											
 											<!-- Access -->
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"

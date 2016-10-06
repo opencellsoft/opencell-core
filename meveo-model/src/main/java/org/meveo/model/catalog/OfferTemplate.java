@@ -18,60 +18,50 @@
  */
 package org.meveo.model.catalog;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.MultilanguageEntity;
+
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
-@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
-public class OfferTemplate extends BusinessCFEntity {
+// @ExportIdentifier({ "code", "provider" })
+// @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints =
+// @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@DiscriminatorValue("OFFER")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_OFFER_TEMPLATE_SEQ")
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
+public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", length = 100)
-	@Size(max = 100)
-	private String name;
-
-	@Column(name = "image")
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	private Blob image;
-
-	@ManyToOne
-	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
-	private OfferTemplateCategory offerTemplateCategory;
+//	@ManyToOne
+//	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
+//	private OfferTemplateCategory offerTemplateCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
@@ -79,18 +69,19 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
+
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<OfferProductTemplate> offerProductTemplates = new HashSet<OfferProductTemplate>();
+
+	@Size(max = 2000)
+	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	private String longDescription;
+
+	@Transient
+	public String prefix;
 	
-	@Column(name="VALID_FROM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validFrom;
-	
-	@Column(name="VALID_TO")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validTo;
-	
-	@Column(name = "IMAGE_CONTENT_TYPE", length = 50)
-	@Size(max = 50)
-	private String imageContentType;
+	@Transient
+	public Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -100,40 +91,11 @@ public class OfferTemplate extends BusinessCFEntity {
 		this.offerServiceTemplates = offerServiceTemplates;
 	}
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
-	}
-
 	public void addOfferServiceTemplate(OfferServiceTemplate serviceTemplate) {
 		if (getOfferServiceTemplates() == null) {
 			offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 		}
 		offerServiceTemplates.add(serviceTemplate);
-	}
-
-	public OfferTemplateCategory getOfferTemplateCategory() {
-		return offerTemplateCategory;
-	}
-
-	public void setOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
-		this.offerTemplateCategory = offerTemplateCategory;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Blob getImage() {
-		return image;
-	}
-
-	public void setImage(Blob image) {
-		this.image = image;
 	}
 
 	public BusinessOfferModel getBusinessOfferModel() {
@@ -144,60 +106,97 @@ public class OfferTemplate extends BusinessCFEntity {
 		this.businessOfferModel = businessOfferModel;
 	}
 
-    /**
-     * Check if offer contains a given service template
-     * 
-     * @param serviceTemplate Service template to match
-     * @return True if offer contains a given service template
-     */
-    public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
+	/**
+	 * Check if offer contains a given service template
+	 *
+	 * @param serviceTemplate
+	 *            Service template to match
+	 * @return True if offer contains a given service template
+	 */
+	public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
 
-        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-            if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public byte[] getImageAsByteArr() {
-		if (image != null) {
-			int blobLength;
-			try {
-				blobLength = (int) image.length();
-				byte[] blobAsBytes = image.getBytes(1, blobLength);
-
-				return blobAsBytes;
-			} catch (SQLException e) {
-				return null;
+		for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+			if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
+				return true;
 			}
 		}
-
-		return null;
+		return false;
 	}
 
-	public Date getValidFrom() {
-		return validFrom;
+	public Set<OfferProductTemplate> getOfferProductTemplates() {
+		return offerProductTemplates;
 	}
 
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
+	public void setOfferProductTemplates(Set<OfferProductTemplate> offerProductTemplates) {
+		this.offerProductTemplates = offerProductTemplates;
 	}
 
-	public Date getValidTo() {
-		return validTo;
+	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+		if (getOfferProductTemplates() == null) {
+			offerProductTemplates = new HashSet<OfferProductTemplate>();
+		}
+		offerProductTemplates.add(offerProductTemplate);
 	}
 
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
+	public String getPrefix() {
+		return prefix;
 	}
 
-	public String getImageContentType() {
-		return imageContentType;
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
-	public void setImageContentType(String imageContentType) {
-		this.imageContentType = imageContentType;
+	public String getLongDescription() {
+		return longDescription;
 	}
 
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
+
+    @SuppressWarnings("rawtypes")
+    public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+        
+        if (serviceTemplatesByChargeType!=null){
+            return serviceTemplatesByChargeType;
+        }
+        
+        serviceTemplatesByChargeType = new HashMap<>();
+
+        for (OfferServiceTemplate service : offerServiceTemplates) {
+            List charges = service.getServiceTemplate().getServiceRecurringCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("RECURRING")) {
+                    serviceTemplatesByChargeType.put("RECURRING", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("RECURRING").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceUsageCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("USAGE")) {
+                    serviceTemplatesByChargeType.put("USAGE", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("USAGE").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("SUBSCRIPTION")) {
+                    serviceTemplatesByChargeType.put("SUBSCRIPTION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("SUBSCRIPTION").add(service.getServiceTemplate());
+            }
+
+            charges = service.getServiceTemplate().getServiceTerminationCharges();
+            if (charges != null && !charges.isEmpty()) {
+                if (!serviceTemplatesByChargeType.containsKey("TERMINATION")) {
+                    serviceTemplatesByChargeType.put("TERMINATION", new ArrayList<ServiceTemplate>());
+                }
+                serviceTemplatesByChargeType.get("TERMINATION").add(service.getServiceTemplate());
+            }
+        }
+
+        return serviceTemplatesByChargeType;
+    }
 }

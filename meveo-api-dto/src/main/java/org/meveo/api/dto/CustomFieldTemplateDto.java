@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -183,6 +184,8 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlElement(name = "fieldCode")
     private List<String> childEntityFieldsForSummary;
 
+    private CustomFieldIndexTypeEnum indexType;
+
     public CustomFieldTemplateDto() {
 
     }
@@ -215,6 +218,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         }
         applicableOnEl = cf.getApplicableOnEl();
         mapKeyType = cf.getMapKeyType();
+        indexType = cf.getIndexType();
 
         if (cf.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && cf.getMatrixColumns() != null) {
             matrixColumns = new ArrayList<>();
@@ -321,7 +325,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     public String toString() {
         return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType + ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo
                 + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", mapKeyType=" + mapKeyType + ", valueRequired=" + valueRequired + ", versionable="
-                + versionable + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
+                + versionable + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + ", indexType=" + indexType + "]";
     }
 
     public String getEntityClazz() {
@@ -446,5 +450,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setChildEntityFieldsForSummary(List<String> childEntityFieldsForSummary) {
         this.childEntityFieldsForSummary = childEntityFieldsForSummary;
+    }
+
+    public CustomFieldIndexTypeEnum getIndexType() {
+        return indexType;
+    }
+
+    public void setIndexType(CustomFieldIndexTypeEnum indexType) {
+        this.indexType = indexType;
     }
 }

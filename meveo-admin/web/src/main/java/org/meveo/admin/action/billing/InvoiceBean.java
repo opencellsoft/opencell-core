@@ -72,6 +72,9 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -131,6 +134,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	private List<RatedTransaction> uiRatedTransactions;
 	
 	private long billingAccountId;
+	
+	private boolean isSelectedInvoices=false;
     
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -721,6 +726,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
 	}
+	
+	public void onRowSelectCheckbox(SelectEvent event) {
+        isSelectedInvoices=true;
+    }
+    public void onRowUnSelectCheckbox(UnselectEvent event) {
+    	isSelectedInvoices=false;
+    }
 
 	public List<SubCategoryInvoiceAgregate> getUiSubCategoryInvoiceAgregates() {
 		return uiSubCategoryInvoiceAgregates;
@@ -769,5 +781,15 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	public Set<Invoice> getLinkedInvoices(Invoice invoice){
 		return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
 	}
+
+	public boolean isSelectedInvoices() {
+		return isSelectedInvoices;
+	}
+
+	public void setSelectedInvoices(boolean isSelectedInvoices) {
+		this.isSelectedInvoices = isSelectedInvoices;
+	}
+	
+	
 
 }

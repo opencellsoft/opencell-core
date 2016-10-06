@@ -113,10 +113,11 @@ public class PaymentApi extends BaseApi {
 		// populate customFields
         try {
             populateCustomFields(paymentDto.getCustomFields(), automatedPayment, true, currentUser); 
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
+        
 		int nbOccMatched = 0;
 		if (paymentDto.isToMatching()) {
 			MatchingCode matchingCode = new MatchingCode();

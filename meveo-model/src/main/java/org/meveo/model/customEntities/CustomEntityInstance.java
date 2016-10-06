@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
@@ -30,11 +29,6 @@ public class CustomEntityInstance extends BusinessCFEntity {
     @Column(name = "PARENT_UUID", updatable = false, length = 60)
     @Size(max = 60)
     public String parentEntityUuid;
-
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
-    }
 
     public String getCetCode() {
         return cetCode;

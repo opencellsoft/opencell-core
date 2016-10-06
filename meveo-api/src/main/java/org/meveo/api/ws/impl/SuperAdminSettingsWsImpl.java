@@ -126,7 +126,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageIsoApi.remove(languageCode);
+			languageIsoApi.remove(languageCode, getCurrentUser());
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -190,7 +190,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryIsoApi.remove(countryCode);
+			countryIsoApi.remove(countryCode, getCurrentUser());
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -255,7 +255,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyIsoApi.remove(currencyCode);
+			currencyIsoApi.remove(currencyCode, getCurrentUser());
 		} catch (Exception e) {
 			super.processException(e, result);
 		}

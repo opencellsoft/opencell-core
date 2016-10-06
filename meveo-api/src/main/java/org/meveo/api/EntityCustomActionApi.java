@@ -115,7 +115,7 @@ public class EntityCustomActionApi extends BaseApi {
         return actionDto;
     }
 
-    public void removeEntityAction(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeEntityAction(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
 
         if (StringUtils.isBlank(actionCode)) {
             missingParameters.add("actionCode");
@@ -131,7 +131,7 @@ public class EntityCustomActionApi extends BaseApi {
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode);
         }
-        entityCustomActionService.remove(scriptInstance);
+        entityCustomActionService.remove(scriptInstance, currentUser);
     }
 
     public List<ScriptInstanceErrorDto> createOrUpdate(EntityCustomActionDto postData, String appliesTo, User currentUser) throws MissingParameterException,

@@ -71,7 +71,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
+            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -29,6 +29,7 @@
         showBackButton - show a default "navigate back" button
         showEditButton - show a default "edit"/"save" button
         showEnableDisableButton - show a default "enable/disable" button
+        showDeleteButton - show "delete" button
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
         updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
         execute - show button to invoke a execute method
@@ -53,7 +54,7 @@
 	<cc:attribute name="updateConfirmationMessage" default="" />
     <cc:attribute name="ajaxSubmit" required="true" />
     <cc:attribute name="submitPartialProcess" />
-    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
+    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute, but issue is with calendars or other input components that are not of input type:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
     <cc:attribute name="submitUpdate" default="@all"/>
     <cc:attribute name="execute" default="false" />
     <cc:attribute name="formId" default="formId" />
@@ -170,6 +171,7 @@
 				<f:param name="cid"
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
+			<f:param name="tab" value="#{cc.attrs.backingBean.activeTab}"></f:param>
 		</p:button>
 
         <c:if test="#{! empty customFieldDataEntryBean.getCustomActions(cc.attrs.backingBean.entity)}">

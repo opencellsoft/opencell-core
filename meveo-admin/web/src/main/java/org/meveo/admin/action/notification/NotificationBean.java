@@ -8,20 +8,19 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.persistence.Entity;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -29,6 +28,7 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.ScriptNotification;
@@ -43,7 +43,7 @@ import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
-public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification> {
+public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 
@@ -220,6 +220,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
 		this.strategyImportType = strategyImportType;
 	}
 
+    
     /**
      * Autocomplete method for class filter field - search entity type classes with @ObservableEntity annotation
      * 
@@ -240,7 +241,8 @@ public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification>
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class) && clazz.getName().toLowerCase().contains(queryLc)) {
+            if (clazz.isAnnotationPresent(Entity.class) && clazz.getName().toLowerCase().contains(queryLc) 
+            		&& (clazz.isAnnotationPresent(ObservableEntity.class) ||  clazz.isAnnotationPresent(NotifiableEntity.class))) {
                 classNames.add(clazz.getName());
             }
         }

@@ -18,6 +18,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -36,6 +37,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     @Inject
     private CurrentProviderBean currentProviderBean;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     /**
      * Request parameter
@@ -119,6 +123,21 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
 
     /**
+     * Prepare to show entity customozation for a particular class - To be used from GUI action button/link
+     * 
+     * @param clazz Entity class
+     */
+    public void initCustomization(String entityClassName) {
+        customizedEntity = null;
+        this.entityClassName = entityClassName;
+        try {
+            getCustomizedEntity();
+        } catch (ClassNotFoundException e) {
+            log.error("Failed to initialize entity customization for a class {}", entityClassName);
+        }
+    }
+
+    /**
      * Construct customizedEntity instance which is a representation of customizable class (e.g. Customer)
      * 
      * @return
@@ -133,8 +152,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             if (customizedEntityMatched != null) {
                 setEntityClassName(customizedEntityMatched.getEntityClass().getName());
                 if (customizedEntityMatched.getCustomEntityId() != null) {
-                    setObjectIdFromSet(customizedEntityMatched.getCustomEntityId());
-                    initEntity();
+                    initEntity(customizedEntityMatched.getCustomEntityId());
                 }
             }
         }
@@ -341,19 +359,23 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     public void removeFieldGrouping() {
 
-        for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
-            if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
-                customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
-            } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                for (TreeNode childChildNode : childNode.getChildren()) {
-                    customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
+        try {
+            for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
+                if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId(), getCurrentUser());
+                } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
+                    for (TreeNode childChildNode : childNode.getChildren()) {
+                        customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId(), getCurrentUser());
+                    }
                 }
             }
+
+            selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
+            
+        } catch (BusinessException e) {
+            log.error("Failed to remove field grouping", e);
         }
-
-        selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
         refreshFields();
-
     }
 
     public void moveUp(SortedTreeNode node) {

@@ -25,6 +25,16 @@
         importCsv - show "import from Csv" button
         sortBy and sortOrder - a default field to sort by and a default sort order
         rowsPerPage - possible paging sizes separated by a comma
+        showFullTextSearch - shall a "global search" filter be visible in the header
+        styleClass = custom style for the datalist
+        paginatorPosition - allows to specify if the paginator appears on the table's top, bottom or both
+        prePaginatorControls - allows to set custom controls that appear just before the paginator.  To set it up correctly, enter a facet name e.g.
+        		<hftl:dataList prePaginatorControls="{CustomControls}">
+        			<f:facet name="{CustomControls}">
+        				...
+        			</f:facet>
+        			...
+        		</hftl:datalist>
          
 -->
 
@@ -43,6 +53,9 @@
         <c:if test="${empty editMode}">
             <c:set var="editMode" value="cell" />
         </c:if>
+    </c:if>
+    <c:if test="${empty styleClass}">
+        <c:set var="styleClass" value=" " />
     </c:if>
     <!-- 	<c:if test="${empty edit}"> -->
     <!-- 		<c:set var="edit" value="true" /> -->
@@ -104,15 +117,22 @@
     <c:if test="${empty rowsPerPage}">
         <c:set var="rowsPerPage" value="10,15,20,50" />
     </c:if>
+    <c:if test="${empty showFullTextSearch}">
+        <c:set var="showFullTextSearch" value="false" />
+    </c:if>
+    
+    <c:if test="${empty paginatorPosition}">
+        <c:set var="paginatorPosition" value="both" />
+    </c:if>
 
     <p:panel id="#{resultsId}_panel" width="100">
 
-        <h:form id="#{formId}" prependId="false">
+        <h:form id="#{formId}" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
             <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}"
                 editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
-                sortOrder="#{sortOrder}" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid" rowKey="#{entity.id}"
-                first="#{backingBean.dataTableFirstAttribute}" reflow="true">
+                sortOrder="#{sortOrder}" paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}"
+                first="#{backingBean.dataTableFirstAttribute}" reflow="true" paginatorPosition="#{paginatorPosition}">
                 <p:ajax event="page" listener="#{backingBean.onPageChange}" />
                 <p:ajax event="toggleSelect" update="@this" process="@this" />
                 <p:ajax event="rowSelectCheckbox" />
@@ -121,6 +141,14 @@
                 <p:ajax event="rowUnselect" />
                 <c:if test="#{editable}">
                 	<p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}"/>
+                </c:if>
+
+                <c:if test="${showFullTextSearch}">
+                    <f:facet name="header">
+                        <p:outputPanel>
+                            <p:inputText id="globalFilter" onkeyup="if (event.keyCode == 13) { PF('cellEntity_#{resultsId}').filter();return false;}" style="width:150px" placeholder="#{messages['commons.search']}" />
+                        </p:outputPanel>
+                    </f:facet>
                 </c:if>
                 <p:column selectionMode="multiple" width="4%" rendered="#{checkMany}" exportable="false" toggleable="false" />
                 <ui:insert />
@@ -134,9 +162,11 @@
                     <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
                 </p:commandButton>
                 <p:commandButton id="#{formId}buttonXlsxExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportXlsxButton}">
-                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true" selectionOnly="#{backingBean.selectedEntities.size()>0}"/>
+                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"
+                        selectionOnly="#{backingBean.selectedEntities.size()>0}" />
                 </p:commandButton>
-                <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv and backingBean.canUserUpdateEntity()}" type="button" onclick="PF('csvDialog').show();" />
+                <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv and backingBean.canUserUpdateEntity()}" type="button"
+                    onclick="PF('csvDialog').show();" />
                 <p:commandButton id="#{formId}buttonCsvExport" value="#{messages['commons.exportCsv']}" ajax="false" rendered="#{exportToCsv}">
                     <l:dataExporter fileType="csv" source="datatable_#{resultsId}" fileName="#{fileName}" fileOptions="#{backingBean.csvOptions()}" />
                 </p:commandButton>

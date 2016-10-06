@@ -84,6 +84,11 @@ public class Subscription extends BusinessCFEntity{
 	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 
 	@OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<ProductInstance> productInstances = new ArrayList<ProductInstance>();
+
+	@OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
 	private List<Access> accessPoints = new ArrayList<Access>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -124,6 +129,14 @@ public class Subscription extends BusinessCFEntity{
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public List<ProductInstance> getProductInstances() {
+		return productInstances;
+	}
+
+	public void setProductInstances(List<ProductInstance> productInstances) {
+		this.productInstances = productInstances;
 	}
 
 	public OfferTemplate getOffer() {

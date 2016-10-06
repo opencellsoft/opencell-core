@@ -18,12 +18,14 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.sql.rowset.serial.SerialBlob;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -46,7 +48,9 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
@@ -81,6 +85,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	private DualListModel<WalletTemplate> terminationWallets;
 
 	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+	
+	private UploadedFile uploadedImage;
 
 	public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
         return serviceChargeTemplateRecurring;
@@ -286,10 +292,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateSubscription();
 	}
 
-	public void deleteServiceSubscriptionChargeTemplate(
-			ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
-		serviceChargeTemplateSubscriptionService.remove(serviceSubscriptionChargeTemplate);
-		entity.getServiceSubscriptionCharges().remove(serviceSubscriptionChargeTemplate);
+	public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateSubscription subscription=serviceChargeTemplateSubscriptionService.findById(id);
+		entity.getServiceSubscriptionCharges().remove(subscription);
+		entity=getPersistenceService().update(entity,getCurrentUser());
+		serviceChargeTemplateSubscriptionService.remove(subscription, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -336,9 +343,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateTermination();
 	}
 
-	public void deleteServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
-		serviceChargeTemplateTerminationService.remove(serviceTerminationChargeTemplate);
-		entity.getServiceTerminationCharges().remove(serviceTerminationChargeTemplate);
+	public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateTermination termination=serviceChargeTemplateTerminationService.findById(id);
+		entity.getServiceTerminationCharges().remove(termination);
+		entity=getPersistenceService().update(entity,getCurrentUser());
+		serviceChargeTemplateTerminationService.remove(termination, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -385,9 +394,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		newServiceChargeTemplateRecurring();
 	}
 
-	public void deleteServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
-		serviceChargeTemplateRecurringService.remove(serviceRecurringChargeTemplate);
-		entity.getServiceRecurringCharges().remove(serviceRecurringChargeTemplate);
+	public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateRecurring recurring=serviceChargeTemplateRecurringService.findById(id);
+		entity.getServiceRecurringCharges().remove(recurring);
+		entity=getPersistenceService().update(entity, getCurrentUser());
+		serviceChargeTemplateRecurringService.remove(recurring, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -441,11 +452,14 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
+	 * @throws BusinessException 
 	 */
 
-	public void deleteServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
-		serviceChargeTemplateUsageService.remove(serviceUsageChargeTemplate.getId());
-		entity.getServiceUsageCharges().remove(serviceUsageChargeTemplate);
+	public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
+		ServiceChargeTemplateUsage usage=serviceChargeTemplateUsageService.findById(id);
+		entity.getServiceUsageCharges().remove(usage);
+		entity=getPersistenceService().update(entity, getCurrentUser());
+		serviceChargeTemplateUsageService.remove(usage, getCurrentUser());
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -494,4 +508,33 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 				&& (serviceInstanceService.findByServiceTemplate(getEntity()) != null) && serviceInstanceService
 				.findByServiceTemplate(getEntity()).size() > 0) ? true : false;
 	}
+
+	public UploadedFile getUploadedImage() {
+		return uploadedImage;
+	}
+
+	public void setUploadedImage(UploadedFile uploadedImage) {
+		this.uploadedImage = uploadedImage;
+	}
+	
+	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
+		uploadedImage = event.getFile();
+
+		if (uploadedImage != null) {
+			byte[] contents = uploadedImage.getContents();
+			try {
+				entity.setImage(new SerialBlob(contents));
+			} catch (SQLException e) {
+				entity.setImage(null);
+			}
+			entity.setImageContentType(uploadedImage.getContentType());
+
+			saveOrUpdate(entity);
+
+			initEntity();
+
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
+		}
+	}
+	
 }

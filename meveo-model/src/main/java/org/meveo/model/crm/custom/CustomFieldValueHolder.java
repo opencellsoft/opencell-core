@@ -88,7 +88,8 @@ public class CustomFieldValueHolder implements Serializable {
     /**
      * Populate GUI "new value fields" with default values
      * 
-     * @param cfts A list of custom field templates. Optional. If not provided - will be retrieved
+     * @param cfts A list of custom field templates to clear and [re]populate default values.
+     * @param cftToReset Reset default values for a given template only. Only one - cfts or cftToReset parameter should be passed.
      */
     public void populateNewValueDefaults(Collection<CustomFieldTemplate> cfts, CustomFieldTemplate cftToReset) {
 

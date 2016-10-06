@@ -184,8 +184,35 @@ public class ReflectionUtils {
     }
     
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
-        Reflections reflections = new Reflections("org.meveo.model");
+        return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
+    }
+    
+    public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass,String prefix) {
+        Reflections reflections = new Reflections(prefix);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
         return classes;
+    }
+
+    /**
+     * Find a class by its simple name that is a subclass of a certain class
+     * 
+     * @param className Simple classname to match
+     * @param parentClass Parent or interface class
+     * @return A class object
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Class<?> getClassBySimpleNameAndParentClass(String className, Class parentClass) {
+        Class<?> entityClass = null;
+        if (!StringUtils.isBlank(className)) {
+            Reflections reflections = new Reflections("org.meveo.model");
+            Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
+            for (Class<?> clazz : classes) {
+                if (className.equals(clazz.getSimpleName())) {
+                    entityClass = clazz;
+                    break;
+                }
+            }
+        }
+        return entityClass;
     }
 }

@@ -151,15 +151,15 @@ public class UsageChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+                CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
 
                 catMessagesService.create(catMessages, currentUser);
             }
@@ -260,13 +260,13 @@ public class UsageChargeTemplateApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode());
+                    CatMessages catMsg = catMessagesService.getCatMessages( chargeTemplate.getCode(),UsageChargeTemplate.class.getSimpleName() , ld.getLanguageCode(),provider);
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
                         catMessagesService.update(catMsg, currentUser);
                     } else {
-                        CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId(), ld.getLanguageCode(),
+                        CatMessages catMessages = new CatMessages(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
                             ld.getDescription());
                         catMessagesService.create(catMessages, currentUser);
                     }
@@ -294,9 +294,9 @@ public class UsageChargeTemplateApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
     }
 
@@ -318,7 +318,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -327,7 +327,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, Provider provider) throws MeveoApiException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
@@ -335,15 +335,12 @@ public class UsageChargeTemplateApi extends BaseApi {
         }
 
         // check if code already exists
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
-
-        // remove cat messages
-        catMessagesService.batchRemove(UsageChargeTemplate.class.getSimpleName(), chargeTemplate.getId(), provider);
-
-        usageChargeTemplateService.remove(chargeTemplate);
+        
+        usageChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
     public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {

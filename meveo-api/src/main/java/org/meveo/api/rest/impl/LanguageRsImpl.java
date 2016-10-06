@@ -72,7 +72,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.remove(languageCode,getCurrentUser().getProvider());
+            languageApi.remove(languageCode,getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

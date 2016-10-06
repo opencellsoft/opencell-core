@@ -69,9 +69,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
 
+	private Map<String, Map<String, SI>> allScriptInstances=new HashMap<String,Map<String,SI>>();
+	
     private CharSequenceCompiler<SI> compiler;
 
     private String classpath = "";
+
 
     /**
      * Constructor.
@@ -111,21 +114,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return result;
     }
 
-    public boolean isExistsCode(String code, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomScript.class, "t", null, provider);
-        qb.addCriterion("code", "=", code, true);
-
-        try {
-            if (qb.getQuery(getEntityManager()).getSingleResult() != null) {
-                return true;
-            }
-        } catch (NoResultException e) {
-
-        }
-
-        return false;
-    }
-
     @Override
     public void create(T script, User creator) throws BusinessException {
 
@@ -133,7 +121,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+        String fullClassName = getFullClassname(script.getScript());
+
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+        }
+        script.setCode(fullClassName);
 
         super.create(script, creator);
         compileScript(script, false);
@@ -146,13 +139,31 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        script.setCode(getFullClassname(script.getScript()));
+
+        String fullClassName = getFullClassname(script.getScript());
+        if (isOverwritesJavaClass(fullClassName)) {
+            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+        }
+
+        script.setCode(fullClassName);
 
         script = super.update(script, updater);
 
         compileScript(script, false);
 
         return script;
+    }
+
+    /**
+     * Check full class name is existed class path or not
+     */
+    public static boolean isOverwritesJavaClass(String fullClassName) {
+        try {
+            Class.forName(fullClassName);
+            return true;
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
     }
 
     /**
@@ -240,7 +251,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             final String qName = getFullClassname(script.getScript());
             final String codeSource = script.getScript();
 
-            log.trace("Compiling code for {}: {}", qName, codeSource);
+            log.debug("Compiling code for {}: {}", qName, codeSource);
             script.setError(false);
             script.getScriptErrors().clear();
 
@@ -249,10 +260,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             if (!testCompile) {
                 if (!allScriptInterfaces.containsKey(script.getProvider().getCode())) {
                     allScriptInterfaces.put(script.getProvider().getCode(), new HashMap<String, Class<SI>>());
-                    log.debug("create Map for {}", script.getProvider().getCode());
+                    allScriptInstances.put(script.getCode(),new HashMap<String, SI>());
+                          log.debug("create Map for {}", script.getProvider().getCode());
                 }
                 Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
                 providerScriptInterfaces.put(script.getCode(), compiledScript);
+                Map<String,SI> providerScriptInstances = allScriptInstances.get(script.getProvider().getCode());
+                log.debug("get providerScriptInstances {}",providerScriptInstances);
+                if(providerScriptInstances==null){
+                	providerScriptInstances=new HashMap<String,SI>();
+                	allScriptInstances.put(script.getProvider().getCode(), providerScriptInstances);
+                }
+                providerScriptInstances.put(script.getCode(),compiledScript.newInstance());
                 log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
             }
         } catch (CharSequenceCompilerException e) {
@@ -303,7 +322,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    public Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
 
         if (allScriptInterfaces.containsKey(provider.getCode())) {
@@ -354,6 +373,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
+    public SI getCachedScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    	SI script = null;
+        script = allScriptInstances.get(provider.getCode()).get(scriptCode);
+        return script;
+    }
+    
     /**
      * Add a log line for a script
      * 
@@ -423,7 +448,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
-        return className;
+        return className!=null?className.trim():null;
     }
 
     /**
@@ -435,7 +460,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public static String getFullClassname(String script) {
         String packageName = getPackageName(script);
         String className = getClassName(script);
-        return (packageName != null ? packageName + "." : "") + className;
+        return (packageName != null ? packageName.trim() + "." : "") + className;
     }
 
     /**
@@ -461,7 +486,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param parameters Additional parameters
+     * @param context Additional parameters
      * @param currentUser Current user
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
@@ -548,4 +573,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
         return parameters;
     }
+
+    /**
+     * Get all script interfaces for a given provider
+     * 
+     * @return the allScriptInterfaces
+     */
+    public Map<String, Class<SI>> getAllScriptInterfaces(Provider provider) {
+        return allScriptInterfaces.get(provider.getCode());
+    } 
 }

@@ -14,10 +14,6 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-
 	<ui:define name="body">
 	
 		<p:panel>
@@ -33,7 +29,6 @@
 		<hftl:entityPopup id="Title_"
 			header="#{messages['title.search']}"
 			backingBean="#{titleBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"
@@ -47,7 +42,6 @@
 		<hftl:entityPopup id="Tax_"
 			header="#{messages['tax.search']}"
 			backingBean="#{taxBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"
@@ -61,7 +55,6 @@
 		<hftl:entityPopup id="InvoiceCategory_"
 			header="#{messages['invoiceCategory.search']}"
 			backingBean="#{invoiceCategoryBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"
@@ -75,7 +68,6 @@
 		<hftl:entityPopup id="InvoiceSubCategory_"
 			header="#{messages['invoiceSubCategory.search']}"
 			backingBean="#{invoiceSubCategoryBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"
@@ -89,7 +81,6 @@
 		<hftl:entityPopup id="ChargeTemplate_"
 			header="#{messages['chargeTemplate.search']}"
 			backingBean="#{chargeTemplateBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"
@@ -103,7 +94,6 @@
 		<hftl:entityPopup id="PricePlanMatrix_"
 			header="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixBean}"
-			eventBackingBean="#{catMessagesBean}"
 			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['catMessages.description']}"

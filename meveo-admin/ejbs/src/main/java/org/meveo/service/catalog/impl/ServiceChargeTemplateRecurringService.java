@@ -24,7 +24,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -69,9 +71,9 @@ public class ServiceChargeTemplateRecurringService extends PersistenceService<Se
 	}
 
 	@Override
-	public void remove(ServiceChargeTemplateRecurring e){
+	public void remove(ServiceChargeTemplateRecurring e, User currentUser) throws BusinessException {
 		refreshOrRetrieve(e);
-		super.remove(e);
+		super.remove(e, currentUser);
 	}
 
 }

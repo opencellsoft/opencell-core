@@ -4,9 +4,12 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{invoiceBean.objectId}" />
+            <f:viewParam name="tab" value="#{invoiceBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
 
 	<ui:define name="body">
 		<p:panel>
@@ -15,7 +18,7 @@
 						backingBean="#{invoiceBean}" showFormButtons="false"
 						formId="headerForm" edit="false">
                 <p:tabView id="tabView"
-				activeIndex="#{invoiceCategoryBean.activeTab}">
+				activeIndex="#{invoiceBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
                          <p:outputPanel>
 						<h:panelGrid columns="2">

@@ -115,7 +115,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 		}
 	}
 
-	public void onRowSelect(SelectEvent event) {
+	public void onCurrencySelect(SelectEvent event) {
 		if (event.getObject() instanceof Currency) {
 			Currency currency = (Currency) event.getObject();
 			log.info("populatCurrencies currency",

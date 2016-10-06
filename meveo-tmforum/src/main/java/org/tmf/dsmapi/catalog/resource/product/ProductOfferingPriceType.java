@@ -1,8 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
-import java.util.EnumSet;
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 //import org.tmf.dsmapi.commons.exceptions.InvalidEnumeratedValueException;
 
 /**

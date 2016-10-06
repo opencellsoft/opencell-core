@@ -108,7 +108,7 @@ public class CustomEntityApi extends BaseApi {
 
     }
 
-    public void removeEntityTemplate(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeEntityTemplate(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("customEntityTemplateCode");
         }
@@ -118,7 +118,7 @@ public class CustomEntityApi extends BaseApi {
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
         if (cet != null) {
             // Related custom field templates will be removed along with CET
-            customEntityTemplateService.remove(cet);
+            customEntityTemplateService.remove(cet, currentUser);
         } else {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
@@ -179,11 +179,10 @@ public class CustomEntityApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, true, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
-
     }
 
     public void updateEntityInstance(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
@@ -214,14 +213,13 @@ public class CustomEntityApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, false, currentUser);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            throw e;
         }
-
     }
 
-    public void removeEntityInstance(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeEntityInstance(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -233,7 +231,7 @@ public class CustomEntityApi extends BaseApi {
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
         if (cei != null) {
-            customEntityInstanceService.remove(cei);
+            customEntityInstanceService.remove(cei, currentUser);
         } else {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, code);
         }
@@ -343,7 +341,7 @@ public class CustomEntityApi extends BaseApi {
         }
 
         for (CustomFieldTemplate cft : cftsToRemove) {
-            customFieldTemplateService.remove(cft.getId());
+            customFieldTemplateService.remove(cft.getId(), currentUser);
         }
 
         Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
@@ -376,7 +374,7 @@ public class CustomEntityApi extends BaseApi {
         }
 
         for (EntityCustomAction action : actionsToRemove) {
-            entityActionScriptService.remove(action.getId());
+            entityActionScriptService.remove(action.getId(), currentUser);
         }
     }
 

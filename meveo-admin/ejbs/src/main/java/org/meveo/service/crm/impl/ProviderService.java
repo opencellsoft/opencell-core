@@ -24,19 +24,27 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.index.ElasticClient;
 
 /**
  * Provider service implementation.
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
+
     @Inject
     private UserService userService;
+
+    @Inject
+    private ElasticClient elasticClient;
 
     public Provider findByCode(String code) {
         return findByCodeWithFetch(code, null);
@@ -67,5 +75,26 @@ public class ProviderService extends PersistenceService<Provider> {
             return null;
         }
     }
-  
+
+    @Override
+    public void create(Provider provider, User creator) throws BusinessException {
+        super.create(provider, creator);
+        elasticClient.createIndexes(provider);
+    }
+    
+    /**
+     * Get provider of and entity. Handles cases when entity itself is a provider
+     * 
+     * @param entity Entity
+     * @return Provider
+     */
+    public static Provider getProvider(IEntity entity) {
+
+        if (entity instanceof Provider) {
+            return (Provider) entity;
+
+        } else {
+            return ((IProvider) entity).getProvider();
+        }
+    }
 }

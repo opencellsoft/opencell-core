@@ -173,7 +173,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 			log.error("failed to matching ",e);
 			messages.error(e.getMessage());
 		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 				+ customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
 	}
 
@@ -204,7 +204,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 			log.error("failed to partial matching",e);
 			messages.error(e.getMessage());
 		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 				+ partialMatchingOccSelected.getAccountOperation()
 						.getCustomerAccount().getId()
 				+ "&edit=true&mainTab=1&faces-redirect=true";
@@ -255,7 +255,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
             messages.error(new BundleKey("messages", e.getMessage()));
         }
 
-        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
     }
 	
 	public boolean isSelectedOperationIncluded(){
@@ -294,7 +294,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 			messages.info(new BundleKey("messages",
 					"consultMatching.noOperationSelected"));
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 					+ customerAccountId
 					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}
@@ -305,7 +305,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 			messages.info(new BundleKey("messages",
 					"consultMatching.operationNotMatched"));
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
 					+ customerAccountId
 					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}

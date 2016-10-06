@@ -2,13 +2,11 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
-    <f:metadata>
-        <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-        <f:viewParam name="customerId" value="#{customerBean.objectId}" />
-    </f:metadata>
-
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+        </f:metadata>
     </ui:define>
 
     <ui:define name="body">
@@ -24,7 +22,7 @@
             </ui:define>
             <ui:define name="buttons">
                 <p:commandButton ajax="false" value="#{messages['accountOperation.buttonSelectionType']}" action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
-                <p:button value="#{messages['action.back']}" outcome="customerAccountDetail" includeViewParams="true">
+                <p:button value="#{messages['action.back']}" outcome="customerAccountDetailOperationsTab" includeViewParams="true">
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
             </ui:define>

@@ -90,6 +90,7 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -100,6 +101,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -116,6 +118,7 @@ import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.DataHolder;
 import com.thoughtworks.xstream.core.ReferenceByIdMarshaller;
 import com.thoughtworks.xstream.core.ReferenceByIdUnmarshaller;
+import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
@@ -144,7 +147,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-
+    
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -654,6 +657,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
                 xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true, null), XStream.PRIORITY_LOW);
 
+                xstream.processAnnotations(ScriptInstance.class);
                 // Indicate XStream to omit certain attributes except ones matching the classes to be exported fully (except the root class)
                 applyAttributesToOmit(xstream, exportTemplate.getClassesToExportAsFull());
 
@@ -1069,7 +1073,8 @@ public class EntityExportImportService implements Serializable {
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, ExportImportStatistics importStats, boolean updateExistingOnly, Provider forceToProvider, User currentUser) {
+    private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, ExportImportStatistics importStats, boolean updateExistingOnly, Provider forceToProvider,
+            User currentUser) {
 
         log.debug("Saving with preserveId={} entity {} ", lookupById, entityToSave);
 
@@ -1187,7 +1192,8 @@ public class EntityExportImportService implements Serializable {
      * @return A updated
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void updateEntityFoundInDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider, User currentUser) {
+    private void updateEntityFoundInDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider,
+            User currentUser) {
 
         if (HibernateProxy.class.isAssignableFrom(entityFromDB.getClass())) {
             entityFromDB = (IEntity) ((HibernateProxy) entityFromDB).getHibernateLazyInitializer().getImplementation();
@@ -1354,8 +1360,8 @@ public class EntityExportImportService implements Serializable {
      * @throws IllegalAccessException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, ExportImportStatistics importStats, Class clazz, Provider forceToProvider, User currentUser)
-            throws IllegalAccessException {
+    private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, ExportImportStatistics importStats, Class clazz,
+            Provider forceToProvider, User currentUser) throws IllegalAccessException {
 
         // If field value was not passed - get it from an entity
         if (fieldValue == null) {
@@ -1807,6 +1813,9 @@ public class EntityExportImportService implements Serializable {
             ParameterizedType aType = (ParameterizedType) field.getGenericType();
             Type[] fieldArgTypes = aType.getActualTypeArguments();
             for (Type fieldArgType : fieldArgTypes) {
+                if (fieldArgType instanceof ParameterizedType) { // Handles cases such as Map<Class<?>, Set<SecuredEntity>> where parameterized types used inside another one
+                    continue;
+                }
                 Class fieldArgClass = (Class) fieldArgType;
                 if (typeToCheck.isAssignableFrom(fieldArgClass)) {
                     return true;
@@ -2031,6 +2040,17 @@ public class EntityExportImportService implements Serializable {
         }
 
         @Override
+		protected void writeText(QuickWriter writer, String text) {
+        	if(text==null){
+        		writer.write("");
+        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
+        		writer.write(text);
+        	}else{
+        		super.writeText(writer, text);
+        	}
+		}
+
+		@Override
         public void endNode() {
             super.endNode();
             attributeClassAdded = false;

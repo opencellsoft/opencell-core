@@ -29,13 +29,10 @@ import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -52,33 +49,29 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class CatMessagesService extends PersistenceService<CatMessages> {
 
-    private static final int ENTITY_ID = 1;
+    private static final String INVALID_CLASS_TYPE = "Invalid class type!";
 
-	private static final int ENTITY_CLASS = 0;
-
-	private static final String INVALID_CLASS_TYPE = "Invalid class type!";
-    
     private Map<String, MultilanguageEntityService<?>> services;
-    
+
     @PostConstruct
     private void init() {
 
     }
-    
+
     @Inject
-	private void initServiceList(@Any Instance<MultilanguageEntityService<?>> entityServices) {
-		if (services == null) {
-			services = Collections.synchronizedMap(new HashMap<String, MultilanguageEntityService<?>>());
-		}
-		if (services.isEmpty()) {
-			for (MultilanguageEntityService<?> entityService : entityServices) {
-				services.put(ReflectionUtils.getCleanClassName(entityService.getEntityClass().getSimpleName()), entityService);
-			}
-		}
-	}
+    private void initServiceList(@Any Instance<MultilanguageEntityService<?>> entityServices) {
+        if (services == null) {
+            services = Collections.synchronizedMap(new HashMap<String, MultilanguageEntityService<?>>());
+        }
+        if (services.isEmpty()) {
+            for (MultilanguageEntityService<?> entityService : entityServices) {
+                services.put(ReflectionUtils.getCleanClassName(entityService.getEntityClass().getSimpleName()), entityService);
+            }
+        }
+    }
 
     public String getMessageDescription(BusinessEntity businessEntity, String languageCode) {
-        String result = getMessageDescription(getMessageCode(businessEntity), languageCode, businessEntity.getDescription());
+        String result = getMessageDescription(businessEntity.getCode(), getEntityClass(businessEntity), languageCode, businessEntity.getDescription(), businessEntity.getProvider());
         if (StringUtils.isBlank(result)) {
             result = businessEntity.getCode();
         }
@@ -86,87 +79,72 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     }
 
     @SuppressWarnings("unchecked")
-    public String getMessageDescription(String messageCode, String languageCode, String defaultDescription) {
+    public String getMessageDescription(String entityCode, String entityClass, String languageCode, String defaultDescription, Provider provider) {
         long startDate = System.currentTimeMillis();
-        if (messageCode == null || languageCode == null) {
-            return null;
+        if (entityCode == null || entityClass == null || languageCode == null) {
+            return defaultDescription;
         }
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-        qb.addCriterionWildcard("c.messageCode", messageCode, true);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        qb.addCriterion("c.entityCode", "=", entityCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterion("c.languageCode", "=", languageCode, true);
+        qb.addCriterionEntity("c.provider", provider);
         List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
 
         String description = (catMessages.size() > 0 && !StringUtils.isBlank(catMessages.get(0).getDescription())) ? catMessages.get(0).getDescription() : defaultDescription;
 
-        log.debug("get message " + messageCode + " description =" + description + ", time=" + (System.currentTimeMillis() - startDate));
+        log.debug("get message " + entityCode + " description =" + description + ", time=" + (System.currentTimeMillis() - startDate));
         return description;
     }
 
-    public CatMessages getCatMessages(IEntity businessEntity, String languageCode) {
+    public CatMessages getCatMessages(BusinessEntity businessEntity, String languageCode) {
 
-        return getCatMessages(getMessageCode(businessEntity), languageCode);
-    }
-
-    public CatMessages getCatMessages(String messageCode, String languageCode) {
-        return getCatMessages(getEntityManager(), messageCode, languageCode);
+        return getCatMessages(businessEntity.getCode(), getEntityClass(businessEntity), languageCode, businessEntity.getProvider());
     }
 
     @SuppressWarnings("unchecked")
-    private CatMessages getCatMessages(EntityManager em, String messageCode, String languageCode) {
+    public CatMessages getCatMessages(String entityCode, String entityClass, String languageCode, Provider provider) {
+
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-        qb.addCriterionWildcard("c.messageCode", messageCode, true);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
-        List<CatMessages> cats = (List<CatMessages>) qb.getQuery(em).getResultList();
+        qb.addCriterion("c.entityCode", "=", entityCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterion("c.languageCode", "=", languageCode, true);
+        qb.addCriterionEntity("c.provider", provider);
+        List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
         return cats != null && cats.size() > 0 ? cats.get(0) : null;
     }
 
+    public List<CatMessages> getCatMessagesList(BusinessEntity businessEntity) {
+        return getCatMessagesList(getEntityClass(businessEntity), businessEntity.getCode(), businessEntity.getProvider());
+    }
+
     @SuppressWarnings("unchecked")
-    public List<CatMessages> getCatMessagesList(String messageCode) {
-        log.debug("getCatMessagesList messageCode={} ", messageCode);
-        if (StringUtils.isBlank(messageCode)) {
+    public List<CatMessages> getCatMessagesList(String entityClass, String entityCode, Provider provider) {
+        log.debug("getCatMessagesList entityClass={},entityCode={} ", entityClass, entityCode);
+        if (StringUtils.isBlank(entityCode) || StringUtils.isBlank(entityClass)) {
             return new ArrayList<CatMessages>();
         }
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-        qb.addCriterion("c.messageCode", "=", messageCode, true);
+        qb.addCriterion("c.entityCode", "=", entityCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterionEntity("c.provider", provider);
         List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
         return cats;
     }
 
-    /**
-     * Get all messages of a given class in a given language
-     * 
-     * @param clazz Class to get messages for
-     * @param languageCode Language to get messages in
-     * @return A list of messages
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<CatMessages> getCatMessagesList(Class clazz, String languageCode) {
-        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-        qb.like("c.messageCode", getMessageCodePrefix(clazz), QueryLikeStyleEnum.MATCH_BEGINNING, false);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
-        List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
-        return cats;
+    public void batchRemove(BusinessEntity businessEntity) {
+        batchRemove(getEntityClass(businessEntity), businessEntity.getCode(), businessEntity.getProvider());
     }
 
-    public void batchRemove(String entityName, Long id, Provider provider) {
-        String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName() + " c WHERE c.messageCode=:messageCode and c.provider=:provider";
+    private void batchRemove(String entityClass, String entityCode, Provider provider) {
+        String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName() + " c WHERE c.entityCode=:entityCode and c.entityClass=:entityClass and c.provider=:provider";
 
         try {
-            getEntityManager().createQuery(strQuery).setParameter("messageCode", entityName + "_" + id).setParameter("provider", provider).executeUpdate();
+            getEntityManager().createQuery(strQuery).setParameter("entityCode", entityCode).setParameter("entityClass", entityClass).setParameter("provider", provider)
+                .executeUpdate();
         } catch (Exception e) {
             log.error("failed to batch remove", e);
         }
-    }
-
-    /**
-     * Get a message code prefix for a given entity
-     * 
-     * @param entity Entity
-     * @return A message code in a format "className_id"
-     */
-    public String getMessageCode(IEntity entity) {
-        String className = ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
-        return className + "_" + entity.getId();
     }
 
     /**
@@ -175,30 +153,24 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
      * @param clazz Class
      * @return A message code in a format "className_"
      */
-    @SuppressWarnings("rawtypes")
-    public String getMessageCodePrefix(Class clazz) {
-        String className = ReflectionUtils.getCleanClassName(clazz.getSimpleName());
-        return className + "_";
+    public String getEntityClass(IEntity entity) {
+        return ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
     }
 
-    public CatMessages findByCodeAndLanguage(String messageCode, String languageCode, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c", null, provider);
-        qb.addCriterionWildcard("c.messageCode", messageCode, true);
-        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+    @SuppressWarnings("rawtypes")
+    public String getEntityClass(Class clazz) {
+        return ReflectionUtils.getCleanClassName(clazz.getSimpleName());
+    }
+
+    public CatMessages findByCodeClassAndLanguage(String entityCode, String entityClass, String languageCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+        qb.addCriterion("c.entityCode", "=", entityCode, true);
+        qb.addCriterion("c.entityClass", "=", entityClass, true);
+        qb.addCriterion("c.languageCode", "=", languageCode, true);
+        qb.addCriterionEntity("c.provider", provider);
         try {
             return (CatMessages) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-	public List<CatMessages> findByCode(String messageCode, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c", null, provider);
-        qb.addCriterionWildcard("c.messageCode", messageCode, true);
-        try {
-            return (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -207,80 +179,60 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
     public List<CatMessages> list(PaginationConfiguration config) {
         List<CatMessages> catMessages = super.list(config);
         for (CatMessages catMsg : catMessages) {
-            BusinessEntity entity = getBusinessEntity(catMsg);
+            BusinessEntity entity = getBusinessEntity(catMsg, getCurrentProvider());
             if (entity != null) {
-                catMsg.setEntityCode(entity.getCode());
+                // catMsg.setEntityCode(entity.getCode());
                 catMsg.setEntityDescription(entity.getDescription());
             }
         }
         return catMessages;
     }
 
-	private BusinessEntity getBusinessEntity(CatMessages catMessages) {
-		BusinessEntity entity = null;
-		if (catMessages != null) {
-			String messagesCode = catMessages.getMessageCode();
-			String[] codes = messagesCode.split("_");
+    private BusinessEntity getBusinessEntity(CatMessages catMessages, Provider provider) {
+        BusinessEntity entity = null;
+        if (catMessages != null) {
+            String entityCode = catMessages.getEntityCode();
+            String entityClass = catMessages.getEntityClass();
+            try {
+                MultilanguageEntityService<?> service = getMultilanguageEntityService(entityClass);
+                if (service != null) {
+                    entity = service.findByCode(entityCode, provider);
+                }
+            } catch (NumberFormatException e) {
+                log.warn("Failed to parse id. Returning null entity. {}", e.getMessage());
+            } catch (BusinessException e) {
+                e.printStackTrace();
+                log.warn("Failed to retrieve entity. Returning null. {}", e.getMessage());
+            }
+        }
+        return entity;
+    }
 
-			if (codes != null && codes.length == 2) {
-				Long id = null;
-				try {
-					id = Long.valueOf(codes[ENTITY_ID]);
-					MultilanguageEntityService<?> service = getMultilanguageEntityService(codes[ENTITY_CLASS]);
-					if (service != null) {
-						entity = service.findById(id);
-					}
-				} catch (NumberFormatException e) {
-					log.warn("Failed to parse id. Returning null entity.");
-				} catch (BusinessException e) {
-					log.warn("Failed to retrieve entity. Returning null.");
-				}
-			}
-		}
-		return entity;
-	}
-     
-	public MultilanguageEntityService<?> getMultilanguageEntityService(String entityClassName)
-			throws BusinessException {
-		MultilanguageEntityService<?> service = null;
-		if (entityClassName != null) {
-			service = this.services.get(entityClassName);
-		}
-		if (service == null) {
-			throw new BusinessException(INVALID_CLASS_TYPE);
-		}
-		return service;
-	}
-	
-	public BusinessEntity getEntityByMessageCode(String messageCode) {
-		BusinessEntity entity = null;
-		if (!StringUtils.isBlank(messageCode) && messageCode.contains("_")) {
-			try {
-				String[] classAndId = messageCode.split("_");
-				String className = classAndId[0];
-				long entityId = Long.parseLong(classAndId[1]);
-				entity = getEntityByClassNameAndId(className, entityId);
-			} catch (NumberFormatException e) {
-				log.warn("Invalid Entity Id.  Will return null entity.", e);
-			}
-		}
-		return entity;
-	}
+    public MultilanguageEntityService<?> getMultilanguageEntityService(String entityClassName) throws BusinessException {
+        MultilanguageEntityService<?> service = null;
+        log.debug("entityClassName {}", entityClassName);
+        if (entityClassName != null) {
+            service = this.services.get(entityClassName);
+        }
+        if (service == null) {
+            throw new BusinessException(INVALID_CLASS_TYPE);
+        }
+        return service;
+    }
 
-	private BusinessEntity getEntityByClassNameAndId(String className, long entityId) {
-		Class<?> entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(className, MultilanguageEntity.class);
-		BusinessEntity entity = null;
-		if (entityClass != null) {
-			try {
-				log.trace("start of find {} by id (id={}) ..", entityClass.getSimpleName(), entityId);
-				entity = (BusinessEntity) getEntityManager().find(entityClass, entityId);
-				log.debug("end of find {} by id (id={}). Result found={}.", entityClass.getSimpleName(), entityId,
-						entity != null);
-			} catch (NoResultException e) {
-				log.warn("Error encountered while retrieving business entity.  Will return null.", e);
-			}
-		}
-		return entity;
-	}
-
+    public BusinessEntity findBusinessEntityByCodeAndClass(String entityCode, String entityClass, Provider provider) {
+        if (StringUtils.isBlank(entityCode)) {
+            return null;
+        }
+        Class<?> entityClazz = ReflectionUtils.getClassBySimpleNameAndAnnotation(entityClass, MultilanguageEntity.class);
+        QueryBuilder qb = new QueryBuilder(entityClazz, "c");
+        qb.addCriterion("c.code", "=", entityCode, true);
+        qb.addCriterionEntity("c.provider", provider);
+        try {
+            return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (Exception e) {
+            log.warn("Invalid Entity code {},class {}.  Will return null entity.", entityCode, entityClass, e);
+        }
+        return null;
+    }
 }

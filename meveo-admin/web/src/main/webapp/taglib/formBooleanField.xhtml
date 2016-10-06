@@ -24,6 +24,9 @@
             <c:if test="#{not isMessage}">
                 <h:outputText id="#{id}" rendered="#{not isMessage}" value="#{fieldItem}" styleClass="field-value" />
             </c:if>
+            <c:if test="#{isMessage and fieldItem == null}">
+                <h:outputText id="#{id}" value="#{messages['commons.no']}" styleClass="field-value" />
+            </c:if>
         </c:if>
     </hftl:decorateFormField>
 </ui:composition>
