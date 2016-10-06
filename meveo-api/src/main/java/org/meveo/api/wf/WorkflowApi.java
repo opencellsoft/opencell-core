@@ -25,7 +25,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
-import org.meveo.service.base.BaseEntityService;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 
@@ -42,7 +42,7 @@ public class WorkflowApi extends BaseApi {
     private WFTransitionService wfTransitionService;
     
 	@Inject
-	private BaseEntityService baseEntityService;
+	private BusinessEntityService businessEntityService;
 	
 	/**
 	 * 
@@ -284,9 +284,9 @@ public class WorkflowApi extends BaseApi {
 		}catch(Exception e){
 			throw new MeveoApiException("Cant find class for baseEntityName");
 		}
-		baseEntityService.setEntityClass(clazz);
+		businessEntityService.setEntityClass(clazz);
 		
-		BusinessEntity businessEntity = baseEntityService.findByCode(baseEntityInstanceId, currentUser.getProvider());	
+		BusinessEntity businessEntity = businessEntityService.findByCode(baseEntityInstanceId, currentUser.getProvider());	
 		if(businessEntity == null){
 			throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
 		}

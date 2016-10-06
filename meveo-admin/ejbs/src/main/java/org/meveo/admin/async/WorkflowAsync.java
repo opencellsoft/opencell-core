@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitWorkflowJobBean;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.wf.Workflow;
@@ -32,8 +33,8 @@ public class WorkflowAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BaseEntity> entities,Workflow workflow, JobExecutionResultImpl result, User currentUser) {
-        for (BaseEntity entity  : entities) {
+    public Future<String> launchAndForget(List<BusinessEntity> entities,Workflow workflow, JobExecutionResultImpl result, User currentUser) {
+        for (BusinessEntity entity  : entities) {
         	unitWorkflowJobBean.execute(result, currentUser, entity,workflow);
         }
         return new AsyncResult<String>("OK");

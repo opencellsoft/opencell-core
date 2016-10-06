@@ -16,18 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.admin.impl;
+package org.meveo.admin.action.wf;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
 
-import org.meveo.model.admin.GriegDunningInputHistory;
-import org.meveo.service.base.PersistenceService;
+@Named
+@ConversationScoped
+public class WFActionListBean extends WFActionBean {
 
-/**
- * GriegDunningInputHistoryService service implementation.
- */
-@Stateless
-public class GriegDunningInputHistoryService extends
-		PersistenceService<GriegDunningInputHistory> {
-
+    private static final long serialVersionUID = -3037867704912788049L;
 }
