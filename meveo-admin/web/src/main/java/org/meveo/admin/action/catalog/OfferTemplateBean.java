@@ -336,10 +336,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	}
 
 	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
-		entity.getOfferProductTemplates().remove(offerProductTemplate);
-		messages.info(new BundleKey("messages", "delete.successful"));
+		try {
+            entity.getOfferProductTemplates().remove(offerProductTemplate);
+            entity = getPersistenceService().update(entity, getCurrentUser());
+			offerProductTemplateService.remove((Long) offerProductTemplate.getId(), getCurrentUser());
+            messages.info(new BundleKey("messages", "delete.successful"));
 
-		newOfferProductTemplate();
+            newOfferServiceTemplate();
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
 	}
 
 	public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
