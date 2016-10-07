@@ -1211,8 +1211,8 @@
 		<addColumn tableName="billing_product_instance">
 			<column name="subscription_id" type="BIGINT" />
 		</addColumn>
-		
 	</changeSet>
+
 	<changeSet author="TonyAlejandro" id="#2070_20160930_account_entity_add_bam_id">
 		<addColumn tableName="account_entity">
 			<column name="bam_id" type="BIGINT"/>
@@ -1238,5 +1238,90 @@
 				referencedColumnNames="id"
 				deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION"/>
 	</changeSet>
+
+	<changeSet author="anasseh" id="#2036_20161004">
+
+	     <createSequence sequenceName="WF_HISTORY_SEQ"/>
+	      <createSequence sequenceName="WF_HISTORY_ACTION_SEQ"/>
+
+
+
+        <createTable tableName="WF_HISTORY">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="ENTITY_INSTANCE_CODE" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="FROM_STATUS" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="TO_STATUS" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="TRANSITION_NAME" type="varchar(255)"/>
+            <column name="ACTION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="WORKFLOW_ID" type="BIGINT" />
+        </createTable>
+
+       <createTable tableName="WF_HISTORY_ACTION">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+             <column name="provider_id" type="BIGINT"/>
+            <column name="ACTION" type="varchar(2000)"/>
+            <column name="RESULT" type="varchar(255)" />
+            <column name="WF_HISTORY_ID" type="BIGINT" />
+        </createTable>
+
+
+        <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_pkey"  tableName="WF_HISTORY" />
+         <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_ACTION_pkey"  tableName="WF_HISTORY_ACTION" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="WF_HISTORY" constraintName="fk_provider_WF_HISTORY_crm_provider"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+                                 baseTableName="WF_HISTORY_ACTION" constraintName="fk_provider_WF_HISTORY_ACTION_crm_provider"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="WF_HISTORY" constraintName="fk_creator_WF_HISTORY_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+                                 baseTableName="WF_HISTORY" constraintName="fk_updater_WF_HISTORY_adm_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="WORKFLOW_ID"
+                                 baseTableName="WF_HISTORY" constraintName="fk_workflow_WF_HISTORY_wf_workflow"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="WF_WORKFLOW" />
+
+        <addForeignKeyConstraint baseColumnNames="WF_HISTORY_ID"
+                                 baseTableName="WF_HISTORY_ACTION" constraintName="fk_workflow_history_WF_HISTORY_ACTION_wf_history"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="WF_HISTORY" />
+
+
+
+     </changeSet>
 
 </databaseChangeLog>

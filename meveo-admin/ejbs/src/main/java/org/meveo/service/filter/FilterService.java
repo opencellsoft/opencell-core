@@ -227,15 +227,6 @@ public class FilterService extends BusinessService<Filter> {
             Query query = fqb.getQuery(getEntityManager());
             log.debug("query={}", fqb.getSqlString());
             List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-            XStream xstream = new XStream() {
-                @Override
-                protected MapperWrapper wrapMapper(MapperWrapper next) {
-                    return new HibernateMapper(next);
-                }
-            };
-
-            applyOmittedFields(xstream, filter);
-
             return objects;
         } catch (Exception e) {
             throw new BusinessException(e);

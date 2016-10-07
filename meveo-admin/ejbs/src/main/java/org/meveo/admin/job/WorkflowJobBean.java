@@ -16,6 +16,7 @@ import org.meveo.admin.async.WorkflowAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -76,7 +77,7 @@ public class WorkflowJobBean {
 			Workflow workflow = workflowService.findByCode(workflowCode, currentUser.getProvider());
 
 			log.debug("filter:{}",filter == null ? null : filter.getCode());
-			List<? extends IEntity> entities = filterService.filteredListAsObjects(filter, currentUser);
+			List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, currentUser);
 			log.debug("entities:" + entities.size());
 			result.setNbItemsToProcess(entities.size());
 			
@@ -85,7 +86,7 @@ public class WorkflowJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(workflowAsync.launchAndForget((List<BaseEntity>) subListCreator.getNextWorkSet(),workflow,result, currentUser));
+				futures.add(workflowAsync.launchAndForget((List<BusinessEntity>) subListCreator.getNextWorkSet(),workflow,result, currentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

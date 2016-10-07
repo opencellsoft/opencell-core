@@ -22,7 +22,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
-import org.meveo.service.wf.BaseEntityService;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.util.view.ESBasedDataModel;
 import org.primefaces.model.LazyDataModel;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class FullTextSearchBean implements Serializable {
     protected User currentUser;
 
     @Inject
-    private BaseEntityService baseEntityService;
+    private BusinessEntityService businessEntityService;
 
     @Inject
     protected Conversation conversation;
@@ -150,7 +150,7 @@ public class FullTextSearchBean implements Serializable {
         QueryBuilder qb = new QueryBuilder(scopeInfo.getClazz(), "be", null, getCurrentUser().getProvider());
         qb.addCriterion("be.code", "=", code, true);
 
-        List<? extends BusinessEntity> results = qb.getQuery(baseEntityService.getEntityManager()).getResultList();
+        List<? extends BusinessEntity> results = qb.getQuery(businessEntityService.getEntityManager()).getResultList();
         if (!results.isEmpty()) {
             BusinessEntity entity = results.get(0);
             viewInfo[0] = BaseBean.getEditViewName(entity.getClass());

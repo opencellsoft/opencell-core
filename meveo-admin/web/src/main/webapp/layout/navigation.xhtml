@@ -418,8 +418,17 @@
 			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
 
 			<p:menuitem id="filters" outcome="filters"	value="#{messages['menu.filters']}" />
-			
-			<p:menuitem id="dunningPlan" outcome="workflows" value="#{messages['menu.workflow']}" />
+						
+			<p:submenu id="workflows"
+				label="#{messages['menu.workflow']}" outcome="workflows">
+				<p:menuitem id="crud_workflows"
+					value="#{messages['menu.workflow']}" outcome="workflows" />
+				
+				<p:menuitem id="workflowHistory"
+					value="#{messages['menu.workflowHistory']}"
+					outcome="workflowHistory" />
+							
+			</p:submenu>
 			
 			<p:submenu id="notifications"
 				label="#{messages['menu.notifications']}" outcome="notifications">

@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:e="http://primefaces.org/extension" xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="workflowHistoryId" value="#{workflowHistoryBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+                    <p:menuitem outcome="workflowHistories" value="#{messages['menu.workflowHistory']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+        <p:panel header="#{messages['workflowHistory.panel']}">
+            
+                <p:tab title="#{messages['workflowHistory.panel']}">
+                    <hftl:formPanel backingBean="#{workflowHistoryBean}" showEnableDisableButton="false" showDeleteButton="false" showBackButton="true" showFormButtons="false">
+                        <hftl:formField label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
+                        <hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
+                         <hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
+                         <hftl:formField label="#{messages['workflow.title']}" field="workflow" valueLabelField="code"/>
+		</hftl:formPanel>
+		
+            <h:panelGroup id="actionsAndReports">
+                <hftl:decorateFormField label="#{messages['workflowHistoryAction.panel']}" componentWidth="100" newLine="true"
+                    rendered="#{true}">
+                    <p:dataTable id="actionsAndReportsData" var="entity" value="#{workflowHistoryBean.entity.actionsAndReports}" paginator="true" rows="10" 
+                        sortField="action" paginatorAlwaysVisible="false"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10"
+                        lazy="false" styleClass="custom-grid" reflow="true">
+                        <hftl:column label="#{messages['workflowHistory.action']}" field="action" width="50%"/>
+                        <hftl:column label="#{messages['workflowHistory.result']}" field="result"  width="50%" />
+
+                    </p:dataTable>
+                </hftl:decorateFormField>
+            </h:panelGroup>		
+                   </p:tab> 
+               
+
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

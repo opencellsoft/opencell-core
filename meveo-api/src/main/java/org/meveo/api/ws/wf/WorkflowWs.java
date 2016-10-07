@@ -33,7 +33,7 @@ public interface WorkflowWs extends IBaseWs {
 	    
 	    
 	    @WebMethod
-	    ActionStatus execute(@WebParam(name = "baseEntityName") String baseEntityName, @WebParam(name = "baseEntityInstanceId") Long baseEntityInstanceId,@WebParam(name = "workflowCode") String workflowCode);
+	    ActionStatus execute(@WebParam(name = "baseEntityName") String baseEntityName, @WebParam(name = "entityInstanceCode") String entityInstanceCode,@WebParam(name = "workflowCode") String workflowCode);
 	    
 	    @WebMethod
 	    WorkflowsResponseDto findByEntity(@WebParam(name = "baseEntityName") String baseEntityName);

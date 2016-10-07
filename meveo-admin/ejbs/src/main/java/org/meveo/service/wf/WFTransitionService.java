@@ -18,18 +18,32 @@
  */
 package org.meveo.service.wf;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.wf.WFAction;
+import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WFTransitionService extends PersistenceService<WFTransition> {
+	
+	@Inject
+	private WFActionService wfActionService;
+	
+	@Inject
+	private WFDecisionRuleService wfDecisionRuleService;
 	
 	public List<WFTransition> listByFromStatus(String fromStatus ,Workflow workflow){
 		if("*".equals(fromStatus)){
@@ -61,8 +75,9 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
         return wfTransition;
     }
 
-    public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow, Provider provider){
-        List<WFTransition> wfTransitions =  (List<WFTransition>) getEntityManager()
+    @SuppressWarnings("unchecked")
+	public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow, Provider provider){
+        List<WFTransition> wfTransitions =  ((List<WFTransition>) getEntityManager()
                 .createQuery(
                         "from "
                                 + WFTransition.class
@@ -72,8 +87,55 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
                 .setParameter("toStatus", toStatus)
                 .setParameter("workflow", workflow)
                 .setParameter("provider", provider)
-                .getResultList();
+                .getResultList());
         return wfTransitions;
     }
+    
+	public synchronized WFTransition duplicate(WFTransition entity, Workflow workflow, User currentUser) throws BusinessException {
+		entity = refreshOrRetrieve(entity);
+		
+		if (workflow != null) {
+			entity.setWorkflow(workflow);
+		}
+
+		entity.getWfActions().size();
+		entity.getWfDecisionRules().size();
+
+		// Detach and clear ids of entity and related entities
+		detach(entity);
+		entity.setId(null);
+		entity.clearUuid();
+
+		List<WFAction> wfActions = entity.getWfActions();
+		entity.setWfActions(new ArrayList<WFAction>());
+
+		Set<WFDecisionRule> wfDecisionRules = entity.getWfDecisionRules();
+		entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
+
+		create(entity, currentUser);
+
+		if (wfActions != null) {
+			for (WFAction wfAction : wfActions) {
+				wfActionService.detach(wfAction);
+				wfAction.setId(null);
+				wfAction.clearUuid();
+				wfActionService.create(wfAction, currentUser);
+
+				entity.getWfActions().add(wfAction);
+			}
+		}
+
+		if (wfDecisionRules != null) {
+			for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
+				wfDecisionRuleService.detach(wfDecisionRule);
+				wfDecisionRule.setId(null);
+				entity.getWfDecisionRules().add(wfDecisionRule);
+			}
+		}
+
+		update(entity, currentUser);
+
+		return entity;
+	}
 
 }
