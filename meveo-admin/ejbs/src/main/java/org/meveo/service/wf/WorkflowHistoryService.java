@@ -18,13 +18,24 @@
  */
 package org.meveo.service.wf;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
+import org.meveo.model.crm.Provider;
+import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> {
-
- 
+		
+	
+	@SuppressWarnings("unchecked")
+	public List<WorkflowHistory> findByEntityCode(String entityInstanceCode,List<Workflow> workflows, Provider provider){
+        return (List<WorkflowHistory>) getEntityManager().createQuery("from " + WorkflowHistory.class.getSimpleName() + " where entityInstanceCode=:entityInstanceCode and"
+        		+ " provider=:provider and workflow in (:workflows)")
+                .setParameter("entityInstanceCode", entityInstanceCode).setParameter("provider", provider).setParameter("workflows", workflows).getResultList();
+        }
+	
 }

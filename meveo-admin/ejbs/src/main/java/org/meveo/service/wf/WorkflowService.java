@@ -43,7 +43,6 @@ import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFAction;
@@ -129,7 +128,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @return All enabled workflowType classes applied on an Entity
      */
     @SuppressWarnings("rawtypes")
-    private List<Class<?>> getWFTypeByEntity(Class<? extends IEntity> entityClass, Provider provider) {
+    private List<Class<?>> getWFTypeByEntity(Class<? extends BusinessEntity> entityClass, Provider provider) {
         List<Class<?>> result = new ArrayList<Class<?>>();
         for (Class<?> clazz : getAllWFTypes(provider)) {
             Class<?> genericClass = null;
@@ -158,7 +157,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param provider
      * @return
      */
-    public List<Workflow> findByEntity(Class<? extends IEntity> entityClass, Provider provider) {
+    public List<Workflow> findByEntity(Class<? extends BusinessEntity> entityClass, Provider provider) {
         List<Workflow> result = new ArrayList<Workflow>();
         List<Class<?>> listWFType = getWFTypeByEntity(entityClass, provider);
         for (Class<?> wfTypeclass : listWFType) {
@@ -175,7 +174,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param provider
      * @return
      */
-    public boolean isWorkflowSetup(Class<? extends IEntity> entityClass, Provider provider) {
+    public boolean isWorkflowSetup(Class<? extends BusinessEntity> entityClass, Provider provider) {
         List<Workflow> workflows = findByEntity(entityClass, provider);
         return !workflows.isEmpty();
     }

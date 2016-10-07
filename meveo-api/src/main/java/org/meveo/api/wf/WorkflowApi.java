@@ -243,9 +243,9 @@ public class WorkflowApi extends BaseApi {
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();
         }
-        Class<? extends IEntity> clazz = null;
+        Class<? extends BusinessEntity> clazz = null;
         try {
-            clazz = (Class<? extends IEntity>) Class.forName(baseEntityName);
+            clazz = (Class<? extends BusinessEntity>) Class.forName(baseEntityName);
         } catch (Exception e) {
             throw new MeveoApiException("Cant find class for baseEntityName");
         }
