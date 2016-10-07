@@ -22,6 +22,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
@@ -37,5 +39,31 @@ public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> 
         		+ " provider=:provider and workflow in (:workflows)")
                 .setParameter("entityInstanceCode", entityInstanceCode).setParameter("provider", provider).setParameter("workflows", workflows).getResultList();
         }
+
+	@SuppressWarnings("unchecked")
+	public List<WorkflowHistory> find(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus, Provider provider) {
+				
+		QueryBuilder queryBuilder = new QueryBuilder(WorkflowHistory.class, "wfh");	
+		queryBuilder.addCriterionEntity("wfh.provider", provider);
+		if(!StringUtils.isBlank(entityInstanceCode)){
+			queryBuilder.addCriterion("wfh.entityInstanceCode", "=", entityInstanceCode, true);
+		}
+		if(!StringUtils.isBlank(workflowCode)){
+			queryBuilder.addCriterion("wfh.workflowCode.code", "=", workflowCode, true);
+		}
+		if(!StringUtils.isBlank(fromStatus)){
+			queryBuilder.addCriterion("wfh.fromStatus", "=", fromStatus, true);
+		}	
+		if(!StringUtils.isBlank(toStatus)){
+			queryBuilder.addCriterion("wfh.toStatus", "=", toStatus, true);
+		}		
+				
+		try {
+			return (List<WorkflowHistory>) queryBuilder.getQuery(getEntityManager()).getResultList();
+		} catch (Exception e) {
+			return null;
+		}
+				
+	}
 	
 }

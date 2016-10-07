@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.dto.payment.WorkflowHistoryDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,13 +21,14 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
+import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WorkflowHistoryService;
 import org.meveo.service.wf.WorkflowService;
 
 @Stateless
@@ -34,6 +36,9 @@ public class WorkflowApi extends BaseApi {
 
 	@Inject
 	private WorkflowService workflowService;
+	
+	@Inject
+	private WorkflowHistoryService workflowHistoryService;
 
 	@Inject
 	private WFTransitionApi wfTransitionApi;
@@ -293,6 +298,19 @@ public class WorkflowApi extends BaseApi {
 		log.debug("businessEntity.getCode() : "+businessEntity.getCode());
 		
 		workflowService.executeWorkflow(businessEntity, workflowCode, currentUser);
+	}
+
+	public List<WorkflowHistoryDto> findHistory(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus, User currentUser) {
+		
+		List<WorkflowHistory> wfsHistory = workflowHistoryService.find(entityInstanceCode, workflowCode,  fromStatus,  toStatus,  currentUser.getProvider());		
+		List<WorkflowHistoryDto> result = new ArrayList<WorkflowHistoryDto>();
+		if(wfsHistory != null){
+			for(WorkflowHistory wfHistory : wfsHistory){
+				WorkflowHistoryDto wfHistoryDto = new WorkflowHistoryDto(wfHistory);
+				result.add(wfHistoryDto);
+			}
+		}
+		return result;
 	}
 }
 
