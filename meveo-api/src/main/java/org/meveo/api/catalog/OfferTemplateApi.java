@@ -28,6 +28,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.OfferProductTemplateService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -57,6 +58,9 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private ProductTemplateService productTemplateService;
+	
+	@Inject
+	private OfferProductTemplateService offerProductTemplateService;
 
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -373,7 +377,7 @@ public class OfferTemplateApi extends BaseApi {
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
 		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
 		boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
-		Set<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
+		Set<OfferProductTemplate> existingProductTemplates = offerProductTemplateService.refreshOrRetrieve(offerTemplate.getOfferProductTemplates());
 		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
 		if (hasOfferProductTemplateDtos) {
 			List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
@@ -386,12 +390,12 @@ public class OfferTemplateApi extends BaseApi {
 			if (hasExistingProductTemplates) {
 				List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
 				offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
-				newOfferProductTemplates.removeAll(existingProductTemplates);
+				newOfferProductTemplates.removeAll(new ArrayList<>(existingProductTemplates));
 				// for (OfferProductTemplate offerProductTemplateForRemoval :
 				// offerProductTemplatesForRemoval) {
 				// offerProductTemplateService.remove(offerProductTemplateForRemoval);
 				// }
-				offerTemplate.getOfferProductTemplates().removeAll(offerProductTemplatesForRemoval);
+				offerTemplate.getOfferProductTemplates().removeAll(new ArrayList<>(offerProductTemplatesForRemoval));
 			}
 			// for (OfferProductTemplate newOfferProductTemplate :
 			// newOfferProductTemplates) {
