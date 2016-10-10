@@ -15,6 +15,7 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -1637,7 +1638,7 @@ public class AccountHierarchyApi extends BaseApi {
 		BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
 		if(businessAccountModel != null) {
-			dto.setBusinessAccountModel(new BusinessAccountModelDto(businessAccountModel));
+			dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
 		}
 
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));

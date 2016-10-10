@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -67,7 +68,8 @@ public class SellerDto extends BaseDto {
 	
 	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
 
-	private BusinessAccountModelDto businessAccountModel = new BusinessAccountModelDto();
+	@XmlElement(name = "businessAccountModel")
+	private BusinessEntityDto businessAccountModel;
 
 	public SellerDto() {
 	}
@@ -194,11 +196,11 @@ public class SellerDto extends BaseDto {
 		this.invoiceTypeSequences = invoiceTypeSequences;
 	}
 
-	public BusinessAccountModelDto getBusinessAccountModel() {
+	public BusinessEntityDto getBusinessAccountModel() {
 		return businessAccountModel;
 	}
 
-	public void setBusinessAccountModel(BusinessAccountModelDto businessAccountModel) {
+	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
 		this.businessAccountModel = businessAccountModel;
 	}
 
