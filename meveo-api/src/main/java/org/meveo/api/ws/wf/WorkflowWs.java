@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.dto.wf.WorkflowHistoryResponseDto;
 import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.ws.IBaseWs;
@@ -37,5 +38,9 @@ public interface WorkflowWs extends IBaseWs {
 	    
 	    @WebMethod
 	    WorkflowsResponseDto findByEntity(@WebParam(name = "baseEntityName") String baseEntityName);
+	    
+	    @WebMethod
+	    WorkflowHistoryResponseDto findHistory( @WebParam(name = "entityInstanceCode") String entityInstanceCode,@WebParam(name = "workflowCode") String workflowCode,@WebParam(name = "fromStatus") String fromStatus,@WebParam(name = "toStatus") String toStatus);
+	 
 	    
 }
