@@ -1281,13 +1281,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				headerCat.setCode(invoiceCategory.getCode());
 				headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
 				headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-
-				Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate
-						.getSubCategoryInvoiceAgregates();
-				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-					headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
-				}
-
+			}
+			Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+				
+				
+			for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+				headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);				
 				headerCategories.put(invoiceCategory.getCode(), headerCat);
 			}
 
