@@ -1,4 +1,4 @@
-package org.meveocrm.model.dwh;
+package org.meveo.model.dwh;
 
 import java.util.Date;
 import java.util.GregorianCalendar;

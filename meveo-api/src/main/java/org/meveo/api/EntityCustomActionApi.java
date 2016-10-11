@@ -43,8 +43,8 @@ public class EntityCustomActionApi extends BaseApi {
 
         checkDtoAndSetAppliesTo(actionDto, appliesTo);
 
-        if (entityCustomActionService.findByCode(actionDto.getFullCode(), currentUser.getProvider()) != null) {
-            throw new EntityAlreadyExistsException(ScriptInstance.class, actionDto.getFullCode());
+        if (entityCustomActionService.findByCodeAndAppliesTo(actionDto.getCode(), actionDto.getAppliesTo(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(EntityCustomAction.class, actionDto.getCode() + "/" + actionDto.getAppliesTo());
         }
 
         EntityCustomAction action = new EntityCustomAction();
@@ -72,9 +72,9 @@ public class EntityCustomActionApi extends BaseApi {
 
         checkDtoAndSetAppliesTo(actionDto, appliesTo);
 
-        EntityCustomAction action = entityCustomActionService.findByCode(actionDto.getFullCode(), currentUser.getProvider());
+        EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionDto.getCode(), actionDto.getAppliesTo(), currentUser.getProvider());
         if (action == null) {
-            throw new EntityDoesNotExistsException(ScriptInstance.class, actionDto.getCode());
+            throw new EntityDoesNotExistsException(EntityCustomAction.class, actionDto.getCode() + "/" + actionDto.getAppliesTo());
         }
 
         entityCustomActionFromDTO(actionDto, action, currentUser);
@@ -96,7 +96,7 @@ public class EntityCustomActionApi extends BaseApi {
         return result;
     }
 
-    public EntityCustomActionDto findEntityAction(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public EntityCustomActionDto find(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
 
         if (StringUtils.isBlank(actionCode)) {
             missingParameters.add("actionCode");
@@ -106,16 +106,16 @@ public class EntityCustomActionApi extends BaseApi {
         }
         handleMissingParameters();
 
-        EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(EntityCustomAction.composeCode(actionCode, appliesTo), appliesTo, currentUser.getProvider());
+        EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo, currentUser.getProvider());
         if (action == null) {
-            throw new EntityDoesNotExistsException(EntityCustomAction.class, EntityCustomAction.composeCode(actionCode, appliesTo));
+            throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode + "/" + appliesTo);
         }
         EntityCustomActionDto actionDto = new EntityCustomActionDto(action);
 
         return actionDto;
     }
 
-    public void removeEntityAction(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+    public void remove(String actionCode, String appliesTo, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException  {
 
         if (StringUtils.isBlank(actionCode)) {
             missingParameters.add("actionCode");
@@ -126,8 +126,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         handleMissingParameters();
 
-        EntityCustomAction scriptInstance = entityCustomActionService.findByCodeAndAppliesTo(EntityCustomAction.composeCode(actionCode, appliesTo), appliesTo,
-            currentUser.getProvider());
+        EntityCustomAction scriptInstance = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo, currentUser.getProvider());
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode);
         }
@@ -140,7 +139,7 @@ public class EntityCustomActionApi extends BaseApi {
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndSetAppliesTo(postData, appliesTo);
 
-        EntityCustomAction scriptInstance = entityCustomActionService.findByCode(postData.getFullCode(), currentUser.getProvider());
+        EntityCustomAction scriptInstance = entityCustomActionService.findByCodeAndAppliesTo(postData.getCode(), postData.getAppliesTo(), currentUser.getProvider());
 
         if (scriptInstance == null) {
             result = create(postData, appliesTo, currentUser);
@@ -165,7 +164,7 @@ public class EntityCustomActionApi extends BaseApi {
         }
         if (StringUtils.isBlank(dto.getScript())) {
             missingParameters.add("script");
-        
+
         } else {
             // If script was passed, code is needed if script source was not passed.
             if (StringUtils.isBlank(dto.getScript().getCode()) && StringUtils.isBlank(dto.getScript().getScript())) {
@@ -195,7 +194,7 @@ public class EntityCustomActionApi extends BaseApi {
      */
     private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action, User currentUser) throws MeveoApiException {
 
-        action.setCode(dto.getCode(), dto.getAppliesTo());
+        action.setCode(dto.getCode());
         action.setDescription(dto.getDescription());
         action.setApplicableOnEl(dto.getApplicableOnEl());
         action.setAppliesTo(dto.getAppliesTo());

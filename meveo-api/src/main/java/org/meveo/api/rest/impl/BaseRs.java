@@ -25,6 +25,7 @@ import org.meveo.api.rest.security.RSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.util.MeveoParamBean;
+import org.meveo.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public abstract class BaseRs implements IBaseRs {
     protected final String RESPONSE_DELIMITER = " - ";
 
     public ActionStatus index() {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V4.2");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V" + Version.appVersion);
         return result;
     }
 

@@ -45,7 +45,8 @@ public interface FilteredListRs extends IBaseRs {
      */
     @Path("/search")
     @GET
-    public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
+    public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from,
+            @QueryParam("size") Integer size);
 
     /**
      * Execute a search in Elastic Search on given fields for given values. Query values by field are passed in extra query parameters in a form of fieldName=valueToMatch
@@ -57,5 +58,15 @@ public interface FilteredListRs extends IBaseRs {
      */
     @Path("/searchByField")
     @GET
-    public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size, @Context UriInfo info);
+    public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
+            @Context UriInfo info);
+
+    /**
+     * Clean and reindex Elastic Search repository
+     * 
+     * @return
+     */
+    @Path("/reindex")
+    @GET
+    public Response reindex();
 }

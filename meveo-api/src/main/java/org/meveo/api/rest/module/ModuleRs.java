@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -26,15 +26,15 @@ public interface ModuleRs extends IBaseRs {
 
     @POST
     @Path("/")
-    public ActionStatus create(ModuleDto moduleDto);
+    public ActionStatus create(MeveoModuleDto moduleDto);
 
     @PUT
     @Path("/")
-    public ActionStatus update(ModuleDto moduleDto);
+    public ActionStatus update(MeveoModuleDto moduleDto);
 
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(ModuleDto moduleDto);
+    public ActionStatus createOrUpdate(MeveoModuleDto moduleDto);
 
     @DELETE
     @Path("/{code}")
@@ -46,7 +46,7 @@ public interface ModuleRs extends IBaseRs {
 
     @PUT
     @Path("/install")
-    public ActionStatus install(ModuleDto moduleDto);
+    public ActionStatus install(MeveoModuleDto moduleDto);
 
     @GET
     @Path("/")

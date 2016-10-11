@@ -69,7 +69,7 @@
     </p:dialog>
 
     <p:dialog id="exportResults" dynamic="true" header="#{messages['export.exportResults']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="exportResultsDialog"
-        width="900">
+        position="top" width="900" >
         <p:scrollPanel mode="native" style="max-height:550px">
             <h:panelGroup id="exportSummary">
                 <h:form rendered="#{entityExportImportBean.exportImportFuture!=null}">

@@ -19,24 +19,11 @@
 package org.meveo.service.job;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class TimerEntityService extends PersistenceService<TimerEntity> {
+public class TimerEntityService extends BusinessService<TimerEntity> {
 
-	public TimerEntity findByCode(String code, Provider provider) {
-			QueryBuilder qb = new QueryBuilder(TimerEntity.class, "t");
-			qb.addCriterionWildcard("t.code", code, true); 
-			qb.addCriterionEntity("provider", provider);
-			try {
-	            return (TimerEntity) qb.getQuery(getEntityManager()).getSingleResult();
-	        } catch (NoResultException e) {
-	            return null;
-	        }
-		}
 }

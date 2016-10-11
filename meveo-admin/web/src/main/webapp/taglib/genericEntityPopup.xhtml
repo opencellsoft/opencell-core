@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+    xmlns:s="http://jboss.org/seam/faces">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a dialog component to search and select an entity. 
+        
+    Used in conjunction with searchField and formFields of type entity with popup="true" attribute. 
+    
+    Attributes
+        id - popup identifier
+        annotation - pick from classes that have a given annotation
+        header - dialog header
+        width - dialog width
+        selectionListenerBean and selectionListenerMethod - action listener bean and method to execute when value is selected from a list.
+        selection - a variable to hold selected item from a search results datatable - An alternative to selectionListenerBean.selectionListenerMethod(). If selectionListenerBean.selectionListenerMethod() is used, method is called after the value is set to field identified by selection attribute. 
+        updateField - a list of component ids to update separated by a comma
+-->
+
+<ui:composition>
+
+    <!-- No id is set. -->
+    <c:if test="${empty id}">
+        <c:set var="id" value="popup" />
+    </c:if>
+    <c:if test="${empty width}">
+        <c:set var="width" value="700" />
+    </c:if>
+
+    <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
+
+    <p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}" appendTo="@(body)"
+        fitViewport="true" responsive="true" position="top">
+        <h:form id="#{id}popupForm">
+            <h:panelGroup layout="block" styleClass="search-panel">
+                <p:messages />
+
+                <p:outputPanel styleClass="search-panel-fields">
+                    <hftl:decorateFormField fieldId="searchEntityClass" label="#{messages['BusinessEntity.type']}">
+                        <p:selectOneMenu id="searchEntityClass" value="#{genericEntityPickerBean.selectedEntityClass}" required="true">
+                            <f:selectItem itemLabel="" itemValue="" />
+                            <f:selectItems value="#{genericEntityPickerBean.getEntityClasses(annotation)}" var="elem" itemLabel="#{ref:getHumanClassName(elem.simpleName)}"
+                                itemValue="#{elem}" />
+                            <s:objectConverter />
+                            <p:ajax update="searchFields #{id}datatable" event="change" />
+                        </p:selectOneMenu>
+                    </hftl:decorateFormField>
+
+                    <h:panelGroup id="searchFields">
+                        <c:if test="#{genericEntityPickerBean.selectedEntityClass!=null}">
+                            <hftl:searchField id="searchCode" label="#{messages['businessEntity.code']}" backingBean="#{genericEntityPickerBean}" field="code" />
+                            <hftl:searchField id="searchDescription" label="#{messages['businessEntity.description']}" backingBean="#{genericEntityPickerBean}" field="description" />
+                            <hftl:searchField id="searchFieldAppliesTo" label="#{messages['meveoModuleItem.appliesTo']}" backingBean="#{genericEntityPickerBean}" field="appliesTo"
+                                isAutocomplete="true" autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNamesHuman"
+                                converter="customFieldAppliesToConverter" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'appliesTo')}" />
+                        </c:if>
+                        <!--                     <hftl:entityPopup id="searchCustomField" width="750" header="#{messages['customField.popup.header']}" backingBean="#{customFieldTemplateListBean}" -->
+                        <!--                         searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['meveoModuleItem.appliesTo']}" -->
+                        <!--                         searchField2="appliesTo" selection="#{backingBean.customField}" column1Label="#{messages['businessEntity.code']}" column1="code" -->
+                        <!--                         column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}" column3="appliesTo" -->
+                        <!--                         updateField=":moduleForm:moduleItems" column3Converter="customFieldAppliesTo" isAutocomplete2="true" autocompleteBean2="#{customFieldTemplateBean}" -->
+                        <!--                         autocompleteMethod2="autocompleteClassNamesHuman" searchField2Converter="customFieldAppliesToConverter"> -->
+                        <!--                     </hftl:entityPopup> -->
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form" />
+                        <p:commandButton id="buttonClear" action="#{genericEntityPickerBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
+                        <p:commandButton id="buttonAll" action="#{genericEntityPickerBean.back}" value="#{messages['commons.all']}" />
+                    </h:panelGroup>
+                </p:outputPanel>
+            </h:panelGroup>
+
+            <p:dataTable id="#{id}datatable" var="e" paginator="true" resizableColumns="true" value="#{genericEntityPickerBean.lazyDataModel}" rows="10" selection="#{selection}"
+                selectionMode="single" rowKey="#{e.id}" lazy="true">
+                <c:if test="#{empty selectionListenerBean}">
+                    <p:ajax event="rowSelect" oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}" />
+                </c:if>
+                <c:if test="#{not empty selectionListenerBean}">
+                    <p:ajax event="rowSelect" listener="#{selectionListenerBean[selectionListenerMethod]}" oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}" />
+                </c:if>
+                <p:column headerText="#{messages['businessEntity.code']}">
+                    <h:outputText value="#{e.code}" />
+                </p:column>
+                <p:column headerText="#{messages['businessEntity.description']}">
+                    <h:outputText value="#{e.description}" />
+                </p:column>
+                <p:column headerText="#{messages['meveoModuleItem.appliesTo']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'appliesTo')}">
+                    <c:set var="converter2" value="#{getConverter.forType(e['appliesTo'], 'customFieldAppliesTo')}"></c:set>
+                    <h:outputText value="#{e['appliesTo']}" converter="#{converter2}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>
+
+</html>

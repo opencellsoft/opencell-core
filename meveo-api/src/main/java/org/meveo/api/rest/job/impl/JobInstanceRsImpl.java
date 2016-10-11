@@ -90,7 +90,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
         try {
-            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser().getProvider()));
+            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

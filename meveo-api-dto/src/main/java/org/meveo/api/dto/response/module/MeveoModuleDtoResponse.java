@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -16,13 +16,13 @@ import org.meveo.api.dto.response.BaseResponse;
 public class MeveoModuleDtoResponse extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
-    private ModuleDto module;
+    private MeveoModuleDto module;
 
-    public ModuleDto getModule() {
+    public MeveoModuleDto getModule() {
         return module;
     }
 
-    public void setModule(ModuleDto module) {
+    public void setModule(MeveoModuleDto module) {
         this.module = module;
     }
 

@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -21,7 +21,7 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class CounterTemplateApi extends BaseApi {
+public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemplateDto> {
 
     @Inject
     private CounterTemplateService<CounterTemplate> counterTemplateService;
@@ -29,7 +29,7 @@ public class CounterTemplateApi extends BaseApi {
     @Inject
     private CalendarService calendarService;
 
-    public void create(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public CounterTemplate create(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -67,9 +67,11 @@ public class CounterTemplateApi extends BaseApi {
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
         counterTemplateService.create(counterTemplate, currentUser);
+
+        return counterTemplate;
     }
 
-    public void update(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public CounterTemplate update(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -104,15 +106,18 @@ public class CounterTemplateApi extends BaseApi {
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
-        counterTemplateService.update(counterTemplate, currentUser);
+        counterTemplate = counterTemplateService.update(counterTemplate, currentUser);
+
+        return counterTemplate;
     }
 
-    public CounterTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    @Override
+    public CounterTemplateDto find(String code, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
             handleMissingParameters();
         }
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, provider);
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(code, currentUser.getProvider());
         if (counterTemplate == null) {
             throw new EntityDoesNotExistsException(CounterTemplate.class, code);
         }
@@ -133,11 +138,12 @@ public class CounterTemplateApi extends BaseApi {
         counterTemplateService.remove(counterTemplate, currentUser);
     }
 
-    public void createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public CounterTemplate createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

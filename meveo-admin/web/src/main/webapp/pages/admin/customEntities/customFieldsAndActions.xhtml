@@ -166,7 +166,7 @@
                 paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                 rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true" resizableColumns="true">
                 <p:column headerText="#{messages['BusinessEntity.code']}">
-                    <h:outputText value="#{entity.localCodeForRead}" />
+                    <h:outputText value="#{entity.code}" />
                 </p:column>
                 <p:column headerText="#{messages['customizedEntities.actionLabel']}">
                     <h:outputText value="#{entity.label}" />
@@ -481,7 +481,7 @@
 
         <hftl:formPanel formId="actionForm" label="#{messages['customizedEntities.actionHeader']}" backingBean="#{entityCustomActionBean}" showFormButtons="false">
 
-            <hftl:formField label="#{messages['BusinessEntity.code']}" field="localCode" required="true" allowEdit="false" componentWidth="15" />
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
             <hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
             <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1" />

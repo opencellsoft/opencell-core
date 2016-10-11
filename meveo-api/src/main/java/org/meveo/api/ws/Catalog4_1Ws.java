@@ -13,7 +13,7 @@ import org.meveo.api.dto.catalog.OfferTemplate4_1Dto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -164,10 +164,10 @@ public interface Catalog4_1Ws extends IBaseWs {
 	// price plan
 
 	@WebMethod
-	ActionStatus createPricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+	ActionStatus createPricePlan(@WebParam(name = "pricePlan") PricePlanMatrixDto postData);
 
 	@WebMethod
-	ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+	ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanMatrixDto postData);
 
 	@WebMethod
 	GetPricePlanResponseDto findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
@@ -179,7 +179,7 @@ public interface Catalog4_1Ws extends IBaseWs {
 	PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
 
 	@WebMethod
-	ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+	ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanMatrixDto postData);
 
 	// triggered Edr
 

@@ -17,7 +17,7 @@ import org.meveo.model.notification.WebHookMethodEnum;
  **/
 @XmlRootElement(name = "WebhookNotification")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WebhookNotificationDto extends NotificationDto {
+public class WebHookDto extends NotificationDto {
 
 	private static final long serialVersionUID = -24934196712758476L;
 
@@ -40,11 +40,11 @@ public class WebhookNotificationDto extends NotificationDto {
 	private Map<String, String> headers = new HashMap<String, String>();
 	private Map<String, String> params = new HashMap<String, String>();
 
-	public WebhookNotificationDto() {
+	public WebHookDto() {
 
 	}
 
-	public WebhookNotificationDto(WebHook e) {
+	public WebHookDto(WebHook e) {
 		super((Notification)e);
 		host = e.getHost();
 		port=e.getPort();

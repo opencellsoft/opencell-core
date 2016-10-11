@@ -6,6 +6,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 
@@ -50,4 +51,11 @@ public interface FilteredListWs extends IBaseWs {
     @WebMethod
     public FilteredListResponseDto searchByField(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") Map<String, String> query,
             @WebParam(name = "from") Integer from, @WebParam(name = "size") Integer size);
+
+    /**
+     * Clean and reindex Elastic Search repository
+     * 
+     * @return
+     */
+    public ActionStatus reindex();
 }

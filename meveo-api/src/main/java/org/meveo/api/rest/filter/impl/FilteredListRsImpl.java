@@ -17,6 +17,7 @@ import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
+import org.meveo.api.index.FullTextSearchApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.filter.FilteredListRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -31,6 +32,9 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 
     @Inject
     private FilteredListApi filteredListApi;
+
+    @Inject
+    private FullTextSearchApi fullTextSearchApi;
 
     
     public Response listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) {
@@ -55,7 +59,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String response = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
@@ -88,11 +92,32 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
                 }
             }
 
-            String response = filteredListApi.search(classnamesOrCetCodes, queryValues, from, size, getCurrentUser());
+            String response = fullTextSearchApi.search(classnamesOrCetCodes, queryValues, from, size, getCurrentUser());
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
             responseBuilder = Response.status(Response.Status.OK).entity(result);
+
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response reindex() {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            fullTextSearchApi.cleanAndReindex(getCurrentUser());
+            responseBuilder = Response.status(Response.Status.OK).entity(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 
         } catch (MeveoApiException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);

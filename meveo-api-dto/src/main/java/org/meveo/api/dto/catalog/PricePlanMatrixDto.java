@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -10,13 +9,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
 
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PricePlanDto implements Serializable {
+public class PricePlanMatrixDto extends BaseDto {
 
     private static final long serialVersionUID = -9089693491690592072L;
 
@@ -62,11 +62,11 @@ public class PricePlanDto implements Serializable {
     
     private CustomFieldsDto customFields = new CustomFieldsDto();
     
-    public PricePlanDto() {
+    public PricePlanMatrixDto() {
 
     }
 
-    public PricePlanDto(PricePlanMatrix e, CustomFieldsDto customFieldInstances) {
+    public PricePlanMatrixDto(PricePlanMatrix e, CustomFieldsDto customFieldInstances) {
 
         code = e.getCode();
         eventCode = e.getEventCode();

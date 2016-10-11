@@ -28,12 +28,14 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
+@ModuleItem
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_NOTIFICATION_SEQ")
@@ -65,18 +67,18 @@ public class Notification extends BusinessEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "COUNTER_INSTANCE_ID")
     private CounterInstance counterInstance;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCRIPT_INSTANCE_ID")
     private ScriptInstance scriptInstance;
-    
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "ADM_NOTIFICATION_PARAMS") 
-	private Map<String, String> params = new HashMap<String, String>();
-	
-	@OneToMany (mappedBy = "notification", cascade = CascadeType.REMOVE)
-	protected List<NotificationHistory> notificationHistories;
-	
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ADM_NOTIFICATION_PARAMS")
+    private Map<String, String> params = new HashMap<String, String>();
+
+    @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
+    protected List<NotificationHistory> notificationHistories;
+
     public String getClassNameFilter() {
         return classNameFilter;
     }
@@ -116,50 +118,47 @@ public class Notification extends BusinessEntity {
     public void setCounterInstance(CounterInstance counterInstance) {
         this.counterInstance = counterInstance;
     }
-    
 
     /**
-	 * @return the scriptInstance
-	 */
-	public ScriptInstance getScriptInstance() {
-		return scriptInstance;
-	}
-
-	/**
-	 * @param scriptInstance the scriptInstance to set
-	 */
-	public void setScriptInstance(ScriptInstance scriptInstance) {
-		this.scriptInstance = scriptInstance;
-	}
-	
-
-	/**
-	 * @return the params
-	 */
-	public Map<String, String> getParams() {
-		return params;
-	}
-
-	/**
-	 * @param params the params to set
-	 */
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-
-	@Override
-    public String toString() {
-        return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
-            classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null , counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
-                    : null);
+     * @return the scriptInstance
+     */
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
     }
 
-	public List<NotificationHistory> getNotificationHistories() {
-		return notificationHistories;
-	}
+    /**
+     * @param scriptInstance the scriptInstance to set
+     */
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
 
-	public void setNotificationHistories(
-			List<NotificationHistory> notificationHistories) {
-		this.notificationHistories = notificationHistories;
-	}
+    /**
+     * @return the params
+     */
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    /**
+     * @param params the params to set
+     */
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
+            classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null, counterTemplate != null ? counterTemplate.getId() : null,
+            counterInstance != null ? counterInstance.getId() : null);
+    }
+
+    public List<NotificationHistory> getNotificationHistories() {
+        return notificationHistories;
+    }
+
+    public void setNotificationHistories(List<NotificationHistory> notificationHistories) {
+        this.notificationHistories = notificationHistories;
+    }
 }

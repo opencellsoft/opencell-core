@@ -25,6 +25,11 @@
         <tag-name>entityPopup</tag-name>
         <source>entityPopup.xhtml</source>
     </tag>
+    
+    <tag>
+        <tag-name>genericEntityPopup</tag-name>
+        <source>genericEntityPopup.xhtml</source>
+    </tag>
 
     <tag>
         <tag-name>panelGroup</tag-name>

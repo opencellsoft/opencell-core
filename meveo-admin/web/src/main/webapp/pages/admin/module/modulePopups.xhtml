@@ -15,46 +15,7 @@
         selection="#{backingBean.entity.script}" updateField=":moduleForm:script_entity">
     </hftl:entityPopup>
 
-    <hftl:entityPopup id="searchCustomEntity" header="#{messages['customEntity.popup.header']}" backingBean="#{customEntityTemplateListBean}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.customEntity}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchCustomField" width="750" header="#{messages['customField.popup.header']}" backingBean="#{customFieldTemplateListBean}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['meveoModuleItem.appliesTo']}" searchField2="appliesTo"
-        selection="#{backingBean.customField}" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
-        column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}" column3="appliesTo" updateField=":moduleForm:moduleItems"
-        column3Converter="customFieldAppliesTo" isAutocomplete2="true" autocompleteBean2="#{customFieldTemplateBean}" autocompleteMethod2="autocompleteClassNamesHuman"
-        searchField2Converter="customFieldAppliesToConverter">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchFilter" header="#{messages['filter.popup.header']}" backingBean="#{filterListBean}" searchField1Label="#{messages['businessEntity.code']}"
-        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
-        selection="#{backingBean.filter}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchScript" header="#{messages['scriptInstance.popup.header']}" backingBean="#{scriptInstanceListBean}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.script}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchJob" header="#{messages['jobInstance.popup.header']}" backingBean="#{jobInstanceListBean}" searchField1Label="#{messages['businessEntity.code']}"
-        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
-        selection="#{backingBean.job}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchNotification" header="#{messages['notification.popup.header']}" backingBean="#{genericNotificationListBean}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.notification}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchSubModules" header="#{messages['meveoModule.popup.header']}" backingBean="#{meveoModuleListBean}" dataModel="#{backingBean.getSubModules()}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.meveoModule}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchMeasurableQuantities" header="#{messages['measurableQuantity.popup.header']}" backingBean="#{measurableQuantityListBean}"
-        searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-        column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{backingBean.measurableQuantity}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-    <hftl:entityPopup id="searchCharts" header="#{messages['chart.popup.header']}" backingBean="#{chartListBean}" searchField1Label="#{messages['businessEntity.code']}"
-        searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
-        selection="#{backingBean.chart}" updateField=":moduleForm:moduleItems">
-    </hftl:entityPopup>
-
+    <hftl:genericEntityPopup id="addModuleItem" header="#{messages['meveoModuleItem.add.header']}" annotation="org.meveo.model.ModuleItem" selection="#{backingBean.moduleItemEntity}" updateField=":moduleForm:moduleItems" />
 
     <p:dialog id="scriptDialog" header="#{messages['meveoModule.scriptHeader']}" modal="true" closeOnEscape="false" maximizable="true" closable="false" widgetVar="scriptDialog"
         width="90%" height="550px">

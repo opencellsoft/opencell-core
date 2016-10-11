@@ -65,8 +65,8 @@ public class ExportTemplate {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public String getHumanName(){
+
+    public String getHumanName() {
         return ReflectionUtils.getHumanClassName(name);
     }
 
@@ -165,11 +165,11 @@ public class ExportTemplate {
     }
 
     @SuppressWarnings("rawtypes")
-    public void addRelatedEntity(String selection, Map<String, String> parameters, Class entityClass) {
+    public void addRelatedEntity(String pathToEntity, String relatedEntityCondition, String selection, Map<String, String> parameters, Class entityClass) {
         if (relatedEntities == null) {
             relatedEntities = new ArrayList<RelatedEntityToExport>();
         }
-        relatedEntities.add(new RelatedEntityToExport(selection, parameters, entityClass));
+        relatedEntities.add(new RelatedEntityToExport(pathToEntity, relatedEntityCondition, selection, parameters, entityClass));
     }
 
     public String getRef() {

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.CustomEntityApi;
+import org.meveo.api.CustomEntityTemplateApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.EntityCustomActionApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -33,7 +33,7 @@ import org.meveo.api.rest.impl.BaseRs;
 public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomizationRs {
 
     @Inject
-    private CustomEntityApi customEntityApi;
+    private CustomEntityTemplateApi customEntityTemplateApi;
 
     @Inject
     private CustomFieldTemplateApi customFieldTemplateApi;
@@ -46,7 +46,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityApi.createEntityTemplate(dto, getCurrentUser());
+            customEntityTemplateApi.create(dto, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -67,7 +67,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityApi.updateEntityTemplate(dto, getCurrentUser());
+            customEntityTemplateApi.updateEntityTemplate(dto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -87,7 +87,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityApi.removeEntityTemplate(customEntityTemplateCode, getCurrentUser());
+            customEntityTemplateApi.removeEntityTemplate(customEntityTemplateCode, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -107,7 +107,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         CustomEntityTemplateResponseDto result = new CustomEntityTemplateResponseDto();
 
         try {
-            result.setCustomEntityTemplate(customEntityApi.findEntityTemplate(customEntityTemplateCode, getCurrentUser()));
+            result.setCustomEntityTemplate(customEntityTemplateApi.find(customEntityTemplateCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -127,7 +127,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityApi.createOrUpdateEntityTemplate(dto, getCurrentUser());
+            customEntityTemplateApi.createOrUpdate(dto, getCurrentUser());
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -148,7 +148,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         CustomEntityTemplatesResponseDto result = new CustomEntityTemplatesResponseDto();
 
         try {
-            result.setCustomEntityTemplates(customEntityApi.listCustomEntityTemplates(code, getCurrentUser()));
+            result.setCustomEntityTemplates(customEntityTemplateApi.listCustomEntityTemplates(code, getCurrentUser()));
 
 //        } catch (MeveoApiException e) {
 //            result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -171,7 +171,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityApi.customizeEntity(dto, getCurrentUser());
+            customEntityTemplateApi.customizeEntity(dto, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -194,7 +194,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         EntityCustomizationResponseDto result = new EntityCustomizationResponseDto();
 
         try {
-            result.setEntityCustomization(customEntityApi.findEntityCustomizations(customizedEntityClass, getCurrentUser()));
+            result.setEntityCustomization(customEntityTemplateApi.findEntityCustomizations(customizedEntityClass, getCurrentUser()));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -275,7 +275,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
-            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider()));
+            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -358,7 +358,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.removeEntityAction(actionCode, appliesTo, getCurrentUser());
+            entityCustomActionApi.remove(actionCode, appliesTo, getCurrentUser());
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -380,7 +380,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         EntityCustomActionResponseDto result = new EntityCustomActionResponseDto();
 
         try {
-            result.setEntityAction(entityCustomActionApi.findEntityAction(actionCode, appliesTo, getCurrentUser()));
+            result.setEntityAction(entityCustomActionApi.find(actionCode, appliesTo, getCurrentUser()));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

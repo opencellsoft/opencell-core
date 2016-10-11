@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -39,7 +39,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class RecurringChargeTemplateApi extends BaseApi {
+public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTemplate, RecurringChargeTemplateDto> {
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
@@ -59,7 +59,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
-    public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -170,9 +170,10 @@ public class RecurringChargeTemplateApi extends BaseApi {
             }
         }
 
+        return chargeTemplate;
     }
 
-    public void update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -286,9 +287,11 @@ public class RecurringChargeTemplateApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        return chargeTemplate;
     }
 
-    public RecurringChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    public RecurringChargeTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
@@ -297,7 +300,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory", "calendar"));
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory", "calendar"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
@@ -305,7 +308,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),currentUser.getProvider())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -330,12 +333,12 @@ public class RecurringChargeTemplateApi extends BaseApi {
         recurringChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
-    public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

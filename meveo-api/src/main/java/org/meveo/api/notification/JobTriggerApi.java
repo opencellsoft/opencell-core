@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -26,7 +26,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Tyshan Shi
  **/
 @Stateless
-public class JobTriggerApi extends BaseApi {
+public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
 
     @Inject
     private JobTriggerService jobTriggerService;
@@ -41,7 +41,7 @@ public class JobTriggerApi extends BaseApi {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    public void create(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public JobTrigger create(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -98,13 +98,16 @@ public class JobTriggerApi extends BaseApi {
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
         jobTriggerService.create(notif, currentUser);
+
+        return notif;
     }
 
-    public JobTriggerDto find(String notificationCode, Provider provider) throws MeveoApiException {
+    @Override
+    public JobTriggerDto find(String notificationCode, User currentUser) throws MeveoApiException {
         JobTriggerDto result = new JobTriggerDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            JobTrigger notif = jobTriggerService.findByCode(notificationCode, provider);
+            JobTrigger notif = jobTriggerService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(JobTrigger.class, notificationCode);
@@ -120,7 +123,7 @@ public class JobTriggerApi extends BaseApi {
         return result;
     }
 
-    public void update(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public JobTrigger update(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -176,8 +179,9 @@ public class JobTriggerApi extends BaseApi {
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
 
-        jobTriggerService.update(notif, currentUser);
+        notif = jobTriggerService.update(notif, currentUser);
 
+        return notif;
     }
 
     public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
@@ -196,11 +200,12 @@ public class JobTriggerApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public JobTrigger createOrUpdate(JobTriggerDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (jobTriggerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

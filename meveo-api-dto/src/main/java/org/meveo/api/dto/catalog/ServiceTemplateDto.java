@@ -1,13 +1,12 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -22,7 +21,7 @@ import org.meveo.model.catalog.WalletTemplate;
  **/
 @XmlRootElement(name = "ServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceTemplateDto implements Serializable {
+public class ServiceTemplateDto extends BaseDto {
 
     private static final long serialVersionUID = -6794700715161690227L;
 

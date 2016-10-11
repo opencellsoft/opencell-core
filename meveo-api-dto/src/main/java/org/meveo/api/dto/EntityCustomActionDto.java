@@ -39,7 +39,7 @@ public class EntityCustomActionDto extends BaseDto {
     }
 
     public EntityCustomActionDto(EntityCustomAction e) {
-        this.code = e.getLocalCodeForRead();
+        this.code = e.getCode();
         this.description = e.getDescription();
 
         this.appliesTo = e.getAppliesTo();
@@ -47,10 +47,6 @@ public class EntityCustomActionDto extends BaseDto {
         this.label = e.getLabel();
 
         this.setScript(new ScriptInstanceDto(e.getScript()));
-    }
-
-    public String getFullCode() {
-        return EntityCustomAction.composeCode(getCode(), appliesTo);
     }
 
     public String getCode() {

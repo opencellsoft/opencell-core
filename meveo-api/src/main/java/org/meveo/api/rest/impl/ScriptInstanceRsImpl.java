@@ -1,5 +1,6 @@
 package org.meveo.api.rest.impl;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -93,7 +94,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     public GetScriptInstanceResponseDto find(String scriptInstanceCode) {
         GetScriptInstanceResponseDto result = new GetScriptInstanceResponseDto();
         try {
-            result.setScriptInstance(scriptInstanceApi.findScriptInstance(scriptInstanceCode, getCurrentUser()));
+            result.setScriptInstance(scriptInstanceApi.find(scriptInstanceCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -112,7 +113,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     public ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {
-            result.setCompilationErrors(scriptInstanceApi.createOrUpdate(postData, getCurrentUser()));
+            result.setCompilationErrors(scriptInstanceApi.createOrUpdateWithCompile(postData, getCurrentUser()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

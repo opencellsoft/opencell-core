@@ -33,7 +33,7 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
@@ -61,7 +61,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
 import org.meveo.model.billing.CounterInstance;
@@ -72,7 +72,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 public class AccountWsImpl extends BaseWs implements AccountWs {
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Inject
     private AccountOperationApi accountOperationApi;
@@ -1415,7 +1415,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
 
         try {
-            result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.get(bamCode, BusinessAccountModel.class, getCurrentUser()));
+            result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.find(bamCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1456,7 +1456,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(BusinessAccountModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class, getCurrentUser());
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {

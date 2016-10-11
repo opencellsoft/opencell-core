@@ -4,9 +4,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveocrm.model.dwh.BarChart;
-import org.meveocrm.model.dwh.LegendPositionEnum;
-import org.meveocrm.model.dwh.OrientationEnum;
+import org.meveo.model.dwh.BarChart;
+import org.meveo.model.dwh.LegendPositionEnum;
+import org.meveo.model.dwh.OrientationEnum;
 
 /**
  * @author Edward P. Legaspi

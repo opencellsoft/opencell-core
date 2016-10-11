@@ -11,13 +11,15 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -28,7 +30,7 @@ import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 
-public class ProductOfferingApi extends BaseApi {
+public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> extends BaseCrudApi<E, T> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;

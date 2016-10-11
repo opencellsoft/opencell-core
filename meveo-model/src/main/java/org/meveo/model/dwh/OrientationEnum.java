@@ -1,4 +1,4 @@
-package org.meveocrm.model.dwh;
+package org.meveo.model.dwh;
 
 public enum OrientationEnum {
 vertical,horizontal

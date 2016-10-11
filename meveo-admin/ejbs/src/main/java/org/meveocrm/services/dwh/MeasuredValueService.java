@@ -10,10 +10,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.dwh.MeasurableQuantity;
+import org.meveo.model.dwh.MeasuredValue;
+import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveocrm.model.dwh.MeasurableQuantity;
-import org.meveocrm.model.dwh.MeasuredValue;
-import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 
 @Stateless
 public class MeasuredValueService extends PersistenceService<MeasuredValue> {

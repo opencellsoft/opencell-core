@@ -1297,5 +1297,12 @@
                                                                                               
         
      </changeSet>
-     
+    <changeSet id="#2042_20160921" author="AndriusKarpavicius">
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.MeasurableQuantity' where ITEM_TYPE='org.meveocrm.model.dwh.MeasurableQuantity'</sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.BarChart' where ITEM_TYPE='org.meveocrm.model.dwh.BarChart'</sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.Chart' where ITEM_TYPE='org.meveocrm.model.dwh.Chart'</sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
+        <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
+    </changeSet>    
+
 </databaseChangeLog>

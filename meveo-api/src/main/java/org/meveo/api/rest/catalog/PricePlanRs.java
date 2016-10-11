@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -37,7 +37,7 @@ public interface PricePlanRs extends IBaseRs {
      */
     @Path("/")
     @POST
-    ActionStatus create(PricePlanDto postData);
+    ActionStatus create(PricePlanMatrixDto postData);
 
     /**
      * Update price plan.
@@ -47,7 +47,7 @@ public interface PricePlanRs extends IBaseRs {
      */
     @Path("/")
     @PUT
-    ActionStatus update(PricePlanDto postData);
+    ActionStatus update(PricePlanMatrixDto postData);
 
     /**
      * Search price plan with a given id.
@@ -75,5 +75,5 @@ public interface PricePlanRs extends IBaseRs {
 
     @Path("/createOrUpdate")
     @POST
-    ActionStatus createOrUpdate(PricePlanDto postData);
+    ActionStatus createOrUpdate(PricePlanMatrixDto postData);
 }

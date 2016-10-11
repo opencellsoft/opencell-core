@@ -44,9 +44,11 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 
 @Entity
+@ModuleItem
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE")
 @ExportIdentifier({ "code", "provider" })

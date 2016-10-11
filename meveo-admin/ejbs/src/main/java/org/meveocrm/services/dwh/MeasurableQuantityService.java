@@ -10,8 +10,8 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.service.base.BusinessService;
-import org.meveocrm.model.dwh.MeasurableQuantity;
 
 @Stateless
 public class MeasurableQuantityService extends

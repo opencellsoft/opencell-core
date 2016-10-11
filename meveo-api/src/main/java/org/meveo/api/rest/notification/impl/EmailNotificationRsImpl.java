@@ -69,7 +69,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
         try {
-            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser().getProvider()));
+            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

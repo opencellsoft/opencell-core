@@ -102,7 +102,7 @@ public class EjbUtils {
             return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + "/" + serviceInterfaceName);
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(EjbUtils.class);
-            log.error("Failed to obtain service interface for {}", serviceInterfaceName, e);
+            log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package org.meveocrm.model.dwh;
+package org.meveo.model.dwh;
 
 public enum MeasurementPeriodEnum {
 	DAILY, WEEKLY, MONTHLY, YEARLY;

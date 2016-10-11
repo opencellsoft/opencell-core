@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.InboundRequestDto;
 import org.meveo.api.dto.notification.InboundRequestsDto;
 import org.meveo.api.dto.notification.NotificationDto;
@@ -35,7 +35,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class NotificationApi extends BaseApi {
+public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> {
 
     @Inject
     private NotificationService notificationService;
@@ -53,7 +53,7 @@ public class NotificationApi extends BaseApi {
     @Inject
     private InboundRequestService inboundRequestService;
 
-    public void create(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Notification create(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -86,7 +86,7 @@ public class NotificationApi extends BaseApi {
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
             counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
-            if (counterTemplate == null){
+            if (counterTemplate == null) {
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
         }
@@ -102,13 +102,16 @@ public class NotificationApi extends BaseApi {
         notif.setCounterTemplate(counterTemplate);
 
         notificationService.create(notif, currentUser);
+
+        return notif;
     }
 
-    public NotificationDto find(String notificationCode, Provider provider) throws MeveoApiException {
+    @Override
+    public NotificationDto find(String notificationCode, User currentUser) throws MeveoApiException {
         NotificationDto result = new NotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
+            ScriptNotification notif = notificationService.findByCode(notificationCode, currentUser.getProvider());
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
@@ -124,7 +127,7 @@ public class NotificationApi extends BaseApi {
         return result;
     }
 
-    public void update(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Notification update(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -171,7 +174,9 @@ public class NotificationApi extends BaseApi {
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
 
-        notificationService.update(notif, currentUser);
+        notif = notificationService.update(notif, currentUser);
+
+        return notif;
     }
 
     public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
@@ -216,11 +221,12 @@ public class NotificationApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    @Override
+    public Notification createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

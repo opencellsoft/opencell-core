@@ -1,5 +1,7 @@
 package org.meveo.api;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,16 +19,22 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -36,6 +44,8 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -57,22 +67,46 @@ public abstract class BaseApi {
     protected CustomFieldInstanceService customFieldInstanceService;
 
     @EJB
-    private CustomEntityApi customEntityApi;
+    private CustomEntityInstanceApi customEntityInstanceApi;
 
     @Inject
     protected EntityToDtoConverter entityToDtoConverter;
 
     @Inject
     private Validator validator;
-    
+
     protected List<String> missingParameters = new ArrayList<String>();
 
+    /**
+     * Check if any parameters are missing and throw and exception
+     * 
+     * @throws MissingParameterException
+     */
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
             MissingParameterException mpe = new MissingParameterException(missingParameters);
             missingParameters.clear();
             throw mpe;
         }
+    }
+
+    protected void handleMissingParameters(BaseDto dto, String... fields) throws MissingParameterException {
+
+        for (String fieldName : fields) {
+
+            try {
+                Object value;
+                value = FieldUtils.readField(dto, fieldName, true);
+                if (value == null) {
+                    missingParameters.add(fieldName);
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Failed to read field value {}.{}", dto.getClass().getName(), fieldName, e.getMessage());
+                missingParameters.add(fieldName);
+            }
+
+        }
+        handleMissingParameters();
     }
 
     /**
@@ -170,7 +204,7 @@ public abstract class BaseApi {
                         List<EntityReferenceWrapper> childEntityReferences = new ArrayList<>();
 
                         for (CustomEntityInstanceDto ceiDto : ((List<CustomEntityInstanceDto>) valueConverted)) {
-                            customEntityApi.createOrUpdateEntityInstance(ceiDto, currentUser);
+                            customEntityInstanceApi.createOrUpdate(ceiDto, currentUser);
                             childEntityReferences.add(new EntityReferenceWrapper(CustomEntityInstance.class.getName(), ceiDto.getCetCode(), ceiDto.getCode()));
                         }
 
@@ -205,18 +239,18 @@ public abstract class BaseApi {
 
         // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
-        if(entity.getParentCFEntities() != null){
-	        for(ICustomFieldEntity entityParent :entity.getParentCFEntities()){
-	        	 cfisAsMap.putAll(customFieldInstanceService.getCustomFieldInstances(entityParent));
-	        }
+        if (entity.getParentCFEntities() != null) {
+            for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
+                cfisAsMap.putAll(customFieldInstanceService.getCustomFieldInstances(entityParent));
+            }
         }
-               
+
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
             }
-            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {            	 
+            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
                 missingParameters.add(cft.getCode());
             } else {
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
@@ -358,7 +392,7 @@ public abstract class BaseApi {
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition requires.
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
-                        customEntityApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck, currentUser);
+                        customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck, currentUser);
                     }
                 }
             }
@@ -438,11 +472,303 @@ public abstract class BaseApi {
         }
         return null;
     }
-    
+
     protected <T> T keepOldValueIfNull(T newValue, T oldValue) {
-		if (newValue == null) {
-			return oldValue;
-		}
-		return newValue;
-	}
+        if (newValue == null) {
+            return oldValue;
+        }
+        return newValue;
+    }
+
+    /**
+     * Convert DTO object to an entity. In addition process child DTO object by creating or updating related entities via calls to API.createOrUpdate(). Note: Does not persist the
+     * entity passed to the method.Takes about 1ms longer as compared to a regular hardcoded jpa.value=dto.value assignment
+     * 
+     * @param entityToPopulate JPA Entity to populate with data from DTO object
+     * @param dto DTO object
+     * @param partialUpdate Is this a partial update - fields with null values will be ignored
+     * @param currentUser Current user
+     * @throws MeveoApiException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected void convertDtoToEntityWithChildProcessing(Object entityToPopulate, Object dto, boolean partialUpdate, User currentUser) throws MeveoApiException {
+
+        String dtoClassName = dto.getClass().getName();
+        for (Field dtoField : FieldUtils.getAllFieldsList(dto.getClass())) {
+            if (Modifier.isStatic(dtoField.getModifiers())) {
+                continue;
+            }
+
+            // log.trace("AKK Populate field {}.{}", dtoClassName, dtoField.getName());
+            Object dtoValue = null;
+            try {
+                dtoValue = dtoField.get(dto);
+                if (partialUpdate && dtoValue == null) {
+                    continue;
+                }
+
+                // Process custom fields as special case
+                if (dtoField.getType().isAssignableFrom(CustomFieldsDto.class)) {
+                    populateCustomFields((CustomFieldsDto) dtoValue, (ICustomFieldEntity) entityToPopulate, true, currentUser);
+                    continue;
+
+                } else if (dtoField.getName().equals("active")) {
+                    if (dtoValue != null) {
+                        FieldUtils.writeField(entityToPopulate, "disabled", !(boolean) dtoValue, true);
+                    }
+                    continue;
+                }
+
+                Field entityField = FieldUtils.getField(entityToPopulate.getClass(), dtoField.getName(), true);
+                if (entityField == null) {
+                    log.warn("No match found for field {}.{} in entity {}", dtoClassName, dtoField.getName(), entityToPopulate.getClass().getName());
+                    continue;
+                }
+
+                // Null value - clear current field value
+                if (dtoValue == null) {
+                    // TODO Need to handle list, Map and Set type field by clearing them instead of setting them null
+
+                    FieldUtils.writeField(entityToPopulate, dtoField.getName(), dtoValue, true);
+
+                    // Both DTO object and Entity fields are DTO or JPA type fields and require a conversion
+                } else if (ReflectionUtils.isDtoOrEntityType(dtoField.getType()) && ReflectionUtils.isDtoOrEntityType(entityField.getType())) {
+
+                    // String entityClassName = dtoValue.getClass().getSimpleName().substring(0, dtoValue.getClass().getSimpleName().lastIndexOf("Dto"));
+                    // Class entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(entityClassName, Entity.class);
+                    // if (entityClass == null) {
+                    // entityClass = ReflectionUtils.getClassBySimpleNameAndAnnotation(entityClassName, Embeddable.class);
+                    // }
+                    //
+                    // if (entityClass == null) {
+                    // log.debug("Don't know how to process a child DTO entity {}. No JPA entity class matched. Will skip the field {}.{}", dtoValue, dtoClassName,
+                    // dtoField.getName());
+                    // continue;
+                    // }
+                    Class entityClass = entityField.getType();
+
+                    // Process DTOs that have exposed their own API (extends BaseDto class)
+                    if (dtoValue instanceof BaseDto) {
+
+                        // For BusinessEntity DTO, a full DTO entity or only a reference (e.g. Code) is passed
+                        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+
+                            BusinessEntity valueAsEntity = null;
+                            String codeValue = (String) FieldUtils.readField(dtoValue, "code", true);
+
+                            // Find an entity referenced
+                            if (isEntityReferenceOnly(dtoValue)) {
+                                // log.trace("A lookup for {} with code {} will be done as reference was passed", entityClass, codeValue);
+                                PersistenceService persistenceService = getPersistenceService(entityClass, true);
+                                valueAsEntity = ((BusinessService) persistenceService).findByCode(codeValue, currentUser.getProvider());
+                                if (valueAsEntity == null) {
+                                    throw new EntityDoesNotExistsException(entityClass, codeValue);
+                                }
+
+                                // Create or update a full entity DTO passed
+                            } else {
+
+                                ApiService apiService = getApiService((BaseDto) dtoValue, true);
+                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue, currentUser);
+                            }
+
+                            // Update field with a new entity
+                            FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
+
+                            // For non-business entity just Create or update a full entity DTO passed
+                        } else {
+
+                            ApiService apiService = getApiService((BaseDto) dtoValue, true);
+                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue, currentUser);
+
+                            // Update field with a new entity
+                            FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
+                        }
+
+                        // Process other embedded DTO entities
+                    } else {
+
+                        // Use existing or create a new entity
+                        Object embededEntity = FieldUtils.readField(entityToPopulate, dtoField.getName(), true);
+                        if (embededEntity == null) {
+                            embededEntity = entityClass.newInstance();
+                        }
+                        convertDtoToEntityWithChildProcessing(embededEntity, dtoValue, partialUpdate, currentUser);
+
+                        FieldUtils.writeField(entityToPopulate, dtoField.getName(), embededEntity, true);
+                    }
+
+                    // DTO field is a simple field (String) representing entity identifier (code) and entity field is a JPA type field
+                } else if (!ReflectionUtils.isDtoOrEntityType(dtoField.getType()) && ReflectionUtils.isDtoOrEntityType(entityField.getType())) {
+
+                    Class entityClass = entityField.getType();
+
+                    // Find an entity referenced
+
+                    PersistenceService persistenceService = getPersistenceService(entityClass, true);
+                    IEntity valueAsEntity = ((BusinessService) persistenceService).findByCode((String) dtoValue, currentUser.getProvider());
+                    if (valueAsEntity == null) {
+                        throw new EntityDoesNotExistsException(entityClass, (String) dtoValue);
+                    }
+
+                    // Update field with a new entity
+                    FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
+
+                    // Regular type like String, Integer, etc..
+                } else {
+                    FieldUtils.writeField(entityToPopulate, dtoField.getName(), dtoValue, true);
+                }
+
+            } catch (MeveoApiException e) {
+                log.error("Failed to read/convert/populate field value {}.{}. Value {}. Processing will stop.", dtoClassName, dtoField.getName(), dtoValue, e);
+                throw e;
+
+            } catch (Exception e) {
+
+                log.error("Failed to read/convert/populate field value {}.{}. Value {}", dtoClassName, dtoField.getName(), dtoValue, e);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Check if DTO object represents only a reference. In case of reference only code and provider fields contain values.
+     * 
+     * @param objectToEvaluate Dto to evaluate
+     * @return True if only code and provider fields contain values
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     */
+    private boolean isEntityReferenceOnly(Object objectToEvaluate) throws IllegalArgumentException, IllegalAccessException {
+
+        for (Field field : FieldUtils.getAllFieldsList(objectToEvaluate.getClass())) {
+            if (Modifier.isStatic(field.getModifiers()) || field.getType().isPrimitive() || field.getName().equals("code") || field.getName().equals("provider")) {
+                continue;
+            }
+
+            Object fieldValue = field.get(objectToEvaluate);
+
+            if (fieldValue != null) {
+
+                if (ReflectionUtils.isDtoOrEntityType(field.getType())) {
+                    if (!isEntityReferenceOnly(fieldValue)) {
+                        return false;
+                    }
+                    continue;
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get a corresponding API service for a given DTO object. Find API service class first trying with item's classname and then with its super class (a simplified version instead
+     * of trying various classsuper classes)
+     * 
+     * @param dto DTO object
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Api service
+     * @throws MeveoApiException
+     */
+    @SuppressWarnings("rawtypes")
+    protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException {
+        String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
+
+        ApiService apiService = (ApiService) EjbUtils.getServiceInterface(entityClassName + "Api");
+        if (apiService == null) {
+            String entitySuperClassName = dto.getClass().getSuperclass().getSimpleName().substring(0, dto.getClass().getSuperclass().getSimpleName().lastIndexOf("Dto"));
+            apiService = (ApiService) EjbUtils.getServiceInterface(entitySuperClassName + "Api");
+        }
+        if (apiService == null && throwException) {
+            throw new MeveoApiException("Failed to find implementation of API service for class " + dto.getClass());
+        }
+
+        return apiService;
+    }
+
+    /**
+     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * 
+     * @param classname JPA entity classname
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Api service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected ApiService getApiService(String classname, boolean throwException) throws ClassNotFoundException {
+
+        Class clazz = Class.forName(classname);
+        return getApiService(clazz, throwException);
+    }
+
+    /**
+     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * 
+     * @param entityClass JPA entity class
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Api service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected ApiService getApiService(Class entityClass, boolean throwException) {
+
+        ApiService apiService = (ApiService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Api");
+        if (apiService == null) {
+            apiService = (ApiService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Api");
+        }
+        if (apiService == null && throwException) {
+            throw new RuntimeException("Failed to find implementation of API service for class " + entityClass.getName());
+        }
+
+        return apiService;
+    }
+
+    /**
+     * Find Persistence service class a given DTO object. Find API service class first trying with item's classname and then with its super class (a simplified version instead of
+     * trying various class superclasses)
+     * 
+     * @param dto DTO object
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Persistence service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected PersistenceService getPersistenceService(BaseDto dto, boolean throwException) throws MeveoApiException {
+        String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
+
+        PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClassName + "Service");
+        if (persistenceService == null) {
+            String entitySuperClassName = dto.getClass().getSuperclass().getSimpleName().substring(0, dto.getClass().getSuperclass().getSimpleName().lastIndexOf("Dto"));
+            persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entitySuperClassName + "Service");
+        }
+        if (persistenceService == null && throwException) {
+            throw new MeveoApiException("Failed to find implementation of persistence service for class " + dto.getClass());
+        }
+
+        return persistenceService;
+    }
+
+    /**
+     * Find Persistence service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * 
+     * @param entityClass JPA Entity class
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Persistence service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws MeveoApiException {
+
+        PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+        if (persistenceService == null) {
+            persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Service");
+        }
+        if (persistenceService == null && throwException) {
+            throw new MeveoApiException("Failed to find implementation of persistence service for class " + entityClass.getName());
+        }
+
+        return persistenceService;
+    }
 }

@@ -42,26 +42,19 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.dto.module.MeveoModuleDto;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.filter.Filter;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
-import org.meveo.model.notification.Notification;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
-import org.meveocrm.model.dwh.Chart;
-import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.CroppedImage;
 import org.primefaces.model.DefaultTreeNode;
@@ -84,7 +77,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     protected MeveoModuleService meveoModuleService;
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Inject
     @ViewBean
@@ -93,15 +86,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     @Inject
     private ElasticClient elasticClient;
 
-    private CustomEntityTemplate customEntity;
-    private CustomFieldTemplate customField;
-    private Filter filter;
-    private ScriptInstance script;
-    private JobInstance job;
-    private Notification notification;
-    private MeveoModule meveoModule;
-    private MeasurableQuantity measurableQuantity;
-    private Chart chart;
+    private BusinessEntity moduleItemEntity;
 
     private TreeNode root;
 
@@ -159,7 +144,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             // If module was downloaded, show module items from meveoModule.moduleSource
         } else {
             try {
-                ModuleDto dto = MeveoModuleService.moduleSourceToDto(module);
+                MeveoModuleDto dto = MeveoModuleService.moduleSourceToDto(module);
 
                 if (dto.getModuleItems() == null) {
                     return module;
@@ -180,12 +165,12 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         return module;
     }
 
-    public CustomEntityTemplate getCustomEntity() {
-        return customEntity;
+    public BusinessEntity getModuleItemEntity() {
+        return moduleItemEntity;
     }
 
-    public void setCustomEntity(CustomEntityTemplate itemEntity) {
-        if (itemEntity != null) {
+    public void setModuleItemEntity(BusinessEntity itemEntity) {
+        if (itemEntity != null && !entity.equals(itemEntity)) {
             MeveoModuleItem item = new MeveoModuleItem(itemEntity);
             if (!entity.getModuleItems().contains(item)) {
                 entity.addModuleItem(item);
@@ -200,90 +185,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     public void setRoot(TreeNode root) {
         this.root = root;
-    }
-
-    public CustomFieldTemplate getCustomField() {
-        return customField;
-    }
-
-    public void setCustomField(CustomFieldTemplate itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public Filter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(Filter itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public ScriptInstance getScript() {
-        return script;
-    }
-
-    public void setScript(ScriptInstance itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public JobInstance getJob() {
-        return job;
-    }
-
-    public void setJob(JobInstance itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public Notification getNotification() {
-        return notification;
-    }
-
-    public void setNotification(Notification itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public MeveoModule getMeveoModule() {
-        return meveoModule;
-    }
-
-    public void setMeveoModule(MeveoModule itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
     }
 
     // public LazyDataModel<T> getSubModules() {
@@ -370,34 +271,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         };
 
         return meveoModuleDataModel;
-    }
-
-    public MeasurableQuantity getMeasurableQuantity() {
-        return measurableQuantity;
-    }
-
-    public void setMeasurableQuantity(MeasurableQuantity itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
-    }
-
-    public Chart getChart() {
-        return chart;
-    }
-
-    public void setChart(Chart itemEntity) {
-        if (itemEntity != null) {
-            MeveoModuleItem item = new MeveoModuleItem(itemEntity);
-            if (!entity.getModuleItems().contains(item)) {
-                entity.addModuleItem(item);
-                new DefaultTreeNode("item", item, getOrCreateNodeByClass(itemEntity.getClass().getName()));
-            }
-        }
     }
 
     public void removeTreeNode(TreeNode node) {
@@ -619,7 +492,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                 return module;
             }
 
-            ModuleDto moduleDto = MeveoModuleService.moduleSourceToDto(module);
+            MeveoModuleDto moduleDto = MeveoModuleService.moduleSourceToDto(module);
 
             module = moduleApi.install(moduleDto, currentUser);
             messages.info(new BundleKey("messages", "meveoModule.installSuccess"), moduleDto.getCode());

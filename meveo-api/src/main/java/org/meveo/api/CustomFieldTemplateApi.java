@@ -176,7 +176,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    public CustomFieldTemplateDto find(String code, String appliesTo, Provider provider) throws MeveoApiException {
+    public CustomFieldTemplateDto find(String code, String appliesTo, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -186,14 +186,16 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
+        Provider provider = currentUser.getProvider();
+        
         if (!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(code, appliesTo, provider);
 
         if (cft == null) {
-            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
+            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo);
         }
         return new CustomFieldTemplateDto(cft);
     }

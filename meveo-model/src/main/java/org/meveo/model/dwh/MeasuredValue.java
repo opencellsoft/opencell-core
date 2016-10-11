@@ -1,4 +1,4 @@
-package org.meveocrm.model.dwh;
+package org.meveo.model.dwh;
 
 import java.math.BigDecimal;
 import java.util.Date;

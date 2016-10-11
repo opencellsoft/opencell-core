@@ -40,7 +40,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModuleItem;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.admin.impl.GenericModuleService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
@@ -48,7 +48,7 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BusinessOfferModelService extends BusinessService<BusinessOfferModel> {
+public class BusinessOfferModelService extends GenericModuleService<BusinessOfferModel> {
 
 	@Inject
 	private BusinessServiceModelService businessServiceModelService;

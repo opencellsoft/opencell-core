@@ -21,15 +21,11 @@ import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.MultilanguageEntity;
-import org.meveo.model.ObservableEntity;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
-@ObservableEntity
-@MultilanguageEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
 @NamedQueries({

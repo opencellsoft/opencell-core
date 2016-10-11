@@ -7,8 +7,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
-import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -36,7 +36,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class PricePlanApi extends BaseApi {
+public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMatrixDto> {
 
     @Inject
     private ChargeTemplateServiceAll chargeTemplateServiceAll;
@@ -62,7 +62,7 @@ public class PricePlanApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public PricePlanMatrix create(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
             missingParameters.add("eventCode");
@@ -165,9 +165,11 @@ public class PricePlanApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        return pricePlanMatrix;
     }
 
-    public void update(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public PricePlanMatrix update(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
             missingParameters.add("eventCode");
@@ -263,27 +265,29 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        pricePlanMatrixService.update(pricePlanMatrix, currentUser);
+        pricePlanMatrix = pricePlanMatrixService.update(pricePlanMatrix, currentUser);
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false, currentUser);
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        return pricePlanMatrix;
     }
 
-    public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
+    public PricePlanMatrixDto find(String pricePlanCode, User currentUser) throws MeveoApiException {
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
             handleMissingParameters();
         }
 
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, currentUser.getProvider());
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
     }
 
     public void remove(String pricePlanCode, User currentUser) throws MeveoApiException, BusinessException {
@@ -301,7 +305,7 @@ public class PricePlanApi extends BaseApi {
         pricePlanMatrixService.remove(pricePlanMatrix, currentUser);
     }
 
-    public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {
+    public List<PricePlanMatrixDto> list(String eventCode, Provider provider) throws MeveoApiException {
         if (StringUtils.isBlank(eventCode)) {
             missingParameters.add("eventCode");
             handleMissingParameters();
@@ -312,19 +316,19 @@ public class PricePlanApi extends BaseApi {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
         }
 
-        List<PricePlanDto> pricePlanDtos = new ArrayList<>();
+        List<PricePlanMatrixDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix)));
+            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix)));
         }
 
         return pricePlanDtos;
     }
 
-    public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {
         if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

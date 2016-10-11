@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -16,12 +16,12 @@ import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.job.TimerEntityService;
 
 @Stateless
-public class TimerEntityApi extends BaseApi {
+public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
 
     @Inject
     private TimerEntityService timerEntityService;
 
-    public void create(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
+    public TimerEntity create(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(timerEntityDto.getCode()) || StringUtils.isBlank(timerEntityDto.getHour()) || StringUtils.isBlank(timerEntityDto.getMinute())
                 || StringUtils.isBlank(timerEntityDto.getSecond()) || StringUtils.isBlank(timerEntityDto.getYear()) || StringUtils.isBlank(timerEntityDto.getMonth())
                 || StringUtils.isBlank(timerEntityDto.getDayOfMonth()) || StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
@@ -61,9 +61,11 @@ public class TimerEntityApi extends BaseApi {
         TimerEntity timerEntity = TimerEntityDto.fromDTO(timerEntityDto, null);
 
         timerEntityService.create(timerEntity, currentUser);
+
+        return timerEntity;
     }
 
-    public void update(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
+    public TimerEntity update(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
 
         String timerEntityCode = timerEntityDto.getCode();
         Provider provider = currentUser.getProvider();
@@ -80,15 +82,17 @@ public class TimerEntityApi extends BaseApi {
 
         timerEntity = TimerEntityDto.fromDTO(timerEntityDto, timerEntity);
 
-        timerEntityService.update(timerEntity, currentUser);
+        timerEntity = timerEntityService.update(timerEntity, currentUser);
+
+        return timerEntity;
     }
 
-    public void createOrUpdate(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
+    public TimerEntity createOrUpdate(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException, BusinessException {
 
         if (timerEntityService.findByCode(timerEntityDto.getCode(), currentUser.getProvider()) == null) {
-            create(timerEntityDto, currentUser);
+            return create(timerEntityDto, currentUser);
         } else {
-            update(timerEntityDto, currentUser);
+            return update(timerEntityDto, currentUser);
         }
     }
 

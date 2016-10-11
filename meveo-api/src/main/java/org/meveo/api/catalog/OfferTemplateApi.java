@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -38,7 +38,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class OfferTemplateApi extends BaseApi {
+public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDto> {
 
 	@Inject
 	private OfferTemplateService offerTemplateService;
@@ -58,7 +58,7 @@ public class OfferTemplateApi extends BaseApi {
 	@Inject
 	private ProductTemplateService productTemplateService;
 
-	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public OfferTemplate create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -160,9 +160,10 @@ public class OfferTemplateApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+		return offerTemplate;
 	}
 
-	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public OfferTemplate update(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -368,6 +369,8 @@ public class OfferTemplateApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+		
+		return offerTemplate;
 	}
 
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
@@ -430,14 +433,14 @@ public class OfferTemplateApi extends BaseApi {
 		return offerProductTemplate;
 	}
 
-	public OfferTemplateDto find(String code, Provider provider) throws MeveoApiException {
+	public OfferTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("offerTemplateCode");
 			handleMissingParameters();
 		}
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
@@ -490,13 +493,13 @@ public class OfferTemplateApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public OfferTemplate createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
 
 		if (offerTemplate == null) {
-			create(postData, currentUser);
+			return create(postData, currentUser);
 		} else {
-			update(postData, currentUser);
+			return update(postData, currentUser);
 		}
 	}
 }

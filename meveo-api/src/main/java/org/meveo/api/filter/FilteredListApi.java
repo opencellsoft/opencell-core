@@ -27,8 +27,8 @@ public class FilteredListApi extends BaseApi {
     private FilterService filterService;
 
     @Inject
-    private ElasticClient elasticClient;
-    
+    private ElasticClient elasticClient;    
+
     public Filter getFilterFromDto(FilterDto filter, User currentUser) throws MeveoApiException {
     	Filter result = null;
         if(StringUtils.isBlank(filter.getCode())&&StringUtils.isBlank(filter.getInputXml())){
