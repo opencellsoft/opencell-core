@@ -11,9 +11,9 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.ProductOffering;
 
 @WorkflowTypeClass
-public class OfferValidatioWF extends WorkflowType<ProductOffering> {
+public class OfferValidationWF extends WorkflowType<ProductOffering> {
 
-    public OfferValidatioWF(ProductOffering e) {
+    public OfferValidationWF(ProductOffering e) {
         super(e);
     }
 
