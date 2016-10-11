@@ -39,11 +39,11 @@ public interface BusinessAccountModelRs extends IBaseRs {
 
     @GET
     @Path("/")
-    public BusinessAccountModelResponseDto find(@QueryParam("bamCode") String bamCode);
+    public BusinessAccountModelResponseDto find(@QueryParam("businessAccountModelCode") String bamCode);
 
     @DELETE
     @Path("/{bamCode}")
-    public ActionStatus remove(@PathParam("bamCode") String bamCode);
+    public ActionStatus remove(@PathParam("businessAccountModelCode") String bamCode);
 
     @GET
     @Path("/list")
