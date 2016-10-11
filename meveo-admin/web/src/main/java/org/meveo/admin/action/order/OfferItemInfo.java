@@ -39,7 +39,8 @@ public class OfferItemInfo implements Serializable {
      * @param entityForCFValues An entity corresponding to what offering template will translate to. OfferTemplate>Subscription, serviceTemplate>serviceInstance,
      *        productTemplate>productInstance
      */
-    public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory, BusinessCFEntity entityForCFValues) {
+    public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory,
+            BusinessCFEntity entityForCFValues) {
         super();
         this.main = main;
         this.template = template;
@@ -53,10 +54,17 @@ public class OfferItemInfo implements Serializable {
             this.entityForCFValues = entityForCFValues;
         } else if (template instanceof OfferTemplate) {
             this.entityForCFValues = new Subscription();
+            ((Subscription) this.entityForCFValues).setOffer((OfferTemplate) template);
+
         } else if (template instanceof ProductTemplate) {
             this.entityForCFValues = new ProductInstance();
+            ((ProductInstance) this.entityForCFValues).setProductTemplate((ProductTemplate) template);
+
         } else if (template instanceof ServiceTemplate) {
             this.entityForCFValues = new ServiceInstance();
+            ((ServiceInstance) this.entityForCFValues).setCode(template.getCode());
+            ((ServiceInstance) this.entityForCFValues).setDescription(template.getDescription());
+            ((ServiceInstance) this.entityForCFValues).setServiceTemplate((ServiceTemplate) template);
         }
     }
 

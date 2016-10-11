@@ -53,6 +53,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
@@ -1681,6 +1682,10 @@ public class EntityExportImportService implements Serializable {
                 for (Field field : cls.getDeclaredFields()) {
 
                     if (field.isAnnotationPresent(Transient.class)) {
+                        attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
+
+                        // This is a workaround to BLOB import issue "blobs may not be accessed after serialization"// TODO need a better solution as field is simply ignored
+                    } else if (field.isAnnotationPresent(Lob.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
                     } else if (field.isAnnotationPresent(OneToMany.class)) {
