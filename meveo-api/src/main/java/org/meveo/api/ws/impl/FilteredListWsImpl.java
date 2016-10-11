@@ -29,8 +29,8 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     public FilteredListResponseDto listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser());
-            result.setSearchResults(response);
+            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser());
+            result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
@@ -43,8 +43,8 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
-            result.setSearchResults(response);
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
@@ -57,8 +57,8 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
-            result.setSearchResults(response);
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }
