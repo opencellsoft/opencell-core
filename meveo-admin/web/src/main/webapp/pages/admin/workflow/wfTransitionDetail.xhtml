@@ -42,7 +42,7 @@
 							<hftl:formPanel
 								formId="formActionPlanItems" edit="#{workflowBean.edit}"
 								label="#{messages['dunningPlan.actions']}"
-								backingBean="#{actionPlanItemBean}"
+								backingBean="#{wFActionBean}"
 								entity="#{wfTransitionBean.wfAction}"
 								showFormButtons="false" ajaxSubmit="true">
 
@@ -83,7 +83,7 @@
 
 						<p:panel id="actionPlanItems_panel">
 							<h:form id="actionItems_form">
-								<hftl:dataList backingBean="#{actionPlanItemBean}"
+								<hftl:dataList backingBean="#{wFActionBean}"
 									dataModel="#{wfTransitionBean.entity.wfActions}"
 									resultsId="dunningPlanActions_results">
 									<hftl:column label="#{messages['dunningPlan.actionEl']}"

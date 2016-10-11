@@ -703,7 +703,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			} 	 
 		}	
 		if (isDetailed()) {
-			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity,null, new Date(),getCurrentUser());
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());

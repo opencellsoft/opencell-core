@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.dto.wf.WorkflowHistoryResponseDto;
 import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -52,11 +53,17 @@ public interface WorkflowRs extends IBaseRs {
     
     @POST
     @Path("/execute")
-    ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("baseEntityInstanceId") Long baseEntityInstanceId,@QueryParam("workflowCode") String workflowCode);
+    ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("entityInstanceCode") String entityInstanceCode,@QueryParam("workflowCode") String workflowCode);
     
     @GET
     @Path("/findByEntity")
     WorkflowsResponseDto findByEntity(@QueryParam("baseEntityName") String baseEntityName);
+    
+    @GET
+    @Path("/history")
+    WorkflowHistoryResponseDto findHistory(@QueryParam("entityInstanceCode") String entityInstanceCode,@QueryParam("workflowCode") String workflowCode,
+    		@QueryParam("fromStatus") String fromStatus,@QueryParam("toStatus") String toStatus);
+
     
 }
 

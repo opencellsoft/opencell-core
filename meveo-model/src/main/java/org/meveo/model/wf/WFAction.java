@@ -165,8 +165,15 @@ public class WFAction extends AuditableEntity {
 		return true;
 	}
 
-    @Override
-    public String toString() {
-        return String.format("WFAction [actionEl=%s, conditionEl=%s]", actionEl, conditionEl);
-}
+	@Override
+	public String toString() {
+		return String.format("WFAction [actionEl=%s, conditionEl=%s]", actionEl, conditionEl);
+	}
+
+	public String clearUuid() {
+		String oldUuid = uuid;
+		uuid = UUID.randomUUID().toString();
+		return oldUuid;
+	}
+    
 }

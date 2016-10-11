@@ -3,10 +3,10 @@ package org.meveo.admin.wf;
 import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 
-public interface IWorkflowType<E extends BaseEntity> {
+public interface IWorkflowType<E extends BusinessEntity> {
 
     /**
      * Get a list of statuses for the workflow

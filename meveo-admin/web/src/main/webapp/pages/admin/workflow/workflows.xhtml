@@ -41,7 +41,7 @@
 			<hftl:column label="#{messages['workflow.enableHistory']}"
 				field="enableHistory" />
 				
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderDuplicateLink="true"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

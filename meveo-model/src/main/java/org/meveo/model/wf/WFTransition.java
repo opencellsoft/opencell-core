@@ -80,7 +80,7 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
     @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
@@ -261,5 +261,12 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     @Override
     public String toString() {
         return String.format("WFTransition [fromStatus=%s, toStatus=%s, priority=%s, conditionEl=%s, combinedEl=%s]", fromStatus, toStatus, priority, conditionEl, getCombinedEl());
+    }   
+    
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
     }
+    
 }

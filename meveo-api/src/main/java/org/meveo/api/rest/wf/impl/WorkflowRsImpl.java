@@ -7,6 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.dto.wf.WorkflowHistoryResponseDto;
 import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -90,10 +91,10 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		}
 
 		@Override
-		public ActionStatus execute(String baseEntityName, Long baseEntityInstanceId, String workflowCode) {
+		public ActionStatus execute(String baseEntityName, String entityInstanceCode, String workflowCode) {
 			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 			try {
-				workflowApi.execute( baseEntityName,  baseEntityInstanceId,  workflowCode,getCurrentUser() );
+				workflowApi.execute( baseEntityName,  entityInstanceCode,  workflowCode,getCurrentUser() );
 			} catch (Exception e) {
 	        	super.processException(e, result);
 	        }			
@@ -109,6 +110,17 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 	        	super.processException(e, workflowsResponseDto.getActionStatus());
 	        }			
 			return workflowsResponseDto;
-		}		
+		}
+		
+		@Override
+		public WorkflowHistoryResponseDto findHistory( String entityInstanceCode, String workflowCode, String fromStatus, String toStatus) {
+			WorkflowHistoryResponseDto workflowHistoryResponseDto = new WorkflowHistoryResponseDto();
+			try {
+				workflowHistoryResponseDto.setListWorkflowHistoryDto(workflowApi.findHistory(entityInstanceCode,  workflowCode,  fromStatus,  toStatus,getCurrentUser()));
+			} catch (Exception e) {
+	        	super.processException(e, workflowHistoryResponseDto.getActionStatus());
+	        }			
+			return workflowHistoryResponseDto;
+		}
 }
 

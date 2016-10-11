@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<!--
+    A tag to display workflow history of an entity
+   
+    
+    Attributes      
+        entity - the businesEntity     
+        tabLabel - the tab label . If not provided a messages['workflowHistory.tabLabel'] will be used
+-->
+
+<ui:composition>
+
+	<c:if test="${empty(tabLabel)}">
+		<c:set var="tabLabel" value="${messages['workflowHistory.tabLabel']}" />
+	</c:if>
+
+	<c:set var="edit" value="#{false}" />
+	
+	<p:tab title="${tabLabel}" rendered="${!empty(workflowHistoryBean.getWorkflowHistory(entity))}">
+		<h:panelGroup id="wfHistoId">
+<!--			<p:dataTable var="histo" value="#{backingBean.getWorkflowHistory(entity)}">
+				<p:column headerText="#{messages['workflowHistory.actionDate']}">
+					<h:outputText value="#{histo.actionDate}" />
+				</p:column>
+				<p:column headerText="#{messages['dunningPlanTransition.fromStatus']}">
+					<h:outputText value="#{histo.fromStatus}" />
+				</p:column>
+				<p:column headerText="#{messages['dunningPlanTransition.toStatus']}">
+					<h:outputText value="#{histo.toStatus}" />
+				</p:column>
+				<p:column headerText="#{messages['workflow.title']}">
+					<h:outputText value="#{histo.workflow.code}" />
+				</p:column>				
+			</p:dataTable>
+			 --> 
+
+                    <p:dataTable id="actionsAndReportsData" var="histo" backingBean="#{workflowHistoryBean}" value="#{workflowHistoryBean.getWorkflowHistory(entity)}" paginator="true" rows="10" 
+                        sortField="actionDate" paginatorAlwaysVisible="false"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
+                        lazy="false" styleClass="custom-grid" reflow="true">
+                        <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" entity="${histo}" time="true" isDate="true"/>
+                        <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus"  entity="${histo}" />
+                        <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus"  entity="${histo}" />
+                        <hftl:column label="#{messages['workflow.title']}" field="workflow.code" entity="${histo}"/>  
+                    </p:dataTable>
+               
+                
+		</h:panelGroup>
+	</p:tab>
+</ui:composition>
+</html>

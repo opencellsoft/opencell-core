@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.FilterDto;
+
 
 @XmlRootElement(name = "GenerateInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,8 +20,11 @@ public class GenerateInvoiceRequestDto {
 	@XmlElement(required = true)
 	private Date invoicingDate;
 	
-	@XmlElement(required = true)
+	@XmlElement()
 	private Date lastTransactionDate;
+	
+	@XmlElement()
+	private FilterDto filter;
 	
 	public GenerateInvoiceRequestDto(){
 		
@@ -81,5 +86,14 @@ public class GenerateInvoiceRequestDto {
 		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + "]";
 	}
 
-	
+
+	public FilterDto getFilter() {
+		return filter;
+	}
+
+
+	public void setFilter(FilterDto filter) {
+		this.filter = filter;
+	}
+
 }

@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{workflowHistoryListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+	
+	<hftl:entityPopup id="workflowPopup"
+			header="#{messages['workflow.panel']}"
+			backingBean="#{workflowBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" 
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" 
+			selection="#{workflowHistoryListBean.filters['workflow']}"  >
+		</hftl:entityPopup>  
+		
+
+		<hftl:searchPanel
+			label="#{messages['workflowHistory.panel']}"
+			backingBean="#{workflowHistoryListBean}" renderNewButton="false">
+			
+			
+			<hftl:searchField label="#{messages['workflow.title']}" id="workflowId" field="workflow" valueLabelField="code" 
+			popup="true" popupId="workflowPopup" clearButton="true" />
+			
+			<hftl:searchField label="#{messages['workflowHistory.actionDate']}"
+				field="actionDate" />
+
+			<hftl:searchField label="#{messages['dunningPlanTransition.fromStatus']}"
+				field="fromStatus" />
+			<hftl:searchField label="#{messages['dunningPlanTransition.toStatus']}"
+				field="toStatus" />		
+			<hftl:searchField label="#{messages['workflowHistory.entityInstanceCode']}"
+				field="entityInstanceCode" />							
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['workflowHistory.title']}" backingBean="#{workflowHistoryListBean}" sortBy="actionDate" >
+			<hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
+			<hftl:column label="#{messages['workflowHistory.entityInstanceCode']}" field="entityInstanceCode" />
+			<hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" /> 
+			<hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" /> 
+			<hftl:column label="#{messages['workflow.title']}" field="workflow.code" />            
+			<hftl:actionsColumn renderViewLink="true" renderDeleteLink="false" width="35"
+				permission="#{identity.hasPermission('billing','billingVisualization')}"/>
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>
