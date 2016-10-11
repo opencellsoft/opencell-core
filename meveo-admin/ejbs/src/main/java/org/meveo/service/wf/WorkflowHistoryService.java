@@ -21,6 +21,7 @@ package org.meveo.service.wf;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -34,11 +35,20 @@ public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> 
 		
 	
 	@SuppressWarnings("unchecked")
-	public List<WorkflowHistory> findByEntityCode(String entityInstanceCode,List<Workflow> workflows, Provider provider){
-        return (List<WorkflowHistory>) getEntityManager().createQuery("from " + WorkflowHistory.class.getSimpleName() + " where entityInstanceCode=:entityInstanceCode and"
-        		+ " provider=:provider and workflow in (:workflows)")
-                .setParameter("entityInstanceCode", entityInstanceCode).setParameter("provider", provider).setParameter("workflows", workflows).getResultList();
-        }
+	public List<WorkflowHistory> findByEntityCode(String entityInstanceCode, List<Workflow> workflows, Provider provider) {
+
+		String queryStr = "from " + WorkflowHistory.class.getSimpleName() + " where entityInstanceCode=:entityInstanceCode and" + " provider=:provider";
+
+		if (workflows != null && !workflows.isEmpty()) {
+			queryStr += " and workflow in (:workflows)";
+		}
+
+		Query query = getEntityManager().createQuery(queryStr).setParameter("entityInstanceCode", entityInstanceCode).setParameter("provider", provider);
+		if (workflows != null && !workflows.isEmpty()) {
+			query = query.setParameter("workflows", workflows);
+		}
+		return (List<WorkflowHistory>) query.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<WorkflowHistory> find(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus, Provider provider) {
