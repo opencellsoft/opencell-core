@@ -611,8 +611,11 @@ public class ProviderApi extends BaseApi {
             	provider.setInvoiceConfiguration(invoiceConfiguration);
             	provider.getInvoiceConfiguration().setProvider(provider);
             }
-            if(invoiceConfigurationDto.isDisplayFreeTransacInInvoice()!=null){
-            	provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.isDisplayFreeTransacInInvoice());
+            if(invoiceConfigurationDto.getDisplayFreeTransacInInvoice()!=null){
+            	provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());
+            }
+            if(invoiceConfigurationDto.getDisplayBillingCycle()!=null){
+                provider.getInvoiceConfiguration().setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
             }
         }
         return provider;

@@ -33,7 +33,7 @@ public class ProviderDto extends BaseDto {
 	
 	private Boolean enterprise;
 	private Boolean levelDuplication;	
-	private Integer rounding = 2;
+	private Integer rounding;
 	private Long prepaidReservationExpirationDelayinMillisec;
 	private String discountAccountingCode;
 	private String email;
