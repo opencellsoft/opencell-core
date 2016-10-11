@@ -95,7 +95,7 @@
                         </p:panel>
                         <p:panel>
                             <ui:repeat value="#{transition.wfActions.toArray()}" var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value" />
+                                <h:outputText value="#{userHierarchyLevelBean.getUserHierarchyLevelFromCode(action.userGroupCode).descriptionOrCode}" styleClass="field-value" />
                             </ui:repeat>
                         </p:panel>
                     </p:panelGrid>
@@ -122,7 +122,7 @@
                         </p:panel>
                         <p:panel>
                             <ui:repeat value="#{wfTransitionBean.catchAll.wfActions.toArray()}" var="action" varStatus="status">
-                                <h:outputText value="#{action.userGroupCode}" styleClass="field-value" />
+                                <h:outputText value="#{userHierarchyLevelBean.getUserHierarchyLevelFromCode(action.userGroupCode).descriptionOrCode}" styleClass="field-value" />
                             </ui:repeat>
                         </p:panel>
                     </p:panelGrid>

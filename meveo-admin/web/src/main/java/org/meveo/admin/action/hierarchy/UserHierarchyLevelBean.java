@@ -440,4 +440,11 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         return null;
     }
 
+    public UserHierarchyLevel getUserHierarchyLevelFromCode(String code) {
+        UserHierarchyLevel userLevelFound = userHierarchyLevelService.findByCode(code, getCurrentProvider());
+        if (userLevelFound == null) {
+            return new UserHierarchyLevel();
+        }
+        return userLevelFound;
+    }  
 }
