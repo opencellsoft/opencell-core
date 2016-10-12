@@ -36,7 +36,7 @@
                         selectionMode="single" selection="#{wfTransitionBean.userGroupSelectedNode}" required="true"
                         requiredMessage="#{messages['mmTransition.assignedTeam']} #{messages['primefaces.tree.REQUIRED']}">
                         <p:treeNode>
-                            <h:outputText value="#{groupLevel.code}" />
+                            <h:outputText value="#{groupLevel.descriptionOrCode}" />
                         </p:treeNode>
                     </p:tree>
                 </h:panelGrid>

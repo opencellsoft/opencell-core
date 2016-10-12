@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -32,7 +31,7 @@ public interface FilteredListRs extends IBaseRs {
      */
     @Path("/listByFilter")
     @POST
-    public Response listByFilter(@QueryParam("filter") FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
+    public Response listByFilter(FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
     /**
      * Execute a search in Elastic Search on all fields (_all field)
