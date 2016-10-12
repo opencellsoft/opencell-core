@@ -201,6 +201,13 @@ public class BankCoordinates implements Serializable, Cloneable {
 	public void setIcs(String ics) {
 		this.ics = ics;
 	}
+
+	@Override
+	public String toString() {
+		return "BankCoordinates [bankCode=" + bankCode + ", branchCode=" + branchCode + ", accountNumber=" + accountNumber + ", key=" + key + ", iban=" + iban + ", bic=" + bic
+				+ ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
+				+ ics + "]";
+	}
 	
 	
 

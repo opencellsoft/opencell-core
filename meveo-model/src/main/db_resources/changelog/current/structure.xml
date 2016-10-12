@@ -12,19 +12,19 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="entity_class" type="VARCHAR(255)" />
-        </createTable>
+		</createTable>
 
 		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" />
         <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" />
         <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" />
-        <addForeignKeyConstraint 
+		<addForeignKeyConstraint
         	constraintName="FK_SECURED_ENTITY_USER" 
         	referencedTableName="ADM_USER" 
         	baseColumnNames="USER_ID" 
         	baseTableName="ADM_SECURED_ENTITY"
             referencedColumnNames="ID" />
-    </changeSet>
-
+	</changeSet>
+	
 	<changeSet id="#1821_20160707" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
 			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
@@ -56,7 +56,7 @@
 		</addColumn>
 	</changeSet>
      <changeSet id="#1890_20160801" author="Mbarek">
-	    <addColumn tableName="BILLING_CYCLE">
+	      <addColumn tableName="BILLING_CYCLE">
           <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
@@ -266,8 +266,7 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-164">       
         <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" referencedColumnNames="id" referencedTableName="wf_action"/>
-    </changeSet>
-    
+    </changeSet>	
     <changeSet id="#1885_20160815_service_entity" author="EdwardPLegaspi">
     	<addColumn tableName="cat_service_template">
     		<column name="image" type="oid" />
@@ -923,7 +922,7 @@
     		<column name="provider_id"></column>
     	</createIndex>
     </changeSet>  
-    
+    	
     <changeSet id="#1637_20160819_2" author="TyshanShi">
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
 				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 

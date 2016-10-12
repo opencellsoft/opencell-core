@@ -26,26 +26,25 @@ public class ProviderDto extends BaseDto {
 	private String currency;
 	private String country;
 	private String language;
-	private boolean multiCurrency;
-	private boolean multiCountry;
-	private boolean multiLanguage;
+	private Boolean multiCurrency;
+	private Boolean multiCountry;
+	private Boolean multiLanguage;
 	private String userAccount;
-
-	private boolean enterprise;
-	private boolean levelDuplication;	
-	private Integer rounding = 2;
+	
+	private Boolean enterprise;
+	private Boolean levelDuplication;	
+	private Integer rounding;
 	private Long prepaidReservationExpirationDelayinMillisec;
 	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private boolean recognizeRevenue;
+	private Boolean recognizeRevenue;
 	private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
 
 	@XmlElement(required = false)
 	private CustomFieldsDto customFields;
 
 	public ProviderDto() {
-
 	}
 	
 	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
@@ -134,27 +133,27 @@ public class ProviderDto extends BaseDto {
 		this.language = language;
 	}
 
-	public boolean isMultiCurrency() {
+	public Boolean isMultiCurrency() {
 		return multiCurrency;
 	}
 
-	public void setMultiCurrency(boolean multiCurrency) {
+	public void setMultiCurrency(Boolean multiCurrency) {
 		this.multiCurrency = multiCurrency;
 	}
 
-	public boolean isMultiCountry() {
+	public Boolean isMultiCountry() {
 		return multiCountry;
 	}
 
-	public void setMultiCountry(boolean multiCountry) {
+	public void setMultiCountry(Boolean multiCountry) {
 		this.multiCountry = multiCountry;
 	}
 
-	public boolean isMultiLanguage() {
+	public Boolean isMultiLanguage() {
 		return multiLanguage;
 	}
 
-	public void setMultiLanguage(boolean multiLanguage) {
+	public void setMultiLanguage(Boolean multiLanguage) {
 		this.multiLanguage = multiLanguage;
 	}
 
@@ -175,19 +174,19 @@ public class ProviderDto extends BaseDto {
 	}
 
 
-	public boolean isEnterprise() {
+	public Boolean isEnterprise() {
 		return enterprise;
 	}
 
-	public void setEnterprise(boolean enterprise) {
+	public void setEnterprise(Boolean enterprise) {
 		this.enterprise = enterprise;
 	}
 
-	public boolean isLevelDuplication() {
+	public Boolean isLevelDuplication() {
 		return levelDuplication;
 	}
 
-	public void setLevelDuplication(boolean levelDuplication) {
+	public void setLevelDuplication(Boolean levelDuplication) {
 		this.levelDuplication = levelDuplication;
 	}
 
@@ -246,11 +245,11 @@ public class ProviderDto extends BaseDto {
 		this.email = email;
 	}
 
-	public boolean isRecognizeRevenue() {
+	public Boolean isRecognizeRevenue() {
 		return recognizeRevenue;
 	}
 
-	public void setRecognizeRevenue(boolean recognizeRevenue) {
+	public void setRecognizeRevenue(Boolean recognizeRevenue) {
 		this.recognizeRevenue = recognizeRevenue;
 	}
 
