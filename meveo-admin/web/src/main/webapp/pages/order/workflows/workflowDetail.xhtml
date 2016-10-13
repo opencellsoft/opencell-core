@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+    template="/layout/template.xhtml">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{wfTransitionBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                <p:menuitem value="#{messages['mmTransition.new']}" disabled="true" rendered="#{wfTransitionBean.entity.transient}" />
+                <p:menuitem value="#{messages['mmTransition.editView']}" disabled="true" rendered="#{!wfTransitionBean.entity.transient}"/>
+            </p:breadCrumb>
+        </h:form>
+
+        <h:panelGroup rendered="#{wfTransitionBean.disabledOrderWF}">
+            <div class="ui-messages ui-widget">
+                <div class="ui-messages-warn ui-corner-all">
+                    <span class="ui-messages-info-warn"></span>
+                    <ul>
+                        <li><h:outputText value="#{messages['mmTransition.orderWFDisabled']}" styleClass="ui-messages-warn-summary" /></li>
+                    </ul>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <hftl:formPanel formId="formDunningPlanTransition" edit="#{wfTransitionBean.edit}" backingBean="#{wfTransitionBean}"
+            entity="#{wfTransitionBean.wfTransition}" ajaxSubmit="true">
+            <hftl:formField label="#{messages['mmTransition.name']}" displayOneLine="true" field="description" size="50" maxlength="100" required="true"
+                edit="#{wfTransitionBean.edit}" labelWidth="25"/>
+            <p:panel styleClass="clearLeft">
+                <p:separator />
+            </p:panel>
+            <p:panel id="decisionRulesPanel" styleClass="clearLeft">
+                <c:forEach items="#{wfTransitionBean.selectedRules}" var="rule" varStatus="loopStatus">
+                    <p:panel id="transitionRulePanel#{loopStatus.index}" styleClass="clearLeft">
+                        <hftl:decorateFormField fieldId="decisionRuleOperationPanel#{loopStatus.index}" label="" componentWidth="10">
+                            <p:tooltip for="decisionRuleOperationPanel#{loopStatus.index}" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="decisionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
+                                action="#{wfTransitionBean.deleteWfDecisionRule(loopStatus.index)}" icon="ui-icon-trash" process="decisionRuleOperationPanel#{loopStatus.index}"
+                                ajaxSubmit="true" partialSubmit="true" update=":formDunningPlanTransition:decisionRulesPanel" />
+
+                        </hftl:decorateFormField>
+                        <hftl:decorateFormField fieldId="decisionRuleName#{loopStatus.index}" label="#{messages['mmTransition.criteria']}" componentWidth="20">
+                            <p:selectOneMenu id="decisionRuleName#{loopStatus.index}" value="#{rule.name}" required="true">
+                                <p:ajax listener="#{wfTransitionBean.changedRuleName(loopStatus.index)}" process="decisionRuleName#{loopStatus.index}"
+                                    update=":formDunningPlanTransition:decisionRulesPanel" />
+                                <f:selectItem itemLabel="#{messages['mmTransition.selectCriteria']}" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{wfTransitionBean.wfDecisionRulesName}" />
+                            </p:selectOneMenu>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="decisionRuleValue#{loopStatus.index}" label="#{messages['mmTransition.value']}" rendered="#{rule.name != null}">
+                            <p:selectOneListbox id="decisionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true" converter="wfDecisionRuleConverter">
+                                <f:selectItems value="#{wfTransitionBean.wfDecisionRulesByName[loopStatus.index]}" var="decisionRule" itemLabel="#{decisionRule.value}"
+                                    itemValue="#{decisionRule}" />
+                                <p:ajax event="change" update=":formDunningPlanTransition:decisionRulesPanel" process="decisionRuleValue#{loopStatus.index}" />
+                            </p:selectOneListbox>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="decisionRuleTextValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'STRING'}" componentWidth="20">
+                            <p:inputText id="decisionRuleTextValue#{loopStatus.index}" value="#{rule.newValue}" required="true" size="20" maxlength="100" />
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="decisionRuleDateValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'DATE'}" componentWidth="20">
+                            <p:calendar id="decisionRuleDateValue#{loopStatus.index}" value="#{rule.newDate}" required="true" size="16" pattern="dd/MM/yyyy" />
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}" componentWidth="20">
+                            <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" required="true" converter="javax.faces.BigDecimal"/>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.string']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}" componentWidth="20">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel for="decisionRuleFromStringValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
+                                <p:inputText id="decisionRuleFromStringValue#{loopStatus.index}" value="#{rule.newValue}" size="20" maxlength="100" />
+                                <p:outputLabel for="decisionRuleFromStringValue#{loopStatus.index}_toRange" value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                <p:inputText id="decisionRuleFromStringValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="20" maxlength="100" />
+                            </h:panelGrid>
+                        </hftl:decorateFormField>
+
+                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
+                            <o:validateOneOrMore components="decisionRuleFromStringValue#{loopStatus.index} transitionRuleFromStringValue#{loopStatus.index}_toRange" />
+                        </h:panelGroup>
+
+                        <hftl:decorateFormField fieldId="decisionRuleFromNumberValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.number']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}" componentWidth="30">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
+                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                    converter="javax.faces.BigDecimal" />
+                                <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10" maxlength="10"
+                                    converter="javax.faces.BigDecimal" />
+                            </h:panelGrid>
+                        </hftl:decorateFormField>
+
+                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
+                            <o:validateOneOrMore components="decisionRuleFromNumberValue#{loopStatus.index} decisionRuleFromNumberValue#{loopStatus.index}_toRange" />
+                        </h:panelGroup>
+
+                        <hftl:decorateFormField fieldId="decisionRuleFromDateValue#{loopStatus.index}" label="#{messages['DecisionRuleTypeEnum.range.date']}"
+                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}" componentWidth="20">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel for="decisionRuleFromDateValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
+                                <p:calendar id="decisionRuleFromDateValue#{loopStatus.index}" value="#{rule.newDate}" size="16" pattern="dd/MM/yyyy" />
+                                <p:outputLabel for="decisionRuleFromDateValue#{loopStatus.index}_toRange" value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                <p:calendar id="decisionRuleFromDateValue#{loopStatus.index}_toRange" value="#{rule.anotherDate}" size="16" pattern="dd/MM/yyyy" />
+                            </h:panelGrid>
+                        </hftl:decorateFormField>
+
+                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
+                            <o:validateOneOrMore components="decisionRuleFromDateValue#{loopStatus.index} decisionRuleFromDateValue#{loopStatus.index}_toRange" />
+                        </h:panelGroup>
+                    </p:panel>
+                </c:forEach>
+            </p:panel>
+            <p:panel styleClass="clearLeft" style="border-bottom: solid">
+                <p:tooltip for="addCriteriaBtn" value="#{messages['mmTransition.addCriteria']}" showEffect="slide" hideEffect="slide" />
+                <p:commandButton id="addCriteriaBtn" action="#{wfTransitionBean.addNewRule()}" process="@this,decisionRulesPanel" value="#{messages['mmTransition.addCriteria']}"
+                    ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus" update=":formDunningPlanTransition:decisionRulesPanel :formDunningPlanTransition:messages" />
+            </p:panel>
+
+            <hftl:decorateFormField fieldId="userGroupLevel" label="" componentWidth="50">
+                <h:panelGrid columns="2">
+                    <p:panel>
+                        <p:outputLabel value="#{messages['mmTransition.assignedTeam']} *" style="padding-right:5px" />
+                        <i class="fa fa-arrow-circle-right text-blue" style="font-size: 16px; padding: 10px 15px; font-weight: 300"></i>
+                    </p:panel>
+                    <p:tree id="userGroupLevel" value="#{wfTransitionBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false"
+                        selectionMode="single" selection="#{wfTransitionBean.userGroupSelectedNode}" required="true"
+                        requiredMessage="#{messages['mmTransition.assignedTeam']} #{messages['primefaces.tree.REQUIRED']}">
+                        <p:treeNode>
+                            <h:outputText value="#{groupLevel.descriptionOrCode}" />
+                        </p:treeNode>
+                    </p:tree>
+                </h:panelGrid>
+            </hftl:decorateFormField>
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

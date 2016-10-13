@@ -161,4 +161,25 @@
 	<changeSet id="#1747_20160810" author="TyshanShi">
 		<sql>delete from BILLING_INVOICE_CONFIGURATION where PROVIDER_ID is null</sql>
 	</changeSet>
+	
+    <changeSet id="#2087_20161013" author="anasseh">
+		<insert tableName="adm_permission">
+			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="name" value="Finance visualization"></column>
+			<column name="ressource" value="finance"></column>
+			<column name="permission" value="financeVisualization"></column>
+		</insert>		
+		<insert tableName="adm_permission">
+			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="name" value="Finance management"></column>
+			<column name="ressource" value="finance"></column>
+			<column name="permission" value="financeManagement"></column>
+		</insert>
+		<insert tableName="adm_permission">
+			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="name" value="Marketing Catalog visualization"></column>
+			<column name="ressource" value="marketing"></column>
+			<column name="permission" value="marketingCatalogVisualization"></column>
+		</insert>						
+	</changeSet>	
 </databaseChangeLog>

@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{bundleTemplateBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{bundleTemplateBean.initEntity}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="productTemplateForm">
+            <p:panel id="headerPanel">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                    <p:menuitem outcome="mm_productTemplates" value="#{messages['productTemplates.search']}" />
+                </p:breadCrumb>
+                <p:panel styleClass="TexAlRight">
+
+                    <p:selectOneMenu></p:selectOneMenu>
+                    <p:selectOneMenu></p:selectOneMenu>
+                    <p:selectOneMenu></p:selectOneMenu>
+                </p:panel>
+                <p:dataGrid id="productTemplateList" var="prod" value="#{productTemplateListBean.productTemplates}" paginator="true" rows="5" columns="1" paginatorPosition="top"
+                    paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                    lazy="true" styleClass="ui-panelgrid-blank" rowKey="#{prod.id}">
+
+                    <p:panel>
+                        <p:panelGrid styleClass="ui-panelgrid-blank">
+                            <p:row>
+                                <p:column rowspan="2">
+                                    <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="100">
+                                        <f:param name="id" value="#{prod.id}"></f:param>
+                                    </p:graphicImage>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{prod.name}"></h:outputText>
+                                </p:column>
+                                <p:column rowspan="2">
+                                    <h:outputText value="#{prod.businessProductModel.description}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{messages['commons.validFrom']}"></p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{messages['commons.validTo']}"></p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{messages['productTemplate.catalogPrice']}"></p:outputLabel>
+                                </p:column>
+                                <p:column rowspan="2">
+                                    <p:commandButton value="#{messages['bundleTemplate.addProduct']}" action="#{bundleTemplateBean.addProductTemplateToBundle(prod)}" ajax="false">
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{prod.description}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{prod.validFrom}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{prod.validTo}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="0.00"></p:outputLabel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:dataGrid>
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
