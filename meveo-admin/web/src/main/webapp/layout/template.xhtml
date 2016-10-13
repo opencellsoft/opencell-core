@@ -31,14 +31,9 @@
 
 
     <div id="layout-topbar-cover">
-        <c:choose>
-            <c:when test='#{currentUser.hasPermission("marketing", "marketingCatalogManager") || currentUser.hasPermission("marketing", "marketingCatalogVisualization")}'>
-                <ui:include src="/layout/mm_topbar.xhtml" />
-            </c:when>
-            <c:otherwise>
+       
                 <ui:include src="/layout/topbar.xhtml" />
-            </c:otherwise>
-        </c:choose>
+            
     </div>
 
     <div id="layout-portlets-cover">

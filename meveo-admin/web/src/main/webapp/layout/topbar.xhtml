@@ -16,27 +16,19 @@
 		<div id="responsive-menu-button">
 			<a id="menu-button"><i class="fa fa-bars fa-5x"></i> </a>
 		</div>
-<div>
-<lu>
- <li><h:link outcome="/home.xhtml" styleClass="top-bar-home"/></li>
- </lu>
- 	</div>
+
 		<h:form id="primary-nav-form">
 			<div class="pull-right" id="primary_nav_wrap">
-
 				<ul id="top-right-menu">
-                    
 					<li><a href="#" id=""><i class="fa fa-2x fa-cog"></i></a>
 						<ul style="display: none; z-index: 1">
 							<li><h:commandLink action="#{identity.logout}"
 									value="#{messages['menutop.logout']}"
 									rendered="#{identity.loggedIn}" immediate="true" /></li>
-
 							<li><h:link outcome="/changePassword.xhtml"
 									value="#{messages['menutop.changePassword']}"
 									rendered="#{identity.loggedIn}" styleClass="headerLink"
 									immediate="true" /></li>
-
 						</ul></li>
 					<li><a href="#"><i class="fa fa-2x fa-question"></i></a>
 						<ul style="display: none; z-index: 1">
@@ -47,7 +39,7 @@
 									<h:outputText value="#{messages['menu.documentation']}" />
 								</h:outputLink></li>
 						</ul></li>
-						
+
 				</ul>
 				<!-- / top-right-menu -->
 			</div>
@@ -63,24 +55,28 @@
 			</script>
 			<div class="FRight">
 				<ul id="user-info" class="ListNoStyle Padding10"
-					style="margin: 0 0px 0 0;">
+					style="margin: 0 40px 0 0;">
 					<li class="Fs14 FontBold">#{identity.user.user.nameOrUsername}</li>
 					<li class="Fs12 FontBold">#{identity.user.currentProvider.code}</li>
 				</ul>
 			</div>
+			<c:if test="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
+			<div class="search-wrapper">		
+				<p:inputText id="globalFullTextSearch"
+					value="#{fullTextSearchBean.filters['fullText']}"
+					placeholder="#{messages['commons.search']}" />
+				<p:commandLink id="doGlobalFullTextSearch"
+					styleClass="Padding5 fa fa-search" action="mm_fullTextSearch"
+					process="globalFullTextSearch @this" />
+					
+			</div>
+			<p:defaultCommand target="doGlobalFullTextSearch" />
+			</c:if>
 		</h:form>
 		<!-- / topbar-wrapper -->
 	</div>
-
-	<div id="header">
-		<div id="logo"></div>
-
-		<div id="headerleft"></div>
-		<div id="headerright"></div>
+	<div id="top-menu-cover" class="FLeft">		
+				<ui:include src="/layout/navigation.xhtml" />
 	</div>
-
-	<c:if test="#{!hideNavigation}">
-		<ui:include src="/layout/navigation.xhtml" />
-	</c:if>
 
 </ui:composition>
