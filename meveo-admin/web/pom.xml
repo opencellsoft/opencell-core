@@ -152,7 +152,8 @@
                 <configuration>
                     <includes>
                         <!-- <include>${project.build.directory}/**/persistence.xml</include> -->
-                        <include>${project.build.directory}/**/layout/*.xhtml</include>
+                        <!--<include>${project.build.directory}/**/layout/*.xhtml</include>-->
+                        <include>${project.build.directory}/meveo/layout/*.xhtml</include>
                         <include>${project.build.directory}/meveo/about.xhtml</include>
                     </includes>
                     <replacements>
