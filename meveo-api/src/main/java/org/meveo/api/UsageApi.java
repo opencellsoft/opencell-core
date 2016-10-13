@@ -22,10 +22,11 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 @Stateless
 public class UsageApi extends BaseApi {
@@ -38,9 +39,12 @@ public class UsageApi extends BaseApi {
 
 	@Inject
 	private InvoiceCategoryService invoiceCategoryService;
-	
+
+	@Inject
+	private UsageChargeTemplateService usageChargeTemplateService;
+
 	/**
-	 * 
+	 *
 	 * @param usageRequestDto
 	 * @param user
 	 * @return
@@ -48,11 +52,11 @@ public class UsageApi extends BaseApi {
 	 * @throws EntityDoesNotExistsException
 	 */
 	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto, User user) throws MissingParameterException, EntityDoesNotExistsException {
-		
+
 		if (StringUtils.isBlank(usageRequestDto.getUserAccountCode())) {
 			missingParameters.add("UserAccountCode");
 		}
-		
+
 		handleMissingParameters();
 
 		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode(), user.getProvider());
@@ -71,10 +75,10 @@ public class UsageApi extends BaseApi {
 				chargeAggregate.setAmount(""+NumberUtils.round((BigDecimal)row[2], 2)+" "+currencyCode);
 				BigDecimal quantity = BigDecimal.ZERO;
 				String quantityToDisplay = "0";
-				if((BigDecimal)row[1] != null){				
+				if((BigDecimal)row[1] != null){
 					quantity = NumberUtils.round((BigDecimal)row[1], 2);
 					quantityToDisplay = quantity.toPlainString();
-					
+
 					if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){
 						long hours = quantity.longValue() / 60;
 						quantityToDisplay = hours+"h " ;
@@ -86,17 +90,17 @@ public class UsageApi extends BaseApi {
 				}
 				log.debug("chargeAggregate  quantityToDisplay {}",quantityToDisplay);
 				chargeAggregate.setQuantity(quantityToDisplay);
-				
+
 				response.getListChargeAggregate().add(chargeAggregate);
 			}catch(Exception e){
 				log.error("usage row error:",e);
 			}
-		}				
+		}
 		return response;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param usageRequestDto
 	 * @param user
 	 * @return
@@ -117,6 +121,7 @@ public class UsageApi extends BaseApi {
 			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
 		}
 		List<InvoiceCategory> invoiceCats = invoiceCategoryService.list(user.getProvider());
+		ChargeTemplate chargeTemplate;
 		for (InvoiceCategory invoiceCategory : invoiceCats) {
 			List<InvoiceSubCategory> invoiceSubCats = invoiceCategory.getInvoiceSubCategories();
 			CatUsageDto catUsageDto = new CatUsageDto();
@@ -128,8 +133,10 @@ public class UsageApi extends BaseApi {
 				subCatUsageDto.setCode(invoiceSubCategory.getCode());
 				subCatUsageDto.setDescription(invoiceSubCategory.getDescription());
 				List<WalletOperation> walletOperations = walletOperationService.openWalletOperationsBySubCat(userAccount.getWallet(), invoiceSubCategory, usageRequestDto.getFromDate(), usageRequestDto.getToDate());
-				for (WalletOperation op : walletOperations) {					
-					if(op.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
+				for (WalletOperation op : walletOperations) {
+					chargeTemplate = op.getChargeInstance().getChargeTemplate();
+					chargeTemplate = usageChargeTemplateService.findById(chargeTemplate.getId());
+					if(chargeTemplate != null){
 						UsageDto usageDto = new UsageDto();
 						usageDto.setCode(op.getCode());
 						usageDto.setDescription(op.getDescription());
@@ -147,11 +154,11 @@ public class UsageApi extends BaseApi {
 					}
 				}
 				if(subCatUsageDto.getListUsage().size()>0){
-				catUsageDto.getListSubCatUsage().add(subCatUsageDto);
+				    catUsageDto.getListSubCatUsage().add(subCatUsageDto);
 				}
 			}
 			if(catUsageDto.getListSubCatUsage().size()>0){
-		     result.getListCatUsage().add(catUsageDto);
+		        result.getListCatUsage().add(catUsageDto);
 			}
 		}
 		return result;
