@@ -289,8 +289,14 @@
         <constraint>true</constraint>
     </page>
     
+    <page view-id=".+\/order\/workflows\/.+" >
+    	<constraint>currentUser.hasPermission('marketing','marketingCatalogManager')</constraint>
+        <constraint type="READ">currentUser.hasPermission('marketing','marketingCatalogVisualization')</constraint>
+    </page>
+    
     <page view-id=".+\/order\/.+" >
         <constraint>currentUser.hasPermission('order','orderManagement')</constraint>
         <constraint type="READ">currentUser.hasPermission('order','orderVisualization')</constraint>
     </page>
+    
 </page-access>
