@@ -10,14 +10,14 @@
 
     <ui:define name="body">
         <p:panel>
-            <h:form id="crumbmenuForm">
+           
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="workflows" value="#{messages['menu.workflow']}" />
                 </p:breadCrumb>
-            </h:form>
+
         </p:panel>
-        <p:panel header="#{messages['workflow.panel']}">
+        <p:panel>
             <p:tabView id="tabView" dynamic="true" cache="true">
                 <p:tab title="#{messages['workflow.panel']}">
                     <hftl:formPanel backingBean="#{workflowBean}" showEnableDisableButton="true">

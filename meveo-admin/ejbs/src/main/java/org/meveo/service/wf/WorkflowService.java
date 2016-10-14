@@ -243,14 +243,16 @@ public class WorkflowService extends BusinessService<Workflow> {
 
                 if (matchExpression(wfTransition.getCombinedEl(), entity)) {
 
-                    log.debug("Processing transition: {} on entity {}", wfTransition, entity);                    
+                    log.debug("Processing transition: {} on entity {}", wfTransition, entity);    
                     WorkflowHistory wfHistory = new WorkflowHistory();
-                    wfHistory.setActionDate(new Date());
-                    wfHistory.setEntityInstanceCode(entity.getCode());
-                    wfHistory.setFromStatus(wfTransition.getFromStatus());
-                    wfHistory.setToStatus(wfTransition.getToStatus());
-                    wfHistory.setTransitionName(wfTransition.getDescription());
-                    wfHistory.setWorkflow(workflow);
+                    if(workflow.isEnableHistory()){	                    
+	                    wfHistory.setActionDate(new Date());
+	                    wfHistory.setEntityInstanceCode(entity.getCode());
+	                    wfHistory.setFromStatus(wfTransition.getFromStatus());
+	                    wfHistory.setToStatus(wfTransition.getToStatus());
+	                    wfHistory.setTransitionName(wfTransition.getDescription());
+	                    wfHistory.setWorkflow(workflow);
+                    }
 
                     List<WFAction> listWFAction = wfActionService.listByTransition(wfTransition);
                     for (WFAction wfAction : listWFAction) {
@@ -364,5 +366,4 @@ public class WorkflowService extends BusinessService<Workflow> {
 		
 		update(entity, currentUser);
 	}
-
 }

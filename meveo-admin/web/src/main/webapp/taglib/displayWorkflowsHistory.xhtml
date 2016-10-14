@@ -30,22 +30,6 @@
 	
 	<p:tab title="${tabLabel}" rendered="${!empty(workflowHistoryBean.getWorkflowHistory(entity))}">
 		<h:panelGroup id="wfHistoId">
-<!--			<p:dataTable var="histo" value="#{backingBean.getWorkflowHistory(entity)}">
-				<p:column headerText="#{messages['workflowHistory.actionDate']}">
-					<h:outputText value="#{histo.actionDate}" />
-				</p:column>
-				<p:column headerText="#{messages['dunningPlanTransition.fromStatus']}">
-					<h:outputText value="#{histo.fromStatus}" />
-				</p:column>
-				<p:column headerText="#{messages['dunningPlanTransition.toStatus']}">
-					<h:outputText value="#{histo.toStatus}" />
-				</p:column>
-				<p:column headerText="#{messages['workflow.title']}">
-					<h:outputText value="#{histo.workflow.code}" />
-				</p:column>				
-			</p:dataTable>
-			 --> 
-
                     <p:dataTable id="actionsAndReportsData" var="histo" backingBean="#{workflowHistoryBean}" value="#{workflowHistoryBean.getWorkflowHistory(entity)}" paginator="true" rows="10" 
                         sortField="actionDate" paginatorAlwaysVisible="false"
                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
@@ -53,7 +37,9 @@
                         <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" entity="${histo}" time="true" isDate="true"/>
                         <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus"  entity="${histo}" />
                         <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus"  entity="${histo}" />
-                        <hftl:column label="#{messages['workflow.title']}" field="workflow.code" entity="${histo}"/>  
+                        <hftl:column label="#{messages['dunningPlan.transition']}" field="transitionName"  entity="${histo}" />
+                        <hftl:column label="#{messages['workflow.title']}" field="workflow.code" entity="${histo}" />  
+                        <hftl:column label="#{messages['workflowHistory.creator']}" field="auditable.creator.userName" entity="${histo}"/> 
                     </p:dataTable>
                
                 

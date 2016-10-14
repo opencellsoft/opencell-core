@@ -4,30 +4,29 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="workflowHistoryId" value="#{workflowHistoryBean.objectId}" />
+            <f:viewParam name="objectId" value="#{workflowHistoryBean.objectId}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
+        <p:panel>          
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.payments']}" disabled="true" />
-                    <p:menuitem outcome="workflowHistories" value="#{messages['menu.workflowHistory']}" />
-                </p:breadCrumb>
-            </h:form>
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="workflowHistoryDetail" value="#{messages['menu.workflowHistory']}" />
+                </p:breadCrumb>           
         </p:panel>
-        <p:panel header="#{messages['workflowHistory.panel']}">
-            
-                <p:tab title="#{messages['workflowHistory.panel']}">
-                    <hftl:formPanel backingBean="#{workflowHistoryBean}" showEnableDisableButton="false" showDeleteButton="false" showBackButton="true" showFormButtons="false">
-                        <hftl:formField label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
-                        <hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
-                         <hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
-                         <hftl:formField label="#{messages['workflow.title']}" field="workflow" valueLabelField="code"/>
+       
+ <p:tabView id="tabView" dynamic="true" cache="true"> 
+     <p:tab title="#{messages['workflowHistory.panel']}">
+         <hftl:formPanel backingBean="#{workflowHistoryBean}" showEnableDisableButton="false" showDeleteButton="false" showBackButton="true" showFormButtons="true" showEditButton="false">
+             <hftl:formField label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
+             <hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
+             <hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
+             <hftl:formField label="#{messages['workflow.title']}" field="workflow" valueLabelField="code"/>
+             <hftl:formField label="#{messages['workflowHistory.creator']}" field="auditabe" valueLabelField="creator.userName"/>
 		</hftl:formPanel>
 		
-            <h:panelGroup id="actionsAndReports">
+       <h:panelGroup id="actionsAndReports">
                 <hftl:decorateFormField label="#{messages['workflowHistoryAction.panel']}" componentWidth="100" newLine="true"
                     rendered="#{true}">
                     <p:dataTable id="actionsAndReportsData" var="entity" value="#{workflowHistoryBean.entity.actionsAndReports}" paginator="true" rows="10" 
@@ -39,11 +38,10 @@
 
                     </p:dataTable>
                 </hftl:decorateFormField>
-            </h:panelGroup>		
-                   </p:tab> 
-               
-
-        </p:panel>
+            </h:panelGroup>
+            </p:tab>		
+    </p:tabView> 
+        
     </ui:define>
 
 </ui:composition>
