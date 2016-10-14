@@ -37,6 +37,12 @@
 						<hftl:formField label="#{messages['contactInformation.email']}"
 							field="email" required="true" useConverter="false"
 							validatorId="emailValidator" />
+						<p:outputPanel styleClass="clearLeft">
+							<hftl:formField label="#{messages['name.firstName']}"
+								field="name" childField="firstName" maxlength="50" />
+							<hftl:formField label="#{messages['name.lastName']}" field="name"
+								childField="lastName" maxlength="50" />
+						</p:outputPanel>
 						<p:commandLink value="#{messages['menutop.changePassword']}"
 							action="#{userBean.showHidePassword}" update="passwordPanel"
 							rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}"

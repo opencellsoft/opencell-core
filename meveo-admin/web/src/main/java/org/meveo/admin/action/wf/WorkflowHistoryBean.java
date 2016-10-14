@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
@@ -56,6 +55,10 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 
 	@Inject
 	private WorkflowService workflowService;
+	
+	private List<WorkflowHistory> wfHistories = new ArrayList<WorkflowHistory>();
+	
+	private BusinessEntity oldConsultedEntity = null;
 
 
 	/**
@@ -66,18 +69,6 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		super(WorkflowHistory.class);		
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public WorkflowHistory initEntity() {		
-		WorkflowHistory workflowHistory = super.initEntity();
-		return workflowHistory;
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -109,13 +100,21 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		return "actionDate";
 	}
 
-	public List<WorkflowHistory> getWorkflowHistory(BaseEntity entity){
-		return null;
-	}
+	/**
+	 * This method is called from some businessEntityDetail's page
+	 * 
+	 * @param entity
+	 * @return
+	 */
 	
 	public List<WorkflowHistory> getWorkflowHistory(BusinessEntity entity){		
-		List<Workflow> workflows = workflowService.findByEntity(entity.getClass(), entity.getProvider());							
-		return workflowHistoryService.findByEntityCode(entity.getCode(), workflows, entity.getProvider());
+		if(oldConsultedEntity == null || !entity.equals(oldConsultedEntity) ){	
+			oldConsultedEntity = entity;
+			List<Workflow> workflows = workflowService.findByEntity(entity.getClass(), entity.getProvider());		
+			log.info(" \n\n\n\n aussi ?");
+			wfHistories = workflowHistoryService.findByEntityCode(entity.getCode(), workflows, entity.getProvider());
+		}
+		return wfHistories;
 	}
 
 }
