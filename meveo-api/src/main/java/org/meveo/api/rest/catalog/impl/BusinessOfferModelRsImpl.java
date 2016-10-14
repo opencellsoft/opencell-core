@@ -19,7 +19,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.BusinessOfferModel;
 
 /**
  * @author Edward P. Legaspi
@@ -137,7 +137,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class, getCurrentUser());
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {

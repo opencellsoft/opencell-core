@@ -82,7 +82,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
 
         try {
-            moduleApi.find(bamCode, getCurrentUser());
+			result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.find(bamCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

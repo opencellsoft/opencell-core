@@ -266,7 +266,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     public MeveoModuleDto find(String code, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            missingParameters.add("code [BOM: businessOfferModelCode, BSM: businessServiceModelCode, BAM: businessAccountModelCode]");
             handleMissingParameters();
         }
 
