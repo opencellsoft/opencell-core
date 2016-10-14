@@ -12,6 +12,10 @@ import org.meveo.commons.utils.StringUtils;
  */
 public class RelatedEntityToExport {
 
+    private String pathToEntityRelatedTo;
+
+    private String condition;
+
     private String selection;
 
     private Map<String, String> parameters;
@@ -26,16 +30,12 @@ public class RelatedEntityToExport {
     }
 
     @SuppressWarnings("rawtypes")
-    public RelatedEntityToExport(String selection, Map<String, String> parameters, Class entityClass) {
+    public RelatedEntityToExport(String pathToEntityRelatedTo, String condition, String selection, Map<String, String> parameters, Class entityClass) {
+        this.pathToEntityRelatedTo = pathToEntityRelatedTo;
+        this.condition = condition;
         this.selection = selection;
         this.parameters = parameters;
         this.entityClass = entityClass;
-    }
-
-    public RelatedEntityToExport(String selection, Map<String, String> parameters, String templateName) {
-        this.selection = selection;
-        this.parameters = parameters;
-        this.templateName = templateName;
     }
 
     public String getSelection() {
@@ -74,7 +74,8 @@ public class RelatedEntityToExport {
 
     @Override
     public String toString() {
-        return String.format("RelatedEntityToExport [entityClass=%s, templateName=%s]", entityClass, templateName);
+        return String.format("RelatedEntityToExport [pathToEntity=%s, relatedEntityCondition=%s entityClass=%s, templateName=%s]", pathToEntityRelatedTo, condition,
+            entityClass, templateName);
     }
 
     @Override
@@ -85,6 +86,13 @@ public class RelatedEntityToExport {
 
         } else if (templateName != null) {
             hash = templateName.hashCode();
+        }
+
+        if (pathToEntityRelatedTo != null) {
+            hash = hash + pathToEntityRelatedTo.hashCode();
+        }
+        if (condition != null) {
+            hash = hash + condition.hashCode();
         }
 
         return hash;
@@ -103,7 +111,9 @@ public class RelatedEntityToExport {
 
         RelatedEntityToExport other = (RelatedEntityToExport) obj;
 
-        if (StringUtils.compare(getTemplateName(), other.getTemplateName()) == 0 && getEntityClass() == other.getEntityClass()
+        if (StringUtils.compare(getPathToEntityRelatedTo(), other.getPathToEntityRelatedTo()) == 0
+                && StringUtils.compare(getCondition(), other.getCondition()) == 0
+                && StringUtils.compare(getTemplateName(), other.getTemplateName()) == 0 && getEntityClass() == other.getEntityClass()
                 && StringUtils.compare(getSelection(), other.getSelection()) == 0) {
             return true;
         }
@@ -116,5 +126,13 @@ public class RelatedEntityToExport {
         } else {
             return templateName;
         }
+    }
+
+    public String getPathToEntityRelatedTo() {
+        return pathToEntityRelatedTo;
+    }
+
+    public String getCondition() {
+        return condition;
     }
 }

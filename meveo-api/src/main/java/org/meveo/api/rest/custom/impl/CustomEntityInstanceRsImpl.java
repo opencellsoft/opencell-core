@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.CustomEntityApi;
+import org.meveo.api.CustomEntityInstanceApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -27,7 +27,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityInstanceRs {
 
     @Inject
-    private CustomEntityApi customEntityApi;
+    private CustomEntityInstanceApi customEntityInstanceApi;
 
     @Override
     public ActionStatus create(String customEntityTemplateCode, CustomEntityInstanceDto dto) {
@@ -41,7 +41,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
             }
 
             dto.setCetCode(customEntityTemplateCode);
-            customEntityApi.createEntityInstance(dto, currentUser);
+            customEntityInstanceApi.create(dto, currentUser);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -69,7 +69,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
             }
 
             dto.setCetCode(customEntityTemplateCode);
-            customEntityApi.updateEntityInstance(dto, currentUser);
+            customEntityInstanceApi.update(dto, currentUser);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -96,7 +96,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
                 throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
             }
 
-            customEntityApi.removeEntityInstance(customEntityTemplateCode, code, currentUser);
+            customEntityInstanceApi.remove(customEntityTemplateCode, code, currentUser);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -123,7 +123,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
                 throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
             }
 
-            result.setCustomEntityInstance(customEntityApi.findEntityInstance(customEntityTemplateCode, code, currentUser));
+            result.setCustomEntityInstance(customEntityInstanceApi.find(customEntityTemplateCode, code, currentUser));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -151,7 +151,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
             }
 
             dto.setCetCode(customEntityTemplateCode);
-            customEntityApi.createOrUpdateEntityInstance(dto, currentUser);
+            customEntityInstanceApi.createOrUpdate(dto, currentUser);
+
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

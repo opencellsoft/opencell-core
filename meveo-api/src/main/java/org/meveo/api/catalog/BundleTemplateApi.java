@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -23,7 +24,8 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
-public class BundleTemplateApi extends ProductOfferingApi {
+@Stateless
+public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, BundleTemplateDto> {
 
 	@Inject
 	private BundleTemplateService bundleTemplateService;
@@ -71,17 +73,17 @@ public class BundleTemplateApi extends ProductOfferingApi {
 		return bundleTemplateDto;
 	}
 
-	public void createOrUpdate(BundleTemplateDto bundleTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
+	public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
 		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode(), currentUser.getProvider());
 
 		if (bundleTemplate == null) {
-			create(bundleTemplateDto, currentUser);
+			return create(bundleTemplateDto, currentUser);
 		} else {
-			update(bundleTemplateDto, currentUser);
+		    return update(bundleTemplateDto, currentUser);
 		}
 	}
 
-	public void create(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public BundleTemplate create(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -123,10 +125,12 @@ public class BundleTemplateApi extends ProductOfferingApi {
 		processBundleProductTemplates(postData, bundleTemplate, currentUser);
 
 		bundleTemplateService.update(bundleTemplate, currentUser);
+		
+		return bundleTemplate;
 
 	}
 
-	public void update(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public BundleTemplate update(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -163,8 +167,9 @@ public class BundleTemplateApi extends ProductOfferingApi {
 
 		processBundleProductTemplates(postData, bundleTemplate, currentUser);
 
-		bundleTemplateService.update(bundleTemplate, currentUser);
+		bundleTemplate = bundleTemplateService.update(bundleTemplate, currentUser);
 
+		return bundleTemplate;
 	}
 
 	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {

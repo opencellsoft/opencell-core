@@ -11,12 +11,12 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessServiceModelRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -29,7 +29,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServiceModelRs {
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Override
     public ActionStatus create(BusinessServiceModelDto postData) {
@@ -76,7 +76,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         GetBusinessServiceModelResponseDto result = new GetBusinessServiceModelResponseDto();
 
         try {
-            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.get(businessServiceModelCode, BusinessServiceModel.class, getCurrentUser()));
+            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.find(businessServiceModelCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -137,7 +137,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {

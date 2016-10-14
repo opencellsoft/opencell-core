@@ -25,6 +25,11 @@
         <tag-name>entityPopup</tag-name>
         <source>entityPopup.xhtml</source>
     </tag>
+    
+    <tag>
+        <tag-name>genericEntityPopup</tag-name>
+        <source>genericEntityPopup.xhtml</source>
+    </tag>
 
     <tag>
         <tag-name>panelGroup</tag-name>
@@ -157,6 +162,10 @@
         <tag-name>formLanguageFields</tag-name>
         <source>formLanguageFields.xhtml</source>
     </tag>
+    <tag>
+     <tag-name>displayWorkflowsHistory</tag-name>
+        <source>displayWorkflowsHistory.xhtml</source>
+    </tag>    
     <tag>
         <tag-name>getFieldInformation</tag-name>
         <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>

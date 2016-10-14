@@ -245,4 +245,6 @@ public interface IPersistenceService<E extends IEntity> {
     public E findById(Long id, Provider provider, boolean refresh);
 
     public E findById(Long id, Provider provider);
+
+	Set<E> refreshOrRetrieve(Set<E> entities);
 }

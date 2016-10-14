@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -36,7 +36,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class UsageChargeTemplateApi extends BaseApi {
+public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, UsageChargeTemplateDto> {
 
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
@@ -54,7 +54,7 @@ public class UsageChargeTemplateApi extends BaseApi {
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
     
 
-    public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public UsageChargeTemplate create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         validate(postData);
 
@@ -164,9 +164,11 @@ public class UsageChargeTemplateApi extends BaseApi {
                 catMessagesService.create(catMessages, currentUser);
             }
         }
+        
+        return chargeTemplate;
     }
 
-    public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public UsageChargeTemplate update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         validate(postData);
 
@@ -298,9 +300,11 @@ public class UsageChargeTemplateApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        return chargeTemplate;
     }
 
-    public UsageChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    public UsageChargeTemplateDto find(String code, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
@@ -310,7 +314,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         UsageChargeTemplateDto result = new UsageChargeTemplateDto();
 
         // check if code already exists
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, provider, Arrays.asList("invoiceSubCategory"));
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
@@ -318,7 +322,7 @@ public class UsageChargeTemplateApi extends BaseApi {
         result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),provider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),currentUser.getProvider())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -343,12 +347,12 @@ public class UsageChargeTemplateApi extends BaseApi {
         usageChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
-    public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public UsageChargeTemplate createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 }

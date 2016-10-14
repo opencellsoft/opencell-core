@@ -7,7 +7,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.NotificationDto;
-import org.meveo.api.dto.notification.WebhookNotificationDto;
+import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
@@ -40,10 +40,10 @@ public interface NotificationWs extends IBaseWs {
 	// webHook
 
 	@WebMethod
-	ActionStatus createWebHookNotification(@WebParam(name = "notification") WebhookNotificationDto postData);
+	ActionStatus createWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
 	@WebMethod
-	ActionStatus updateWebHookNotification(@WebParam(name = "notification") WebhookNotificationDto postData);
+	ActionStatus updateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
 	@WebMethod
 	GetWebHookNotificationResponseDto findWebHookNotification(
@@ -53,7 +53,7 @@ public interface NotificationWs extends IBaseWs {
 	ActionStatus removeWebHookNotification(@WebParam(name = "notificationCode") String notificationCode);
 
 	@WebMethod
-	ActionStatus createOrUpdateWebHookNotification(@WebParam(name = "notification") WebhookNotificationDto postData);
+	ActionStatus createOrUpdateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
 	// email
 

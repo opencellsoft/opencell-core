@@ -52,7 +52,7 @@
             </relatedEntity>
         </relatedEntities>
     </template>
-    <template name="ScriptInstance with all dependencies" entityToExport="org.meveo.model.scripts.ScriptInstance">
+    <template name="ScriptInstance" entityToExport="org.meveo.model.scripts.ScriptInstance">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
         <classesToExportAsFull>
             <java-class>org.meveo.model.security.Role</java-class> <!-- Might want to include Permissions as well instead of ignoring if not found -->
@@ -62,7 +62,7 @@
             <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
-    <template name="Notification with all dependencies" entityToExport="org.meveo.model.notification.Notification">
+    <template name="Notification" entityToExport="org.meveo.model.notification.Notification">
         <exportAllClassesAsFull>true</exportAllClassesAsFull>
         <classesToExportAsFull>
             <java-class>org.meveo.model.security.Role</java-class> <!-- Might want to include Permissions as well instead of ignoring if not found -->
@@ -72,7 +72,7 @@
             <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
-    
+
     <template name="Filter" entityToExport="org.meveo.model.filter.Filter">
         <classesToExportAsFull>
             <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
@@ -104,172 +104,45 @@
             <java-class>org.meveo.model.module.MeveoModuleItem</java-class>
         </classesToExportAsFull>
         <relatedEntities>
-            <relatedEntity>
-                <entityClass>org.meveo.model.customEntities.CustomEntityTemplate</entityClass>
-                <selection>select mie from CustomEntityTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.customEntities.CustomEntityTemplate' and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
+            <relatedEntity pathToEntityRelatedTo="moduleItems" condition="#{entity.itemClass ne 'org.meveo.model.crm.CustomFieldTemplate'}">
+                <selection>select mie from #{entity.itemClassSimpleName} mie where mie.code=:itemCode and mie.provider=:provider
                 </selection>
                 <parameters>
                     <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
+                        <string>itemCode</string>
+                        <string>#{entity.itemCode}</string>
                     </entry>
                     <entry>
                         <string>provider</string>
-                        <string>#{entity.provider}</string>
+                        <string>#{mainEntity.provider}</string>
                     </entry>
                 </parameters>
             </relatedEntity>
-            <relatedEntity>
+            <relatedEntity pathToEntityRelatedTo="moduleItems" condition="#{entity.itemClass eq 'org.meveo.model.crm.CustomFieldTemplate'}">
                 <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
-                <selection>select mie from CustomFieldTemplate mie, MeveoModuleItem mi where mie.disabled=false and mie.appliesTo=mi.appliesTo and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.crm.CustomFieldTemplate' and mi.meveoModule=:meveoModule and mie.provider=:provider
+                <selection>
+                    select mie from CustomFieldTemplate mie where mie.code=:itemCode and mie.appliesTo=:appliesTo and mie.provider=:provider
                 </selection>
                 <parameters>
                     <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
+                        <string>itemCode</string>
+                        <string>#{entity.itemCode}</string>
+                    </entry>
+                    <entry>
+                        <string>appliesTo</string>
+                        <string>#{entity.appliesTo}</string>
                     </entry>
                     <entry>
                         <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.filter.Filter</entityClass>
-                <selection>select mie from Filter mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.filter.Filter' and
-                    mi.meveoModule=:meveoModule
-                    and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <templateName>ScriptInstance with all dependencies</templateName>
-                <selection>select mie from ScriptInstance mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.scripts.ScriptInstance' and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.jobs.JobInstance</entityClass>
-                <selection>select mie from JobInstance mie, MeveoModuleItem mi where mie.code=mi.itemCode and
-                    mi.itemClass='org.meveo.model.jobs.JobInstance'
-                    and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <templateName>Notification with all dependencies</templateName>
-                <selection>select mie from Notification mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    (mi.itemClass='org.meveo.model.notification.Notification' or mi.itemClass='org.meveo.model.notification.EmailNotification' or
-                    mi.itemClass='org.meveo.model.notification.InstantMessagingNotification' or mi.itemClass='org.meveo.model.notification.JobTrigger' or
-                    mi.itemClass='org.meveo.model.notification.ScriptNotification' or mi.itemClass='org.meveo.model.notification.WebHook') and
-                    mi.meveoModule=:meveoModule and
-                    mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.module.MeveoModule</entityClass>
-                <selection>select mie from MeveoModule mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    (mi.itemClass='org.meveo.model.module.MeveoModule' or mi.itemClass='org.meveo.model.catalog.BusinessOfferModel' or
-                    mi.itemClass='org.meveo.model.catalog.BusinessServiceModel' or
-                    mi.itemClass='org.meveo.model.crm.BusinessAccountModel') and
-                    mi.meveoModule=:meveoModule and
-                    mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveocrm.model.dwh.MeasurableQuantity</entityClass>
-                <selection>select mie from MeasurableQuantity mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    mi.itemClass='org.meveocrm.model.dwh.MeasurableQuantity' and
-                    mi.meveoModule=:meveoModule and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveocrm.model.dwh.Chart</entityClass>
-                <selection>select mie from Chart mie, MeveoModuleItem mi where mie.disabled=false and mie.code=mi.itemCode and
-                    (mi.itemClass='org.meveocrm.model.dwh.BarChart' or
-                    mi.itemClass='org.meveocrm.model.dwh.LineChart' or mi.itemClass='org.meveocrm.model.dwh.PieChart') and mi.meveoModule=:meveoModule
-                    and mie.provider=:provider
-                </selection>
-                <parameters>
-                    <entry>
-                        <string>meveoModule</string>
-                        <string>#{entity}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{entity.provider}</string>
+                        <string>#{mainEntity.provider}</string>
                     </entry>
                 </parameters>
             </relatedEntity>
         </relatedEntities>
     </template>
-    <template name="Chart" entityToExport="org.meveocrm.model.dwh.Chart">
+    <template name="Chart" entityToExport="org.meveo.model.dwh.Chart">
         <classesToExportAsFull>
-            <java-class>org.meveocrm.model.dwh.MeasurableQuantity</java-class>
+            <java-class>org.meveo.model.dwh.MeasurableQuantity</java-class>
         </classesToExportAsFull>
     </template>
     <template name="Calendar" entityToExport="org.meveo.model.catalog.Calendar">
@@ -309,37 +182,43 @@
         </classesToExportAsFull>
     </template>
     <template name="Offers" entityToExport="org.meveo.model.catalog.OfferTemplate">
-		<classesToExportAsFull>
-			<java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
-			<java-class>org.meveo.model.catalog.ServiceTemplate</java-class>
-			<java-class>org.meveo.model.catalog.TriggeredEDRTemplate</java-class>
-			<java-class>org.meveo.model.catalog.CounterTemplate</java-class>
-			<java-class>org.meveo.model.catalog.ChargeTemplate</java-class>
-			<java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
+            <java-class>org.meveo.model.catalog.ServiceTemplate</java-class>
+            <java-class>org.meveo.model.catalog.TriggeredEDRTemplate</java-class>
+            <java-class>org.meveo.model.catalog.CounterTemplate</java-class>
+            <java-class>org.meveo.model.catalog.ChargeTemplate</java-class>
+            <java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateSubscription</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateTermination</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateUsage</java-class>
             <java-class>org.meveo.model.billing.WalletInstance</java-class>
-			<java-class>org.meveo.model.catalog.DiscountPlan</java-class>
-		</classesToExportAsFull>
-		<relatedEntities>
-			<relatedEntity>
-				<entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
-				<selection>
-					select pp from PricePlanMatrix pp where pp.eventCode in					
-						(
-							select sctr.chargeTemplate.code from ServiceChargeTemplateRecurring sctr where sctr.serviceTemplate in
-							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
-						) or pp.eventCode in (
-							select scts.chargeTemplate.code from ServiceChargeTemplateSubscription scts where scts.serviceTemplate in
-							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
-						) or pp.eventCode in (						
-							select sctt.chargeTemplate.code from ServiceChargeTemplateTermination sctt where sctt.serviceTemplate in
-							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
-						) or pp.eventCode in (
-							select sctu.chargeTemplate.code from ServiceChargeTemplateUsage sctu where sctu.serviceTemplate in
-							(select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
-						)					
+            <java-class>org.meveo.model.catalog.DiscountPlan</java-class>
+        </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
+                <selection>
+                    select pp from PricePlanMatrix pp where pp.eventCode in
+                    (
+                    select sctr.chargeTemplate.code from ServiceChargeTemplateRecurring sctr where
+                    sctr.serviceTemplate in
+                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+                    ) or
+                    pp.eventCode in (
+                    select scts.chargeTemplate.code from ServiceChargeTemplateSubscription scts where scts.serviceTemplate in
+                    (select ost.serviceTemplate from
+                    OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+                    ) or pp.eventCode in (
+                    select sctt.chargeTemplate.code from
+                    ServiceChargeTemplateTermination sctt where sctt.serviceTemplate in
+                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where
+                    o=:offerTemplate and o.provider=:provider)
+                    ) or pp.eventCode in (
+                    select sctu.chargeTemplate.code from ServiceChargeTemplateUsage sctu where sctu.serviceTemplate
+                    in
+                    (select ost.serviceTemplate from OfferTemplate o join o.offerServiceTemplates ost where o=:offerTemplate and o.provider=:provider)
+                    )
                 </selection>
                 <parameters>
                     <entry>
@@ -351,28 +230,28 @@
                         <string>#{entity.provider}</string>
                     </entry>
                 </parameters>
-			</relatedEntity>
-		</relatedEntities>
-	</template>
-	<template name="ProductTemplate" entityToExport="org.meveo.model.catalog.ProductTemplate">
-		<classesToExportAsFull>
-			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
-			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>			
-		</classesToExportAsFull>
+            </relatedEntity>
+        </relatedEntities>
+    </template>
+    <template name="ProductTemplate" entityToExport="org.meveo.model.catalog.ProductTemplate">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+            <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
+        </classesToExportAsFull>
     </template>
     <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
-    	<classesToExportAsFull>
-			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
-			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
-			<java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
-		</classesToExportAsFull>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+            <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
+            <java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
+        </classesToExportAsFull>
     </template>
     <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
-    	<classesToExportAsFull>
-			<java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
-			<java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
-			<java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
-		</classesToExportAsFull>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
+            <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
+            <java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
+        </classesToExportAsFull>
     </template>
 
     <template name="Users and roles">
@@ -417,6 +296,7 @@
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
             <template ref="SubscriptionTerminationReason" />
+            <template ref="UserHierarchyLevel" />
         </groupedTemplates>
     </template>
 
@@ -446,7 +326,9 @@
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />
             <template ref="ChargeTemplate" />
+            <template ref="ScriptInstance" />            
             <template ref="MeveoModule" />
+            <template ref="OfferTemplateCategory" />            
             <template ref="ServiceTemplate" />
             <template ref="OfferTemplate" />
             <template ref="PricePlanMatrix" />

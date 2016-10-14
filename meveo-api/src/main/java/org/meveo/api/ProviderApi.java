@@ -20,6 +20,7 @@ import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
+import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
@@ -137,7 +138,6 @@ public class ProviderApi extends BaseApi {
         }
 
         handleMissingParameters();
-
         if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
             throw new LoginException("User has no permission to create new providers");
         }
@@ -147,93 +147,7 @@ public class ProviderApi extends BaseApi {
             throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
         }
 
-        provider = new Provider();
-        provider.setCode(postData.getCode().toUpperCase());
-        provider.setDescription(postData.getDescription());
-
-        provider.setMulticountryFlag(postData.isMultiCountry());
-        provider.setMulticurrencyFlag(postData.isMultiCurrency());
-        provider.setMultilanguageFlag(postData.isMultiLanguage());
-
-        provider.setEntreprise(postData.isEnterprise());
-        if(postData.getInvoiceConfiguration()!=null){
-        	provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
-		}
-        provider.setRounding(postData.getRounding());
-        provider.setEmail(postData.getEmail());
-        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
-        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
-
-        // search for country
-        if (!StringUtils.isBlank(postData.getCountry())) {
-            Country country = countryService.findByCode(postData.getCountry());
-            if (country == null) {
-                throw new EntityDoesNotExistsException(Country.class.getName(), postData.getCountry());
-            }
-
-            provider.setCountry(country);
-        }
-
-        // search for currency
-        if (!StringUtils.isBlank(postData.getCurrency())) {
-            Currency currency = currencyService.findByCode(postData.getCurrency());
-            if (currency == null) {
-                throw new EntityDoesNotExistsException(Currency.class.getName(), postData.getCurrency());
-            }
-
-            provider.setCurrency(currency);
-        }
-
-        // search for language
-        if (!StringUtils.isBlank(postData.getLanguage())) {
-            Language language = languageService.findByCode(postData.getLanguage());
-            if (language == null) {
-                throw new EntityDoesNotExistsException(Language.class.getName(), postData.getLanguage());
-            }
-
-            provider.setLanguage(language);
-        }
-
-        if (!StringUtils.isBlank(postData.getUserAccount())) {
-            UserAccount ua = userAccountService.findByCode(postData.getUserAccount(), currentUser.getProvider());
-            provider.setUserAccount(ua);
-        }
-
-        InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-        if (postData.getInvoiceConfiguration() != null) {
-            invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
-            invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
-            invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
-            invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
-            invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
-            invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
-            invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
-            invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
-            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods()); 
-            invoiceConfiguration.setDisplayBillingCycle(postData.getInvoiceConfiguration().getDisplayBillingCycle());
-        }
-
-        invoiceConfiguration.setProvider(provider);
-
-        provider.setInvoiceConfiguration(invoiceConfiguration);
-
-        if (postData.getBankCoordinates() != null) {
-            provider.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
-            provider.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
-            provider.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-            provider.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
-            provider.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
-            provider.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
-            provider.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-            provider.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
-            provider.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
-            provider.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-            provider.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
-            provider.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
-        }
-
-        provider.setRecognizeRevenue(postData.isRecognizeRevenue());
-
+        provider=fromDto(postData,currentUser.getProvider(),provider);
         providerService.create(provider, currentUser);
 
         // populate customFields
@@ -284,129 +198,7 @@ public class ProviderApi extends BaseApi {
             throw new LoginException("User has no permission to manage provider " + provider.getCode());
         }
 
-        provider.setDescription(postData.getDescription());
-        provider.setMulticountryFlag(postData.isMultiCountry());
-        provider.setMulticurrencyFlag(postData.isMultiCurrency());
-        provider.setMultilanguageFlag(postData.isMultiLanguage());
-        provider.setRounding(postData.getRounding());
-        provider.setEmail(postData.getEmail());
-        provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
-        provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
-
-        // search for country
-        if (!StringUtils.isBlank(postData.getCountry())) {
-            Country country = countryService.findByCode(postData.getCountry());
-            if (country == null) {
-                throw new EntityDoesNotExistsException(Country.class.getName(), postData.getCountry());
-            }
-
-            provider.setCountry(country);
-        }
-
-        // search for currency
-        if (!StringUtils.isBlank(postData.getCurrency())) {
-            Currency currency = currencyService.findByCode(postData.getCurrency());
-            if (currency == null) {
-                throw new EntityDoesNotExistsException(Currency.class.getName(), postData.getCurrency());
-            }
-
-            provider.setCurrency(currency);
-        }
-
-        // search for language
-        if (!StringUtils.isBlank(postData.getLanguage())) {
-            Language language = languageService.findByCode(postData.getLanguage());
-            if (language == null) {
-                throw new EntityDoesNotExistsException(Language.class.getName(), postData.getLanguage());
-            }
-
-            provider.setLanguage(language);
-        }
-
-        if (!StringUtils.isBlank(postData.getUserAccount())) {
-            UserAccount ua = userAccountService.findByCode(postData.getUserAccount(), currentUser.getProvider());
-            provider.setUserAccount(ua);
-        }
-
-        provider.setDisplayFreeTransacInInvoice(postData.getInvoiceConfiguration().isDisplayFreeTransacInInvoice());
-        provider.setEntreprise(postData.isEnterprise());
-
-        BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-            bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-            bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-            bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-            bankCoordinates.setKey(postData.getBankCoordinates().getKey());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-            bankCoordinates.setIban(postData.getBankCoordinates().getIban());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
-            bankCoordinates.setBic(postData.getBankCoordinates().getBic());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
-            bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
-            bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
-            bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
-            bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
-            bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
-            bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
-        }
-        provider.setBankCoordinates(bankCoordinates);
-
-        InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration() == null ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
-
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplaySubscriptions())) {
-            invoiceConfiguration.setDisplaySubscriptions(postData.getInvoiceConfiguration().getDisplaySubscriptions());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayServices())) {
-            invoiceConfiguration.setDisplayServices(postData.getInvoiceConfiguration().getDisplayServices());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayOffers())) {
-            invoiceConfiguration.setDisplayOffers(postData.getInvoiceConfiguration().getDisplayOffers());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayEdrs())) {
-            invoiceConfiguration.setDisplayEdrs(postData.getInvoiceConfiguration().getDisplayEdrs());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayProvider())) {
-            invoiceConfiguration.setDisplayProvider(postData.getInvoiceConfiguration().getDisplayProvider());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayDetail())) {
-            invoiceConfiguration.setDisplayDetail(postData.getInvoiceConfiguration().getDisplayDetail());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayPricePlans())) {
-            invoiceConfiguration.setDisplayPricePlans(postData.getInvoiceConfiguration().getDisplayPricePlans());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayCfAsXML())) {
-            invoiceConfiguration.setDisplayCfAsXML(postData.getInvoiceConfiguration().getDisplayCfAsXML());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayChargesPeriods())) {
-            invoiceConfiguration.setDisplayChargesPeriods(postData.getInvoiceConfiguration().getDisplayChargesPeriods());
-        }
-        if (!StringUtils.isBlank(postData.getInvoiceConfiguration().getDisplayBillingCycle())) {
-            invoiceConfiguration.setDisplayBillingCycle(postData.getInvoiceConfiguration().getDisplayBillingCycle());
-        }
-        invoiceConfiguration.setProvider(provider);
-        provider.setInvoiceConfiguration(invoiceConfiguration);
-
-        provider.setRecognizeRevenue(postData.isRecognizeRevenue());
-
+        provider=fromDto(postData,currentUser.getProvider(),provider);
         provider = providerService.update(provider, currentUser);
 
         // populate customFields
@@ -675,5 +467,157 @@ public class ProviderApi extends BaseApi {
 
         throw new EntityDoesNotExistsException(Provider.class, providerCode);
     }
+    public Provider fromDto(ProviderDto postData,Provider currentProvider,Provider entity)throws MeveoApiException{
 
+    	Provider provider=null;
+    	if(entity==null){
+    		provider=new Provider();
+    		provider.setCode(postData.getCode().toUpperCase());
+    	}else{
+    		provider=entity;
+    	}
+    	if(!StringUtils.isBlank(postData.getDescription())){
+    		provider.setDescription(postData.getDescription());
+    	}
+    	// search for currency
+        if (!StringUtils.isBlank(postData.getCurrency())) {
+            Currency currency = currencyService.findByCode(postData.getCurrency());
+            if (currency == null) {
+                throw new EntityDoesNotExistsException(Currency.class.getName(), postData.getCurrency());
+            }
+            provider.setCurrency(currency);
+        }
+        // search for country
+        if (!StringUtils.isBlank(postData.getCountry())) {
+            Country country = countryService.findByCode(postData.getCountry());
+            if (country == null) {
+                throw new EntityDoesNotExistsException(Country.class.getName(), postData.getCountry());
+            }
+            provider.setCountry(country);
+        }
+        // search for language
+        if (!StringUtils.isBlank(postData.getLanguage())) {
+            Language language = languageService.findByCode(postData.getLanguage());
+            if (language == null) {
+                throw new EntityDoesNotExistsException(Language.class.getName(), postData.getLanguage());
+            }
+            provider.setLanguage(language);
+        }
+    	if(postData.isMultiCurrency()!=null){
+    		provider.setMulticurrencyFlag(postData.isMultiCurrency());
+    	}
+    	if(postData.isMultiCountry()!=null){
+    		provider.setMulticountryFlag(postData.isMultiCountry());
+    	}
+    	if(postData.isMultiLanguage()!=null){
+    		provider.setMultilanguageFlag(postData.isMultiLanguage());
+    	}
+    	if (!StringUtils.isBlank(postData.getUserAccount())) {
+            UserAccount ua = userAccountService.findByCode(postData.getUserAccount(),currentProvider);
+            provider.setUserAccount(ua);
+        }
+    	if(postData.isEnterprise()!=null){
+        	provider.setEntreprise(postData.isEnterprise());
+        }
+        if(postData.isLevelDuplication()!=null){
+        	provider.setLevelDuplication(postData.isLevelDuplication());
+        }
+    	if(postData.getRounding()!=null){
+    		provider.setRounding(postData.getRounding());
+    	}
+    	if(postData.getPrepaidReservationExpirationDelayinMillisec()!=null){
+    		provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
+    	}
+    	if(!StringUtils.isBlank(postData.getDiscountAccountingCode())){
+    		provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+    	}
+    	if(!StringUtils.isBlank(postData.getEmail())){
+    		provider.setEmail(postData.getEmail());
+    	}
+        BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+            bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+            bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+            bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+            bankCoordinates.setKey(postData.getBankCoordinates().getKey());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+            bankCoordinates.setIban(postData.getBankCoordinates().getIban());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+            bankCoordinates.setBic(postData.getBankCoordinates().getBic());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+            bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+            bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+            bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+            bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+            bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
+        }
+        if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+            bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
+        }
+        if(provider.getBankCoordinates()==null){
+        	provider.setBankCoordinates(bankCoordinates);
+        }
+        if(postData.isRecognizeRevenue()!=null){
+        	provider.setRecognizeRevenue(postData.isRecognizeRevenue());
+        }
+        InvoiceConfiguration invoiceConfiguration = (provider.getInvoiceConfiguration() == null) ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
+        InvoiceConfigurationDto invoiceConfigurationDto=postData.getInvoiceConfiguration();
+        if(invoiceConfigurationDto!=null){
+        	if (invoiceConfigurationDto.getDisplaySubscriptions()!=null) {
+                invoiceConfiguration.setDisplaySubscriptions(invoiceConfigurationDto.getDisplaySubscriptions());
+            }
+            if (invoiceConfigurationDto.getDisplayServices()!=null) {
+                invoiceConfiguration.setDisplayServices(invoiceConfigurationDto.getDisplayServices());
+            }
+            if (invoiceConfigurationDto.getDisplayOffers()!=null) {
+                invoiceConfiguration.setDisplayOffers(invoiceConfigurationDto.getDisplayOffers());
+            }
+            if (invoiceConfigurationDto.getDisplayEdrs()!=null) {
+                invoiceConfiguration.setDisplayEdrs(invoiceConfigurationDto.getDisplayEdrs());
+            }
+            if (invoiceConfigurationDto.getDisplayProvider()!=null) {
+                invoiceConfiguration.setDisplayProvider(invoiceConfigurationDto.getDisplayProvider());
+            }
+            if (invoiceConfigurationDto.getDisplayCfAsXML()!=null) {
+                invoiceConfiguration.setDisplayCfAsXML(invoiceConfigurationDto.getDisplayCfAsXML());
+            }
+            if (invoiceConfigurationDto.getDisplayPricePlans()!=null) {
+                invoiceConfiguration.setDisplayPricePlans(invoiceConfigurationDto.getDisplayPricePlans());
+            }
+            if (invoiceConfigurationDto.getDisplayDetail()!=null) {
+                invoiceConfiguration.setDisplayDetail(invoiceConfigurationDto.getDisplayDetail());
+            }
+            if (invoiceConfigurationDto.getDisplayChargesPeriods()!=null) {
+                invoiceConfiguration.setDisplayChargesPeriods(invoiceConfigurationDto.getDisplayChargesPeriods());
+            }
+            if(provider.getInvoiceConfiguration()==null||provider.getInvoiceConfiguration().isTransient()){
+            	provider.setInvoiceConfiguration(invoiceConfiguration);
+            	provider.getInvoiceConfiguration().setProvider(provider);
+            }
+            if(invoiceConfigurationDto.getDisplayFreeTransacInInvoice()!=null){
+            	provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());
+            }
+            if(invoiceConfigurationDto.getDisplayBillingCycle()!=null){
+                provider.getInvoiceConfiguration().setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
+            }
+        }
+        return provider;
+    }
 }

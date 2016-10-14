@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.wf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,10 +26,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WorkflowHistoryService;
+import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -41,14 +46,16 @@ import org.omnifaces.cdi.ViewScoped;
 @ViewScoped
 public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * 
 	 * Injected @{link WorkflowHistory} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
 	private WorkflowHistoryService workflowHistoryService;
-	
+
+	@Inject
+	private WorkflowService workflowService;
 
 
 	/**
@@ -80,7 +87,7 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		return workflowHistoryService;
 	}
 
-	
+
 	@Override
 	protected String getListViewName() {
 		return "workflowHistories";
@@ -101,5 +108,14 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	protected String getDefaultSort() {
 		return "actionDate";
 	}
-    
+
+	public List<WorkflowHistory> getWorkflowHistory(BaseEntity entity){
+		return null;
+	}
+	
+	public List<WorkflowHistory> getWorkflowHistory(BusinessEntity entity){		
+		List<Workflow> workflows = workflowService.findByEntity(entity.getClass(), entity.getProvider());							
+		return workflowHistoryService.findByEntityCode(entity.getCode(), workflows, entity.getProvider());
+	}
+
 }

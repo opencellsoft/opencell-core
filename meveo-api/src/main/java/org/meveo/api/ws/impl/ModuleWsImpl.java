@@ -10,12 +10,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.ws.ModuleWs;
 import org.meveo.model.module.MeveoModule;
 
@@ -28,10 +28,10 @@ import org.meveo.model.module.MeveoModule;
 public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Override
-    public ActionStatus create(ModuleDto moduleDto) {
+    public ActionStatus create(MeveoModuleDto moduleDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -51,7 +51,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
     }
 
     @Override
-    public ActionStatus update(ModuleDto moduleDto) {
+    public ActionStatus update(MeveoModuleDto moduleDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -96,7 +96,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(null, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(null, getCurrentUser());
             result.setModules(dtos);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -118,7 +118,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            ModuleDto dto = moduleApi.get(code, MeveoModule.class, getCurrentUser());
+            MeveoModuleDto dto = moduleApi.find(code, getCurrentUser());
             result.setModule(dto);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -135,7 +135,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(ModuleDto moduleDto) {
+    public ActionStatus createOrUpdate(MeveoModuleDto moduleDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -155,7 +155,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
     }
 
     @Override
-    public ActionStatus installModule(ModuleDto moduleDto) {
+    public ActionStatus installModule(MeveoModuleDto moduleDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

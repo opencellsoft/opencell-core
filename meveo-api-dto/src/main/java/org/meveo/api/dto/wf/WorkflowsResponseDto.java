@@ -18,21 +18,18 @@ import org.meveo.api.dto.response.BaseResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowsResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1262341691039525086L;
 
     @XmlElementWrapper(name="workflows")
     @XmlElement(name="workflow")
-    private List<WorkflowDto> listWorkflowDto = new ArrayList<WorkflowDto>();
+    private List<WorkflowDto> workflows = new ArrayList<WorkflowDto>();
 
-    public List<WorkflowDto> getListWorkflowDto() {
-        return listWorkflowDto;
+    public List<WorkflowDto> getWorkflows() {
+        return workflows;
     }
 
-    public void setListWorkflowDto(List<WorkflowDto> listWorkflowDto) {
-        this.listWorkflowDto = listWorkflowDto;
+    public void setWorkflows(List<WorkflowDto> workflows) {
+        this.workflows = workflows;
     }
 }
 

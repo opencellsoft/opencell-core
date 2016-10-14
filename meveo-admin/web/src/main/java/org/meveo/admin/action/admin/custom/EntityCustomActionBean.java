@@ -35,19 +35,9 @@ public class EntityCustomActionBean extends BaseBean<EntityCustomAction> {
     }
 
     @Override
-    public EntityCustomAction initEntity(Long id) {
-        super.initEntity(id);
-        entity.getLocalCodeForRead();
-        return entity;
-    }
-
-    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        if (entity.isTransient()) {
-            entity.setCode(entity.getLocalCode(), entity.getAppliesTo());
-        }
         EntityCustomAction actionDuplicate = entityActionScriptService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo(), getCurrentProvider());
         if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "customizedEntities.actionAlreadyExists"));

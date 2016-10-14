@@ -3,12 +3,15 @@ package org.meveo.api.billing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.account.UserAccountApi;
@@ -714,15 +717,12 @@ public class SubscriptionApi extends BaseApi {
     public SubscriptionsListDto listAll(int pageSize, int pageNum, Provider provider) throws MeveoApiException {
 
         SubscriptionsListDto result = new SubscriptionsListDto();
-        int fromIndex = pageSize * pageNum;
-        int toIndex = fromIndex + pageSize;
-        List<Subscription> subscriptionAll = subscriptionService.list();
-        result.setListSize(subscriptionAll.size());
-        toIndex = subscriptionAll.size() > toIndex ? toIndex : subscriptionAll.size();
-        List<Subscription> subscriptions = subscriptionAll.subList(fromIndex, toIndex);
+        Map<String, Object> filters = new HashMap<>();
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
+        List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
-            for (Subscription s : subscriptions) {
-                result.getSubscription().add(subscriptionToDto(s));
+            for (Subscription subscription : subscriptions) {
+                result.getSubscription().add(subscriptionToDto(subscription));
             }
         }
 

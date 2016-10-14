@@ -5,6 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
 	xmlns:custom="http://manaty.net/custom" contentType="text/html">
 
 
@@ -22,17 +23,30 @@
 		<div class="row">
 			<div class="footer-icons col-xs-12">
 				<ul class="list-inline">
-					<li><a href="https://www.youtube.com/c/Opencellsoftwares/videos" target="_blank"><i
-							class="fa fa-youtube"></i></a></li>
-					<li><a href="https://www.facebook.com/opencellsoftware" target="_blank"><i
-							class="fa fa-facebook"></i></a></li>
-					<li><a href="https://twitter.com/opencellsoft" target="_blank"><i class="fa fa-twitter"></i></a>
-					</li>
-					<li><a href="https://www.linkedin.com/company/opencell" target="_blank"><i
-							class="fa fa-linkedin"></i></a></li>
 					<li>
-						<div class="footer-copyright"><i
-								class="fa fa-copyright"></i> Opencell
+						<a href="https://www.youtube.com/c/Opencellsoftwares/videos" target="_blank">
+							<i class="fa fa-youtube" />
+						</a>
+					</li>
+					<li>
+						<a href="https://www.facebook.com/opencellsoftware" target="_blank">
+							<i class="fa fa-facebook" />
+						</a>
+					</li>
+					<li>
+						<a href="https://twitter.com/opencellsoft" target="_blank">
+							<i class="fa fa-twitter" />
+						</a>
+					</li>
+					<li>
+						<a href="https://www.linkedin.com/company/opencell" target="_blank">
+							<i class="fa fa-linkedin" />
+						</a>
+					</li>
+					<li>
+						<div class="footer-copyright">
+							<ui:param name="buildNumber" value="@BUILD_NUMBER@" />
+							<i class="fa fa-copyright" /> Opencell @VERSION_NUMBER@ commit #{of:abbreviate(buildNumber, 8)}
 						</div>
 					</li>
 				</ul>

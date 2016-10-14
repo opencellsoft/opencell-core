@@ -131,7 +131,7 @@
 <!-- 							</p:tab> -->
 
 								<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages" />
-
+								<hftl:displayWorkflowsHistory entity="#{customerBean.entity}" />
 						</p:tabView>
 
                     <hf:formButtons columns="5" backingBean="#{customerBean}" edit="#{customerBean.edit}" ajaxSubmit="true"

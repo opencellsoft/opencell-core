@@ -37,6 +37,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.ParamBean;
@@ -202,6 +203,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * Save or update order item to order
      */
+    @ActionMethod
     public void saveOrderItem() {
 
         try {
@@ -345,6 +347,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     }
 
     @Override
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = super.saveOrUpdate(killConversation);
         

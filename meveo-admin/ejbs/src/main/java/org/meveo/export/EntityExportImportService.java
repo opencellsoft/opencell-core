@@ -53,6 +53,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
@@ -71,6 +72,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -82,6 +84,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
@@ -107,6 +110,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -147,7 +151,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-    
+
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -216,6 +220,8 @@ public class EntityExportImportService implements Serializable {
         XStream xstream = new XStream();
         xstream.alias("template", ExportTemplate.class);
         xstream.alias("relatedEntity", RelatedEntityToExport.class);
+        xstream.useAttributeFor(RelatedEntityToExport.class, "pathToEntityRelatedTo");
+        xstream.useAttributeFor(RelatedEntityToExport.class, "condition");
         xstream.useAttributeFor(ExportTemplate.class, "ref");
         xstream.useAttributeFor(ExportTemplate.class, "name");
         xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
@@ -322,7 +328,7 @@ public class EntityExportImportService implements Serializable {
                 cfParameters.put("provider", "#{entity.provider}");
             }
 
-            exportTemplate.addRelatedEntity(cfSelect, cfParameters, CustomFieldInstance.class);
+            exportTemplate.addRelatedEntity(null, null, cfSelect, cfParameters, CustomFieldInstance.class);
 
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
         }
@@ -1678,6 +1684,10 @@ public class EntityExportImportService implements Serializable {
                     if (field.isAnnotationPresent(Transient.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
+                        // This is a workaround to BLOB import issue "blobs may not be accessed after serialization"// TODO need a better solution as field is simply ignored
+                    } else if (field.isAnnotationPresent(Lob.class)) {
+                        attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
+
                     } else if (field.isAnnotationPresent(OneToMany.class)) {
 
                         // Omit attribute only if backward relationship is set
@@ -1866,6 +1876,7 @@ public class EntityExportImportService implements Serializable {
 
         List<IEntity> entities = null;
 
+        // A list of entities was passed
         if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()) {
             if (from >= selectedEntitiesToExport.size()) {
                 return retrievedEntities;
@@ -1876,7 +1887,7 @@ public class EntityExportImportService implements Serializable {
 
             List<? extends IEntity> entitiesLocal = selectedEntitiesToExport.subList(from, Math.min(from + pageSize, selectedEntitiesToExport.size()));
             for (IEntity entity : entitiesLocal) {
-                entities.add(emLocal.find(entity.getClass(), entity.getId()));
+                entities.add(emLocal.find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId()));
             }
 
             // Retrieve next pageSize number of entities from iterator
@@ -1957,30 +1968,170 @@ public class EntityExportImportService implements Serializable {
         // Retrieve related entities if applicable
         if (exportTemplate.getRelatedEntities() != null && !exportTemplate.getRelatedEntities().isEmpty()) {
             for (IEntity entity : entities) {
-                Map<Object, Object> elContext = new HashMap<Object, Object>();
-                elContext.put("entity", entity);
                 for (RelatedEntityToExport relatedEntityInfo : exportTemplate.getRelatedEntities()) {
-                    String lastElExpr = null;
-                    TypedQuery<IEntity> query = getEntityManager().createQuery(relatedEntityInfo.getSelection(), IEntity.class);
-                    try {
-                        for (Entry<String, String> param : relatedEntityInfo.getParameters().entrySet()) {
-                            lastElExpr = param.getValue(); // Just for debugging purpose remember the last EL evaluated
-                            Object paramValue = ValueExpressionWrapper.evaluateExpression(param.getValue(), elContext, Object.class);
-                            query.setParameter(param.getKey(), paramValue);
-                        }
-                        retrievedEntities.addReletedEntities(relatedEntityInfo, query.getResultList());
 
-                    } catch (Exception e) {
-                        log.error("Could not evaluate expression {} for exportTemplate {} given entity {}", lastElExpr, exportTemplate.getName(), entity, e);
+                    // Handle case when related entities are related to main class
+                    if (relatedEntityInfo.getPathToEntityRelatedTo() == null) {
+                        retrievedEntities.addReletedEntities(relatedEntityInfo, retrieveRelatedEntities(exportTemplate.getName(), relatedEntityInfo, entity, null));
+
+                        // Handle case when related entities are related to main class/entity fields
+                    } else {
+                        List<IEntity> resolvedEntities = resolvePathToEntityRelatedTo(exportTemplate.getName(), entity, relatedEntityInfo.getPathToEntityRelatedTo());
+                        // log.error("Akk resolved {} to {}", relatedEntityInfo.getPathToEntityRelatedTo(), resolvedEntities);
+                        if (resolvedEntities != null) {
+                            for (IEntity resolvedEntity : resolvedEntities) {
+                                retrievedEntities.addReletedEntities(relatedEntityInfo,
+                                    retrieveRelatedEntities(exportTemplate.getName(), relatedEntityInfo, resolvedEntity, entity));
+                            }
+                        }
                     }
                 }
-
             }
         }
 
         log.debug("Retrieved for {} export template: {}", exportTemplate.getName(), retrievedEntities.getSummary());
 
         return retrievedEntities;
+    }
+
+    /**
+     * Resolve path to entities to check for related entities
+     * 
+     * @param exportTemplateName Export template name
+     * @param entity Entity to use for path resolution
+     * @param pathToEntityRelatedTo Path to resolve. Contains a field path similar to EL. Need to evaluate one field at a time as it can return a list of values. E.g. in
+     *        "offerTemplate.offerServiceTemplates.serviceTemplate.serviceRecurringCharges.chargeTemplate" offerServiceTemplates and serviceRecurringCharges will return a list of
+     *        values
+     * @return A list of entities
+     */
+    private List<IEntity> resolvePathToEntityRelatedTo(String exportTemplateName, Object entity, String pathToEntityRelatedTo) {
+
+        try {
+            return internalResolvePathToEntityRelatedTo(entity, pathToEntityRelatedTo);
+        } catch (Exception e) {
+            log.error("Failed to resolve path \"{}\"in template {} for entity {}", pathToEntityRelatedTo, exportTemplateName, entity, e);
+            return null;
+        }
+    }
+
+    /**
+     * Resolve path to entities to check for related entities
+     * 
+     * @param entity Object to use for path resolution
+     * @param pathToEntityRelatedTo Path to resolve. Contains a field path similar to EL. Need to evaluate one field at a time as it can return a list of values. E.g. in
+     *        "offerTemplate.offerServiceTemplates.serviceTemplate.serviceRecurringCharges.chargeTemplate" offerServiceTemplates and serviceRecurringCharges will return a list of
+     *        values
+     * @return A list of entities
+     * @throws IllegalAccessException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private List<IEntity> internalResolvePathToEntityRelatedTo(Object entity, String pathToEntityRelatedTo) throws IllegalAccessException {
+        List<IEntity> resolvedEntities = new ArrayList<>();
+
+        int pos = pathToEntityRelatedTo.indexOf('.');
+        if (pos > 0) {
+
+            String field = pathToEntityRelatedTo.substring(0, pos);
+            String remainingPath = pathToEntityRelatedTo.substring(pos + 1);
+
+            Object value = FieldUtils.readField(entity, field, true);
+
+            if (value != null) {
+                if (value instanceof Collection) {
+                    for (Object childValue : (Collection) value) {
+                        resolvedEntities.addAll(internalResolvePathToEntityRelatedTo(childValue, remainingPath));
+                    }
+                } else if (value instanceof Map) {
+                    for (Object childValue : ((Map) value).values()) {
+                        resolvedEntities.addAll(internalResolvePathToEntityRelatedTo(childValue, remainingPath));
+                    }
+                } else {
+                    resolvedEntities.addAll(internalResolvePathToEntityRelatedTo(value, remainingPath));
+                }
+            }
+
+            // The last field in the field path. Return whatever field value is
+        } else {
+
+            Object value = FieldUtils.readField(entity, pathToEntityRelatedTo, true);
+            // log.error("AKK read {} of {} to {}", pathToEntityRelatedTo, entity, value);
+            if (value != null) {
+                if (value instanceof IEntity) {
+                    resolvedEntities.add((IEntity) value);
+                } else if (value instanceof Collection) {
+                    resolvedEntities.addAll((Collection) value);
+                } else if (value instanceof Map) {
+                    resolvedEntities.addAll(((Map) value).values());
+                }
+            }
+        }
+
+        return resolvedEntities;
+    }
+
+    /**
+     * Retrieve related entities for a given entity
+     * 
+     * @param exportTemplateName Export template name
+     * @param relatedEntityInfo Related entity information
+     * @param entity Entity related to
+     * @return
+     */
+    private List<IEntity> retrieveRelatedEntities(String exportTemplateName, RelatedEntityToExport relatedEntityInfo, IEntity entity, IEntity mainEntity) {
+
+        log.debug("Retrieving related entities in {} template, {} for entity {}", exportTemplateName, relatedEntityInfo, entity);
+        try {
+
+            // Check if applies based on condition
+            if (relatedEntityInfo.getCondition() != null
+                    && !ValueExpressionWrapper.evaluateToBooleanMultiVariable(relatedEntityInfo.getCondition(), "entity", entity, "mainEntity", mainEntity)) {
+                return null;
+            }
+
+            Map<Object, Object> elContext = new HashMap<Object, Object>();
+            elContext.put("entity", entity);
+            if (mainEntity != null) {
+                elContext.put("mainEntity", mainEntity);
+            }
+
+            String selectionSql = resolveElExpressionsInString(relatedEntityInfo.getSelection(), elContext);
+
+            TypedQuery<IEntity> query = getEntityManager().createQuery(selectionSql, IEntity.class);
+
+            for (Entry<String, String> param : relatedEntityInfo.getParameters().entrySet()) {
+                Object paramValue = ValueExpressionWrapper.evaluateExpression(param.getValue(), elContext, Object.class);
+                query.setParameter(param.getKey(), paramValue);
+            }
+            return query.getResultList();
+
+        } catch (Exception e) {
+            log.error("Failed to evaluate SQL or retrieve related entities in {} template, {} for entity {}", exportTemplateName, relatedEntityInfo, entity, e);
+            return null;
+        }
+    }
+
+    /**
+     * Resolve EL expressions in a given string
+     * 
+     * @param stringToAnalyze String to analyze for EL expressions
+     * @param elContext EL variables
+     * @return String with EL replaced by values
+     * @throws BusinessException
+     */
+    private String resolveElExpressionsInString(String stringToAnalyze, Map<Object, Object> elContext) throws BusinessException {
+
+        int pos = stringToAnalyze.indexOf('#');
+        while (pos > 0) {
+
+            int endPos = stringToAnalyze.indexOf('}', pos);
+
+            Object value = ValueExpressionWrapper.evaluateExpression(stringToAnalyze.substring(pos, endPos + 1), elContext, Object.class);
+            stringToAnalyze = stringToAnalyze.substring(0, pos) + value + stringToAnalyze.substring(endPos + 1);
+
+            pos = stringToAnalyze.indexOf('#');
+        }
+
+        return stringToAnalyze;
     }
 
     public static class ExportInfo {
@@ -2040,17 +2191,17 @@ public class EntityExportImportService implements Serializable {
         }
 
         @Override
-		protected void writeText(QuickWriter writer, String text) {
-        	if(text==null){
-        		writer.write("");
-        	}else if(text.indexOf(XStreamCDATAConverter.CDATA_START)>=0&&text.indexOf(XStreamCDATAConverter.CDATA_END)>0){
-        		writer.write(text);
-        	}else{
-        		super.writeText(writer, text);
-        	}
-		}
+        protected void writeText(QuickWriter writer, String text) {
+            if (text == null) {
+                writer.write("");
+            } else if (text.indexOf(XStreamCDATAConverter.CDATA_START) >= 0 && text.indexOf(XStreamCDATAConverter.CDATA_END) > 0) {
+                writer.write(text);
+            } else {
+                super.writeText(writer, text);
+            }
+        }
 
-		@Override
+        @Override
         public void endNode() {
             super.endNode();
             attributeClassAdded = false;
@@ -2379,7 +2530,7 @@ public class EntityExportImportService implements Serializable {
             return getExportImportTemplate(relatedEntityInfo.getTemplateName());
         }
 
-        log.error("No export template found for relaetd entity {}", relatedEntityInfo);
+        log.error("No export template found for related entity {}", relatedEntityInfo);
         return null;
     }
 
@@ -2400,14 +2551,38 @@ public class EntityExportImportService implements Serializable {
         }
 
         protected void addReletedEntities(RelatedEntityToExport relatedEntity, List<IEntity> entitiesToAdd) {
+
+            if (entitiesToAdd == null || entitiesToAdd.isEmpty()) {
+                return;
+            }
             if (relatedEntities == null) {
                 relatedEntities = new HashMap<RelatedEntityToExport, List<IEntity>>();
             }
-            if (!entitiesToAdd.isEmpty()) {
+
+            // Entity class or template name was specified in relatedEntity configuration, so use it
+            if (!StringUtils.isBlank(relatedEntity.getEntityClassNameOrTemplateName())) {
                 if (!relatedEntities.containsKey(relatedEntity)) {
                     relatedEntities.put(relatedEntity, new ArrayList<IEntity>());
                 }
                 relatedEntities.get(relatedEntity).addAll(entitiesToAdd);
+
+                // Entity class or template name was not specified, so need to calculate it for every entity
+            } else {
+                for (IEntity entity : entitiesToAdd) {
+                    try {
+                        RelatedEntityToExport relatedEntityForEntity = (RelatedEntityToExport) BeanUtilsBean.getInstance().cloneBean(relatedEntity);
+                        relatedEntityForEntity.setEntityClass(PersistenceUtils.getClassForHibernateObject(entity));
+                        // log.error("AKK class calculated is {}", relatedEntityForEntity.getEntityClass());
+                        if (!relatedEntities.containsKey(relatedEntityForEntity)) {
+                            relatedEntities.put(relatedEntityForEntity, new ArrayList<IEntity>());
+                        }
+                        relatedEntities.get(relatedEntityForEntity).add(entity);
+
+                    } catch (Exception e) {
+                        log.error("Failed to clone object {}", relatedEntity, e);
+                    }
+                }
+
             }
         }
 

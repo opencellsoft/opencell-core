@@ -23,10 +23,10 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.meveocrm.model.dwh.BarChart;
-import org.meveocrm.model.dwh.Chart;
-import org.meveocrm.model.dwh.LineChart;
-import org.meveocrm.model.dwh.PieChart;
+import org.meveo.model.dwh.BarChart;
+import org.meveo.model.dwh.Chart;
+import org.meveo.model.dwh.LineChart;
+import org.meveo.model.dwh.PieChart;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.ChartModel;

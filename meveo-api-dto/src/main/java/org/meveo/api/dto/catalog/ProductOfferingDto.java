@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -20,7 +20,7 @@ import org.meveo.model.catalog.ProductOffering;
 
 @XmlRootElement(name = "ProductOffering")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductOfferingDto implements Serializable {
+public class ProductOfferingDto extends BaseDto {
 
 	private static final long serialVersionUID = 4599063410509766484L;
 

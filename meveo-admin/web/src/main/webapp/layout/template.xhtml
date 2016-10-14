@@ -31,14 +31,9 @@
 
 
     <div id="layout-topbar-cover">
-        <c:choose>
-            <c:when test="#{currentUser.hasRole('MARKETING_MANAGER')}">
-                <ui:include src="/marketingManager/layout/topbar.xhtml" />
-            </c:when>
-            <c:otherwise>
+       
                 <ui:include src="/layout/topbar.xhtml" />
-            </c:otherwise>
-        </c:choose>
+            
     </div>
 
     <div id="layout-portlets-cover">

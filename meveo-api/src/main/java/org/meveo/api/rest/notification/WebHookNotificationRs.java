@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.notification.WebhookNotificationDto;
+import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -28,11 +28,11 @@ public interface WebHookNotificationRs extends IBaseRs {
 
     @POST
     @Path("/")
-    ActionStatus create(WebhookNotificationDto postData);
+    ActionStatus create(WebHookDto postData);
 
     @PUT
     @Path("/")
-    ActionStatus update(WebhookNotificationDto postData);
+    ActionStatus update(WebHookDto postData);
 
     @GET
     @Path("/")
@@ -44,5 +44,5 @@ public interface WebHookNotificationRs extends IBaseRs {
 
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(WebhookNotificationDto postData);
+    ActionStatus createOrUpdate(WebHookDto postData);
 }

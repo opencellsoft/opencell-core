@@ -11,16 +11,15 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.BusinessServiceModel;
 
 /**
  * @author Edward P. Legaspi
@@ -30,7 +29,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferModelRs {
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Override
     public ActionStatus create(BusinessOfferModelDto postData) {
@@ -77,7 +76,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
         try {
-            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.get(businessOfferModelCode, BusinessOfferModel.class, getCurrentUser()));
+            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.find(businessOfferModelCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -138,7 +137,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class, getCurrentUser());
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {

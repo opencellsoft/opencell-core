@@ -9,9 +9,10 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.dto.payment.WorkflowHistoryDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,20 +21,24 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
+import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.wf.WFTransitionService;
+import org.meveo.service.wf.WorkflowHistoryService;
 import org.meveo.service.wf.WorkflowService;
 
 @Stateless
-public class WorkflowApi extends BaseApi {
+public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
 	@Inject
 	private WorkflowService workflowService;
+	
+	@Inject
+	private WorkflowHistoryService workflowHistoryService;
 
 	@Inject
 	private WFTransitionApi wfTransitionApi;
@@ -53,14 +58,18 @@ public class WorkflowApi extends BaseApi {
 	 * @throws MissingParameterException 
 	 * @throws EntityDoesNotExistsException 
 	 */
-	public void create(WorkflowDto workflowDto, User currentUser) throws EntityAlreadyExistsException, BusinessException, MissingParameterException, EntityDoesNotExistsException  {
+    public Workflow create(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
+
 		validateDto(workflowDto, false);
+
 		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
 		if(workflow != null) {
 			throw new EntityAlreadyExistsException(Workflow.class, workflowDto.getCode());
 		}		
+        
 		workflow = fromDTO(workflowDto, null);
 		workflowService.create(workflow, currentUser);		
+
 		if(workflowDto.getListWFTransitionDto() != null &&  !workflowDto.getListWFTransitionDto().isEmpty()){
             int priority = 1;
 		    for(WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()){
@@ -69,6 +78,8 @@ public class WorkflowApi extends BaseApi {
                 priority++;
 		    }
 		}		
+
+        return workflow;
 	}
 
 	/**
@@ -81,9 +92,10 @@ public class WorkflowApi extends BaseApi {
 	 * @throws MissingParameterException 
 	 * @throws EntityAlreadyExistsException 
 	 */
-	public void update(WorkflowDto workflowDto, User currentUser) throws EntityDoesNotExistsException, BusinessException, MissingParameterException,
-               EntityAlreadyExistsException, BusinessApiException {
+    public Workflow update(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
+
 		validateDto(workflowDto, true);
+
 		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider(), Arrays.asList("transitions"));
 		if (workflow == null) {
 			throw new EntityDoesNotExistsException(Workflow.class, workflowDto.getCode());
@@ -94,7 +106,8 @@ public class WorkflowApi extends BaseApi {
         }
 
 		workflow = fromDTO(workflowDto, workflow);
-		workflowService.update(workflow, currentUser);
+        workflow = workflowService.update(workflow, currentUser);
+
         List<WFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(workflowDto.getListWFTransitionDto())) {
             for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
@@ -125,6 +138,8 @@ public class WorkflowApi extends BaseApi {
 
 		    }
 		}
+
+        return workflow;
 	}
 
 	/**
@@ -135,8 +150,10 @@ public class WorkflowApi extends BaseApi {
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	public WorkflowDto find(String workflowCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException{
+    @Override
+    public WorkflowDto find(String workflowCode, User currentUser) throws MeveoApiException {
 		return new WorkflowDto(find(workflowCode, currentUser.getProvider()));
+
 	}
 
 	/**
@@ -177,13 +194,13 @@ public class WorkflowApi extends BaseApi {
 	 * @throws EntityDoesNotExistsException
 	 * @throws MissingParameterException 
 	 */
-	public void createOrUpdate(WorkflowDto workflowDto, User currentUser) throws EntityAlreadyExistsException, BusinessException,
-            EntityDoesNotExistsException, MissingParameterException, BusinessApiException {
+    @Override
+    public Workflow createOrUpdate(WorkflowDto workflowDto, User currentUser) throws MeveoApiException, BusinessException {
 		Workflow workflow = workflowService.findByCode(workflowDto.getCode(), currentUser.getProvider());
 		if(workflow == null){
-			create(workflowDto, currentUser);
+            return create(workflowDto, currentUser);
 		}else{
-			update(workflowDto, currentUser);
+            return update(workflowDto, currentUser);
 		}
 	}
 
@@ -243,9 +260,9 @@ public class WorkflowApi extends BaseApi {
 			missingParameters.add("baseEntityName");
 			handleMissingParameters();
         }
-        Class<? extends IEntity> clazz = null;
+        Class<? extends BusinessEntity> clazz = null;
         try {
-            clazz = (Class<? extends IEntity>) Class.forName(baseEntityName);
+            clazz = (Class<? extends BusinessEntity>) Class.forName(baseEntityName);
         } catch (Exception e) {
             throw new MeveoApiException("Cant find class for baseEntityName");
         }
@@ -293,6 +310,19 @@ public class WorkflowApi extends BaseApi {
 		log.debug("businessEntity.getCode() : "+businessEntity.getCode());
 		
 		workflowService.executeWorkflow(businessEntity, workflowCode, currentUser);
+	}
+
+	public List<WorkflowHistoryDto> findHistory(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus, User currentUser) {
+		
+		List<WorkflowHistory> wfsHistory = workflowHistoryService.find(entityInstanceCode, workflowCode,  fromStatus,  toStatus,  currentUser.getProvider());		
+		List<WorkflowHistoryDto> result = new ArrayList<WorkflowHistoryDto>();
+		if(wfsHistory != null){
+			for(WorkflowHistory wfHistory : wfsHistory){
+				WorkflowHistoryDto wfHistoryDto = new WorkflowHistoryDto(wfHistory);
+				result.add(wfHistoryDto);
+			}
+		}
+		return result;
 	}
 }
 

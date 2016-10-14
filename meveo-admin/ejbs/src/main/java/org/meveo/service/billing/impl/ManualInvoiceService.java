@@ -18,18 +18,9 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-
 import org.meveo.service.base.PersistenceService;
 
 @Stateless

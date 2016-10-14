@@ -53,8 +53,8 @@
 
                         <c:if test="#{createEditPopup}">
                             <p:commandLink id="#{id}" value="#{fieldItem[valueLabelField]}" immediate="true" oncomplete="PF('#{createEditPopupId}').show()"
-                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" />
-                            <p:tooltip for="#{id}" value="#{messages['commons.viewEdit']}" styleClass="field-value" />
+                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" styleClass="field-value" />
+                            <p:tooltip for="#{id}" value="#{messages['commons.viewEdit']}" />
                         </c:if>
                     </c:if>
                 </c:if>

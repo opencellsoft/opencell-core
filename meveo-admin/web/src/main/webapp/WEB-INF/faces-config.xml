@@ -2044,25 +2044,25 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>mm_home</from-outcome>
-			<to-view-id>/marketingManager/index.xhtml
+			<to-view-id>/pages/mm_index.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_offerTemplates</from-outcome>
-			<to-view-id>/marketingManager/offers/offerTemplates.xhtml
+			<to-view-id>/pages/catalog/offers/offerTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_offers</from-outcome>
-			<to-view-id>/marketingManager/offers/offers.xhtml
+			<to-view-id>/pages/catalog/offers/offers.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
         <navigation-case>
             <from-outcome>mm_offerTemplateDetail</from-outcome>
-            <to-view-id>/marketingManager/offers/offerDetail.xhtml
+            <to-view-id>/pages/catalog/offers/offerDetail.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
         </navigation-case>        
@@ -2080,43 +2080,43 @@
         </navigation-case>        
 		<navigation-case>
 			<from-outcome>mm_productTemplates</from-outcome>
-			<to-view-id>/marketingManager/products/productTemplates.xhtml
+			<to-view-id>/pages/catalog/products/productTemplates.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_productTemplateDetail</from-outcome>
-			<to-view-id>/marketingManager/products/productTemplateDetail.xhtml
+			<to-view-id>/pages/catalog/products/productTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_bundleTemplateDetail</from-outcome>
-			<to-view-id>/marketingManager/products/bundleTemplateDetail.xhtml
+			<to-view-id>/pages/catalog/products/bundleTemplateDetail.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_bundleTemplateSelectProduct</from-outcome>
-			<to-view-id>/marketingManager/products/selectProduct.xhtml
+			<to-view-id>/pages/catalog/products/selectProduct.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mm_workflows</from-outcome>
-			<to-view-id>/marketingManager/workflows/workflows.xhtml
+			<to-view-id>/pages/order/workflows/workflows.xhtml
 			</to-view-id>
 			<redirect include-view-params="true" />
 		</navigation-case>
         <navigation-case>
             <from-outcome>mm_workflowDetail</from-outcome>
-            <to-view-id>/marketingManager/workflows/workflowDetail.xhtml
+            <to-view-id>/pages/order/workflows/workflowDetail.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
         </navigation-case>
         <navigation-case>
             <from-outcome>mm_workflowDefault</from-outcome>
-            <to-view-id>/marketingManager/workflows/workflowDefault.xhtml
+            <to-view-id>/pages/order/workflows/workflowDefault.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
         </navigation-case>

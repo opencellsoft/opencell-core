@@ -10,11 +10,12 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseProviderlessEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.crm.CustomFieldTemplate;
 
 @Entity
 @ExportIdentifier({ "meveoModule.code", "meveoModule.provider", "appliesTo", "itemClass", "itemCode" })
@@ -52,8 +53,11 @@ public class MeveoModuleItem extends BaseProviderlessEntity {
         this.itemEntity = itemEntity;
         this.itemClass = itemEntity.getClass().getName();
         this.itemCode = itemEntity.getCode();
-        if (itemEntity instanceof CustomFieldTemplate) {
-            this.appliesTo = ((CustomFieldTemplate) itemEntity).getAppliesTo();
+        if (ReflectionUtils.hasField(itemEntity, "appliesTo")) {
+            try {
+                this.appliesTo = (String) FieldUtils.readField(itemEntity, "appliesTo", true);
+            } catch (IllegalAccessException e) {
+            }
         }
     }
 
@@ -78,6 +82,14 @@ public class MeveoModuleItem extends BaseProviderlessEntity {
     public void setItemClass(String itemClass) {
         this.itemClass = itemClass;
     }
+    
+    public String getItemClassSimpleName() {
+        if (itemClass != null) {
+            return itemClass.substring(itemClass.lastIndexOf('.') + 1);
+        }
+        return null;
+    }
+    
 
     public String getItemCode() {
         return itemCode;

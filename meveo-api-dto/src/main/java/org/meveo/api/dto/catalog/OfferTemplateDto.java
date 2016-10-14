@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -22,7 +22,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
  **/
 @XmlRootElement(name = "OfferTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferTemplateDto implements Serializable {
+public class OfferTemplateDto extends BaseDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 

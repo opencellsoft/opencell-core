@@ -5,7 +5,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 
@@ -17,10 +17,10 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 public interface ModuleWs extends IBaseWs {
 
     @WebMethod
-    public ActionStatus create(@WebParam(name = "module") ModuleDto moduleDto);
+    public ActionStatus create(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus update(@WebParam(name = "module") ModuleDto moduleDto);
+    public ActionStatus update(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
     public ActionStatus delete(@WebParam(name = "code") String code);
@@ -32,10 +32,10 @@ public interface ModuleWs extends IBaseWs {
     public MeveoModuleDtoResponse get(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus createOrUpdate(@WebParam(name = "module") ModuleDto moduleDto);
+    public ActionStatus createOrUpdate(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus installModule(@WebParam(name = "module") ModuleDto moduleDto);
+    public ActionStatus installModule(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
     public ActionStatus uninstallModule(@WebParam(name = "code") String code);

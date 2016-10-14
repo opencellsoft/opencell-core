@@ -13,13 +13,13 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.account.BusinessAccountModelRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -32,7 +32,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccountModelRs {
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Inject
     AccountHierarchyApi accountHierarchyApi;
@@ -82,7 +82,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
 
         try {
-            moduleApi.get(bamCode, BusinessAccountModel.class, getCurrentUser());
+			result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.find(bamCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -123,7 +123,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<ModuleDto> dtos = moduleApi.list(BusinessAccountModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class, getCurrentUser());
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {

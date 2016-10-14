@@ -44,6 +44,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -51,6 +52,7 @@ import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 
 @Entity
+@ModuleItem
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code", "provider" })

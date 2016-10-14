@@ -91,7 +91,7 @@ public class FullTextSearchBean implements Serializable {
                 public String[] getSearchScope() {
 
                     // Limit search scope to offers, product, offer template categories, user groups for marketing manager application
-                    if (FullTextSearchBean.this.getCurrentUser().hasRole("MARKETING_MANAGER")) {
+                    if (FullTextSearchBean.this.getCurrentUser().hasPermission("marketing", "marketingCatalogManager") || FullTextSearchBean.this.getCurrentUser().hasPermission("marketing", "marketingCatalogVisualization")) {
                         return new String[] { OfferTemplate.class.getName(), ProductTemplate.class.getName(), BundleTemplate.class.getName(),
                                 OfferTemplateCategory.class.getName(), UserHierarchyLevel.class.getName() };
                     }
@@ -156,7 +156,7 @@ public class FullTextSearchBean implements Serializable {
             viewInfo[0] = BaseBean.getEditViewName(entity.getClass());
             viewInfo[1] = entity.getId().toString();
 
-            if (getCurrentUser().hasRole("MARKETING_MANAGER")) {
+            if (getCurrentUser().hasPermission("marketing", "marketingCatalogManager") || getCurrentUser().hasPermission("marketing", "marketingCatalogVisualization")) {
                 viewInfo[0] = "mm_" + viewInfo[0];
             }
 

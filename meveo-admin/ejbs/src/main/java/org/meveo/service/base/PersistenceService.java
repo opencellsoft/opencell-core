@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -602,6 +603,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         List<E> refreshedEntities = new ArrayList<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(refreshOrRetrieve(entity));
+        }
+
+        return refreshedEntities;
+    }
+    
+    @Override
+    public Set<E> refreshOrRetrieve(Set<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        Set<E> refreshedEntities = new HashSet<E>();
         for (E entity : entities) {
             refreshedEntities.add(refreshOrRetrieve(entity));
         }

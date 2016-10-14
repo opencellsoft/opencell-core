@@ -27,9 +27,9 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.api.module.ModuleApi;
+import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.primefaces.model.DefaultTreeNode;
@@ -42,26 +42,26 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ModuleApi moduleApi;
+    private MeveoModuleApi moduleApi;
 
     @Inject
     private MeveoModuleService meveoModuleService;
 
-    private ModuleDto selectedModuleDto;
+    private MeveoModuleDto selectedModuleDto;
 
     private TreeNode selectedModuleItems;
 
-    private EntityListDataModelPF<ModuleDto> moduleDtos = null;
+    private EntityListDataModelPF<MeveoModuleDto> moduleDtos = null;
 
-    public EntityListDataModelPF<ModuleDto> getModuleDtos() {
+    public EntityListDataModelPF<MeveoModuleDto> getModuleDtos() {
         return moduleDtos;
     }
 
-    public ModuleDto getSelectedModuleDto() {
+    public MeveoModuleDto getSelectedModuleDto() {
         return selectedModuleDto;
     }
 
-    public void setSelectedModuleDto(ModuleDto selectedModuleDto) {
+    public void setSelectedModuleDto(MeveoModuleDto selectedModuleDto) {
         this.selectedModuleDto = selectedModuleDto;
         selectedModuleItems = new DefaultTreeNode("Root");
         if (selectedModuleDto == null) {
@@ -85,7 +85,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     public void loadModulesFromInstance() {
         log.debug("start loadModulesFromInstance {}", meveoInstance.getUrl());
         try {
-            moduleDtos = new EntityListDataModelPF<ModuleDto>(new ArrayList<ModuleDto>());
+            moduleDtos = new EntityListDataModelPF<MeveoModuleDto>(new ArrayList<MeveoModuleDto>());
             moduleDtos.addAll(meveoModuleService.downloadModulesFromMeveoInstance(meveoInstance));
 
         } catch (Exception e) {
