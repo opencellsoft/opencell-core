@@ -15,7 +15,6 @@
 
     <ui:define name="body">
 
-		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
@@ -24,7 +23,6 @@
 					<p:menuitem value="#{messages['user.editView']}" disabled="true" rendered="#{!userBean.entity.transient}" />
 				</p:breadCrumb>
 			</h:form>
-		</p:panel>
 
 		<p:panel>
 			<p:tabView id="tabView" activeIndex="#{userBean.activeTab}">

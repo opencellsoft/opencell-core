@@ -81,11 +81,11 @@ public class OfferProductTemplate implements IEntity {
 
 	@Override
 	public int hashCode() {
-		if (id != null)
+		if (id != null){
 			return id.intValue();
-
+		}
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = prime * 1; // super.hashCode();
 		result = prime * result + ((offerTemplate == null) ? 0 : offerTemplate.getId().hashCode());
 		result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
 

@@ -20,10 +20,8 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,11 +55,11 @@ public class OfferTemplate extends ProductOffering {
 	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
 	private BusinessOfferModel businessOfferModel;
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<OfferProductTemplate> offerProductTemplates = new HashSet<OfferProductTemplate>();
+	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
 	@Size(max = 2000)
 	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
@@ -81,11 +79,19 @@ public class OfferTemplate extends ProductOffering {
 		this.offerServiceTemplates = offerServiceTemplates;
 	}
 
-	public void addOfferServiceTemplate(OfferServiceTemplate serviceTemplate) {
+	public void addOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
 		if (getOfferServiceTemplates() == null) {
 			offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 		}
-		offerServiceTemplates.add(serviceTemplate);
+		offerServiceTemplates.add(offerServiceTemplate);
+	}
+	
+	public void updateOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
+	 
+	    int index = offerServiceTemplates.indexOf(offerServiceTemplate);
+	    if (index>=0){
+	        offerServiceTemplates.set(index, offerServiceTemplate);
+	    }
 	}
 
 	public BusinessOfferModel getBusinessOfferModel() {
@@ -112,21 +118,46 @@ public class OfferTemplate extends ProductOffering {
 		}
 		return false;
 	}
+	
+    /**
+     * Check if offer contains a given product template
+     *
+     * @param productTemplate
+     *            Product template to match
+     * @return True if offer contains a given product template
+     */
+    public boolean containsProductTemplate(ProductTemplate productTemplate) {
 
-	public Set<OfferProductTemplate> getOfferProductTemplates() {
+        for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+            if (offerProductTemplate.getProductTemplate().equals(productTemplate)) {
+                return true;
+            }
+        }
+        return false;
+    }	
+
+	public List<OfferProductTemplate> getOfferProductTemplates() {
 		return offerProductTemplates;
 	}
 
-	public void setOfferProductTemplates(Set<OfferProductTemplate> offerProductTemplates) {
+	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
 		this.offerProductTemplates = offerProductTemplates;
 	}
 
 	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 		if (getOfferProductTemplates() == null) {
-			offerProductTemplates = new HashSet<OfferProductTemplate>();
+			offerProductTemplates = new ArrayList<OfferProductTemplate>();
 		}
 		offerProductTemplates.add(offerProductTemplate);
 	}
+
+    public void updateOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+
+        int index = offerProductTemplates.indexOf(offerProductTemplate);
+        if (index >= 0) {
+            offerProductTemplates.set(index, offerProductTemplate);
+        }
+    }
 
 	public String getPrefix() {
 		return prefix;

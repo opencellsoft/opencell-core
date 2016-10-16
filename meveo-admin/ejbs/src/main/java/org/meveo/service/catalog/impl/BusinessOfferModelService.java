@@ -57,9 +57,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	private PricePlanMatrixService pricePlanMatrixService;
 
 	@Inject
-	private OfferServiceTemplateService offerServiceTemplateService;
-
-	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
 	@Inject
@@ -179,7 +176,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 			List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
-				offerServiceTemplate = offerServiceTemplateService.refreshOrRetrieve(offerServiceTemplate);
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
@@ -543,11 +539,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// add to offer
 		for (OfferServiceTemplate newOfferServiceTemplate : newOfferServiceTemplates) {
 			newOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
-			offerServiceTemplateService.create(newOfferServiceTemplate, currentUser);
-
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
 
+		offerTemplateService.update(newOfferTemplate, currentUser);
+		
 		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
 				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(), currentUser);
