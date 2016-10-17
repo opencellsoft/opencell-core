@@ -181,11 +181,13 @@
 										</p:panel>
 
 										<p:panel>
-											<p:panel styleClass="switch-wrapper">
-												<p:inputSwitch value="#{entity.active}" disabled="true"
-													onLabel="#{messages['accountStatusEnum.active']}"
-													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-											</p:panel>
+											<p:outputPanel>
+												<p:panel styleClass="switch-wrapper" rendered="#{offerTemplateBean.displayStatus(entity)}">
+													<h:outputText value="#{messages['commons.status']}: " />
+													<h:outputText value="#{entity.lifeCycleStatus}"
+														styleClass="field-value" />
+												</p:panel>
+											</p:outputPanel>
 											<p:panel style="width: 150px;">
 												<ul class="list-inline">
 													<li><p:link id="viewLink"

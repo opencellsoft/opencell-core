@@ -198,12 +198,13 @@
 										</p:panel>
 
 										<p:panel>
-											<p:panel>
-												<p:inputSwitch value="#{prod.active}" disabled="true"
-													styleClass="#{prod.active ? 'GreenBg' : ''}"
-													onLabel="#{messages['accountStatusEnum.active']}"
-													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-											</p:panel>
+											<p:outputPanel>
+												<p:panel styleClass="switch-wrapper" rendered="#{productTemplateBean.displayStatus(prod)}">
+													<h:outputText value="#{messages['commons.status']}: " />
+													<h:outputText value="#{prod.lifeCycleStatus}"
+														styleClass="field-value" />
+												</p:panel>
+											</p:outputPanel>
 											<p:panel styleClass="text-center">
 												<ul class="list-inline" style="width: 135px;">
 													<li><p:link id="viewLink"

@@ -3,6 +3,8 @@ package org.meveo.admin.action.catalog;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -21,6 +23,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductChargeTemplate;
@@ -463,5 +466,23 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		} catch (BusinessException e) {
 			log.error("Failed to create missing custom field templates", e);
 		}
+	}
+	
+	public boolean displayStatus(ProductTemplate e) {
+		Date now = new Date();
+
+		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
+			if (e.getValidFrom() == null && e.getValidTo() == null) {
+				return true;
+			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
+				return true;
+			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
+				return true;
+			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
