@@ -133,7 +133,13 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		entity.getAttachments().size();
 		entity.getChannels().size();
 		entity.getOfferProductTemplates().size();
-		entity.getOfferTemplateCategories().size();
+        entity.getOfferTemplateCategories().size();
+
+        if (entity.getOfferServiceTemplates() != null) {
+            for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
+                offerServiceTemplate.getIncompatibleServices().size();
+            }
+        }
 
 		String code = findDuplicateCode(entity, currentUser);
 
@@ -141,7 +147,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		detach(entity);
 		entity.setId(null);
 		String sourceAppliesToEntity = entity.clearUuid();
-
+		
 		List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
 		entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
 
