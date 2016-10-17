@@ -111,7 +111,6 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		if(oldConsultedEntity == null || !entity.equals(oldConsultedEntity) ){	
 			oldConsultedEntity = entity;
 			List<Workflow> workflows = workflowService.findByEntity(entity.getClass(), entity.getProvider());		
-			log.info(" \n\n\n\n aussi ?");
 			wfHistories = workflowHistoryService.findByEntityCode(entity.getCode(), workflows, entity.getProvider());
 		}
 		return wfHistories;
