@@ -261,6 +261,10 @@
                                             <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                                         </p:panel>
                                     </f:facet>
+                                    <hftl:decorateFormField fieldId="serviceMandatory" label="#{messages['offerServiceTemplate.mandatory']}">
+                            			<p:selectBooleanCheckbox id="serviceMandatory" value="#{ost.mandatory}" ></p:selectBooleanCheckbox>
+                            		</hftl:decorateFormField>
+                            	
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
