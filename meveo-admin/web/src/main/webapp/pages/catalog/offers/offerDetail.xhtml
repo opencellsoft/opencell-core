@@ -255,12 +255,13 @@
                             <h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
 
                             <p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
-                                <p:panel rendered="#{ost.serviceTemplate.selected}">
+                                <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
                                     <f:facet name="header">
                                         <p:panel styleClass="TexAlLeft">
                                             <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                                         </p:panel>
                                     </f:facet>
+                                    
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":formId:messages"
