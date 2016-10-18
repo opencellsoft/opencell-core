@@ -184,6 +184,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
                     serviceConfigurationDto.setCode(st.getCode());
                     serviceConfigurationDto.setDescription(st.getDescription());
+					serviceConfigurationDto.setMandatory(ost.isMandatory());
                     servicesConfigurations.add(serviceConfigurationDto);
                     if (stCfsDto != null) {
                         serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
