@@ -261,8 +261,8 @@
                                             <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                                         </p:panel>
                                     </f:facet>
-                                    <hftl:decorateFormField fieldId="serviceMandatory" label="#{messages['offerServiceTemplate.mandatory']}">
-                            			<p:selectBooleanCheckbox id="serviceMandatory" value="#{ost.mandatory}" ></p:selectBooleanCheckbox>
+                                    <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
+                            			<p:selectBooleanCheckbox id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}" ></p:selectBooleanCheckbox>
                             		</hftl:decorateFormField>
                             	
                                     <!-- custom fields -->
