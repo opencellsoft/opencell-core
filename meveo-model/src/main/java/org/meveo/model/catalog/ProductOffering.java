@@ -69,7 +69,7 @@ public abstract class ProductOffering extends BusinessCFEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validTo;
 
-	@Column(name = "image")
+	@Column(name = "image", columnDefinition="binary")
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;

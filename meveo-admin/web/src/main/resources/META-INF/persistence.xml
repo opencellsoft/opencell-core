@@ -5,7 +5,7 @@
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <persistence-unit name="MeveoAdmin">
-        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
+        <jta-data-source>java:jboss/datasources/MeveoAdminMysqlDatasource</jta-data-source>
         <jar-file>lib/meveo-model-${project.version}.jar</jar-file>
         <properties>
             <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->

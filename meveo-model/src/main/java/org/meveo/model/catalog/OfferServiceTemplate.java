@@ -40,7 +40,7 @@ public class OfferServiceTemplate extends BaseEntity {
     @NotNull
     private ServiceTemplate serviceTemplate;
 
-    @Column(name = "MANDATORY")
+    @Column(name = "MANDATORY", columnDefinition="bit")
     private boolean mandatory;
 
     @ManyToMany(fetch = FetchType.LAZY)

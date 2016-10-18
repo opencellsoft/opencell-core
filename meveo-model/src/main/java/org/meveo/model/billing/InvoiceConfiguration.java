@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -31,7 +32,7 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     private static final long serialVersionUID = -735961368678724497L;
     
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "ID")
     @Access(AccessType.PROPERTY)
     private Long id;
@@ -40,34 +41,34 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     @Column(name = "VERSION")
     private Integer version;
 
-    @Column(name = "DISPLAY_SUBSCRIPTIONS")
+    @Column(name = "DISPLAY_SUBSCRIPTIONS", columnDefinition="bit")
     private Boolean displaySubscriptions = false;
 
-    @Column(name = "DISPLAY_SERVICES")
+    @Column(name = "DISPLAY_SERVICES", columnDefinition="bit")
     private Boolean displayServices = false;
 
-    @Column(name = "DISPLAY_OFFERS")
+    @Column(name = "DISPLAY_OFFERS", columnDefinition="bit")
     private Boolean displayOffers = false;
     
-    @Column(name = "DISPLAY_PRICEPLANS")
+    @Column(name = "DISPLAY_PRICEPLANS", columnDefinition="bit")
     private Boolean displayPricePlans = false;
 
-    @Column(name = "DISPLAY_EDRS")
+    @Column(name = "DISPLAY_EDRS", columnDefinition="bit")
     private Boolean displayEdrs = false;
 
-    @Column(name = "DISPLAY_PROVIDER")
+    @Column(name = "DISPLAY_PROVIDER", columnDefinition="bit")
     private Boolean displayProvider = false;
 
-    @Column(name = "DISPLAY_DETAIL")
+    @Column(name = "DISPLAY_DETAIL", columnDefinition="bit")
     private Boolean displayDetail = true;
 
-    @Column(name = "DISPLAY_CF_AS_XML")
+    @Column(name = "DISPLAY_CF_AS_XML", columnDefinition="bit")
     private Boolean displayCfAsXML = false;
     
-    @Column(name = "DISPLAY_CHARGES_PERIODS")
+    @Column(name = "DISPLAY_CHARGES_PERIODS", columnDefinition="bit")
     private Boolean displayChargesPeriods = false;
     
-    @Column(name = "DISPLAY_BILLING_CYCLE")
+    @Column(name = "DISPLAY_BILLING_CYCLE", columnDefinition="bit")
     private Boolean displayBillingCycle = false;
 
     @OneToOne

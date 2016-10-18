@@ -15,7 +15,7 @@ public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;
 
-    @Column(name = "FILLED")
+    @Column(name = "FILLED", columnDefinition="bit")
     private boolean filled;
 
     @Enumerated(EnumType.STRING)
@@ -32,10 +32,10 @@ public class PieChart extends Chart {
     @Column(name = "SLICE_MARGIN")
     private int sliceMargin;
 
-    @Column(name = "SHADOW")
+    @Column(name = "SHADOW", columnDefinition="bit")
     private boolean shadow = true;
 
-    @Column(name = "SHOW_DATA_LABELS")
+    @Column(name = "SHOW_DATA_LABELS", columnDefinition="bit")
     private boolean showDataLabels;
 
     @Column(name = "LEGEND_COLS")

@@ -74,7 +74,7 @@ public class InvoiceType extends BusinessEntity {
 	@MapKeyJoinColumn(name="SELLER_ID")
 	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
 	
-	@Column(name = "MATCHING_AUTO")
+	@Column(name = "MATCHING_AUTO", columnDefinition="bit")
 	private boolean matchingAuto = false;
 	
 	 

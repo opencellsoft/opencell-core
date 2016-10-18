@@ -61,7 +61,7 @@ public class DDRequestLOT extends AuditableEntity {
 	private Integer invoicesNumber;
 
 	
-	@Column(name = "IS_PAYMENT_CREATED")
+	@Column(name = "IS_PAYMENT_CREATED", columnDefinition="bit")
 	private boolean paymentCreated;
 
 	@Column(name = "INVOICE_AMOUNT", precision = 23, scale = 12)

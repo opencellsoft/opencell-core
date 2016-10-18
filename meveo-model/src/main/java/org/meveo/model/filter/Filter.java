@@ -48,7 +48,7 @@ public class Filter extends BusinessCFEntity {
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
 
-	@Column(name = "SHARED")
+	@Column(name = "SHARED", columnDefinition="bit")
 	private Boolean shared;
 
 	public FilterCondition getFilterCondition() {

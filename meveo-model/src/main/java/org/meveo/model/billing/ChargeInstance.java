@@ -146,7 +146,7 @@ public class ChargeInstance extends BusinessEntity {
 	@Transient 
 	private List<WalletOperation> sortedWalletOperations;
 
-	@Column(name = "IS_PREPAID", length = 1)
+	@Column(name = "IS_PREPAID", length = 1, columnDefinition="bit")
 	protected Boolean prepaid=Boolean.FALSE;
 
 	public String getCriteria1() {

@@ -62,7 +62,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	@Embedded
 	private Address address = new Address();
 
-	@Column(name = "DEFAULT_LEVEL")
+	@Column(name = "DEFAULT_LEVEL", columnDefinition="bit")
 	private Boolean defaultLevel = true;
 
     @Column(name = "PROVIDER_CONTACT", length = 255)

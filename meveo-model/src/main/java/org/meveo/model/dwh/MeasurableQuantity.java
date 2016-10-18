@@ -50,10 +50,10 @@ public class MeasurableQuantity extends BusinessEntity {
     @Size(max = 255)
 	private String dimension4;
 
-	@Column(name = "EDITABLE")
+	@Column(name = "EDITABLE", columnDefinition="bit")
 	private boolean editable;
 
-	@Column(name = "ADDITIVE")
+	@Column(name = "ADDITIVE", columnDefinition="bit")
 	private boolean additive;
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be

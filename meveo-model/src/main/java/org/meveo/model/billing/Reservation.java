@@ -72,7 +72,7 @@ public class Reservation extends AuditableEntity {
     @CollectionTable(name = "BILLING_RESRV_COUNTID")
 	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
 
-    @Column(name="ORIGIN_EDR")
+    @Column(name="ORIGIN_EDR", columnDefinition="binary")
     private EDR originEdr;
     
 	public String getInputMessage() {

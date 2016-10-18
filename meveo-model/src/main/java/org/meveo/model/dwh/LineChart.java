@@ -15,7 +15,7 @@ public class LineChart extends Chart {
 
 	private static final long serialVersionUID = 1563273820297215070L;
 
-	@Column(name = "FILLED")
+	@Column(name = "FILLED", columnDefinition="bit")
 	private boolean filled;
 
 	@Enumerated(EnumType.STRING)
@@ -26,7 +26,7 @@ public class LineChart extends Chart {
 	@Size(max = 1000)
 	private String seriesColors = "1b788f";
 
-	@Column(name = "SHADOW")
+	@Column(name = "SHADOW", columnDefinition="bit")
 	private boolean shadow = true;
 
 	@Column(name = "MIN_X")
@@ -43,7 +43,7 @@ public class LineChart extends Chart {
 
 	// Whether line segments should be broken at null
 	// value, fall will join point on either side of line.
-	@Column(name = "BREAK_ON_NULL")
+	@Column(name = "BREAK_ON_NULL", columnDefinition="bit")
 	private boolean breakOnNull;
 
 	@Column(name = "X_AXIS_LABEL", length = 255)
@@ -62,19 +62,19 @@ public class LineChart extends Chart {
 	private Integer yaxisAngle;
 
 	// Whether to stack series
-	@Column(name = "STACKED")
+	@Column(name = "STACKED", columnDefinition="bit")
 	private boolean stacked;
 
 	// Enables plot zooming.
-	@Column(name = "ZOOM")
+	@Column(name = "ZOOM", columnDefinition="bit")
 	private boolean zoom;
 
 	// Enables animation on plot rendering
-	@Column(name = "ANIMATE")
+	@Column(name = "ANIMATE", columnDefinition="bit")
 	private boolean animate;
 
 	// Defines visibility of datatip.
-	@Column(name = "SHOW_DATA_TIP")
+	@Column(name = "SHOW_DATA_TIP", columnDefinition="bit")
 	private boolean showDataTip = true;
 
 	// Template string for datatips.

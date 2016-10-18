@@ -56,8 +56,8 @@ public class Workflow extends BusinessEntity {
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
 	
 	
-	@Column(name = "ENABLE_HOSTORY")
-	boolean enableHistory;
+	@Column(name = "ENABLE_HOSTORY", columnDefinition="bit")
+	private boolean enableHistory;
 
 	/**
 	 * @return the wfType

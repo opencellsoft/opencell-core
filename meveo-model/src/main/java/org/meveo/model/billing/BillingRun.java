@@ -149,7 +149,7 @@ public class BillingRun extends AuditableEntity {
 	@Column(name = "SELECTED_BILLING_ACCOUNTS", columnDefinition="TEXT")
 	private String selectedBillingAccounts;
 
-	@Column(name = "XML_INVOICE_GENERATED")
+	@Column(name = "XML_INVOICE_GENERATED", columnDefinition="bit")
 	private Boolean xmlInvoiceGenerated = Boolean.FALSE;
 
 	@Transient

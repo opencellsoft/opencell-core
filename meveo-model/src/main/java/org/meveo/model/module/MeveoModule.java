@@ -58,7 +58,7 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     @Size(max = 255)
     private String logoPicture;
 
-    @Column(name = "INSTALLED")
+    @Column(name = "INSTALLED", columnDefinition="bit")
     private boolean installed;
 
     @Column(name = "MODULE_SOURCE", nullable = false, columnDefinition = "TEXT")

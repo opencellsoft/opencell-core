@@ -8014,7 +8014,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-timerDEMO">
         <insert tableName="meveo_timer">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id"  valueNumeric="1" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="*" />
             <column name="sc_d_o_week" value="*" />
@@ -8030,7 +8030,7 @@
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8044,7 +8044,7 @@
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8057,7 +8057,7 @@
             <column name="UUID" value="Cust_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8070,7 +8070,7 @@
             <column name="UUID" value="M_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8083,7 +8083,7 @@
             <column name="UUID" value="U_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="5" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8096,7 +8096,7 @@
             <column name="UUID" value="RR_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="6" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8109,7 +8109,7 @@
             <column name="UUID" value="RT_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="7" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8122,7 +8122,7 @@
             <column name="UUID" value="XML_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="8" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8135,7 +8135,7 @@
             <column name="UUID" value="PDF_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="9" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8148,7 +8148,7 @@
             <column name="UUID" value="Acco_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="10" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8161,7 +8161,7 @@
             <column name="UUID" value="Subs_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="11" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="true" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -8177,7 +8177,7 @@
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceConfigDEMO">
         <insert tableName="billing_invoice_configuration">
-            <column name="id" valueSequenceNext="billing_invoice_configuration_seq" />
+            <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1"></column>
             <column name="display_subscriptions" valueBoolean="true"></column>
@@ -8188,7 +8188,7 @@
 
 	<changeSet id="#1951_20160919" author="anasseh">
 		<insert tableName="billing_invoice_type">
-			<column name="id" valueSequenceNext="BILLING_INVOICE_TYPE_SEQ" />
+			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
@@ -8198,10 +8198,10 @@
 			<column name="creator_id" valueNumeric="1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="25" />	
-			<column name="MATCHING_AUTO" value="false" />		
+			<column name="MATCHING_AUTO" valueBoolean="false" />		
 		</insert>
 		<insert tableName="billing_invoice_type">
-			<column name="id" valueSequenceNext="BILLING_INVOICE_TYPE_SEQ" />
+			<column name="id" valueNumeric="2" />
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
@@ -8211,7 +8211,7 @@
 			<column name="creator_id" valueNumeric="1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="11" />			
-			<column name="MATCHING_AUTO" value="false" />
+			<column name="MATCHING_AUTO" valueBoolean="false" />
 		</insert>		
 		<insert tableName="billing_invoice_type_applies_to">
 			<column name="invoice_type_id" value="1" />			

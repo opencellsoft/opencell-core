@@ -104,7 +104,7 @@ public class Subscription extends BusinessCFEntity{
 	@JoinColumn(name = "SUB_TERMIN_REASON_ID")
 	private SubscriptionTerminationReason subscriptionTerminationReason;
 
-	@Column(name = "DEFAULT_LEVEL")
+	@Column(name = "DEFAULT_LEVEL", columnDefinition="bit")
 	private Boolean defaultLevel = true;
 
 	public Date getEndAgreementDate() {

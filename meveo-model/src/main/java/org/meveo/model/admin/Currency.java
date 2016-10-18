@@ -49,7 +49,7 @@ public class Currency extends ProviderlessEntity {
 	private String descriptionEn;
 
 	/** Flag field that indicates if it is system currency. */
-	@Column(name = "SYSTEM_CURRENCY")
+	@Column(name = "SYSTEM_CURRENCY", columnDefinition="bit")
 	private Boolean systemCurrency;
 
 	public String getCurrencyCode() {

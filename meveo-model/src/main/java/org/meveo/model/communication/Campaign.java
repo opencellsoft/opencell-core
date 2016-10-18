@@ -71,7 +71,7 @@ public class Campaign extends BusinessEntity {
 	@Size(max = 255)
 	private String subMedia;
 
-	@Column(name = "USE_ANY_MEDIA")
+	@Column(name = "USE_ANY_MEDIA", columnDefinition="bit")
 	private Boolean useAnyMedia;
 
 	@Enumerated(EnumType.STRING)

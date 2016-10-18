@@ -33,7 +33,7 @@ public class BarChart extends Chart {
 	private OrientationEnum orientation;
 
 	//Enables stacked display of bars
-	@Column(name="STACKED")
+	@Column(name="STACKED", columnDefinition="bit")
 	private boolean stacked;
 	
 	//Minimum boundary value.
@@ -46,7 +46,7 @@ public class BarChart extends Chart {
 
 	//Whether line segments should be broken at null
 	//value, fall will join point on either side of line.
-	@Column(name="BREAK_ON_NULL")
+	@Column(name="BREAK_ON_NULL", columnDefinition="bit")
 	private boolean breakOnNull;
 
 
@@ -73,15 +73,15 @@ public class BarChart extends Chart {
 	private int legendRows;
 
 	//Enables plot zooming.
-	@Column(name="ZOOM")
+	@Column(name="ZOOM", columnDefinition="bit")
 	private boolean zoom;
 	
 	//Enables animation on plot rendering
-	@Column(name="ANIMATE")
+	@Column(name="ANIMATE", columnDefinition="bit")
 	private boolean animate;
 	
 	//Defines visibility of datatip.
-	@Column(name="SHOW_DATA_TIP")
+	@Column(name="SHOW_DATA_TIP", columnDefinition="bit")
 	private boolean showDataTip=true;
 	
 	//Template string for datatips.

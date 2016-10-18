@@ -66,7 +66,7 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     @Enumerated(EnumType.STRING)
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
     
-    @Column(name = "IMMEDIATE_INVOICING")
+    @Column(name = "IMMEDIATE_INVOICING", columnDefinition="bit")
     private Boolean immediateInvoicing = false;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {

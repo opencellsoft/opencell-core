@@ -76,7 +76,7 @@ public class BankOperation extends AuditableEntity {
 	@Column(name = "CREDIT")
 	private BigDecimal credit;
 
-	@Column(name = "IS_VALID")
+	@Column(name = "IS_VALID", columnDefinition="bit")
 	private boolean isValid;
 
 	@Column(name = "ERROR_CAUSE", length = 255)

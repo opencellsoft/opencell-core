@@ -52,7 +52,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Column(name = "NB_ERROR")
     private long nbItemsProcessedWithError;
 
-    @Column(name = "JOB_DONE")
+    @Column(name = "JOB_DONE", columnDefinition="bit")
     private boolean done = true;
 
     @Enumerated(EnumType.STRING)

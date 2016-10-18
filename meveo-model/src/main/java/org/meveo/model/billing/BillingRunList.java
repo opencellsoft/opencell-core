@@ -37,7 +37,7 @@ public class BillingRunList extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "INVOICE")
+	@Column(name = "INVOICE", columnDefinition="bit")
 	private Boolean invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

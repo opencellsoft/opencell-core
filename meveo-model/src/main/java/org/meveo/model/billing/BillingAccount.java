@@ -82,7 +82,7 @@ public class BillingAccount extends AccountEntity {
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
-	@Column(name = "ELECTRONIC_BILLING")
+	@Column(name = "ELECTRONIC_BILLING", columnDefinition="bit")
 	private Boolean electronicBilling = false;
 
 	@Temporal(TemporalType.TIMESTAMP)

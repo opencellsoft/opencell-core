@@ -27,7 +27,7 @@ public class EnableEntity extends BaseEntity implements IEnable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DISABLED", nullable = false)
+	@Column(name = "DISABLED", nullable = false, columnDefinition="bit")	
 	@NotNull
 	private boolean disabled;
 

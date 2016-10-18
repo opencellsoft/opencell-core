@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
 	<changeSet id="#1803_20160628" author="TonyAlejandro">
         <createTable tableName="ADM_SECURED_ENTITY">
@@ -14,9 +14,9 @@
 			<column name="entity_class" type="VARCHAR(255)" />
 		</createTable>
 
-		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" />
-        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" />
-        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" />
+		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" columnDataType="BIGINT" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" columnDataType="VARCHAR(60)" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" columnDataType="VARCHAR(255)" />
 		<addForeignKeyConstraint
         	constraintName="FK_SECURED_ENTITY_USER" 
         	referencedTableName="ADM_USER" 
@@ -27,12 +27,12 @@
 	
 	<changeSet id="#1821_20160707" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
-			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_from" type="DATETIME"></column>
+			<column name="valid_to" type="DATETIME"></column>
 		</addColumn>
 		<addColumn tableName="cat_offer_serv_templates">
-			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_from" type="DATETIME"></column>
+			<column name="valid_to" type="DATETIME"></column>
 		</addColumn>
 	</changeSet>
 	
@@ -60,13 +60,13 @@
           <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
+			<column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueBoolean="false"></column> 
 		</addColumn>
 	</changeSet>
 	
-      <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
-         <sql>update BILLING_TAX set UUID ='TAX-'|| id </sql>   
-        <sql>update BILLING_CYCLE set UUID ='BillingCycle-'|| id </sql> 
+    <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
+         <sql>update BILLING_TAX set UUID =concat('TAX-', id) </sql>   
+         <sql>update BILLING_CYCLE set UUID = concat('BillingCycle-', id) </sql> 
     </changeSet>  	
 
     <changeSet author="anasseh (generated)" id="#1841_13072016-1">
@@ -80,17 +80,17 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-4">
         <createTable tableName="wf_action">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_action_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="action_el" type="VARCHAR(2000)"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="priority" type="INT4"/>
@@ -102,17 +102,17 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-5">
         <createTable tableName="wf_transition">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_transition_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="from_status" type="VARCHAR(255)"/>
             <column name="to_status" type="VARCHAR(255)"/>
@@ -120,27 +120,29 @@
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
             <column name="workflow_id" type="BIGINT"/>
+            <column name="priority" type="INT4" />
+            <column name="description" type="VARCHAR(100)"/>        
         </createTable>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-6">
         <createTable tableName="wf_workflow">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_workflow_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="code" type="VARCHAR(60)">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(100)"/>
-            <column name="enable_hostory" type="BOOL"/>
-            <column name="export_lot" type="BOOL"/>
+            <column name="enable_hostory" type="${type.boolean}"/>
+            <column name="export_lot" type="${type.boolean}"/>
             <column name="status" type="VARCHAR(255)"/>
             <column name="wf_type" type="VARCHAR(255)"/>
             <column name="provider_id" type="BIGINT"/>
@@ -153,24 +155,10 @@
         <dropForeignKeyConstraint  baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" />
     </changeSet>   
     
-    <changeSet author="anasseh (generated)" id="#1841_13072016-18">
-        <addPrimaryKey columnNames="id" constraintName="wf_action_pkey" tableName="wf_action"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-19">
-        <addPrimaryKey columnNames="id" constraintName="wf_transition_pkey" tableName="wf_transition"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-20">
-        <addPrimaryKey columnNames="id" constraintName="wf_workflow_pkey" tableName="wf_workflow"/>
-    </changeSet>
- 
-    <changeSet author="anasseh (generated)" id="#1841_13072016-23">
-        <addUniqueConstraint columnNames="from_status, to_status, workflow_id, provider_id" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
-    </changeSet>
-
-    <changeSet author="anasseh (generated)" id="#1841_13072016-25">
-        <addUniqueConstraint columnNames="priority, wf_transition_id, provider_id" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_action"/>
-    </changeSet>
-
+   <changeSet author="anasseh (generated)" id="#1841_13072016-165-1" dbms="mysql">
+        <dropIndex tableName="ar_action_dunning" indexName="fk_r8q3phft4xgm8lbfu6i7lo3kx"/>
+    </changeSet>       
+     
     <changeSet author="anasseh (generated)" id="#1841_13072016-27">
         <addUniqueConstraint columnNames="provider_id, code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow"/>
     </changeSet>
@@ -207,56 +195,14 @@
     <changeSet author="anasseh (generated)" id="#1841_13072016-61">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_action" constraintName="fk_q7dvcjiuap29yhvq884lt0die" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
     </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-63">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_24c5wf8u9a35yf8uutjf5qwwf"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-64">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_3nhld7nla1pv1t8eejdl4dn6p"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-69">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_78p10vstesm3xr605s46qn3gq"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-70">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_8q1jrqq9e8xru7m27nbwrxp3k"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-72">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_ar_credit_category_ar_dunning_plan"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-80">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_ecur7dwit9crb6cbhlubxs3jn"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-81">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_eu7ekseo196cq1qgyg7xm7vs5"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-82">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_gc1m3d2m0dsqcaek8rxrk0u87"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-84">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_j0vlitgsqwnnkry67xwuead15"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-86">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_jpipfg980fcv7pq4s9tnb35ik"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-87">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_k9j7i31wmyhrw11lyxkdnpymr"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-95">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_n5ax6w0qt9pum3oc3n2b3hgxw"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-101">
-        <dropUniqueConstraint constraintName="uk_ewwxy8ieo179rif5ud8hduqkt" tableName="ar_dunning_plan_transition"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-103">
-        <dropUniqueConstraint constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" tableName="ar_dunning_plan"/>
-    </changeSet>   
     <changeSet author="anasseh (generated)" id="#1841_13072016-104">
         <dropTable tableName="ar_action_plan_item"/>
     </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-105">
-        <dropTable tableName="ar_dunning_plan"/>
-    </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-106">
         <dropTable tableName="ar_dunning_plan_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-105">
+        <dropTable tableName="ar_dunning_plan"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-144">
         <dropSequence sequenceName="ar_dunning_plan_seq"/>
@@ -269,7 +215,7 @@
     </changeSet>	
     <changeSet id="#1885_20160815_service_entity" author="EdwardPLegaspi">
     	<addColumn tableName="cat_service_template">
-    		<column name="image" type="oid" />
+    		<column name="image" type="${type.blob}" />
 			<column name="image_content_type" type="VARCHAR(50)" />
     	</addColumn>
     </changeSet>  
@@ -285,18 +231,18 @@
     	
 	<changeSet id="#1839_20160713_channel" author="EdwardLegaspi">
 		<createTable tableName="cat_channel">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_channel_pkey" />
 			</column>
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -306,8 +252,7 @@
 		</createTable>
 
 		<createSequence sequenceName="cat_channel_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_channel_pkey"
-			tableName="cat_channel" />
+
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_cat_channel" deferrable="false" disabled="false"
 			initiallyDeferred="false" tableName="cat_channel" />
@@ -329,17 +274,10 @@
 		author="EdwardLegaspi">
 		<createTable tableName="cat_business_product_model">
 			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="pk_cat_business_product_model" />
 			</column>
 		</createTable>
 
-		<addPrimaryKey columnNames="id"
-			constraintName="pk_cat_business_product_model" tableName="cat_business_product_model" />
-	</changeSet>
-
-	<changeSet id="#1839_20160719_bam" author="EdwardPLegaspi">
-		<addPrimaryKey tableName="crm_business_account_model"
-			columnNames="id" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_offering" author="EdwardLegaspi">
@@ -352,11 +290,6 @@
 		
 		<sql>UPDATE cat_offer_template SET TYPE='OFFER'</sql>
 		
-		<addForeignKeyConstraint baseColumnNames="cat_offer_template_cat_id"
-			baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_tpl_cat"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="cat_offer_template_category" />
 		<addForeignKeyConstraint baseColumnNames="business_offer_model_id"
 			baseTableName="cat_offer_template" constraintName="fk_prod_offer_template_bom"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -422,18 +355,18 @@
 
 	<changeSet id="#1839_20160713_digital_resource" author="EdwardLegaspi">
 		<createTable tableName="cat_digital_resource">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_digital_resource_pkey" />
 			</column>
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -445,8 +378,7 @@
 		</createTable>
 
 		<createSequence sequenceName="cat_digital_resource_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_digital_resource_pkey"
-			tableName="cat_digital_resource" />
+
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_digital_resource" deferrable="false" disabled="false"
 			initiallyDeferred="false" tableName="cat_digital_resource" />
@@ -486,12 +418,10 @@
 	<changeSet id="#1839_20160713_cat_product_charge_templ"
 		author="SebastienMichea">
 		<createTable tableName="cat_product_charge_templ">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_prod_charge_templ_pkey"/>
 			</column>
 		</createTable>
-		<addPrimaryKey columnNames="id" constraintName="cat_prod_charge_templ_pkey"
-			tableName="cat_product_charge_templ" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
@@ -531,23 +461,16 @@
 	<changeSet id="#1839_20160713_cat_offer_product_template"
 		author="EdwardLegaspi">
 		<createTable tableName="cat_offer_product_template">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_product_template_pkey" />
 			</column>
-			<column name="provider_id" type="BIGINT" />
-			<column name="version" type="INT4" />
 			<column name="offer_template_id" type="BIGINT" />
 			<column name="product_template_id" type="BIGINT" />
-			<column name="mandatory" type="BOOL" />
+			<column name="mandatory" type="${type.boolean}" />
 		</createTable>
 
 		<createSequence sequenceName="cat_offer_product_template_seq" />
-		<addPrimaryKey columnNames="id"
-			constraintName="cat_offer_product_template_pkey" tableName="cat_offer_product_template" />
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="cat_offer_product_template" constraintName="fk_cat_off_prod_tpl_crm_provider"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
 		<addForeignKeyConstraint baseColumnNames="offer_template_id"
 			baseTableName="cat_offer_product_template" constraintName="fk_cat_off_pro_tpl_offer_template"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -561,23 +484,16 @@
 	<changeSet id="#1839_20160713_cat_bundle_product_template"
 		author="EdwardLegaspi">
 		<createTable tableName="cat_bundle_product_template">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_bundle_prod_tpl_pkey" />
 			</column>
-			<column name="provider_id" type="BIGINT" />
-			<column name="version" type="INT4" />
 			<column name="product_template_id" type="BIGINT" />
 			<column name="bundle_template_id" type="BIGINT" />
 			<column name="quantity" type="INT4" />
 		</createTable>
 
 		<createSequence sequenceName="cat_bundle_product_template_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_bundle_prod_tpl_pkey"
-			tableName="cat_bundle_product_template" />
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_prod_tpl_crm_prov"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+        
 		<addForeignKeyConstraint baseColumnNames="product_template_id"
 			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_pro_tpl_prod_off_tpl"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -608,17 +524,17 @@
 	<changeSet id="#1839_20160713_billing_product_inst"
 		author="SebastienMichea">
 		<createTable tableName="billing_product_instance">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="billing_product_instance_pkey" />
 			</column>
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
@@ -630,11 +546,9 @@
 			<column name="product_template_id" type="BIGINT" />
 			<column name="quantity" type="numeric(23, 12)" />
 			<column name="user_account_id" type="BIGINT"></column>
-			<column name="application_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="application_date" type="DATETIME" />
 		</createTable>
 		<createSequence sequenceName="billing_product_instance_seq" />
-		<addPrimaryKey columnNames="id" constraintName="billing_product_instance_pkey"
-			tableName="billing_product_instance" />
 			
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_product_instance" deferrable="false" disabled="false"
@@ -666,15 +580,15 @@
 		author="SebastienMichea">
 		<createTable tableName="billing_product_charge_inst">
 			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="billing_prod_chg_inst_pkey" />
 			</column>
 			<column name="product_instance_id" type="BIGINT" />
 			<column name="product_chrg_tmpl_id" type="BIGINT" />
 			<column name="quantity" type="numeric(23, 12)" />
 		</createTable>
+        
 		<createSequence sequenceName="billing_product_charge_inst_seq" />
-		<addPrimaryKey columnNames="id" constraintName="billing_prod_chg_inst_pkey"
-			tableName="billing_product_charge_inst" />
+
 		<addForeignKeyConstraint baseColumnNames="product_instance_id"
 			baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodins"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -690,17 +604,17 @@
         <createSequence sequenceName="ord_order_seq" />
 
         <createTable tableName="ord_order">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_order_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false" />
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="updated" type="DATETIME" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -710,21 +624,19 @@
             <column name="description" type="VARCHAR(100)" />
             <column name="external_id" type="VARCHAR(100)" />
             <column name="delivery_instructions" type="TEXT" />
-            <column name="order_date" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="order_date" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="REQ_START_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="REQ_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="EXP_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="REQ_START_DATE" type="DATETIME" />
+            <column name="REQ_COMPLETION_DATE" type="DATETIME" />
+            <column name="EXP_COMPLETION_DATE" type="DATETIME" />
+            <column name="COMPLETION_DATE" type="DATETIME" />
             <column name="priority" type="int" defaultValueNumeric="2" />
             <column name="category" type="VARCHAR(200)" />
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false" />
             </column>
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="ord_order_pkey" tableName="ord_order" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order" constraintName="fk_ord_order_crm_provider" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -741,8 +653,8 @@
         <createSequence sequenceName="ord_order_item_seq" />
 
         <createTable tableName="ord_order_item">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_order_item_pkey" />
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
@@ -766,8 +678,6 @@
             </column>
             <column name="subscription_id" type="BIGINT" />
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="ord_order_item_pkey" tableName="ord_order_item" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_crm_provider" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -821,7 +731,7 @@
             <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
             <column name="ROUTED_TO_USER_ID" type="BIGINT"/>
             <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
-            <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="start_date" type="DATETIME"/>
         </addColumn>
         
         <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_ID" baseTableName="ORD_ORDER" constraintName="fk_ord_order_rt_user"
@@ -829,24 +739,31 @@
         
     </changeSet>
     
+    <changeSet id="#1839_20160810_offer_template_category-0" author="EdwardLegaspi" dbms="mysql">
+      
+        <dropForeignKeyConstraint baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_template_category"/>
+        <dropIndex tableName="cat_offer_template" indexName="fk_cat_offer_template_offer_template_category"/>
+    </changeSet>
+    
 	<changeSet id="#1839_20160810_offer_template_category" author="EdwardLegaspi">
 		<sql>INSERT INTO CAT_PRODUCT_OFFER_TMPL_CAT (product_id, offer_template_cat_id, indx) SELECT id, cat_offer_template_cat_id, 0 FROM cat_offer_template WHERE cat_offer_template_cat_id IS NOT NULL;</sql>
+
 		<dropColumn tableName="cat_offer_template" columnName="cat_offer_template_cat_id"/>
 	</changeSet>
 	     
     <changeSet author="pbach (generated)" id="#1863_04082016-165">
         <createTable tableName="hierarchy_entity">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="hierarchy_entity_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="code" type="VARCHAR(60)">
                 <constraints nullable="false"/>
             </column>
@@ -860,8 +777,7 @@
         </createTable>
         
         <createSequence sequenceName="hierarchy_entity_seq" />
-        <addPrimaryKey columnNames="id" constraintName="hierarchy_entity_pkey"
-                       tableName="hierarchy_entity" />
+        
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_crm_provider"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -901,13 +817,20 @@
 			where a.address_country in (select c.country_code from adm_country c);
 		</sql>
     </changeSet>
+    
+    
+    <changeSet id="#1637_20160819_1-0" author="TyshanShi" dbms="mysql">
+        <dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+        <dropIndex tableName="ADM_MESSAGES" indexName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+        <dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+        <dropIndex tableName="ADM_MESSAGES" indexName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+    </changeSet>
+    
     <changeSet id="#1637_20160819_1" author="TyshanShi">
     	<addColumn tableName="ADM_MESSAGES">
     		<column name="ENTITY_CLASS" type="varchar(60)"/>
     		<column name="ENTITY_CODE" type="varchar(60)"/>
     	</addColumn>
-    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
-    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="disabled"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="created"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="updated"/>
@@ -923,111 +846,31 @@
     	</createIndex>
     </changeSet>  
     	
-    <changeSet id="#1637_20160819_2" author="TyshanShi">
+    <changeSet id="#1637_20160819_2" author="TyshanShi" dbms="PostgreSQL" >
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
-				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				id =(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
 				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
 				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
 		<sql>alter table ADM_MESSAGES drop column code</sql>
 	</changeSet>
     	
-    <changeSet author="pbach (generated)" id="#1861_16082016-165">
-        <createTable tableName="wf_transition_rule">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="condition_el" type="VARCHAR(2000)"/>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="value" type="VARCHAR(255)"/>
-            <column name="provider_id" type="BIGINT"/>
-            <column name="creator_id" type="BIGINT"/>
-            <column name="updater_id" type="BIGINT"/>
-            <column name="priority" type="INT4"/>
-            <column name="type" type="VARCHAR(255)"/>
-            <column name="model" type="BOOL"/>
-        </createTable>
-    
-        <addPrimaryKey columnNames="id" constraintName="wf_wf_transition_rule_pkey"
-                       tableName="wf_transition_rule" />
-
-        <addForeignKeyConstraint baseColumnNames="provider_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_provider_wf_transition_rule_crm_provider"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-
-        <addForeignKeyConstraint baseColumnNames="creator_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_creator_wf_transition_rule_adm_user"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
-        <addForeignKeyConstraint baseColumnNames="updater_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_updater_wf_transition_rule_adm_user"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
-        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="wf_transition_rule" />
-
-        <createTable tableName="wf_transition_transition_rule">
-            <column name="transition_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="transition_rule_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="transition_id"
-                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_id_wf_transition"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
-
-        <addForeignKeyConstraint baseColumnNames="transition_rule_id"
-                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_rule_id_transition_rule"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition_rule" />
-
-        <createSequence sequenceName="wf_transition_rule_seq" />
-    </changeSet>
-
-
-    <changeSet author="pbach (generated)" id="#1861_26082016-166">
-        <addColumn tableName="wf_transition">
-            <column name="priority" type="INT4" />
-        </addColumn>
-        <addColumn tableName="wf_transition">
-            <column name="description" type="VARCHAR(100)"/>
-        </addColumn>
-        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" />
-
-        <addUniqueConstraint columnNames="from_status, to_status, priority, workflow_id, provider_id" constraintName="uk_from_status_to_status_priority_workflow_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
-    </changeSet>
-
 	<changeSet id="#cat_bundle_template_add_uk" author="EdwardLegaspi">
 		<addUniqueConstraint
 			columnNames="product_template_id, bundle_template_id"
@@ -1035,27 +878,19 @@
 			disabled="false" initiallyDeferred="false" tableName="cat_bundle_product_template" />
 	</changeSet>
 
-	<changeSet id="#cat_offer_product_template_cat_bundle_product_template" author="EdwardLegaspi">
-		<dropColumn tableName="cat_offer_product_template" columnName="version"/>
-		<dropColumn tableName="cat_offer_product_template" columnName="provider_id"/>
-		<dropColumn tableName="cat_bundle_product_template" columnName="version"/>
-		<dropColumn tableName="cat_bundle_product_template" columnName="provider_id"/>
-	</changeSet>
-	
-
     <changeSet author="pbach (generated)" id="#1861_05092016-167">
         <createTable tableName="wf_decision_rule">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_wf_decision_rule_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="name" type="VARCHAR(255)"/>
             <column name="value" type="VARCHAR(255)"/>
@@ -1063,11 +898,8 @@
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
             <column name="type" type="VARCHAR(255)"/>
-            <column name="model" type="BOOL"/>
+            <column name="model" type="${type.boolean}"/>
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="wf_wf_decision_rule_pkey"
-                       tableName="wf_decision_rule" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="wf_decision_rule" constraintName="fk_provider_wf_decision_rule_crm_provider"
@@ -1106,10 +938,8 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />
 
-        <createSequence sequenceName="wf_decision_rule_seq" />
+        <createSequence sequenceName="wf_decision_rule_seq" startValue="10" />
 
-        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_from_status_to_status_priority_workflow_provider" />
-        <dropUniqueConstraint tableName="wf_action" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" />
         <addColumn tableName="wf_transition">
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
@@ -1120,22 +950,11 @@
                              initiallyDeferred="false" tableName="wf_transition" />
         <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_action" />
-        <sql>
-            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
-            value, provider_id, creator_id, updater_id, type, model
-            FROM wf_transition_rule;
-            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
-            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
-            update wf_transition set UUID='TRANSITION-'||id where UUID is null;
-            update wf_action set UUID='ACTION-'||id where UUID is null;
-        </sql>
 
-        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID"/>
-        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID"/>
 
-        <dropTable tableName="wf_transition_transition_rule"/>
-        <dropTable tableName="wf_transition_rule"/>
-        <dropSequence sequenceName="wf_transition_rule_seq"/>
+        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID" columnDataType="VARCHAR(60)" />
+        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID" columnDataType="VARCHAR(60)"/>
+
         <dropColumn tableName="WF_WORKFLOW" columnName="status"/>
     </changeSet>
     
@@ -1149,23 +968,29 @@
         </addColumn>
     </changeSet> 
 
-    <changeSet id="#1844_20160903" author="pbach">
-        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>
+
+    <changeSet id="#1844_20160903-0" author="pbach" dbms="mysql">    
+        <dropForeignKeyConstraint baseTableName="ord_order" constraintName="fk_ord_order_rt_user"/>
+        <dropIndex tableName="ord_order" indexName="fk_ord_order_rt_user" />            
+    </changeSet> 
+    
+    <changeSet id="#1844_20160903" author="pbach">         
+        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"/>
         <addColumn tableName="ord_order">
             <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
         </addColumn>
     </changeSet>
-    
+        
     <changeSet id="#1889_20160908" author="AndriusKarpavicius">
         <addColumn tableName="ORD_ORDER">
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
         <sql>update ORD_ORDER set UUID ='ORDER-'|| id </sql>   
-        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID"/> 
+        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID" columnDataType="VARCHAR(60)"/> 
         
-        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID"/> 
-        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID"/> 
-        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID"/> 
+        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID" columnDataType="VARCHAR(60)"/> 
+        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID" columnDataType="VARCHAR(60)"/> 
+        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID" columnDataType="VARCHAR(60)"/> 
     </changeSet>
 
     <changeSet id="#1844_20160910" author="pbach">
@@ -1204,8 +1029,16 @@
 			constraintName="uk_product_instance" />
 	</changeSet>
 
+
+    <changeSet id="#2060_20160928_remove_offer_template-0" author="SebastienMichea" dbms="mysql">
+        
+        <dropForeignKeyConstraint baseTableName="billing_charge_instance" constraintName="fk_chrg_instance_offer"/>
+        <dropIndex tableName="billing_charge_instance" indexName="fk_chrg_instance_offer"/>
+    </changeSet>
+
 	<changeSet id="#2060_20160928_remove_offer_template"
 		author="SebastienMichea">
+        
 		<dropColumn tableName="billing_charge_instance" columnName="offer_template_id"/>
 		<addColumn tableName="billing_product_instance">
 			<column name="subscription_id" type="BIGINT" />
@@ -1220,17 +1053,17 @@
 	     
 	     
         <createTable tableName="WF_HISTORY">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="WF_HISTORY_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}">
                 <constraints nullable="false" />
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="updated" type="DATETIME" />
             <column name="provider_id" type="BIGINT"/>
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
@@ -1244,13 +1077,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="TRANSITION_NAME" type="varchar(255)"/>
-            <column name="ACTION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="ACTION_DATE" type="DATETIME" />
             <column name="WORKFLOW_ID" type="BIGINT" />                              
         </createTable>
         
        <createTable tableName="WF_HISTORY_ACTION">    
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="WF_HISTORY_ACTION_pkey" />
             </column>
             <column name="version" type="INT4" />  
              <column name="provider_id" type="BIGINT"/>    
@@ -1259,10 +1092,6 @@
             <column name="WF_HISTORY_ID" type="BIGINT" />                              
         </createTable>
     
-       
-        <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_pkey"  tableName="WF_HISTORY" />
-         <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_ACTION_pkey"  tableName="WF_HISTORY_ACTION" />
-
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="WF_HISTORY" constraintName="fk_provider_WF_HISTORY_crm_provider"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"

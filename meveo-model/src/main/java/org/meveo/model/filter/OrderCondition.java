@@ -29,7 +29,7 @@ public class OrderCondition extends BaseEntity {
 	@Column(name = "FIELD_NAME")
 	private List<String> fieldNames = new ArrayList<String>();
 
-	@Column(name = "ASCENDING")
+	@Column(name = "ASCENDING", columnDefinition="bit")
 	private boolean ascending;
 
 	@OneToOne(mappedBy = "orderCondition")

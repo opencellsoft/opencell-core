@@ -34,7 +34,7 @@ public abstract class CustomScript extends BusinessEntity {
     @Transient
     private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 
-    @Column(name = "IS_ERROR")
+    @Column(name = "IS_ERROR", columnDefinition="bit")
     private Boolean error = false;
 
     /**

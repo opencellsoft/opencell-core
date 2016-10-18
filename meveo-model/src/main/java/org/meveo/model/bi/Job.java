@@ -54,7 +54,7 @@ public class Job extends ProviderlessEntity {
 	@Column(name = "NEXT_EXECUTION_DATE")
 	private Date nextExecutionDate;
 
-	@Column(name = "ACTIVE")
+	@Column(name = "ACTIVE", columnDefinition="bit")
 	private boolean active;
 
 	@Column(name = "JOB_FREQUENCY")

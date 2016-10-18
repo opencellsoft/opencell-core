@@ -92,7 +92,7 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
 
-	@Column(name = "image")
+	@Column(name = "image", columnDefinition="binary")
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;

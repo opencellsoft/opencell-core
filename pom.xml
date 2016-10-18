@@ -631,13 +631,22 @@
             </activation>
             <properties>
                 <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
+<!--                 <db.driver>org.postgresql.Driver </db.driver> -->
+<!--                 <db.url>jdbc:postgresql://localhost/meveo</db.url> -->
+<!--                 <db.username>meveo</db.username> -->
+<!--                 <db.password>meveo</db.password> -->
+                <db.driver>com.mysql.jdbc.Driver</db.driver>
+                <db.url>jdbc:mysql://localhost:3306/meveo</db.url>
+                <db.username>root</db.username>
+                <db.password></db.password>
             </properties>
             <dependencies>
-                <!-- Dependency for liquibase plugin -->
+<!--                 Dependency for liquibase plugin -->
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>5.1.40</version>
+                </dependency>   
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>

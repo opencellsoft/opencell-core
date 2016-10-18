@@ -45,13 +45,13 @@ public class SubscriptionTerminationReason extends BaseEntity {
     @Size(max = 255)
 	private String description;
 
-	@Column(name = "APPLY_AGREEMENT")
+	@Column(name = "APPLY_AGREEMENT", columnDefinition="bit")
 	private boolean applyAgreement;
 
-	@Column(name = "APPLY_REIMBURSMENT")
+	@Column(name = "APPLY_REIMBURSMENT", columnDefinition="bit")
 	private boolean applyReimbursment;
 
-	@Column(name = "APPLY_TERMINATION_CHARGES")
+	@Column(name = "APPLY_TERMINATION_CHARGES", columnDefinition="bit")
 	private boolean applyTerminationCharges;
 
 	public String getCode() {

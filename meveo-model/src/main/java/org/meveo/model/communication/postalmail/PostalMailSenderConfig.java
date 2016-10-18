@@ -44,10 +44,13 @@ public class PostalMailSenderConfig extends MessageSenderConfig {
 	@Enumerated(EnumType.STRING)
 	private EnvelopeWindowType windowType;
 
+	@Column(columnDefinition="bit")
 	private boolean printRectoVerso;
 
+	@Column(columnDefinition="bit")
 	private boolean useColor;
 
+	@Column(columnDefinition="bit")
 	private boolean addAddressFrontPage;
 
 	@Column(name = "STAMPTYPE", length = 255)

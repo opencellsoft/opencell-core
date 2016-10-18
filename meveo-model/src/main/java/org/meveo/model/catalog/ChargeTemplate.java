@@ -66,7 +66,7 @@ public class ChargeTemplate extends BusinessCFEntity {
 	@Column(name = "CREDIT_DEBIT_FLAG")
 	private OperationTypeEnum type;
 
-	@Column(name = "AMOUNT_EDITABLE")
+	@Column(name = "AMOUNT_EDITABLE", columnDefinition="bit")
 	private Boolean amountEditable;
 
 	@ManyToOne(fetch = FetchType.LAZY)

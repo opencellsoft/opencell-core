@@ -41,7 +41,7 @@ public class MessageTemplateVariable extends BusinessEntity {
 	@JoinColumn(name = "TEMPLATE_ID")
 	private MessageTemplate messageTemplate;
 
-	@Column(name = "MANDATORY")
+	@Column(name = "MANDATORY", columnDefinition="bit")
 	private boolean mandatory;
 
 	public MessageTemplate getMessageTemplate() {

@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +25,7 @@ import org.meveo.model.IEntity;
 public class OfferProductTemplate implements IEntity {
 
 	@Id
-	@GeneratedValue(generator = "ID_GENERATOR")
+	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
 	@Column(name = "ID")
 	@Access(AccessType.PROPERTY)
 	protected Long id;
@@ -37,7 +38,7 @@ public class OfferProductTemplate implements IEntity {
 	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
 	private ProductTemplate productTemplate;
 
-	@Column(name = "MANDATORY")
+	@Column(name = "MANDATORY", columnDefinition="bit")
 	private boolean mandatory;
 
 	@Override

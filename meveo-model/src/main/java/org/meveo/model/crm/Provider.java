@@ -82,7 +82,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Size(max = 100)
     protected String description;
 
-    @Column(name = "DISABLED", nullable = false)
+    @Column(name = "DISABLED", nullable = false, columnDefinition="bit")
     @NotNull
     private boolean disabled;
 
@@ -98,13 +98,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @JoinColumn(name = "LANGUAGE_ID")
     private Language language;
 
-    @Column(name = "MULTICOUNTRY_FLAG")
+    @Column(name = "MULTICOUNTRY_FLAG", columnDefinition="bit")
     private boolean multicountryFlag;
 
-    @Column(name = "MULTICURRENCY_FLAG")
+    @Column(name = "MULTICURRENCY_FLAG", columnDefinition="bit")
     private boolean multicurrencyFlag;
 
-    @Column(name = "MULTILANGUAGE_FLAG")
+    @Column(name = "MULTILANGUAGE_FLAG", columnDefinition="bit")
     private boolean multilanguageFlag;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -143,7 +143,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Transient
     private List<PaymentMethodEnum> paymentMethods;
 
-    @Column(name = "LOGO")
+    @Column(name = "LOGO", columnDefinition="binary")
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private Blob logo;
@@ -154,19 +154,19 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
-    @Column(name = "ENTREPRISE")
+    @Column(name = "ENTREPRISE", columnDefinition="bit")
     private boolean entreprise = false;
 
-    @Column(name = "AUTOMATIC_INVOICING")
+    @Column(name = "AUTOMATIC_INVOICING", columnDefinition="bit")
     private boolean automaticInvoicing = false;
 
     @Embedded
     private InterBankTitle interBankTitle=new InterBankTitle();
 
-    @Column(name = "AMOUNT_VALIDATION")
+    @Column(name = "AMOUNT_VALIDATION", columnDefinition="bit")
     private boolean amountValidation = false;
 
-    @Column(name = "LEVEL_DUPLICATION")
+    @Column(name = "LEVEL_DUPLICATION", columnDefinition="bit")
     private boolean levelDuplication = false;
 
     @Column(name = "EMAIL", length = 100)
@@ -180,7 +180,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCurrency> tradingCurrencies;
 
-    @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
+    @Column(name = "DISPLAY_FREE_TX_IN_INVOICE", columnDefinition="bit")
     private boolean displayFreeTransacInInvoice = false;
 
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
@@ -199,7 +199,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
 	
-	@Column(name = "RECOGNIZE_REVENUE")
+	@Column(name = "RECOGNIZE_REVENUE", columnDefinition="bit")
 	private boolean recognizeRevenue;
 	
 

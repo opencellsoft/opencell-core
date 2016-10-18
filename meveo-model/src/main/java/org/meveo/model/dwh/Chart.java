@@ -57,7 +57,7 @@ public class Chart extends BusinessEntity {
     @Size(max = 255)
     private String extender;
 
-    @Column(name = "VISIBLE")
+    @Column(name = "VISIBLE", columnDefinition="bit")
     private Boolean visible = false;
 
     @Transient

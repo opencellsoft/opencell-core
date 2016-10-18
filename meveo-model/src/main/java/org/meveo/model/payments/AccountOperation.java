@@ -118,7 +118,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 	private String occDescription;
 	
 	
-	@Column(name = "EXCLUDED_FROM_DUNNING")
+	@Column(name = "EXCLUDED_FROM_DUNNING", columnDefinition="bit")
 	private boolean excludedFromDunning;
 	
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)

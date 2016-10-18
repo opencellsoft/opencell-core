@@ -64,13 +64,13 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	@Column(name = "DURATION_TERM_IN_MONTH")
 	private Integer durationTermInMonth;
 
-	@Column(name = "SUBSCRIPTION_PRORATA")
+	@Column(name = "SUBSCRIPTION_PRORATA", columnDefinition="bit")
 	private Boolean subscriptionProrata;
 
-	@Column(name = "TERMINATION_PRORATA")
+	@Column(name = "TERMINATION_PRORATA", columnDefinition="bit")
 	private Boolean terminationProrata;
 
-	@Column(name = "APPLY_IN_ADVANCE")
+	@Column(name = "APPLY_IN_ADVANCE", columnDefinition="bit")
 	private Boolean applyInAdvance;
 
 	@Enumerated(EnumType.STRING)

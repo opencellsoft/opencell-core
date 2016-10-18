@@ -111,7 +111,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		// check if offer already exists
 		if (offerTemplateService.findByCode(code, currentUser.getProvider()) != null) {
-			throw new BusinessException("" + MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
+			throw new BusinessException("Offer template with code "+code +" already exists");
 		}
 
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {

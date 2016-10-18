@@ -107,7 +107,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Size(max = 50)
 	private String prDescription;
 
-	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
+	@Column(name = "DISCOUNT_AGGREGATE", nullable = false, columnDefinition="bit")
 	@NotNull
 	private boolean discountAggregate;
 	

@@ -46,7 +46,7 @@ public class EmailSenderConfig extends MessageSenderConfig {
     @Size(max = 50)
 	private String password;
 
-	@Column(name = "USE_SSL")
+	@Column(name = "USE_SSL", columnDefinition="bit")
 	private Boolean useSSL;
 
 	@Column(name = "DEFAULT_FROM_EMAIL", length = 255)

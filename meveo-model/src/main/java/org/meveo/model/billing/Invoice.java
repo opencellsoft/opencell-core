@@ -142,11 +142,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@Size(max = 1200)
 	private String comment;
 
-	@Column(name = "PDF")
+	@Column(name = "PDF", columnDefinition="binary")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
 
-	@Column(name = "DETAILED_INVOICE")
+	@Column(name = "DETAILED_INVOICE", columnDefinition="bit")
 	private boolean isDetailedInvoice = true;
 
 	@ManyToOne

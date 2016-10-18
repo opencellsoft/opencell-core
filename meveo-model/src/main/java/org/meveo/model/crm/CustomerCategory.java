@@ -36,7 +36,7 @@ public class CustomerCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "EXONERATED_FROM_TAXES")
+	@Column(name = "EXONERATED_FROM_TAXES", columnDefinition="bit")
 	private boolean exoneratedFromTaxes=false ;
 	
 	@Column(name = "EXONERATION_TAX_EL", length = 2000)

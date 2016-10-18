@@ -69,7 +69,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @NotNull
     private String appliesTo;
 
-    @Column(name = "VALUE_REQUIRED")
+    @Column(name = "VALUE_REQUIRED", columnDefinition="bit")
     private boolean valueRequired;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -86,7 +86,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Transient
     private boolean matrixColumnsSorted;
 
-    @Column(name = "VERSIONABLE")
+    @Column(name = "VERSIONABLE", columnDefinition="bit")
     private boolean versionable;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -116,18 +116,18 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
-    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
+    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false, columnDefinition="bit")
     private boolean triggerEndPeriodEvent;
 
     @Column(name = "GUI_POSITION", length = 100)
     @Size(max = 100)
     private String guiPosition;
 
-    @Column(name = "ALLOW_EDIT")
+    @Column(name = "ALLOW_EDIT", columnDefinition="bit")
     @NotNull
     private boolean allowEdit = true;
 
-    @Column(name = "HIDE_ON_NEW")
+    @Column(name = "HIDE_ON_NEW", columnDefinition="bit")
     @NotNull
     private boolean hideOnNew;
 
@@ -145,7 +145,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 2000)
     private String applicableOnEl;
 
-    @Column(name = "CACHE_VALUE")
+    @Column(name = "CACHE_VALUE", columnDefinition="bit")
     @NotNull
     private boolean cacheValue;
 

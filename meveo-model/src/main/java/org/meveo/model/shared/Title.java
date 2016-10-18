@@ -40,7 +40,7 @@ public class Title extends BusinessEntity {
 
 	private static final long serialVersionUID = -6827515878506806536L;
 
-	@Column(name = "IS_COMPANY")
+	@Column(name = "IS_COMPANY", columnDefinition="bit")
 	private Boolean isCompany = Boolean.FALSE;
 
 	public Title() {

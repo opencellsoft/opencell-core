@@ -64,7 +64,7 @@ public class WFDecisionRule extends AuditableEntity implements Comparable<WFDeci
     @NotNull
 	private String conditionEl;
 
-    @Column(name = "MODEL")
+    @Column(name = "MODEL", columnDefinition="bit")
     private boolean model = false;
 
     @ManyToMany(mappedBy="wfDecisionRules")

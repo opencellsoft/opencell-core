@@ -48,7 +48,7 @@ public class WalletTemplate extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	private BillingWalletTypeEnum walletType;
 
-	@Column(name = "CONSUMPTION_ALERT_SET")
+	@Column(name = "CONSUMPTION_ALERT_SET", columnDefinition="bit")
 	private boolean consumptionAlertSet;
 
 	@Column(name = "FAST_RATING_LEVEL")

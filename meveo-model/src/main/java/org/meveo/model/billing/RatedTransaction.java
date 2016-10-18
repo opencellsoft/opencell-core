@@ -177,7 +177,7 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "STATUS")
 	private RatedTransactionStatusEnum status;
 
-	@Column(name = "DO_NOT_TRIGGER_INVOICING")
+	@Column(name = "DO_NOT_TRIGGER_INVOICING", columnDefinition="bit")
 	private boolean doNotTriggerInvoicing = false;
 
 	@Column(name = "PARAMETER_1", length = 255)
