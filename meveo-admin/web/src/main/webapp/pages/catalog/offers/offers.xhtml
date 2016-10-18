@@ -182,10 +182,10 @@
 
 										<p:panel>
 											<p:outputPanel>
-												<p:panel styleClass="switch-wrapper" rendered="#{offerTemplateBean.displayStatus(entity)}">
+												<p:panel styleClass="switch-wrapper">
 													<h:outputText value="#{messages['commons.status']}: " />
-													<h:outputText value="#{entity.lifeCycleStatus}"
-														styleClass="field-value" />
+													<h:outputText value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
 												</p:panel>
 											</p:outputPanel>
 											<p:panel style="width: 150px;">

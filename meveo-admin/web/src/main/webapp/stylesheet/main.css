@@ -1005,5 +1005,7 @@ ul.Navigation li a { display: block; text-align: center; padding: 16px; text-dec
 .Green { color: green; }
 .GreenBg { background-color: green; }
 .DataListCenter table tr td { text-align: center; }
+.GreenDark { color: #008000; }
+.GrayDark { color: #808080; }
 
 .SearchCombo td { padding: 0px; }

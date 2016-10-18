@@ -199,10 +199,10 @@
 
 										<p:panel>
 											<p:outputPanel>
-												<p:panel styleClass="switch-wrapper" rendered="#{productTemplateBean.displayStatus(prod)}">
+												<p:panel styleClass="switch-wrapper">
 													<h:outputText value="#{messages['commons.status']}: " />
-													<h:outputText value="#{prod.lifeCycleStatus}"
-														styleClass="field-value" />
+													<h:outputText value="#{prod.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', prod.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(prod) ? 'GreenDark' : 'GrayDark'}" />
 												</p:panel>
 											</p:outputPanel>
 											<p:panel styleClass="text-center">
