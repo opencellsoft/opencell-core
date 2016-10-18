@@ -300,9 +300,8 @@
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>
-								<p:inputSwitch value="#{entity.active}" disabled="true"
-									onLabel="#{messages['accountStatusEnum.active']}"
-									offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
+								<h:outputText value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
 							</p:column>
 							<p:column>
 								<ul class="list-inline">
