@@ -48,7 +48,8 @@
                                 <hftl:formField label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true"
                                     actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onCodeChange" listenerUpdate="name" />
                                 <hftl:formField id="name" label="#{messages['offerTemplate.name']}" field="name" required="true" />
-                                <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" />
+<!--                                 <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" /> -->
+                                <hftl:formLanguageFields backingBean="#{offerTemplateBean}" multiLang="true" />
                                 <hftl:formField label="#{messages['offerTemplate.longDescription']}" field="longDescription" textArea="true" id="longDescription" rows="1" componentWidth="100"/>
                                 <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{offerTemplateCategoryListBean}" componentWidth="30" />

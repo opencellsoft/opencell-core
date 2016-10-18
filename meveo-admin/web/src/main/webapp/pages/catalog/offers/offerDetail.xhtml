@@ -72,15 +72,12 @@
                         </c:if>
                         <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
 
-                    </h:panelGrid>
-                    <p:panel>
-                        <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
-                        <h:outputText value="#{offerTemplateBean.entity.auditable.creator}"></h:outputText>
-                    </p:panel>
-                    <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
                         <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
+                        <hftl:formField label="#{messages['commons.lastEditor']}" entity="#{offerTemplateBean.entity.auditable}" field="creator" valueLabelField="nameOrUsername"
+                            edit="false" />
+
                     </h:panelGrid>
                 </p:panel>
                 <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
@@ -137,9 +134,10 @@
             <p:panel id="customFieldsWrappPanel">
                 <f:facet name="header">
                     <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-                    <p:commandLink action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}" process="@this customFieldsWrappPanel"
-                        oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration"
-                        style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
+                    <p:commandLink id="customizeOfferCF" action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}"
+                        process="@this customFieldsWrappPanel" oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel"
+                        styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
+                    <p:tooltip for="customizeOfferCF">#{help['action.customize.attributes']}</p:tooltip>
                 </f:facet>
                 <!-- custom fields -->
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
