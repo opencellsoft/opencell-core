@@ -1,111 +1,71 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
+    xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org" xmlns:pe="http://primefaces.org/ui/extensions">
 
 <ui:composition>
 
-	<c:set var="mainBackingBean" value="#{backingBean}" />
+    <c:set var="mainBackingBean" value="#{backingBean}" />
+    <c:set var="mainFormId" value="#{formId}" />
 
-	<hftl:entityPopup id="searchProductTemplatePopup"
-		header="#{messages['productTemplate.title']}"
-		updateField=":tabView:productForm:productTemplateCode :tabView:productForm:productTemplateCode_text"
-		selection="#{mainBackingBean.offerProductTemplate.productTemplate}"
-		backingBean="#{productTemplateBean}"
-		searchField1Label="#{messages['BusinessEntity.code']}"
-		searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-		column1="code"></hftl:entityPopup>
+    <hftl:entityPopup id="searchProductTemplatePopup" header="#{messages['productTemplate.title']}"
+        updateField="${mainFormId}:tabView:productTemplateCode ${mainFormId}:tabView:productTemplateCode_text" selection="#{mainBackingBean.offerProductTemplate.productTemplate}"
+        backingBean="#{productTemplateBean}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+        column1="code"></hftl:entityPopup>
 
-	<p:panel styleClass="form-panel">
-		<hftl:decorateFormField fieldId="offerTemplateCode1"
-			label="#{messages['offerTemplate.code']}">
-			<h:outputText id="offerTemplateCode1"
-				value="#{mainBackingBean.entity.code}" disabled="true"
-				style="font-weight:bold;" />
-			<h:inputHidden rendered="#{mainBackingBean.edit}" />
-		</hftl:decorateFormField>
-		<hftl:decorateFormField fieldId="offerTemplateDescription2"
-			label="#{messages['offerTemplate.description']}">
-			<h:outputText id="offerTemplateDescription2"
-				value="#{mainBackingBean.entity.description}" disabled="true"
-				style="font-weight:bold;" />
-			<h:inputHidden rendered="#{mainBackingBean.edit}" />
-		</hftl:decorateFormField>
-	</p:panel>
+    <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" paginator="false" rows="10" lazy="false" styleClass="custom-grid"
+        rowIndexVar="rowIndex" resizableColumns="true">
 
-	<h:panelGroup id="productPanel">
-		<hftl:dataList id="productTable" backingBean="#{mainBackingBean}"
-			dataModel="#{mainBackingBean.entity.offerProductTemplates}"
-			resultsId="products_results" exportToXml="false">
-			<hftl:column label="#{messages['productTemplate.title']}"
-				field="productTemplate.code" entityView="productTemplateDetail"
-				valueIdField="productTemplate.id" />
-			<hftl:column label="#{messages['offerServiceTemplate.mandatory']}"
-				field="mandatory" />
-			<p:column styleClass="actions-column"
-				rendered="#{mainBackingBean.edit}">
-				<f:facet name="header">
-					<h:outputText value="#{messages['commons.actions']}" />
-				</f:facet>
-				<p:commandButton update=":tabView:productForm"
-					action="#{mainBackingBean.editOfferProductTemplate(entity)}"
-					icon="ui-icon-document" />
-				<p:commandButton
-					action="#{mainBackingBean.deleteOfferProductTemplate(entity)}"
-					rendered="#{mainBackingBean.canUserUpdateEntity()}"
-					icon="ui-icon-trash"
-					update=":tabView:productPanel :tabView:productForm" />
-			</p:column>
-		</hftl:dataList>
-	</h:panelGroup>
+        <hftl:column label="#{messages['productTemplate.title']}" field="productTemplate.code" entityView="productTemplateDetail" valueIdField="productTemplate.id" />
+        <hftl:column label="#{messages['offerServiceTemplate.mandatory']}" field="mandatory" isMessage="true" />
 
-	<p:panel rendered="#{mainBackingBean.edit}">
-		<hftl:formPanel formId="productForm" edit="#{mainBackingBean.edit}"
-			backingBean="#{mainBackingBean}"
-			entity="#{mainBackingBean.offerProductTemplate}"
-			showFormButtons="false" ajaxSubmit="true">
-			<hftl:formField label="#{messages['productTemplate.title']}"
-				id="productTemplateCode" field="productTemplate"
-				valueLabelField="code" popup="true"
-				popupId="searchProductTemplatePopup" clearButton="true"
-				required="true"
-				disabled="#{!mainBackingBean.offerProductTemplate.transient}" />
-			<hftl:formField label="#{messages['offerServiceTemplate.mandatory']}"
-				id="mandatory" field="mandatory" />
-			<ui:param name="buttons" value="true" />
-			<ui:define name="buttons">
-				<p:commandButton
-					rendered="#{mainBackingBean.offerProductTemplate.id==null and mainBackingBean.canUserUpdateEntity()}"
-					action="#{mainBackingBean.saveOfferProductTemplate()}"
-					value="#{messages['action.addSave']}"
-					update=":tabView:productPanel :tabView:productForm">
-					<f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
-				</p:commandButton>
-				<p:commandButton
-					rendered="#{offerTemplateBean.offerProductTemplate.id!=null}"
-					action="#{offerTemplateBean.saveOfferProductTemplate()}"
-					value="#{messages['action.update']}"
-					update=":tabView:productPanel :tabView:productForm" />
-				<p:commandButton value="#{messages['action.cancel']}"
-					action="#{offerTemplateBean.newOfferProductTemplate}"
-					update=":tabView:productForm" />
-				<p:button id="buttonBack" value="#{messages['action.back']}"
-					outcome="#{offerTemplateBean.back()}" includeViewParams="true">
-					<f:param name="cid"
-						value="#{javax.enterprise.context.conversation.id}" />
-				</p:button>
-			</ui:define>
-		</hftl:formPanel>
-	</p:panel>
+        <p:column styleClass="actions-column" rendered="#{mainBackingBean.edit}">
+            <f:facet name="header">
+                <h:outputText value="#{messages['commons.actions']}" />
+            </f:facet>
+            <p:commandButton update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails"
+                action="#{mainBackingBean.editOfferProductTemplate(entity)}" icon="ui-icon-document" process="@this" />
+            <p:commandButton action="#{mainBackingBean.deleteOfferProductTemplate(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}"
+                icon="ui-icon-trash" update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails #{mainFormId}:tabView:offerProducts" process="@this" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton value="#{messages['commons.addNew']}" action="#{offerTemplateBean.newOfferProductTemplate()}"
+                update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails" rendered="#{mainBackingBean.edit}" process="@this" />
+        </f:facet>
+    </p:dataTable>
 
+
+
+    <p:messages id="offerProductMessages" redisplay="false" />
+
+    <h:panelGroup id="offerProductDetails">
+
+        <p:separator rendered="#{mainBackingBean.offerProductTemplate!=null}" />
+
+        <p:panel header="#{messages['offerTemplate.productTemplate']}" rendered="#{mainBackingBean.offerProductTemplate!=null}">
+
+            <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+
+                <hftl:formField entity="#{mainBackingBean.offerProductTemplate}" label="#{messages['productTemplate.title']}" id="productTemplateCode" field="productTemplate"
+                    valueLabelField="code" popup="true" popupId="searchProductTemplatePopup" clearButton="true" required="true"
+                    disabled="#{!mainBackingBean.offerProductTemplate.transient}" />
+                <hftl:formField entity="#{mainBackingBean.offerProductTemplate}" label="#{messages['offerServiceTemplate.mandatory']}" id="mandatoryProduct" field="mandatory" />
+
+                <h:panelGroup layout="block" styleClass="form-panel-actions">
+                    <p:commandButton value="#{messages[mainBackingBean.offerProductTemplate.id==null?'action.addSave':'action.update']}"
+                        action="#{mainBackingBean.saveOfferProductTemplate()}"
+                        update="offerProductMessages ${mainFormId}:tabView:offerProducts ${mainFormId}:tabView:offerProductDetails"
+                        rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" process="offerProductDetails" />
+
+                    <p:commandButton value="#{messages['action.cancel']}" action="#{mainBackingBean.cancelOfferProductTemplateEdit}"
+                        update="offerProductMessages ${mainFormId}:tabView:offerProducts ${mainFormId}:tabView:offerProductDetails" rendered="#{mainBackingBean.edit}"
+                        process="@this" />
+                </h:panelGroup>
+            </p:outputPanel>
+
+        </p:panel>
+    </h:panelGroup>
 </ui:composition>
 </html>

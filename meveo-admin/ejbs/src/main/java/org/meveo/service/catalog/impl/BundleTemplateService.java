@@ -32,9 +32,6 @@ public class BundleTemplateService extends BusinessService<BundleTemplate> {
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
 
-	@Inject
-	private BundleProductTemplateService bundleProductTemplateService;
-
 	public long bundleTemplateActiveCount(boolean status) {
 		long result = 0;
 
@@ -96,7 +93,6 @@ public class BundleTemplateService extends BusinessService<BundleTemplate> {
 		entity.setBundleProducts(new HashSet<BundleProductTemplate>());
 
 		entity.setCode(code);
-		create(entity, getCurrentUser());
 
 		if (businessAccountModels != null) {
 			for (BusinessAccountModel bam : businessAccountModels) {
@@ -133,15 +129,14 @@ public class BundleTemplateService extends BusinessService<BundleTemplate> {
 				entity.getBundleProducts().add(bpt);
 			}
 			for (BundleProductTemplate bpt : bundleProductTemplates) {
-				bundleProductTemplateService.detach(bpt);
 				bpt.setId(null);
 				bpt.setBundleTemplate(entity);
-				bundleProductTemplateService.create(bpt, currentUser);
 				entity.addBundleProductTemplate(bpt);
 			}
 		}
 
-		update(entity, currentUser);
+
+        create(entity, getCurrentUser());
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 }

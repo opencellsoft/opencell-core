@@ -97,7 +97,7 @@ public class OfferServiceTemplate extends BaseEntity {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
+        int result = prime * 1; // super.hashCode();
         result = prime * result + ((incompatibleServices == null) ? 0 : incompatibleServices.hashCode());
         result = prime * result + ((offerTemplate == null) ? 0 : offerTemplate.hashCode());
         result = prime * result + ((serviceTemplate == null) ? 0 : serviceTemplate.hashCode());

@@ -40,27 +40,19 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.ChannelService;
-import org.meveo.service.catalog.impl.OfferProductTemplateService;
-import org.meveo.service.catalog.impl.OfferServiceTemplateService;
-import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
@@ -68,524 +60,427 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
 /**
- * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components. s
+ * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components. s
  * 
  */
 @Named
 @ViewScoped
 public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private SubscriptionService subscriptionService;
+    @Inject
+    private SubscriptionService subscriptionService;
 
-	/**
-	 * Injected @{link OfferTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	protected OfferTemplateService offerTemplateService;
+    /**
+     * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    protected OfferTemplateService offerTemplateService;
 
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
 
-	@Inject
-	protected CustomFieldInstanceService customFieldInstanceService;
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
-	@Inject
-	private OfferServiceTemplateService offerServiceTemplateService;
+    @Inject
+    private BusinessOfferModelService businessOfferModelService;
 
-	@Inject
-	private OfferProductTemplateService offerProductTemplateService;
+    @Inject
+    private EntityToDtoConverter entityToDtoConverter;
 
-	@Inject
-	private BusinessOfferModelService businessOfferModelService;
+    @Inject
+    private EntityExportImportService entityExportImportService;
 
-	@Inject
-	private EntityToDtoConverter entityToDtoConverter;
+    private Long bomId;
 
-	@Inject
-	private ChannelService channelService;
+    private DualListModel<ServiceTemplate> incompatibleServices;
+    private OfferServiceTemplate offerServiceTemplate;
+    private OfferProductTemplate offerProductTemplate;
+    private UploadedFile uploadedFile;
+    private BusinessOfferModel businessOfferModel;
 
-	@Inject
-	private BusinessAccountModelService businessAccountModelService;
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public OfferTemplateBean() {
+        super(OfferTemplate.class);
+    }
 
-	@Inject
-	private OfferTemplateCategoryService offerTemplateCategoryService;
+    @Override
+    public OfferTemplate initEntity() {
+        OfferTemplate result = super.initEntity();
 
-	@Inject
-	private EntityExportImportService entityExportImportService;
+        if (bomId != null) {
+            businessOfferModel = businessOfferModelService.findById(bomId);
+        }
 
-	private Long bomId;
+        return result;
+    }
 
-	private DualListModel<ServiceTemplate> incompatibleServices;
-	private DualListModel<BusinessAccountModel> businessAccountModelsDM;
-	private DualListModel<Channel> channelsDM;
-	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
-	private OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-	private OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
-	private UploadedFile uploadedFile;
-	private BusinessOfferModel businessOfferModel;
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<OfferTemplate> getPersistenceService() {
+        return offerTemplateService;
+    }
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public OfferTemplateBean() {
-		super(OfferTemplate.class);
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider", "offerTemplateCategories", "channels", "businessAccountModels");
+    }
 
-	@Override
-	public OfferTemplate initEntity() {
-		OfferTemplate result = super.initEntity();
+    public List<OfferTemplate> listActive() {
+        Map<String, Object> filters = getFilters();
+        filters.put("disabled", false);
+        PaginationConfiguration config = new PaginationConfiguration(filters);
 
-		if (bomId != null) {
-			businessOfferModel = businessOfferModelService.findById(bomId);
-		}
+        return offerTemplateService.list(config);
+    }
 
-		return result;
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<OfferTemplate> getPersistenceService() {
-		return offerTemplateService;
-	}
+    @ActionMethod
+    public void duplicate() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                offerTemplateService.duplicate(entity, getCurrentUser());
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
+        }
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "offerTemplateCategories", "channels", "businessAccountModels");
-	}
+    public boolean isUsedInSubscription() {
+        return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
+            getEntity()).size() > 0) ? true : false;
+    }
 
-	public List<OfferTemplate> listActive() {
-		Map<String, Object> filters = getFilters();
-		filters.put("disabled", false);
-		PaginationConfiguration config = new PaginationConfiguration(filters);
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        if (bomId != null && businessOfferModel != null) {
+            Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValues();
+            CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
 
-		return offerTemplateService.list(config);
-	}
+            List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
+            // process the services
+            for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+                ServiceTemplate st = ost.getServiceTemplate();
+                if (st.isSelected()) {
+                    Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValues();
+                    CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+                    ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+                    serviceConfigurationDto.setCode(st.getCode());
+                    serviceConfigurationDto.setDescription(st.getDescription());
+                    servicesConfigurations.add(serviceConfigurationDto);
+                    if (stCfsDto != null) {
+                        serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
+                    }
+                }
+            }
 
-	@ActionMethod
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			try {
-				offerTemplateService.duplicate(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessException e) {
-				log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-		}
-	}
+            OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null,
+                offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations,
+                entity.getChannels(), entity.getBusinessAccountModels(), entity.getOfferTemplateCategories(), currentUser);
 
-	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
-				getEntity()).size() > 0) ? true : false;
-	}
+            // populate service custom fields
+            for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+                ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+                if (serviceTemplate.isSelected()) {
+                    for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
+                        ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
+                        String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
+                        if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
+                            Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
+                                .getValues();
+                            if (stCustomFieldInstances != null) {
+                                // populate offer cf
+                                customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (bomId != null && businessOfferModel != null) {
-			Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValues();
-			CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
+            // populate offer cf
+            customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
 
-			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
-			// process the services
-			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
-				ServiceTemplate st = ost.getServiceTemplate();
-				if (st.isSelected()) {
-					Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValues();
-					CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
+            return back();
+        } else {
+            boolean newEntity = (entity.getId() == null);
 
-					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-					serviceConfigurationDto.setCode(st.getCode());
-					serviceConfigurationDto.setDescription(st.getDescription());
-					servicesConfigurations.add(serviceConfigurationDto);
-					if (stCfsDto != null) {
-						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
-					}
-				}
-			}
+            String outcome = super.saveOrUpdate(killConversation);
 
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null,
-					offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations,
-					entity.getChannels(), entity.getBusinessAccountModels(), entity.getOfferTemplateCategories(), currentUser);
+            if (outcome != null) {
 
-			// populate service custom fields
-			for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
-				ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-				if (serviceTemplate.isSelected()) {
-					for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
-						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
-						String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
-						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
-							Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
-									.getValues();
-							if (stCustomFieldInstances != null) {
-								// populate offer cf
-								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false);
-								break;
-							}
-						}
-					}
-				}
-			}
+                if (outcome.equals("mm_offers")) {
+                    // populate service custom fields
+                    for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+                        ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+                        Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
+                        if (stCustomFieldInstances != null) {
+                            // populate offer cf
+                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false);
+                        }
+                    }
+                }
 
-			// populate offer cf
-			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
+                return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
+            }
+        }
 
-			return back();
-		} else {
-			boolean newEntity = (entity.getId() == null);
+        return null;
+    }
 
-			if (channelsDM != null && (channelsDM.getSource() != null || channelsDM.getTarget() != null)) {
-				entity.getChannels().clear();
-				entity.getChannels().addAll(channelService.refreshOrRetrieve(channelsDM.getTarget()));
-			}
-			if (businessAccountModelsDM != null && (businessAccountModelsDM.getSource() != null || businessAccountModelsDM.getTarget() != null)) {
-				entity.getBusinessAccountModels().clear();
-				entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(businessAccountModelsDM.getTarget()));
-			}
-			if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
-				entity.getOfferTemplateCategories().clear();
-				entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
-			}
+    @ActionMethod
+    public void saveOfferServiceTemplate() {
+        log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
-			String outcome = super.saveOrUpdate(killConversation);
+        try {
+            if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
 
-			if (outcome != null) {
+            offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
 
-				if (outcome.equals("mm_offers")) {
-					// populate service custom fields
-					for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
-						ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-						Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
-						if (stCustomFieldInstances != null) {
-							// populate offer cf
-							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false);
-						}
-					}
-				}
+            if (offerServiceTemplate.getId() != null) {
+                messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.update.successful"));
 
-				return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
-			}
-		}
+            } else {
 
-		return null;
-	}
+                // Validate that such service was not added earlier
+                if (entity.containsServiceTemplate(offerServiceTemplate.getServiceTemplate())) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), offerServiceTemplate.getServiceTemplate().getDescriptionOrCode());
+                    return;
+                }
 
-	public void saveOfferServiceTemplate() {
-		log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
+                offerServiceTemplate.setOfferTemplate(entity);
+                entity.addOfferServiceTemplate(offerServiceTemplate);
+                messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.create.successful"));
+            }
 
-		try {
-			if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-			offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
-			if (offerServiceTemplate.getId() != null) {
-				offerServiceTemplate = offerServiceTemplateService.update(offerServiceTemplate, getCurrentUser());
-				entity = getPersistenceService().refreshOrRetrieve(entity);
-				messages.info(new BundleKey("messages", "update.successful"));
+        } catch (Exception e) {
+            log.error("exception when saving offer service template !", e.getMessage());
+            messages.error(new BundleKey("messages", "save.unsuccessful"));
+        }
 
-			} else {
-				offerServiceTemplate.setOfferTemplate(entity);
-				offerServiceTemplateService.create(offerServiceTemplate, getCurrentUser());
-				entity.addOfferServiceTemplate(offerServiceTemplate);
-				entity = getPersistenceService().update(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			}
-
-			offerServiceTemplate.getIncompatibleServices().clear();
-			offerServiceTemplate.getIncompatibleServices().addAll(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
-
-		} catch (Exception e) {
-			log.error("exception when saving offer service template !", e.getMessage());
-			messages.error(new BundleKey("messages", "save.unsuccessful"));
-		}
-
-		newOfferServiceTemplate();
-	}
+        offerServiceTemplate = null;
+    }
 
     @ActionMethod
     public void deleteOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
         try {
-            entity.getOfferServiceTemplates().remove(offerServiceTemplate);
-            entity = getPersistenceService().update(entity, getCurrentUser());
-            offerServiceTemplateService.remove(offerServiceTemplate.getId(), getCurrentUser());
-            messages.info(new BundleKey("messages", "delete.successful"));
 
-            newOfferServiceTemplate();
+            entity.getOfferServiceTemplates().remove(offerServiceTemplate);
+            this.offerServiceTemplate = null;
+
+            messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.delete.successful"));
 
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
-	}
+    }
 
-	public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
-		entity.getOfferProductTemplates().remove(offerProductTemplate);
-		messages.info(new BundleKey("messages", "delete.successful"));
+    @ActionMethod
+    public void deleteOfferProductTemplate(OfferProductTemplate offerProductTemplate) throws BusinessException {
+        try {
+            entity.getOfferProductTemplates().remove(offerProductTemplate);
+            this.offerProductTemplate = null;
 
-		newOfferProductTemplate();
-	}
+            messages.info(new BundleKey("messages", "offerTemplate.productTemplate.delete.successful"));
 
-	public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
-		this.offerServiceTemplate = offerServiceTemplate;
-		setIncompatibleServices(null);
-	}
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
+    }
 
-	public void newOfferProductTemplate() {
-		this.offerProductTemplate = new OfferProductTemplate();
-	}
+    public void editOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
+        this.offerServiceTemplate = offerServiceTemplate;
+        setIncompatibleServices(null);
+    }
 
-	public void editOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
-		this.offerProductTemplate = offerProductTemplate;
-	}
+    public void cancelOfferServiceTemplateEdit() {
+        this.offerServiceTemplate = null;
+    }
 
-	public void saveOfferProductTemplate() {
-		log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
+    public void newOfferProductTemplate() {
+        this.offerProductTemplate = new OfferProductTemplate();
+    }
 
-		try {
-			if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
+    public void editOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+        this.offerProductTemplate = offerProductTemplate;
+    }
 
-			if (offerProductTemplate.getId() != null) {
-				offerProductTemplate = offerProductTemplateService.update(offerProductTemplate, getCurrentUser());
-				entity = getPersistenceService().refreshOrRetrieve(entity);
-				messages.info(new BundleKey("messages", "update.successful"));
+    public void cancelOfferProductTemplateEdit() {
+        this.offerProductTemplate = null;
+    }
 
-			} else {
-				offerProductTemplate.setOfferTemplate(entity);
-				offerProductTemplateService.create(offerProductTemplate, getCurrentUser());
-				entity.addOfferProductTemplate(offerProductTemplate);
-				entity = getPersistenceService().update(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			}
+    @ActionMethod
+    public void saveOfferProductTemplate() {
+        log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
 
-		} catch (Exception e) {
-			log.error("exception when saving offer product template !", e.getMessage());
-			messages.error(new BundleKey("messages", "save.unsuccessful"));
-		}
+        try {
+            if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
 
-		newOfferProductTemplate();
-	}
+            if (offerProductTemplate.getId() != null) {
+                messages.info(new BundleKey("messages", "offerTemplate.productTemplate.update.successful"));
 
-	public void newOfferServiceTemplate() {
-		this.offerServiceTemplate = new OfferServiceTemplate();
-		this.incompatibleServices = null;
-	}
+            } else {
 
-	public OfferServiceTemplate getOfferServiceTemplate() {
-		return offerServiceTemplate;
-	}
+                // Validate that such service was not added earlier
+                if (entity.containsProductTemplate(offerProductTemplate.getProductTemplate())) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), offerProductTemplate.getProductTemplate().getDescriptionOrCode());
+                    return;
+                }
 
-	public void setOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
-		this.offerServiceTemplate = offerServiceTemplate;
-	}
+                offerProductTemplate.setOfferTemplate(entity);
+                entity.addOfferProductTemplate(offerProductTemplate);
+                messages.info(new BundleKey("messages", "offerTemplate.productTemplate.create.successful"));
+            }
 
-	public DualListModel<ServiceTemplate> getIncompatibleServices() {
+        } catch (Exception e) {
+            log.error("Failed to save offer product template !", e.getMessage());
+            messages.error(new BundleKey("messages", "save.unsuccessful"));
+        }
 
-		if (incompatibleServices == null) {
-			List<ServiceTemplate> source = null;
-			if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
-				source = serviceTemplateService.listActive();
-			} else {
-				source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
-			}
+        offerProductTemplate = null;
+    }
 
-			List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
+    public void newOfferServiceTemplate() {
+        this.offerServiceTemplate = new OfferServiceTemplate();
+        this.incompatibleServices = null;
+    }
 
-			if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
-				target.addAll(offerServiceTemplate.getIncompatibleServices());
-			}
-			source.removeAll(target);
-			incompatibleServices = new DualListModel<ServiceTemplate>(source, target);
-		}
-		return incompatibleServices;
-	}
+    public OfferServiceTemplate getOfferServiceTemplate() {
+        return offerServiceTemplate;
+    }
 
-	public void setIncompatibleServices(DualListModel<ServiceTemplate> incompatibleServices) {
-		this.incompatibleServices = incompatibleServices;
-	}
+    public void setOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
+        this.offerServiceTemplate = offerServiceTemplate;
+    }
 
-	public UploadedFile getUploadedFile() {
-		return uploadedFile;
-	}
+    public DualListModel<ServiceTemplate> getIncompatibleServices() {
 
-	public void setUploadedFile(UploadedFile uploadedFile) {
-		this.uploadedFile = uploadedFile;
-	}
+        if (incompatibleServices == null) {
+            List<ServiceTemplate> source = null;
+            if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
+                source = serviceTemplateService.listActive();
+            } else {
+                source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
+            }
 
-	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
-		uploadedFile = event.getFile();
+            List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();
 
-		if (uploadedFile != null) {
-			byte[] contents = uploadedFile.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				entity.setImage(null);
-			}
-			entity.setImageContentType(uploadedFile.getContentType());
+            if (offerServiceTemplate != null && offerServiceTemplate.getIncompatibleServices() != null && offerServiceTemplate.getIncompatibleServices().size() > 0) {
+                target.addAll(offerServiceTemplate.getIncompatibleServices());
+            }
+            source.removeAll(target);
+            incompatibleServices = new DualListModel<ServiceTemplate>(source, target);
+        }
+        return incompatibleServices;
+    }
 
-			saveOrUpdate(entity);
+    public void setIncompatibleServices(DualListModel<ServiceTemplate> incompatibleServices) {
+        this.incompatibleServices = incompatibleServices;
+    }
 
-			initEntity();
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
 
-			messages.info(new BundleKey("messages", "message.upload.succesful"));
-		}
-	}
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
 
-	public OfferProductTemplate getOfferProductTemplate() {
-		return offerProductTemplate;
-	}
+    public void handleFileUpload(FileUploadEvent event) throws BusinessException {
+        uploadedFile = event.getFile();
 
-	public void setOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
-		this.offerProductTemplate = offerProductTemplate;
-	}
+        if (uploadedFile != null) {
+            byte[] contents = uploadedFile.getContents();
+            try {
+                entity.setImage(new SerialBlob(contents));
+            } catch (SQLException e) {
+                entity.setImage(null);
+            }
+            entity.setImageContentType(uploadedFile.getContentType());
 
-	public Long getBomId() {
-		return bomId;
-	}
+            saveOrUpdate(entity);
 
-	public void setBomId(Long bomId) {
-		this.bomId = bomId;
-	}
+            initEntity();
 
-	public DualListModel<BusinessAccountModel> getBusinessAccountModelsDM() {
-		if (businessAccountModelsDM == null) {
-			List<BusinessAccountModel> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = businessAccountModelService.listInstalled(entity.getProvider());
-			} else {
-				perksSource = businessAccountModelService.listInstalled(currentUser.getProvider());
-			}
+            messages.info(new BundleKey("messages", "message.upload.succesful"));
+        }
+    }
 
-			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
-			if (entity.getBusinessAccountModels() != null) {
-				perksTarget.addAll(entity.getBusinessAccountModels());
-			}
+    public OfferProductTemplate getOfferProductTemplate() {
+        return offerProductTemplate;
+    }
 
-			perksSource.removeAll(perksTarget);
-			businessAccountModelsDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
-		}
+    public void setOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+        this.offerProductTemplate = offerProductTemplate;
+    }
 
-		return businessAccountModelsDM;
-	}
+    public Long getBomId() {
+        return bomId;
+    }
 
-	public void setBusinessAccountModelsDM(DualListModel<BusinessAccountModel> businessAccountModelsDM) {
-		this.businessAccountModelsDM = businessAccountModelsDM;
-	}
+    public void setBomId(Long bomId) {
+        this.bomId = bomId;
+    }
 
-	public DualListModel<Channel> getChannelsDM() {
-		if (channelsDM == null) {
-			List<Channel> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = channelService.list(entity.getProvider());
-			} else {
-				perksSource = channelService.list(currentUser.getProvider());
-			}
+    public ExportTemplate getMarketingCatalogExportTemplate() {
+        return entityExportImportService.getExportImportTemplate("Offers");
+    }
 
-			List<Channel> perksTarget = new ArrayList<Channel>();
-			if (entity.getChannels() != null) {
-				perksTarget.addAll(entity.getChannels());
-			}
+    public BusinessOfferModel getBusinessOfferModel() {
+        return businessOfferModel;
+    }
 
-			perksSource.removeAll(perksTarget);
-			channelsDM = new DualListModel<Channel>(perksSource, perksTarget);
-		}
+    public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
+        this.businessOfferModel = businessOfferModel;
+    }
 
-		return channelsDM;
-	}
+    public void onNameChange() {
+        if (StringUtils.isEmpty(entity.getCode())) {
+            entity.setCode(entity.getName());
+        }
+    }
 
-	public void setChannelsDM(DualListModel<Channel> channelsDM) {
-		this.channelsDM = channelsDM;
-	}
+    public void onCodeChange() {
+        if (StringUtils.isEmpty(entity.getName())) {
+            entity.setName(entity.getCode());
+        }
+    }
 
-	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
-		if (offerTemplateCategoriesDM == null) {
-			List<OfferTemplateCategory> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = offerTemplateCategoryService.list(entity.getProvider());
-			} else {
-				perksSource = offerTemplateCategoryService.list(currentUser.getProvider());
-			}
+    @ActionMethod
+    public void addProductTemplateToOffer(ProductTemplate productTemplate) {
 
-			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
-			if (entity.getOfferTemplateCategories() != null) {
-				perksTarget.addAll(entity.getOfferTemplateCategories());
-			}
+        if (entity.containsProductTemplate(productTemplate)) {
+            messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), productTemplate.getDescriptionOrCode());
+            return;
+        }
 
-			perksSource.removeAll(perksTarget);
-			offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
-		}
+        OfferProductTemplate opt = new OfferProductTemplate();
+        opt.setProductTemplate(productTemplate);
+        opt.setOfferTemplate(entity);
 
-		return offerTemplateCategoriesDM;
-	}
+        entity.addOfferProductTemplate(opt);
 
-	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
-		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
-	}
-
-	public ExportTemplate getMarketingCatalogExportTemplate() {
-		return entityExportImportService.getExportImportTemplate("Offers");
-	}
-
-	public BusinessOfferModel getBusinessOfferModel() {
-		return businessOfferModel;
-	}
-
-	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
-		this.businessOfferModel = businessOfferModel;
-	}
-
-	public void onNameChange() {
-		if (StringUtils.isEmpty(entity.getCode())) {
-			entity.setCode(entity.getName());
-		}
-	}
-
-	public void addProductTemplateToOffer(ProductTemplate prodTemplate) {
-		boolean found = false;
-		for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
-			if (prodTemplate.equals(opt.getProductTemplate())) {
-				found = true;
-			}
-		}
-
-		if (!found) {
-			OfferProductTemplate opt = new OfferProductTemplate();
-			opt.setProductTemplate(prodTemplate);
-			opt.setOfferTemplate(entity);
-
-			try {
-				entity.addOfferProductTemplate(opt);
-				entity = getPersistenceService().update(entity, currentUser);
-			} catch (BusinessException e) {
-				log.error("IPIEL: fail creating opt {}", e.getMessage());
-				messages.error(e.getMessage());
-			}
-		}
-	}
-
-	public void removeProductTemplateFromOffer(OfferProductTemplate offerProductTemplate) throws BusinessException {
-		entity.getOfferProductTemplates().remove(offerProductTemplate);
-		entity = getPersistenceService().update(entity, getCurrentUser());
-
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+        messages.info(new BundleKey("messages", "offerTemplate.productTemplate.create.successful"));
+    }
 }

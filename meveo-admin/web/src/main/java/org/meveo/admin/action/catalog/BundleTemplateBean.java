@@ -30,7 +30,6 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.BundleProductTemplateService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
@@ -55,9 +54,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	@Inject
 	protected BundleTemplateService bundleTemplateService;
-
-	@Inject
-	protected BundleProductTemplateService bundleProductTemplateService;
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
