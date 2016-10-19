@@ -187,9 +187,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @ActionMethod
     public void deleteWfTransition(WFTransition transitionToDelete) {
         try {
-            WFTransition transition = wFTransitionService.findById(transitionToDelete.getId());
-            wFTransitionService.remove(transition, getCurrentUser());
-            entity.getTransitions().remove(transitionToDelete);
+            wFTransitionService.remove(transitionToDelete.getId(), getCurrentUser());
+            entity = workflowService.refreshOrRetrieve(entity);
             wfDecisionRulesByName.clear();
             selectedRules.clear();
             wfActions.clear();
@@ -197,6 +196,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {
+            log.info("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }
@@ -234,13 +234,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
         List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
         List<String> classNames = new ArrayList<String>();
         for (Class<?> clazz : allWFType) {
-        	if(!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())){
-	            if (StringUtils.isBlank(query)) {
-	                classNames.add(clazz.getName());
-	            } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
-	                classNames.add(clazz.getName());
-	            }
-        	}
+            if (!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())) {
+                if (StringUtils.isBlank(query)) {
+                    classNames.add(clazz.getName());
+                } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
+                    classNames.add(clazz.getName());
+                }
+            }
         }
         Collections.sort(classNames);
         return classNames;
@@ -608,17 +608,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
             return result;
         }
     }
-    
+
     @ActionMethod
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			try {
-				workflowService.duplicate(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessException e) {
-				log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-		}
-	}
+    public void duplicate() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                workflowService.duplicate(entity, getCurrentUser());
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
+        }
+    }
 }
