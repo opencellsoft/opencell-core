@@ -165,11 +165,6 @@
 
                             <p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
                                 <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
-                                    <f:facet name="header">
-                                        <p:panel styleClass="TexAlLeft">
-                                            <h:outputText value="#{messages['marketingManager.catalog.service']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-                                        </p:panel>
-                                    </f:facet>
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
                                         <p:selectBooleanCheckbox id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
