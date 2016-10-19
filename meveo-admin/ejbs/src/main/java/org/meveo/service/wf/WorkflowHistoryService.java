@@ -25,7 +25,6 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
