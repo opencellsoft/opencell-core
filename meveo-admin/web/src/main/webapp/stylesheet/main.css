@@ -310,7 +310,6 @@ div.body > table > thead,
 .ui-menubar .ui-menu-child { background-color : #efeff0 !important; }
 .ui-menubar .ui-menu-child .ui-menuitem-link {width: 100%;}
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-s { background-image : url(../img/ui-icons_616161_256x240.png) !Important; }
-.ui-icon-triangle-1-s { background-image : url(../img/ui-icons_616161_256x240-2.png) !Important; background-position : -64px -16px; }
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-e { background-image : url(../img/ui-icons_616161_256x240-2.png) !Important; }
 /* .ui-button:hover .ui-button-icon-left { background-image : url(../img/ui-icons_616161_256x240-1.png) !Important; } */
 
