@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -10,10 +11,17 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['offerTemplate.search']}"
-			backingBean="#{offerTemplateListBean}">
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" styleClass="no-text-decoration" />
+                <p:menuitem value="#{messages['menu.offers']}" outcome="offerTemplates" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel backingBean="#{offerTemplateListBean}">
 			<hftl:searchField label="#{messages['offerTemplate.code']}"
 				field="code" />
 			<hftl:searchField label="#{messages['offerTemplate.description']}"

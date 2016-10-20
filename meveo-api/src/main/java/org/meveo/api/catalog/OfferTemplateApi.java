@@ -2,7 +2,6 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,8 +27,6 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.OfferProductTemplateService;
-import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -48,9 +45,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 	private ServiceTemplateService serviceTemplateService;
 
 	@Inject
-	private OfferServiceTemplateService offerServiceTemplateService;
-
-	@Inject
 	private BusinessOfferModelService businessOfferModelService;
 
 	@Inject
@@ -59,9 +53,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 	@Inject
 	private ProductTemplateService productTemplateService;
 	
-	@Inject
-	private OfferProductTemplateService offerProductTemplateService;
-
 	public OfferTemplate create(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
@@ -144,7 +135,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 					offerServiceTemplate.setIncompatibleServices(incompatibleServices);
 				}
 
-				offerServiceTemplateService.create(offerServiceTemplate, currentUser);
 				offerServiceTemplates.add(offerServiceTemplate);
 			}
 			if (offerServiceTemplates.size() > 0) {
@@ -275,12 +265,11 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 				if (toBeDeleted.size() > 0) {
 					for (OfferServiceTemplate offerServiceTemplate : toBeDeleted) {
-						offerServiceTemplateService.remove(offerServiceTemplate, currentUser);
+						offerTemplate.getOfferServiceTemplates().remove(offerServiceTemplate);
 					}
 				}
 
 				if (toBeAdded.size() > 0) {
-					List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 					for (OfferServiceTemplateDto offerServiceTemplateDto : toBeAdded) {
 						ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
 						ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
@@ -310,13 +299,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 							offerServiceTemplate.setIncompatibleServices(incompatibleServices);
 						}
 
-						offerServiceTemplateService.create(offerServiceTemplate, currentUser);
-						offerServiceTemplates.add(offerServiceTemplate);
+						offerTemplate.getOfferServiceTemplates().add(offerServiceTemplate);
 					}
 
-					if (offerServiceTemplates.size() > 0) {
-						offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
-					}
 				}
 			} else {
 				List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
@@ -349,7 +334,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 						offerServiceTemplate.setIncompatibleServices(incompatibleServices);
 					}
 
-					offerServiceTemplateService.create(offerServiceTemplate, currentUser);
 					offerServiceTemplates.add(offerServiceTemplate);
 				}
 
@@ -380,7 +364,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
 		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
 		boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
-		Set<OfferProductTemplate> existingProductTemplates = offerProductTemplateService.refreshOrRetrieve(offerTemplate.getOfferProductTemplates());
+		List<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
 		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
 		if (hasOfferProductTemplateDtos) {
 			List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
@@ -451,7 +435,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 		OfferTemplateDto offerTemplateDto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate));
 
-		Set<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
+		List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
 		if (childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()) {
 			List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
 			OfferProductTemplateDto offerProductTemplateDto = null;

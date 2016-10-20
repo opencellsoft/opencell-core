@@ -116,7 +116,7 @@ public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 		public WorkflowHistoryResponseDto findHistory( String entityInstanceCode, String workflowCode, String fromStatus, String toStatus) {
 			WorkflowHistoryResponseDto workflowHistoryResponseDto = new WorkflowHistoryResponseDto();
 			try {
-				workflowHistoryResponseDto.setListWorkflowHistoryDto(workflowApi.findHistory(entityInstanceCode,  workflowCode,  fromStatus,  toStatus,getCurrentUser()));
+				workflowHistoryResponseDto.setWorkflowHistories(workflowApi.findHistory(entityInstanceCode,  workflowCode,  fromStatus,  toStatus,getCurrentUser()));
 			} catch (Exception e) {
 	        	super.processException(e, workflowHistoryResponseDto.getActionStatus());
 	        }			

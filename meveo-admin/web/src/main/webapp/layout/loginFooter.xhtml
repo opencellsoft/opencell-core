@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:custom="http://manaty.net/custom" contentType="text/html">
+
+
+	<footer class="text-center">
+		<div class="row">
+			<div class="footer-links col-xs-12">
+				<ul class="list-inline">
+					<li><a href="https://opencellsoft.com/about/" target="_blank">About Opencell</a></li>
+					<li><a href="https://app.assembla.com/spaces/meveo/messages" target="_blank">Community</a></li>
+					<li><a href="https://opencellsoft.com/privacy/" target="_blank">Privacy</a></li>
+					<li><a href="https://opencellsoft.com/contact_us/" target="_blank">Contact us</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="footer-icons col-xs-12">
+				<ul class="list-inline">
+					<li>
+						<a href="https://www.youtube.com/c/Opencellsoftwares/videos" target="_blank">
+							<i class="fa fa-youtube" />
+						</a>
+					</li>
+					<li>
+						<a href="https://www.facebook.com/opencellsoftware" target="_blank">
+							<i class="fa fa-facebook" />
+						</a>
+					</li>
+					<li>
+						<a href="https://twitter.com/opencellsoft" target="_blank">
+							<i class="fa fa-twitter" />
+						</a>
+					</li>
+					<li>
+						<a href="https://www.linkedin.com/company/opencell" target="_blank">
+							<i class="fa fa-linkedin" />
+						</a>
+					</li>
+					<li>
+						<div class="footer-copyright">
+							<ui:param name="buildNumber" value="@BUILD_NUMBER@" />
+							<i class="fa fa-copyright" /> Opencell @VERSION_NUMBER@ commit #{buildNumber}
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+
+	<p:ajaxStatus
+		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		<f:facet name="start">
+			<h:graphicImage library="img" name="loading.gif" />
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+		closeOnEscape="true">
+		<p:commandButton value="#{messages['commons.yes']}" type="button"
+			styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		<p:commandButton value="#{messages['commons.no']}" type="button"
+			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	</p:confirmDialog>
+	
+</f:view>

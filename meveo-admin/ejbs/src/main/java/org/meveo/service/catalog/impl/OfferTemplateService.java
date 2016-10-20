@@ -20,9 +20,7 @@ package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -53,9 +51,6 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
-
-	@Inject
-	private OfferServiceTemplateService offerServiceTemplateService;
 
 	@Override
 	public void create(OfferTemplate offerTemplate, User creator) throws BusinessException {
@@ -138,7 +133,13 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		entity.getAttachments().size();
 		entity.getChannels().size();
 		entity.getOfferProductTemplates().size();
-		entity.getOfferTemplateCategories().size();
+        entity.getOfferTemplateCategories().size();
+
+        if (entity.getOfferServiceTemplates() != null) {
+            for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
+                offerServiceTemplate.getIncompatibleServices().size();
+            }
+        }
 
 		String code = findDuplicateCode(entity, currentUser);
 
@@ -146,8 +147,8 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		detach(entity);
 		entity.setId(null);
 		String sourceAppliesToEntity = entity.clearUuid();
-
-		List<OfferServiceTemplate> serviceTemplates = entity.getOfferServiceTemplates();
+		
+		List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
 		entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
 
 		List<BusinessAccountModel> businessAccountModels = entity.getBusinessAccountModels();
@@ -159,19 +160,17 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		List<Channel> channels = entity.getChannels();
 		entity.setChannels(new ArrayList<Channel>());
 
-		Set<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
-		entity.setOfferProductTemplates(new HashSet<OfferProductTemplate>());
+		List<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
+		entity.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
 
 		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
 		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
 		entity.setCode(code);
-		create(entity, currentUser);
 
-		if (serviceTemplates != null) {
-			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
+		if (offerServiceTemplates != null) {
+			for (OfferServiceTemplate serviceTemplate : offerServiceTemplates) {
 				serviceTemplate.getIncompatibleServices().size();
-				offerServiceTemplateService.detach(serviceTemplate);
 				serviceTemplate.setId(null);
 				List<ServiceTemplate> incompatibleServices = serviceTemplate.getIncompatibleServices();
 				serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
@@ -181,7 +180,6 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 					}
 				}
 				serviceTemplate.setOfferTemplate(entity);
-				offerServiceTemplateService.create(serviceTemplate, currentUser);
 				entity.addOfferServiceTemplate(serviceTemplate);
 			}
 		}
@@ -206,6 +204,8 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 		if (offerProductTemplates != null) {
 			for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+			    offerProductTemplate.setId(null);
+			    offerProductTemplate.setOfferTemplate(entity);
 				entity.getOfferProductTemplates().add(offerProductTemplate);
 			}
 		}
@@ -216,7 +216,7 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 			}
 		}
 
-		update(entity, currentUser);
+        create(entity, currentUser);
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
 

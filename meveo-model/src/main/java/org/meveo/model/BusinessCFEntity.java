@@ -44,6 +44,11 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
         this.uuid = uuid;
     }
 
+    /**
+     * Change UUID value. Return old value
+     * 
+     * @return Old UUID value
+     */
     @Override
     public String clearUuid() {
         String oldUuid = uuid;
