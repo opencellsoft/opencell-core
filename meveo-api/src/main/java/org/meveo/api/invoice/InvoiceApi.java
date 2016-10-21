@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.FilterApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
@@ -38,7 +37,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -68,7 +66,6 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -475,7 +472,6 @@ public class InvoiceApi extends BaseApi {
 	 * @throws BusinessApiException
 	 * @throws Exception
 	 */
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
@@ -515,7 +511,7 @@ public class InvoiceApi extends BaseApi {
 
 		
 		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, generateInvoiceRequestDto.getInvoicingDate());
-		log.info("createRatedTransaction ok");
+		log.debug("createRatedTransaction ok");
 
 		Filter ratedTransactionFilter =null;
 		if(generateInvoiceRequestDto.getFilter()!=null){
@@ -524,7 +520,7 @@ public class InvoiceApi extends BaseApi {
 
 		Invoice invoice = invoiceService.createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter
 				,generateInvoiceRequestDto.getInvoicingDate(),generateInvoiceRequestDto.getLastTransactionDate(),currentUser);
-		log.info("createAgregatesAndInvoice ok");
+		log.debug("createAgregatesAndInvoice ok ");
 
 		invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
 		invoice.setPdf(null);							

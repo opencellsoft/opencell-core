@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -44,7 +46,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	ParamBean param  = ParamBean.getInstance();
 
 	public InvoiceType getDefaultType(String invoiceTypeCode, User currentUser) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider());
+		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider(),Arrays.asList("code","sellerSequence"));
 		if (defaultInvoiceType != null) {
 			return defaultInvoiceType;
 		}
