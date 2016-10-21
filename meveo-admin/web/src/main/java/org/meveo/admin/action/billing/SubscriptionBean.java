@@ -285,7 +285,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		selectedWalletTemplate = new WalletTemplate();
 		selectedWalletTemplateCode=null;
 	}
-
+	
     public void saveOneShotChargeIns() {
         log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
         try {
@@ -321,6 +321,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             messages.info(new BundleKey("messages", "save.successful"));
 
+        } catch (BusinessException e1) {
+        	log.error("exception when applying one shot charge!", e1);
+			messages.error(e1.getMessage());
         } catch (Exception e) {
             log.error("exception when applying one shot charge!", e);
             messages.error(e.getMessage());
@@ -926,7 +929,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	public List<ProductTemplate> getOfferProductTemplates() {
 		List<ProductTemplate> result = new ArrayList<>();
 
-		if (entity != null) {
+		if (entity != null && entity.getOffer() != null) {
 			for (OfferProductTemplate offerProductTemplate : offerTemplateService.refreshOrRetrieve(entity.getOffer()).getOfferProductTemplates()) {
                 result.add(offerProductTemplate.getProductTemplate());
             }
