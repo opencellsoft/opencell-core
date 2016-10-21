@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 

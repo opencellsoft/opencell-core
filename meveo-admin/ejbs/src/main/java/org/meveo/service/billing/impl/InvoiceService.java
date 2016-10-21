@@ -405,9 +405,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			billingRun = em.find(BillingRun.class, billingRunId);
 			em.refresh(billingRun);
 		} else {
-			if(ratedTransactionFilter==null){
-				throw new BusinessException("Both billingRun and Filter cannot be null when invoicing");
-			}
 			if(invoiceDate==null){
 				throw new BusinessException("invoiceDate must be set if billingRun is null");	
 			}
@@ -430,6 +427,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(invoiceType == null){
 				invoiceType = invoiceTypeService.getDefaultCommertial(currentUser);
 			}
+			log.debug("invoiceType {}",invoiceType.getCode());
 			invoice = new Invoice();
 			invoice.setInvoiceType(invoiceType);
 			invoice.setBillingAccount(billingAccount);
@@ -467,19 +465,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
 
-			//Note that rated transactions get updated in ratedTransactionservice in case of Filter
+			// Note that rated transactions get updated in
+			// ratedTransactionservice in case of Filter
 			if(ratedTransactionFilter==null){
 				if (currentUser.getProvider().isDisplayFreeTransacInInvoice()) {
-					em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
-							.setParameter("billingAccount", billingAccount)
-							.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-							.setParameter("billingRun", billingRun).setParameter("invoice", invoice).executeUpdate();
+					Query query = em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree" + (billingRun == null ? "NoBR" : "")).
+							         setParameter("billingAccount", billingAccount).
+							         setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).
+							         setParameter("invoice", invoice);
+					if (billingRun != null) {
+						query = query.setParameter("billingRun", billingRun);
+					}
+					query.executeUpdate();
 				} else {
-					em.createNamedQuery("RatedTransaction.updateInvoiced").setParameter("billingAccount", billingAccount)
-							.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-							.setParameter("billingRun", billingRun).setParameter("invoice", invoice).executeUpdate();
-	
+					Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : ""))
+							.setParameter("billingAccount", billingAccount)
+							.setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate())
+							.setParameter("invoice", invoice);
+					if (billingRun != null) {
+						query = query.setParameter("billingRun", billingRun);
 				}
+					query.executeUpdate();
+			}
 			}
 
 			StringBuffer num1 = new StringBuffer("000000000");
@@ -495,7 +502,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			// getEntityManager().merge(invoice);
 			Long endDate = System.currentTimeMillis();
 
-			log.info("createAgregatesAndInvoice BR_ID=" + billingRun==null?"null":billingRun.getId() + ", BA_ID=" + billingAccount.getId()
+			log.info("createAgregatesAndInvoice BR_ID=" +( billingRun==null?"null":billingRun.getId() )+ ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
 		} catch (Exception e) {
 			log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
