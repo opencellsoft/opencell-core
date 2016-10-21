@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -69,7 +70,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     @NotNull
     private String appliesTo;
 
-    @Column(name = "VALUE_REQUIRED", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -86,7 +88,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Transient
     private boolean matrixColumnsSorted;
 
-    @Column(name = "VERSIONABLE", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "VERSIONABLE")
     private boolean versionable;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -116,18 +119,21 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
-    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false, columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
 
     @Column(name = "GUI_POSITION", length = 100)
     @Size(max = 100)
     private String guiPosition;
 
-    @Column(name = "ALLOW_EDIT", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "ALLOW_EDIT")
     @NotNull
     private boolean allowEdit = true;
 
-    @Column(name = "HIDE_ON_NEW", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "HIDE_ON_NEW")
     @NotNull
     private boolean hideOnNew;
 
@@ -145,7 +151,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 2000)
     private String applicableOnEl;
 
-    @Column(name = "CACHE_VALUE", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "CACHE_VALUE")
     @NotNull
     private boolean cacheValue;
 

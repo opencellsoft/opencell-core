@@ -45,7 +45,7 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
     @NotNull
     private String name;
 
-    @Column(name = "IMAGE", columnDefinition="binary")
+    @Column(name = "IMAGE")
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private Blob image;

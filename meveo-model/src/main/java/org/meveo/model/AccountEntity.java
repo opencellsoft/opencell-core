@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
@@ -62,7 +63,8 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	@Embedded
 	private Address address = new Address();
 
-	@Column(name = "DEFAULT_LEVEL", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
     @Column(name = "PROVIDER_CONTACT", length = 255)

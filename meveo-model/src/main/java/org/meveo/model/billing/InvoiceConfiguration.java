@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
@@ -41,34 +42,44 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     @Column(name = "VERSION")
     private Integer version;
 
-    @Column(name = "DISPLAY_SUBSCRIPTIONS", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_SUBSCRIPTIONS")
     private Boolean displaySubscriptions = false;
 
-    @Column(name = "DISPLAY_SERVICES", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_SERVICES")
     private Boolean displayServices = false;
 
-    @Column(name = "DISPLAY_OFFERS", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_OFFERS")
     private Boolean displayOffers = false;
     
-    @Column(name = "DISPLAY_PRICEPLANS", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_PRICEPLANS")
     private Boolean displayPricePlans = false;
 
-    @Column(name = "DISPLAY_EDRS", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_EDRS")
     private Boolean displayEdrs = false;
 
-    @Column(name = "DISPLAY_PROVIDER", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_PROVIDER")
     private Boolean displayProvider = false;
 
-    @Column(name = "DISPLAY_DETAIL", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_DETAIL")
     private Boolean displayDetail = true;
 
-    @Column(name = "DISPLAY_CF_AS_XML", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_CF_AS_XML")
     private Boolean displayCfAsXML = false;
     
-    @Column(name = "DISPLAY_CHARGES_PERIODS", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_CHARGES_PERIODS")
     private Boolean displayChargesPeriods = false;
     
-    @Column(name = "DISPLAY_BILLING_CYCLE", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_BILLING_CYCLE")
     private Boolean displayBillingCycle = false;
 
     @OneToOne

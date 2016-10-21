@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 @Entity
@@ -37,7 +38,8 @@ public class BillingRunList extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "INVOICE", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "INVOICE")
 	private Boolean invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)

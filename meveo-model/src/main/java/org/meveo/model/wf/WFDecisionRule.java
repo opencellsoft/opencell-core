@@ -32,6 +32,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -64,7 +65,8 @@ public class WFDecisionRule extends AuditableEntity implements Comparable<WFDeci
     @NotNull
 	private String conditionEl;
 
-    @Column(name = "MODEL", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "MODEL")
     private boolean model = false;
 
     @ManyToMany(mappedBy="wfDecisionRules")

@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -52,14 +53,16 @@ public abstract class MessageSenderConfig extends BusinessEntity {
 	@Column(name = "PRIORITY")
 	private PriorityEnum defaultPriority;
 
-	@Column(name = "MANAGE_NON_DISTRIB", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "MANAGE_NON_DISTRIB")
 	private Boolean manageNonDistributedMessage;
 
 	@Column(name = "NON_DISTRIB_EMAIL", length = 255)
     @Size(max = 255)
 	private String NonDistributedEmail;
 
-	@Column(name = "USE_ACK", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "USE_ACK")
 	private Boolean useAcknoledgement;
 
 	@Column(name = "ACK_EMAIL", length = 255)

@@ -10,6 +10,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -34,7 +35,8 @@ public abstract class CustomScript extends BusinessEntity {
     @Transient
     private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 
-    @Column(name = "IS_ERROR", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "IS_ERROR")
     private Boolean error = false;
 
     /**

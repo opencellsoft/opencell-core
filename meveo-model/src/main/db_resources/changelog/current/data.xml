@@ -31,7 +31,7 @@
         <insert tableName="adm_user">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.787" />
             <column name="email" />
             <column name="last_password_modification" valueDate="current_date" />
@@ -76,12 +76,12 @@
 
     <changeSet id="#1861_20160817" author="pbach">
         <sql>
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, 1);
         </sql>
     </changeSet>
 
@@ -99,14 +99,14 @@
 			<column name="sc_year" value="*" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="code" value="Monthly" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2015-03-19 00:04:19.913" />
 		</insert>
 
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="job_category" value="DWH" />
 			<column name="job_template" value="DWHQueryJob" />
@@ -121,7 +121,7 @@
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="job_category" value="DWH" />
 			<column name="job_template" value="DWHQueryJob" />

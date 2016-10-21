@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -82,7 +83,8 @@ public class BillingAccount extends AccountEntity {
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
-	@Column(name = "ELECTRONIC_BILLING", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "ELECTRONIC_BILLING")
 	private Boolean electronicBilling = false;
 
 	@Temporal(TemporalType.TIMESTAMP)

@@ -22,12 +22,15 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+
 @MappedSuperclass
 public class EnableEntity extends BaseEntity implements IEnable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DISABLED", nullable = false, columnDefinition="bit")	
+	@Type(type="numeric_boolean")
+	@Column(name = "DISABLED", nullable = false)	
 	@NotNull
 	private boolean disabled;
 

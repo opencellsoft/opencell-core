@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -50,10 +51,12 @@ public class MeasurableQuantity extends BusinessEntity {
     @Size(max = 255)
 	private String dimension4;
 
-	@Column(name = "EDITABLE", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "EDITABLE")
 	private boolean editable;
 
-	@Column(name = "ADDITIVE", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "ADDITIVE")
 	private boolean additive;
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be

@@ -29,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 @Entity
@@ -76,7 +77,8 @@ public class BankOperation extends AuditableEntity {
 	@Column(name = "CREDIT")
 	private BigDecimal credit;
 
-	@Column(name = "IS_VALID", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "IS_VALID")
 	private boolean isValid;
 
 	@Column(name = "ERROR_CAUSE", length = 255)

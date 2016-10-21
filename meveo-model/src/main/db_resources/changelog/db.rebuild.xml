@@ -2,12 +2,14 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
-    <property name="type.blob" value="BYTEA" dbms="postgresql" />
-    <property name="type.blob" value="binary" dbms="mysql" />
-    <property name="type.boolean" value="boolean" dbms="postgresql" />
-    <property name="type.boolean" value="bit" dbms="mysql" />
+    <property name="type.byteArray" value="BYTEA" dbms="postgresql" />
+    <property name="type.byteArray" value="tinyblob" dbms="mysql" />
+    <property name="type.blob" value="blob" dbms="postgresql" />
+    <property name="type.blob" value="longblob" dbms="mysql" />
+    <property name="type.boolean" value="INT4" dbms="postgresql" />
+    <property name="type.boolean" value="integer" dbms="mysql" />
     <property name="type.byte" value="smallint" dbms="postgresql" />
-    <property name="type.byte" value="tinyint" dbms="mysql" />
+    <property name="type.byte" value="tinyint(1)" dbms="mysql" />
     <property name="cast.long" value="bigint" dbms="postgresql" />
     <property name="cast.long" value="UNSIGNED " dbms="mysql" />
     <property name="id.auto" value="false" dbms="postgresql" />

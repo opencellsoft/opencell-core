@@ -26,6 +26,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -66,7 +67,8 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     @Enumerated(EnumType.STRING)
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
     
-    @Column(name = "IMMEDIATE_INVOICING", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "IMMEDIATE_INVOICING")
     private Boolean immediateInvoicing = false;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {

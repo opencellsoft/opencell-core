@@ -50,6 +50,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -146,7 +147,8 @@ public class ChargeInstance extends BusinessEntity {
 	@Transient 
 	private List<WalletOperation> sortedWalletOperations;
 
-	@Column(name = "IS_PREPAID", length = 1, columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "IS_PREPAID")
 	protected Boolean prepaid=Boolean.FALSE;
 
 	public String getCriteria1() {

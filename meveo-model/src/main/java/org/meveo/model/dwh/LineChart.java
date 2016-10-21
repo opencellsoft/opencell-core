@@ -8,6 +8,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "DWH_CHART_LINE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_LINE_SEQ")
@@ -15,7 +17,8 @@ public class LineChart extends Chart {
 
 	private static final long serialVersionUID = 1563273820297215070L;
 
-	@Column(name = "FILLED", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "FILLED")
 	private boolean filled;
 
 	@Enumerated(EnumType.STRING)
@@ -26,7 +29,8 @@ public class LineChart extends Chart {
 	@Size(max = 1000)
 	private String seriesColors = "1b788f";
 
-	@Column(name = "SHADOW", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "SHADOW")
 	private boolean shadow = true;
 
 	@Column(name = "MIN_X")
@@ -43,7 +47,8 @@ public class LineChart extends Chart {
 
 	// Whether line segments should be broken at null
 	// value, fall will join point on either side of line.
-	@Column(name = "BREAK_ON_NULL", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "BREAK_ON_NULL")
 	private boolean breakOnNull;
 
 	@Column(name = "X_AXIS_LABEL", length = 255)
@@ -62,19 +67,23 @@ public class LineChart extends Chart {
 	private Integer yaxisAngle;
 
 	// Whether to stack series
-	@Column(name = "STACKED", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "STACKED")
 	private boolean stacked;
 
 	// Enables plot zooming.
-	@Column(name = "ZOOM", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "ZOOM")
 	private boolean zoom;
 
 	// Enables animation on plot rendering
-	@Column(name = "ANIMATE", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "ANIMATE")
 	private boolean animate;
 
 	// Defines visibility of datatip.
-	@Column(name = "SHOW_DATA_TIP", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "SHOW_DATA_TIP")
 	private boolean showDataTip = true;
 
 	// Template string for datatips.

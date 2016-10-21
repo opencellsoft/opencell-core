@@ -33,6 +33,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -56,7 +57,8 @@ public class Workflow extends BusinessEntity {
 	private List<WFTransition> transitions = new ArrayList<WFTransition>();
 	
 	
-	@Column(name = "ENABLE_HOSTORY", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "ENABLE_HOSTORY")
 	private boolean enableHistory;
 
 	/**

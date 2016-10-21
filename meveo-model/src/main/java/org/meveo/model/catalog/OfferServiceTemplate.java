@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -40,7 +41,8 @@ public class OfferServiceTemplate extends BaseEntity {
     @NotNull
     private ServiceTemplate serviceTemplate;
 
-    @Column(name = "MANDATORY", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "MANDATORY")
     private boolean mandatory;
 
     @ManyToMany(fetch = FetchType.LAZY)

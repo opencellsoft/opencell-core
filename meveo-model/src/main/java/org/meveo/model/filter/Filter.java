@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.*;
 
 /**
@@ -48,7 +49,8 @@ public class Filter extends BusinessCFEntity {
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
 
-	@Column(name = "SHARED", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "SHARED")
 	private Boolean shared;
 
 	public FilterCondition getFilterCondition() {

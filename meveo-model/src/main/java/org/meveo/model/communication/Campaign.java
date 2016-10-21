@@ -33,6 +33,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -71,7 +72,8 @@ public class Campaign extends BusinessEntity {
 	@Size(max = 255)
 	private String subMedia;
 
-	@Column(name = "USE_ANY_MEDIA", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "USE_ANY_MEDIA")
 	private Boolean useAnyMedia;
 
 	@Enumerated(EnumType.STRING)

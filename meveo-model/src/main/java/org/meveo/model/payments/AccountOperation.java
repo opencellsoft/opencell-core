@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -118,7 +119,8 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 	private String occDescription;
 	
 	
-	@Column(name = "EXCLUDED_FROM_DUNNING", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "EXCLUDED_FROM_DUNNING")
 	private boolean excludedFromDunning;
 	
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)

@@ -35,6 +35,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -45,6 +46,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -142,11 +144,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@Size(max = 1200)
 	private String comment;
 
-	@Column(name = "PDF", columnDefinition="binary")
+	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
+	@Lob
 	private byte[] pdf;
 
-	@Column(name = "DETAILED_INVOICE", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "DETAILED_INVOICE")
 	private boolean isDetailedInvoice = true;
 
 	@ManyToOne

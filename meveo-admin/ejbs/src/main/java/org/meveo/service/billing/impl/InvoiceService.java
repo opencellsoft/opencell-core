@@ -78,7 +78,6 @@ import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
@@ -539,7 +538,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
 				+ currentUser.getProvider().getCode() + File.separator;
 
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
+		Invoice invoice = refreshOrRetrieve((Invoice) parameters.get(PdfGeneratorConstants.INVOICE));
 		
 		
 		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));
@@ -960,7 +959,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 
-	public List<Invoice> findInvoicesByType(InvoiceType invoiceType, BillingAccount ba) {
+	@SuppressWarnings("unchecked")
+    public List<Invoice> findInvoicesByType(InvoiceType invoiceType, BillingAccount ba) {
 		List<Invoice> result = new ArrayList<Invoice>();
 		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, invoiceType.getProvider());
 		qb.addCriterionEntity("billingAccount", ba);
@@ -1047,7 +1047,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return invoice.getLinkedInvoices().iterator().next();
 	}
 
-	public List<Invoice> getInvoicesWithAccountOperation(BillingAccount billingAccount, Provider currentProvider) {
+	@SuppressWarnings("unchecked")
+    public List<Invoice> getInvoicesWithAccountOperation(BillingAccount billingAccount, Provider currentProvider) {
 		try {
 			QueryBuilder qb = new QueryBuilder("SELECT i FROM " + Invoice.class.getName() + " i");
 			qb.addCriterionEntity("i.provider", currentProvider);	 

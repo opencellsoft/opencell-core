@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.IEntity;
 
 /**
@@ -38,7 +39,8 @@ public class OfferProductTemplate implements IEntity {
 	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
 	private ProductTemplate productTemplate;
 
-	@Column(name = "MANDATORY", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "MANDATORY")
 	private boolean mandatory;
 
 	@Override

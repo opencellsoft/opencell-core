@@ -26,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.shared.Address;
 
@@ -44,13 +45,16 @@ public class PostalMailSenderConfig extends MessageSenderConfig {
 	@Enumerated(EnumType.STRING)
 	private EnvelopeWindowType windowType;
 
-	@Column(columnDefinition="bit")
+	@Type(type="numeric_boolean")
+	@Column()
 	private boolean printRectoVerso;
 
-	@Column(columnDefinition="bit")
+	@Type(type="numeric_boolean")
+	@Column()
 	private boolean useColor;
 
-	@Column(columnDefinition="bit")
+	@Type(type="numeric_boolean")
+	@Column()
 	private boolean addAddressFrontPage;
 
 	@Column(name = "STAMPTYPE", length = 255)

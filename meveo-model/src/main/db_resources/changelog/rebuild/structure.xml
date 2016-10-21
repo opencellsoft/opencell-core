@@ -395,7 +395,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_entity_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" >
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1786,7 +1786,7 @@
             <column name="trading_country_id" type="BIGINT" />
             <column name="trading_currency_id" type="BIGINT" />
             <column name="trading_language_id" type="BIGINT" />
-            <column name="detailed_invoice" type="${type.boolean}" defaultValue="true" />
+            <column name="detailed_invoice" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="invoice_id" type="BIGINT" />
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
@@ -2078,7 +2078,7 @@
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="expiry_date" type="date" />
             <column name="input_message" type="VARCHAR(255)" />
-            <column name="origin_edr" type="${type.blob}" />
+            <column name="origin_edr" type="BIGINT" />
             <column name="quantity" type="numeric(23, 12)" />
             <column name="reservation_date" type="date" />
             <column name="status" type="VARCHAR(255)" />
@@ -2646,7 +2646,7 @@
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
-            <column name="mandatory" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-215">
@@ -3259,7 +3259,7 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
-            <column name="versionable" type="${type.boolean}" defaultValue="false">
+            <column name="versionable" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="calendar_id" type="BIGINT" />
@@ -3268,22 +3268,22 @@
             <column name="STORAGE_TYPE" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="TRIGGER_END_PERIOD_EVENT" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="TRIGGER_END_PERIOD_EVENT" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="CACHE_VALUE_FOR" type="int" />
             <column name="APPLIES_TO" type="VARCHAR(100)">
                 <constraints nullable="false" />
             </column>
             <column name="GUI_POSITION" type="VARCHAR(100)" />
-            <column name="ALLOW_EDIT" type="${type.boolean}" defaultValueBoolean="true">
+            <column name="ALLOW_EDIT" type="${type.boolean}" defaultValueNumeric="1">
                 <constraints nullable="false" />
             </column>
-            <column name="HIDE_ON_NEW" type="${type.boolean}" defaultValueBoolean="false">
+            <column name="HIDE_ON_NEW" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="MAX_VALUE" type="BIGINT" />
             <column name="MIN_VALUE" type="BIGINT" />
             <column name="REG_EXP" type="VARCHAR(80)" />
-            <column name="CACHE_VALUE" type="${type.boolean}" defaultValueBoolean="true">
+            <column name="CACHE_VALUE" type="${type.boolean}" defaultValueNumeric="1">
                 <constraints nullable="false" />
             </column>
             <column name="MAPKEY_TYPE" type="varchar(20)" />
@@ -3444,7 +3444,7 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
-            <column name="RECOGNIZE_REVENUE" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="RECOGNIZE_REVENUE" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -3908,12 +3908,12 @@
             <column name="display_subscriptions" type="${type.boolean}" />
             <column name="display_services" type="${type.boolean}" />
             <column name="display_offers" type="${type.boolean}" />
-            <column name="display_edrs" type="${type.boolean}" defaultValueBoolean="false" />
-            <column name="display_provider" type="${type.boolean}" defaultValueBoolean="false" />
-            <column name="display_detail" type="${type.boolean}" defaultValueBoolean="true" />
-            <column name="DISPLAY_PRICEPLANS" type="${type.boolean}" defaultValueBoolean="false" />
-            <column name="DISPLAY_CF_AS_XML" type="${type.boolean}" defaultValueBoolean="false" />
-            <column name="DISPLAY_CHARGES_PERIODS" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="display_edrs" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="display_provider" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="display_detail" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="DISPLAY_PRICEPLANS" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="DISPLAY_CF_AS_XML" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="DISPLAY_CHARGES_PERIODS" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -4147,7 +4147,7 @@
             <column name="order_condition_id" type="BIGINT" />
             <column name="primary_selector_id" type="BIGINT" />
             <column name="input_xml" type="text" />
-            <column name="shared" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="shared" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
@@ -4358,7 +4358,7 @@
             </column>
             <column name="LOGO_PICTURE" type="varchar(255)" />
             <column name="SCRIPT_INSTANCE_ID" type="BIGINT" />
-            <column name="INSTALLED" type="${type.boolean}" defaultValueBoolean="false">
+            <column name="INSTALLED" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="MODULE_SOURCE" type="TEXT" />
@@ -4483,8 +4483,8 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_bsm" />
             </column>
             <column name="service_template_id" type="BIGINT" />
-            <column name="duplicate_service" type="${type.boolean}" defaultValueBoolean="false" />
-            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="duplicate_service" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-311">
@@ -4532,7 +4532,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_recog_rule_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueBoolean="false" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>

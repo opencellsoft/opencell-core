@@ -60,7 +60,7 @@
           <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-			<column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueBoolean="false"></column> 
+			<column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueNumeric="0"/> 
 		</addColumn>
 	</changeSet>
 	
@@ -1132,5 +1132,19 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
     </changeSet>    
+
+    <changeSet id="#2049_20161021" author="AndriusKarpavicius">
+        <dropColumn tableName="BILLING_RESERVATION" columnName="ORIGIN_EDR"/>
+        <addColumn tableName="BILLING_RESERVATION">
+            <column name="ORIGIN_EDR_ID" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="ORIGIN_EDR_ID" baseTableName="BILLING_RESERVATION" constraintName="fk_reservation_edr"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />                               
+                                                      
+    </changeSet>
+
+
+    <!--  migrate boolean fields, migrate billing_invoice.pdf from bytea to oid -->
 
 </databaseChangeLog>

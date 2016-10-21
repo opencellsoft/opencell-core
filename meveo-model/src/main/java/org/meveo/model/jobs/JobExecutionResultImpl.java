@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -52,7 +53,8 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Column(name = "NB_ERROR")
     private long nbItemsProcessedWithError;
 
-    @Column(name = "JOB_DONE", columnDefinition="bit")
+    @Type(type="numeric_boolean")
+    @Column(name = "JOB_DONE")
     private boolean done = true;
 
     @Enumerated(EnumType.STRING)

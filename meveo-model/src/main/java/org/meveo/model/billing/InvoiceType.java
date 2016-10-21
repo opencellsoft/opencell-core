@@ -40,6 +40,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
@@ -74,7 +75,8 @@ public class InvoiceType extends BusinessEntity {
 	@MapKeyJoinColumn(name="SELLER_ID")
 	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
 	
-	@Column(name = "MATCHING_AUTO", columnDefinition="bit")
+	@Type(type="numeric_boolean")
+    @Column(name = "MATCHING_AUTO")
 	private boolean matchingAuto = false;
 	
 	 
