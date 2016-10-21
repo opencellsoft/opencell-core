@@ -50,6 +50,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
@@ -68,7 +69,7 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.OfferProductTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
@@ -141,7 +142,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	private ProductTemplateService productTemplateService;
 
 	@Inject
-	private OfferProductTemplateService offerProductTemplateService;
+	private OfferTemplateService offerTemplateService;
 
 	private ServiceInstance selectedServiceInstance;
 
@@ -926,10 +927,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		List<ProductTemplate> result = new ArrayList<>();
 
 		if (entity != null) {
-			result = offerProductTemplateService.listByOfferTemplate(entity.getOffer());
-		}
+			for (OfferProductTemplate offerProductTemplate : offerTemplateService.refreshOrRetrieve(entity.getOffer()).getOfferProductTemplates()) {
+                result.add(offerProductTemplate.getProductTemplate());
+            }
+         }
 
 		return result;
 	}
-
 }

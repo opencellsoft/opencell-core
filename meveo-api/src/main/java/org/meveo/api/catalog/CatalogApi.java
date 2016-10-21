@@ -195,7 +195,7 @@ public class CatalogApi extends BaseApi {
 
 	private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, User currentUser, ServiceTemplate serviceTemplate) {
 		List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
-		Set<OfferProductTemplate> offerProductTemplates = offerTemplate.getOfferProductTemplates();
+		List<OfferProductTemplate> offerProductTemplates = offerTemplate.getOfferProductTemplates();
 
 		if (offerProductTemplates == null || offerProductTemplates.isEmpty()) {
 			return productOfferingPrices;

@@ -57,9 +57,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	private PricePlanMatrixService pricePlanMatrixService;
 
 	@Inject
-	private OfferServiceTemplateService offerServiceTemplateService;
-
-	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
 	@Inject
@@ -179,15 +176,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 			List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
 			for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
-				offerServiceTemplate = offerServiceTemplateService.refreshOrRetrieve(offerServiceTemplate);
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
 
 				boolean serviceFound = false;
-				ServiceConfigurationDto serviceCodeDto = new ServiceConfigurationDto();
+				ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
 				for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
 					String serviceCode = tempServiceCodeDto.getCode();
 					if (serviceCode.equals(serviceTemplate.getCode())) {
-						serviceCodeDto = tempServiceCodeDto;
+						serviceConfigurationDto = tempServiceCodeDto;
 						serviceFound = true;
 					}
 				}
@@ -208,14 +204,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 				if (bsm != null && bsm.getScript() != null) {
 					try {
-						serviceModelScriptService.beforeCreateServiceFromBSM(serviceCodeDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
+						serviceModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
 					} catch (BusinessException e) {
 						log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
 					}
 				}
 
 				OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
-				newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
+				newOfferServiceTemplate.setMandatory(serviceConfigurationDto.isMandatory());
 				if (offerServiceTemplate.getIncompatibleServices() != null) {
 					newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
 				}
@@ -224,7 +220,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 				try {
 					BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
 					newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
-					newServiceTemplate.setDescription(serviceCodeDto.getDescription());
+					newServiceTemplate.setDescription(serviceConfigurationDto.getDescription());
 					newServiceTemplate.setBusinessServiceModel(bsm);
 					newServiceTemplate.setAuditable(null);
 					newServiceTemplate.setId(null);
@@ -526,7 +522,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 					if (bsm != null && bsm.getScript() != null) {
 						try {
-							serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplate, serviceCodeDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
+							serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplate, serviceConfigurationDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
 						} catch (BusinessException e) {
 							log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
 						}
@@ -543,11 +539,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// add to offer
 		for (OfferServiceTemplate newOfferServiceTemplate : newOfferServiceTemplates) {
 			newOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
-			offerServiceTemplateService.create(newOfferServiceTemplate, currentUser);
-
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
 
+		offerTemplateService.update(newOfferTemplate, currentUser);
+		
 		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
 				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(), currentUser);

@@ -29,6 +29,8 @@ public class ServiceConfigurationDto {
 	@XmlElementWrapper(name = "parameters")
 	@XmlElement(name = "parameter")
 	private List<CustomFieldDto> customFields;
+	
+	private boolean mandatory;
 
 	public String getCode() {
 		return code;
@@ -57,6 +59,14 @@ public class ServiceConfigurationDto {
 	@Override
 	public String toString() {
 		return "ServiceConfigurationDto [code=" + code + ", description=" + description + ", customFields=" + customFields + "]";
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 }

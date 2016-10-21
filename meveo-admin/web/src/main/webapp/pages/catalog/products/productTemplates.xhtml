@@ -160,7 +160,6 @@
 												<h:outputText id="nameOrCode" styleClass="FontBold"
 													value="#{of:abbreviate(prod.nameOrCode, 25)}"></h:outputText>
 											</p>
-											<p:tooltip for="nameOrCode" value="#{prod.nameOrCode}"></p:tooltip>
 											<p>
 												<ui:repeat value="#{prod.offerTemplateCategories.toArray()}"
 													var="c" varStatus="status">
@@ -215,9 +214,7 @@
 															<f:param name="edit" value="false"></f:param>
 															<f:param name="backView" value="mm_productTemplates"></f:param>
 															<f:param name="tab" value="0"></f:param>
-														</p:link> <p:tooltip for="viewLink"
-															value="#{messages['commons.view']}" showEffect="slide"
-															hideEffect="slide" /></li>
+														</p:link></li>
 													<li><p:link id="editLink"
 															styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
 															outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}">
@@ -227,9 +224,7 @@
 															<f:param name="edit" value="true" />
 															<f:param name="editMode" value="edit" />
 															<f:param name="backView" value="mm_productTemplates"></f:param>
-														</p:link> <p:tooltip for="editLink"
-															value="#{messages['commons.edit']}" showEffect="slide"
-															hideEffect="slide" /></li>
+														</p:link></li>
 													<li><p:commandLink id="duplicateLinkProd"
 															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
 															styleClass="fa fa-copy fa-2x text-blue"
@@ -241,10 +236,7 @@
 															<f:param name="tab" value="0"></f:param>
 															<p:confirm header="#{messages['commons.duplicate']}"
 																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink> <p:tooltip for="duplicateLinkProd"
-															value="#{messages['commons.duplicate']}"
-															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
-															showEffect="slide" hideEffect="slide" /> <p:commandLink
+														</p:commandLink><p:commandLink
 															id="duplicateLinkBndl"
 															rendered="#{productTemplateBean.isBundleTemplate(prod)}"
 															styleClass="fa fa-copy fa-2x text-blue"
@@ -256,17 +248,12 @@
 															<f:param name="tab" value="0"></f:param>
 															<p:confirm header="#{messages['commons.duplicate']}"
 																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink> <p:tooltip for="duplicateLinkBndl"
-															value="#{messages['commons.duplicate']}"
-															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
-															showEffect="slide" hideEffect="slide" /></li>
+														</p:commandLink></li>
 													<li><p:commandLink id="addToExportLink"
 															styleClass="fa fa-share-square-o fa-2x text-blue"
 															action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
 															update=":ptToExport :exportablePTs">
-														</p:commandLink> <p:tooltip for="addToExportLink"
-															value="#{messages['commons.addToExport']}"
-															showEffect="slide" hideEffect="slide" /></li>
+														</p:commandLink></li>
 												</ul>
 											</p:panel>
 										</p:panel>

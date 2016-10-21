@@ -9,14 +9,14 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-           
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="workflows" value="#{messages['menu.workflow']}" />
-                </p:breadCrumb>
-
-        </p:panel>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem outcome="workflows" value="#{messages['menu.workflow']}" />
+                <p:menuitem value="#{messages['workflow.new']}" disabled="true" rendered="#{workflowBean.entity.transient}" />
+                <p:menuitem value="#{messages['workflow.editView']} - #{workflowBean.entity.descriptionOrCode}" disabled="true" rendered="#{!workflowBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
         <p:panel>
             <p:tabView id="tabView" dynamic="true" cache="true">
                 <p:tab title="#{messages['workflow.panel']}">
@@ -24,12 +24,12 @@
                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" allowEdit="false" required="true" validateUnique="true" />
                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" />
 
-                        <hftl:formField label="#{messages['workflow.type']}" field="wfType" allowEdit="false" required="true" size="60" maxlength="255" autocompleteBean="#{workflowBean}"
-                            autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+                        <hftl:formField label="#{messages['workflow.type']}" field="wfType" allowEdit="false" required="true" size="60" maxlength="255"
+                            autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
 
                         <hftl:formField label="#{messages['workflow.exportLot']}" field="exportLot" />
                         <hftl:formField label="#{messages['workflow.enableHistory']}" field="enableHistory" />
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true"/>
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
                     </hftl:formPanel>
                 </p:tab>
 
@@ -140,7 +140,7 @@
                                                                 label="#{messages['decisionRuleNewValue.value']}"
                                                                 rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}">
                                                                 <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
-                                                                    required="true" converter="javax.faces.BigDecimal"/>
+                                                                    required="true" converter="javax.faces.BigDecimal" />
                                                             </hftl:decorateFormField>
 
                                                             <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}"
@@ -169,7 +169,8 @@
                                                                 <h:panelGrid columns="4">
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}"
                                                                         value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
-                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10" converter="javax.faces.BigDecimal"/>                                                                    
+                                                                    <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10"
+                                                                        maxlength="10" converter="javax.faces.BigDecimal" />
                                                                     <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange"
                                                                         value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
                                                                     <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
@@ -236,12 +237,14 @@
 
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}" componentWidth="75">
-                                                                <p:inputTextarea id="actionEl#{actionIndex.index}" value="#{action.actionEl}" required="true" autoResize="true" style="width:100%;"
-                                                                    maxlength="2000" rows="1" />
+                                                            <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}"
+                                                                componentWidth="75">
+                                                                <p:inputTextarea id="actionEl#{actionIndex.index}" value="#{action.actionEl}" required="true" autoResize="true"
+                                                                    style="width:100%;" maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>
 
-                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}" componentWidth="75">
+                                                            <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}"
+                                                                componentWidth="75">
                                                                 <p:inputTextarea id="conditionElAction#{actionIndex.index}" value="#{action.conditionEl}" autoResize="true"
                                                                     style="width:100%;" maxlength="2000" rows="1" />
                                                             </hftl:decorateFormField>

@@ -263,17 +263,18 @@ public class WorkflowService extends BusinessService<Workflow> {
                             if (entity.equals(actionResult)){
                                 entity = (BusinessEntity) actionResult;
                             }
-                            WorkflowHistoryAction wfHistoryAction = new WorkflowHistoryAction();
-                            wfHistoryAction.setAction(wfAction.getActionEl());
-                            wfHistoryAction.setResult(actionResult == null ? null : actionResult.toString());
-                            wfHistoryAction.setWorkflowHistory(wfHistory);
-                            wfHistory.getActionsAndReports().add(wfHistoryAction) ;            
+                            if (workflow.isEnableHistory()) {
+                                WorkflowHistoryAction wfHistoryAction = new WorkflowHistoryAction();
+                                wfHistoryAction.setAction(wfAction.getActionEl());
+                                wfHistoryAction.setResult(actionResult == null ? null : actionResult.toString());
+                                wfHistoryAction.setWorkflowHistory(wfHistory);
+                                wfHistory.getActionsAndReports().add(wfHistoryAction);
+                            }
                         }
                     }
 					if(workflow.isEnableHistory()){
 						workflowHistoryService.create(wfHistory, currentUser);
 					}
-                    
                     
                     wfType.setEntity((BusinessEntity) entity);
                     wfType.changeStatus(wfTransition.getToStatus(), currentUser);

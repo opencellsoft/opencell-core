@@ -21,15 +21,17 @@
     <c:if test="${empty(edit)}">
         <c:set var="edit" value="#{formLevelEdit}" />
     </c:if>
-
+    <c:if test="${entity == null}">
+        <c:set var="entity" value="${formLevelEntity!=null ? formLevelEntity : backingBean.entity}" />
+    </c:if>
 <!--     <hftl:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="#{newLine}" displayOneLine="#{displayOneLine}"/> -->
 
     <hftl:decorateFormField fieldId="descriptionI" label="#{messages['businessEntity.languageDescriptions']}" componentWidth="50" 
         displayOneLine="#{displayOneLine}" rendered="#{multiLang}">
 
-        <p:inputText id="description" value="#{entity.description}" size="80" maxlength="100" style="margin-left:40px;"
+        <p:inputText id="description" value="#{entity.description}" size="80" maxlength="100" style="margin-left:36px;"
                     rendered="#{edit}" />
-        <h:outputText value="#{entity.description}" style="margin-left:50px;" rendered="#{! edit}" />
+        <h:outputText value="#{entity.description}" style="margin-left:36px;" rendered="#{! edit}" />
 
         <h:dataTable id="descriptionI" value="#{backingBean.getProviderLanguages()}" var="languageCom">
             <h:column>
