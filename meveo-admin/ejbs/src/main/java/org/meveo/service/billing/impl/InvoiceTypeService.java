@@ -46,7 +46,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	ParamBean param  = ParamBean.getInstance();
 
 	public InvoiceType getDefaultType(String invoiceTypeCode, User currentUser) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider(),Arrays.asList("code","sellerSequence"));
+		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider());
 		if (defaultInvoiceType != null) {
 			return defaultInvoiceType;
 		}
