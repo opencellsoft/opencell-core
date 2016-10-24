@@ -63,7 +63,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		return matchOperations(customerAccountId, customerAccountCode, operationIds, operationIdForPartialMatching, MatchingTypeEnum.M, user);
 	}
 
-	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum, User user) throws Exception {
+	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException  {
 		MatchingCode matchingCode = new MatchingCode();		
 		BigDecimal amountToMatch = BigDecimal.ZERO;
 		for (AccountOperation accountOperation : listOcc) {
@@ -136,7 +136,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		log.info("successfully end cancelMatching!");
 	}
 
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} user:{}", new Object[] { customerAccountId, customerAccountCode, operationIds, user == null ? "null" : user.getName() });
 		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode, user.getProvider());
 
