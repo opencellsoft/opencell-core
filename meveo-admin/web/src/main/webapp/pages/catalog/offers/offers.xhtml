@@ -319,7 +319,7 @@
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['menu.productTemplates']}"
-												rendered="#{entity.productTemplates!=null}" />
+												rendered="#{entity.productTemplates!=null and entity.productTemplates.size!=0}" />
 										</f:facet>
 										<p:dataList styleClass="dataList" paginatorPosition="bottom"
 											paginatorAlwaysVisible="false"
