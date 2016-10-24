@@ -150,8 +150,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private InvoiceTypeService invoiceTypeService;
     
     @Inject
-    private  CustomerService customerService;
-   
+    private CustomerService customerService;
+      
 	
 
 	private String PDF_DIR_NAME = "pdf";
@@ -280,7 +280,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
 			cfName = "INVOICE_SEQUENCE";
 		}
-		Customer cust  = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());		
+		Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
 		Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType(), currentUser);
 
         Sequence sequence = getSequence(invoice, seller,cfName,1,true,currentUser);
