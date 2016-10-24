@@ -182,4 +182,12 @@
 			<column name="permission" value="marketingCatalogVisualization"></column>
 		</insert>						
 	</changeSet>	
+	
+	<changeSet id="#2120_20161024-Update default opencell usernames" author="EdwardLegaspi">
+		<sql>
+			<![CDATA[update adm_user set username='OPENCELL.ADMIN', password='bf8c7d679397827ac587e4d976903f29d437ed98' where username='MEVEO.ADMIN';
+			update adm_user set username='OPENCELL.SUPERADMIN', password='141fb5df0d658f7718eed6d97defc9dfb687de9a' where username='MEVEO.SUPERADMIN';
+			update adm_user set username='OPENCELL.MARKETINGMANAGER', password='8618dab964637c4efa75bca53de7c858258eed5e' where username='MEVEO.MARKETINGMANAGER';]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
