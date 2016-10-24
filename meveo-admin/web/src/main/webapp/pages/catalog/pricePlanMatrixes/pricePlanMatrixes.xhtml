@@ -125,15 +125,20 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.code']}" />
 				</f:facet>
-				<p:cellEditor>
-					<f:facet name="output">
-						<h:outputText value="#{entity.code}" />
-					</f:facet>
-					<f:facet name="input">
-						<p:inputText value="#{entity.code}" required="true" maxlength="60"
-							size="20" />
-					</f:facet>
-				</p:cellEditor>
+				<h:link id="pp_detail" value="#{entity.code}" outcome="pricePlanMatrixDetail">
+                    <f:param name="objectId" value="#{entity.id}" />
+                    <f:param name="edit" value="true" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </h:link>
+<!-- 				<p:cellEditor> -->
+<!-- 					<f:facet name="output"> -->
+<!-- 						<h:outputText value="#{entity.code}" /> -->
+<!-- 					</f:facet> -->
+<!-- 					<f:facet name="input"> -->
+<!-- 						<p:inputText value="#{entity.code}" required="true" maxlength="60" -->
+<!-- 							size="20" /> -->
+<!-- 					</f:facet> -->
+<!-- 				</p:cellEditor> -->
 			</p:column>
 			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
