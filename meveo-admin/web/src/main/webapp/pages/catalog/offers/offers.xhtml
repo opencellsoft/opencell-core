@@ -231,83 +231,105 @@
 								</p:panel>
 
 								<p:panel styleClass="VAlignTop Wid60 Responsive100">
-									<p:panel>
-										<p:panel
-											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
-											<f:facet name="header">
-												<h:outputText
-													value="#{messages['marketingManager.catalog.OneTimeFee']}"
-													rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
-											</f:facet>
+									<p:panel
+										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										<f:facet name="header">
+											<h:outputText
+												value="#{messages['marketingManager.catalog.OneTimeFee']}"
+												rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
+										</f:facet>
 
-											<p:dataList styleClass="dataList" paginatorPosition="bottom"
-												paginatorAlwaysVisible="false"
-												value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}"
-												var="service" type="ordered"
-												rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
-												<h:outputText value="#{service.descriptionOrCode}"
-													styleClass="text-bold" />
-												<h:panelGroup layout="block">
-													<ul class="no-list-style">
-														<ui:repeat var="charge"
-															value="#{service.serviceSubscriptionCharges}">
-															<li><h:outputText
-																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-														</ui:repeat>
-													</ul>
-												</h:panelGroup>
-											</p:dataList>
-										</p:panel>
-										<p:panel
-											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
-											<f:facet name="header">
-												<h:outputText
-													value="#{messages['marketingManager.catalog.recurringFee']}"
-													rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}" />
-											</f:facet>
-											<p:dataList styleClass="dataList" paginatorPosition="bottom"
-												paginatorAlwaysVisible="false"
-												value="#{entity.serviceTemplatesByChargeType['RECURRING']}"
-												var="service" type="ordered"
-												rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
-												<h:outputText value="#{service.descriptionOrCode}"
-													styleClass="text-bold" />
-												<h:panelGroup layout="block">
-													<ul class="no-list-style">
-														<ui:repeat var="charge"
-															value="#{service.serviceRecurringCharges}">
-															<li><h:outputText
-																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-														</ui:repeat>
-													</ul>
-												</h:panelGroup>
-											</p:dataList>
-										</p:panel>
-										<p:panel
-											styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
-											<f:facet name="header">
-												<h:outputText
-													value="#{messages['marketingManager.catalog.usageFee']}"
-													rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}" />
-											</f:facet>
-											<p:dataList styleClass="dataList" paginatorPosition="bottom"
-												paginatorAlwaysVisible="false"
-												value="#{entity.serviceTemplatesByChargeType['USAGE']}"
-												var="service" type="ordered"
-												rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
-												<h:outputText value="#{service.descriptionOrCode}"
-													styleClass="text-bold" />
-												<h:panelGroup layout="block">
-													<ul class="no-list-style">
-														<ui:repeat var="charge"
-															value="#{service.serviceUsageCharges}">
-															<li><h:outputText
-																	value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-														</ui:repeat>
-													</ul>
-												</h:panelGroup>
-											</p:dataList>
-										</p:panel>
+										<p:dataList styleClass="dataList" paginatorPosition="bottom"
+											paginatorAlwaysVisible="false"
+											value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}"
+											var="service" type="ordered"
+											rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
+											<h:outputText value="#{service.descriptionOrCode}"
+												styleClass="text-bold" />
+											<h:panelGroup layout="block">
+												<ul class="no-list-style">
+													<ui:repeat var="charge"
+														value="#{service.serviceSubscriptionCharges}">
+														<li><h:outputText
+																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+													</ui:repeat>
+												</ul>
+											</h:panelGroup>
+										</p:dataList>
+									</p:panel>
+									<p:panel
+										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										<f:facet name="header">
+											<h:outputText
+												value="#{messages['marketingManager.catalog.recurringFee']}"
+												rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}" />
+										</f:facet>
+										<p:dataList styleClass="dataList" paginatorPosition="bottom"
+											paginatorAlwaysVisible="false"
+											value="#{entity.serviceTemplatesByChargeType['RECURRING']}"
+											var="service" type="ordered"
+											rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
+											<h:outputText value="#{service.descriptionOrCode}"
+												styleClass="text-bold" />
+											<h:panelGroup layout="block">
+												<ul class="no-list-style">
+													<ui:repeat var="charge"
+														value="#{service.serviceRecurringCharges}">
+														<li><h:outputText
+																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+													</ui:repeat>
+												</ul>
+											</h:panelGroup>
+										</p:dataList>
+									</p:panel>
+									<p:panel
+										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										<f:facet name="header">
+											<h:outputText
+												value="#{messages['marketingManager.catalog.usageFee']}"
+												rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}" />
+										</f:facet>
+										<p:dataList styleClass="dataList" paginatorPosition="bottom"
+											paginatorAlwaysVisible="false"
+											value="#{entity.serviceTemplatesByChargeType['USAGE']}"
+											var="service" type="ordered"
+											rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
+											<h:outputText value="#{service.descriptionOrCode}"
+												styleClass="text-bold" />
+											<h:panelGroup layout="block">
+												<ul class="no-list-style">
+													<ui:repeat var="charge"
+														value="#{service.serviceUsageCharges}">
+														<li><h:outputText
+																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+													</ui:repeat>
+												</ul>
+											</h:panelGroup>
+										</p:dataList>
+									</p:panel>
+									<p:panel
+										styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
+										<f:facet name="header">
+											<h:outputText
+												value="#{messages['menu.productTemplates']}"
+												rendered="#{entity.productTemplates!=null and entity.productTemplates.size!=0}" />
+										</f:facet>
+										<p:dataList styleClass="dataList" paginatorPosition="bottom"
+											paginatorAlwaysVisible="false"
+											value="#{entity.productTemplates}"
+											var="prod" type="ordered"
+											rendered="#{entity.productTemplates!=null and entity.productTemplates.size!=0}">
+											<h:outputText value="#{prod.descriptionOrCode}"
+												styleClass="text-bold" />
+											<h:panelGroup layout="block">
+												<ul class="no-list-style">
+													<ui:repeat var="charge"
+														value="#{prod.productChargeTemplates}">
+														<li><h:outputText value="#{charge.descriptionOrCode}" /></li>
+													</ui:repeat>
+												</ul>
+											</h:panelGroup>
+										</p:dataList>
 									</p:panel>
 								</p:panel>
 							</p:dataGrid>
