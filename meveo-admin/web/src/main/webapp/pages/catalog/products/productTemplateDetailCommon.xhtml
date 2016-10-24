@@ -108,7 +108,19 @@
 
     </p:panelGrid>
 
-    <!-- Product Templates -->
+	<p:panel rendered="#{!mainBackingBean.entity.transient}">
+		<f:facet name="header">#{messages['productTemplate.productCharges']}</f:facet>
+		<hftl:dataList backingBean="#{productTemplateBean}"
+			dataModel="#{mainBackingBean.entity.productChargeTemplates}">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code"
+				editView="productChargeTemplateDetail" valueIdField="id"
+				backView="productTemplates" />
+			<hftl:column field="description"
+				label="#{messages['BusinessEntity.description']}" />
+		</hftl:dataList>
+	</p:panel>
+
+	<!-- Product Templates -->
     <c:if test="#{mode eq 'BUNDLE'}">
         <p:panel id="bundleProductPanel" header="#{messages['menu.productTemplates']}" rendered="#{!mainBackingBean.entity.transient}">
             <p:panel rendered="#{mainBackingBean.edit}">
