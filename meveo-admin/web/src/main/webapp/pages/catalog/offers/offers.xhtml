@@ -325,7 +325,7 @@
 											paginatorAlwaysVisible="false"
 											value="#{entity.productTemplates}"
 											var="prod" type="ordered"
-											rendered="#{entity.productTemplates!=null}">
+											rendered="#{entity.productTemplates!=null and entity.productTemplates.size!=0}">
 											<h:outputText value="#{prod.descriptionOrCode}"
 												styleClass="text-bold" />
 											<h:panelGroup layout="block">
