@@ -348,9 +348,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-126">
         <createSequence sequenceName="meveo_filter_seq" startValue="1" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-127">
-        <createSequence sequenceName="meveo_filter_parameter_seq" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-128">
         <createSequence sequenceName="CUST_CET_SEQ" />
     </changeSet>
@@ -395,7 +392,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_entity_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" >
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -413,7 +410,7 @@
             <column name="address_country" type="VARCHAR(50)" />
             <column name="address_state" type="VARCHAR(50)" />
             <column name="address_zipcode" type="VARCHAR(10)" />
-            <column name="default_level" type="${type.boolean}" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="external_ref_1" type="VARCHAR(50)" />
             <column name="external_ref_2" type="VARCHAR(50)" />
             <column name="firstname" type="VARCHAR(50)" />
@@ -507,7 +504,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_inbound_request_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -599,7 +596,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_messages_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -660,7 +657,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notif_history_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -764,7 +761,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notification_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -837,7 +834,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_title_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -848,7 +845,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="is_company" type="${type.boolean}" />
+            <column name="is_company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -860,7 +857,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_user_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -898,7 +895,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_account_operation_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -909,7 +906,9 @@
             <column name="account_code_client_side" type="VARCHAR(255)" />
             <column name="amount" type="numeric(23, 12)" />
             <column name="due_date" type="date" />
-            <column name="excluded_from_dunning" type="${type.boolean}" />
+            <column name="excluded_from_dunning" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="matching_amount" type="numeric(23, 12)" />
             <column name="matching_status" type="VARCHAR(255)" />
             <column name="occ_code" type="VARCHAR(255)" />
@@ -956,7 +955,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_action_dunning_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -985,7 +984,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_action_plan_item_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1011,7 +1010,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_bank_operation_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1026,7 +1025,9 @@
             <column name="error_cause" type="VARCHAR(255)" />
             <column name="file_name" type="VARCHAR(255)" />
             <column name="invoice_id" type="VARCHAR(255)" />
-            <column name="is_valid" type="${type.boolean}" />
+            <column name="is_valid" type="${type.boolean}"  defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="label_1" type="VARCHAR(255)" />
             <column name="label_2" type="VARCHAR(255)" />
             <column name="label_3" type="VARCHAR(255)" />
@@ -1066,7 +1067,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_item_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1100,7 +1101,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1110,7 +1111,9 @@
             <column name="file_name" type="VARCHAR(255)" />
             <column name="invoice_amount" type="numeric(23, 12)" />
             <column name="invoice_number" type="INT4" />
-            <column name="is_payment_created" type="${type.boolean}" />
+            <column name="is_payment_created" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="return_file_name" type="VARCHAR(255)" />
             <column name="return_status_code" type="VARCHAR(255)" />
             <column name="send_date" type="DATETIME" />
@@ -1128,7 +1131,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_op_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1153,7 +1156,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_due_date_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1175,7 +1178,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_lot_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1196,7 +1199,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_plan_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1222,7 +1225,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_plan_transition_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1247,7 +1250,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_amount_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1268,7 +1271,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_code_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1291,7 +1294,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_occ_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1318,7 +1321,9 @@
             </column>
             <column name="updated" type="DATETIME" />
             <column name="version" type="INT4" />
-            <column name="active" type="${type.boolean}" />
+            <column name="active" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="job_frequency" type="INT4" />
             <column name="job_repository_id" type="INT4" />
             <column name="last_execution_date" type="DATETIME" />
@@ -1434,7 +1439,7 @@
             <column name="br_amount_with_tax" type="numeric(23, 12)" />
             <column name="br_amount_without_tax" type="numeric(23, 12)" />
             <column name="discount_rate" type="numeric(23, 12)" />
-            <column name="electronic_billing" type="${type.boolean}" />
+            <column name="electronic_billing" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="email" type="VARCHAR(255)" />
             <column name="invoice_prefix" type="VARCHAR(255)" />
             <column name="next_invoice_date" type="DATETIME" />
@@ -1462,7 +1467,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1487,7 +1492,7 @@
             <column name="start_date" type="DATETIME" />
             <column name="status" type="VARCHAR(255)" />
             <column name="status_date" type="DATETIME" />
-            <column name="xml_invoice_generated" type="${type.boolean}" />
+            <column name="xml_invoice_generated" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -1505,7 +1510,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_list_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1530,7 +1535,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_charge_instance_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1548,7 +1553,7 @@
             <column name="criteria_2" type="VARCHAR(255)" />
             <column name="criteria_3" type="VARCHAR(255)" />
             <column name="pr_description" type="VARCHAR(100)" />
-            <column name="is_prepaid" type="${type.boolean}" />
+            <column name="is_prepaid" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="status" type="VARCHAR(255)" />
             <column name="status_date" type="DATETIME" />
             <column name="termination_date" type="date" />
@@ -1582,7 +1587,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1607,7 +1612,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_period_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1635,7 +1640,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_cycle_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1665,7 +1670,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1686,7 +1691,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_language_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1707,7 +1712,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discplan_inst_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1732,7 +1737,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_inv_sub_cat_country_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1754,7 +1759,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1786,7 +1791,9 @@
             <column name="trading_country_id" type="BIGINT" />
             <column name="trading_currency_id" type="BIGINT" />
             <column name="trading_language_id" type="BIGINT" />
-            <column name="detailed_invoice" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="detailed_invoice" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
             <column name="invoice_id" type="BIGINT" />
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
@@ -1803,7 +1810,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_agregate_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1818,7 +1825,7 @@
             <column name="description" type="VARCHAR(600)" />
             <column name="description_discount" type="VARCHAR(50)" />
             <column name="discount" type="numeric(23, 12)" />
-            <column name="discount_aggregate" type="${type.boolean}">
+            <column name="discount_aggregate" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="item_number" type="INT4" />
@@ -1854,7 +1861,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1880,7 +1887,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_lang_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1901,7 +1908,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_cat_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -1962,7 +1969,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_priceplan_inst_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2000,7 +2007,9 @@
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="code" type="VARCHAR(255)" />
             <column name="description" type="VARCHAR(255)" />
-            <column name="do_not_trigger_invoicing" type="${type.boolean}" />
+            <column name="do_not_trigger_invoicing" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="offer_code" type="VARCHAR(35)" />
             <column name="parameter_1" type="VARCHAR(255)" />
             <column name="parameter_2" type="VARCHAR(255)" />
@@ -2046,7 +2055,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rejected_billing_accounts_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2067,7 +2076,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_reservation_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2108,7 +2117,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_service_instance_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2143,9 +2152,15 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_subscrip_termin_reason_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="apply_agreement" type="${type.boolean}" />
-            <column name="apply_reimbursment" type="${type.boolean}" />
-            <column name="apply_termination_charges" type="${type.boolean}" />
+            <column name="apply_agreement" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="apply_reimbursment" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="apply_termination_charges" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="code" type="VARCHAR(255)" />
             <column name="description" type="VARCHAR(255)" />
             <column name="provider_id" type="BIGINT" />
@@ -2157,7 +2172,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_subscription_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2168,7 +2183,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="default_level" type="${type.boolean}" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="end_agrement_date" type="DATETIME" />
             <column name="status" type="VARCHAR(255)" />
             <column name="status_date" type="DATETIME" />
@@ -2193,7 +2208,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2217,7 +2232,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_language_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2238,7 +2253,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_country_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2258,7 +2273,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_currency_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2279,7 +2294,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_language_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2324,7 +2339,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2354,7 +2369,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2415,7 +2430,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2482,7 +2497,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_charge_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2528,7 +2543,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_counter_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2576,7 +2591,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2600,7 +2615,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_item_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2646,7 +2661,9 @@
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
-            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-215">
@@ -2655,7 +2672,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2685,7 +2702,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-216">
         <createTable tableName="cat_one_shot_charge_templ">
-            <column name="immediate_invoicing" type="${type.boolean}" />
+            <column name="immediate_invoicing" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="type" type="VARCHAR(255)" />
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_one_shot_charge_templ_pkey" />
@@ -2698,7 +2715,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_plan_matrix_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2864,7 +2881,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_service_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2893,7 +2910,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_triggered_edr_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2936,7 +2953,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_wallet_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -2947,7 +2964,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="consumption_alert_set" type="${type.boolean}" />
+            <column name="consumption_alert_set" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="fast_rating_level" type="INT4" />
             <column name="wallet_type" type="VARCHAR(255)" />
             <column name="provider_id" type="BIGINT" />
@@ -2962,7 +2981,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_campaign_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3020,7 +3039,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_coords_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3063,7 +3082,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_message_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3094,7 +3113,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_variable_pkey"/>
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3105,7 +3124,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="mandatory" type="${type.boolean}" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -3118,7 +3139,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_var_value_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3158,7 +3179,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_sender_config_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3179,9 +3200,13 @@
             <column name="delay_min" type="BIGINT" />
             <column name="use_ack" type="${type.boolean}" />
             <column name="stamptype" type="VARCHAR(255)" />
-            <column name="addaddressfrontpage" type="${type.boolean}" />
+            <column name="addaddressfrontpage" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="envelopformat" type="VARCHAR(255)" />
-            <column name="printrectoverso" type="${type.boolean}" />
+            <column name="printrectoverso" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="address_1" type="VARCHAR(50)" />
             <column name="address_2" type="VARCHAR(50)" />
             <column name="address_3" type="VARCHAR(50)" />
@@ -3189,7 +3214,9 @@
             <column name="address_country" type="VARCHAR(50)" />
             <column name="address_state" type="VARCHAR(50)" />
             <column name="address_zipcode" type="VARCHAR(10)" />
-            <column name="usecolor" type="${type.boolean}" />
+            <column name="usecolor" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="windowtype" type="VARCHAR(255)" />
             <column name="smtp_host" type="VARCHAR(255)" />
             <column name="smtp_port" type="INT4" />
@@ -3209,7 +3236,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_field_inst_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3241,7 +3268,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_field_tmpl_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3255,7 +3282,9 @@
             <column name="field_type" type="VARCHAR(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="value_required" type="${type.boolean}" />
+            <column name="value_required" type="${type.boolean}"  defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -3268,7 +3297,9 @@
             <column name="STORAGE_TYPE" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="TRIGGER_END_PERIOD_EVENT" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="TRIGGER_END_PERIOD_EVENT" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="CACHE_VALUE_FOR" type="int" />
             <column name="APPLIES_TO" type="VARCHAR(100)">
                 <constraints nullable="false" />
@@ -3283,7 +3314,7 @@
             <column name="MAX_VALUE" type="BIGINT" />
             <column name="MIN_VALUE" type="BIGINT" />
             <column name="REG_EXP" type="VARCHAR(80)" />
-            <column name="CACHE_VALUE" type="${type.boolean}" defaultValueNumeric="1">
+            <column name="CACHE_VALUE" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="MAPKEY_TYPE" type="varchar(20)" />
@@ -3324,7 +3355,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_brand_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3346,7 +3377,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_category_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3357,7 +3388,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="exonerated_from_taxes" type="${type.boolean}" />
+            <column name="exonerated_from_taxes" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -3381,7 +3414,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3392,8 +3425,12 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="amount_validation" type="${type.boolean}" />
-            <column name="automatic_invoicing" type="${type.boolean}" />
+            <column name="amount_validation" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="automatic_invoicing" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="account_number" type="VARCHAR(11)" />
             <column name="account_owner" type="VARCHAR(50)" />
             <column name="bank_code" type="VARCHAR(5)" />
@@ -3407,9 +3444,13 @@
             <column name="issuer_number" type="VARCHAR(50)" />
             <column name="hash_key" type="VARCHAR(2)" />
             <column name="discount_accounting_code" type="VARCHAR(255)" />
-            <column name="display_free_tx_in_invoice" type="${type.boolean}" />
+            <column name="display_free_tx_in_invoice" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="email" type="VARCHAR(100)" />
-            <column name="entreprise" type="${type.boolean}" />
+            <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="address_1" type="VARCHAR(50)" />
             <column name="address_2" type="VARCHAR(50)" />
             <column name="address_3" type="VARCHAR(50)" />
@@ -3421,11 +3462,19 @@
             <column name="creditor_code" type="VARCHAR(255)" />
             <column name="financial_institution_code" type="VARCHAR(255)" />
             <column name="nne" type="VARCHAR(255)" />
-            <column name="level_duplication" type="${type.boolean}" />
+            <column name="level_duplication" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="logo" type="${type.blob}" />
-            <column name="multicountry_flag" type="${type.boolean}" />
-            <column name="multicurrency_flag" type="${type.boolean}" />
-            <column name="multilanguage_flag" type="${type.boolean}" />
+            <column name="multicountry_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="multicurrency_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="multilanguage_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="prepaid_resrv_delay_ms" type="BIGINT" />
             <column defaultValueNumeric="2" name="rating_rounding" type="INT4" />
             <column name="payment_methods" type="VARCHAR(255)" />
@@ -3444,7 +3493,9 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
-            <column name="RECOGNIZE_REVENUE" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="RECOGNIZE_REVENUE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -3453,7 +3504,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_contact_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3489,7 +3540,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_seller_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3551,7 +3602,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3563,7 +3614,6 @@
             </column>
             <column name="description" type="VARCHAR(100)" />
             <column name="extender" type="VARCHAR(255)" />
-            <column name="isvisible" type="${type.boolean}" />
             <column name="css_style" type="VARCHAR(1000)" />
             <column name="css_style_class" type="VARCHAR(255)" />
             <column name="provider_id" type="BIGINT" />
@@ -3573,19 +3623,23 @@
             <column name="role_id" type="BIGINT" />
             <column name="width" type="VARCHAR(10)" />
             <column name="height" type="VARCHAR(10)" />
-            <column name="VISIBLE" type="${type.boolean}" />
+            <column name="VISIBLE" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-254">
         <createTable tableName="dwh_chart_bar">
-            <column name="animate" type="${type.boolean}" />
+            <column name="animate" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="barmargin" type="INT4">
                 <constraints nullable="false" />
             </column>
             <column name="barpadding" type="INT4">
                 <constraints nullable="false" />
             </column>
-            <column name="break_on_null" type="${type.boolean}" />
+            <column name="break_on_null" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="data_tip_format" type="VARCHAR(255)" />
             <column name="legend_cols" type="INT4" />
             <column name="legend_position" type="VARCHAR(255)" />
@@ -3593,13 +3647,19 @@
             <column name="max" type="FLOAT8" />
             <column name="min" type="FLOAT8" />
             <column name="orientation" type="INT4" />
-            <column name="show_data_tip" type="${type.boolean}" />
-            <column name="stacked" type="${type.boolean}" />
+            <column name="show_data_tip" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="stacked" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="x_axis_angle" type="INT4" />
             <column name="x_axis_label" type="VARCHAR(255)" />
             <column name="y_axis_angle" type="INT4" />
             <column name="y_axis_label" type="VARCHAR(255)" />
-            <column name="zoom" type="${type.boolean}" />
+            <column name="zoom" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_bar_pkey" />
             </column>
@@ -3607,10 +3667,16 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-255">
         <createTable tableName="dwh_chart_line">
-            <column name="animate" type="${type.boolean}" />
-            <column name="break_on_null" type="${type.boolean}" />
+            <column name="animate" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="break_on_null" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="data_tip_format" type="VARCHAR(255)" />
-            <column name="filled" type="${type.boolean}" />
+            <column name="filled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="legend_cols" type="INT4" />
             <column name="legend_position" type="VARCHAR(255)" />
             <column name="legend_rows" type="INT4" />
@@ -3619,14 +3685,22 @@
             <column name="min_x" type="INT4" />
             <column name="min_y" type="INT4" />
             <column name="series_colors" type="VARCHAR(1000)" />
-            <column name="shadow" type="${type.boolean}" />
-            <column name="show_data_tip" type="${type.boolean}" />
-            <column name="stacked" type="${type.boolean}" />
+            <column name="shadow" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="show_data_tip" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="stacked" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="x_axis_angle" type="INT4" />
             <column name="x_axis_label" type="VARCHAR(255)" />
             <column name="y_axis_angle" type="INT4" />
             <column name="y_axis_label" type="VARCHAR(255)" />
-            <column name="zoom" type="${type.boolean}" />
+            <column name="zoom" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_line_pkey" />
             </column>
@@ -3635,13 +3709,19 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-256">
         <createTable tableName="dwh_chart_pie">
             <column name="diameter" type="INT4" />
-            <column name="filled" type="${type.boolean}" />
+            <column name="filled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="legend_cols" type="INT4" />
             <column name="legend_position" type="VARCHAR(255)" />
             <column name="legend_rows" type="INT4" />
             <column name="series_colors" type="VARCHAR(1000)" />
-            <column name="shadow" type="${type.boolean}" />
-            <column name="show_data_labels" type="${type.boolean}" />
+            <column name="shadow" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="show_data_labels" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="slice_margin" type="INT4" />
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_pie_pkey" />
@@ -3676,7 +3756,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_measurable_quant_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3691,7 +3771,9 @@
             <column name="dimension_2" type="VARCHAR(255)" />
             <column name="dimension_3" type="VARCHAR(255)" />
             <column name="dimension_4" type="VARCHAR(255)" />
-            <column name="editable" type="${type.boolean}" />
+            <column name="editable" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="last_measure_date" type="DATETIME" />
             <column name="measurement_period" type="VARCHAR(255)" />
             <column name="sql_query" type="VARCHAR(2000)" />
@@ -3699,8 +3781,9 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
-            <column name="additive" type="${type.boolean}" />
-            <column name="VISIBLE" type="${type.boolean}" />
+            <column name="additive" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-259">
@@ -3729,7 +3812,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="job_execution_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="job_done" type="${type.boolean}" />
+            <column name="job_done" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
             <column name="end_date" type="DATETIME" />
             <column name="nb_success" type="BIGINT" />
             <column name="nb_error" type="BIGINT" />
@@ -3750,7 +3835,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="medina_access_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="acces_user_id" type="VARCHAR(255)" />
@@ -3804,7 +3889,7 @@
             <column name="updated" type="DATETIME" />
             <column name="updater_id" type="BIGINT" />
             <column name="provider_id" type="BIGINT" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -3868,7 +3953,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="rm_service_param_template_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3905,9 +3990,9 @@
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
-            <column name="display_subscriptions" type="${type.boolean}" />
-            <column name="display_services" type="${type.boolean}" />
-            <column name="display_offers" type="${type.boolean}" />
+            <column name="display_subscriptions" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="display_services" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="display_offers" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="display_edrs" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="display_provider" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="display_detail" type="${type.boolean}" defaultValueNumeric="1" />
@@ -3923,7 +4008,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_credit_category_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3946,7 +4031,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_job_instance_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -3978,7 +4063,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_meveo_instance_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4030,7 +4115,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4048,7 +4133,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="SRC_TYPE" type="VARCHAR(100)" />
-            <column name="IS_ERROR" type="${type.boolean}" />
+            <column name="IS_ERROR" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
 
     </changeSet>
@@ -4093,7 +4178,9 @@
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
-            <column name="ascending" type="${type.boolean}" />
+            <column name="ascending" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
     </changeSet>
@@ -4128,7 +4215,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4237,52 +4324,13 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-296">
-        <createTable tableName="meveo_filter_parameter">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_parameter_pkey" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="DATETIME">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="DATETIME" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-            <column name="default_value" type="VARCHAR(50)" />
-            <column name="value_required" type="${type.boolean}" />
-            <column name="field_type" type="VARCHAR(255)" />
-            <column name="entity_clazz" type="VARCHAR(255)" />
-            <column name="filter_id" type="BIGINT" />
-        </createTable>
-    </changeSet>
-
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-297">
-        <createTable tableName="meveo_filter_parameter_list_val">
-            <column name="filterparameter_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="listvalues" type="VARCHAR(255)" />
-            <column name="listvalues_key" type="VARCHAR(255)">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-298">
         <createTable tableName="CUST_CET">
             <column name="id" type="BIGINT" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cust_cet_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4312,7 +4360,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_cust_cei_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4339,7 +4387,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_module_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4387,7 +4435,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="Ftp_Imported_File_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4445,7 +4493,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_offer_template_category" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4483,8 +4531,12 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_bsm" />
             </column>
             <column name="service_template_id" type="BIGINT" />
-            <column name="duplicate_service" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="duplicate_service" type="${type.boolean}" defaultValueNumeric="0" 
+                <constraints nullable="false" />
+            </column>
+            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0" 
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-311">
@@ -4532,7 +4584,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_recog_rule_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>
@@ -4576,7 +4630,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_action_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4606,7 +4660,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_type_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
@@ -4622,7 +4676,9 @@
             <column name="description" type="VARCHAR(100)" />
             <column name="prefix_el" type="VARCHAR(2000)" />
             <column name="sequence_size" type="INT4" />
-            <column name="matching_auto" type="${type.boolean}" />
+            <column name="matching_auto" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="occ_template_id" type="BIGINT" />
             <column name="current_invoice_nb" type="BIGINT" />
             <column name="occ_templ_negative_id" type="BIGINT" />
@@ -7092,22 +7148,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1022">
         <addForeignKeyConstraint baseColumnNames="EDR_ID" baseTableName="BILLING_RATED_TRANSACTION" constraintName="fk_ropEdrId" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1023">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_crm_provider"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1024">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_filter_parameter" constraintName="fk_creator_meveo_filter_parameter_adm_user"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1025">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="meveo_filter_parameter" constraintName="fk_updater_meveo_filter_parameter_adm_user"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1026">
-        <addForeignKeyConstraint baseColumnNames="filter_id" baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_meveo_filter"
-            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1027">
         <addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice" referencedTableName="billing_invoice" baseColumnNames="invoice_id"

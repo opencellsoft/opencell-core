@@ -51,7 +51,7 @@ public class Filter extends BusinessCFEntity {
 
 	@Type(type="numeric_boolean")
     @Column(name = "SHARED")
-	private Boolean shared;
+	private Boolean shared = false;
 
 	public FilterCondition getFilterCondition() {
 		return filterCondition;
