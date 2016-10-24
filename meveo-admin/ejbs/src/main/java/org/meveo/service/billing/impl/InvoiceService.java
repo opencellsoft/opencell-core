@@ -94,14 +94,17 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Document;
@@ -145,6 +148,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private  CustomerService customerService;
    
 	
 
@@ -274,8 +280,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())){
 			cfName = "INVOICE_SEQUENCE";
 		}
-		
-		Seller seller = chooseSeller(invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType(), currentUser);
+		Customer cust  = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());		
+		Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType(), currentUser);
 
         Sequence sequence = getSequence(invoice, seller,cfName,1,true,currentUser);
 		String prefix = sequence.getPrefixEL();
@@ -998,7 +1004,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param currentUser
 	 * @return
 	 */
-	private Seller chooseSeller(Seller seller,String cfName,Date date,InvoiceType invoiceType,User currentUser){
+	private Seller chooseSeller(Seller seller,String cfName,Date date,InvoiceType invoiceType,User currentUser){		
 		if(seller.getSeller() == null){
 			return seller;
 		}

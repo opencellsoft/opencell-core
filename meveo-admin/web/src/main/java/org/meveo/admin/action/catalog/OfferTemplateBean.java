@@ -21,6 +21,7 @@ package org.meveo.admin.action.catalog;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -484,4 +486,22 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         messages.info(new BundleKey("messages", "offerTemplate.productTemplate.create.successful"));
     }
+    
+    public boolean displayStatus(OfferTemplate e) {
+		Date now = new Date();
+
+		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
+			if (e.getValidFrom() == null && e.getValidTo() == null) {
+				return true;
+			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
+				return true;
+			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
+				return true;
+			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

@@ -197,12 +197,13 @@
 										</p:panel>
 
 										<p:panel>
-											<p:panel>
-												<p:inputSwitch value="#{prod.active}" disabled="true"
-													styleClass="#{prod.active ? 'GreenBg' : ''}"
-													onLabel="#{messages['accountStatusEnum.active']}"
-													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-											</p:panel>
+											<p:outputPanel>
+												<p:panel styleClass="switch-wrapper">
+													<h:outputText value="#{messages['commons.status']}: " />
+													<h:outputText value="#{prod.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', prod.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(prod) ? 'GreenDark' : 'GrayDark'}" />
+												</p:panel>
+											</p:outputPanel>
 											<p:panel styleClass="text-center">
 												<ul class="list-inline" style="width: 135px;">
 													<li><p:link id="viewLink"
@@ -286,9 +287,8 @@
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>
-								<p:inputSwitch value="#{entity.active}" disabled="true"
-									onLabel="#{messages['accountStatusEnum.active']}"
-									offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
+								<h:outputText value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
 							</p:column>
 							<p:column>
 								<ul class="list-inline">
