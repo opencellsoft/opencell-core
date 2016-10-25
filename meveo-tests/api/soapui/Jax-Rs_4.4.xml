@@ -597,7 +597,7 @@
       </con:method>
     </con:resource>
   </con:interface>
-  <con:testSuite id="15130244-71cb-4823-990a-4f5472ca8dba" name="Copy of Setup Authorization">
+  <con:testSuite id="15130244-71cb-4823-990a-4f5472ca8dba" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="10607a5a-71af-4f83-ba48-5e4f047e340c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
@@ -619,7 +619,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
 	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
 	    for( testStep in testCaseItem.getTestStepList() ) {
-	    	     testStep.getTestRequest().setPreemptive(true);
+	    	
+	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep )){
+	          	continue;
+	          }
+	          
+	    		testStep.getTestRequest().setPreemptive(true);
+	    	
 
 			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
 				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
@@ -657,7 +663,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlan/" methodName="create" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="create DiscountPlan - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
@@ -692,7 +698,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/" methodName="create" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="create DiscountPlanItem - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
@@ -732,7 +738,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/" methodName="update" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="update DiscountPlanItem - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
@@ -772,7 +778,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/createOrUpdate" methodName="createOrUpdate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="createOrUpdate DiscountPlanItem - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
@@ -812,7 +818,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/" methodName="get" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="get DiscountPlanItem - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
@@ -848,7 +854,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/{discountPlanItemCode}" methodName="remove" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="remove DiscountPlanItem - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
@@ -884,7 +890,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlan/" methodName="remove" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="remove DiscountPlan - Request 1" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
@@ -921,7 +927,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" resourcePath="/meveo/api/rest/catalog/discountPlanItem/" methodName="get" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="get DiscountPlanItem fail" id="f5534a8b-75fd-4b2e-af40-a268ead48763" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
@@ -973,7 +979,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" methodName="listByFilter" resourcePath="/meveo/api/rest/filteredList/listByFilter" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="List by filter" id="7e6da4e9-3dff-4822-a899-9d87141fde10" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://localhost:8080</con:endpoint>
@@ -1029,7 +1035,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:config service="http://localhost:8080" methodName="Method 1" resourcePath="/meveo/api/rest/billing/subscription/applyProduct" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="applyProduct" id="49565b98-9f83-46fe-a3db-9c6a9f70d838" mediaType="application/json" postQueryString="false">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
@@ -1047,6 +1053,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -1067,11 +1074,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
       <con:name>meveoPassword</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

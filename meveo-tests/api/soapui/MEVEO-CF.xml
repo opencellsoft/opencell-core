@@ -35,7 +35,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="6525abb5-8ba3-41fe-82de-1f972b44d134" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b2e65184-0a07-4efe-b806-cf19123b4dd3" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -257,7 +257,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0452a833-b399-485e-ad93-15f1e0a8ca1f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="72a49db8-bcef-486e-9671-de5b708d7070" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -461,7 +461,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b037c488-90b4-4d4f-80d6-b060bc44907c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="ae9cb189-0221-4e04-bf8f-dfb88acf74a3" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -536,7 +536,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="32ff6d91-bacd-454b-b5de-4a57ecf8c57f" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4ffe8a54-5903-483e-b0c1-8647717699f1" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -581,7 +581,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="4ec8e092-5cf5-4d58-99b8-1820735211c8" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d448977e-a42b-4430-a185-07dc5987ccca" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -608,7 +608,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="dd5ee2d6-be0e-43bb-9323-e7b7fbcb62a4" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="76101927-a2ad-47ed-9128-eeb6341b1df1" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -920,7 +920,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5bc32de0-5b17-4a66-b85b-746eb0521c91" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -959,11 +959,11 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="df9523f5-ebd3-41b1-8d36-c525c9ddce42" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO CF" type="rest" definitionUrl="SELLER_DATE_SINGLE_V" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints/>
+    <con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="03f488f9-f60e-4aef-ad70-b3cdb58831b8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080</con:endpoint>
     </con:endpoints>
     <con:resource name="Customer" path="/api/rest/account/customer" id="1224e4ed-0996-4503-b004-a449dd20884d">
@@ -1033,7 +1033,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/InvoiceWs?wsdl" id="3d2d8e46-81dd-4e9b-868b-1da64fe62cc2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
@@ -1090,15 +1090,28 @@ headersForSuper.put("Authorization","Basic "+supeUserPass.getBytes().encodeBase6
 for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
 	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
-	    for( testStep in testCaseItem.getTestStepsOfType(com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep) ) {
+	    for( testStep in testCaseItem.getTestStepList() ) {
 	    	
-		    	 testStep.getTestRequest().setPreemptive(true);
-		    	 if (testCaseItem.getName().equals("CFT - Provider")){
-		    	 	testStep.getTestRequest().setRequestHeaders(headersForSuper);
-		    	 } else {
-		    	 	testStep.getTestRequest().setRequestHeaders(headers);
-		    	 }
+	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep )){
+	          	continue;
+	          }
+	          
+	    		testStep.getTestRequest().setPreemptive(true);
+	    	
+
+			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
+				
+		    	} else if (testStep.getName().contains("AUTHORIZATION_ADMIN")) {
+		    		testStep.getTestRequest().setRequestHeaders(headers);
+		    		
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") 
+		    	    || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")){
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
 		    	
+		    	} else if(!testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(headers);
+		    	}
 	    }
 	}
 }</con:setupScript>
@@ -25267,19 +25280,19 @@ public class Action1 extends Script {
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
       <con:name>meveoPassword</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
       <con:name>meveoSuperUserName</con:name>
-      <con:value>meveo.superadmin</con:value>
+      <con:value>opencell.superadmin</con:value>
     </con:property>
     <con:property>
       <con:name>meveoSuperPassword</con:name>
-      <con:value>meveo.superadmin</con:value>
+      <con:value>opencell.superadmin</con:value>
     </con:property>
     <con:property>
       <con:name>entityPrefix</con:name>
