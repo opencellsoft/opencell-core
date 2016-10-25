@@ -30,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
@@ -76,6 +77,10 @@ public class CustomerAccountApi extends AccountApi {
 	}
 
 	public CustomerAccount create(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return create(postData, currentUser, true, null);
+	}
+
+	public CustomerAccount create(CustomerAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -138,6 +143,10 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
 		}
 
+		if(businessAccountModel != null){
+			customerAccount.setBusinessAccountModel(businessAccountModel);
+		}
+
 		customerAccountService.create(customerAccount, currentUser);
 
 		// Validate and populate customFields
@@ -156,6 +165,10 @@ public class CustomerAccountApi extends AccountApi {
 	}
 
 	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
+		return update(postData, currentUser, true, null);
+	}
+
+	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -241,6 +254,10 @@ public class CustomerAccountApi extends AccountApi {
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef2())) {
 			customerAccount.setExternalRef2(postData.getExternalRef2());
+		}
+
+		if(businessAccountModel != null) {
+			customerAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
 		try {

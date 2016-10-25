@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -66,6 +67,9 @@ public class SellerDto extends BaseDto {
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
+
+	@XmlElement(name = "businessAccountModel")
+	private BusinessEntityDto businessAccountModel;
 
 	public SellerDto() {
 	}
@@ -192,10 +196,17 @@ public class SellerDto extends BaseDto {
 		this.invoiceTypeSequences = invoiceTypeSequences;
 	}
 
+	public BusinessEntityDto getBusinessAccountModel() {
+		return businessAccountModel;
+	}
+
+	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
+		this.businessAccountModel = businessAccountModel;
+	}
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + "]";
+		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
 	}
 
 	

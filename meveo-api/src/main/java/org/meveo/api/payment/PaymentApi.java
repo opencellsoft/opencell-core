@@ -2,7 +2,6 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,15 +16,12 @@ import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -116,7 +112,6 @@ public class PaymentApi extends BaseApi {
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
 		automatedPaymentService.create(automatedPayment, currentUser);
 		// populate customFields
-<<<<<<< HEAD
         try {
             populateCustomFields(paymentDto.getCustomFields(), automatedPayment, true, currentUser); 
         } catch (Exception e) {
@@ -124,14 +119,6 @@ public class PaymentApi extends BaseApi {
             throw e;
         }
         
-=======
-		try {
-			populateCustomFields(paymentDto.getCustomFields(), automatedPayment, true, currentUser); 
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw new MeveoApiException("Failed to associate custom field instance to an entity");
-		}
->>>>>>> 6f6ae04... re #2142 - [API]  createPaiment, matching wrong
 		int nbOccMatched = 0;
 		if (paymentDto.isToMatching()) {
 			List<Long> listReferenceToMatch = new ArrayList<Long>();
