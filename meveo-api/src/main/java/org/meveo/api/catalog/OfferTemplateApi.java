@@ -216,15 +216,24 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 					boolean found = false;
 
 					// check if already exists
+					OfferServiceTemplate tempOfferServicetemTemplate = null;
 					for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
 						if (offerServiceTemplate.getServiceTemplate().getCode().equals(offerServiceTemplateDto.getServiceTemplate().getCode())) {
 							found = true;
+							tempOfferServicetemTemplate = offerServiceTemplate;
 							break;
 						}
 					}
 
 					if (!found) {
 						toBeAdded.add(offerServiceTemplateDto);
+					} else {
+						// update
+						if (offerServiceTemplateDto.getMandatory() == null) {
+							tempOfferServicetemTemplate.setMandatory(offerServiceTemplateDto.getServiceTemplate().isMandatory());
+						} else {
+							tempOfferServicetemTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
+						}
 					}
 				}
 
