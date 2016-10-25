@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -97,6 +98,8 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
 
     public void close() {
         this.endDate = new Date();
+        this.addReport(getErrorsAString());
+        this.addReport(getWarningAString());
     }
 
     // helper
@@ -222,7 +225,9 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     }
 
     public void addReport(String report) {
-        this.report = (this.report == null ? "" : (this.report + ", ")) + report;
+        if (!StringUtils.isBlank(report)) {
+            this.report = (this.report == null ? "" : (this.report + ", ")) + report;
+        }
     }
 
     public boolean isDone() {
