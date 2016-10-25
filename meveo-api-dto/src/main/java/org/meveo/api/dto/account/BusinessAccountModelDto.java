@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.module.MeveoModule;
 
 /**
@@ -25,6 +26,10 @@ public class BusinessAccountModelDto extends MeveoModuleDto {
 
     public BusinessAccountModelDto(MeveoModule module) {
         super(module);
+        if(module instanceof BusinessAccountModel){
+            BusinessAccountModel businessAccountModel = (BusinessAccountModel) module;
+            this.hierarchyType = businessAccountModel.getHierarchyType();
+        }
     }
 
     public AccountHierarchyTypeEnum getHierarchyType() {

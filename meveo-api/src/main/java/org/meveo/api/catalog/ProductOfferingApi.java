@@ -4,7 +4,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.sql.rowset.serial.SerialBlob;
@@ -45,7 +44,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 	private DigitalResourceApi digitalResourceApi;
 
 	protected void processProductChargeTemplateToDto(ProductTemplate productTemplate, ProductTemplateDto productTemplateDto) {
-		Set<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
+		List<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
 		ProductChargeTemplateDto productChargeTemplateDto = null;
 		List<ProductChargeTemplateDto> chargeDtos = new ArrayList<>();
 		if(productChargeTemplates != null) {
@@ -122,7 +121,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 			newProductChargeTemplates.add(productChargeTemplate);
 		}
 		
-		Set<ProductChargeTemplate> existingProductChargeTemplates = productTemplate.getProductChargeTemplates();
+		List<ProductChargeTemplate> existingProductChargeTemplates = productTemplate.getProductChargeTemplates();
 		boolean hasExistingProductChargeTemplates = existingProductChargeTemplates != null && !existingProductChargeTemplates.isEmpty();
 		boolean hasNewProductChargeTemplates = !newProductChargeTemplates.isEmpty();
 		

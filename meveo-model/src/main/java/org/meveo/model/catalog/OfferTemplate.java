@@ -70,6 +70,9 @@ public class OfferTemplate extends ProductOffering {
 	
 	@Transient
 	public Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType;
+	
+	@Transient
+	public List<ProductTemplate> productTemplates;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -220,4 +223,19 @@ public class OfferTemplate extends ProductOffering {
 
         return serviceTemplatesByChargeType;
     }
+    
+	public List<ProductTemplate> getProductTemplates() {
+		if (productTemplates != null) {
+			return productTemplates;
+		}
+
+		productTemplates = new ArrayList<>();
+
+		for (OfferProductTemplate prodTemplate : offerProductTemplates) {
+			prodTemplate.getProductTemplate().getProductChargeTemplates();
+			productTemplates.add(prodTemplate.getProductTemplate());
+		}
+
+		return productTemplates;
+	}
 }

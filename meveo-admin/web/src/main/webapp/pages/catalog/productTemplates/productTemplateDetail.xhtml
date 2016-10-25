@@ -35,7 +35,7 @@
 					</ui:include>
 				</p:tab>
 				<p:tab tab="productCharges"
-					title="#{messages['productTemplate.productCharges']}">
+					title="#{messages['productTemplate.productCharges']}" rendered="#{!productTemplateBean.entity.transient}">
 					<hftl:dataList backingBean="#{productTemplateBean}"
 						dataModel="#{productTemplateBean.entity.productChargeTemplates}">
 						<hftl:column label="#{messages['BusinessEntity.code']}"

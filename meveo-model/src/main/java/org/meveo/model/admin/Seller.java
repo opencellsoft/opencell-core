@@ -44,6 +44,7 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.Address;
 
 @Entity
@@ -81,6 +82,10 @@ public class Seller extends BusinessCFEntity {
 	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
 	@MapKeyJoinColumn(name="INVOICETYPE_ID")
 	Map<InvoiceType,Sequence> invoiceTypeSequence = new HashMap<InvoiceType,Sequence>();
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "BAM_ID")
+	private BusinessAccountModel businessAccountModel;
 	
 	
 	public Seller() {
@@ -148,6 +153,14 @@ public class Seller extends BusinessCFEntity {
 	 */
 	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
 		this.invoiceTypeSequence = invoiceTypeSequence;
+	}
+
+	public BusinessAccountModel getBusinessAccountModel() {
+		return businessAccountModel;
+	}
+
+	public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
+		this.businessAccountModel = businessAccountModel;
 	}
 
 	@Override

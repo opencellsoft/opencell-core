@@ -3,7 +3,6 @@ package org.meveo.api.account;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -30,6 +29,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -64,6 +64,10 @@ public class SellerApi extends BaseApi {
     }
 
     public Seller create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+        return create(postData, currentUser, checkCustomField, null);
+    }
+
+    public Seller create(SellerDto postData, User currentUser, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -128,6 +132,10 @@ public class SellerApi extends BaseApi {
             seller.setSeller(parentSeller);
         }
 
+        if(businessAccountModel != null) {
+            seller.setBusinessAccountModel(businessAccountModel);
+        }
+
         sellerService.create(seller, currentUser);
 
         // populate customFields
@@ -147,6 +155,10 @@ public class SellerApi extends BaseApi {
     }
 
     public Seller update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
+        return update(postData, currentUser, checkCustomField, null);
+    }
+
+    public Seller update(SellerDto postData, User currentUser, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -221,6 +233,10 @@ public class SellerApi extends BaseApi {
             }
 
             seller.setSeller(parentSeller);
+        }
+
+        if(businessAccountModel != null) {
+            seller.setBusinessAccountModel(businessAccountModel);
         }
 
         seller = sellerService.update(seller, currentUser);

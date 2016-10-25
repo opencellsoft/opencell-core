@@ -18,6 +18,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -122,6 +123,9 @@ public class InvoiceApi extends BaseApi {
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
+	
+	@Inject
+	private ResourceBundle resourceMessages;
 	
 	/**
 	 * Create an invoice based on the DTO object data and current user
@@ -472,6 +476,7 @@ public class InvoiceApi extends BaseApi {
 	 * @throws BusinessApiException
 	 * @throws Exception
 	 */
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
@@ -505,19 +510,19 @@ public class InvoiceApi extends BaseApi {
 
 			throw new BusinessApiException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
 		}
-
-		List<Long> baIds = new ArrayList<Long>();
-		baIds.add(billingAccount.getId());
-
 		
-		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, generateInvoiceRequestDto.getInvoicingDate());
+		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, generateInvoiceRequestDto.getInvoicingDate());				
 		log.debug("createRatedTransaction ok");
 
 		Filter ratedTransactionFilter =null;
 		if(generateInvoiceRequestDto.getFilter()!=null){
 			ratedTransactionFilter=filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter(), currentUser);
+		}else{
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, (generateInvoiceRequestDto.getLastTransactionDate()))){
+				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
+			}
 		}
-
+		
 		Invoice invoice = invoiceService.createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter
 				,generateInvoiceRequestDto.getInvoicingDate(),generateInvoiceRequestDto.getLastTransactionDate(),currentUser);
 		log.debug("createAgregatesAndInvoice ok ");
