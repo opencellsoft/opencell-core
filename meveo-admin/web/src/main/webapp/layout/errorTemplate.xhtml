@@ -12,8 +12,10 @@
 			<h2>
 				<ui:insert name="contentTitle">Error</ui:insert>
 			</h2>
+			
+			<ui:insert name="errorContent"></ui:insert>
 
-			<ui:insert name="errorContent">
+			<div>
 				<ul>
 					<li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
 					<li>User agent: #{header['user-agent']}</li>
@@ -33,7 +35,11 @@
 						<code>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</code>
 					</pre></li>
 				</ul>
-			</ui:insert>
+			</div>
+
+			<p>
+				<a href="#{request.contextPath}">#{messages['message.backToHome']}</a>
+			</p>
 
 			<h:outputScript
 				rendered="#{facesContext.partialViewContext.ajaxRequest}">scrollTo(0, 0);</h:outputScript>
