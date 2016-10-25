@@ -24,10 +24,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
+
 @XmlRootElement(name = "Invoice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceDto extends BaseDto {

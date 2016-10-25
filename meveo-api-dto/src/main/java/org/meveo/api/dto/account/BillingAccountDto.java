@@ -1,5 +1,6 @@
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.invoice.Invoice4_2Dto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,7 +53,9 @@ public class BillingAccountDto extends AccountDto {
 	private String terminationReason;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private List<Invoice4_2Dto> invoices = new ArrayList<Invoice4_2Dto>();
+	private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
+	private BigDecimal invoicingThreshold; 
+	
 	/**
 	 * Use for GET / LIST only.
 	 */
@@ -131,7 +134,7 @@ public class BillingAccountDto extends AccountDto {
 		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
 				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
 				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate=" + statusDate + ",terminationReason=" + terminationReason
-				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + "]";
+				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + ", invoicingThreshold="+invoicingThreshold+"]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -198,12 +201,28 @@ public class BillingAccountDto extends AccountDto {
 		this.bankCoordinates = bankCoordinates;
 	}
 
-	public List<Invoice4_2Dto> getInvoices() {
+	public List<InvoiceDto> getInvoices() {
 		return invoices;
 	}
 
-	public void setInvoices(List<Invoice4_2Dto> invoices) {
+	public void setInvoices(List<InvoiceDto> invoices) {
 		this.invoices = invoices;
 	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+	
+	
 
 }

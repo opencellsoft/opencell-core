@@ -173,6 +173,9 @@ public class BillingAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	// key is the counter template code
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+	
+	@Column(name = "INVOICING_THRESHOLD")
+	private BigDecimal invoicingThreshold; 
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -411,4 +414,19 @@ public class BillingAccount extends AccountEntity {
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return CustomerAccount.class;
 	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+	
 }
