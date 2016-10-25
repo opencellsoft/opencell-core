@@ -1181,31 +1181,65 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:testSuite id="f37ac3d6-bd0a-4c30-bdb3-b3a6aed39b74" name="Create Settings">
+  <con:testSuite id="1ba1fb76-ce27-4529-a21d-5b126e022774" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="068d579b-cc32-4b5b-a366-8223bf24e711" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SOAPUI Configuration" searchProperties="true">
+    <con:testCase id="50184407-506d-4c99-9ea3-27fc6f3ad22f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
       <con:settings/>
       <con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
+StringToStringMap headersForSuper = new StringToStringMap();
+
+String supeUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
+ log.info("userPass="+supeUserPass);
+ 
 String userPass = testCase.testSuite.project.getPropertyValue("meveoUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoPassword");
  log.info("userPass="+userPass);
 headers.put("Authorization","Basic "+userPass.getBytes().encodeBase64());
+headersForSuper.put("Authorization","Basic "+supeUserPass.getBytes().encodeBase64());
 for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
-	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getLabel()+"]")
+	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
 	    for( testStep in testCaseItem.getTestStepList() ) {
-	    	if (! testStep instanceof ManualTestStep){
-	        testStep.getTestRequest().setPreemptive(true);
-	        testStep.getTestRequest().setRequestHeaders(headers);
-	    	}
+	    	
+	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep )){
+	          	continue;
+	          }
+	          
+	    		testStep.getTestRequest().setPreemptive(true);
+	    	
+
+			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
+				
+		    	} else if (testStep.getName().contains("AUTHORIZATION_ADMIN")) {
+		    		testStep.getTestRequest().setRequestHeaders(headers);
+		    		
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") 
+		    	    || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")){
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
+		    	
+		    	} else if(!testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(headers);
+		    	}
 	    }
 	}
 }</con:setupScript>
-      <con:properties/>
+      <con:properties>
+        <con:property>
+          <con:name>authorization</con:name>
+          <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>
+        </con:property>
+      </con:properties>
     </con:testCase>
+    <con:properties/>
+    <con:setupScript/>
+  </con:testSuite>
+  <con:testSuite id="f37ac3d6-bd0a-4c30-bdb3-b3a6aed39b74" name="Create Settings">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="b1f36e9d-b591-47e2-b07b-5d63c0ad1269" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Basic Settings" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Create UsageRatingJob instance" id="5e06d277-ecd7-4154-b60f-ced90fa46086">
@@ -1215,7 +1249,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateJobInstance</con:operation>
           <con:request name="Create UsageRatingJob instance" id="649e7b1d-d31a-45d1-a439-683999b38cfe">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/JobWs</con:endpoint>
@@ -1255,7 +1289,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTitle</con:operation>
           <con:request name="Create Title Mr" id="02322ba7-efc3-436a-832a-7e379f305cac">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -1296,7 +1330,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTitle</con:operation>
           <con:request name="Create Title Company" id="02322ba7-efc3-436a-832a-7e379f305cac">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -1338,7 +1372,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createSeller</con:operation>
           <con:request name="Create Seller DEFAULT" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1380,7 +1414,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomerBrand</con:operation>
           <con:request name="Create Customer Brand" id="0e9ee45f-adea-4470-a32c-492383e887d7">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -1417,7 +1451,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomerCategory</con:operation>
           <con:request name="Create Customer Category Mr" id="db4162cc-6df1-440a-a6bc-8595e87d56ff">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -1455,7 +1489,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createLanguage</con:operation>
           <con:request name="Create Language FR" id="4f08f355-cc76-432f-8562-bc9e54348a42">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1497,7 +1531,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createLanguage</con:operation>
           <con:request name="Create Language ENG" id="4f08f355-cc76-432f-8562-bc9e54348a42">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1539,7 +1573,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCurrency</con:operation>
           <con:request name="Create Currency EUR" id="b5792943-ec02-4170-b622-982d37b6a36d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1581,7 +1615,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCurrency</con:operation>
           <con:request name="Create Currency USD" id="b5792943-ec02-4170-b622-982d37b6a36d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1623,7 +1657,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCountry</con:operation>
           <con:request name="Create country FR" id="2da077b1-08ae-447e-b766-d0d3467af0bb">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1666,7 +1700,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCountry</con:operation>
           <con:request name="Create country US" id="2da077b1-08ae-447e-b766-d0d3467af0bb">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1709,7 +1743,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCalendar</con:operation>
           <con:request name="Create Monthly Calendar" id="c728137c-92ba-4535-be03-4bca0f2c5a42">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1765,7 +1799,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCalendar</con:operation>
           <con:request name="Annualy Calendar" id="c728137c-92ba-4535-be03-4bca0f2c5a42">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1810,7 +1844,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTax</con:operation>
           <con:request name="Create tax 0" id="ad55f353-9b70-4b6e-9eed-9f4db098316b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1866,7 +1900,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTax</con:operation>
           <con:request name="Create tax 10" id="ad55f353-9b70-4b6e-9eed-9f4db098316b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1922,7 +1956,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTax</con:operation>
           <con:request name="Create tax 20" id="ad55f353-9b70-4b6e-9eed-9f4db098316b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -1978,7 +2012,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createBillingCycle</con:operation>
           <con:request name="Create Bill cycle" id="63e08286-4c00-43af-b31d-b7e310ee0eee">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2031,7 +2065,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceCategory</con:operation>
           <con:request name="Create Invoice Category ABO" id="cbfc50f6-8a26-44bf-9c97-8b1fa857d7fb">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2078,7 +2112,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceCategory</con:operation>
           <con:request name="Create Invoice Category RAM" id="cbfc50f6-8a26-44bf-9c97-8b1fa857d7fb">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2125,7 +2159,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategory</con:operation>
           <con:request name="Create Invoice Sub category CPU" id="2ddab2ea-5f6c-47b1-93f9-816163ffca1c">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2173,7 +2207,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategoryCountry</con:operation>
           <con:request name="CreateInvoiceSubCategoryCountry CPU" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2217,7 +2251,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategory</con:operation>
           <con:request name="Create Invoice Sub category RAM" id="2ddab2ea-5f6c-47b1-93f9-816163ffca1c">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2265,7 +2299,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategoryCountry</con:operation>
           <con:request name="CreateInvoiceSubCategoryCountry RAM" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -2319,7 +2353,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create calendar" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -2365,7 +2399,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create counterTemplate" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -2420,7 +2454,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usageCharge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -2480,7 +2514,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -2532,7 +2566,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -2602,7 +2636,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -2656,7 +2690,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -2718,7 +2752,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -2777,7 +2811,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -2867,7 +2901,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -2923,7 +2957,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -2965,7 +2999,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create access" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -3016,7 +3050,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -3071,7 +3105,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="registerCdrList" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/MediationWs</con:endpoint>
@@ -3116,7 +3150,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="create script instance" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/ScriptInstanceWs</con:endpoint>
@@ -3175,7 +3209,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="create notification" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/NotificationWs</con:endpoint>
@@ -3227,7 +3261,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="execute UsageRatingJob => create  counterPeriod with Value=80" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -3272,7 +3306,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="registerCdrList" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/MediationWs</con:endpoint>
@@ -3313,7 +3347,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="UsageRatingJob => create  counterPeriod with Value=0 and launch counterPeriodNotification" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -3372,7 +3406,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>updateProvider</con:operation>
           <con:request name="Update Provider" id="469a1c42-2c91-47fb-b917-5cf3c2ce72c8">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3419,7 +3453,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceType</con:operation>
           <con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3467,7 +3501,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateBillingCycle</con:operation>
           <con:request name="Create BillingCycle" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3513,7 +3547,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>updateSeller</con:operation>
           <con:request name="Create Seller" id="37258cdf-c90b-46ae-97b3-74576d44b559">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -3570,7 +3604,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurrent charge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3633,7 +3667,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usageCharge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3696,7 +3730,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3752,7 +3786,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3820,7 +3854,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan recurrent" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3865,7 +3899,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -3919,7 +3953,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -3980,7 +4014,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -4039,7 +4073,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -4118,7 +4152,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -4173,7 +4207,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -4215,7 +4249,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Create access" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -4266,7 +4300,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -4321,7 +4355,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="registerCdrList" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/MediationWs</con:endpoint>
@@ -4390,7 +4424,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createPricePlan</con:operation>
           <con:request name="execute RT-Job" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -4435,7 +4469,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceCategory</con:operation>
           <con:request name="createInvoiceCategory" id="1ec6b2a8-9b7d-4340-a817-2dd3cdda21b0">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -4458,6 +4492,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4474,7 +4509,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategory</con:operation>
           <con:request name="createInvoiceSubCategory" id="7dec32a6-e291-44b4-96c5-b3e2630b2cac">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -4499,6 +4534,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4515,7 +4551,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createTax</con:operation>
           <con:request name="createTax" id="18836e05-2c24-42c6-91c3-c4be1e5d93d7">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -4539,6 +4575,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4555,7 +4592,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoiceSubCategoryCountry</con:operation>
           <con:request name="createInvoiceSubCategoryCountry" id="d4fbe12c-4240-4251-af7f-a42b5ca0eed1">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -4581,6 +4618,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4601,7 +4639,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createInvoice</con:operation>
           <con:request name="createInvoice" id="f80d04e8-c967-41fb-b7d3-78362c3f8069">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -4720,6 +4758,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4765,7 +4804,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findInvoiceByIdOrType</con:operation>
           <con:request name="findInvoiceById" id="760398ab-8d68-4ff2-95e1-bf65faddffa9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -4787,6 +4826,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4803,7 +4843,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findInvoiceByIdOrType</con:operation>
           <con:request name="findInvoiceByType" id="760398ab-8d68-4ff2-95e1-bf65faddffa9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -4827,6 +4867,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4865,7 +4906,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceType</con:operation>
           <con:request name="create PP CF4" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -4893,6 +4934,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -4909,7 +4951,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create offer template" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5075,7 +5117,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurring" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5138,7 +5180,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5193,7 +5235,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5263,7 +5305,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5317,7 +5359,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -5379,7 +5421,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -5438,7 +5480,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -5528,7 +5570,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -5584,7 +5626,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -5635,7 +5677,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -5690,7 +5732,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findOfferTemplate</con:operation>
           <con:request name="execute RT job" id="c85a4974-17ea-4e31-95a2-a58b67b5e164">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -5705,6 +5747,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -5721,7 +5764,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findOfferTemplate</con:operation>
           <con:request name="findUsage > all opend ratedTransactions" id="c85a4974-17ea-4e31-95a2-a58b67b5e164">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/UsageWs</con:endpoint>
@@ -5743,6 +5786,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -5777,7 +5821,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurring" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5840,7 +5884,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usageCharge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5903,7 +5947,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create product" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -5972,7 +6016,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurring" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6035,7 +6079,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6090,7 +6134,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6160,7 +6204,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6214,7 +6258,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -6276,7 +6320,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -6335,7 +6379,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -6425,7 +6469,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -6481,7 +6525,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -6532,7 +6576,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -6587,7 +6631,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findOfferTemplate</con:operation>
           <con:request name="GenerateInvoice" id="c85a4974-17ea-4e31-95a2-a58b67b5e164">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -6607,6 +6651,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -6623,7 +6668,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findXMLInvoice</con:operation>
           <con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -6638,6 +6683,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -6654,7 +6700,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findXMLInvoice</con:operation>
           <con:request name="FindPDF" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -6669,6 +6715,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -6703,7 +6750,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceType</con:operation>
           <con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -6751,7 +6798,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOrUpdateBillingCycle</con:operation>
           <con:request name="Create BillingCycle" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -6797,7 +6844,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>updateSeller</con:operation>
           <con:request name="Create Seller" id="37258cdf-c90b-46ae-97b3-74576d44b559">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -6849,7 +6896,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurring" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6912,7 +6959,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -6967,7 +7014,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7037,7 +7084,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7091,7 +7138,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -7153,7 +7200,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -7212,7 +7259,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -7302,7 +7349,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -7357,7 +7404,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -7408,7 +7455,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -7463,7 +7510,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findOfferTemplate</con:operation>
           <con:request name="GenerateInvoice" id="c85a4974-17ea-4e31-95a2-a58b67b5e164">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -7483,6 +7530,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -7499,7 +7547,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findXMLInvoice</con:operation>
           <con:request name="GetInvoiceXml" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -7520,6 +7568,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -7536,7 +7585,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>findXMLInvoice</con:operation>
           <con:request name="FindPDF" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -7552,6 +7601,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -7586,7 +7636,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create calendar" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -7636,7 +7686,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create counterTemplate" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7691,7 +7741,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create recurrent charge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7754,7 +7804,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usageCharge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7814,7 +7864,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7872,7 +7922,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7947,7 +7997,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan recurrent" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -7992,7 +8042,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -8046,7 +8096,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -8108,7 +8158,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -8167,7 +8217,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -8257,7 +8307,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -8313,7 +8363,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -8355,7 +8405,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create access" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -8406,7 +8456,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOccTemplate</con:operation>
           <con:request name="createOccTemplate" id="ecbb904e-abd3-4b5f-935d-1c02fd64beaf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8431,6 +8481,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8447,7 +8498,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceType</con:operation>
           <con:request name="createInvoiceType" id="ab0aa5b6-32d2-4347-8ab3-4310bf81a425">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8483,6 +8534,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8499,7 +8551,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceCategory</con:operation>
           <con:request name="createInvoiceCategory" id="1ec6b2a8-9b7d-4340-a817-2dd3cdda21b0">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8522,6 +8574,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8538,7 +8591,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceSubCategory</con:operation>
           <con:request name="createInvoiceSubCategory" id="7dec32a6-e291-44b4-96c5-b3e2630b2cac">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8563,6 +8616,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8579,7 +8633,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createTax</con:operation>
           <con:request name="createTax" id="18836e05-2c24-42c6-91c3-c4be1e5d93d7">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8603,6 +8657,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8619,7 +8674,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoiceSubCategoryCountry</con:operation>
           <con:request name="createInvoiceSubCategoryCountry" id="d4fbe12c-4240-4251-af7f-a42b5ca0eed1">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -8645,6 +8700,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8665,7 +8721,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoice</con:operation>
           <con:request name="createInvoice_1" id="f80d04e8-c967-41fb-b7d3-78362c3f8069">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -8777,6 +8833,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8793,7 +8850,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoice</con:operation>
           <con:request name="createInvoice_2" id="f80d04e8-c967-41fb-b7d3-78362c3f8069">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -8905,6 +8962,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8925,7 +8983,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>create</con:operation>
           <con:request name="createJob" id="0552be13-d4e7-43bc-8b88-a22e981f78f8">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -8951,6 +9009,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -8967,7 +9026,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>execute</con:operation>
           <con:request name="execute" id="242614aa-7ce8-4682-9e87-2dc75acf2a20">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -8990,6 +9049,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -9010,7 +9070,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createInvoice</con:operation>
           <con:request name="find invoices with account operation" id="f80d04e8-c967-41fb-b7d3-78362c3f8069">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint>
@@ -9032,6 +9092,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -9062,7 +9123,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create calendar" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint>
@@ -9117,7 +9178,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create counterTemplate" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -9172,7 +9233,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usageCharge" id="fc356bef-2092-4fb7-ac25-63c700f03b64">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -9232,7 +9293,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service" id="a2141db6-7a8b-47b4-9df4-f318c0e9a41a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -9284,7 +9345,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="caffde36-0c45-427e-86d9-467708ec6521">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -9354,7 +9415,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage" id="2c330768-c410-4db6-b763-4ee1a3ca9308">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/CatalogWs</con:endpoint>
@@ -9408,7 +9469,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -9470,7 +9531,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -9529,7 +9590,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create billing account" id="0f35da3a-d075-45cb-a420-43b20574be27">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -9619,7 +9680,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create user account" id="3d3eb7c4-a009-4864-abed-b37a3dde0d48">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -9675,7 +9736,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create subscription" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -9717,7 +9778,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Create access" id="bfa7b48b-6eda-4154-ba41-182f3dcda810">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/AccountWs</con:endpoint>
@@ -9768,7 +9829,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createCustomer</con:operation>
           <con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint>
@@ -9823,7 +9884,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createPricePlan</con:operation>
           <con:request name="registerCdrList" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/MediationWs</con:endpoint>
@@ -9874,7 +9935,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:operation>createPricePlan</con:operation>
           <con:request name="execute UsageRatingJob and fire notification when counterPeriod value =0" id="fe0e22f5-df04-41a7-9ef6-2358d68ef719">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
@@ -9928,11 +9989,11 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
     </con:property>
     <con:property>
       <con:name>meveoUsername</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
       <con:name>meveoPassword</con:name>
-      <con:value>meveo.admin</con:value>
+      <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>

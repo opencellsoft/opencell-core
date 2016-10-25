@@ -9,8 +9,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -19,8 +22,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -61,7 +62,7 @@ public class PaymentApi extends BaseApi {
 	
 	
 
-	public void createPayment(PaymentDto paymentDto, User currentUser) throws  MeveoApiException, BusinessException {
+	public void createPayment(PaymentDto paymentDto, User currentUser) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
 		if (StringUtils.isBlank(paymentDto.getAmount())) {
@@ -79,9 +80,9 @@ public class PaymentApi extends BaseApi {
 		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
 			missingParameters.add("paymentMethod");
 		}
-		
+
 		handleMissingParameters();
-		
+
 		Provider provider = currentUser.getProvider();
 		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode(), provider);
 		if (customerAccount == null) {
@@ -120,40 +121,24 @@ public class PaymentApi extends BaseApi {
         
 		int nbOccMatched = 0;
 		if (paymentDto.isToMatching()) {
-			MatchingCode matchingCode = new MatchingCode();
-			BigDecimal amountToMatch = BigDecimal.ZERO;
+			List<Long> listReferenceToMatch = new ArrayList<Long>();
 			if(paymentDto.getListOCCReferenceforMatching() !=null){
 				nbOccMatched = paymentDto.getListOCCReferenceforMatching().size();
 				for (int i = 0; i < nbOccMatched; i++) {
-					RecordedInvoice accountOperation = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
-					amountToMatch = accountOperation.getUnMatchingAmount();
-					accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
-					accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
-					accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-					recordedInvoiceService.update(accountOperation, currentUser);
-					MatchingAmount matchingAmount = new MatchingAmount();
-					matchingAmount.setProvider(accountOperation.getProvider());
-					matchingAmount.setAccountOperation(accountOperation);
-					matchingAmount.setMatchingCode(matchingCode);
-					matchingAmount.setMatchingAmount(amountToMatch);
-					matchingAmountService.create(matchingAmount, currentUser);
-					accountOperation.getMatchingAmounts().add(matchingAmount);
-					matchingCode.getMatchingAmounts().add(matchingAmount);
-					
+					RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
+					if(accountOperationToMatch == null){
+						throw new BusinessApiException("Cannot find account operation with reference:"+paymentDto.getListOCCReferenceforMatching().get(i));
+					}
+					listReferenceToMatch.add(accountOperationToMatch.getId());
 				}
+				listReferenceToMatch.add(automatedPayment.getId());
+				matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A, currentUser);
 			}
 
-			matchingCode.setMatchingAmountDebit(paymentDto.getAmount());
-			matchingCode.setMatchingAmountCredit(paymentDto.getAmount());
-			matchingCode.setMatchingDate(new Date());
-			matchingCode.setMatchingType(MatchingTypeEnum.A);
-			matchingCode.setProvider(provider);
-			matchingCodeService.create(matchingCode, currentUser);
-			log.info("matching created  for 1 automatedPayment and " + (nbOccMatched - 1) + " occ");
-		} else {
+		}else {
 			log.info("no matching created ");
 		}
-		log.info("automatedPayment created for amount:" + automatedPayment.getAmount());
+		log.debug("automatedPayment created for amount:" + automatedPayment.getAmount());
 	}
 
 	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {

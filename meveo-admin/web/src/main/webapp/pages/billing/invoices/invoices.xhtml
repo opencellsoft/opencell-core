@@ -56,7 +56,7 @@
 		<hftl:dataList label="#{messages['invoices.title']}"
 			backingBean="#{invoiceBean}" id="datatable_invoicesId" >
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" valueIdField="id" entityView="invoiceDetail"/>
-			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%"/>
+			<hftl:column label="#{messages['invoice.billingAccount']}" field="billingAccount.code" valueIdField="billingAccount.id" entityView="billingAccountDetail" backView="invoices" width="15%" objectIdParamName="billingAccountId" />
 			<hftl:column label="#{messages['invoice.invoiceType']}" field="invoiceType.code"  />
 			<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" isDate="true" /> 

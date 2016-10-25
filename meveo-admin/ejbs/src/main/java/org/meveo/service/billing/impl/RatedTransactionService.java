@@ -350,7 +350,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				} else {
 					cq.where(pStatus, pWallet,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
 				}
-				invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
+				invoiceSubCats = getEntityManager().createQuery(cq).getResultList();				
 			}
 			
 			List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
@@ -608,8 +608,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced", Long.class);
 		count = q.setParameter("billingAccount", billingAccount)
 				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
-		log.debug("isBillingAccountBillable code={},lastTransactionDate={}, displayFreeTransac={}) : {}"
-				,billingAccount.getCode(),lastTransactionDate,billingAccount.getProvider().isDisplayFreeTransacInInvoice(),count);
+		log.debug("isBillingAccountBillable code={},lastTransactionDate={}) : {}",billingAccount.getCode(),lastTransactionDate,count);
 		return count > 0 ? true : false;
 	}
 	/**

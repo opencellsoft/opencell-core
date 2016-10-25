@@ -151,7 +151,7 @@
 			<p:menuitem id="businessAccountModels" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
 		</p:submenu>
 
-		<p:submenu id="orders" label="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization')}">
+		<p:submenu id="orders" label="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
 			<p:menuitem id="order" outcome="orders" value="#{messages['menu.orders']}" />
 		</p:submenu>
 
@@ -159,39 +159,38 @@
 			<p:menuitem id="mm_workflows" value="#{messages['menu.marketingManager.workflowList']}" outcome="mm_workflows" />
 		</p:submenu>
 
-		<p:submenu id="mediation" label="#{messages['menu.mediation']}" rendered="#{identity.hasPermission('billing','billingVisualization')}">
+		<p:submenu id="mediation" label="#{messages['menu.mediation']}" rendered="#{identity.hasPermission('billing','billingVisualization') or identity.hasPermission('billing','billingManagement')}">
 			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
 			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" rendered="#{identity.hasPermission('billing','billingManagement')}" />
 		</p:submenu>
 
-		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{identity.hasPermission('billing','billingVisualization')}">
+		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{identity.hasPermission('billing','billingVisualization') or identity.hasPermission('billing','billingManagement') }">
 			<p:submenu id="rating" label="#{messages['menu.rating']}" rendered="#{identity.hasPermission('billing','billingVisualization')}">
 				<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
 			</p:submenu>
 			<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
-			<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
+			<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
 				<p:menuitem id="billingRuns" outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
 				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing" rendered="#{identity.hasPermission('billing','billingManagement')}" value="#{messages['menu.globalExecution']}" />
 				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing" value="#{messages['menu.exceptionalInvoicing']}" />
 			</p:submenu>
-			<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
+			<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
 				<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" />
 				<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" />
 				<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" />
 			</p:submenu>
 		</p:submenu>
 
-		<p:submenu id="payment" label="#{messages['menu.Recouvrement']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
+		<p:submenu id="payment" label="#{messages['menu.Recouvrement']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
 			<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
 		
-<!-- to be uncommented in 4.5
 		<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{identity.hasPermission('finance','financeVisualization') or identity.hasPermission('finance','financeManagement') }">
 			<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
 			<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		</p:submenu>
- -->
+
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}" rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
 			<p:menuitem id="measurableQuantities" value="#{messages['menu.measurableQuantities']}" outcome="measurableQuantities" />
 			<p:menuitem id="measuredValues" value="#{messages['menu.measuredValues']}" outcome="measuredValueDetail" />

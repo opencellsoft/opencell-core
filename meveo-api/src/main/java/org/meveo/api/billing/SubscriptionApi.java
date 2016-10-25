@@ -595,8 +595,8 @@ public class SubscriptionApi extends BaseApi {
 		List<WalletOperation> walletOperations = null;
 
 		try {
-			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(),
-					postData.getProduct(), postData.getDescription(), currentUser);
+			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
+					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), currentUser);
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
 					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			for (WalletOperation walletOperation : walletOperations) {

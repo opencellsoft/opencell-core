@@ -3,7 +3,6 @@ package org.meveo.api.account;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -16,9 +15,10 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -26,6 +26,7 @@ import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -924,7 +925,7 @@ public class AccountHierarchyApi extends BaseApi {
 				sellerDto.setCustomFields(cfsDto);
 			}
 
-			seller = sellerApi.create(sellerDto, currentUser, true);
+			seller = sellerApi.create(sellerDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -962,7 +963,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = customerApi.create(customerDto, currentUser, true);
+			accountEntity = customerApi.create(customerDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -1007,7 +1008,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = customerAccountApi.create(customerAccountDto, currentUser, true);
+			accountEntity = customerAccountApi.create(customerAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1067,7 +1068,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = billingAccountApi.create(billingAccountDto, currentUser, true);
+			accountEntity = billingAccountApi.create(billingAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -1103,7 +1104,7 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = userAccountApi.create(userAccountDto, currentUser, true);
+			accountEntity = userAccountApi.create(userAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
@@ -1201,7 +1202,7 @@ public class AccountHierarchyApi extends BaseApi {
 				sellerDto.setCustomFields(cfsDto);
 			}
 
-			seller = sellerApi.update(sellerDto, currentUser, true);
+			seller = sellerApi.update(sellerDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -1239,7 +1240,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = customerApi.update(customerDto, currentUser, true);
+			accountEntity = customerApi.update(customerDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -1284,7 +1285,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = customerAccountApi.update(customerAccountDto, currentUser, true);
+			accountEntity = customerAccountApi.update(customerAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1344,7 +1345,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = billingAccountApi.update(billingAccountDto, currentUser, true);
+			accountEntity = billingAccountApi.update(billingAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -1380,7 +1381,7 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountDto.setCustomFields(cfsDto);
 			}
 
-			accountEntity = userAccountApi.update(userAccountDto, currentUser, true);
+			accountEntity = userAccountApi.update(userAccountDto, currentUser, true, businessAccountModel);
 		}
 
 		if (businessAccountModel != null && businessAccountModel.getScript() != null) {
@@ -1634,8 +1635,13 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setName(new NameDto(account.getName()));
 		dto.setAddress(new AddressDto(account.getAddress()));
 
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));
+		BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
+		if(businessAccountModel != null) {
+			dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
+		}
+
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));
 	}
 
 	public CustomerDto customerToDto(Customer customer) {

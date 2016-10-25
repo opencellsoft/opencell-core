@@ -1212,6 +1212,32 @@
 		</addColumn>		
 	</changeSet>
 	
+	<changeSet author="TonyAlejandro" id="#2070_20160930_account_entity_add_bam_id">
+		<addColumn tableName="account_entity">
+			<column name="bam_id" type="BIGINT"/>
+		</addColumn>
+		<addForeignKeyConstraint
+				constraintName="fk_account_entity_crm_business_account_model"
+				baseTableName="account_entity"
+				baseColumnNames="bam_id"
+				referencedTableName="crm_business_account_model"
+				referencedColumnNames="id"
+				deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION"/>
+	</changeSet>
+
+	<changeSet author="TonyAlejandro" id="#2070_20160930_seller_add_bam_id">
+		<addColumn tableName="crm_seller">
+			<column name="bam_id" type="BIGINT"/>
+		</addColumn>
+		<addForeignKeyConstraint
+				constraintName="fk_crm_seller_crm_business_account_model"
+				baseTableName="crm_seller"
+				baseColumnNames="bam_id"
+				referencedTableName="crm_business_account_model"
+				referencedColumnNames="id"
+				deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION"/>
+	</changeSet>
+
 	<changeSet author="anasseh" id="#2036_20161004">
 	
 	     <createSequence sequenceName="WF_HISTORY_SEQ"/>

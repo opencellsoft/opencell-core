@@ -35,6 +35,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -70,6 +71,10 @@ public class UserAccountApi extends AccountApi {
 	}
 
 	public UserAccount create(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return create(postData, currentUser, true, null);
+	}
+
+	public UserAccount create(UserAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -95,6 +100,10 @@ public class UserAccountApi extends AccountApi {
 		userAccount.setExternalRef1(postData.getExternalRef1());
 		userAccount.setExternalRef2(postData.getExternalRef2());
 
+		if(businessAccountModel != null){
+			userAccount.setBusinessAccountModel(businessAccountModel);
+		}
+
 		try {
 			userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 		} catch (AccountAlreadyExistsException e) {
@@ -117,6 +126,10 @@ public class UserAccountApi extends AccountApi {
 	}
 
 	public UserAccount update(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
+		return update(postData, currentUser, true, null);
+	}
+
+	public UserAccount update(UserAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -150,6 +163,10 @@ public class UserAccountApi extends AccountApi {
 		}
 
 		updateAccount(userAccount, postData, currentUser, checkCustomFields);
+
+		if(businessAccountModel != null){
+			userAccount.setBusinessAccountModel(businessAccountModel);
+		}
 
 		try {
 			userAccount = userAccountService.update(userAccount, currentUser);

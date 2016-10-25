@@ -5,9 +5,11 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
 
@@ -30,6 +32,9 @@ public abstract class AccountDto implements Serializable {
 	private String externalRef2;
 	private NameDto name = new NameDto();
 	private AddressDto address = new AddressDto();
+
+	@XmlElement(name = "businessAccountModel")
+	private BusinessEntityDto businessAccountModel;
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	@XmlTransient
@@ -105,6 +110,14 @@ public abstract class AccountDto implements Serializable {
 		this.address = address;
 	}
 
+	public BusinessEntityDto getBusinessAccountModel() {
+		return businessAccountModel;
+	}
+
+	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
+		this.businessAccountModel = businessAccountModel;
+	}
+
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
@@ -151,7 +164,8 @@ public abstract class AccountDto implements Serializable {
 		return "AccountDto [code=" + code + ", description=" + description
 				+ ", externalRef1=" + externalRef1 + ", externalRef2="
 				+ externalRef2 + ", name=" + name + ", address=" + address
-				+ ", customFields=" + customFields + ", loaded=" + loaded + "]";
+				+ ", customFields=" + customFields + ", loaded=" + loaded
+				+ ", businessAccountModel=" + businessAccountModel +  "]";
 	}
 
 }

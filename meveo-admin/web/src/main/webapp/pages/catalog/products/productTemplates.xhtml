@@ -143,7 +143,7 @@
 								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 								lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
 								rowsPerPageTemplate="10,15,20,50" rowKey="#{prod.id}">
-								<p:panel styleClass="Wid50 VAlignTop">
+								<p:panel styleClass="Wid50 Responsive100 VAlignTop">
 									<p:panelGrid columns="3"
 										styleClass="panelGrid ui-panelgrid-blank"
 										columnClasses="Wid10 VAlignTop Responsive100, Wid56 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop">
@@ -160,7 +160,6 @@
 												<h:outputText id="nameOrCode" styleClass="FontBold"
 													value="#{of:abbreviate(prod.nameOrCode, 25)}"></h:outputText>
 											</p>
-											<p:tooltip for="nameOrCode" value="#{prod.nameOrCode}"></p:tooltip>
 											<p>
 												<ui:repeat value="#{prod.offerTemplateCategories.toArray()}"
 													var="c" varStatus="status">
@@ -198,12 +197,13 @@
 										</p:panel>
 
 										<p:panel>
-											<p:panel>
-												<p:inputSwitch value="#{prod.active}" disabled="true"
-													styleClass="#{prod.active ? 'GreenBg' : ''}"
-													onLabel="#{messages['accountStatusEnum.active']}"
-													offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
-											</p:panel>
+											<p:outputPanel>
+												<p:panel styleClass="switch-wrapper">
+													<h:outputText value="#{messages['commons.status']}: " />
+													<h:outputText value="#{prod.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', prod.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(prod) ? 'GreenDark' : 'GrayDark'}" />
+												</p:panel>
+											</p:outputPanel>
 											<p:panel styleClass="text-center">
 												<ul class="list-inline" style="width: 135px;">
 													<li><p:link id="viewLink"
@@ -215,9 +215,7 @@
 															<f:param name="edit" value="false"></f:param>
 															<f:param name="backView" value="mm_productTemplates"></f:param>
 															<f:param name="tab" value="0"></f:param>
-														</p:link> <p:tooltip for="viewLink"
-															value="#{messages['commons.view']}" showEffect="slide"
-															hideEffect="slide" /></li>
+														</p:link></li>
 													<li><p:link id="editLink"
 															styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
 															outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}">
@@ -227,9 +225,7 @@
 															<f:param name="edit" value="true" />
 															<f:param name="editMode" value="edit" />
 															<f:param name="backView" value="mm_productTemplates"></f:param>
-														</p:link> <p:tooltip for="editLink"
-															value="#{messages['commons.edit']}" showEffect="slide"
-															hideEffect="slide" /></li>
+														</p:link></li>
 													<li><p:commandLink id="duplicateLinkProd"
 															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
 															styleClass="fa fa-copy fa-2x text-blue"
@@ -241,10 +237,7 @@
 															<f:param name="tab" value="0"></f:param>
 															<p:confirm header="#{messages['commons.duplicate']}"
 																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink> <p:tooltip for="duplicateLinkProd"
-															value="#{messages['commons.duplicate']}"
-															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
-															showEffect="slide" hideEffect="slide" /> <p:commandLink
+														</p:commandLink><p:commandLink
 															id="duplicateLinkBndl"
 															rendered="#{productTemplateBean.isBundleTemplate(prod)}"
 															styleClass="fa fa-copy fa-2x text-blue"
@@ -256,21 +249,31 @@
 															<f:param name="tab" value="0"></f:param>
 															<p:confirm header="#{messages['commons.duplicate']}"
 																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink> <p:tooltip for="duplicateLinkBndl"
-															value="#{messages['commons.duplicate']}"
-															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
-															showEffect="slide" hideEffect="slide" /></li>
+														</p:commandLink></li>
 													<li><p:commandLink id="addToExportLink"
 															styleClass="fa fa-share-square-o fa-2x text-blue"
 															action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
 															update=":ptToExport :exportablePTs">
-														</p:commandLink> <p:tooltip for="addToExportLink"
-															value="#{messages['commons.addToExport']}"
-															showEffect="slide" hideEffect="slide" /></li>
+														</p:commandLink></li>
 												</ul>
 											</p:panel>
 										</p:panel>
 									</p:panelGrid>
+								</p:panel>
+							
+								<p:panel styleClass="Wid25 Responsive100 VAlignTop">
+									<f:facet name="header">
+										<h:outputText
+											value="#{messages['productTemplate.productCharges']}"
+											rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size>0}" />
+									</f:facet>
+									<p:dataList styleClass="dataList" paginatorPosition="bottom"
+										paginatorAlwaysVisible="false"
+										value="#{prod.productChargeTemplates}"
+										var="ct" type="ordered"
+										rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size>0}">
+										<h:outputText value="#{ct.descriptionOrCode}" />
+									</p:dataList>
 								</p:panel>
 							</p:dataGrid>
 						</h:form>
@@ -299,9 +302,8 @@
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>
-								<p:inputSwitch value="#{entity.active}" disabled="true"
-									onLabel="#{messages['accountStatusEnum.active']}"
-									offLabel="#{messages['accountStatusEnum.inactive']}"></p:inputSwitch>
+								<h:outputText value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
 							</p:column>
 							<p:column>
 								<ul class="list-inline">
