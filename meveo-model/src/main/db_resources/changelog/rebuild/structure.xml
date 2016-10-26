@@ -4531,10 +4531,10 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_bsm" />
             </column>
             <column name="service_template_id" type="BIGINT" />
-            <column name="duplicate_service" type="${type.boolean}" defaultValueNumeric="0" 
+            <column name="duplicate_service" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0" 
+            <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0"> 
                 <constraints nullable="false" />
             </column>
         </createTable>
