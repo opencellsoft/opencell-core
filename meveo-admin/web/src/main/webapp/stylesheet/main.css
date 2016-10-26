@@ -284,15 +284,8 @@ div.body > table > thead,
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list { /*border-top : 1px solid  #b3cecb; padding : 3px 1px 1px 3px; margin-left : 3px;*/ }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem { padding : 0px !important; margin : 0px !important; width : 100%; border-left : none !important; border-right : none !important; -webkit-border-radius: 0px; border-radius: 0px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover { color:#fff; background: #264676 !important; box-shadow : none; -webkit-border-radius: 0px 8px 0px 8px; border-radius: 0px 8px 0px 8px; box-sizing: border-box}
-.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover span.ui-icon-triangle-1-e {
-    height: 16px;
-    width: 16px;
-    background-image: url('/meveo/javax.faces.resource/images/rightarrow-navy.svg.jsf?ln=primefaces-modena') !important;
-    background-position: center right !important;
-    background-repeat: no-repeat;
-}
-.ui-menuitem-link.ui-submenu-link .ui-icon { display: none; }
-.ui-menu .ui-menuitem .ui-menuitem-link .ui-icon-triangle-1-s{background-image: url('/meveo/javax.faces.resource/images/downarrow-navy.svg.jsf?ln=primefaces-modena') !important;}
+
+.ui-menu .ui-menuitem .ui-menuitem-link .ui-icon-triangle-1-s{background-image: none !important;}
 .ui-menu .ui-menu-parent .ui-menu-child { background: #1A3A6A !important; padding: 0; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-menuitem-link { text-shadow : none; padding : 1px 0px 0px 0px; padding: 7px 10px; box-sizing: border-box; }
 .ui-menu .ui-menuitem-text {  padding : 2px; }
@@ -309,8 +302,7 @@ div.body > table > thead,
 .ui-menu-child .ui-state-hover .ui-menuitem-text { color : white; }
 .ui-menubar .ui-menu-child { background-color : #efeff0 !important; }
 .ui-menubar .ui-menu-child .ui-menuitem-link {width: 100%;}
-.ui-menuitem .ui-state-hover .ui-icon-triangle-1-s { background-image : url(../img/ui-icons_616161_256x240.png) !Important; }
-.ui-menuitem .ui-state-hover .ui-icon-triangle-1-e { background-image : url(../img/ui-icons_616161_256x240-2.png) !Important; }
+.ui-menuitem .ui-icon-triangle-1-e { background-image : url(../img/ui-icons_616161_256x240-2.png) !Important; }
 /* .ui-button:hover .ui-button-icon-left { background-image : url(../img/ui-icons_616161_256x240-1.png) !Important; } */
 
 /* paginator */
