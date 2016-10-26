@@ -70,35 +70,19 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.amountWithoutTax<>0 "
 				+ " AND r.usageDate<:lastTransactionDate "
 				+ "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
-				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.usageDate<:lastTransactionDate "
-				+ " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoicedNoBR", query = "UPDATE RatedTransaction r "
 				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),				
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
-				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFreeNoBR", query = "UPDATE RatedTransaction r "
-				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),				
 		@NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled", query = "SELECT r.walletOperationId FROM RatedTransaction r "
 				+ " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
 				+ " AND r.walletOperationId IN :walletIdList"),

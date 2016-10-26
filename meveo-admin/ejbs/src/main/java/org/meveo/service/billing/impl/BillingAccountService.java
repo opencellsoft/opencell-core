@@ -230,15 +230,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		billingRun = billingRunService.findById(billingRun.getId(),true);
 		log.debug(" refresh billingRun.id:"+((billingRun==null)?"null":billingRun.getId()));
 
-		Query q = null;
-		if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-			 log.debug("updateBillingAccountTotalAmounts isDisplayFreeTransacInInvoice : true");
-			 q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree").setParameter("billingAccount", billingAccount);
-		} else {
-			 log.debug("updateBillingAccountTotalAmounts isDisplayFreeTransacInInvoice : false");
-			 q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount);
-		}
+		Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount);
 		log.debug("updateBillingAccountTotalAmounts lastTransactionDate is {}",billingRun.getLastTransactionDate());
+
 		@SuppressWarnings("unchecked")
 		List<Object[]> queryResults = q.setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getResultList();
 		Object[] queryResult = queryResults.size() > 0 ? queryResults.get(0) : null;
