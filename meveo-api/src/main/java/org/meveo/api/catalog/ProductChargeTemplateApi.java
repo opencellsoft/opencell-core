@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -32,6 +33,7 @@ import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 
+@Stateless
 public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate, ProductChargeTemplateDto> {
 
 	@Inject
