@@ -190,4 +190,45 @@
 			update adm_user set username='OPENCELL.MARKETINGMANAGER', password='8618dab964637c4efa75bca53de7c858258eed5e' where username='MEVEO.MARKETINGMANAGER';]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="#2119_20161027-Update titles" author="EdwardPLegaspi" failOnError="false" onValidationFail="MARK_RAN">
+		<sql>
+			<![CDATA[
+			INSERT INTO adm_title (id, disabled, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), false, now(), 'ASSOC', 'Association', true, 1);
+			INSERT INTO adm_title (id, disabled, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), false, now(), 'CIE', 'Office', false, 1);
+			INSERT INTO adm_title (id, disabled, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), false, now(), 'MR', 'Sir', false, 1);
+			INSERT INTO adm_title (id, disabled, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), false, now(), 'MRS', 'Madam', false, 1);
+			INSERT INTO adm_title (id, disabled, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), false, now(), 'MS', 'Miss', false, 1);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="#2119_20161027-Update title on user and account entity" author="EdwardPLegaspi">
+		<sql>
+			<!-- update users -->
+			<![CDATA[
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES')); 
+			]]>
+		</sql>
+		<sql>
+			<!-- update account entity -->
+			<![CDATA[
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES'));
+			]]>
+		</sql>
+		<sql>
+			<!-- update adm_title -->
+			<![CDATA[
+			UPDATE adm_title SET disabled=true WHERE code NOT IN ('ASSOC', 'CIE', 'MR', 'MRS', 'MS');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
