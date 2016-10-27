@@ -844,7 +844,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 
-	public void createRatedTransaction(Long walletOperationId,User currentUser )throws Exception{
+	public void createRatedTransaction(Long walletOperationId,User currentUser ) throws BusinessException{
 		WalletOperation walletOperation = walletOperationService.findById(walletOperationId, currentUser.getProvider()) ;
 
 		BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
@@ -881,7 +881,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		walletOperationService.updateNoCheck(walletOperation);
 	}
 
-	public void createRatedTransaction(Long billingAccountId,User currentUser,Date invoicingDate )throws Exception{
+	public void createRatedTransaction(Long billingAccountId,User currentUser,Date invoicingDate ) throws BusinessException {
 		BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();

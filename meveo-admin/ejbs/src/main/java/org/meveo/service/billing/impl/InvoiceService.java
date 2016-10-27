@@ -74,6 +74,7 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -100,7 +101,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -151,6 +151,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject
     private CustomerService customerService;
+     
+	 @Inject
+	 private ResourceBundle resourceMessages;
       
 	
 
@@ -402,7 +405,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,
 			Date invoiceDate,Date lastTransactionDate, User currentUser)
-			throws BusinessException, Exception {
+			throws BusinessException {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
 		EntityManager em = getEntityManager();
@@ -1074,5 +1077,59 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.error("failed to get invoices with no account operation", ex);
 		}
 		return null;
+	}
+	
+	/**
+	 * Create RatedTransaction and generate invoice for the billingAccount
+	 * 
+	 * @param billingAccount
+	 * @param invoiceDate
+	 * @param lastTransactionDate
+	 * @param ratedTxFilter
+	 * @param currentUser
+	 * @return
+	 * @throws BusinessException
+	 */
+	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,User currentUser ) throws BusinessException {
+
+		if (StringUtils.isBlank(billingAccount)) {
+			throw new BusinessException("billingAccount is null");
+		}
+		if (StringUtils.isBlank(invoiceDate)) {
+			throw new BusinessException("invoicingDate is null");
+		}
+		if (StringUtils.isBlank(lastTransactionDate)) {
+			throw new BusinessException("lastTransactionDate is null");
+		}
+		if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate)) {
+			throw new BusinessException("lastTransactionDate or filter is null");
+		}
+		
+        if (billingAccount.getBillingRun() != null
+                && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
+                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) 
+                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
+
+			throw new BusinessException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
+		}
+		
+		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, invoiceDate);				
+		log.debug("createRatedTransaction ok");
+
+		Filter ratedTransactionFilter =null;
+		if(ratedTxFilter == null){			
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, (lastTransactionDate))){
+				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
+			}
+		}
+		
+		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter ,invoiceDate,lastTransactionDate,currentUser);
+		log.debug("createAgregatesAndInvoice ok ");
+
+		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
+		invoice.setPdf(null);							
+		update(invoice, currentUser);						
+		
+		return invoice;
 	}
 }
