@@ -1,7 +1,7 @@
 package org.meveo.model.catalog;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -27,19 +27,19 @@ public class BundleTemplate extends ProductTemplate {
 	private static final long serialVersionUID = -4295608354238684804L;
 
 	@OneToMany(mappedBy = "bundleTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<BundleProductTemplate> bundleProducts = new HashSet<BundleProductTemplate>();
+	private List<BundleProductTemplate> bundleProducts = new ArrayList<BundleProductTemplate>();
 
-	public Set<BundleProductTemplate> getBundleProducts() {
+	public List<BundleProductTemplate> getBundleProducts() {
 		return bundleProducts;
 	}
 
-	public void setBundleProducts(Set<BundleProductTemplate> bundleProducts) {
+	public void setBundleProducts(List<BundleProductTemplate> bundleProducts) {
 		this.bundleProducts = bundleProducts;
 	}
 
 	public void addBundleProductTemplate(BundleProductTemplate bundleProductTemplate) {
 		if (getBundleProducts() == null) {
-			bundleProducts = new HashSet<BundleProductTemplate>();
+			bundleProducts = new ArrayList<BundleProductTemplate>();
 		}
 		bundleProductTemplate.setBundleTemplate(this);
 		

@@ -212,22 +212,21 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			BundleProductTemplate bpt = new BundleProductTemplate();
 			bpt.setProductTemplate(prodTemplate);
 			bpt.setBundleTemplate(entity);
+			
+			entity.addBundleProductTemplate(bpt);
 
-			try {
-				entity.addBundleProductTemplate(bpt);
-				entity = getPersistenceService().update(entity, currentUser);
-			} catch (BusinessException e) {
-				log.error("IPIEL: fail creating opt {}", e.getMessage());
-				messages.error(e.getMessage());
-			}
+			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.create.successful"));
 		}
 	}
 
 	public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
-		entity.getBundleProducts().remove(bundleProductTemplate);
-		entity = getPersistenceService().update(entity, getCurrentUser());
+		try {
+			entity.getBundleProducts().remove(bundleProductTemplate);
 
-		messages.info(new BundleKey("messages", "delete.successful"));
+			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.delete.successful"));
+		} catch (Exception e) {
+			messages.error(new BundleKey("messages", "error.delete.unexpected"));
+		}
 	}
 
 	private void savePricePlanMatrix() throws BusinessException {
