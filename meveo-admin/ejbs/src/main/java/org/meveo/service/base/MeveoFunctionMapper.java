@@ -274,7 +274,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return null;
         }
 
-        String[] keys = concatenatedKeys.split("|");
+        String[] keys = concatenatedKeys.split("\\|");
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, (Object[]) keys);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
@@ -345,7 +345,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return null;
         }
 
-        String[] keys = concatenatedKeys.split("|");
+        String[] keys = concatenatedKeys.split("\\|");
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, (Object[]) keys);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
@@ -493,7 +493,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return null;
         }
 
-        String[] keys = concatenatedKeys.split("|");
+        String[] keys = concatenatedKeys.split("\\|");
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, (Object[]) keys);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
@@ -569,7 +569,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return null;
         }
 
-        String[] keys = concatenatedKeys.split("|");
+        String[] keys = concatenatedKeys.split("\\|");
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByMatrix(entity, code, (Object[]) keys);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
