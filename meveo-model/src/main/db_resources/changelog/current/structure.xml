@@ -1329,5 +1329,11 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
     </changeSet>    
+    
+    	<changeSet author="anasseh" id="#2143_20161025">
+		<addColumn tableName="billing_billing_account">
+			<column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
+		</addColumn>
+    </changeSet>
 
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -77,7 +78,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private AccountStatusEnum baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-
+	private BigDecimal invoicingThreshold; 
+	
 	// user account
 	private AccountStatusEnum uaStatus;
 
@@ -366,7 +368,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 				+ country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms
 				+ ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email
 				+ ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields
-				+ "]";
+				 + ", invoicingThreshold="+invoicingThreshold+"]";
 	}
 
 	public AccountStatusEnum getUaStatus() {
@@ -478,6 +480,20 @@ public class CRMAccountHierarchyDto extends BaseDto {
 			CustomFieldValueDto cfValue = new CustomFieldValueDto(cfMapToAdd.getDoubleValue());
 			customFieldDto.getMapValue().put(cfMapToAdd.getCode(), cfValue);
 		}
+	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
 	}
 
 }

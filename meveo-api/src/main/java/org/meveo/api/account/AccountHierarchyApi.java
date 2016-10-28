@@ -327,6 +327,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountDto.setLanguage(postData.getLanguageCode());
 		billingAccountDto.setBillingCycle(billingCycleCode);
 		billingAccountDto.setAddress(address);
+		billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 
 		billingAccountApi.create(billingAccountDto, currentUser);
 
@@ -502,6 +503,7 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountDto.setLanguage(postData.getLanguageCode());
 		billingAccountDto.setBillingCycle(billingCycleCode);
 		billingAccountDto.setAddress(address);
+		billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 
 		billingAccountApi.createOrUpdate(billingAccountDto, currentUser);
 
@@ -1034,6 +1036,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setStatus(postData.getBaStatus());
 			billingAccountDto.setTerminationReason(postData.getTerminationReason());
 			billingAccountDto.setEmail(postData.getEmail());
+			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
 				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
@@ -1311,6 +1314,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setStatus(postData.getBaStatus());
 			billingAccountDto.setTerminationReason(postData.getTerminationReason());
 			billingAccountDto.setEmail(postData.getEmail());
+			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
 				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());

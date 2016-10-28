@@ -408,16 +408,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			throws BusinessException {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
+
 		EntityManager em = getEntityManager();
 		BillingRun billingRun=null;
 		if(billingRunId!=null){
 			billingRun = em.find(BillingRun.class, billingRunId);
 			em.refresh(billingRun);
 		} else {
-			if(invoiceDate==null){
-				throw new BusinessException("invoiceDate must be set if billingRun is null");	
+			if(invoiceDate==null || lastTransactionDate == null ){
+				throw new BusinessException("invoiceDate and lastTransactionDate  must be set if billingRun is null");	
 			}
 		}
+		
+		if(billingAccount.getInvoicingThreshold() != null){
+			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
+			if(invoiceAmount == null){
+				throw new BusinessException("Cant compute invoice amount");
+			}
+			if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
+				throw new BusinessException("Invoice amount below the threshold");	
+			}
+		}
+		
 		try {
 			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
 			em.refresh(billingAccount);

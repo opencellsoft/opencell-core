@@ -67,14 +67,7 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
 				+ " AND r.usageDate<:lastTransactionDate " + " AND r.billingAccount IN :billingAccountList"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
-				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.amountWithoutTax<>0 "
-				+ " AND r.usageDate<:lastTransactionDate "
-				+ "AND r.invoice is null"
-				+ " AND r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
+		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.doNotTriggerInvoicing=false "
