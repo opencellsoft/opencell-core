@@ -195,7 +195,7 @@
 		<sql>
 			<![CDATA[
 			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'ASSOC', 'Assoc.', true, 1);
-			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'CIE', 'Cie.', false, 1);
+			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'CIE', 'Cie.', true, 1);
 			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'MR', 'Mr.', false, 1);
 			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'MRS', 'Mrs.', false, 1);
 			INSERT INTO adm_title (id, version, disabled, creator_id, created, code, description, is_company, provider_id) values (nextval('adm_title_seq'), 0, false, 1, now(), 'MS', 'Ms.', false, 1);
@@ -238,17 +238,17 @@
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Assoc.', 'ENG', 1, 'Title', 'ASSOC');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Assoc.', 'FRA', 1, 'Title', 'ASSOC');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Cie.', 'ENG', 1, 'Title', 'CIE');
-			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Ste.', 'FRA', 1, 'Title', 'CIE');
+			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Sté', 'FRA', 1, 'Title', 'CIE');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mr.', 'ENG', 1, 'Title', 'MR');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'M.', 'FRA', 1, 'Title', 'MR');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mrs.', 'ENG', 1, 'Title', 'MRS');
-			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mme.', 'FRA', 1, 'Title', 'MRS');
+			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mme', 'FRA', 1, 'Title', 'MRS');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Ms.', 'ENG', 1, 'Title', 'MS');
-			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mlle.', 'FRA', 1, 'Title', 'MS');
+			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Mlle', 'FRA', 1, 'Title', 'MS');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Dr.', 'ENG', 1, 'Title', 'DR');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Dr', 'FRA', 1, 'Title', 'DR');
 			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Prof.', 'ENG', 1, 'Title', 'PROF');
-			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Pr.', 'FRA', 1, 'Title', 'PROF');
+			INSERT INTO adm_messages (id, version, description, language_code, provider_id, entity_class, entity_code) VALUES (nextval('ADM_MESSAGES_SEQ'), 0, 'Pr', 'FRA', 1, 'Title', 'PROF');
 		</sql>
 	</changeSet>
 
