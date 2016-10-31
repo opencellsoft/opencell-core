@@ -489,25 +489,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			// Note that rated transactions get updated in
 			// ratedTransactionservice in case of Filter
 			if (ratedTransactionFilter == null) {
-				if (currentUser.getProvider().isDisplayFreeTransacInInvoice()) {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree" + (billingRun == null ? "NoBR" : "")).
-							         setParameter("billingAccount", billingAccount).
-							         setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).
-							         setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				} else {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : ""))
-							.setParameter("billingAccount", billingAccount)
-							.setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate())
-							.setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				}
+                Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : "")).setParameter("billingAccount", billingAccount)
+                    .setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).setParameter("invoice", invoice);
+                if (billingRun != null) {
+                    query = query.setParameter("billingRun", billingRun);
+                }
+                query.executeUpdate();
 			}
 
 			StringBuffer num1 = new StringBuffer("000000000");
