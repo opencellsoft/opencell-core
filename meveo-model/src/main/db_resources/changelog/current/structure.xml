@@ -1329,5 +1329,21 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
     </changeSet>    
-
+    <changeSet id="#2050_20161031" author="SebastienMichea">
+		<addColumn tableName="BILLING_SERVICE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_PRODUCT_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_CHARGE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_WALLET_OPERATION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_RATED_TRANSACTION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

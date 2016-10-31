@@ -25,6 +25,9 @@ public class GenerateInvoiceRequestDto {
 	
 	@XmlElement()
 	private FilterDto filter;
+
+	@XmlElement()
+	private String orderNumber;
 	
 	public GenerateInvoiceRequestDto(){
 		
@@ -83,7 +86,9 @@ public class GenerateInvoiceRequestDto {
 	 */
 	@Override
 	public String toString() {
-		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + "]";
+		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode +
+				", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + 
+				", filter="+filter+", orderNumber="+orderNumber+"]";
 	}
 
 
@@ -94,6 +99,14 @@ public class GenerateInvoiceRequestDto {
 
 	public void setFilter(FilterDto filter) {
 		this.filter = filter;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 }

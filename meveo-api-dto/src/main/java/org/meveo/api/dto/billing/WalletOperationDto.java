@@ -60,6 +60,7 @@ public class WalletOperationDto extends BaseDto {
 	private String parameter1;
 	private String parameter2;
 	private String parameter3;
+	private String orderNumber;
 	private Date startDate;
 	private Date endDate;
 	private Date operationDate;
@@ -245,6 +246,14 @@ public class WalletOperationDto extends BaseDto {
 
 	public void setParameter3(String parameter3) {
 		this.parameter3 = parameter3;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 	public Date getStartDate() {

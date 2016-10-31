@@ -237,7 +237,8 @@ public class InvoiceApi extends BaseApi {
 					
 					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                         ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax, amountWithTax, amountTax,
-                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null, null);
+                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null,null
+                        , null, null, null, null);
 					meveoRatedTransaction.setCode(ratedTransaction.getCode());
 					meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 					meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
@@ -492,8 +493,9 @@ public class InvoiceApi extends BaseApi {
 			missingParameters.add("invoicingDate");
 		}
 		if (generateInvoiceRequestDto.getLastTransactionDate() == null && 
-				generateInvoiceRequestDto.getFilter()==null) {
-			missingParameters.add("lastTransactionDate or filter");
+				StringUtils.isBlank(generateInvoiceRequestDto.getFilter()) && 
+				StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber()) ) {
+			missingParameters.add("lastTransactionDate or filter or orderNumber");
 		}
 
 		handleMissingParameters();
@@ -523,7 +525,7 @@ public class InvoiceApi extends BaseApi {
 			}
 		}
 		
-		Invoice invoice = invoiceService.createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter
+		Invoice invoice = invoiceService.createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter,generateInvoiceRequestDto.getOrderNumber()
 				,generateInvoiceRequestDto.getInvoicingDate(),generateInvoiceRequestDto.getLastTransactionDate(),currentUser);
 		log.debug("createAgregatesAndInvoice ok ");
 

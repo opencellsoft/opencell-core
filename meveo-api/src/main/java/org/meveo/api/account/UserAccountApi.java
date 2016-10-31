@@ -377,7 +377,7 @@ public class UserAccountApi extends AccountApi {
 
 		try {
 			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(),
-					postData.getProduct(), postData.getDescription(), currentUser);
+					postData.getProduct(), postData.getDescription(),null, currentUser);
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
 					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			for (WalletOperation walletOperation : walletOperations) {

@@ -400,7 +400,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,
+	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,String orderNumber,
 			Date invoiceDate,Date lastTransactionDate, User currentUser)
 			throws BusinessException, Exception {
 		Invoice invoice =null;
@@ -467,13 +467,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
 					txReg.getTransactionStatus(), em.isOpen());
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,
-					ratedTransactionFilter,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
+					ratedTransactionFilter,orderNumber,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
 
 			// Note that rated transactions get updated in
-			// ratedTransactionservice in case of Filter
-			if (ratedTransactionFilter == null) {
+			// ratedTransactionservice in case of Filter or orderNumber not empty
+			if (ratedTransactionFilter!=null && StringUtils.isBlank(orderNumber)) {
 				if (currentUser.getProvider().isDisplayFreeTransacInInvoice()) {
 					Query query = em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree" + (billingRun == null ? "NoBR" : "")).
 							         setParameter("billingAccount", billingAccount).
