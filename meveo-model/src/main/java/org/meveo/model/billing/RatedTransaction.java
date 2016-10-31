@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -170,7 +171,8 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "STATUS")
 	private RatedTransactionStatusEnum status;
 
-	@Column(name = "DO_NOT_TRIGGER_INVOICING")
+	@Type(type="numeric_boolean")
+    @Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
 
 	@Column(name = "PARAMETER_1", length = 255)

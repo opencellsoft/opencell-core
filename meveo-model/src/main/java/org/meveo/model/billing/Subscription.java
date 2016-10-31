@@ -37,6 +37,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -104,7 +105,8 @@ public class Subscription extends BusinessCFEntity{
 	@JoinColumn(name = "SUB_TERMIN_REASON_ID")
 	private SubscriptionTerminationReason subscriptionTerminationReason;
 
-	@Column(name = "DEFAULT_LEVEL")
+	@Type(type="numeric_boolean")
+    @Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
 	public Date getEndAgreementDate() {

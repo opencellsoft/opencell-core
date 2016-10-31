@@ -553,7 +553,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
 				+ currentUser.getProvider().getCode() + File.separator;
 
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
+		Invoice invoice = refreshOrRetrieve((Invoice) parameters.get(PdfGeneratorConstants.INVOICE));
 		
 		
 		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));

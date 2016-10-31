@@ -40,6 +40,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -66,7 +67,8 @@ public class ChargeTemplate extends BusinessCFEntity {
 	@Column(name = "CREDIT_DEBIT_FLAG")
 	private OperationTypeEnum type;
 
-	@Column(name = "AMOUNT_EDITABLE")
+	@Type(type="numeric_boolean")
+    @Column(name = "AMOUNT_EDITABLE")
 	private Boolean amountEditable;
 
 	@ManyToOne(fetch = FetchType.LAZY)

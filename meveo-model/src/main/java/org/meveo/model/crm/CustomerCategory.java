@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -36,7 +37,8 @@ public class CustomerCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "EXONERATED_FROM_TAXES")
+	@Type(type="numeric_boolean")
+    @Column(name = "EXONERATED_FROM_TAXES")
 	private boolean exoneratedFromTaxes=false ;
 	
 	@Column(name = "EXONERATION_TAX_EL", length = 2000)

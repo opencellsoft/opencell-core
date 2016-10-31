@@ -29,6 +29,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -64,13 +65,16 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	@Column(name = "DURATION_TERM_IN_MONTH")
 	private Integer durationTermInMonth;
 
-	@Column(name = "SUBSCRIPTION_PRORATA")
+	@Type(type="numeric_boolean")
+    @Column(name = "SUBSCRIPTION_PRORATA")
 	private Boolean subscriptionProrata;
 
-	@Column(name = "TERMINATION_PRORATA")
+	@Type(type="numeric_boolean")
+    @Column(name = "TERMINATION_PRORATA")
 	private Boolean terminationProrata;
 
-	@Column(name = "APPLY_IN_ADVANCE")
+	@Type(type="numeric_boolean")
+    @Column(name = "APPLY_IN_ADVANCE")
 	private Boolean applyInAdvance;
 
 	@Enumerated(EnumType.STRING)

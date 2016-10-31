@@ -23,6 +23,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageSenderConfig;
 
 @Entity
@@ -46,7 +47,8 @@ public class EmailSenderConfig extends MessageSenderConfig {
     @Size(max = 50)
 	private String password;
 
-	@Column(name = "USE_SSL")
+	@Type(type="numeric_boolean")
+    @Column(name = "USE_SSL")
 	private Boolean useSSL;
 
 	@Column(name = "DEFAULT_FROM_EMAIL", length = 255)
