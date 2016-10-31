@@ -34,6 +34,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -173,6 +174,9 @@ public class EDR extends BaseEntity {
 	@JoinColumn(name = "HEADER_EDR_ID")
 	@ManyToOne()
 	private EDR headerEDR;
+	
+	@Transient
+	private Date subscriptionDate;
 
 	public Subscription getSubscription() {
 		return subscription;
@@ -278,8 +282,6 @@ public class EDR extends BaseEntity {
 		this.lastUpdate = lastUpdate;
 	}
 	
-	
-
 	public String getParameter5() {
 		return parameter5;
 	}
@@ -416,6 +418,14 @@ public class EDR extends BaseEntity {
 		this.headerEDR = headerEDR;
 	}
 
+	public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
+	
+	public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
+	
 	@Override
 	public String toString() {
 		return "EDR [subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="

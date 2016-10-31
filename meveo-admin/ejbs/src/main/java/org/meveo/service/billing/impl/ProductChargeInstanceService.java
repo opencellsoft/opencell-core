@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -33,9 +34,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -104,6 +107,49 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		}
 		return result;
 	}
+
+    /**
+     * Apply a product charge to a user account for a Virtual operation. Does not create/update/persist any entity.
+     * 
+     * @param chargeTemplate One shot charge template
+     * @param userAccount User account
+     * @param offerCode Offer code
+     * @param effectiveDate Effective charge date
+     * @param quantity Quantity
+     * @param criteria1 Criteria 1
+     * @param criteria2 Criteria 2
+     * @param criteria3 Criteria 3
+     * @param currentUser Current user
+     * @return Wallet operation
+     * @throws BusinessException
+     */
+    public WalletOperation applyProductChargeInstanceVirtual(ProductChargeTemplate chargeTemplate, List<WalletTemplate> walletTemplates, UserAccount userAccount, String offerCode,
+            Date effectiveDate, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3, User currentUser)
+            throws BusinessException {
+
+        log.debug("Apply product charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date {}", userAccount.getCode(), chargeTemplate.getCode(), effectiveDate);
+
+        @SuppressWarnings("unused")
+        boolean prepaid = false;
+        List<WalletInstance> walletInstances = new ArrayList<>();
+        if (walletTemplates != null && walletTemplates.size() > 0) {
+            for (WalletTemplate walletTemplate : walletTemplates) {
+                if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                    prepaid = true;
+                }
+                WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser);
+                walletInstances.add(walletInstance);
+            }
+        } else {
+            walletInstances.add(userAccount.getWallet());
+        }
+        BigDecimal inputQuantity = quantity;
+        quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
+        WalletOperation walletOperation = walletOperationService.rateProductApplicationVirtual(chargeTemplate, userAccount, offerCode, inputQuantity, quantity, effectiveDate,
+            amountWithoutTax, amountWithTax, criteria1, criteria2, criteria3, currentUser);
+        
+        return walletOperation;
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {

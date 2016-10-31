@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 @Named
 public class CustomCdrParser implements CSVCDRParser {
 
-	private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
+	private static Logger log = LoggerFactory.getLogger(CustomCdrParser.class);
 
 	DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");

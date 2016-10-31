@@ -44,7 +44,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -58,10 +57,7 @@ public class PDFParametersConstruction {
 			.getLogger(PDFParametersConstruction.class);
     @Inject
     private CatMessagesService catMessagesService;
-    
-    @Inject
-    private InvoiceService invoiceService;
-    
+        
 	@Inject
 	protected CustomFieldTemplateService customFieldTemplateService;
     
@@ -78,16 +74,14 @@ public class PDFParametersConstruction {
 					.getResource("reports/fonts.jar") });
 
 	public Map<String, Object> constructParameters(Invoice invoice, User currentUser) {
-		return constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
-	}
-	
-	public Map<String, Object> constructParameters(Long invoiceId, User currentUser, Provider provider) {
+		
 		try {
-			provider = currentUser.getProvider();
+			Provider provider = currentUser.getProvider();
 			currencyFormat.setMinimumFractionDigits(2);
-			Invoice invoice = invoiceService.findById(invoiceId, provider);
+			
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
+			
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			BillingCycle billingCycle = null;
 			if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {

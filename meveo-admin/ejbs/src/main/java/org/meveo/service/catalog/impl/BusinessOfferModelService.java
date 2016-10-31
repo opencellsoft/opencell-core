@@ -81,7 +81,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
-	private CounterTemplateService<CounterTemplate> counterTemplateService;
+	private CounterTemplateService counterTemplateService;
 
 	@Inject
 	private OfferTemplateService offerTemplateService;

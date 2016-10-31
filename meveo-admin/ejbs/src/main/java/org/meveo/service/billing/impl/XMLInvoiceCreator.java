@@ -141,32 +141,28 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	
-	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
-		createXMLInvoice(invoiceId, billingRundir, true);
-	}
-
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createXMLInvoice(Long invoiceId, File billingRundir) throws BusinessException {
-		createXMLInvoice(invoiceId, billingRundir, false);
-	}
-	
-	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment)
-			throws BusinessException {
-		createXMLInvoice(invoiceId, billingRundir, isInvoiceAdjustment, true);
+	public void createXMLInvoiceInNewTransaction(Long invoiceId) throws BusinessException {
+		createXMLInvoice(invoiceId);
 	}
 
-	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment, boolean refreshInvoice)
-			throws BusinessException {
-//		 log.debug("creating xml invoice... using date pattern: " + DEFAULT_DATE_PATTERN);
-		serviceIds = new ArrayList<>();
-		offerIds = new ArrayList<>();
-		priceplanIds = new ArrayList<>();
+    public File createXMLInvoice(Long invoiceId) throws BusinessException {
+        Invoice invoice = findById(invoiceId);
+        invoice = invoiceService.refreshOrRetrieve(invoice);
+        return createXMLInvoice(invoice);
+    }
+    
+    public File createXMLInvoice(Invoice invoice) throws BusinessException {
+        log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
+            invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+
 		try {
-			Invoice invoice = findById(invoiceId);
-			if(refreshInvoice) {
-				invoice = invoiceService.refreshOrRetrieve(invoice);
-			}
-			isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+		
+		    serviceIds = new ArrayList<>();
+	        offerIds = new ArrayList<>();
+	        priceplanIds = new ArrayList<>();
+	        	
+			boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 
@@ -443,33 +439,28 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// create string from xml tree
 			DOMSource source = new DOMSource(doc);
 
-			if (isInvoiceAdjustment) {
-				StreamResult result = new StreamResult(billingRundir + File.separator
-						+ paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_")
-						+ invoice.getInvoiceNumber() + ".xml");
-				billingRundir.mkdirs();
+            File billingRundir = new File(invoiceService.getBillingRunPath(invoice));
+            billingRundir.mkdirs();
+			File xmlFile = new File(billingRundir.getPath() + File.separator + invoiceService.getInvoiceXMLFilename(invoice));
 
-				StringWriter writer = new StringWriter();
-				trans.transform(new DOMSource(doc), new StreamResult(writer));
-				log.debug(writer.getBuffer().toString().replaceAll("\n|\r", ""));
+            StreamResult result = new StreamResult(xmlFile);
 
-				trans.transform(source, result);
-			} else {
-				StreamResult result = new StreamResult(billingRundir
-						+ File.separator
-						+ (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber()
-								: invoice.getTemporaryInvoiceNumber()) + ".xml");
-				billingRundir.mkdirs();
-				trans.transform(source, result);
-			}
+            StringWriter writer = new StringWriter();
+            trans.transform(new DOMSource(doc), new StreamResult(writer));
+            log.trace("XML invoice: " + writer.getBuffer().toString().replaceAll("\n|\r", ""));
 
-		} catch (TransformerException e) {
-			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
-		} catch (ParserConfigurationException e) {
-			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
-		}
+            trans.transform(source, result);
+            
+            return xmlFile;
 
+        } catch (TransformerException | ParserConfigurationException e) {
+            throw new BusinessException(
+                "Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber()
+                        : invoice.getTemporaryInvoiceNumber(), e);
+        }
 	}
+
+
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent, boolean enterprise, Element invoiceTag,
 			boolean displayDetail) throws BusinessException {
@@ -1406,14 +1397,27 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 		return true;
 	}
- private String getLinkedInvoicesnumberAsString(List<Invoice> linkedInvoices){
-	 if(linkedInvoices == null || linkedInvoices.isEmpty() ){
-		 return "";
-	 }
-	 String result = "";
-	 for(Invoice inv : linkedInvoices){
-		 result += inv.getInvoiceNumber() +" ";
-	 }
-	 return result;
- }
+
+    private String getLinkedInvoicesnumberAsString(List<Invoice> linkedInvoices) {
+        if (linkedInvoices == null || linkedInvoices.isEmpty()) {
+            return "";
+        }
+        String result = "";
+        for (Invoice inv : linkedInvoices) {
+            result += inv.getInvoiceNumber() + " ";
+        }
+        return result;
+    }
+
+    public boolean deleteXmlInvoice(Invoice invoice) {
+
+        String xmlFilename = invoiceService.getFullXmlFilePath(invoice);
+
+        File file = new File(xmlFilename);
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return true;
+        }
+    }
 }

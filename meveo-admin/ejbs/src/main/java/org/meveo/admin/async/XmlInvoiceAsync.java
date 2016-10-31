@@ -3,7 +3,6 @@
  */
 package org.meveo.admin.async;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -35,12 +34,12 @@ public class XmlInvoiceAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Invoice> invoices,File billingRundir, JobExecutionResultImpl result) {
+	public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
 		
 		for (Invoice invoice : invoices) {
 			long startDate = System.currentTimeMillis();
 			try {
-				xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
+				xmlInvoiceCreator.createXMLInvoiceInNewTransaction(invoice.getId());
 				result.registerSucces();
 			} catch (Exception e) {		
 				result.registerError(e.getMessage());

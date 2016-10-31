@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import javax.ejb.Stateless;
@@ -16,7 +15,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
@@ -50,7 +48,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -105,9 +102,6 @@ public class Invoice4_2Api extends BaseApi {
 
     @Inject
     XMLInvoiceCreator xmlInvoiceCreator;
-
-    @Inject
-    private PDFParametersConstruction pDFParametersConstruction;
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
@@ -496,23 +490,9 @@ public class Invoice4_2Api extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }
-        ParamBean param = ParamBean.getInstance();
-        String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-        String sep = File.separator;
-        String invoicePath = invoicesDir
-                + sep
-                + currentUser.getProvider().getCode()
-                + sep
-                + "invoices"
-                + sep
-                + "xml"
-                + sep
-                + (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable().getCreated(),
-                    paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : invoice.getBillingRun().getId());
-        File billingRundir = new File(invoicePath);
-        xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
-        String xmlCanonicalPath = invoicePath + sep + invoiceNumber + ".xml";
-        Scanner scanner = new Scanner(new File(xmlCanonicalPath));
+
+        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        Scanner scanner = new Scanner(xmlFile);
         String xmlContent = scanner.useDelimiter("\\Z").next();
         scanner.close();
         log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
@@ -539,8 +519,7 @@ public class Invoice4_2Api extends BaseApi {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }
         if (invoice.getPdf() == null) {
-            Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
-            invoiceService.producePdf(parameters, currentUser);
+            invoiceService.producePdf(invoice, currentUser);
         }
         invoiceService.findById(invoice.getId(), true);
         log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);

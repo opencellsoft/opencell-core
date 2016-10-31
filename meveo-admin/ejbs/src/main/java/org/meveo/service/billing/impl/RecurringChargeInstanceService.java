@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
@@ -42,7 +44,9 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
@@ -282,8 +286,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				  .setParameter("chargeInstance", activeRecurringChargeInstance).setParameter("provider", user.getProvider())
 							.executeUpdate();
 			  }catch (Exception e) {
-				e.printStackTrace();
-				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
+				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId, e);
 			  }
 			}
 
@@ -346,4 +349,39 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		return nbRating;
 	}
 
+
+    /**
+     * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
+     * 
+     * @param chargeTemplate Charge template to apply
+     * @param userAccount User account to apply to
+     * @param offerCode Offer code
+     * @param inputQuantity Quantity as received
+     * @param quantity Quantity as calculated
+     * @param subscriptionDate Subscription start date
+     * @param fromDate Recurring charge application start
+     * @param toDate Recurring charge application end
+     * @param amountWithoutTax Amount without tax to override
+     * @param amountWithTax Amount with tax to override
+     * @param criteria1 Criteria 1
+     * @param criteria2 Criteria 2
+     * @param criteria3 Criteria 3
+     * @param currentUser Current user
+     * @return Wallet operations
+     * @throws BusinessException
+     */
+    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, Date subscriptionDate,
+            Date fromDate, Date toDate, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3,
+            User currentUser) throws BusinessException {
+
+        log.debug("Apply recuring charges on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date range {}-{}", userAccount.getCode(),
+            chargeTemplate.getCode(), fromDate, toDate);
+
+        BigDecimal inputQuantity = quantity;
+        quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
+
+        return walletOperationService.applyReccuringChargeVirtual(chargeTemplate, userAccount, offerCode, inputQuantity, inputQuantity, subscriptionDate, fromDate, toDate,
+            amountWithoutTax, amountWithTax, criteria1, criteria2, criteria3, currentUser);
+
+    }
 }

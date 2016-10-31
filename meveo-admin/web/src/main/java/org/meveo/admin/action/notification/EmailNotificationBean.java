@@ -51,7 +51,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 	ParamBean paramBean = ParamBean.getInstance();
 	
     @Inject
-    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
+    CounterTemplateService counterTemplateService;
     
     @Inject
     ScriptInstanceService scriptInstanceService;

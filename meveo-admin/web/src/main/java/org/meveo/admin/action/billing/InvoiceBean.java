@@ -30,7 +30,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.Instance;
@@ -46,7 +45,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
-import org.meveo.admin.job.PDFParametersConstruction;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
@@ -73,7 +72,6 @@ import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 
@@ -116,9 +114,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
-
-	@Inject
-	private PDFParametersConstruction pDFParametersConstruction;
 	
 	@Inject
 	@RequestParam()
@@ -368,10 +363,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generatePdf() {
 		try {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity, getCurrentUser());
-			invoiceService.producePdf(parameters, getCurrentUser());
+			invoiceService.producePdf(entity.getId(), getCurrentUser());
 			entity=invoiceService.refreshOrRetrieve(entity);
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
+			
 		} catch (InvoiceXmlNotFoundException e) {
 			messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
 		} catch (InvoiceJasperNotFoundException e) {
@@ -391,7 +386,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generateXMLInvoice() throws BusinessException {
 		try {
-			xmlInvoiceCreator.createXMLInvoice(entity.getId(), getXmlInvoiceDir());
+			xmlInvoiceCreator.createXMLInvoice(entity.getId());
 			messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 		} catch (Exception e) {
 			log.error("failed to generate xml invoice", e);
@@ -465,22 +460,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		return null;
 	}
 
-	public void deleteXmlInvoice() {
-		try {
-			String thePrefix =""; 
-			if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
-				thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
-			}
-			File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator+thePrefix
-					+ entity.getTemporaryInvoiceNumber() + ".xml");
-			if (file.exists()) {
-				file.delete();
-				messages.info(new BundleKey("messages", "delete.successful"));
-			}
-		} catch (Exception e) {
-			log.error("failed to delete xml invoice ", e);
-		}
-	}
+    @ActionMethod
+    public void deleteXmlInvoice() {
+
+        boolean fileDeleted = xmlInvoiceCreator.deleteXmlInvoice(getEntity());
+        if (fileDeleted) {
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } else {
+            messages.info(new BundleKey("messages", "error.delete.unexpected"));
+        }
+    }
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
 		String thePrefix =""; 
@@ -716,12 +705,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 		invoiceService.commit();
 		// create xml invoice adjustment
-		String brPath = invoiceService.getBillingRunPath(entity.getBillingRun(), entity.getAuditable().getCreated(),currentUser.getProvider().getCode());
-		File billingRundir = new File(brPath);		
-		xmlInvoiceCreator.createXMLInvoiceAdjustment(entity.getId(), billingRundir);
+		xmlInvoiceCreator.createXMLInvoice(entity.getId());
+		
 		// create pdf
-        Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity.getId(), currentUser, currentUser.getProvider());
-		invoiceService.produceInvoiceAdjustmentPdf(parameters, currentUser);
+		invoiceService.producePdf(entity.getId(), currentUser);
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";

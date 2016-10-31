@@ -40,6 +40,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -219,13 +220,44 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	}
 
 	public void oneShotChargeApplication(Subscription subscription,
-			OneShotChargeInstance oneShotChargeInstance, Date effetDate, BigDecimal quantity, User creator)
+			OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity, User creator)
 			throws BusinessException {
 		BigDecimal inputQuantity = quantity;
 		quantity = NumberUtil.getInChargeUnit(quantity, oneShotChargeInstance.getChargeTemplate().getUnitMultiplicator(), oneShotChargeInstance.getChargeTemplate()
 				.getUnitNbDecimal(),oneShotChargeInstance.getChargeTemplate().getRoundingMode());
-		walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, creator);
+		walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effectiveDate, creator);
 	}
+
+    /**
+     * Apply a one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
+     * 
+     * @param chargeTemplate One shot charge template
+     * @param userAccount User account
+     * @param offerCode Offer code
+     * @param effectiveDate Effective charge date
+     * @param quantity Quantity
+     * @param amountWithoutTax Amount without tax to override
+     * @param amountWithTax Amount with tax to override
+     * @param criteria1 Criteria 1
+     * @param criteria2 Criteria 2
+     * @param criteria3 Criteria 3
+     * @param currentUser Current user
+     * @return Wallet operation
+     * @throws BusinessException
+     */
+    public WalletOperation oneShotChargeApplicationVirtual(OneShotChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, Date effectiveDate,
+            BigDecimal quantity, String criteria1, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria2, String criteria3, User currentUser)
+            throws BusinessException {
+
+        log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date {}", userAccount.getCode(), chargeTemplate.getCode(),
+            effectiveDate);
+
+        BigDecimal inputQuantity = quantity;
+        quantity = NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
+
+        return walletOperationService.rateOneShotApplicationVirtual(chargeTemplate, userAccount, offerCode, inputQuantity, quantity, effectiveDate, amountWithoutTax,
+            amountWithTax, criteria1, criteria2, criteria3, currentUser);
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeInstance> findOneShotChargeInstancesBySubscriptionId(Long subscriptionId) {

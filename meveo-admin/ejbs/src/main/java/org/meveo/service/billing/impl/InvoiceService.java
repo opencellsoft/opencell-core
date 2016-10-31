@@ -48,16 +48,20 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -89,6 +93,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -100,7 +105,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -109,6 +113,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -518,6 +523,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}		
 		return invoice;
 	}
+	
+    public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType, User currentUser)
+            throws BusinessException {
+
+        if (invoiceType == null) {
+            invoiceType = invoiceTypeService.getDefaultCommertial(currentUser);
+        }
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceType(invoiceType);
+        invoice.setBillingAccount(billingAccount);
+        invoice.setInvoiceDate(new Date());
+
+        PaymentMethodEnum paymentMethod = billingAccount.getPaymentMethod();
+        if (paymentMethod == null) {
+            paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+        }
+        invoice.setPaymentMethod(paymentMethod);
+        invoice.setProvider(currentUser.getProvider());
+
+        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, currentUser, false, true);
+
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+        }
+
+        invoice.setTemporaryInvoiceNumber("000000000");
+
+        return invoice;
+    }
+	
 
 	@SuppressWarnings("unchecked")
 	public List<Invoice> findByBillingRun(BillingRun billingRun) {
@@ -532,146 +567,132 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	public void produceInvoiceAdjustmentPdf(Map<String, Object> parameters, User currentUser) throws Exception {
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());		
-		String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
-				+ currentUser.getProvider().getCode() + File.separator;
-		
-		File billingRundir = new File(brPath);
-		String invoiceXmlFileName = billingRundir + File.separator
-				+ paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber()
-				+ ".xml";
-
-		producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir, true);
-	}
-
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void producePdf(Map<String, Object> parameters, User currentUser) throws Exception {
-		String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
-				+ currentUser.getProvider().getCode() + File.separator;
-
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		
-		
-		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));
-		String thePrefix =""; 
-		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
-			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
-		}
-		String invoiceXmlFileName = billingRundir
-				+ File.separator+thePrefix
-				+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice
-						.getTemporaryInvoiceNumber()) + ".xml";
-
-		producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir, invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode()));
+	public void producePdfInNewTransaction(Long invoiceId, User currentUser) throws BusinessException {
+	    producePdf(invoiceId, currentUser);
 	}
 
-	public void producePdf(Map<String, Object> parameters, User currentUser, String invoiceXmlFileName,
-			String meveoDir, boolean isInvoiceAdjustment) throws Exception {
+   public void producePdf(Long invoiceId, User currentUser) throws BusinessException {
+       Invoice invoice = findById(invoiceId);
+       producePdf(invoice, currentUser);
+   }
+   
+   public void producePdf(Invoice invoice, User currentUser) throws BusinessException  {
+        
+        String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + File.separator;
+        String invoiceXmlFileName = getFullXmlFilePath(invoice);
+        Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice, currentUser);
+
+        producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir);
+    }
+
+    private void producePdf(Map<String, Object> parameters, User currentUser, String invoiceXmlFileName, String meveoDir) throws BusinessException {
 		log.info("PDFInvoiceGenerationJob is invoice key exists="
 				+ ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + ""
 						: "parameters is null"));
 
-		String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
-		(new File(pdfDirectory)).mkdirs();
+        String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
+        (new File(pdfDirectory)).mkdirs();
 
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		String INVOICE_TAG_NAME = "invoice";
+        Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
+        String INVOICE_TAG_NAME = "invoice";
 
-		File invoiceXmlFile = new File(invoiceXmlFileName);
-		if (!invoiceXmlFile.exists()) {
-			throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
-		}
-		BillingAccount billingAccount = invoice.getBillingAccount();
-		BillingCycle billingCycle = null;
-		if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
-			billingCycle=billingAccount.getBillingCycle();
-		}
-		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
-				.getBillingTemplateName() : "default";
-		String resDir = meveoDir + "jasper";
-		
-		File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
-		  if (!destDir.exists()) {
-			destDir.mkdirs();
-			String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
-			File sourceFile = new File(sourcePath);
-			if (!sourceFile.exists()) {
-				VirtualFile vfDir = VFS.getChild("content/"
-						+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")
-						+ ".war/WEB-INF/classes/jasper");
-				log.info("default jaspers path :"+vfDir.getPathName());
-				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-				sourceFile = new File(vfPath.getPath());
-				if (!sourceFile.exists()) {
-					throw new BusinessException("embedded jasper report for invoice is missing!");
-				}
-			}
-			FileUtils.copyDirectory(sourceFile, destDir);
-		}
-		File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplate + File.separator+ "invoiceAdjustmentPdf");
-		if (!destDirInvoiceAdjustment.exists()) {
-			destDirInvoiceAdjustment.mkdirs();
-			String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./invoiceAdjustment").getPath();
-			File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
-			if (!sourceFileInvoiceAdjustment.exists()) {
-				VirtualFile vfDir = VFS.getChild("content/"+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/invoiceAdjustment");
-				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-				sourceFileInvoiceAdjustment = new File(vfPath.getPath());
-				if (!sourceFileInvoiceAdjustment.exists()) {
-					throw new BusinessException("embedded jasper report for invoice is missing!");
-				}
-			}
-			FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
-		}
-		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod(),isInvoiceAdjustment);
-		if (!jasperFile.exists()) {
-			throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
-		}
-		log.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
+        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 
-		InputStream reportTemplate = new FileInputStream(jasperFile);
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document xmlDocument = db.parse(invoiceXmlFile);
-		xmlDocument.getDocumentElement().normalize();
-		Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
+        File invoiceXmlFile = new File(invoiceXmlFileName);
+        if (!invoiceXmlFile.exists()) {
+            throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
+        }
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        BillingCycle billingCycle = null;
+        if (billingAccount != null && billingAccount.getBillingCycle() != null) {
+            billingCycle = billingAccount.getBillingCycle();
+        }
+        String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle.getBillingTemplateName() : "default";
+        String resDir = meveoDir + "jasper";
 
-		Transformer trans = TransformerFactory.newInstance().newTransformer();
-		trans.setOutputProperty(OutputKeys.INDENT, "yes");
-		StringWriter writer = new StringWriter();
-		trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
-		log.debug(writer.getBuffer().toString().replaceAll("\n|\r", ""));
+        String pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
+            (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()))
+                + ".pdf";
+        if (isInvoiceAdjustment) {
+            pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
+                paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber())
+                    + ".pdf";
+        }
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		XPathExpression expr = xPath.compile("/invoice");
-		Object result = expr.evaluate(xmlDocument, XPathConstants.NODE);
-		Node node = (Node) result;
+        try {
+            File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
+                File sourceFile = new File(sourcePath);
+                if (!sourceFile.exists()) {
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/classes/jasper");
+                    log.info("default jaspers path :" + vfDir.getPathName());
+                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                    sourceFile = new File(vfPath.getPath());
+                    if (!sourceFile.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing!");
+                    }
+                }
+                FileUtils.copyDirectory(sourceFile, destDir);
+            }
+            File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplate + File.separator + "invoiceAdjustmentPdf");
+            if (!destDirInvoiceAdjustment.exists()) {
+                destDirInvoiceAdjustment.mkdirs();
+                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./invoiceAdjustment").getPath();
+                File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
+                if (!sourceFileInvoiceAdjustment.exists()) {
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/classes/invoiceAdjustment");
+                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                    sourceFileInvoiceAdjustment = new File(vfPath.getPath());
+                    if (!sourceFileInvoiceAdjustment.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing!");
+                    }
+                }
+                FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
+            }
+            File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod(), isInvoiceAdjustment);
+            if (!jasperFile.exists()) {
+                throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
+            }
+            log.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
 
-		JRXmlDataSource dataSource = null;
+            InputStream reportTemplate = new FileInputStream(jasperFile);
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document xmlDocument = db.parse(invoiceXmlFile);
+            xmlDocument.getDocumentElement().normalize();
+            Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
 
-		if (node != null) {
-			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice");
-		} else {
-			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice");
-		}
+            Transformer trans = TransformerFactory.newInstance().newTransformer();
+            trans.setOutputProperty(OutputKeys.INDENT, "yes");
+            StringWriter writer = new StringWriter();
+            trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
+            log.debug(writer.getBuffer().toString().replaceAll("\n|\r", ""));
 
-		JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-		String pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(), (!StringUtils.isBlank(invoice
-				.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()))
-				+ ".pdf";
-		if (isInvoiceAdjustment) {
-			pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
-					paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber())
-					+ ".pdf";
-		}
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            XPathExpression expr = xPath.compile("/invoice");
+            Object result = expr.evaluate(xmlDocument, XPathConstants.NODE);
+            Node node = (Node) result;
 
-		JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
-		log.info(String.format("PDF file '%s' produced", pdfFileName));
+            JRXmlDataSource dataSource = null;
+
+            if (node != null) {
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+            } else {
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+            }
+
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
+            log.info(String.format("PDF file '%s' produced", pdfFileName));
+
+        } catch (IOException |JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
+            throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
+        }
 
 		FileInputStream fileInputStream = null;
 		try {
@@ -994,6 +1015,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return brPath;
 	}
 	
+	public String getBillingRunPath(Invoice invoice){
+	    return getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), invoice.getProvider().getCode());
+	}
+	
+    public String getInvoiceXMLFilename(Invoice invoice) {
+
+        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+        if (isInvoiceAdjustment) {
+            return paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber() + ".xml";
+        
+        } else {
+            return (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
+        }
+    }
+        
+    public String getFullXmlFilePath(Invoice invoice) {
+        return getBillingRunPath(invoice) + File.separator + getInvoiceXMLFilename(invoice);
+    }
+	
 	/**
 	 *  if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
 	 *  
@@ -1022,27 +1062,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
-		String brPath = getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode());
-		File billingRundir = new File(brPath);
-		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir, invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode()), refreshInvoice);
-		String thePrefix =""; 
-		if(invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
-			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
-		}
-		String xmlCanonicalPath = brPath + File.separator + thePrefix+invoiceNumber + ".xml";
-		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
-		String xmlContent = scanner.useDelimiter("\\Z").next();
-		scanner.close();
-		log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
-		
-		return xmlContent;
-	}
+
+        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+
+        Scanner scanner = new Scanner(xmlFile);
+        String xmlContent = scanner.useDelimiter("\\Z").next();
+        scanner.close();
+        log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
+
+        return xmlContent;
+    }
 
 
 	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws Exception {
 		if (invoice.getPdf() == null) {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
-			producePdf(parameters, currentUser);
+			producePdf(invoice.getId(), currentUser);
 		}
 		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);		
 		return invoice.getPdf();
