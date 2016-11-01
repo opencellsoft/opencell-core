@@ -2,7 +2,6 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,7 +50,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
 		// process all bundleProductTemplates then create
 		// bundleProductTemplateDtos accordingly.
-		Set<BundleProductTemplate> bundleProducts = bundleTemplate.getBundleProducts();
+		List<BundleProductTemplate> bundleProducts = bundleTemplate.getBundleProducts();
 		if (bundleProducts != null && !bundleProducts.isEmpty()) {
 			List<BundleProductTemplateDto> bundleProductTemplates = new ArrayList<>();
 			BundleProductTemplateDto bundleProductTemplateDto = null;
@@ -190,7 +189,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 	private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate, User user) throws MeveoApiException, BusinessException {
 		List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
 		boolean hasBundleProductTemplateDtos = bundleProductTemplates != null && !bundleProductTemplates.isEmpty();
-		Set<BundleProductTemplate> existingProductTemplates = bundleTemplate.getBundleProducts();
+		List<BundleProductTemplate> existingProductTemplates = bundleTemplate.getBundleProducts();
 		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
 		if (hasBundleProductTemplateDtos) {
 			List<BundleProductTemplate> newBundleProductTemplates = new ArrayList<>();
