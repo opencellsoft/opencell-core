@@ -28,6 +28,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -48,7 +49,8 @@ public class WalletTemplate extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	private BillingWalletTypeEnum walletType;
 
-	@Column(name = "CONSUMPTION_ALERT_SET")
+	@Type(type="numeric_boolean")
+    @Column(name = "CONSUMPTION_ALERT_SET")
 	private boolean consumptionAlertSet;
 
 	@Column(name = "FAST_RATING_LEVEL")

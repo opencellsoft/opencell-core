@@ -408,16 +408,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			throws BusinessException {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
+
 		EntityManager em = getEntityManager();
 		BillingRun billingRun=null;
 		if(billingRunId!=null){
 			billingRun = em.find(BillingRun.class, billingRunId);
 			em.refresh(billingRun);
 		} else {
-			if(invoiceDate==null){
-				throw new BusinessException("invoiceDate must be set if billingRun is null");	
+			if(invoiceDate==null || lastTransactionDate == null ){
+				throw new BusinessException("invoiceDate and lastTransactionDate  must be set if billingRun is null");	
 			}
 		}
+		
+		if(billingAccount.getInvoicingThreshold() != null){
+			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
+			if(invoiceAmount == null){
+				throw new BusinessException("Cant compute invoice amount");
+			}
+			if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
+				throw new BusinessException("Invoice amount below the threshold");	
+			}
+		}
+		
 		try {
 			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
 			em.refresh(billingAccount);
@@ -477,25 +489,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			// Note that rated transactions get updated in
 			// ratedTransactionservice in case of Filter
 			if (ratedTransactionFilter == null) {
-				if (currentUser.getProvider().isDisplayFreeTransacInInvoice()) {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree" + (billingRun == null ? "NoBR" : "")).
-							         setParameter("billingAccount", billingAccount).
-							         setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).
-							         setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				} else {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : ""))
-							.setParameter("billingAccount", billingAccount)
-							.setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate())
-							.setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				}
+                Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : "")).setParameter("billingAccount", billingAccount)
+                    .setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).setParameter("invoice", invoice);
+                if (billingRun != null) {
+                    query = query.setParameter("billingRun", billingRun);
+                }
+                query.executeUpdate();
 			}
 
 			StringBuffer num1 = new StringBuffer("000000000");
@@ -554,7 +553,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
 				+ currentUser.getProvider().getCode() + File.separator;
 
-		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
+		Invoice invoice = refreshOrRetrieve((Invoice) parameters.get(PdfGeneratorConstants.INVOICE));
 		
 		
 		File billingRundir = new File(getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), currentUser.getProvider().getCode()));

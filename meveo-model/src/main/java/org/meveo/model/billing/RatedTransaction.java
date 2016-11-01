@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -67,14 +68,7 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
 				+ " AND r.usageDate<:lastTransactionDate " + " AND r.billingAccount IN :billingAccountList"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
-				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.amountWithoutTax<>0 "
-				+ " AND r.usageDate<:lastTransactionDate "
-				+ "AND r.invoice is null"
-				+ " AND r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
+		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.doNotTriggerInvoicing=false "
@@ -82,23 +76,13 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoicedNoBR", query = "UPDATE RatedTransaction r "
 				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),				
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
-				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFreeNoBR", query = "UPDATE RatedTransaction r "
-				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),				
 		@NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled", query = "SELECT r.walletOperationId FROM RatedTransaction r "
 				+ " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
 				+ " AND r.walletOperationId IN :walletIdList"),
@@ -187,7 +171,8 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "STATUS")
 	private RatedTransactionStatusEnum status;
 
-	@Column(name = "DO_NOT_TRIGGER_INVOICING")
+	@Type(type="numeric_boolean")
+    @Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
 
 	@Column(name = "PARAMETER_1", length = 255)

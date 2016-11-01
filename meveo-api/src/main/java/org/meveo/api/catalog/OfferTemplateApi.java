@@ -1,11 +1,14 @@
 package org.meveo.api.catalog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
@@ -89,6 +92,14 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
 			}
 			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+		}
+		
+		if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				offerTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
 		}
 		
 		if(postData.getOfferTemplateCategories() != null) {
@@ -185,6 +196,14 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
+		
+		if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				offerTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
 		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
 			offerTemplate.getOfferTemplateCategories().clear();

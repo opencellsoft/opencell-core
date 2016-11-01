@@ -132,6 +132,10 @@
 														label="#{messages['discountPlan.title']}"
 														listBean="#{discountPlanBean}" field="discountPlan"
 														valueLabelField="code" required="false" />
+														
+												<hftl:formField
+														label="#{messages['billingAccount.invoicingThreshold']}"
+														field="invoicingThreshold" required="false" size="20" />														
 													
 													<h:panelGroup id="invoicePrefixBoxPanel">
                                                         <hftl:decorateFormField fieldId="returnToAgency_select" label="#{messages['billingAccount.returnToAgency']}" >
@@ -170,7 +174,6 @@
     															value="#{billingAccountBean.entity.invoicePrefix}" style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
 													</h:panelGroup>
-
 													<hftl:formField
 														label="#{messages['billingAccount.externalRef1']}"
 														field="externalRef1" maxlength="50" useConverter="false" newLine="true"/>

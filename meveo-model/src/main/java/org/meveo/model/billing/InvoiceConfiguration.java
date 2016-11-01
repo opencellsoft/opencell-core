@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
@@ -31,7 +33,7 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     private static final long serialVersionUID = -735961368678724497L;
     
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "ID")
     @Access(AccessType.PROPERTY)
     private Long id;
@@ -40,33 +42,43 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     @Column(name = "VERSION")
     private Integer version;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_SUBSCRIPTIONS")
     private Boolean displaySubscriptions = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_SERVICES")
     private Boolean displayServices = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_OFFERS")
     private Boolean displayOffers = false;
     
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_PRICEPLANS")
     private Boolean displayPricePlans = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_EDRS")
     private Boolean displayEdrs = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_PROVIDER")
     private Boolean displayProvider = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_DETAIL")
     private Boolean displayDetail = true;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_CF_AS_XML")
     private Boolean displayCfAsXML = false;
     
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_CHARGES_PERIODS")
     private Boolean displayChargesPeriods = false;
     
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_BILLING_CYCLE")
     private Boolean displayBillingCycle = false;
 

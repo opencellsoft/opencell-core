@@ -36,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 @Entity
@@ -61,7 +62,8 @@ public class DDRequestLOT extends AuditableEntity {
 	private Integer invoicesNumber;
 
 	
-	@Column(name = "IS_PAYMENT_CREATED")
+	@Type(type="numeric_boolean")
+    @Column(name = "IS_PAYMENT_CREATED")
 	private boolean paymentCreated;
 
 	@Column(name = "INVOICE_AMOUNT", precision = 23, scale = 12)

@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -48,6 +49,8 @@ public class ServiceTemplateDto extends BaseDto {
      * BusinessServiceModel code.
      */
     private String somCode;
+    
+    private String imageBase64;
 
     public ServiceTemplateDto() {
     }
@@ -57,6 +60,9 @@ public class ServiceTemplateDto extends BaseDto {
         description = serviceTemplate.getDescription();
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
+        if (serviceTemplate.getImage() != null) {
+			imageBase64 = Base64.encodeBase64String(serviceTemplate.getImageAsByteArr());
+		}
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -239,5 +245,13 @@ public class ServiceTemplateDto extends BaseDto {
 
 	public void setLongDescription(String longDescription) {
 		this.longDescription = longDescription;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
 	}
 }
