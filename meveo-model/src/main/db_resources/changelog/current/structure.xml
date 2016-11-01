@@ -1184,8 +1184,10 @@
 
 
     <!-- migrate boolean fields, migrate billing_invoice.pdf from bytea to oid -->
-    <changeSet id="#2049_20161024" author="AndriusKarpavicius" dbms="postgresql">
-
+    <changeSet id="#2049_20161024" author="AndriusKarpavicius" dbms="postgresql" >
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="migration" value="true"/>         
+        </preConditions>
 
         <renameColumn tableName="DWH_CHART" oldColumnName="VISIBLE" newColumnName="VISIBLE_BOOL" />
         <addColumn tableName="DWH_CHART">
@@ -2789,6 +2791,10 @@
     </changeSet>
 
     <changeSet id="#2049_20161024-1" author="AndriusKarpavicius" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="migration" value="true"/>     
+        </preConditions>
+        
         <renameColumn tableName="BILLING_INVOICE" oldColumnName="PDF" newColumnName="PDF_BYTE" />
         <addColumn tableName="BILLING_INVOICE">
             <column name="PDF" type="${type.blob}"/>
