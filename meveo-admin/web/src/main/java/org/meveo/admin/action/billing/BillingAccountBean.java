@@ -260,7 +260,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String generateInvoice() {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, currentUser);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null, currentUser);
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
         } catch (Exception e) {

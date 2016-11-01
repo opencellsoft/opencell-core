@@ -73,7 +73,6 @@ import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 
@@ -703,7 +702,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			} 	 
 		}	
 		if (isDetailed()) {
-			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity,null, new Date(),getCurrentUser());
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity,null, null, new Date(),getCurrentUser());
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
