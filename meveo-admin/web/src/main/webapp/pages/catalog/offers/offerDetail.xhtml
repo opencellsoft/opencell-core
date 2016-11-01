@@ -88,9 +88,16 @@
                     <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
                         valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
                 </h:panelGrid>
+                
             </p:panelGrid>
 
-            <p:panel>
+			<p:panel>
+				<p:panel style="margin: 0 auto;">
+					<hr class="Separator" />
+				</p:panel>
+			</p:panel>
+
+			<p:panel>
                 <f:facet name="header">
                     <h:outputText value="#{messages['menu.marketingManager.products']}" styleClass="SubHeader" />
                 </f:facet>
@@ -130,8 +137,14 @@
                     </p:dataTable>
                 </p:panel>
             </p:panel>
+            
+            <p:panel>
+				<p:panel style="margin: 0 auto;">
+					<hr class="Separator" />
+				</p:panel>
+			</p:panel>
 
-            <p:panel id="customFieldsWrappPanel">
+            <p:panel id="customFieldsWrappPanel" rendered="false">
                 <f:facet name="header">
                     <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                     <p:commandLink id="customizeOfferCF" action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}"
@@ -156,14 +169,18 @@
 
                 <p:panel>
                     <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost" varStatus="loopStatus">
-                        <h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Responsive Wid2, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
-                            <p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
-                                <p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
-                            </p:selectBooleanCheckbox>
+                        <h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Responsive Wid2 VAlignTop, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
 
-                            <h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+							<p:panel>
+								<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" style="margin-right: 2px; position: relative; top: 5px"
+									rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
+								</p:selectBooleanCheckbox>
 
-                            <p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
+								<h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
+							</p:panel>
+
+							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
                                 <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
                                         <p:selectBooleanCheckbox id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>

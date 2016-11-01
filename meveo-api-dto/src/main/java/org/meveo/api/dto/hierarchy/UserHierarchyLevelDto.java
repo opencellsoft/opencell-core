@@ -6,6 +6,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.hierarchy.HierarchyLevel;
@@ -27,6 +29,8 @@ public class UserHierarchyLevelDto implements Serializable {
 
     private String parentLevel;
 
+    @XmlElementWrapper(name="childLevels")
+    @XmlElement(name="userHierarchyLevel")
     private List<UserHierarchyLevelDto> childLevels;
 
     protected Long orderLevel = 0L;

@@ -166,14 +166,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	// apply a oneShotCharge on the postpaid wallet
 	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			BigDecimal quantity, String criteria1, String criteria2, String criteria3, User creator,boolean applyCharge)
+			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber,User creator,boolean applyCharge)
 			throws BusinessException {
 		return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax,
-				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null,creator,true);
+				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null,orderNumber,creator,true);
 	}
 	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,User creator,boolean applyCharge)
+			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,String orderNumber,User creator,boolean applyCharge)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -196,6 +196,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);
+		oneShotChargeInstance.setOrderNumber(orderNumber);
 		if (walletCode == null) {
 			oneShotChargeInstance.setPrepaid(false);
 			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
@@ -312,7 +313,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 				(OneShotChargeTemplate) oneShotChargeTemplate,
 				wallet.getCode(), new Date(), balanceNoTax.negate(), balanceWithTax.negate(),
 				BigDecimal.ONE, null, null,
-				null, currentUser,false);
+				null,null, currentUser,false);
 		if(compensationCharge==null){
 			throw new BusinessException("Cannot find or create compensating charge instance for code "
 					+matchingChargeCode);

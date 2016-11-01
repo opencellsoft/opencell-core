@@ -84,7 +84,7 @@
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.5.2</version>
                     <configuration>
                         <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
                         <driver>${db.driver}</driver>
@@ -145,6 +145,18 @@
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Import hibernate for boolean mapping to Char - compatibility between postgress and mysql - use provided scope as is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>antlr</groupId>
+                    <artifactId>antlr</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- JSR-303 (Bean Validation) Implementation -->

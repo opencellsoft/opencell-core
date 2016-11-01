@@ -18,7 +18,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -62,54 +61,34 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.MeveoParamBean;
 
 @Stateless
 public class InvoiceApi extends BaseApi {
 
 	@Inject
-	RecordedInvoiceService recordedInvoiceService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	ProviderService providerService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
-	CustomerAccountService customerAccountService;
+	private BillingRunService billingRunService;
 
 	@Inject
-	BillingAccountService billingAccountService;
+	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	@Inject
-	BillingRunService billingRunService;
-
-	@Inject
-	InvoiceSubCategoryService invoiceSubCategoryService;
-
-	@Inject
-	RatedTransactionService ratedTransactionService;
-
-	@Inject
-	OCCTemplateService oCCTemplateService;
+	private RatedTransactionService ratedTransactionService;
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
 
 	@Inject
-	InvoiceService invoiceService;
-
-	@Inject
-	TaxService taxService;
-
-	@Inject
-	XMLInvoiceCreator xmlInvoiceCreator;
+	private InvoiceService invoiceService;
 
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
@@ -124,8 +103,6 @@ public class InvoiceApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 	
-	@Inject
-	private ResourceBundle resourceMessages;
 	
 	/**
 	 * Create an invoice based on the DTO object data and current user
@@ -237,7 +214,8 @@ public class InvoiceApi extends BaseApi {
 					
 					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                         ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax, amountWithTax, amountTax,
-                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null, null);
+                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null,null
+                        , null, null, null, null);
 					meveoRatedTransaction.setCode(ratedTransaction.getCode());
 					meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 					meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
@@ -476,7 +454,7 @@ public class InvoiceApi extends BaseApi {
 	 * @throws BusinessApiException
 	 * @throws Exception
 	 */
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
@@ -492,8 +470,9 @@ public class InvoiceApi extends BaseApi {
 			missingParameters.add("invoicingDate");
 		}
 		if (generateInvoiceRequestDto.getLastTransactionDate() == null && 
-				generateInvoiceRequestDto.getFilter()==null) {
-			missingParameters.add("lastTransactionDate or filter");
+				StringUtils.isBlank(generateInvoiceRequestDto.getFilter()) && 
+				StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber()) ) {
+			missingParameters.add("lastTransactionDate or filter or orderNumber");
 		}
 
 		handleMissingParameters();
@@ -503,40 +482,20 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
 		}
 
-        if (billingAccount.getBillingRun() != null
-                && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
-                        || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) || billingAccount.getBillingRun().getStatus()
-                    .equals(BillingRunStatusEnum.POSTVALIDATED))) {
-
-			throw new BusinessApiException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
-		}
-		
-		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, generateInvoiceRequestDto.getInvoicingDate());				
-		log.debug("createRatedTransaction ok");
-
 		Filter ratedTransactionFilter =null;
 		if(generateInvoiceRequestDto.getFilter()!=null){
 			ratedTransactionFilter=filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter(), currentUser);
-		}else{
-			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, (generateInvoiceRequestDto.getLastTransactionDate()))){
-				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
-			}
 		}
 		
-		Invoice invoice = invoiceService.createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter
-				,generateInvoiceRequestDto.getInvoicingDate(),generateInvoiceRequestDto.getLastTransactionDate(),currentUser);
-		log.debug("createAgregatesAndInvoice ok ");
+		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), currentUser);				
 
-		invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
-		invoice.setPdf(null);							
-		invoiceService.update(invoice, currentUser);						
-		
 		return new GenerateInvoiceResultDto(invoice);
 	}
 
 	public String getXMLInvoice(String invoiceNumber, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial(currentUser).getCode(), currentUser);
 	}
+
 
     public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode, User currentUser) throws FileNotFoundException, MissingParameterException,
             EntityDoesNotExistsException, BusinessException {

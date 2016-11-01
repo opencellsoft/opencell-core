@@ -19,8 +19,7 @@
             </p:breadCrumb>
         </h:form>
 
-        <hftl:formPanel backingBean="#{bundleTemplateBean}" showFormButtons="true" showDeleteButton="false" formButtonsTopRight="true" backView="mm_productTemplates">
-
+        <hftl:formPanel id="bundleForm" backingBean="#{bundleTemplateBean}" showFormButtons="true" showDeleteButton="false" formButtonsTopRight="true" backView="mm_productTemplates">
             <ui:include src="productTemplateDetailCommon.xhtml">
                 <ui:param name="backingBean" value="#{bundleTemplateBean}" />
                 <ui:param name="mode" value="BUNDLE" />
@@ -56,7 +55,7 @@
                         </p:column>
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton value="#{messages['bundleTemplate.addProduct']}" action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
-                                update=":#{p:component('bundleTemplateList')}" oncomplete="PF('selectProduct').hide()">
+                                update=":#{p:component('bundleTemplateList')} :#{p:component('messages')}" oncomplete="PF('selectProduct').hide()">
                             </p:commandButton>
                         </p:column>
                     </p:dataTable>

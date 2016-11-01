@@ -78,6 +78,7 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -157,7 +158,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private CustomerService customerService;
       
+	 @Inject
+	 private ResourceBundle resourceMessages;
 	
+
 
 	private String PDF_DIR_NAME = "pdf";
 	private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
@@ -405,21 +409,33 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,
+	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,String orderNumber,
 			Date invoiceDate,Date lastTransactionDate, User currentUser)
-			throws BusinessException, Exception {
+			throws BusinessException {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
+
 		EntityManager em = getEntityManager();
 		BillingRun billingRun=null;
 		if(billingRunId!=null){
 			billingRun = em.find(BillingRun.class, billingRunId);
 			em.refresh(billingRun);
 		} else {
-			if(invoiceDate==null){
-				throw new BusinessException("invoiceDate must be set if billingRun is null");	
+			if(invoiceDate==null || lastTransactionDate == null ){
+				throw new BusinessException("invoiceDate and lastTransactionDate  must be set if billingRun is null");	
 			}
 		}
+		
+		if(billingAccount.getInvoicingThreshold() != null){
+			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
+			if(invoiceAmount == null){
+				throw new BusinessException("Cant compute invoice amount");
+			}
+			if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
+				throw new BusinessException("Invoice amount below the threshold");	
+			}
+		}
+		
 		try {
 			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
 			em.refresh(billingAccount);
@@ -472,33 +488,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
 					txReg.getTransactionStatus(), em.isOpen());
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,
-					ratedTransactionFilter,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
+					ratedTransactionFilter,orderNumber,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
 
 			// Note that rated transactions get updated in
-			// ratedTransactionservice in case of Filter
-			if (ratedTransactionFilter == null) {
-				if (currentUser.getProvider().isDisplayFreeTransacInInvoice()) {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree" + (billingRun == null ? "NoBR" : "")).
-							         setParameter("billingAccount", billingAccount).
-							         setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).
-							         setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				} else {
-					Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : ""))
-							.setParameter("billingAccount", billingAccount)
-							.setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate())
-							.setParameter("invoice", invoice);
-					if (billingRun != null) {
-						query = query.setParameter("billingRun", billingRun);
-					}
-					query.executeUpdate();
-				}
-			}
+			// ratedTransactionservice in case of Filter or orderNumber not empty
+            if (ratedTransactionFilter == null && StringUtils.isBlank(orderNumber)) {
+                Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : "")).setParameter("billingAccount", billingAccount)
+                    .setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).setParameter("invoice", invoice);
+                if (billingRun != null) {
+                    query = query.setParameter("billingRun", billingRun);
+                }
+                query.executeUpdate();
+            }
 
 			StringBuffer num1 = new StringBuffer("000000000");
 			num1.append(invoice.getId() + "");
@@ -542,7 +545,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setPaymentMethod(paymentMethod);
         invoice.setProvider(currentUser.getProvider());
 
-        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, currentUser, false, true);
+        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, null, currentUser, false, true);
 
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -1108,5 +1111,60 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.error("failed to get invoices with no account operation", ex);
 		}
 		return null;
+	}
+	
+	/**
+	 * Create RatedTransaction and generate invoice for the billingAccount
+	 * 
+	 * @param billingAccount
+	 * @param invoiceDate
+	 * @param lastTransactionDate
+	 * @param ratedTxFilter
+	 * @param orderNumber Order number associated to subscription
+	 * @param currentUser
+	 * @return
+	 * @throws BusinessException
+	 */
+	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,String orderNumber,User currentUser ) throws BusinessException {
+
+		if (StringUtils.isBlank(billingAccount)) {
+			throw new BusinessException("billingAccount is null");
+		}
+		if (StringUtils.isBlank(invoiceDate)) {
+			throw new BusinessException("invoicingDate is null");
+		}
+		if (StringUtils.isBlank(lastTransactionDate)) {
+			throw new BusinessException("lastTransactionDate is null");
+		}
+		if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate)) {
+			throw new BusinessException("lastTransactionDate or filter is null");
+		}
+		
+        if (billingAccount.getBillingRun() != null
+                && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
+                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) 
+                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
+
+			throw new BusinessException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
+		}
+		
+		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, invoiceDate);				
+		log.debug("createRatedTransaction ok");
+
+		Filter ratedTransactionFilter =null;
+		if(ratedTxFilter == null){			
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, (lastTransactionDate))){
+				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
+			}
+		}
+		
+		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter, orderNumber,invoiceDate,lastTransactionDate,currentUser);
+		log.debug("createAgregatesAndInvoice ok ");
+
+		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
+		invoice.setPdf(null);							
+		update(invoice, currentUser);						
+		
+		return invoice;
 	}
 }

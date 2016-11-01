@@ -36,6 +36,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.BusinessCFEntity;
@@ -79,17 +80,23 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+    
     public ProductInstance() {
         super();
     }
 
-    public ProductInstance(UserAccount userAccount,Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code, String description, User user) {
+    public ProductInstance(UserAccount userAccount,Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity,
+    		Date applicationDate, String code, String description, String orderNumber,User user) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
         this.productChargeInstances = new ArrayList<>();
         this.productTemplate = productTemplate;
         this.quantity = quantity;
+        this.orderNumber=orderNumber;
         this.subscription=subscription;
         if(subscription==null){
             this.userAccount = userAccount;
@@ -150,7 +157,15 @@ public class ProductInstance extends BusinessCFEntity {
         this.applicationDate = applicationDate;
     }
 
-    public boolean equals(Object obj) {
+    public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }

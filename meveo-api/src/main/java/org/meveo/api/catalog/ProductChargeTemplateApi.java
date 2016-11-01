@@ -314,14 +314,14 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
-			missingParameters.add("usageChargeTemplateCode");
+			missingParameters.add("productChargeTemplateCode");
 			handleMissingParameters();
 		}
 
 		// check if code already exists
 		ProductChargeTemplate chargeTemplate = productChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
 		if (chargeTemplate == null) {
-			throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
+			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, code);
 		}
 
 		productChargeTemplateService.remove(chargeTemplate, currentUser);

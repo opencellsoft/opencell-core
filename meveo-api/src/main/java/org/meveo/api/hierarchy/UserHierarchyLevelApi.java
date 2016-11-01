@@ -118,7 +118,9 @@ public class UserHierarchyLevelApi extends BaseApi {
             if (userHierarchyLevel.getParentLevel() != null) {
                 userHierarchyLevelDto.setParentLevel(userHierarchyLevel.getParentLevel().getCode());
             }
-            userHierarchyLevelDto.setChildLevels(convertToUserHierarchyLevelDto(userHierarchyLevel.getChildLevels()));
+            if (!userHierarchyLevel.getChildLevels().isEmpty()){
+                userHierarchyLevelDto.setChildLevels(convertToUserHierarchyLevelDto(userHierarchyLevel.getChildLevels()));
+            }
             return userHierarchyLevelDto;
         }
         throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);

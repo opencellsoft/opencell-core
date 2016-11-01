@@ -6,6 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.module.MeveoModule;
 
 @Entity
@@ -18,9 +19,11 @@ public class BusinessServiceModel extends MeveoModule {
     @JoinColumn(name = "SERVICE_TEMPLATE_ID")
     private ServiceTemplate serviceTemplate;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DUPLICATE_SERVICE")
     private boolean duplicateService;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DUPLICATE_PRICE_PLAN")
     private boolean duplicatePricePlan;
 

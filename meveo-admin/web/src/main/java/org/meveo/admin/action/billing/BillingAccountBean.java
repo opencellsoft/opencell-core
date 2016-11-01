@@ -255,6 +255,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
         return getEditViewName();
 	}
+	
+
+	public String generateInvoice() {
+		log.info("generateInvoice billingAccountId:" + entity.getId());
+		try {
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null, currentUser);
+			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
+			
+        } catch (Exception e) {
+            log.error("Failed to generateInvoice ", e);
+            messages.error(e.getMessage());
+        }
+        return getEditViewName();
+	}
 
 	// TODO: @Factory("getInvoices")
 	@Produces
@@ -480,5 +494,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
 		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
 	}
+	
 
 }

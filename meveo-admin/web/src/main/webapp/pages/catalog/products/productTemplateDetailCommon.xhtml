@@ -122,7 +122,7 @@
 
 	<!-- Product Templates -->
     <c:if test="#{mode eq 'BUNDLE'}">
-        <p:panel id="bundleProductPanel" header="#{messages['menu.productTemplates']}" rendered="#{!mainBackingBean.entity.transient}">
+        <p:panel id="bundleProductPanel" header="#{messages['menu.productTemplates']}">
             <p:panel rendered="#{mainBackingBean.edit}">
                 <p:commandButton value="#{messages['bundleTemplate.addProduct']}" type="button" onclick="PF('selectProduct').show();" update=":selectProduct" />
             </p:panel>
@@ -153,7 +153,7 @@
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"
-                                update=":#{p:component('bundleTemplateList')}">
+                                update=":#{p:component('bundleTemplateList')} :#{p:component('messages')}">
                             </p:commandButton>
                         </h:panelGroup>
                     </p:column>

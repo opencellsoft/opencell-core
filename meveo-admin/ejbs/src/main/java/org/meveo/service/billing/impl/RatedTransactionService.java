@@ -49,7 +49,6 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -243,15 +242,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,
-			Filter ratedTransactionFilter,Date lastTransactionDate, User currentUser)
+			Filter ratedTransactionFilter,String orderNumber,Date lastTransactionDate, User currentUser)
 			throws BusinessException {
-		createInvoiceAndAgregates(billingAccount, invoice,ratedTransactionFilter, null, lastTransactionDate, currentUser, false, false);
+		createInvoiceAndAgregates(billingAccount, invoice,ratedTransactionFilter, null, orderNumber, lastTransactionDate, currentUser, false, false);
 	}
 
     @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
-            Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
+            String orderNumber, Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
 		billingAccount = getEntityManager().merge(billingAccount);
 		
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
@@ -267,12 +266,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             WalletInstance wallet = userAccount.getWallet();
             List<Object[]> invoiceSubCats = new ArrayList<>();
 
-            if (ratedTransactionFilter != null || isVirtual) {
+            if (ratedTransactionFilter != null || !StringUtils.isBlank(orderNumber) || isVirtual) {
+
+                if (!StringUtils.isBlank(orderNumber)) {
+                    List<RatedTransaction> orderRatedTransactions = null;
+                    orderRatedTransactions = (List<RatedTransaction>) getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                        .setParameter("wallet", wallet).setParameter("orderNumber", orderNumber).getResultList();
+                    if (ratedTransactions == null){
+                        ratedTransactions = new ArrayList<>();
+                    }
+                    ratedTransactions.addAll(orderRatedTransactions);
+                }
                 if (ratedTransactions == null || ratedTransactions.isEmpty()) {
                     continue;
                 }
-                for (IEntity ent : ratedTransactions) {
-                    RatedTransaction ratedTransaction = (RatedTransaction) ent;
+                for (RatedTransaction ratedTransaction : ratedTransactions) {
                     Object[] record = new Object[5];
                     record[0] = ratedTransaction.getInvoiceSubCategory().getId();
                     record[1] = ratedTransaction.getAmountWithoutTax();
@@ -281,22 +289,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     record[4] = ratedTransaction.getQuantity();
                     boolean recordValid = true;
                     // check status
-					recordValid&=isInvoiceAdjustment?ratedTransaction.getStatus()==RatedTransactionStatusEnum.BILLED:ratedTransaction.getStatus()==RatedTransactionStatusEnum.OPEN;
+                    recordValid &= (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN);
                     // wallet
                     recordValid &= ratedTransaction.getWallet().getId() == wallet.getId();
-                    // amount
-                    if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-                        recordValid &= !ratedTransaction.getAmountWithoutTax().equals(BigDecimal.ZERO);
-                    }
                     // usageDate
-                    if (lastTransactionDate!=null){
+                    if (lastTransactionDate != null) {
                         recordValid &= ratedTransaction.getUsageDate().before(lastTransactionDate);
-                    }                    
+                    }
                     // invoice not set
-                    recordValid &= ratedTransaction.getInvoice() == null;
+                    recordValid &= (ratedTransaction.getInvoice() == null);
 
                     if (recordValid) {
                         ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+                        ratedTransaction.setInvoice(invoice);
+                        
                         boolean foundRecordForSameId = false;
                         for (Object[] existingRecord : invoiceSubCats) {
                             if (existingRecord[0].equals(record[0])) {
@@ -336,9 +342,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
                 Predicate pWallet = cb.equal(from.get("wallet"), wallet);
                 Predicate pAmoutWithoutTax = null;
-                if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-                    pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
-                }
                 Predicate pOldTransaction = cb.lessThan(from.get("usageDate"), lastTransactionDate);
                 Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
 
@@ -347,11 +350,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     pInvoice = cb.equal(from.get("invoice"), invoice);
                 }
 
-                if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-                    cq.where(pStatus, pWallet, pAmoutWithoutTax, pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
-                } else {
                     cq.where(pStatus, pWallet, pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
-                }
+
                 invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
             }
 
@@ -636,8 +636,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 * #createXMLInvoice(Long, java.io.File, boolean, boolean) createXMLInvoice}
 	 * 
 	 * <p>If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction 
-	 * with amount=0 don't show up in the XML. If displayFreeTransacInInvoice is <tt>true</tt>, RT, which status is OPEN and
-	 * not linked to a invoice, will appear in the XML invoice</p>
+	 * with amount=0 don't show up in the XML.</p>
 	 * @param wallet
 	 * @param invoice
 	 * @param invoiceSubCategory
@@ -650,14 +649,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoice.getProvider());
 		qb.addCriterionEntity("c.wallet", wallet);
 		qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
+        qb.addCriterionEntity("c.invoice", invoice);
 
 		if (!invoice.getProvider().isDisplayFreeTransacInInvoice()) {
-			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
 			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
-			qb.addCriterionEntity("c.invoice", invoice);
-		}else{
-			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
-			qb.addSql(" c.invoice is null ");
 		}
 
 		qb.addOrderCriterion("c.usageDate", true);
@@ -912,7 +908,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(), walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
             unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax, RatedTransactionStatusEnum.OPEN,
             walletOperation.getProvider(), walletOperation.getWallet(), walletOperation.getWallet().getUserAccount().getBillingAccount(), invoiceSubCategory,
-            walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getRatingUnitDescription(),
+            walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(), walletOperation.getRatingUnitDescription(),
             walletOperation.getPriceplan(), walletOperation.getOfferCode(), walletOperation.getEdr());
         ratedTransaction.setDescription(walletOperation.getDescription());
         ratedTransaction.setCode(walletOperation.getCode());

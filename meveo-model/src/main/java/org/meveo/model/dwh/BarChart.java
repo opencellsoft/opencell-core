@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "DWH_CHART_BAR")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_BAR_SEQ")
@@ -33,7 +35,8 @@ public class BarChart extends Chart {
 	private OrientationEnum orientation;
 
 	//Enables stacked display of bars
-	@Column(name="STACKED")
+	@Type(type="numeric_boolean")
+    @Column(name="STACKED")
 	private boolean stacked;
 	
 	//Minimum boundary value.
@@ -46,7 +49,8 @@ public class BarChart extends Chart {
 
 	//Whether line segments should be broken at null
 	//value, fall will join point on either side of line.
-	@Column(name="BREAK_ON_NULL")
+	@Type(type="numeric_boolean")
+    @Column(name="BREAK_ON_NULL")
 	private boolean breakOnNull;
 
 
@@ -73,15 +77,18 @@ public class BarChart extends Chart {
 	private int legendRows;
 
 	//Enables plot zooming.
-	@Column(name="ZOOM")
+	@Type(type="numeric_boolean")
+    @Column(name="ZOOM")
 	private boolean zoom;
 	
 	//Enables animation on plot rendering
-	@Column(name="ANIMATE")
+	@Type(type="numeric_boolean")
+    @Column(name="ANIMATE")
 	private boolean animate;
 	
 	//Defines visibility of datatip.
-	@Column(name="SHOW_DATA_TIP")
+	@Type(type="numeric_boolean")
+    @Column(name="SHOW_DATA_TIP")
 	private boolean showDataTip=true;
 	
 	//Template string for datatips.

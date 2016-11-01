@@ -26,6 +26,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -45,8 +46,8 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	public static final int NB_DECIMALS = 12;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR")
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
 	@Column(name = "ID")
 	@Access(AccessType.PROPERTY)
 	protected Long id;

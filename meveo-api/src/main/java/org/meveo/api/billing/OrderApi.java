@@ -330,6 +330,7 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order item {} {}", order.getCode(), orderItem.getItemId());
 
+        String orderNumber = StringUtils.isBlank(order.getExternalId())?order.getCode():order.getExternalId();
         orderItem.setStatus(OrderStatusEnum.IN_PROGRESS);
 
         OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
@@ -342,7 +343,7 @@ public class OrderApi extends BaseApi {
             if (primaryOffering instanceof ProductTemplate) {
 
                 ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
-                    null,currentUser);
+                    null,orderNumber,currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -370,14 +371,14 @@ public class OrderApi extends BaseApi {
           
                 // Instantiate a service
                 Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, productOrderItem.getProduct(), services, orderItem, productOrderItem,
-                    currentUser);
+                    orderNumber,currentUser);
                 orderItem.setSubscription(subscription);
                 // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
                     ProductInstance productInstance = instantiateProduct(productOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
-                    		subscription,currentUser);
+                    		subscription,orderNumber,currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
@@ -452,7 +453,7 @@ public class OrderApi extends BaseApi {
                     }
                 }
 
-                processServices(subscription, services, currentUser);
+                processServices(subscription, services,orderNumber, currentUser);
 
                 orderItem.setSubscription(subscription);
 
@@ -505,7 +506,7 @@ public class OrderApi extends BaseApi {
     }
 
     private Subscription instantiateSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem, User currentUser) throws BusinessException, MeveoApiException {
+            OrderItem productOrderItem, String orderNumber,User currentUser) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -536,13 +537,13 @@ public class OrderApi extends BaseApi {
         }
 
         // instantiate and activate services
-        processServices(subscription, services, currentUser);
+        processServices(subscription, services, orderNumber,currentUser);
 
         return subscription;
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem,Subscription subscription, User currentUser) throws BusinessException {
+            OrderItem productOrderItem,Subscription subscription,String orderNumber, User currentUser) throws BusinessException {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -553,7 +554,8 @@ public class OrderApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
-        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(),subscription, productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
+        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(),subscription, productTemplate, quantity, 
+        		chargeDate, code, productTemplate.getDescription(), orderNumber,
                 currentUser);
             productInstance.setProvider(currentUser.getProvider());
 
@@ -628,7 +630,7 @@ public class OrderApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+    private void processServices(Subscription subscription, List<Product> services, String orderNumber,User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException, MeveoApiException {
 
         ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
@@ -691,6 +693,7 @@ public class OrderApi extends BaseApi {
                     BigDecimal.class, new BigDecimal(1)));
                 service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
                     DateUtils.setTimeToZero(new Date())));
+                service.setOrderNumber(orderNumber);
                 service.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class, currentUser.getProvider()));
 
                 activateServicesRequestDto.getServicesToActivateDto().addService(service);

@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -50,6 +51,9 @@ import org.meveo.model.rating.EDR;
 @NamedQueries({
 		@NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
 		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
+		@NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet "
+				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
+				+ " AND r.orderNumber=:orderNumber and invoice is null order by usageDate desc "),
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
@@ -67,14 +71,7 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
 				+ " AND r.usageDate<:lastTransactionDate " + " AND r.billingAccount IN :billingAccountList"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
-				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.amountWithoutTax<>0 "
-				+ " AND r.usageDate<:lastTransactionDate "
-				+ "AND r.invoice is null"
-				+ " AND r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
+		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.doNotTriggerInvoicing=false "
@@ -82,23 +79,13 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoicedNoBR", query = "UPDATE RatedTransaction r "
 				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
+				+ " and r.doNotTriggerInvoicing=false"
 				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),				
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
-				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),
-		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFreeNoBR", query = "UPDATE RatedTransaction r "
-				+ "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
-				+ " and r.billingAccount=:billingAccount"),				
 		@NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled", query = "SELECT r.walletOperationId FROM RatedTransaction r "
 				+ " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
 				+ " AND r.walletOperationId IN :walletIdList"),
@@ -187,7 +174,8 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "STATUS")
 	private RatedTransactionStatusEnum status;
 
-	@Column(name = "DO_NOT_TRIGGER_INVOICING")
+	@Type(type="numeric_boolean")
+    @Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
 
 	@Column(name = "PARAMETER_1", length = 255)
@@ -201,6 +189,11 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "PARAMETER_3", length = 255)
     @Size(max = 255)
 	private String parameter3;
+
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRICEPLAN_ID")
@@ -217,6 +210,7 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "ADJUSTED_RATED_TX")
 	private RatedTransaction adjustedRatedTx;
+
 
 	@Transient
 	private OfferTemplate offerTemplate;
@@ -247,6 +241,7 @@ public class RatedTransaction extends BaseEntity {
 		this.setParameter1(ratedTransaction.getParameter1());
 		this.setParameter2(ratedTransaction.getParameter2());
 		this.setParameter3(ratedTransaction.getParameter3());
+		this.setOrderNumber(ratedTransaction.getOrderNumber());
 		this.setPriceplan(ratedTransaction.getPriceplan());
 		this.setOfferCode(ratedTransaction.getOfferCode());
 		this.setEdr(ratedTransaction.getEdr());
@@ -258,7 +253,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
-			String parameter1, String parameter2, String parameter3, String unityDescription,
+			String parameter1, String parameter2, String parameter3, String orderNumber,String unityDescription,
 			PricePlanMatrix priceplan, String offerCode, EDR edr) {
 		super();
 		this.walletOperationId = walletOperationId;
@@ -277,6 +272,7 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter1 = parameter1;
 		this.parameter2 = parameter2;
 		this.parameter3 = parameter3;
+		this.orderNumber=orderNumber;
 		this.priceplan = priceplan;
 		this.offerCode = offerCode;
 		this.unityDescription = unityDescription;
@@ -482,6 +478,14 @@ public class RatedTransaction extends BaseEntity {
 
 	public void setParameter3(String parameter3) {
 		this.parameter3 = parameter3;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 	public PricePlanMatrix getPriceplan() {

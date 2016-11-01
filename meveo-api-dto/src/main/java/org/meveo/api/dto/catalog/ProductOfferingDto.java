@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.DigitalResource;
@@ -51,6 +52,8 @@ public class ProductOfferingDto extends BaseDto {
 	private LifeCycleStatusEnum lifeCycleStatus;
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
+	private String imageBase64;
 
 	public ProductOfferingDto() {
 	}
@@ -63,7 +66,10 @@ public class ProductOfferingDto extends BaseDto {
 		this.setValidTo(product.getValidTo());
 		this.setLifeCycleStatus(product.getLifeCycleStatus());
 		if (product.getImage() != null) {
-			this.setImageValue(new String(product.getImageAsByteArr()));
+			imageBase64 = Base64.encodeBase64String(product.getImageAsByteArr());
+		}
+		if (product.getImage() != null) {
+			// this.setImageValue(new String(product.getImageAsByteArr()));
 		}
 		List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
@@ -168,6 +174,14 @@ public class ProductOfferingDto extends BaseDto {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
 	}
 
 }
