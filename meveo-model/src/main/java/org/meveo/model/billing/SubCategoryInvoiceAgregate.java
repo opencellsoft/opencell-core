@@ -226,8 +226,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	 */
 	@Override
 	public String toString() {
-		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + invoiceSubCategory + ", subCategoryTaxes=" + subCategoryTaxes + ", categoryInvoiceAgregate=" + categoryInvoiceAgregate + ", wallet=" + wallet + ", ratedtransactions=" + ratedtransactions + ", discountPlanCode=" + discountPlanCode + ", discountPlanItemCode=" + discountPlanItemCode + ", discountPercent=" + discountPercent + ", oldAmountWithoutTax=" + oldAmountWithoutTax + ", oldAmountWithTax="
-				+ oldAmountWithTax + "]";
+		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + (invoiceSubCategory == null ? null:invoiceSubCategory.getCode() )+ ", oldAmountWithoutTax=" +
+	oldAmountWithoutTax + ", oldAmountWithTax="+ oldAmountWithTax + "]";
 	}
 
 }

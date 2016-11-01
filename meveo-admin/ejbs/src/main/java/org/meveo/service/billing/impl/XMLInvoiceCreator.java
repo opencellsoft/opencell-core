@@ -134,9 +134,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
-	TransformerFactory transfac = TransformerFactory.newInstance();
+    private TransformerFactory transfac = TransformerFactory.newInstance();
 
-	List<Long> serviceIds = null,  offerIds =null , priceplanIds = null;
+    private List<Long> serviceIds = null,  offerIds =null , priceplanIds = null;
+    private Map<String,String> littleCache = new HashMap<String, String>();
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
@@ -155,9 +156,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		createXMLInvoice(invoiceId, billingRundir, isInvoiceAdjustment, true);
 	}
 
-	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment, boolean refreshInvoice)
-			throws BusinessException {
-//		 log.debug("creating xml invoice... using date pattern: " + DEFAULT_DATE_PATTERN);
+	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment, boolean refreshInvoice) throws BusinessException {
 		serviceIds = new ArrayList<>();
 		offerIds = new ArrayList<>();
 		priceplanIds = new ArrayList<>();
@@ -811,8 +810,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	public void addPaymentInfo(BillingAccount billingAccount, Document doc, Element parent) {
 
-		// log.debug("add payment info");
-
 		Element paymentMethod = doc.createElement("paymentMethod");
 		parent.appendChild(paymentMethod);
 		if (billingAccount.getPaymentMethod() != null) {
@@ -995,7 +992,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 								}
 
 								if(walletOperation.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()){
-									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),true); 
+									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),false); 
 									ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
 									// get periodStartDate and periodEndDate for recurrents
@@ -1036,7 +1033,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						if (ratedTransaction.getPriceplan() != null) {
 							Element pricePlan = doc.createElement("pricePlan");
 							pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
-                            pricePlan.setAttribute("description", catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(), languageCode));
+							 if( ! littleCache.containsKey(ratedTransaction.getPriceplan().getCode()+"_"+languageCode)){
+								 littleCache.put(ratedTransaction.getPriceplan().getCode()+"_"+languageCode, catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(),languageCode));
+							 }
+                            pricePlan.setAttribute("description", littleCache.get(ratedTransaction.getPriceplan().getCode()+"_"+languageCode));
 							line.appendChild(pricePlan);
 							if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
 							    addPricePlans(ratedTransaction.getPriceplan(),invoice,doc,invoiceTag);
@@ -1161,7 +1161,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 		}
 
-		log.info("addCategorries time: " + (System.currentTimeMillis() - startDate));
+		log.debug("addCategorries time: " + (System.currentTimeMillis() - startDate));
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) throws BusinessException {
@@ -1293,17 +1293,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 		addHeaderCategories(invoice, headerCategories, doc, parent, entreprise, invoice.getProvider());
 
-		// log.info("addHeaderCategories time: " + (System.currentTimeMillis() -
-		// startDate));
 	}
 
 	private void addHeaderCategories(Invoice invoice,
 			LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories, Document doc, Element parent,
 			boolean entreprise, Provider provider) {
 
-		int rounding = provider.getRounding() == null ? 2 : provider.getRounding();
-		String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-
+		int rounding = provider.getRounding() == null ? 2 : provider.getRounding();		
 		// log.debug("add header categories");
 
 		Element categories = doc.createElement("categories");

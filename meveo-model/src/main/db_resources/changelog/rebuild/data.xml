@@ -8,7 +8,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AFA" />
             <column name="description_en" value="Afghani" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="2" />
@@ -16,7 +16,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ZAR" />
             <column name="description_en" value="Rand" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="3" />
@@ -24,7 +24,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ALL" />
             <column name="description_en" value="Lek" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="4" />
@@ -32,7 +32,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="DZD" />
             <column name="description_en" value="Dinar algérien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="5" />
@@ -40,7 +40,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="EUR" />
             <column name="description_en" value="Euro" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="6" />
@@ -48,7 +48,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AOA" />
             <column name="description_en" value="Kwanza" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="7" />
@@ -56,7 +56,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="XCD" />
             <column name="description_en" value="Dollar des Cara bes de lEst" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="8" />
@@ -64,7 +64,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ANG" />
             <column name="description_en" value="Florin des Antilles" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="9" />
@@ -72,7 +72,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SAR" />
             <column name="description_en" value="Riyal saoudien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="10" />
@@ -80,7 +80,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ARS" />
             <column name="description_en" value="Peso" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="11" />
@@ -88,7 +88,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AMD" />
             <column name="description_en" value="Dram" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="12" />
@@ -96,7 +96,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AWG" />
             <column name="description_en" value="Florin d Aruba" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="13" />
@@ -104,7 +104,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AUD" />
             <column name="description_en" value="Dollar australien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="14" />
@@ -112,7 +112,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AZM" />
             <column name="description_en" value="Manat azerbaïdjanais" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="15" />
@@ -120,7 +120,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BSD" />
             <column name="description_en" value="Dollar des Bahamas" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="16" />
@@ -128,7 +128,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BHD" />
             <column name="description_en" value="Dinar de Bahreïn" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="17" />
@@ -136,7 +136,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BDT" />
             <column name="description_en" value="Taka" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="18" />
@@ -144,7 +144,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BBD" />
             <column name="description_en" value="Dollar de Barbade" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="19" />
@@ -152,7 +152,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BZD" />
             <column name="description_en" value="Dollar de Belize" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="20" />
@@ -160,7 +160,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="XOF" />
             <column name="description_en" value="Franc CFA - BCEAO" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="21" />
@@ -168,7 +168,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BMD" />
             <column name="description_en" value="Dollar des Bermudes" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="22" />
@@ -176,7 +176,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BTN" />
             <column name="description_en" value="Ngultrum" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="23" />
@@ -184,7 +184,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BYR" />
             <column name="description_en" value="Rouble biãlorussie" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="24" />
@@ -192,7 +192,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BOB" />
             <column name="description_en" value="Boliviano" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="25" />
@@ -200,7 +200,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BAM" />
             <column name="description_en" value="Mark bosniaque convertible" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="26" />
@@ -208,7 +208,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BWP" />
             <column name="description_en" value="Pula" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="27" />
@@ -216,7 +216,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BRL" />
             <column name="description_en" value="Real" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="28" />
@@ -224,7 +224,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BND" />
             <column name="description_en" value="Dollar de Brunéi" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="29" />
@@ -232,7 +232,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BGN" />
             <column name="description_en" value="Lev" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="30" />
@@ -240,7 +240,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="BIF" />
             <column name="description_en" value="Franc du Burundi" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="31" />
@@ -248,7 +248,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NOK" />
             <column name="description_en" value="Couronne norvégienne" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="32" />
@@ -256,7 +256,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KYD" />
             <column name="description_en" value="Dollar des îles Caïmanes" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="33" />
@@ -264,7 +264,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KHR" />
             <column name="description_en" value="Riel" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="34" />
@@ -272,7 +272,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="XAF" />
             <column name="description_en" value="Franc CFA - BEAC" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="35" />
@@ -280,7 +280,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CAD" />
             <column name="description_en" value="Dollar canadien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="36" />
@@ -288,7 +288,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CVE" />
             <column name="description_en" value="Escudo du Cap-Vert" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="37" />
@@ -296,7 +296,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CFA" />
             <column name="description_en" value="FRANC CFA-BEAC" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="38" />
@@ -304,7 +304,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CLP" />
             <column name="description_en" value="Peso chilien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="39" />
@@ -312,7 +312,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CNY" />
             <column name="description_en" value="Yuan Ren-Min-Bi" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="40" />
@@ -320,7 +320,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CYP" />
             <column name="description_en" value="Livre chypriote" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="41" />
@@ -328,7 +328,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="COP" />
             <column name="description_en" value="Peso colombien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="42" />
@@ -336,7 +336,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KMF" />
             <column name="description_en" value="Franc des Comores" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="43" />
@@ -344,7 +344,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CDF" />
             <column name="description_en" value="FRANC DU CONGO DEMOCRATIQUE" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="44" />
@@ -352,7 +352,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KRW" />
             <column name="description_en" value="Won" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="45" />
@@ -360,7 +360,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KPW" />
             <column name="description_en" value="Won de la Corée du Nord" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="46" />
@@ -368,7 +368,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CRC" />
             <column name="description_en" value="Colon de Costa Rica" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="47" />
@@ -376,7 +376,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="HRK" />
             <column name="description_en" value="Kuna" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="48" />
@@ -384,7 +384,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CUP" />
             <column name="description_en" value="Peso cubain" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="49" />
@@ -392,7 +392,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
             <column name="description_en" value="Dollar des Etats-unis" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="50" />
@@ -400,7 +400,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="DKK" />
             <column name="description_en" value="Couronne danoise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="51" />
@@ -408,7 +408,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="DJF" />
             <column name="description_en" value="Franc de Djibouti" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="52" />
@@ -416,7 +416,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="DOP" />
             <column name="description_en" value="Peso dominicain" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="53" />
@@ -424,7 +424,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="EGP" />
             <column name="description_en" value="Livre égyptienne" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="54" />
@@ -432,7 +432,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="AED" />
             <column name="description_en" value="Dirham des émirats arabes unis" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="55" />
@@ -440,7 +440,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ERN" />
             <column name="description_en" value="Nafka" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="56" />
@@ -448,7 +448,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="EEK" />
             <column name="description_en" value="Couronne d Estonie" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="57" />
@@ -456,7 +456,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ETB" />
             <column name="description_en" value="Birr éthiopien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="58" />
@@ -464,7 +464,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="FKP" />
             <column name="description_en" value="Livre de Falkland" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="59" />
@@ -472,7 +472,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="FJD" />
             <column name="description_en" value="Dollar des Fidji" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="60" />
@@ -480,7 +480,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GMD" />
             <column name="description_en" value="Dalasie" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="61" />
@@ -488,7 +488,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GEL" />
             <column name="description_en" value="Lari" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="62" />
@@ -496,7 +496,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GHC" />
             <column name="description_en" value="Cedi ghanéen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="63" />
@@ -504,7 +504,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GIP" />
             <column name="description_en" value="Livre de Gibraltar" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="64" />
@@ -512,7 +512,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GTQ" />
             <column name="description_en" value="Quetzal" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="65" />
@@ -520,7 +520,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GBP" />
             <column name="description_en" value="Livre sterling" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="66" />
@@ -528,7 +528,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GNF" />
             <column name="description_en" value="Franc guinéen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="67" />
@@ -536,7 +536,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GYD" />
             <column name="description_en" value="Dollar de Guyane" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="68" />
@@ -544,7 +544,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="HTG" />
             <column name="description_en" value="Gourde" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="69" />
@@ -552,7 +552,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="HNL" />
             <column name="description_en" value="Lempira" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="70" />
@@ -560,7 +560,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="HKD" />
             <column name="description_en" value="Dollar de Hong-Kong" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="71" />
@@ -568,7 +568,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="HUF" />
             <column name="description_en" value="Forint" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="72" />
@@ -576,7 +576,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NZD" />
             <column name="description_en" value="Dollar néo-zélandais" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="73" />
@@ -584,7 +584,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="INR" />
             <column name="description_en" value="Roupie indienne" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="74" />
@@ -592,7 +592,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="IDR" />
             <column name="description_en" value="Rupiah" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="75" />
@@ -600,7 +600,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="IRR" />
             <column name="description_en" value="Rial iranien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="76" />
@@ -608,7 +608,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="IQD" />
             <column name="description_en" value="Dinar iraquien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="77" />
@@ -616,7 +616,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ISK" />
             <column name="description_en" value="Couronne islandaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="78" />
@@ -624,7 +624,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ILS" />
             <column name="description_en" value="Sheqel" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="79" />
@@ -632,7 +632,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="JMD" />
             <column name="description_en" value="Dollar jamaïcain" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="80" />
@@ -640,7 +640,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="JPY" />
             <column name="description_en" value="Yen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="81" />
@@ -648,7 +648,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="JOD" />
             <column name="description_en" value="Dinar jordanien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="82" />
@@ -656,7 +656,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KZT" />
             <column name="description_en" value="Tenge" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="83" />
@@ -664,7 +664,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KES" />
             <column name="description_en" value="Shilling du Kenya" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="84" />
@@ -672,7 +672,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KGS" />
             <column name="description_en" value="Som" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="85" />
@@ -680,7 +680,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="KWD" />
             <column name="description_en" value="Dinar koweïtien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="86" />
@@ -688,7 +688,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LAK" />
             <column name="description_en" value="Kip" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="87" />
@@ -696,7 +696,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LSL" />
             <column name="description_en" value="Loti" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="88" />
@@ -704,7 +704,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LVL" />
             <column name="description_en" value="Lats letton" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="89" />
@@ -712,7 +712,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LBP" />
             <column name="description_en" value="Livre libanaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="90" />
@@ -720,7 +720,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LRD" />
             <column name="description_en" value="Dollar libérien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="91" />
@@ -728,7 +728,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LYD" />
             <column name="description_en" value="Dinar libyen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="92" />
@@ -736,7 +736,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CHF" />
             <column name="description_en" value="Franc suisse" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="93" />
@@ -744,7 +744,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LTL" />
             <column name="description_en" value="Litas lituanien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="94" />
@@ -752,7 +752,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MOP" />
             <column name="description_en" value="Pataca" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="95" />
@@ -760,7 +760,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MKD" />
             <column name="description_en" value="Denar" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="96" />
@@ -768,7 +768,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MGA" />
             <column name="description_en" value="Ariary malgache" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="97" />
@@ -776,7 +776,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MGF" />
             <column name="description_en" value="Franc malgache" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="98" />
@@ -784,7 +784,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MYR" />
             <column name="description_en" value="Ringgit de Malaisie" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="99" />
@@ -792,7 +792,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MWK" />
             <column name="description_en" value="Kwacha" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="100" />
@@ -800,7 +800,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MVR" />
             <column name="description_en" value="Rufiyaa" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="101" />
@@ -808,7 +808,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MTL" />
             <column name="description_en" value="Livre maltaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="102" />
@@ -816,7 +816,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MAD" />
             <column name="description_en" value="Dirham marocain" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="103" />
@@ -824,7 +824,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MUR" />
             <column name="description_en" value="Roupie mauricienne" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="104" />
@@ -832,7 +832,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MRO" />
             <column name="description_en" value="Ouguija" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="105" />
@@ -840,7 +840,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MXN" />
             <column name="description_en" value="Peso mexicain" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="106" />
@@ -848,7 +848,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MDL" />
             <column name="description_en" value="Leu de Moldave" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="107" />
@@ -856,7 +856,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MNT" />
             <column name="description_en" value="Tugrik" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="108" />
@@ -864,7 +864,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MZM" />
             <column name="description_en" value="Metical" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="109" />
@@ -872,7 +872,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="MMK" />
             <column name="description_en" value="Kyat" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="110" />
@@ -880,7 +880,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NAD" />
             <column name="description_en" value="Dollar namibien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="111" />
@@ -888,7 +888,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NPR" />
             <column name="description_en" value="Roupie Népalaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="112" />
@@ -896,7 +896,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NIO" />
             <column name="description_en" value="Cordoba oro" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="113" />
@@ -904,7 +904,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="NGN" />
             <column name="description_en" value="Naira" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="114" />
@@ -912,7 +912,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="XPF" />
             <column name="description_en" value="Franc CFP" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="115" />
@@ -920,7 +920,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="OMR" />
             <column name="description_en" value="Rial Omani" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="116" />
@@ -928,7 +928,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="XAU" />
             <column name="description_en" value="Opérations sur or" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="117" />
@@ -936,7 +936,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="UGX" />
             <column name="description_en" value="Shilling ougandais" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="118" />
@@ -944,7 +944,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="UZS" />
             <column name="description_en" value="Soum ouzbek" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="119" />
@@ -952,7 +952,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PKR" />
             <column name="description_en" value="Roupie pakistanaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="120" />
@@ -960,7 +960,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PAB" />
             <column name="description_en" value="Balboa" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="121" />
@@ -968,7 +968,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PGK" />
             <column name="description_en" value="Kina" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="122" />
@@ -976,7 +976,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PYG" />
             <column name="description_en" value="Guarani" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="123" />
@@ -984,7 +984,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PEN" />
             <column name="description_en" value="Nouveau sol" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="124" />
@@ -992,7 +992,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PHP" />
             <column name="description_en" value="Peso philippin" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="125" />
@@ -1000,7 +1000,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="PLN" />
             <column name="description_en" value="Zloty" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="126" />
@@ -1008,7 +1008,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="QAR" />
             <column name="description_en" value="Riyal du Qatar" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="127" />
@@ -1016,7 +1016,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="RON" />
             <column name="description_en" value="LEI (Nouveau Leu)" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="128" />
@@ -1024,7 +1024,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ROL" />
             <column name="description_en" value="Leu" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="129" />
@@ -1032,7 +1032,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="RUB" />
             <column name="description_en" value="Rouble russe (nouveau)" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="130" />
@@ -1040,7 +1040,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="RWF" />
             <column name="description_en" value="Franc du Rwanda" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="131" />
@@ -1048,7 +1048,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SBD" />
             <column name="description_en" value="Dollar des îles Salomon" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="132" />
@@ -1056,7 +1056,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SVC" />
             <column name="description_en" value="Colon salvadorien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="133" />
@@ -1064,7 +1064,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="WST" />
             <column name="description_en" value="Tala" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="134" />
@@ -1072,7 +1072,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="STD" />
             <column name="description_en" value="Dobra" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="135" />
@@ -1080,7 +1080,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CSD" />
             <column name="description_en" value="Dinar Serbe" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="136" />
@@ -1088,7 +1088,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SCR" />
             <column name="description_en" value="Roupie des Seychelles" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="137" />
@@ -1096,7 +1096,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SLL" />
             <column name="description_en" value="Leone" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="138" />
@@ -1104,7 +1104,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SGD" />
             <column name="description_en" value="Dollar de Singapour" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="139" />
@@ -1112,7 +1112,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SKK" />
             <column name="description_en" value="Couronne slovaque" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="140" />
@@ -1120,7 +1120,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SIT" />
             <column name="description_en" value="Tolar" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="141" />
@@ -1128,7 +1128,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SOS" />
             <column name="description_en" value="Shilling Somalien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="142" />
@@ -1136,7 +1136,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SDG" />
             <column name="description_en" value="Livre soudanaise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="143" />
@@ -1144,7 +1144,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="LKR" />
             <column name="description_en" value="Roupie de Sri Lanka" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="144" />
@@ -1152,7 +1152,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SHP" />
             <column name="description_en" value="Livre de Sainte-Hélène" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="145" />
@@ -1160,7 +1160,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SEK" />
             <column name="description_en" value="Couronne suédoise" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="146" />
@@ -1168,7 +1168,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SRD" />
             <column name="description_en" value="Florin du suriname" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="147" />
@@ -1176,7 +1176,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SZL" />
             <column name="description_en" value="Lilangeni" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="148" />
@@ -1184,7 +1184,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="SYP" />
             <column name="description_en" value="Livre syrienne" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="149" />
@@ -1192,7 +1192,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TJS" />
             <column name="description_en" value="Somoni" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="150" />
@@ -1200,7 +1200,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TWD" />
             <column name="description_en" value="Nouveau dollar de Taïwan" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="151" />
@@ -1208,7 +1208,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TZS" />
             <column name="description_en" value="Shilling tanzanien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="152" />
@@ -1216,7 +1216,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="CZK" />
             <column name="description_en" value="Couronne tchèque" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="153" />
@@ -1224,7 +1224,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="THB" />
             <column name="description_en" value="Baht" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="154" />
@@ -1232,7 +1232,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TOP" />
             <column name="description_en" value="Pa anga" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="155" />
@@ -1240,7 +1240,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TTD" />
             <column name="description_en" value="Dollar de Trinité et de Tobago" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="156" />
@@ -1248,7 +1248,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TND" />
             <column name="description_en" value="Dinar tunisien" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="157" />
@@ -1256,7 +1256,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TMM" />
             <column name="description_en" value="Manat turkmène" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="158" />
@@ -1264,7 +1264,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TRY" />
             <column name="description_en" value="Nouvelle Livre turque" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="159" />
@@ -1272,7 +1272,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="TRL" />
             <column name="description_en" value="Livre turque" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="160" />
@@ -1280,7 +1280,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="UAH" />
             <column name="description_en" value="HRYVNIA" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="161" />
@@ -1288,7 +1288,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="UYU" />
             <column name="description_en" value="Nouveau Peso uruguayen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="162" />
@@ -1296,7 +1296,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="VUV" />
             <column name="description_en" value="Vatu" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="163" />
@@ -1304,7 +1304,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="VEF" />
             <column name="description_en" value="Bolivar Fuerte" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="164" />
@@ -1312,7 +1312,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="VND" />
             <column name="description_en" value="Dong" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="165" />
@@ -1320,7 +1320,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="YER" />
             <column name="description_en" value="Riyal yéménite" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="166" />
@@ -1328,7 +1328,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ZMK" />
             <column name="description_en" value="Kwacha de Zambie" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="167" />
@@ -1336,7 +1336,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="ZWD" />
             <column name="description_en" value="Dollar du Zimbabwe" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="168" />
@@ -1344,7 +1344,7 @@
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="GHS" />
             <column name="description_en" value="Cedi ghanéen" />
-            <column name="system_currency" valueBoolean="true" />
+            <column name="system_currency" valueNumeric="1" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-languages">
@@ -6618,12 +6618,12 @@
         <insert tableName="crm_provider">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="1" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:08.922" />
             <column name="code" value="DEMO" />
             <column name="description" />
-            <column name="amount_validation" valueBoolean="false" />
-            <column name="automatic_invoicing" valueBoolean="false" />
+            <column name="amount_validation" valueNumeric="0" />
+            <column name="automatic_invoicing" valueNumeric="0" />
             <column name="account_number" value="33333333333" />
             <column name="account_owner" value="owner" />
             <column name="bank_code" value="SGMB" />
@@ -6637,9 +6637,9 @@
             <column name="issuer_number" value="1111" />
             <column name="hash_key" value="11" />
             <column name="discount_accounting_code" />
-            <column name="display_free_tx_in_invoice" valueBoolean="true" />
+            <column name="display_free_tx_in_invoice" valueNumeric="1" />
             <column name="email" />
-            <column name="entreprise" valueBoolean="true" />
+            <column name="entreprise" valueNumeric="1" />
             <column name="address_1" />
             <column name="address_2" />
             <column name="address_3" />
@@ -6651,11 +6651,11 @@
             <column name="creditor_code" />
             <column name="financial_institution_code" />
             <column name="nne" />
-            <column name="level_duplication" valueBoolean="false" />
+            <column name="level_duplication" valueNumeric="0" />
             <column name="logo" />
-            <column name="multicountry_flag" valueBoolean="true" />
-            <column name="multicurrency_flag" valueBoolean="true" />
-            <column name="multilanguage_flag" valueBoolean="true" />
+            <column name="multicountry_flag" valueNumeric="1" />
+            <column name="multicurrency_flag" valueNumeric="1" />
+            <column name="multilanguage_flag" valueNumeric="1" />
             <column name="prepaid_resrv_delay_ms" valueNumeric="60000" />
             <column name="rating_rounding" />
             <column name="payment_methods" />
@@ -6671,7 +6671,7 @@
         <insert tableName="crm_provider_contact">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.892" />
             <column name="code" value="DEMO_ADMIN" />
             <column name="description" value="Demo Administrator" />
@@ -6814,371 +6814,371 @@
         <insert tableName="adm_title">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:08.943" />
             <column name="code" value="AGCE" />
             <column name="description" value="Agency" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:08.964" />
             <column name="code" value="ASSO" />
             <column name="description" value="Association" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:08.985" />
             <column name="code" value="CAB" />
             <column name="description" value="Office" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.006" />
             <column name="code" value="COLL" />
             <column name="description" value="College" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="5" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.026" />
             <column name="code" value="COM" />
             <column name="description" value="Municipality" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="6" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.049" />
             <column name="code" value="COPR" />
             <column name="description" value="Co-ownership" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="7" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.07" />
             <column name="code" value="CSSE" />
             <column name="description" value="Saving office" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="8" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.091" />
             <column name="code" value="EARL" />
             <column name="description" value="EARL" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="9" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.112" />
             <column name="code" value="ETS" />
             <column name="description" value="Etablishment" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="10" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.139" />
             <column name="code" value="EURL" />
             <column name="description" value="EURL" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="11" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.161" />
             <column name="code" value="GAEC" />
             <column name="description" value="GAEC" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="12" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.182" />
             <column name="code" value="HLM" />
             <column name="description" value="HLM" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="13" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.204" />
             <column name="code" value="HOPI" />
             <column name="description" value="Hospital" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="14" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.225" />
             <column name="code" value="INST" />
             <column name="description" value="Institute" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="15" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.246" />
             <column name="code" value="LABO" />
             <column name="description" value="Laboratory" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="16" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.267" />
             <column name="code" value="M" />
             <column name="description" value="Sir" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="17" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.288" />
             <column name="code" value="MLLES" />
             <column name="description" value="Miss" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="18" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.31" />
             <column name="code" value="MLLE_M" />
             <column name="description" value="Miss Sir" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="19" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.331" />
             <column name="code" value="MLLE" />
             <column name="description" value="Miss" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="20" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.358" />
             <column name="code" value="MM" />
             <column name="description" value="Sirs" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="21" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.379" />
             <column name="code" value="MME" />
             <column name="description" value="Madam" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="22" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.4" />
             <column name="code" value="MME_M" />
             <column name="description" value="Madam Sir" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="23" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.421" />
             <column name="code" value="MMES" />
             <column name="description" value="Ladies" />
-            <column name="is_company" valueBoolean="false" />
+            <column name="is_company" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="24" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.442" />
             <column name="code" value="MTRE" />
             <column name="description" value="Master" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="25" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.463" />
             <column name="code" value="SA" />
             <column name="description" value="Limited company" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="26" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.484" />
             <column name="code" value="SARL" />
             <column name="description" value="SARL" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="27" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.505" />
             <column name="code" value="SCEA" />
             <column name="description" value="SCEA" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="28" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.526" />
             <column name="code" value="SCI" />
             <column name="description" value="SCI" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="29" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.548" />
             <column name="code" value="SCM" />
             <column name="description" value="SCM" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="30" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.567" />
             <column name="code" value="SCP" />
             <column name="description" value="SCP" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="31" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.59" />
             <column name="code" value="SELARL" />
             <column name="description" value="SELARL" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="32" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.61" />
             <column name="code" value="SNC" />
             <column name="description" value="SNC" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="33" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.632" />
             <column name="code" value="SNI" />
             <column name="description" value="SNI" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="34" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.654" />
             <column name="code" value="STE" />
             <column name="description" value="Company" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="35" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.675" />
             <column name="code" value="SUCC" />
             <column name="description" value="Succession" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="36" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.702" />
             <column name="code" value="SYNDIC" />
             <column name="description" value="Syndicate" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="37" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.723" />
             <column name="code" value="SYNDCOP" />
             <column name="description" value="Management agent" />
-            <column name="is_company" valueBoolean="true" />
+            <column name="is_company" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
     </changeSet>
@@ -7186,7 +7186,7 @@
         <insert tableName="adm_user">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.745" />
             <column name="email" />
             <column name="last_password_modification" valueDate="current_date" />
@@ -7200,7 +7200,7 @@
         <insert tableName="adm_user">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.787" />
             <column name="email" />
             <column name="last_password_modification" valueDate="current_date" />
@@ -7224,7 +7224,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.046" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7236,7 +7236,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.067" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7248,7 +7248,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.088" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7260,7 +7260,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.109" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7272,7 +7272,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="5" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.13" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7284,7 +7284,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="6" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.171" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7296,7 +7296,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="7" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.192" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7308,7 +7308,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="8" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.215" />
             <column name="account_code" value="90590,4191,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7320,7 +7320,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="9" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.236" />
             <column name="account_code" value="90590,4191,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7332,7 +7332,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="10" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.257" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7344,7 +7344,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="11" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.278" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7356,7 +7356,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="12" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.299" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7368,7 +7368,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="13" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.328" />
             <column name="account_code" value="90590,4191,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7380,7 +7380,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="14" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.349" />
             <column name="account_code" value="90590,4191,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7392,7 +7392,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="15" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.37" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7404,7 +7404,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="16" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.392" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7416,7 +7416,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="17" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.414" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4721,00000,000,0000,00000000,00000" />
@@ -7428,7 +7428,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="18" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.435" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,65870,00000,000,0000,00000000,00000" />
@@ -7440,7 +7440,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="19" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.456" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,75870,00000,000,0000,00000000,00000" />
@@ -7452,7 +7452,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="20" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.485" />
             <column name="account_code" value="90590,4191,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7464,7 +7464,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="21" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.507" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,4191,00000,000,0000,00000000,00000" />
@@ -7476,7 +7476,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="22" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.528" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,416,00000,000,0000,00000000,00000" />
@@ -7488,7 +7488,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="23" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.549" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7500,7 +7500,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="24" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.578" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
@@ -7512,7 +7512,7 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="25" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.599" />
             <column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
             <column name="account_code_client_side" />
@@ -7527,7 +7527,7 @@
             <column name="cal_type" value="YEARLY" />
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.284" />
             <column name="code" value="MONTHLY" />
             <column name="description" value="Monthly Calendar" />
@@ -7545,7 +7545,7 @@
             <column name="cal_type" value="PERIOD" />
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.568" />
             <column name="code" value="One period" />
             <column name="description" value="One period Calendar" />
@@ -7563,7 +7563,7 @@
             <column name="cal_type" value="PERIOD" />
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.591" />
             <column name="code" value="Multi period" />
             <column name="description" value="Multi period Calendar" />
@@ -7630,7 +7630,7 @@
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.85" />
             <column name="code" value="CYC_INV_MT_1" />
             <column name="description" value="Monthly Invoice Cycle 1" />
@@ -7642,7 +7642,7 @@
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.871" />
             <column name="code" value="CYC_INV_MT_2" />
             <column name="description" value="Monthly Invoice Cycle 2" />
@@ -7656,7 +7656,7 @@
         <insert tableName="billing_tax">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.611" />
             <column name="code" value="TAX_00" />
             <column name="description" value="0 Percent Tax" />
@@ -7667,7 +7667,7 @@
         <insert tableName="billing_tax">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.637" />
             <column name="code" value="TAX_05" />
             <column name="description" value="5 Percent Tax" />
@@ -7678,7 +7678,7 @@
         <insert tableName="billing_tax">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.659" />
             <column name="code" value="TAX_18" />
             <column name="description" value="18 Percent Tax" />
@@ -7691,7 +7691,7 @@
         <insert tableName="billing_trading_country">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
             <column name="pr_description" value="United States" />
             <column name="provider_id" valueNumeric="1" />
@@ -7700,7 +7700,7 @@
         <insert tableName="billing_trading_country">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
             <column name="pr_description" value="France" />
             <column name="provider_id" valueNumeric="1" />
@@ -7709,7 +7709,7 @@
         <insert tableName="billing_trading_currency">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.195" />
             <column name="pr_currency_to_this" />
             <column name="pr_description" value="US Dollar" />
@@ -7719,7 +7719,7 @@
         <insert tableName="billing_trading_currency">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.216" />
             <column name="pr_currency_to_this" />
             <column name="pr_description" value="Euro" />
@@ -7729,7 +7729,7 @@
         <insert tableName="billing_trading_language">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.152" />
             <column name="pr_description" value="English" />
             <column name="provider_id" valueNumeric="1" />
@@ -7738,7 +7738,7 @@
         <insert tableName="billing_trading_language">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.174" />
             <column name="pr_description" value="French" />
             <column name="provider_id" valueNumeric="1" />
@@ -7749,7 +7749,7 @@
         <insert tableName="billing_invoice_cat">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.68" />
             <column name="code" value="CONSUMPTION" />
             <column name="description" value="Consumption" />
@@ -7760,7 +7760,7 @@
         <insert tableName="billing_invoice_cat">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.702" />
             <column name="code" value="SUBSCRIPTION" />
             <column name="description" value="Subscription" />
@@ -7771,7 +7771,7 @@
         <insert tableName="billing_invoice_sub_cat">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.724" />
             <column name="code" value="CMP_DATA" />
             <column name="description" value="Consumption Data" />
@@ -7784,7 +7784,7 @@
         <insert tableName="billing_invoice_sub_cat">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.744" />
             <column name="code" value="SUB_DATA" />
             <column name="description" value="Subscription Data" />
@@ -7797,7 +7797,7 @@
         <insert tableName="billing_inv_sub_cat_country">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.765" />
             <column name="provider_id" valueNumeric="1" />
             <column name="invoice_sub_category_id" valueNumeric="1" />
@@ -7807,7 +7807,7 @@
         <insert tableName="billing_inv_sub_cat_country">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.786" />
             <column name="provider_id" valueNumeric="1" />
             <column name="invoice_sub_category_id" valueNumeric="1" />
@@ -7817,7 +7817,7 @@
         <insert tableName="billing_inv_sub_cat_country">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.807" />
             <column name="provider_id" valueNumeric="1" />
             <column name="invoice_sub_category_id" valueNumeric="2" />
@@ -7827,7 +7827,7 @@
         <insert tableName="billing_inv_sub_cat_country">
             <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.829" />
             <column name="provider_id" valueNumeric="1" />
             <column name="invoice_sub_category_id" valueNumeric="2" />
@@ -7839,9 +7839,9 @@
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="apply_agreement" valueBoolean="true" />
-            <column name="apply_reimbursment" valueBoolean="true" />
-            <column name="apply_termination_charges" valueBoolean="true" />
+            <column name="apply_agreement" valueNumeric="1" />
+            <column name="apply_reimbursment" valueNumeric="1" />
+            <column name="apply_termination_charges" valueNumeric="1" />
             <column name="code" value="TERM_REASON_1" />
             <column name="description" value="Agreement Reimbursement Charge" />
             <column name="provider_id" valueNumeric="1" />
@@ -7849,9 +7849,9 @@
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="apply_agreement" valueBoolean="true" />
-            <column name="apply_reimbursment" valueBoolean="false" />
-            <column name="apply_termination_charges" valueBoolean="false" />
+            <column name="apply_agreement" valueNumeric="1" />
+            <column name="apply_reimbursment" valueNumeric="0" />
+            <column name="apply_termination_charges" valueNumeric="0" />
             <column name="code" value="TERM_REASON_2" />
             <column name="description" value="Agreement" />
             <column name="provider_id" valueNumeric="1" />
@@ -7859,9 +7859,9 @@
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="apply_agreement" valueBoolean="false" />
-            <column name="apply_reimbursment" valueBoolean="true" />
-            <column name="apply_termination_charges" valueBoolean="false" />
+            <column name="apply_agreement" valueNumeric="0" />
+            <column name="apply_reimbursment" valueNumeric="1" />
+            <column name="apply_termination_charges" valueNumeric="0" />
             <column name="code" value="TERM_REASON_3" />
             <column name="description" value="Charge" />
             <column name="provider_id" valueNumeric="1" />
@@ -7871,7 +7871,7 @@
         <insert tableName="crm_customer_brand">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.131" />
             <column name="code" value="DEFAULT" />
             <column name="description" value="Demo Product and Services" />
@@ -7880,21 +7880,21 @@
         <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.089" />
             <column name="code" value="PROSPECT" />
             <column name="description" value="Prospect" />
-            <column name="exonerated_from_taxes" valueBoolean="false" />
+            <column name="exonerated_from_taxes" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
         <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.11" />
             <column name="code" value="CLIENT" />
             <column name="description" value="Client" />
-            <column name="exonerated_from_taxes" valueBoolean="false" />
+            <column name="exonerated_from_taxes" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1" />
         </insert>
     </changeSet>
@@ -7903,7 +7903,7 @@
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PART_C" />
             <column name="description" value="Part C" />
@@ -7912,7 +7912,7 @@
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PART_M" />
             <column name="description" value="Part M" />
@@ -7921,7 +7921,7 @@
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PRO" />
             <column name="description" value="PRO" />
@@ -7930,7 +7930,7 @@
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="VIP" />
             <column name="description" value="VIP" />
@@ -7939,7 +7939,7 @@
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="5" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="NEWCUSTOMER" />
             <column name="description" value="New Customer" />
@@ -7951,7 +7951,7 @@
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="MAIN_SELLER" />
             <column name="description" value="Demo Distributor" />
@@ -7972,7 +7972,7 @@
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.934" />
             <column name="code" value="SELLER_US" />
             <column name="description" value="US Seller" />
@@ -7993,7 +7993,7 @@
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.955" />
             <column name="code" value="SELLER_FR" />
             <column name="description" value="France Seller" />
@@ -8014,7 +8014,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-timerDEMO">
         <insert tableName="meveo_timer">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id"  valueNumeric="1" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="*" />
             <column name="sc_d_o_week" value="*" />
@@ -8025,14 +8025,14 @@
             <column name="sc_year" value="*" />
             <column name="provider_id" valueNumeric="1" />
             <column name="code" value="Hourly" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="RATING" />
             <column name="job_template" value="ReRatingJob" />
@@ -8044,9 +8044,9 @@
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="2" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportCustomersJob" />
@@ -8057,9 +8057,9 @@
             <column name="UUID" value="Cust_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="MediationJob" />
@@ -8070,9 +8070,9 @@
             <column name="UUID" value="M_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="4" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="RATING" />
             <column name="job_template" value="UsageRatingJob" />
@@ -8083,9 +8083,9 @@
             <column name="UUID" value="U_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="5" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="RATING" />
             <column name="job_template" value="RecurringRatingJob" />
@@ -8096,9 +8096,9 @@
             <column name="UUID" value="RR_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="6" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="RatedTransactionsJob" />
@@ -8109,9 +8109,9 @@
             <column name="UUID" value="RT_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="7" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="XMLInvoiceGenerationJob" />
@@ -8122,9 +8122,9 @@
             <column name="UUID" value="XML_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="8" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="PDFInvoiceGenerationJob" />
@@ -8135,9 +8135,9 @@
             <column name="UUID" value="PDF_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="9" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportAccountsJob" />
@@ -8148,9 +8148,9 @@
             <column name="UUID" value="Acco_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="10" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportSubscriptionsJob" />
@@ -8161,9 +8161,9 @@
             <column name="UUID" value="Subs_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="11" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="true" />
+            <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="InvoicingJob" />
@@ -8177,20 +8177,20 @@
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceConfigDEMO">
         <insert tableName="billing_invoice_configuration">
-            <column name="id" valueSequenceNext="billing_invoice_configuration_seq" />
+            <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="0" />
             <column name="provider_id" valueNumeric="1"></column>
-            <column name="display_subscriptions" valueBoolean="true"></column>
-            <column name="display_offers" valueBoolean="true"></column>
-            <column name="display_services" valueBoolean="true"></column>
+            <column name="display_subscriptions" valueNumeric="1"></column>
+            <column name="display_offers" valueNumeric="1"></column>
+            <column name="display_services" valueNumeric="1"></column>
         </insert>
     </changeSet>
 
 	<changeSet id="#1951_20160919" author="anasseh">
 		<insert tableName="billing_invoice_type">
-			<column name="id" valueSequenceNext="BILLING_INVOICE_TYPE_SEQ" />
+			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="code" value="COM" />
 			<column name="description" value="Commercial invoice" />
@@ -8198,12 +8198,12 @@
 			<column name="creator_id" valueNumeric="1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="25" />	
-			<column name="MATCHING_AUTO" value="false" />		
+			<column name="MATCHING_AUTO" valueNumeric="0" />		
 		</insert>
 		<insert tableName="billing_invoice_type">
-			<column name="id" valueSequenceNext="BILLING_INVOICE_TYPE_SEQ" />
+			<column name="id" valueNumeric="2" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="code" value="ADJ" />
 			<column name="description" value="Adjustement" />
@@ -8211,7 +8211,7 @@
 			<column name="creator_id" valueNumeric="1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="11" />			
-			<column name="MATCHING_AUTO" value="false" />
+			<column name="MATCHING_AUTO" valueNumeric="0" />
 		</insert>		
 		<insert tableName="billing_invoice_type_applies_to">
 			<column name="invoice_type_id" value="1" />			

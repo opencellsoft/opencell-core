@@ -296,11 +296,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						//check status
 						recordValid&=(ratedTransaction.getStatus()==RatedTransactionStatusEnum.OPEN);
 						//wallet
-						recordValid&=(ratedTransaction.getWallet().getId()==wallet.getId());
-						//NOTE SMI 2016-10-31: we invoice 0 transaction in all cases just we wont send it to xml
-						//if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-						//	recordValid&=!ratedTransaction.getAmountWithoutTax().equals(BigDecimal.ZERO);
-						//}
+						recordValid&=ratedTransaction.getWallet().getId()==wallet.getId();
 						//usageDate
 						if(lastTransactionDate!=null){
 							recordValid&=ratedTransaction.getUsageDate().before(lastTransactionDate);
@@ -351,9 +347,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 				Predicate pWallet = cb.equal(from.get("wallet"), wallet);
 				Predicate pAmoutWithoutTax = null;
-				if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-					pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
-				}
 				Predicate pOldTransaction = cb.lessThan(from.get("usageDate"),lastTransactionDate);
 				Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
 				
@@ -362,11 +355,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					pInvoice = cb.equal(from.get("invoice"), invoice);
 				}
 				
-				if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-					cq.where(pStatus, pWallet, pAmoutWithoutTax,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
-				} else {
 					cq.where(pStatus, pWallet,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
-				}
+
 				invoiceSubCats = getEntityManager().createQuery(cq).getResultList();				
 			}
 			
@@ -633,8 +623,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 * #createXMLInvoice(Long, java.io.File, boolean, boolean) createXMLInvoice}
 	 * 
 	 * <p>If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction 
-	 * with amount=0 don't show up in the XML. If displayFreeTransacInInvoice is <tt>true</tt>, RT, which status is OPEN and
-	 * not linked to a invoice, will appear in the XML invoice</p>
+	 * with amount=0 don't show up in the XML.</p>
 	 * @param wallet
 	 * @param invoice
 	 * @param invoiceSubCategory
@@ -647,14 +636,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoice.getProvider());
 		qb.addCriterionEntity("c.wallet", wallet);
 		qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
+        qb.addCriterionEntity("c.invoice", invoice);
 
 		if (!invoice.getProvider().isDisplayFreeTransacInInvoice()) {
-			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
 			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
-			qb.addCriterionEntity("c.invoice", invoice);
-		}else{
-			qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
-			qb.addSql(" c.invoice is null ");
 		}
 
 		qb.addOrderCriterion("c.usageDate", true);
@@ -861,7 +847,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 
-	public void createRatedTransaction(Long walletOperationId,User currentUser )throws Exception{
+	public void createRatedTransaction(Long walletOperationId,User currentUser ) throws BusinessException{
 		WalletOperation walletOperation = walletOperationService.findById(walletOperationId, currentUser.getProvider()) ;
 
 		BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
@@ -898,7 +884,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		walletOperationService.updateNoCheck(walletOperation);
 	}
 
-	public void createRatedTransaction(Long billingAccountId,User currentUser,Date invoicingDate )throws Exception{
+	public void createRatedTransaction(Long billingAccountId,User currentUser,Date invoicingDate ) throws BusinessException {
 		BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();

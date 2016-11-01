@@ -8,6 +8,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "DWH_CHART_PIE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_PIE_SEQ")
@@ -15,6 +17,7 @@ public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;
 
+    @Type(type="numeric_boolean")
     @Column(name = "FILLED")
     private boolean filled;
 
@@ -32,9 +35,11 @@ public class PieChart extends Chart {
     @Column(name = "SLICE_MARGIN")
     private int sliceMargin;
 
+    @Type(type="numeric_boolean")
     @Column(name = "SHADOW")
     private boolean shadow = true;
 
+    @Type(type="numeric_boolean")
     @Column(name = "SHOW_DATA_LABELS")
     private boolean showDataLabels;
 

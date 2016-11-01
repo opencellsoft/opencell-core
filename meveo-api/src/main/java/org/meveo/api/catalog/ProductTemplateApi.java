@@ -1,10 +1,13 @@
 package org.meveo.api.catalog;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -59,11 +62,15 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 			missingParameters.add("code");
 		}
 
-		List<ProductChargeTemplateDto> productChargeTemplateDtos = postData.getProductChargeTemplates();
-		for(ProductChargeTemplateDto productChargeTemplateDto : productChargeTemplateDtos){
-			if (productChargeTemplateDto == null || StringUtils.isBlank(productChargeTemplateDto.getCode())) {
-				missingParameters.add("productChargeTemplate");
+		if (postData.getProductChargeTemplates() != null) {
+			List<ProductChargeTemplateDto> productChargeTemplateDtos = postData.getProductChargeTemplates();
+			for (ProductChargeTemplateDto productChargeTemplateDto : productChargeTemplateDtos) {
+				if (productChargeTemplateDto == null || StringUtils.isBlank(productChargeTemplateDto.getCode())) {
+					missingParameters.add("productChargeTemplate");
+				}
 			}
+		} else {
+			missingParameters.add("productChargeTemplates");
 		}
 
 		handleMissingParameters();
@@ -81,6 +88,14 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidFrom(postData.getValidFrom());
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+		
+		if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				productTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
 		processImage(postData, productTemplate);
 
@@ -119,6 +134,14 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidFrom(postData.getValidFrom());
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+		
+		if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				productTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
 		processImage(postData, productTemplate);
 

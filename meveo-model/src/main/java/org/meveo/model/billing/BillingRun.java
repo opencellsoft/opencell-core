@@ -41,9 +41,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.filter.Filter;
 
 @Entity
 @Table(name = "BILLING_BILLING_RUN")
@@ -149,7 +149,8 @@ public class BillingRun extends AuditableEntity {
 	@Column(name = "SELECTED_BILLING_ACCOUNTS", columnDefinition="TEXT")
 	private String selectedBillingAccounts;
 
-	@Column(name = "XML_INVOICE_GENERATED")
+	@Type(type="numeric_boolean")
+    @Column(name = "XML_INVOICE_GENERATED")
 	private Boolean xmlInvoiceGenerated = Boolean.FALSE;
 
 	@Transient

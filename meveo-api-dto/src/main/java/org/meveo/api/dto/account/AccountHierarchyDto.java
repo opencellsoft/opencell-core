@@ -1,6 +1,7 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -53,7 +54,7 @@ public class AccountHierarchyDto implements Serializable {
 	private String state;
 	private String city;
 	private Boolean usePrefix;
-
+	private BigDecimal invoicingThreshold; 
 	private CustomFieldsDto customFields;
 
 	@XmlTransient
@@ -249,7 +250,7 @@ public class AccountHierarchyDto implements Serializable {
 				+ countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate
 				+ ", phoneNumber=" + phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3
 				+ ", zipCode=" + zipCode + ", state=" + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index="
-				+ index + "]";
+				+ index + ", invoicingThreshold="+invoicingThreshold+"]";
 	}
 
 	public int getLimit() {
@@ -329,5 +330,21 @@ public class AccountHierarchyDto implements Serializable {
 	public void setUsePrefix(Boolean usePrefix) {
 		this.usePrefix = usePrefix;
 	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+	
+	
 
 }

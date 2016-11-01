@@ -42,6 +42,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -82,6 +83,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Size(max = 100)
     protected String description;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISABLED", nullable = false)
     @NotNull
     private boolean disabled;
@@ -98,12 +100,15 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @JoinColumn(name = "LANGUAGE_ID")
     private Language language;
 
+    @Type(type="numeric_boolean")
     @Column(name = "MULTICOUNTRY_FLAG")
     private boolean multicountryFlag;
 
+    @Type(type="numeric_boolean")
     @Column(name = "MULTICURRENCY_FLAG")
     private boolean multicurrencyFlag;
 
+    @Type(type="numeric_boolean")
     @Column(name = "MULTILANGUAGE_FLAG")
     private boolean multilanguageFlag;
 
@@ -154,18 +159,22 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
+    @Type(type="numeric_boolean")
     @Column(name = "ENTREPRISE")
     private boolean entreprise = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "AUTOMATIC_INVOICING")
     private boolean automaticInvoicing = false;
 
     @Embedded
     private InterBankTitle interBankTitle=new InterBankTitle();
 
+    @Type(type="numeric_boolean")
     @Column(name = "AMOUNT_VALIDATION")
     private boolean amountValidation = false;
 
+    @Type(type="numeric_boolean")
     @Column(name = "LEVEL_DUPLICATION")
     private boolean levelDuplication = false;
 
@@ -180,6 +189,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCurrency> tradingCurrencies;
 
+    @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
     private boolean displayFreeTransacInInvoice = false;
 
@@ -199,7 +209,8 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
 	
-	@Column(name = "RECOGNIZE_REVENUE")
+    @Type(type="numeric_boolean")
+    @Column(name = "RECOGNIZE_REVENUE")
 	private boolean recognizeRevenue;
 	
 

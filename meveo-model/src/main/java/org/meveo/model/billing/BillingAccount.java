@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -82,7 +83,8 @@ public class BillingAccount extends AccountEntity {
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
-	@Column(name = "ELECTRONIC_BILLING")
+	@Type(type="numeric_boolean")
+    @Column(name = "ELECTRONIC_BILLING")
 	private Boolean electronicBilling = false;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -173,6 +175,9 @@ public class BillingAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	// key is the counter template code
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+	
+	@Column(name = "INVOICING_THRESHOLD")
+	private BigDecimal invoicingThreshold; 
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -411,4 +416,19 @@ public class BillingAccount extends AccountEntity {
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return CustomerAccount.class;
 	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+	
 }

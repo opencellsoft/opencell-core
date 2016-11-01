@@ -1,11 +1,14 @@
 package org.meveo.api.catalog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
@@ -263,6 +266,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setProvider(provider);
+        
+        if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				serviceTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
         serviceTemplateService.create(serviceTemplate, currentUser);
 
@@ -324,6 +335,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		serviceTemplate.setBusinessServiceModel(businessService);
 
         setAllWalletTemplatesToNull(serviceTemplate);
+        
+        if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				serviceTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
         serviceTemplate = serviceTemplateService.update(serviceTemplate, currentUser);
 
