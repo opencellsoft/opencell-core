@@ -184,7 +184,7 @@ public class StringUtils {
 
 		String newValue = enleverAccent(value) ;
 
-		newValue = newValue.replaceAll("[^\\-A-Za-z0-9]", "_");
+		newValue = newValue.replaceAll("[^\\-A-Za-z0-9.@-]", "_");
 		return newValue;
 	}
     
