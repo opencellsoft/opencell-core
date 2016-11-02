@@ -36,6 +36,8 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -762,6 +764,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}		
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -840,6 +852,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceIntance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -900,7 +922,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
-
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}	
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -966,6 +997,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}
