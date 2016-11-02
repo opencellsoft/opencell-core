@@ -483,10 +483,12 @@ public class InvoiceApi extends BaseApi {
 		}
 
 		Filter ratedTransactionFilter =null;
-		if(generateInvoiceRequestDto.getFilter()!=null){
+		if(generateInvoiceRequestDto.getFilter()!=null){			
 			ratedTransactionFilter=filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter(), currentUser);
-		}
-		
+			if(ratedTransactionFilter == null){
+				throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
+			}
+		}		
 		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), currentUser);				
 
 		return new GenerateInvoiceResultDto(invoice);

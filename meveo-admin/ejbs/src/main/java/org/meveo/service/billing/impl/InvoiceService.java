@@ -413,6 +413,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Date invoiceDate,Date lastTransactionDate, User currentUser)
 			throws BusinessException {
 		Invoice invoice =null;
+		log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ", 
+				billingAccount,billingRunId,ratedTransactionFilter,orderNumber,lastTransactionDate,invoiceDate);
 		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
 
 		EntityManager em = getEntityManager();
@@ -421,8 +423,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			billingRun = em.find(BillingRun.class, billingRunId);
 			em.refresh(billingRun);
 		} else {
-			if(invoiceDate==null || lastTransactionDate == null ){
-				throw new BusinessException("invoiceDate and lastTransactionDate  must be set if billingRun is null");	
+			if(invoiceDate==null){
+				throw new BusinessException("invoiceDate must be set if billingRun is null");	
+			}
+			if(StringUtils.isBlank(lastTransactionDate) && 
+					StringUtils.isBlank(orderNumber) && 
+					ratedTransactionFilter == null){
+				throw new BusinessException("lastTransactionDate or orderNumber or ratedTransactionFilter must be set if billingRun is null");
 			}
 		}
 		
@@ -1133,11 +1140,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (StringUtils.isBlank(invoiceDate)) {
 			throw new BusinessException("invoicingDate is null");
 		}
-		if (StringUtils.isBlank(lastTransactionDate)) {
-			throw new BusinessException("lastTransactionDate is null");
-		}
-		if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate)) {
-			throw new BusinessException("lastTransactionDate or filter is null");
+
+		if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate) && StringUtils.isBlank(orderNumber)) {
+			throw new BusinessException("lastTransactionDate or filter or orderNumber is null");
 		}
 		
         if (billingAccount.getBillingRun() != null
@@ -1149,18 +1154,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		
 		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, invoiceDate);				
-		log.debug("createRatedTransaction ok");
-
-		Filter ratedTransactionFilter =null;
-		if(ratedTxFilter == null){			
-			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, (lastTransactionDate))){
+				
+		//TODO me the same check too for filter and orderNumber
+		if(ratedTxFilter == null && StringUtils.isBlank(orderNumber)){			
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, lastTransactionDate)){
 				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
 			}
 		}
 		
-		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTransactionFilter, orderNumber,invoiceDate,lastTransactionDate,currentUser);
-		log.debug("createAgregatesAndInvoice ok ");
-
+		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTxFilter, orderNumber,invoiceDate,lastTransactionDate,currentUser);
 		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
 		invoice.setPdf(null);							
 		update(invoice, currentUser);						
