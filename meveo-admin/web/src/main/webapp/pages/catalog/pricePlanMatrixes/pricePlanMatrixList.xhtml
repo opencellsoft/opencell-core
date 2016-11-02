@@ -394,25 +394,25 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column   width="52">
+		<p:column width="52">
 			<f:facet name="header">
 				<h:outputText value="#{messages['commons.actions']}" />
 			</f:facet>
-			<p:button  outcome="pricePlanMatrixDetail" icon="ui-icon-document" >
-			<f:param name="objectId" value="#{entity.id}" /> 
-	        <f:param name="edit" value="true" />
-			<f:param name="chargeId" value="#{chargeTemplateBean.entity.id}" />
-			 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-           </p:button> 
-			 <p:commandButton update="@form" icon="ui-icon-trash" 
-			 	action="#{pricePlanMatrixBean.delete(entity.id)}"
-			 	rendered="#{pricePlanMatrixBean.canUserUpdateEntity()}"> 
-			<p:confirm header="#{messages['commons.confirmationHeader']}"
-				message="#{messages['commons.confirmDelete']}"
-				icon="ui-icon-alert" />
-		    </p:commandButton> 
-			</p:column>
-		</p:dataTable>
+			<p:button outcome="pricePlanMatrixDetail" icon="ui-icon-document">
+				<f:param name="objectId" value="#{entity.id}" />
+				<f:param name="edit" value="true" />
+				<f:param name="chargeId" value="#{chargeTemplateBean.entity.id}" />
+				<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
+			</p:button>
+			<p:commandButton update="@form" icon="ui-icon-trash"
+				action="#{pricePlanMatrixBean.delete(entity.id)}"
+				rendered="#{pricePlanMatrixBean.canUserUpdateEntity()}">
+				<p:confirm header="#{messages['commons.confirmationHeader']}"
+					message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+			</p:commandButton>
+		</p:column>
+	</p:dataTable>
 		 <p:button id="buttonNew" outcome="pricePlanMatrixDetail" 
 		 	value="#{messages['commons.new']}"
 		 	rendered="#{pricePlanMatrixBean.canUserUpdateEntity()}">
