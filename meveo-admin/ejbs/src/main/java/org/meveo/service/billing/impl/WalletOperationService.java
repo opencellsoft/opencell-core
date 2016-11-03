@@ -76,6 +76,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.slf4j.Logger;
 
@@ -103,6 +104,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@Inject
 	private WalletCacheContainerProvider walletCacheContainerProvider;
 
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
 	private DateFormat sdf;
 	private String str_tooPerceived = null;
 
@@ -382,7 +386,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), chargeInstance,
@@ -472,7 +479,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(), chargeInstance,
@@ -569,7 +579,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		if (!recurringChargeTemplate.getApplyInAdvance()) {
@@ -695,7 +708,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			Tax tax = invoiceSubcategoryCountry.getTax();
 			if (tax == null) {
-				throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+				tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+				if (tax == null) {
+					throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+				}
 			}
 
 			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(),
@@ -782,7 +798,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextApplicationDate,
@@ -868,7 +887,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("Tax is null for invoiceSubCategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("Tax is null for invoiceSubCategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		while (applicationDate.getTime() < nextChargeDate.getTime()) {
@@ -988,7 +1010,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+			}
 		}
 		
 		Calendar cal = recurringChargeTemplate.getCalendar();

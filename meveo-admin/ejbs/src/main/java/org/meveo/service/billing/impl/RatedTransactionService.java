@@ -357,10 +357,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
 					List<Tax> taxes = new ArrayList<Tax>();
 					for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-						if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 
+						if ((invoicesubcatCountry.getSellingCountry()==null || 
+			            		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
+			                     && invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
+			                 && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
 					    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
-							
-							taxes.add(invoicesubcatCountry.getTax());
+							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+								taxes.add(invoicesubcatCountry.getTax());
+							} else {
+								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice));
+							}
 						}
 					}
 
@@ -740,8 +746,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			List<Tax> taxes = new ArrayList<Tax>();
 			for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
 					.getInvoiceSubcategoryCountries()) {
-				if (invoicesubcatCountry.getTradingCountry().getCountryCode()
-						.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
+				if ((invoicesubcatCountry.getSellingCountry()==null || 
+	            		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
+	                     && invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
+	                 && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode()
+						.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()))
 						&& invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
 					taxes.add(invoicesubcatCountry.getTax());
 				}

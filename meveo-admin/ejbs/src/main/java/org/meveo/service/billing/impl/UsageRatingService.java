@@ -50,6 +50,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.MeveoJpa;
@@ -103,6 +104,9 @@ public class UsageRatingService {
     @Inject 
 	private Event<CounterPeriodEvent> counterPeriodEvent;
     
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+
 	
 
 	// @PreDestroy
@@ -183,7 +187,10 @@ public class UsageRatingService {
 		TradingCurrency currency = chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
-
+		if(tax==null){
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+		}
+		
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());

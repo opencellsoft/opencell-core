@@ -26,6 +26,9 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+
 import org.slf4j.Logger;
 
 @Stateless
@@ -42,6 +45,9 @@ public class RealtimeChargingService {
 
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
 	
 	public BigDecimal getApplicationPrice(BillingAccount ba,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
@@ -64,13 +70,14 @@ public class RealtimeChargingService {
 
 		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
 
-		return getApplicationPrice(currentUser, seller, currency,
+
+		return getApplicationPrice(currentUser, seller, ba,currency,
 				tradingCountry, chargeTemplate, subscriptionDate, offerCode,
 				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
 	public BigDecimal getApplicationPrice(User currentUser,
-			Seller seller, TradingCurrency currency,
+			Seller seller,BillingAccount ba, TradingCurrency currency,
 			TradingCountry tradingCountry,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
 			String offerCode, BigDecimal quantity, String param1,
@@ -99,10 +106,13 @@ public class RealtimeChargingService {
 		}
 		
 		Tax tax = invoiceSubcategoryCountry.getTax();
-		if (tax == null) {
-			throw new IncorrectChargeTemplateException(
+		if (tax == null && ba!=null){
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), ba, null);
+			if (tax == null) {
+				throw new IncorrectChargeTemplateException(
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
+			}
 		}
 
 		WalletOperation op = new WalletOperation();
@@ -123,7 +133,7 @@ public class RealtimeChargingService {
 
 		op.setDescription("");
 		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
-		op.setTaxPercent(tax.getPercent());
+		op.setTaxPercent(tax==null?BigDecimal.ZERO:tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
 		op.setEndDate(null);

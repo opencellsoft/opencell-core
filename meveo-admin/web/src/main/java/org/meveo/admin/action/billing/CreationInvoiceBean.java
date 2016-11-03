@@ -128,7 +128,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private boolean includeBalance;
 
-	private InvoiceAgregateHandler agregateHandler = new InvoiceAgregateHandler();
+	private InvoiceAgregateHandler agregateHandler = new InvoiceAgregateHandler(invoiceSubCategoryService);
 	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
 
 	@Inject
