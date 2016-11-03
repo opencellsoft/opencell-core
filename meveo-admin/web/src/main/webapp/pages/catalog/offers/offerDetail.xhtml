@@ -177,7 +177,7 @@
 									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
 								</p:selectBooleanCheckbox>
 
-								 <p:inplace id="ajax" editor="true" rendered="#{offerTemplateBean.edit}">
+								 <p:inplace id="serviceDescription_#{loopStatus.index}" editor="true" rendered="#{offerTemplateBean.edit}">
 						            <p:inputText value="#{ost.serviceTemplate.description}" required="true" label="text" />
 						        </p:inplace>
  								<h:outputText value=" #{ost.serviceTemplate.description}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
