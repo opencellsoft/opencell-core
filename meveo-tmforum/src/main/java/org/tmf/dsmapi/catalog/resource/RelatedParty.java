@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
 import org.tmf.dsmapi.commons.Utilities;
@@ -15,38 +14,27 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "role": "Owner",
- *     "id": "1234",
- *     "href": "http ://serverLocation:port/partyManagement/partyRole/1234"
- * }
- *
+ * 
+ *         { "role": "Owner", "id": "1234", "href": "http ://serverLocation:port/partyManagement/partyRole/1234" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class RelatedParty implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "REL_PARTY_ID", nullable = true)
     private String id;
 
-    @Column(name = "REL_PARTY_HREF", nullable = true)
     private String href;
 
-    @Column(name = "REL_PARTY_NAME", nullable = true)
     private String name;
 
     @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "startDateTime", column = @Column(name = "REL_PARTY_START_DATE_TIME")),
-        @AttributeOverride(name = "endDateTime", column = @Column(name = "REL_PARTY_END_DATE_TIME"))
-    })
+    @AttributeOverrides({ @AttributeOverride(name = "startDateTime", column = @Column(name = "REL_PARTY_START_DATE_TIME")),
+            @AttributeOverride(name = "endDateTime", column = @Column(name = "REL_PARTY_END_DATE_TIME")) })
     private TimeRange validFor;
 
-    @Column(name = "REL_PARTY_ROLE", nullable = true)
     @JsonProperty(value = "role")
     private String partyRole;
 

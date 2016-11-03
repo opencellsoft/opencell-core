@@ -2,40 +2,28 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.PostLoad;
-import javax.persistence.Transient;
 
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.VersionProperty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
-@MappedSuperclass
 public abstract class AbstractCatalogEntity extends AbstractEntity implements Serializable {
 
     public final static String ROOT_CATALOG_ID = "";
 
-    @Id
-    @Column(name = "CATALOG_ID", nullable = false)
     @JsonIgnore
     private String catalogId;
 
-    @Id
-    @Column(name = "CATALOG_VERSION", nullable = false)
     @JsonIgnore
-    @VersionProperty
     private String catalogVersion;
 
-    @Transient
     @JsonIgnore
     private ParsedVersion parsedCatalogVersion;
 
@@ -132,8 +120,8 @@ public abstract class AbstractCatalogEntity extends AbstractEntity implements Se
         return true;
     }
 
-    public void configureCatalogIdentifier(){
-        setCatalogId (ROOT_CATALOG_ID);
+    public void configureCatalogIdentifier() {
+        setCatalogId(ROOT_CATALOG_ID);
         setParsedCatalogVersion(ParsedVersion.ROOT_CATALOG_VERSION);
     }
 

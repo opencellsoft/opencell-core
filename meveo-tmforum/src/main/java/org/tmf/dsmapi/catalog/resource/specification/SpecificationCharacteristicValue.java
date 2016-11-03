@@ -2,9 +2,6 @@ package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -13,45 +10,28 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author pierregauthier
- *
- * {
- *     "valueType": "number",
- *     "default": true,
- *     "value": "4.2",
- *     "unitOfMeasure": "inches",
- *     "valueFrom": "",
- *     "valueTo": "",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     }
- * }
- *
+ * 
+ *         { "valueType": "number", "default": true, "value": "4.2", "unitOfMeasure": "inches", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class SpecificationCharacteristicValue implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "VALUE_TYPE", nullable = true)
     private CharacteristicValueType valueType;
 
-    @Column(name = "DEFAULT_VALUE", nullable = true)
     @JsonProperty("default")
     private Boolean defaultValue;
 
-    @Column(name = "THE_VALUE", nullable = true)
     private String value;
 
-    @Column(name = "UNIT_OF_MEASURE", nullable = true)
     private String unitOfMeasure;
 
-    @Column(name = "VALUE_FROM", nullable = true)
     private String valueFrom;
 
-    @Column(name = "VALUE_TO", nullable = true)
     private String valueTo;
 
     private TimeRange validFor;
@@ -175,7 +155,8 @@ public class SpecificationCharacteristicValue implements Serializable {
 
     @Override
     public String toString() {
-        return "SpecificationCharacteristicValue{" + "valueType=" + valueType + ", defaultValue=" + defaultValue + ", value=" + value + ", unitOfMeasure=" + unitOfMeasure + ", valueFrom=" + valueFrom + ", valueTo=" + valueTo + ", validFor=" + validFor + '}';
+        return "SpecificationCharacteristicValue{" + "valueType=" + valueType + ", defaultValue=" + defaultValue + ", value=" + value + ", unitOfMeasure=" + unitOfMeasure
+                + ", valueFrom=" + valueFrom + ", valueTo=" + valueTo + ", validFor=" + validFor + '}';
     }
 
     public static SpecificationCharacteristicValue createProto() {

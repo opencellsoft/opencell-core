@@ -2,10 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
-
 //import org.tmf.dsmapi.catalog.client.CatalogClient;
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -18,42 +14,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * The prefix 'referenced' was added to the property names of this class to work
- * around an issue in the platform.  Without the prefix, you could not update the
- * id field of entity properties that were of this class.  For example, attempting
- * to update or edit the ProductSpecification.bundledProductSpecification[n].id
- * would throw an exception.  The exception would claim the operation was attempting
- * to update a key field (the real key field is named ENTITY_ID in the database).
- * The 'referenced' prefix fixes this issue while making this class a bit uglier
- * than it needs to be.
- *
+ * 
+ *         The prefix 'referenced' was added to the property names of this class to work around an issue in the platform. Without the prefix, you could not update the id field of
+ *         entity properties that were of this class. For example, attempting to update or edit the ProductSpecification.bundledProductSpecification[n].id would throw an exception.
+ *         The exception would claim the operation was attempting to update a key field (the real key field is named ENTITY_ID in the database). The 'referenced' prefix fixes this
+ *         issue while making this class a bit uglier than it needs to be.
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class BundledProductReference extends AbstractEntityReference implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "REFERENCED_ID", nullable = true)
     @JsonProperty(value = "id")
     private String referencedId;
 
-    @Column(name = "REFERENCED_HREF", nullable = true)
     @JsonProperty(value = "href")
     private String referencedHref;
 
-    @Column(name = "REFERENCED_NAME", nullable = true)
     @JsonProperty(value = "name")
     private String referencedName;
 
-
-    @Column(name = "REFERENCED_LIFECYCLE_STATUS", nullable = true)
     @JsonProperty(value = "lifecycleStatus")
     private LifecycleStatus referencedLifecycleStatus;
 
-    @Transient
     @JsonUnwrapped
     private AbstractEntity entity;
 
@@ -161,17 +146,18 @@ public class BundledProductReference extends AbstractEntityReference implements 
 
     @Override
     public String toString() {
-        return "BundledProductReference{" + "referencedId=" + referencedId + ", referencedHref=" + referencedHref + ", referencedName=" + referencedName + ", referencedLifecycleStatus=" + referencedLifecycleStatus + ", entity=" + entity + '}';
+        return "BundledProductReference{" + "referencedId=" + referencedId + ", referencedHref=" + referencedHref + ", referencedName=" + referencedName
+                + ", referencedLifecycleStatus=" + referencedLifecycleStatus + ", entity=" + entity + '}';
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public void fetchEntity(Class theClass, int depth) {
-//        entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
+        // entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
     }
 
     public static BundledProductReference createProto() {
-        BundledProductReference bundledProductReference = new BundledProductReference ();
+        BundledProductReference bundledProductReference = new BundledProductReference();
 
         bundledProductReference.referencedId = "id";
         bundledProductReference.referencedHref = "href";

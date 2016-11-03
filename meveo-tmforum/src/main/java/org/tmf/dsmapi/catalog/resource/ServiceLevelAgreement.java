@@ -2,37 +2,26 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "28",
- *     "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
- *     "name": "Standard SLA"
- * }
- *
+ * 
+ *         { "id": "28", "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28", "name": "Standard SLA" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ServiceLevelAgreement implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "SLA_ID", nullable = true)
     private String id;
 
-    @Column(name = "SLA_HREF", nullable = true)
     private String href;
 
-    @Column(name = "SLA_NAME", nullable = true)
     private String name;
 
     public ServiceLevelAgreement() {
@@ -99,7 +88,6 @@ public class ServiceLevelAgreement implements Serializable {
     public String toString() {
         return "ServiceLevelAgreement{" + "id=" + id + ", href=" + href + ", name=" + name + '}';
     }
-
 
     public static ServiceLevelAgreement createProto() {
         ServiceLevelAgreement ServiceLevelAgreement = new ServiceLevelAgreement();

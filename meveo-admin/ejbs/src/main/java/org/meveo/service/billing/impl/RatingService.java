@@ -269,30 +269,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	}
 	
-	// used to rate a oneshot, recurring or product charge for virtual operation
-    public WalletOperation rateChargeApplicationVirtual(ChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, Date subscriptionDate, ApplicationTypeEnum applicationType, Date applicationDate,
-            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
-			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
-            Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule, User currentUser) throws BusinessException {
-
-        if (!(chargeTemplate instanceof RecurringChargeTemplate)) {
-            subscriptionDate = null;
-        }
-
-        String languageCode = userAccount.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        
-        WalletOperation walletOperation = prerateChargeApplication(chargeTemplate, subscriptionDate, offerCode,
-                null, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, languageCode, taxPercent, discountPercent,
-                nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, null, startdate, endDate, mode, userAccount, currentUser);
-
-        return walletOperation;
-    }
-
 	// used to rate a oneshot, recurring or product charge and triggerEDR
 	public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
 			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate,
-			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule, User currentUser) throws BusinessException {
+			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule, boolean isVirtual, User currentUser) throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
@@ -308,8 +289,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 		
 		chargeInstance.getWalletOperations().add(walletOperation);
 			
-        // handle associated edr creation unless it is a Scheduled operation
-        if (forSchedule){
+        // handle associated edr creation unless it is a Scheduled or virtual operation
+        if (forSchedule || isVirtual){
             return walletOperation;
         }
 

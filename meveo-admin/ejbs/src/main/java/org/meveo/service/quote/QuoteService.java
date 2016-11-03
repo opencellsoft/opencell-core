@@ -1,7 +1,6 @@
 package org.meveo.service.quote;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,21 +10,20 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.service.base.BaseService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -33,18 +31,14 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 
 @Stateless
-public class QuoteService extends BaseService {
+public class QuoteService extends BusinessService<Quote> {
 
     @Inject
     private CDRParsingService cdrParsingService;
-
-    @Inject
-    private OfferTemplateService offerTemplateService;
 
     @Inject
     private InvoiceService invoiceService;
@@ -67,71 +61,70 @@ public class QuoteService extends BaseService {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    public void provideQuote(List<String> cdrs, String offerCode, UserAccount userAccount, Date fromDate, Date toDate, User currentUser) throws BusinessException {
+    @SuppressWarnings("unused")
+    public Invoice provideQuote(List<String> cdrs, Subscription subscription, List<ProductInstance> productInstances, Date fromDate, Date toDate, User currentUser)
+            throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
 
-        BigDecimal quantity = new BigDecimal(1);
+        BillingAccount billingAccount = null;
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, currentUser.getProvider());
-
-        // Add subscription charges
-        for (OfferServiceTemplate service : offerTemplate.getOfferServiceTemplates()) {
-            List<ServiceChargeTemplateSubscription> subscriptionCharges = service.getServiceTemplate().getServiceSubscriptionCharges();
-            for (ServiceChargeTemplateSubscription charge : subscriptionCharges) {
-                OneShotChargeTemplate chargeTemplate = charge.getChargeTemplate();
-                walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(chargeTemplate, userAccount, offerCode, fromDate, quantity, null, null, null,
-                    null, null, currentUser));
+        // Add Product charges
+        if (productInstances != null) {
+            for (ProductInstance productInstance : productInstances) {
+                if (productInstance.getUserAccount() != null) {
+                    billingAccount = productInstance.getUserAccount().getBillingAccount();
+                }
+                for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
+                    walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, currentUser, true));
+                }
             }
         }
 
-        // Add product charges
-        for (OfferProductTemplate service : offerTemplate.getOfferProductTemplates()) {
+        if (subscription != null) {
+            billingAccount = subscription.getUserAccount().getBillingAccount();
 
-            List<ProductChargeTemplate> productCharges = service.getProductTemplate().getProductChargeTemplates();
-            for (ProductChargeTemplate chargeTemplate : productCharges) {
-                walletOperations.add(productChargeInstanceService.applyProductChargeInstanceVirtual(chargeTemplate, null, userAccount, offerCode, fromDate, quantity, null, null,
-                    null, null, null, currentUser));
-            }
-        }
-
-        // Add recurring charges
-        for (OfferServiceTemplate service : offerTemplate.getOfferServiceTemplates()) {
-            List<ServiceChargeTemplateRecurring> recurringCharges = service.getServiceTemplate().getServiceRecurringCharges();
-            for (ServiceChargeTemplateRecurring charge : recurringCharges) {
-                RecurringChargeTemplate chargeTemplate = charge.getChargeTemplate();
-                walletOperations.addAll(recurringChargeInstanceService.applyRecurringChargeVirtual(chargeTemplate, userAccount, offerCode, fromDate, fromDate, toDate, quantity,
-                    null, null, null, null, null, currentUser));
-            }
-        }
-
-        // Process CDRS
-        if (cdrs != null && !cdrs.isEmpty()) {
-
-            cdrParsingService.initByApi(currentUser.getUserName(), "quote");
-
-            List<EDR> edrs = new ArrayList<>();
-
-            // Parse CDRs to Edrs
-            try {
-                for (String cdr : cdrs) {
-                    edrs.add(cdrParsingService.getEDRWoutAccess(cdr, CDRParsingService.CDR_ORIGIN_API, fromDate, currentUser));
+            // Add subscription charges
+            for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
+                    walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(),
+                        serviceInstance.getQuantity(), currentUser));
                 }
 
-            } catch (CDRParsingException e) {
-                log.error("Error parsing cdr={}", e.getRejectionCause());
-                throw new BusinessException(e.getRejectionCause().toString());
+                // Add recurring charges
+                for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+                    walletOperations.addAll(recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, fromDate, toDate, currentUser));
+                }
             }
 
-            // Rate EDRs
-            for (EDR edr : edrs) {
-                log.debug("edr={}", edr);
-                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageVirtual(edr, offerTemplate, userAccount, currentUser);
-                if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                    log.error("edr rejected={}", edr.getRejectReason());
-                    throw new BusinessException(edr.getRejectReason());
+            // Process CDRS
+            if (cdrs != null && !cdrs.isEmpty() && subscription!=null) {
+
+                cdrParsingService.initByApi(currentUser.getUserName(), "quote");
+
+                List<EDR> edrs = new ArrayList<>();
+
+                // Parse CDRs to Edrs
+                try {
+                    for (String cdr : cdrs) {
+                        edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, subscription, currentUser));
+                    }
+
+                } catch (CDRParsingException e) {
+                    log.error("Error parsing cdr={}", e.getRejectionCause());
+                    throw new BusinessException(e.getRejectionCause().toString());
                 }
-                walletOperations.addAll(walletOperationsFromEdr);
+
+                // Rate EDRs
+                for (EDR edr : edrs) {
+                    log.debug("edr={}", edr);
+                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageWithinTransaction(edr, true, currentUser);
+                    if (edr.getStatus() == EDRStatusEnum.REJECTED) {
+                        log.error("edr rejected={}", edr.getRejectReason());
+                        throw new BusinessException(edr.getRejectReason());
+                    }
+                    walletOperations.addAll(walletOperationsFromEdr);
+                }
             }
         }
 
@@ -141,10 +134,11 @@ public class QuoteService extends BaseService {
             ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true, currentUser));
         }
 
-        Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, userAccount.getBillingAccount(), null, currentUser);
+        Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, null, currentUser);
 
         File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice);
         invoiceService.producePdf(invoice, currentUser);
 
+        return invoice;
     }
 }

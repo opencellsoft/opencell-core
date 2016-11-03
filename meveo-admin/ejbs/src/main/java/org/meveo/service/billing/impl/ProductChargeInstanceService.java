@@ -71,86 +71,29 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
-	public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance,User user,boolean persist) throws BusinessException {
-		List<WalletOperation> result=null;
-		ChargeTemplate chargeTemplate=productChargeInstance.getProductChargeTemplate();
-		List<WalletTemplate> walletTemplates = productChargeInstance.getProductInstance().getProductTemplate().getWalletTemplates();
-		productChargeInstance.setPrepaid(false);
-		if (walletTemplates != null && walletTemplates.size() > 0) {
-			log.debug("found {} wallets",walletTemplates.size());
-			for (WalletTemplate walletTemplate : walletTemplates) {
-				log.debug("walletTemplate {}",walletTemplate.getCode());
-				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
-					log.debug("this wallet is prepaid, we set the charge instance itself as being prepaid");
-					productChargeInstance.setPrepaid(true);
+    public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, User currentUser, boolean isVirtual) throws BusinessException {
 
-				}
-				WalletInstance walletInstance=walletService.getWalletInstance(productChargeInstance.getUserAccount(),
-						walletTemplate, user);
-				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),productChargeInstance.getId());
-				productChargeInstance.getWalletInstances().add(walletInstance);
-			}
-		} else {
-			log.debug("as the charge is postpaid, we add the principal wallet");
-			productChargeInstance.getWalletInstances().add(
-					productChargeInstance.getUserAccount().getWallet());
-		}
-		BigDecimal inputQuantity = productChargeInstance.getQuantity();
-		BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
-				chargeTemplate.getRoundingMode());
-		WalletOperation walletOperation =  walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);
-		if(persist){
-			result=walletOperationService.chargeWalletOperation(walletOperation, user);
-		} else {
-			result = new ArrayList<>();
-			result.add(walletOperation);
-		}
-		return result;
-	}
+        List<WalletOperation> walletOperations = null;
+        ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
 
-    /**
-     * Apply a product charge to a user account for a Virtual operation. Does not create/update/persist any entity.
-     * 
-     * @param chargeTemplate One shot charge template
-     * @param userAccount User account
-     * @param offerCode Offer code
-     * @param effectiveDate Effective charge date
-     * @param quantity Quantity
-     * @param criteria1 Criteria 1
-     * @param criteria2 Criteria 2
-     * @param criteria3 Criteria 3
-     * @param currentUser Current user
-     * @return Wallet operation
-     * @throws BusinessException
-     */
-    public WalletOperation applyProductChargeInstanceVirtual(ProductChargeTemplate chargeTemplate, List<WalletTemplate> walletTemplates, UserAccount userAccount, String offerCode,
-            Date effectiveDate, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3, User currentUser)
-            throws BusinessException {
+        log.debug("Apply product charge. User account {}, subscription {}, offer {}, charge {}, quantity {}, date {}",
+            productChargeInstance.getUserAccount() != null ? productChargeInstance.getUserAccount().getCode() : null,
+            productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(), productChargeInstance
+                .getQuantity(), productChargeInstance.getChargeDate());
 
-        log.debug("Apply product charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date {}", userAccount.getCode(), chargeTemplate.getCode(), effectiveDate);
-
-        @SuppressWarnings("unused")
-        boolean prepaid = false;
-        List<WalletInstance> walletInstances = new ArrayList<>();
-        if (walletTemplates != null && walletTemplates.size() > 0) {
-            for (WalletTemplate walletTemplate : walletTemplates) {
-                if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    prepaid = true;
-                }
-                WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser);
-                walletInstances.add(walletInstance);
-            }
+        BigDecimal inputQuantity = productChargeInstance.getQuantity();
+        BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
+            chargeTemplate.getRoundingMode());
+        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual, currentUser);
+        if (!isVirtual) {
+            walletOperations = walletOperationService.chargeWalletOperation(walletOperation, currentUser);
         } else {
-            walletInstances.add(userAccount.getWallet());
+            walletOperations = new ArrayList<>();
+            walletOperations.add(walletOperation);
         }
-        BigDecimal inputQuantity = quantity;
-        quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
-        WalletOperation walletOperation = walletOperationService.rateProductApplicationVirtual(chargeTemplate, userAccount, offerCode, inputQuantity, quantity, effectiveDate,
-            amountWithoutTax, amountWithTax, criteria1, criteria2, criteria3, currentUser);
-        
-        return walletOperation;
+        return walletOperations;
     }
-
+	
 	@SuppressWarnings("unchecked")
 	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);

@@ -125,7 +125,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     public void serviceInstanciation(ServiceInstance serviceInstance, User creator) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-        serviceInstanciation(serviceInstance, creator, null, null);
+        serviceInstanciation(serviceInstance, creator, null, null, false);
     }
     // validate service is in offer service list
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException{
@@ -137,22 +137,26 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return true;
     }
 
-    public void serviceInstanciation(ServiceInstance serviceInstance, User creator, BigDecimal subscriptionAmount, BigDecimal terminationAmount)
+    public void serviceInstanciation(ServiceInstance serviceInstance, User creator, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-        log.debug("serviceInstanciation serviceID={}, code={}", serviceInstance.getId(), serviceInstance.getCode());
+        log.debug("serviceInstanciation subscriptionId={}, code={}", serviceInstance.getSubscription().getId(), serviceInstance.getCode());
 
-        String serviceCode = serviceInstance.getServiceTemplate().getCode();
+
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        serviceTemplate = serviceTemplateService.attach(serviceTemplate);
+        
         Subscription subscription = serviceInstance.getSubscription();
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new IncorrectSusbcriptionException("subscription is not active");
         }
-
-        List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceCode, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.INACTIVE,
-            InstanceStatusEnum.SUSPENDED);
-        if (serviceInstances != null && serviceInstances.size() > 0) {
-            throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode()
+        if (!isVirtual){
+            List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.INACTIVE,
+                InstanceStatusEnum.SUSPENDED);
+            if (serviceInstances != null && serviceInstances.size() > 0) {
+                throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode()
                     + " and status is [ACTIVE or INACTIVE or SUSPENDED] is already created.");
+            }
         }
         checkServiceAssociatedWithOffer(serviceInstance);
 
@@ -163,41 +167,48 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
         }
         serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
-        serviceInstance.setCode(serviceCode);
+        serviceInstance.setCode(serviceTemplate.getCode());
+        if (serviceInstance.getDescription() != null) {
+            serviceInstance.setDescription(serviceTemplate.getDescription());
+        }
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
-        create(serviceInstance, creator); // AKK was with subscription.getProvider()
+        
+        if (!isVirtual) {
+            create(serviceInstance, creator); // AKK was with subscription.getProvider()
+        }
+        
         subscription.getServiceInstances().add(serviceInstance);
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-
-        serviceTemplate = serviceTemplateService.attach(serviceTemplate);
 
         for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceRecurringCharges()) {
             RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                serviceInstance.getSubscriptionDate(), seller, creator);
+                serviceInstance.getSubscriptionDate(), seller, isVirtual, creator);
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
 
         for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
             OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-                serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, creator, true);
+                serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, creator, true, isVirtual);
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 
         for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
             OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-                serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, creator, false);
+                serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, creator, false, isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 
         for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
             UsageChargeInstance chargeInstance = usageChargeInstanceService.usageChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-                serviceUsageChargeTemplate, serviceInstance.getSubscriptionDate(), seller, creator);
+                serviceUsageChargeTemplate, serviceInstance.getSubscriptionDate(), seller, isVirtual, creator);
             serviceInstance.getUsageChargeInstances().add(chargeInstance);
         }
 
-        // execute instantiation script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-            serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
+        if (!isVirtual) {
+            // execute instantiation script
+            if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+                serviceModelScriptService
+                    .instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), creator);
+            }
         }
     }
 

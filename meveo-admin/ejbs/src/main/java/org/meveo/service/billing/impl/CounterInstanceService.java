@@ -66,7 +66,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private CounterPeriodService counterPeriodService;
 
-    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, User creator) throws BusinessException {
+    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual, User creator) throws BusinessException {
         CounterInstance result = null;
 
         if (userAccount == null) {
@@ -89,10 +89,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result = new CounterInstance();
                 result.setCounterTemplate(counterTemplate);
                 result.setBillingAccount(billingAccount);
-                create(result, creator); // AKK was with billingAccount.getProvider()
-
+                
+                if (!isVirtual){
+                    create(result, creator); // AKK was with billingAccount.getProvider()
+                }
+                
                 billingAccount.getCounters().put(counterTemplate.getCode(), result);
-                billingAccountService.update(billingAccount, creator);
+                
+                if (!isVirtual){
+                    billingAccountService.update(billingAccount, creator);
+                }
             } else {
                 result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
             }
@@ -101,10 +107,15 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result = new CounterInstance();
                 result.setCounterTemplate(counterTemplate);
                 result.setUserAccount(userAccount);
-                create(result, creator); // AKK was with userAccount.getProvider()
 
+                if (!isVirtual){
+                    create(result, creator); // AKK was with userAccount.getProvider()
+                }
                 userAccount.getCounters().put(counterTemplate.getCode(), result);
-                userAccountService.update(userAccount, creator);
+
+                if (!isVirtual){
+                    userAccountService.update(userAccount, creator);
+                }
             } else {
                 result = userAccount.getCounters().get(counterTemplate.getCode());
             }

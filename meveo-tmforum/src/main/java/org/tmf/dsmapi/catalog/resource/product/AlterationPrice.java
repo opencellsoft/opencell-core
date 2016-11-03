@@ -1,10 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -12,22 +8,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "percentage": "100%"
- * }
- *
+ * 
+ *         { "percentage": "100%" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class AlterationPrice implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
-
-    @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true)
     String percentage;
 
     public AlterationPrice() {

@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.PostLoad;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,10 +15,8 @@ import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
-import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,71 +24,28 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "10",
- *     "version": "1.1",
- *     "href": "http://serverlocation:port/catalogManagement/catalog/10",
- *     "name": "Catalog Wholesale Business",
- *     "description": "A catalog to hold categories, products, services, and resources",
- *     "lastUpdate": "2013-04-19T16:42:23-04:00",
- *     "lifecycleStatus": "Active",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     },
- *     "type": "Product Catalog",
- *     "category": [
- *         {
- *             "id": "12",
- *             "version": "1.2",
- *             "href": "http://serverlocation:port/catalogManagement/category/12",
- *             "name": "Cloud offerings",
- *             "description": " A category to hold all available cloud service offers "
- *         }
- *     ],
- *     "relatedParty": [
- *         {
- *             "role": "Owner",
- *             "id": "1234",
- *             "href": "http://serverLocation:port/partyManagement/partyRole/1234"
- *         },
- *         {
- *             "role": "Reviser",
- *             "name": "Roger Collins"
- *         }
- *     ]
- * }
- *
+ * 
+ *         { "id": "10", "version": "1.1", "href": "http://serverlocation:port/catalogManagement/catalog/10", "name": "Catalog Wholesale Business", "description":
+ *         "A catalog to hold categories, products, services, and resources", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" }, "type": "Product Catalog", "category": [ { "id": "12", "version": "1.2", "href":
+ *         "http://serverlocation:port/catalogManagement/category/12", "name": "Cloud offerings", "description": " A category to hold all available cloud service offers " } ],
+ *         "relatedParty": [ { "role": "Owner", "id": "1234", "href": "http://serverLocation:port/partyManagement/partyRole/1234" }, { "role": "Reviser", "name": "Roger Collins" }
+ *         ] }
+ * 
  */
-@MappedSuperclass
 @XmlRootElement
-@JsonInclude(value=Include.NON_NULL)
+@JsonInclude(value = Include.NON_NULL)
 public class Catalog extends AbstractEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
     private static final Logger logger = Logger.getLogger(Catalog.class.getName());
 
-    @Column(name = "TYPE", nullable = true)
     private CatalogType type;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_CATALOG_R_CATEGORY", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "VERSION")
-    })
-    @EntityReferenceProperty(classId=Category.class)
     private List<CatalogReference> category;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_CATALOG_R_PARTY", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "VERSION")
-    })
     private List<RelatedParty> relatedParty;
 
     public Catalog() {
@@ -198,7 +147,7 @@ public class Catalog extends AbstractEntity implements Serializable {
         super.setCreateDefaults();
 
         if (getVersion() == null) {
-             super.setParsedVersion(ParsedVersion.ROOT_CATALOG_VERSION);
+            super.setParsedVersion(ParsedVersion.ROOT_CATALOG_VERSION);
         }
     }
 
@@ -253,9 +202,9 @@ public class Catalog extends AbstractEntity implements Serializable {
         catalog.setHref("href");
         catalog.setName("name");
         catalog.setDescription("description");
-        catalog.setLastUpdate(new Date ());
+        catalog.setLastUpdate(new Date());
         catalog.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        catalog.setValidFor(TimeRange.createProto ());
+        catalog.setValidFor(TimeRange.createProto());
 
         catalog.type = CatalogType.PRODUCT_CATALOG;
 

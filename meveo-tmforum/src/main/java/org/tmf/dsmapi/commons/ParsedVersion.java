@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public class ParsedVersion implements Serializable {
     private final static long serialVersionUID = 1L;
@@ -44,11 +44,11 @@ public class ParsedVersion implements Serializable {
         }
 
         if (majorVersion > MAX_MAJOR_VERSION) {
-            throw new IllegalArgumentException ("Major version, " + majorVersion + ", is too large; maximum value=" + MAX_MAJOR_VERSION);
+            throw new IllegalArgumentException("Major version, " + majorVersion + ", is too large; maximum value=" + MAX_MAJOR_VERSION);
         }
 
         if (minorVersion > MAX_MINOR_VERSION) {
-            throw new IllegalArgumentException ("Minor version, " + minorVersion + ", is too large; maximum value=" + MAX_MINOR_VERSION);
+            throw new IllegalArgumentException("Minor version, " + minorVersion + ", is too large; maximum value=" + MAX_MINOR_VERSION);
         }
 
         this.externalView = createExternalView_();
@@ -122,16 +122,17 @@ public class ParsedVersion implements Serializable {
 
     @Override
     public String toString() {
-        return "ParsedVersion{" + "majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", externalView=" + externalView + ", internalView=" + internalView + ", valid=" + valid + '}';
+        return "ParsedVersion{" + "majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", externalView=" + externalView + ", internalView=" + internalView
+                + ", valid=" + valid + '}';
     }
 
     public boolean isGreaterThan(ParsedVersion other) {
         if (this.isValid() == false) {
-            throw new IllegalArgumentException ("invalid version object");
+            throw new IllegalArgumentException("invalid version object");
         }
 
         if (other == null || other.isValid() == false) {
-            throw new IllegalArgumentException ("invalid other version object");
+            throw new IllegalArgumentException("invalid other version object");
         }
 
         if (this == ROOT_CATALOG_VERSION) {
@@ -151,7 +152,7 @@ public class ParsedVersion implements Serializable {
             return true;
         }
 
-        return (this.minorVersion.compareTo (other.minorVersion) > 0) ? true : false;
+        return (this.minorVersion.compareTo(other.minorVersion) > 0) ? true : false;
     }
 
     private String createInternalView_() {
@@ -167,22 +168,20 @@ public class ParsedVersion implements Serializable {
             return false;
         }
 
-        String parts [] = input.split ("\\.");
+        String parts[] = input.split("\\.");
         if (parts.length != 2) {
             return false;
         }
 
         try {
-            majorVersion = Integer.parseInt(parts [0]);
-        }
-        catch (Exception ex) {
+            majorVersion = Integer.parseInt(parts[0]);
+        } catch (Exception ex) {
             return false;
         }
 
         try {
-            minorVersion = Integer.parseInt(parts [1]);
-        }
-        catch (Exception ex) {
+            minorVersion = Integer.parseInt(parts[1]);
+        } catch (Exception ex) {
             initialize_();
             return false;
         }

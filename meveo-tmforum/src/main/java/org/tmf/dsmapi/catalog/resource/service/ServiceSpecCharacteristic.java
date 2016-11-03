@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
@@ -18,48 +16,16 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "34",
- *     "name": "Screen Size",
- *     "description": "Screen size",
- *     "valueType": "number",
- *     "configurable": false,
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     },
- *     "serviceSpecCharRelationship": [
- *         {
- *             "type": "dependency",
- *             "id": "43",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ],
- *     "serviceSpecCharacteristicValue": [
- *         {
- *             "valueType": "number",
- *             "default": true,
- *             "value": "4.2",
- *             "unitOfMeasure": "inches",
- *             "valueFrom": "",
- *             "valueTo": "",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ]
- * }
- *
+ * 
+ *         { "id": "34", "name": "Screen Size", "description": "Screen size", "valueType": "number", "configurable": false, "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "serviceSpecCharRelationship": [ { "type": "dependency", "id": "43", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ], "serviceSpecCharacteristicValue": [ { "valueType": "number", "default": true, "value": "4.2", "unitOfMeasure":
+ *         "inches", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ] }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ServiceSpecCharacteristic implements Serializable {
     public final static long serialVersionUID = 1L;
 
@@ -214,7 +180,9 @@ public class ServiceSpecCharacteristic implements Serializable {
 
     @Override
     public String toString() {
-        return "ServiceSpecCharacteristic{" + "id=" + id + ", name=" + name + ", description=" + description + ", validFor=" + validFor + ", valueType=" + valueType + ", configurable=" + configurable + ", serviceSpecCharRelationship=" + serviceSpecCharRelationship + ", serviceSpecCharacteristicValue=" + serviceSpecCharacteristicValue + '}';
+        return "ServiceSpecCharacteristic{" + "id=" + id + ", name=" + name + ", description=" + description + ", validFor=" + validFor + ", valueType=" + valueType
+                + ", configurable=" + configurable + ", serviceSpecCharRelationship=" + serviceSpecCharRelationship + ", serviceSpecCharacteristicValue="
+                + serviceSpecCharacteristicValue + '}';
     }
 
     @JsonIgnore
@@ -259,7 +227,7 @@ public class ServiceSpecCharacteristic implements Serializable {
         serviceSpecCharacteristic.serviceSpecCharRelationship.add(SpecificationCharacteristicRelationship.createProto());
 
         serviceSpecCharacteristic.serviceSpecCharacteristicValue = new ArrayList<SpecificationCharacteristicValue>();
-        serviceSpecCharacteristic.serviceSpecCharacteristicValue.add (SpecificationCharacteristicValue.createProto());
+        serviceSpecCharacteristic.serviceSpecCharacteristicValue.add(SpecificationCharacteristicValue.createProto());
 
         return serviceSpecCharacteristic;
     }

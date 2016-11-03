@@ -31,6 +31,7 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
@@ -46,7 +47,6 @@ import org.meveo.model.cache.CachedTriggeredEDR;
 import org.meveo.model.cache.CachedUsageChargeInstance;
 import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -131,19 +131,30 @@ public class UsageRatingService {
      * @throws BusinessException
      */
     private void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal quantityToCharge, CachedUsageChargeInstance cachedChargeInstance,
-            UserAccount userAccount, CounterInstance counterInstance, String offerCode, User currentUser) throws BusinessException {
+            boolean isVirtual, User currentUser) throws BusinessException {
 
+        UsageChargeInstance chargeInstance = null;
+        
         // Not a virtual operation
-        if (cachedChargeInstance.getId() != null) {
-            UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(cachedChargeInstance.getId());
-            walletOperation.setChargeInstance(chargeInstance);
-            userAccount = chargeInstance.getUserAccount();
-            counterInstance = chargeInstance.getCounter();
-            offerCode = chargeInstance.getSubscription() == null ? null : chargeInstance.getSubscription().getOffer().getCode();
-            walletOperation.setSubscriptionDate(edr.getSubscription().getSubscriptionDate());
+        if (!isVirtual) {
+            chargeInstance = usageChargeInstanceService.findById(cachedChargeInstance.getId());            
+        
+        // For virtual operation, lookup charge in the subscription
         } else {
-            walletOperation.setSubscriptionDate(edr.getSubscriptionDate());
+            for (ServiceInstance serviceInstance : edr.getSubscription().getServiceInstances()) {
+                for(UsageChargeInstance usageChargeInstance: serviceInstance.getUsageChargeInstances()){
+                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplate().getCode())){
+                        chargeInstance = usageChargeInstance;
+                        break;
+                    }
+                }
+            }            
         }
+        walletOperation.setChargeInstance(chargeInstance);
+        UserAccount userAccount = chargeInstance.getUserAccount();
+        CounterInstance counterInstance = chargeInstance.getCounter();
+        String offerCode = edr.getSubscription().getOffer().getCode();
+        walletOperation.setSubscriptionDate(edr.getSubscription().getSubscriptionDate());
 
         walletOperation.setOperationDate(edr.getEventDate());
         walletOperation.setParameter1(edr.getParameter1());
@@ -298,13 +309,12 @@ public class UsageRatingService {
      * @param edr EDR to rate
      * @param cachedCharge Charge instance to apply
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @param userAccountForVirtual User account for virtual operation
      * @param currentUser Current user
      * @return returns true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
      * @throws BusinessException
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, CachedUsageChargeInstance cachedCharge, boolean isVirtual,
-            UserAccount userAccountForVirtual, CounterInstance counterInstanceForVirtual, String offerCodeForVirtual, User currentUser) throws BusinessException {
+            User currentUser) throws BusinessException {
 
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
@@ -334,7 +344,7 @@ public class UsageRatingService {
             edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
             quantityToCharge = deducedQuantity;
         }
-        rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, cachedCharge, userAccountForVirtual, counterInstanceForVirtual, offerCodeForVirtual, currentUser);
+        rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, cachedCharge, isVirtual, currentUser);
 
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(walletOperation, currentUser);
@@ -417,7 +427,7 @@ public class UsageRatingService {
         if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 
             WalletReservation walletOperation = new WalletReservation();
-            rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, null, null, null, currentUser);
+            rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, false, currentUser);
             walletOperation.setReservation(reservation);
             walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
             reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
@@ -441,11 +451,11 @@ public class UsageRatingService {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
-        rateUsageWithinTransaction(edr, currentUser);
+        rateUsageWithinTransaction(edr, false, currentUser);
     }
 
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    public List<WalletOperation> rateUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
+    public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual, User currentUser) throws BusinessException {
         BigDecimal originalQuantity = edr.getQuantity();
 
         log.info("Rating EDR={}", edr);
@@ -463,98 +473,20 @@ public class UsageRatingService {
         boolean edrIsRated = false;
 
         try {
-            if (!ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
-                edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
-                return null;
-            }
+            List<CachedUsageChargeInstance> charges = null;
 
-            // TODO:order charges by priority and id
-            List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
-
-            boolean foundPricePlan = true;
-            // Find the first matching charge and rate it
-            for (CachedUsageChargeInstance charge : charges) {
-                CachedUsageChargeTemplate templateCache = charge.getChargeTemplate();
-                log.trace("try templateCache=" + templateCache.toString());
-
-                try {
-                    if (!isChargeMatch(edr, templateCache.getCode(), templateCache.getFilterExpression(), templateCache.getFilter1(), templateCache.getFilter2(),
-                        templateCache.getFilter3(), templateCache.getFilter4())) {
-                        continue;
-                    }
-                } catch (ChargeWitoutPricePlanException e) {
-                    log.debug("Charge {} was matched but does not contain a priceplan", templateCache.getCode());
-                    foundPricePlan = false;
-                    continue;
+            if (!isVirtual) {
+                if (!ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
+                    edr.setStatus(EDRStatusEnum.REJECTED);
+                    edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
+                    return null;
                 }
 
-                log.debug("Found matching charge inst : id=" + charge.getId());
-                WalletOperation walletOperation = new WalletOperation();
-                edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, false, null, null, null, currentUser);
-                walletOperations.add(walletOperation);
-                if (edrIsRated) {
-                    edr.setStatus(EDRStatusEnum.RATED);
-                    break;
-                }
-            }
+                // TODO:order charges by priority and id
+                charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
-            if (!edrIsRated) {
-                edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(!foundPricePlan ? "NO_PRICEPLAN" : "NO_MATCHING_CHARGE");
-                return null;
-            }
-
-        } catch (Exception e) {
-            log.error("failed to rate usage Within Transaction", e);
-            edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason((e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
-            return null;
-            // throw new BusinessException(e);
-        }
-
-        // put back the original quantity in edr (could have been decrease by counters)
-        edr.setQuantity(originalQuantity);
-
-        return walletOperations;
-    }
-
-    /**
-     * Rate usage records (EDRs). Does not create/update/persist any entity.
-     * @param edr Usage records
-     * @param offerTemplate Offer template
-     * @param userAccount User account
-     * @param currentUser Current user
-     * @return Wallet operations
-     * @throws BusinessException
-     */
-    public List<WalletOperation> rateUsageVirtual(EDR edr, OfferTemplate offerTemplate, UserAccount userAccount, User currentUser) throws BusinessException {
-        BigDecimal originalQuantity = edr.getQuantity();
-
-        log.info("Rating EDR={}", edr);
-
-        List<WalletOperation> walletOperations = new ArrayList<>();
-
-        edr.setLastUpdate(new Date());
-
-        if (offerTemplate == null) {
-            edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("NULL_OFFER");
-            return null;
-        }
-
-        boolean edrIsRated = false;
-
-        try {
-            // TODO AKK populate charge and counter cache if needed with charges for an offer template
-
-            // TODO:order charges by priority and id
-            List<CachedUsageChargeInstance> charges = new ArrayList<>();
-
-            if (charges.isEmpty()) {
-                edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason("OFFER_HAS_NO_CHARGE");
-                return null;
+            } else {
+                // TODO still need to obtain charges as subscription is virtual
             }
 
             boolean foundPricePlan = true;
@@ -576,7 +508,7 @@ public class UsageRatingService {
 
                 log.debug("Found matching charge inst : id=" + charge.getId());
                 WalletOperation walletOperation = new WalletOperation();
-                edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, true, userAccount, null, offerTemplate.getCode(), currentUser);
+                edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual, currentUser);
                 walletOperations.add(walletOperation);
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);

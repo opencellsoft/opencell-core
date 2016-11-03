@@ -382,7 +382,7 @@ public class WalletApi extends BaseApi {
             walletTemplate.setCode(WalletTemplate.PRINCIPAL);
         }
 
-        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser);
+        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, false, currentUser);
         if (walletInstance == null) {
             throw new EntityDoesNotExistsException(WalletInstance.class, walletTemplate.getCode());
         }

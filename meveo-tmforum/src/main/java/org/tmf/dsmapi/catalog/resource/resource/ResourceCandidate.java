@@ -7,14 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
@@ -22,9 +14,7 @@ import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
-import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,74 +22,28 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "42",
- *     "version": "2.8",
- *     "href": "http://serverlocation:port/catalogManagement/resourceCandidate/42",
- *     "name": "Virtual Storage Medium",
- *     "description": "Virtual Storage Medium",
- *     "lastUpdate": "2013-04-19T16:42:23-04:00",
- *     "lifecycleStatus": "Active",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     },
- *     "category": [
- *         {
- *             "id": "12",
- *             "href": "http://serverlocation:port/catalogManagement/resourceCategory/12",
- *             "version": "2.0",
- *             "name": "Cloud offerings"
+ * 
+ *         { "id": "42", "version": "2.8", "href": "http://serverlocation:port/catalogManagement/resourceCandidate/42", "name": "Virtual Storage Medium", "description":
+ *         "Virtual Storage Medium", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
+ *         "endDateTime": "2013-06-19T00:00:00-04:00" }, "category": [ { "id": "12", "href": "http://serverlocation:port/catalogManagement/resourceCategory/12", "version": "2.0",
+ *         "name": "Cloud offerings" } ], "serviceLevelAgreement": { "id": "28", "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28", "name": "Standard SLA"
+ *         }, "resourceSpecification": { "id": "13", "href": "http://serverlocation:port/catalogManagement/resourceSpecification/13", "name": "specification 1", "version": "1.1" }
  *         }
- *     ],
- *     "serviceLevelAgreement": {
- *         "id": "28",
- *         "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
- *         "name": "Standard SLA"
- *     },
- *     "resourceSpecification": {
- *         "id": "13",
- *         "href": "http://serverlocation:port/catalogManagement/resourceSpecification/13",
- *         "name": "specification 1",
- *         "version": "1.1"
- *     }
- * }
- *
+ * 
  */
-@MappedSuperclass
 @XmlRootElement
-@JsonInclude(value=Include.NON_NULL)
+@JsonInclude(value = Include.NON_NULL)
 public class ResourceCandidate extends AbstractCatalogEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final static Logger logger = Logger.getLogger(ResourceCandidate.class.getName());
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_RESOURCE_R_CATEGORY", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    @EntityReferenceProperty(classId=Category.class)
     private List<CatalogReference> category;
 
-    @Embedded
     private ServiceLevelAgreement serviceLevelAgreement;
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "referencedId", column = @Column(name = "RESOURCE_SPEC_ID")),
-        @AttributeOverride(name = "referencedVersion", column = @Column(name = "RESOURCE_SPEC_VERSION")),
-        @AttributeOverride(name = "referencedHref", column = @Column(name = "RESOURCE_SPEC_HREF")),
-        @AttributeOverride(name = "referencedName", column = @Column(name = "RESOURCE_SPEC_NAME")),
-        @AttributeOverride(name = "referencedDescription", column = @Column(name = "RESOURCE_SPEC_DESCRIPTION"))
-    })
-    @EntityReferenceProperty(classId=ResourceSpecification.class)
     private CatalogReference resourceSpecification;
 
     public ResourceCandidate() {
@@ -171,7 +115,8 @@ public class ResourceCandidate extends AbstractCatalogEntity implements Serializ
 
     @Override
     public String toString() {
-        return "ResourceCandidate{<" + super.toString() + ">, category=" + category + ", serviceLevelAgreement=" + serviceLevelAgreement + ", resourceSpecification=" + resourceSpecification + '}';
+        return "ResourceCandidate{<" + super.toString() + ">, category=" + category + ", serviceLevelAgreement=" + serviceLevelAgreement + ", resourceSpecification="
+                + resourceSpecification + '}';
     }
 
     @Override
@@ -220,9 +165,9 @@ public class ResourceCandidate extends AbstractCatalogEntity implements Serializ
         resourceCandidate.setHref("href");
         resourceCandidate.setName("name");
         resourceCandidate.setDescription("description");
-        resourceCandidate.setLastUpdate(new Date ());
+        resourceCandidate.setLastUpdate(new Date());
         resourceCandidate.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        resourceCandidate.setValidFor(TimeRange.createProto ());
+        resourceCandidate.setValidFor(TimeRange.createProto());
 
         resourceCandidate.category = new ArrayList<CatalogReference>();
         resourceCandidate.category.add(CatalogReference.createProto());

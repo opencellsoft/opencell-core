@@ -16,6 +16,7 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
@@ -93,17 +94,16 @@ public class CDRParsingService extends PersistenceService<EDR> {
         return result;
     }
 
-    public EDR getEDRWoutAccess(String line, String origin, Date subscriptionDate, User currentUser) throws CDRParsingException {
+    public EDR getEDRForVirtual(String line, String origin, Subscription subscription, User currentUser) throws CDRParsingException {
 
         Serializable cdr = cdrParser.getCDR(line);
         EDRDAO edrDAO = cdrParser.getEDR(cdr, origin);
-        EDR edr = edrDaoToEdr(edrDAO, null, currentUser.getProvider());
-        edr.setSubscriptionDate(subscriptionDate);
+        EDR edr = edrDaoToEdr(edrDAO, null, subscription);
 
         return edr;
     }
 
-    private EDR edrDaoToEdr(EDRDAO edrDAO, Access accessPoint, Provider provider) {
+    private EDR edrDaoToEdr(EDRDAO edrDAO, Access accessPoint, Subscription subscription) {
         EDR edr = new EDR();
         edr.setCreated(new Date());
         edr.setEventDate(edrDAO.getEventDate());
@@ -134,8 +134,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
             edr.setSubscription(accessPoint.getSubscription());
             edr.setAccessCode(accessPoint.getAccessUserId());
             edr.setProvider(accessPoint.getProvider());
-        } else {
-            edr.setProvider(provider);
+        } else if (subscription != null) {
+            edr.setSubscription(subscription);
+            edr.setProvider(subscription.getProvider());
         }
 
         return edr;

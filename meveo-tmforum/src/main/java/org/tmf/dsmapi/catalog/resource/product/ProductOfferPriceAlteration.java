@@ -2,12 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -16,56 +10,32 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "name": "Shipping Discount",
- *     "description": "One time shipping discount",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *     },
- *     "priceType": "One Time discount",
- *     "unitOfMeasure": "",
- *     "price": {
- *         "percentage": "100%"
- *     },
- *     "recurringChargePeriod": "",
- *     "priceCondition": "apply if total amount of the  order is greater than 300.00"
- * }
- *
+ * 
+ *         { "name": "Shipping Discount", "description": "One time shipping discount", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", }, "priceType":
+ *         "One Time discount", "unitOfMeasure": "", "price": { "percentage": "100%" }, "recurringChargePeriod": "", "priceCondition":
+ *         "apply if total amount of the  order is greater than 300.00" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ProductOfferPriceAlteration implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "PRICE_ALT_NAME", nullable = true)
     private String name;
 
-    @Column(name = "PRICE_ALT_DESCRIPTION", nullable = true)
     private String description;
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "startDateTime", column = @Column(name = "PRICE_ALT_START_DATE_TIME")),
-        @AttributeOverride(name = "endDateTime", column = @Column(name = "PRICE_ALT_END_DATE_TIME"))
-    })
     private TimeRange validFor;
 
-    @Column(name = "PRICE_ALT_PRICE_TYPE", nullable = true)
     private ProductOfferPriceAlterationType priceType;
 
-    @Column(name = "PRICE_ALT_UNIT_OF_MEASURE", nullable = true)
     private String unitOfMeasure;
 
-    @Embedded
     private AlterationPrice price;
 
-    @Column(name = "PRICE_ALT_RECURRING_CHARGE_PERIOD", nullable = true)
     private String recurringChargePeriod;
 
-    @Column(name = "PRICE_ALT_PRICE_CONDITION", nullable = true)
     private String priceCondition;
 
     public ProductOfferPriceAlteration() {
@@ -200,7 +170,8 @@ public class ProductOfferPriceAlteration implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductOfferPriceAlteration{" + "name=" + name + ", description=" + description + ", validFor=" + validFor + ", priceType=" + priceType + ", unitOfMeasure=" + unitOfMeasure + ", price=" + price + ", recurringChargePeriod=" + recurringChargePeriod + ", priceCondition=" + priceCondition + '}';
+        return "ProductOfferPriceAlteration{" + "name=" + name + ", description=" + description + ", validFor=" + validFor + ", priceType=" + priceType + ", unitOfMeasure="
+                + unitOfMeasure + ", price=" + price + ", recurringChargePeriod=" + recurringChargePeriod + ", priceCondition=" + priceCondition + '}';
     }
 
     public static ProductOfferPriceAlteration createProto() {

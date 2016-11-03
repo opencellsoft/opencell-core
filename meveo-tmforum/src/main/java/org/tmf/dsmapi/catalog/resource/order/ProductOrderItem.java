@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -17,13 +17,10 @@ import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement
-@JsonInclude(value=Include.NON_NULL)
-public class OrderItem implements Serializable {
+@XmlType(name="OrderItem")
+@JsonInclude(value = Include.NON_NULL)
+public class ProductOrderItem implements Serializable {
 
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 2224931518265750159L;
     private String id;
     private String action;
@@ -97,9 +94,9 @@ public class OrderItem implements Serializable {
      * 
      * @throws BusinessException
      */
-    public static String serializeOrderItem(OrderItem productOrderItem) throws BusinessException {
+    public static String serializeOrderItem(ProductOrderItem productOrderItem) throws BusinessException {
         try {
-            Marshaller m = JAXBContext.newInstance(OrderItem.class).createMarshaller();
+            Marshaller m = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             StringWriter w = new StringWriter();
             m.marshal(productOrderItem, w);
@@ -119,12 +116,12 @@ public class OrderItem implements Serializable {
      * 
      * @throws BusinessException
      */
-    public static OrderItem deserializeOrderItem(String orderItemSource) throws BusinessException {
+    public static ProductOrderItem deserializeOrderItem(String orderItemSource) throws BusinessException {
         // Store orderItem DTO into DB to be retrieved for full information
         try {
-            Unmarshaller m = JAXBContext.newInstance(OrderItem.class).createUnmarshaller();
+            Unmarshaller m = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
             // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            OrderItem productOrderItem = (OrderItem) m.unmarshal(new StringReader(orderItemSource));
+            ProductOrderItem productOrderItem = (ProductOrderItem) m.unmarshal(new StringReader(orderItemSource));
 
             return productOrderItem;
 

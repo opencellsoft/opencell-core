@@ -1,19 +1,16 @@
 package org.tmf.dsmapi.catalog.resource.specification;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+
 //import org.tmf.dsmapi.commons.exceptions.InvalidEnumeratedValueException;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public enum SpecificationCharacteristicRelationshipType {
-    AGGREGATION ("aggregation"),
-    MIGRATION   ("migration"),
-    SUBSTITUTION("substitution"),
-    DEPENDENCY  ("dependency"),
-    EXCLUSIVITY ("exclusivity");
+    AGGREGATION("aggregation"), MIGRATION("migration"), SUBSTITUTION("substitution"), DEPENDENCY("dependency"), EXCLUSIVITY("exclusivity");
 
     private String value;
 
@@ -41,17 +38,17 @@ public enum SpecificationCharacteristicRelationshipType {
         return null;
     }
 
-//    @JsonCreator
-//    public static SpecificationCharacteristicRelationshipType fromJson(String value) throws InvalidEnumeratedValueException {
-//        if (value == null) {
-//            return null;
-//        }
-//
-//        SpecificationCharacteristicRelationshipType enumeratedValue = SpecificationCharacteristicRelationshipType.find(value);
-//        if (enumeratedValue != null) {
-//            return enumeratedValue;
-//        }
-//
-//        throw new InvalidEnumeratedValueException(value, EnumSet.allOf(SpecificationCharacteristicRelationshipType.class));
-//    }
+    // @JsonCreator
+    // public static SpecificationCharacteristicRelationshipType fromJson(String value) throws InvalidEnumeratedValueException {
+    // if (value == null) {
+    // return null;
+    // }
+    //
+    // SpecificationCharacteristicRelationshipType enumeratedValue = SpecificationCharacteristicRelationshipType.find(value);
+    // if (enumeratedValue != null) {
+    // return enumeratedValue;
+    // }
+    //
+    // throw new InvalidEnumeratedValueException(value, EnumSet.allOf(SpecificationCharacteristicRelationshipType.class));
+    // }
 }

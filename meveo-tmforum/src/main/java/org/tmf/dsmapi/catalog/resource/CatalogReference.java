@@ -2,15 +2,10 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
-
 //import org.tmf.dsmapi.catalog.client.CatalogClient;
 import org.tmf.dsmapi.commons.AbstractEntityReference;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.VersionProperty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,50 +14,37 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * The prefix 'referenced' was added to the property names of this class to work
- * around an issue in the platform.  Without the prefix, you could not update the
- * id & version fields of entity properties that were of this class.  For example,
- * attempting to update or edit the ResourceCandidate.category[n].version would
- * throw an exception.  The exception would claim the operation was attempting to
- * update a key field (the real key field is named ENTITY_VERSION in the database).
- * The 'referenced' prefix fixes this issue while making this class a bit uglier
- * than it needs to be.
- *
+ * 
+ *         The prefix 'referenced' was added to the property names of this class to work around an issue in the platform. Without the prefix, you could not update the id & version
+ *         fields of entity properties that were of this class. For example, attempting to update or edit the ResourceCandidate.category[n].version would throw an exception. The
+ *         exception would claim the operation was attempting to update a key field (the real key field is named ENTITY_VERSION in the database). The 'referenced' prefix fixes this
+ *         issue while making this class a bit uglier than it needs to be.
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class CatalogReference extends AbstractEntityReference implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "REFERENCED_ID", nullable = true)
     @JsonProperty(value = "id")
     private String referencedId;
 
-    @Column(name = "REFERENCED_VERSION", nullable = true)
     @JsonProperty(value = "version")
-    @VersionProperty
     private String referencedVersion;
 
-    @Transient
     @JsonIgnore
     private ParsedVersion parsedVersion;
 
-    @Column(name = "REFERENCED_HREF", nullable = true)
     @JsonProperty(value = "href")
     private String referencedHref;
 
-    @Column(name = "REFERENCED_NAME", nullable = true)
     @JsonProperty(value = "name")
     private String referencedName;
 
-    @Column(name = "REFERENCED_DESCRIPTION", nullable = true)
     @JsonProperty(value = "description")
     private String referencedDescription;
 
-    @Transient
     @JsonUnwrapped
     private AbstractEntity entity;
 
@@ -208,16 +190,17 @@ public class CatalogReference extends AbstractEntityReference implements Seriali
 
     @Override
     public String toString() {
-        return "Reference{" + "referencedId=" + referencedId + ", referencedVersion=" + referencedVersion + ", parsedVersion=" + parsedVersion + ", referencedHref=" + referencedHref + ", referencedName=" + referencedName + ", referencedDescription=" + referencedDescription + ", entity=" + entity + '}';
+        return "Reference{" + "referencedId=" + referencedId + ", referencedVersion=" + referencedVersion + ", parsedVersion=" + parsedVersion + ", referencedHref="
+                + referencedHref + ", referencedName=" + referencedName + ", referencedDescription=" + referencedDescription + ", entity=" + entity + '}';
     }
 
     @Override
     public void fetchEntity(Class theClass, int depth) {
-//        entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
+        // entity = (AbstractEntity) CatalogClient.getObject(referencedHref, theClass, depth);
     }
 
     public static CatalogReference createProto() {
-        CatalogReference catalogReference = new CatalogReference ();
+        CatalogReference catalogReference = new CatalogReference();
 
         catalogReference.referencedId = "id";
         catalogReference.referencedVersion = "1.6";

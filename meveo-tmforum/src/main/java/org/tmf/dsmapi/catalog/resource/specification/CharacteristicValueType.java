@@ -1,16 +1,16 @@
 package org.tmf.dsmapi.catalog.resource.specification;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+
 //import org.tmf.dsmapi.commons.exceptions.InvalidEnumeratedValueException;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public enum CharacteristicValueType {
-    STRING("string"),
-    NUMBER("number");
+    STRING("string"), NUMBER("number");
 
     private String value;
 
@@ -38,17 +38,17 @@ public enum CharacteristicValueType {
         return null;
     }
 
-//    @JsonCreator
-//    public static CharacteristicValueType fromJson(String value) throws InvalidEnumeratedValueException {
-//        if (value == null) {
-//            return null;
-//        }
-//
-//        CharacteristicValueType enumeratedValue = CharacteristicValueType.find(value);
-//        if (enumeratedValue != null) {
-//            return enumeratedValue;
-//        }
-//
-//        throw new InvalidEnumeratedValueException(value, EnumSet.allOf(CharacteristicValueType.class));
-//    }
+    // @JsonCreator
+    // public static CharacteristicValueType fromJson(String value) throws InvalidEnumeratedValueException {
+    // if (value == null) {
+    // return null;
+    // }
+    //
+    // CharacteristicValueType enumeratedValue = CharacteristicValueType.find(value);
+    // if (enumeratedValue != null) {
+    // return enumeratedValue;
+    // }
+    //
+    // throw new InvalidEnumeratedValueException(value, EnumSet.allOf(CharacteristicValueType.class));
+    // }
 }

@@ -2,37 +2,26 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "13",
- *     "href": "http://serverlocation:port/marketSales/channel/13",
- *     "name": "Online Channel"
- * }
- *
+ * 
+ *         { "id": "13", "href": "http://serverlocation:port/marketSales/channel/13", "name": "Online Channel" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class Channel implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "CHANNEL_ID", nullable = true)
     private String id;
 
-    @Column(name = "CHANNEL_HREF", nullable = true)
     private String href;
 
-    @Column(name = "CHANNEL_NAME", nullable = true)
     private String name;
 
     public Channel() {

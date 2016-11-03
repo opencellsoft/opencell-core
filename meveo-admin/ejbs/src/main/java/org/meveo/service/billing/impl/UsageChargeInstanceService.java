@@ -58,7 +58,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     private WalletCacheContainerProvider walletCacheContainerProvider;
     
 	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
-			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, User creator)
+			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, boolean isVirtual, User creator)
 			throws BusinessException {
 
 		log.debug("instanciate usageCharge for code {} and subscription {}",
@@ -89,7 +89,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 					usageChargeInstance.setPrepaid(true);
 				}
 				WalletInstance walletInstance =walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-						walletTemplate, serviceInstance.getAuditable().getCreator());
+						walletTemplate, isVirtual, creator);
 				log.debug("we add the waleltInstance {} to the charge instance {}",walletInstance.getId(),
 						usageChargeInstance.getId());
 				usageChargeInstance.getWalletInstances().add(walletInstance);
@@ -99,17 +99,22 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 			usageChargeInstance.getWalletInstances()
 					.add(serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
-		create(usageChargeInstance, creator); // AKK was with serviceInstance.getProvider()
-
-		if(usageChargeInstance.getPrepaid()){
-		    walletCacheContainerProvider.updateCache(usageChargeInstance);
-		}
 		
+        if (!isVirtual) {
+            create(usageChargeInstance, creator); // AKK was with serviceInstance.getProvider()
+
+            if (usageChargeInstance.getPrepaid()) {
+                walletCacheContainerProvider.updateCache(usageChargeInstance);
+            }
+        }
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
-					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
+					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), isVirtual, creator);
 			usageChargeInstance.setCounter(counterInstance);
-			update(usageChargeInstance, creator);
+			
+			if (!isVirtual){
+			    update(usageChargeInstance, creator);
+			}
 		}
 
 		return usageChargeInstance;
