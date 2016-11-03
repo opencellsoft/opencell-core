@@ -1,6 +1,5 @@
 package org.meveo.api.catalog;
 
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +8,9 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -62,19 +61,13 @@ public class OfferTemplateCategoryApi extends BaseApi {
             offerTemplateCategory.setDescription(postData.getDescription());
             offerTemplateCategory.setName(postData.getName());
 
-            if (postData.getImageByteValue() != null) {
-                byte[] byteContent = postData.getImageByteValue().getBytes();
-                try {
-                    Blob blobImg = new SerialBlob(byteContent);
-                    offerTemplateCategory.setImage(blobImg);
-
-                } catch (SerialException e) {
-                    throw new MeveoApiException("Invalid base64 encoded image string.");
-
-                } catch (SQLException e) {
-                    throw new MeveoApiException("System error.");
-                }
-            }
+            if (!StringUtils.isBlank(postData.getImageBase64())) {
+    			try {
+    				offerTemplateCategory.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+    			} catch (SQLException e) {
+    				throw new MeveoApiException("Invalid image data.");
+    			}
+    		}
 
             String parentCode = postData.getOfferTemplateCategoryCode();
             if (!StringUtils.isBlank(parentCode)) {
@@ -130,19 +123,13 @@ public class OfferTemplateCategoryApi extends BaseApi {
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
-        if (postData.getImageByteValue() != null) {
-            byte[] byteContent = postData.getImageByteValue().getBytes();
-            try {
-                Blob blobImg = new SerialBlob(byteContent);
-                offerTemplateCategory.setImage(blobImg);
-
-            } catch (SerialException e) {
-                throw new MeveoApiException("Invalid base64 encoded image string.");
-
-            } catch (SQLException e) {
-                throw new MeveoApiException("System error.");
-            }
-        }
+        if (!StringUtils.isBlank(postData.getImageBase64())) {
+			try {
+				offerTemplateCategory.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
+			} catch (SQLException e) {
+				throw new MeveoApiException("Invalid image data.");
+			}
+		}
 
         String parentCode = postData.getOfferTemplateCategoryCode();
         if (!StringUtils.isBlank(parentCode)) {

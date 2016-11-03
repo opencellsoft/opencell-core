@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 @XmlRootElement(name = "OfferCategory")
@@ -40,6 +41,8 @@ public class OfferTemplateCategoryDto implements Serializable {
 	
 	private Long parentId;
 	
+	private String imageBase64;
+	
 	public OfferTemplateCategoryDto() {
 		
 	}
@@ -56,7 +59,7 @@ public class OfferTemplateCategoryDto implements Serializable {
 			this.setActive(offerTemplateCategory.isActive());
 			
 			if (offerTemplateCategory.getImage() != null) {
-				this.setImageByteValue(new String(offerTemplateCategory.getImageAsByteArr()));
+				imageBase64 = Base64.encodeBase64String(offerTemplateCategory.getImageAsByteArr());
 			}
 			
 			OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
@@ -170,5 +173,13 @@ public class OfferTemplateCategoryDto implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
 	}
 }
