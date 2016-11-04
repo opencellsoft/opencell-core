@@ -559,7 +559,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	@SuppressWarnings("unchecked")
 	public List<BusinessOfferModel> listInstalled(Provider provider) {
 		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b", null, null, provider);
+		qb.startOrClause();
 		qb.addCriterion("installed", "=", true, true);
+		qb.addSql("moduleSource is null");
+		qb.endOrClause();
+		
 		try {
 			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
