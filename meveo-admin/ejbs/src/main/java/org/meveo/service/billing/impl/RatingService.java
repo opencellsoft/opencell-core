@@ -247,6 +247,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		walletOperation.setStartDate(startdate);
 		walletOperation.setEndDate(endDate);
 		walletOperation.setOfferCode(offerCode);
+		walletOperation.setInvoiceSubCategory(invoiceSubCategory);
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
         if (chargeInstance != null) {
             walletOperation.setSeller(chargeInstance.getSeller());

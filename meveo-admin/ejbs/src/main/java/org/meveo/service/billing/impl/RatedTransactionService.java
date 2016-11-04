@@ -302,6 +302,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     if (recordValid) {
                         ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
                         ratedTransaction.setInvoice(invoice);
+                        if (isVirtual) {
+                            invoice.getRatedTransactions().add(ratedTransaction);
+                        }
                         
                         boolean foundRecordForSameId = false;
                         for (Object[] existingRecord : invoiceSubCats) {
@@ -896,8 +899,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal amountTax = walletOperation.getAmountTax();
         BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
         BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
-        InvoiceSubCategory invoiceSubCategory = isVirtual ? walletOperation.getInvoiceSubCategory() : walletOperation.getChargeInstance().getChargeTemplate()
-            .getInvoiceSubCategory();
+        InvoiceSubCategory invoiceSubCategory = walletOperation.getInvoiceSubCategory() != null ? walletOperation.getInvoiceSubCategory() : walletOperation.getChargeInstance()
+            .getChargeTemplate().getInvoiceSubCategory();
         /*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
                 .getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
             amountWithTAx = walletOperation.getAmountWithoutTax();
@@ -905,7 +908,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
             unitAmountTax = BigDecimal.ZERO;
         }*/
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(), walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
             unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax, RatedTransactionStatusEnum.OPEN,
             walletOperation.getProvider(), walletOperation.getWallet(), walletOperation.getWallet().getUserAccount().getBillingAccount(), invoiceSubCategory,
             walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(), walletOperation.getRatingUnitDescription(),

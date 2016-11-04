@@ -73,8 +73,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @XmlRootElement(name = "Quote")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "billingAccount", "state", "id", "href", "externalId", "description", "category", "version", "quoteDate", "effectiveQuoteCompletionDate",
-        "quoteCompletionDate", "notificationContact", "validFor", "note", "characteristic", "customer", "relatedParty", "agreement", "quoteProductOfferingPrice", "quoteItem" })
 @JsonInclude(value = Include.NON_NULL)
 public class ProductQuote implements Serializable {
 
@@ -87,21 +85,13 @@ public class ProductQuote implements Serializable {
     protected String description;
     protected String category;
     protected String version;
-    @XmlElement(type = String.class)
     @JsonSerialize(using = CustomDateSerializer.class)
-    @XmlSchemaType(name = "dateTime")
     protected Date quoteDate;
-    @XmlElement(type = String.class)
     @JsonSerialize(using = CustomDateSerializer.class)
-    @XmlSchemaType(name = "dateTime")
     protected Date effectiveQuoteCompletionDate;
-    @XmlElement(type = String.class)
     @JsonSerialize(using = CustomDateSerializer.class)
-    @XmlSchemaType(name = "dateTime")
     protected Date quoteCompletionDate;
-    @XmlElement(type = String.class)
     @JsonSerialize(using = CustomDateSerializer.class)
-    @XmlSchemaType(name = "dateTime")
     protected Date fulfillmentStartDate;
     protected String notificationContact;
     protected TimeRange validFor;

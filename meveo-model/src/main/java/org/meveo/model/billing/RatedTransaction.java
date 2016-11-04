@@ -214,6 +214,9 @@ public class RatedTransaction extends BaseEntity {
 
 	@Transient
 	private OfferTemplate offerTemplate;
+	
+	@Transient
+	private WalletOperation walletOperation;
 
 	public RatedTransaction() {
 		super();
@@ -249,14 +252,17 @@ public class RatedTransaction extends BaseEntity {
 		this.setProvider(ratedTransaction.getProvider());
 	}
 
-	public RatedTransaction(Long walletOperationId, Date usageDate, BigDecimal unitAmountWithoutTax,
+	public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax,
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
 			String parameter1, String parameter2, String parameter3, String orderNumber,String unityDescription,
 			PricePlanMatrix priceplan, String offerCode, EDR edr) {
 		super();
-		this.walletOperationId = walletOperationId;
+        if (walletOperation != null) {
+            this.walletOperationId = walletOperation.getId();
+            this.walletOperation = walletOperation;
+        }
 		this.usageDate = usageDate;
 		this.unitAmountWithoutTax = unitAmountWithoutTax;
 		this.unitAmountWithTax = unitAmountWithTax;
@@ -541,6 +547,15 @@ public class RatedTransaction extends BaseEntity {
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
 	}
+	
+	public WalletOperation getWalletOperation() {
+        return walletOperation;
+    }
+	
+	public void setWalletOperation(WalletOperation walletOperation) {
+        this.walletOperation = walletOperation;
+    }
+	
 	 @Override
 	    public boolean equals(Object obj) {
 	        if (this == obj) {

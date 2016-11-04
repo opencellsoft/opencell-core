@@ -510,4 +510,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 			invoiceAgregates.add(obj);
 		}
 	}
+
+    public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
+        List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
+
+        for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+                aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
+            }
+        }
+        
+        return aggregates;
+    }
+
+    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+
+        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+
+        for (RatedTransaction ratedTransaction : ratedTransactions) {           
+            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+                ratedTransactionsMatched.add(ratedTransaction);
+            }
+
+        }
+        return ratedTransactionsMatched;
+    }
 }

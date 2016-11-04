@@ -519,7 +519,7 @@ public class Invoice4_2Api extends BaseApi {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }
         if (invoice.getPdf() == null) {
-            invoiceService.producePdf(invoice, currentUser);
+            invoiceService.producePdf(invoice, false, currentUser);
         }
         invoiceService.findById(invoice.getId(), true);
         log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);

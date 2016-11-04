@@ -169,6 +169,11 @@ public class WalletInstance extends BusinessEntity {
     }
 
     public boolean equals(WalletInstance w) {
-		return (w == null) || (w.getCode().equals(this.code));
-	}
+        if (w == null) {
+            return true;
+        } else if (id != null && w.getId() != null && id.equals(w.getId())) {
+            return true;
+        }
+        return (w.getCode().equals(this.code));
+    }
 }

@@ -68,8 +68,7 @@ public class QuoteItem extends BaseEntity {
      * Associated invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_ID", nullable = false)
-    @NotNull
+    @JoinColumn(name = "INVOICE_ID")
     private Invoice invoice;
 
     @Transient

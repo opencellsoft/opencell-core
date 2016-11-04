@@ -381,7 +381,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public File getXmlInvoiceDir() {	
-		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getAuditable().getCreated(), getCurrentProvider().getCode()));
+		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getInvoiceDate(), getCurrentProvider().getCode()));
 	}
 
 	public void generateXMLInvoice() throws BusinessException {

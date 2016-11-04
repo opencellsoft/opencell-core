@@ -136,9 +136,10 @@ public class QuoteService extends BusinessService<Quote> {
 
         Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, null, currentUser);
 
-        File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice);
-        invoiceService.producePdf(invoice, currentUser);
+        File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
+        invoiceService.producePdf(invoice, true, currentUser);
 
+        invoiceService.create(invoice, currentUser);
         return invoice;
     }
 }

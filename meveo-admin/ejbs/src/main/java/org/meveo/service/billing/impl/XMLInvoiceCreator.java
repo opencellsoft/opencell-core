@@ -150,10 +150,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     public File createXMLInvoice(Long invoiceId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
         invoice = invoiceService.refreshOrRetrieve(invoice);
-        return createXMLInvoice(invoice);
+        return createXMLInvoice(invoice, false);
     }
     
-    public File createXMLInvoice(Invoice invoice) throws BusinessException {
+    public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
         log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
             invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
 
@@ -184,7 +184,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.setAttribute("number", invoice.getInvoiceNumber());
 			invoiceTag.setAttribute("type", invoice.getInvoiceType().getCode());
 			invoiceTag.setAttribute("invoiceCounter", invoice.getAlias());
-			invoiceTag.setAttribute("id", invoice.getId().toString());
+            invoiceTag.setAttribute("id", invoice.getId() != null ? invoice.getId().toString() : "");
 			invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer()
 					.getCode()
 					+ "");
@@ -376,7 +376,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			header.appendChild(comment);
 
 			addHeaderCategories(invoice, doc, header);
-			addDiscounts(invoice, doc, header);
+			addDiscounts(invoice, doc, header, isVirtual);
 
 			Element amount = doc.createElement("amount");
 			invoiceTag.appendChild(amount);
@@ -429,7 +429,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				invoiceTag.appendChild(detail);
 			}
 
-			addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail);
+			addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual);
 			addCustomFields(invoice, invoice, doc, invoiceTag);
 			
 			Transformer trans = transfac.newTransformer();
@@ -464,7 +464,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent, boolean enterprise, Element invoiceTag,
-			boolean displayDetail) throws BusinessException {
+			boolean displayDetail, boolean isVirtual) throws BusinessException {
 		// log.debug("add user account");
 
 		Element userAccountsTag = null;
@@ -488,7 +488,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				userAccountsTag.appendChild(userAccountTag);
 				addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
 				addCategories(userAccount, invoice, doc, invoiceTag,userAccountTag, invoice.getProvider()
-						.getInvoiceConfiguration().getDisplayDetail(), enterprise);
+						.getInvoiceConfiguration().getDisplayDetail(), enterprise, isVirtual);
 			}			
 			addSubscriptions(userAccount, invoice, doc, userAccountTag, invoiceTag);
 		}
@@ -864,7 +864,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag,Element parent,
-			boolean generateSubCat, boolean enterprise) throws BusinessException {
+			boolean generateSubCat, boolean enterprise, boolean isVirtual) throws BusinessException {
 
 		log.debug("add categories");
 
@@ -931,10 +931,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
 					InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
-					List<RatedTransaction> transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(
+					List<RatedTransaction> transactions = null;
+                    if (isVirtual) {
+                        transactions = invoice.getRatedTransactionsForCategory(subCatInvoiceAgregate.getWallet(), subCatInvoiceAgregate.getInvoiceSubCategory());
+                    } else {
+					    transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(
 							subCatInvoiceAgregate.getWallet(), invoice,
 							subCatInvoiceAgregate.getInvoiceSubCategory());
-								
+					}
+					
 					String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
@@ -960,7 +965,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategory.setAttribute("taxPercent", taxesPercent);
 										
 					for (RatedTransaction ratedTransaction : transactions) {
-						getEntityManager().refresh(ratedTransaction);
+                        if (!isVirtual) {
+                            getEntityManager().refresh(ratedTransaction);
+                        }
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()
 								: ratedTransaction.getAmountWithoutTax();
 						if (transactionAmount == null) {
@@ -969,46 +976,56 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 						Element line = doc.createElement("line");
 						String code = "", description = ""; Date periodStartDate=null;Date periodEndDate=null;
-						WalletOperation walletOperation = null;
+						WalletOperation walletOperation = ratedTransaction.getWalletOperation();
 						code = ratedTransaction.getCode();
 						description = ratedTransaction.getDescription();
 												
 						if (ratedTransaction.getWalletOperationId() != null) {
 							walletOperation = getEntityManager().find(WalletOperation.class,
 									ratedTransaction.getWalletOperationId());
-							if(walletOperation!=null){	
-								if(StringUtils.isBlank(code)){
-								code = walletOperation.getCode();
-								}
-								if(StringUtils.isBlank(description)){
-								description = walletOperation.getDescription();
-								}
+						}
+                        if (walletOperation != null) {
+                            if (StringUtils.isBlank(code)) {
+                                code = walletOperation.getCode();
+                            }
+                            if (StringUtils.isBlank(description)) {
+                                description = walletOperation.getDescription();
+                            }
 
-								if(walletOperation.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()){
-									ChargeInstance chargeInstance=(ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(),false); 
-									ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+                            if (userAccount.getProvider().getInvoiceConfiguration().getDisplayChargesPeriods()) {
+                                ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+                                if (!isVirtual) {
+                                    chargeInstance = (ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(), false);
+                                }
+                                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-									// get periodStartDate and periodEndDate for recurrents
-									if( chargeTemplate instanceof RecurringChargeTemplate){
-										periodStartDate=walletOperation.getStartDate();
-										periodEndDate=walletOperation.getEndDate();
-									}
-									// get periodStartDate and periodEndDate for usages
-									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-									else if(usageChargeTemplateService.findById(chargeTemplate.getId())!=null && walletOperation.getOperationDate()!=null){
-										CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
-										if(counterPeriod!=null){
-											periodStartDate=counterPeriod.getPeriodStartDate();
-											periodEndDate=counterPeriod.getPeriodEndDate();
-										}
-									}
-									line.setAttribute("periodStartDate", periodStartDate != null ? 
-											 DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
-									line.setAttribute("periodEndDate", periodEndDate != null ? 
-											 DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
-								}
-							}
-						} 
+                                // get periodStartDate and periodEndDate for recurrents
+                                if (chargeTemplate instanceof RecurringChargeTemplate) {
+                                    periodStartDate = walletOperation.getStartDate();
+                                    periodEndDate = walletOperation.getEndDate();
+                                
+                                    // get periodStartDate and periodEndDate for usages
+                                    // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
+                                } else if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && walletOperation.getOperationDate() != null) {
+                                    CounterPeriod counterPeriod = null;
+                                    if (!isVirtual) {
+                                        counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
+                                    } else {
+                                        counterPeriod = walletOperation.getCounter().getCounterPeriod(walletOperation.getOperationDate());
+                                    }
+                                    if (counterPeriod != null) {
+                                        periodStartDate = counterPeriod.getPeriodStartDate();
+                                        periodEndDate = counterPeriod.getPeriodEndDate();
+                                    }
+                                }
+                                line.setAttribute("periodStartDate",
+                                    periodStartDate != null ? DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN))
+                                            + "" : "");
+                                line.setAttribute("periodEndDate",
+                                    periodEndDate != null ? DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + ""
+                                            : "");
+                            }
+                        }
 										
 						line.setAttribute("code", code != null ? code : "");
 					
@@ -1350,13 +1367,21 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 	}
 
-	private void addDiscounts(Invoice invoice, Document doc, Element parent) {
+	private void addDiscounts(Invoice invoice, Document doc, Element parent, boolean isVirtual) {
 		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
 		Element discounts = doc.createElement("discounts");
 
 		parent.appendChild(discounts);
-		for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : invoiceAgregateService
-				.findDiscountAggregates(invoice)) {
+		
+		List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
+		if (isVirtual){
+		    subCategoryInvoiceAgregates = invoice.getDiscountAgregates();
+		    
+        } else {
+            subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+		}
+		
+		for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
 
 			Element discount = doc.createElement("discount");
 			discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanCode());

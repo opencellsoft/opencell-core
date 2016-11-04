@@ -19,6 +19,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
@@ -59,9 +60,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  * 
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QuoteItem", propOrder = { "id", "state", "action", "appointment", "attachment", "relatedParty", "note", "productOffering", "product",
-        "itemQuoteProductOfferingPrice" })
+@XmlType(name = "QuoteItem")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductQuoteItem implements Serializable {
 

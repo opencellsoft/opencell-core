@@ -522,7 +522,7 @@ public class OrderApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(),
             Date.class, null));
 
         subscriptionService.create(subscription, currentUser);

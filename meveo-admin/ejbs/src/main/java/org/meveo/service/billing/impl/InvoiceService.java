@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -558,7 +559,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
         }
 
-        invoice.setTemporaryInvoiceNumber("000000000");
+        invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;
     }
@@ -584,19 +585,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
    public void producePdf(Long invoiceId, User currentUser) throws BusinessException {
        Invoice invoice = findById(invoiceId);
-       producePdf(invoice, currentUser);
+       producePdf(invoice, false, currentUser);
    }
    
-   public void producePdf(Invoice invoice, User currentUser) throws BusinessException  {
+   public void producePdf(Invoice invoice, boolean isVirtual, User currentUser) throws BusinessException  {
         
         String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice, currentUser);
-
-        producePdf(parameters, currentUser, invoiceXmlFileName, meveoDir);
-    }
-
-    private void producePdf(Map<String, Object> parameters, User currentUser, String invoiceXmlFileName, String meveoDir) throws BusinessException {
+       
 		log.info("PDFInvoiceGenerationJob is invoice key exists="
 				+ ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + ""
 						: "parameters is null"));
@@ -604,7 +601,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
         (new File(pdfDirectory)).mkdirs();
 
-        Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
         String INVOICE_TAG_NAME = "invoice";
 
         boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
@@ -714,8 +710,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			byte[] fileBytes = new byte[(int) file.length()];
 			fileInputStream = new FileInputStream(file);
 			fileInputStream.read(fileBytes);
-			invoice.setPdf(fileBytes);			
-			update(invoice, currentUser);
+			invoice.setPdf(fileBytes);	
+            if (!isVirtual) {
+                update(invoice, currentUser);
+            }
 			log.debug("invoice.setPdf update ok");
 		} catch (Exception e) {
 			log.error("Error saving file to DB as blob. {}", e);
@@ -1026,7 +1024,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 	public String getBillingRunPath(Invoice invoice){
-	    return getBillingRunPath(invoice.getBillingRun(), invoice.getAuditable().getCreated(), invoice.getProvider().getCode());
+	    return getBillingRunPath(invoice.getBillingRun(), invoice.getInvoiceDate(), invoice.getProvider().getCode());
 	}
 	
     public String getInvoiceXMLFilename(Invoice invoice) {

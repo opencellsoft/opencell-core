@@ -6885,11 +6885,15 @@
             <con:element xsi:nil="true"/>
             <con:description xsi:nil="true"/>
           </con:representation>
-          <con:request name="Request 1" id="a0f4764e-0f61-4ba6-9ba6-0c4971f945c9" mediaType="application/json">
+          <con:request name="Request 1" id="a0f4764e-0f61-4ba6-9ba6-0c4971f945c9" mediaType="application/json" postQueryString="false">
             <con:settings/>
             <con:endpoint>http://i.meveo.info</con:endpoint>
             <con:request/>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
             <con:parameters/>
           </con:request>
         </con:method>
@@ -6917,7 +6921,7 @@
           </con:request>
         </con:method>
       </con:resource>
-      <con:resource name="/{id}" path="/{id}{orderId}" id="ceb2cf32-8299-4ac6-81b5-7c94f3c14a78">
+      <con:resource name="/{id}" path="/{id}" id="ceb2cf32-8299-4ac6-81b5-7c94f3c14a78">
         <con:settings/>
         <con:parameters>
           <con:parameter>
@@ -6925,6 +6929,12 @@
             <con:value xsi:nil="true"/>
             <con:style>TEMPLATE</con:style>
             <con:default xsi:nil="true"/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>id</con:name>
+            <con:value/>
+            <con:style>TEMPLATE</con:style>
+            <con:default/>
           </con:parameter>
         </con:parameters>
         <con:method name="PATCH - updateProductOrder" id="5dc8d7ea-0ae8-48ad-aa87-c030aa497a89" method="PATCH">
@@ -6960,6 +6970,10 @@
             <con:request/>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:parameters/>
+            <con:parameterOrder>
+              <con:entry>orderId</con:entry>
+              <con:entry>id</con:entry>
+            </con:parameterOrder>
           </con:request>
         </con:method>
       </con:resource>
@@ -13926,6 +13940,75 @@
         </con:request>
       </con:method>
     </con:resource>
+    <con:resource name="productQuote" path="quoteManagement/productQuote" id="bfe8e51f-2c4d-41bf-9909-c40a5eb74b6a">
+      <con:settings/>
+      <con:parameters/>
+      <con:method name="findProductQuotes" id="e4523492-4dd3-4bc2-9df3-c8c9bc7f24e5" method="GET">
+        <con:settings/>
+        <con:parameters/>
+      </con:method>
+      <con:method name="createProductQuote" id="cf3c4e9e-bd0f-4763-a121-0c1c32461dd6" method="POST">
+        <con:settings/>
+        <con:parameters/>
+      </con:method>
+    </con:resource>
+    <con:resource name="{id}" path="quoteManagement/productQuote/{quoteId}" id="321acabb-ebbe-4490-961f-8f9aa92d7524">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>id</con:name>
+          <con:value>id</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>id</con:default>
+        </con:parameter>
+        <con:parameter>
+          <con:name>quoteId</con:name>
+          <con:value/>
+          <con:style>TEMPLATE</con:style>
+          <con:default/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="updateProductQuote" id="82a0a0c5-2937-4d40-a375-2ab193bcdfbb" method="PATCH">
+        <con:settings/>
+        <con:parameters/>
+        <con:request name="Request 1" id="9890328d-8f3e-4639-a465-27f12a6fad5c" mediaType="application/json" postQueryString="false">
+          <con:settings>
+            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+          </con:settings>
+          <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+          <con:request/>
+          <con:credentials>
+            <con:authType>No Authorization</con:authType>
+          </con:credentials>
+          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+          <con:jmsPropertyConfig/>
+          <con:parameters/>
+          <con:parameterOrder>
+            <con:entry>id</con:entry>
+            <con:entry>quoteId</con:entry>
+          </con:parameterOrder>
+        </con:request>
+      </con:method>
+      <con:method name="getProductQuote" id="dca8e253-cf52-49b9-8908-90ca9823ef6c" method="GET">
+        <con:settings/>
+        <con:parameters/>
+        <con:request name="Request 1" id="0785fc34-f2a4-41d1-946b-d8b04828a834" mediaType="application/json">
+          <con:settings/>
+          <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+          <con:request/>
+          <con:credentials>
+            <con:authType>No Authorization</con:authType>
+          </con:credentials>
+          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+          <con:jmsPropertyConfig/>
+          <con:parameters/>
+          <con:parameterOrder>
+            <con:entry>id</con:entry>
+            <con:entry>quoteId</con:entry>
+          </con:parameterOrder>
+        </con:request>
+      </con:method>
+    </con:resource>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -17718,10 +17801,317 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="c223b2c9-5871-46b6-988c-cb9659ec97bf" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Quote" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create Product quote" id="1590b456-a91f-4ec7-802e-321184a9a9cc">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product quote" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
+   "quoteDate":"2015-10-25T15:50:48+08",
+   "billingAccount":[
+	  {
+	     "id":"${#Project#baseEntityPrefix}_UA"
+	  }
+   ],
+   "quoteItem":[
+      {
+         "id":"03",
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+         },
+         "product":{
+            "productCharacteristic":[               
+              {
+                 "name":"quantity",
+                 "value":"2"
+              },
+              {
+			  "name":"productInstanceCode",
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_3_Instance"
+              },
+              {
+                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+                  "value":"Product CF value"
+              },
+              {
+                 "name":"${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP",
+                 "value":"{'One':150,'Two':100}"
+              }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create Product quote  - 3 items" id="71192e8c-2844-4892-a850-e23949fdcd96" disabled="true">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product quote  - 3 items" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
+   "quoteDate":"2015-10-25T15:50:48+08","billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"27/02/2016"
+               },
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"27/01/2016"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {        	
+                  "type":"bundled",
+                  "product":{          
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"1"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "id":"02",
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_OFFER3",
+            "bundledProductOffering":[
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+               },
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT2"
+               }
+            ]
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2"
+               }
+            ],
+            "productRelationship":[
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+		                  "name":"productInstanceCode",
+		                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Product_1_Instance"
+		               }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"5"
+                        }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"27/01/2016"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"3"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      },   
+      {
+         "id":"03",
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+         },
+         "product":{
+            "productCharacteristic":[               
+              {
+                 "name":"quantity",
+                 "value":"2"
+              },
+              {
+			  "name":"productInstanceCode",
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_3_Instance"
+              },
+              {
+                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+                  "value":"Product CF value"
+              },
+              {
+                 "name":"${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP",
+                 "value":"{'One':150,'Two':100}"
+              }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>70</con:value>
+        <con:value>72</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

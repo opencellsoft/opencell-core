@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
@@ -17,6 +18,7 @@ import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@XmlRootElement
 @XmlType(name="OrderItem")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductOrderItem implements Serializable {

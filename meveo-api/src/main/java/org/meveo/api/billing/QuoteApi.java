@@ -40,6 +40,7 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -102,6 +103,9 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -302,6 +306,9 @@ public class QuoteApi extends BaseApi {
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
+        
+        billingAccountService.refresh(quote.getUserAccount().getBillingAccount());
+        userAccountService.refresh(quote.getUserAccount());
         quote = quoteService.update(quote, currentUser);
 
         log.trace("Finished processing quote {}", quote.getCode());
@@ -373,16 +380,18 @@ public class QuoteApi extends BaseApi {
                 fromDate = productInstance.getApplicationDate();
             }
         }
-        if (productQuoteItem.getSubscriptionPeriod().getStartDateTime() != null && productQuoteItem.getSubscriptionPeriod().getStartDateTime().before(fromDate)) {
+        if (productQuoteItem.getSubscriptionPeriod() != null && productQuoteItem.getSubscriptionPeriod().getStartDateTime() != null
+                && productQuoteItem.getSubscriptionPeriod().getStartDateTime().before(fromDate)) {
             fromDate = productQuoteItem.getSubscriptionPeriod().getStartDateTime();
         }
-        if (toDate == null) {
+        if (toDate == null && productQuoteItem.getSubscriptionPeriod() != null) {
             productQuoteItem.getSubscriptionPeriod().getEndDateTime();
         }
 
+        log.error("AKK date from {} to {}", fromDate, toDate);
         // Create invoices for simulated charges for product instances and subscriptions
         Invoice invoice = quoteService.provideQuote(productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate, currentUser);
-        quoteItem.setInvoice(invoice);
+        //quoteItem.setInvoice(invoice);
 
         // Serialize back the productOrderItem with updated invoice attachments
         quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
@@ -404,8 +413,8 @@ public class QuoteApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-            Date.class, null));
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(productQuoteItem.getProduct(),
+            OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
         subscription.setProvider(currentUser.getProvider());
 
         // // Validate and populate customFields
