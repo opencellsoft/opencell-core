@@ -169,24 +169,24 @@
 
                 <p:panel>
                     <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost" varStatus="loopStatus">
-                        <h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Responsive Wid2 VAlignTop, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
-
+                        <h:panelGrid columns="2" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Wid25 Responsive100 VAlignTop Padding5, TexAlLeft Wid75 Responsive100 VAlignTop">
+					
 							<p:panel>
 								<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" style="margin-right: 2px; position: relative; top: 5px"
 									rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
 									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
 								</p:selectBooleanCheckbox>
-
-								 <p:inplace id="serviceDescription_#{loopStatus.index}" editor="true" rendered="#{offerTemplateBean.edit}">
+								
+								<p:inplace id="serviceDescription_#{loopStatus.index}" editor="true" rendered="#{offerTemplateBean.edit}">
 						            <p:inputText value="#{ost.serviceTemplate.description}" required="true" label="text" />
 						        </p:inplace>
  								<h:outputText value=" #{ost.serviceTemplate.description}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
-							</p:panel>
+ 							</p:panel>
 
 							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
                                 <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
-                                        <p:selectBooleanCheckbox id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
+                                        <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
 
                                     <!-- custom fields -->
