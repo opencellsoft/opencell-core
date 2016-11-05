@@ -143,4 +143,9 @@ public class BusinessEntity extends AuditableEntity {
     public String toString() {
         return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
     }
+    
+    public void setDescriptionOrCode(String val) {
+    	setDescription(val);
+    }
+    
 }

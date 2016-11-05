@@ -44,35 +44,40 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
-        if (StringUtils.isBlank(postData.getCountry())) {
+        if (StringUtils.isBlank(postData.getCountry()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("country");
         }
-        if (StringUtils.isBlank(postData.getTax())) {
+        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("tax");
         }
 
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
-        if (tradingCountry == null) {
-            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
-        }
-
+        
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        Tax tax = taxService.findByCode(postData.getTax(), provider);
-        if (tax == null) {
-            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+        TradingCountry tradingCountry = null;
+        if(!StringUtils.isBlank(postData.getCountry())){		
+	        tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+	        if (tradingCountry == null) {
+	            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+	        }
+	        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, provider) != null) {
+	            throw new EntityAlreadyExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
+	                    + postData.getCountry() + " already exists.");
+	        }	        
         }
-
-        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, provider) != null) {
-            throw new EntityAlreadyExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
-                    + postData.getCountry() + " already exists.");
+        
+        Tax tax = null;
+        if(!StringUtils.isBlank(postData.getTax())){
+	        tax = taxService.findByCode(postData.getTax(), provider);
+	        if (tax == null) {
+	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+	        }
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
@@ -80,6 +85,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setTax(tax);
         invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
         invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
+        invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
         invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry, currentUser);
     }
 
@@ -88,10 +94,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
-        if (StringUtils.isBlank(postData.getCountry())) {
+        if (StringUtils.isBlank(postData.getCountry()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("country");
         }
-        if (StringUtils.isBlank(postData.getTax())) {
+        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("tax");
         }
 

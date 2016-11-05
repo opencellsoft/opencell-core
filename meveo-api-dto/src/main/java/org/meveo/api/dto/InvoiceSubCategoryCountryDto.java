@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 
-/**
- * @author Edward P. Legaspi
- **/
 @XmlRootElement(name = "InvoiceSubCategoryCountry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubCategoryCountryDto extends BaseDto {
@@ -19,12 +16,14 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 	@XmlElement(required = true)
 	private String invoiceSubCategory;
 
-	@XmlElement(required = true)
+	private String sellingCountry;
+	
 	private String country;
 
-	@XmlElement(required = true)
 	private String tax;
 
+	private String taxCodeEL;
+	
 	private String discountCode;
 	
 
@@ -36,8 +35,10 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
 		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
-		country = invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
-		tax = invoiceSubcategoryCountry.getTax().getCode();
+		sellingCountry = invoiceSubcategoryCountry.getSellingCountry()==null?null:invoiceSubcategoryCountry.getSellingCountry().getCountryCode();
+		country = invoiceSubcategoryCountry.getTradingCountry()==null?null:invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
+		tax = invoiceSubcategoryCountry.getTax()==null?null:invoiceSubcategoryCountry.getTax().getCode();
+		taxCodeEL = invoiceSubcategoryCountry.getTaxCodeEL();
 		filterEL=invoiceSubcategoryCountry.getFilterEL();
 	}
 
@@ -47,6 +48,14 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	public void setInvoiceSubCategory(String invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public String getSellingCountry() {
+		return sellingCountry;
+	}
+
+	public void setSellingCountry(String sellingCountry) {
+		this.sellingCountry = sellingCountry;
 	}
 
 	public String getCountry() {
@@ -63,6 +72,14 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	public void setTax(String tax) {
 		this.tax = tax;
+	}
+
+	public String getTaxCodeEL() {
+		return taxCodeEL;
+	}
+
+	public void setTaxCodeEL(String taxCodeEL) {
+		this.taxCodeEL = taxCodeEL;
 	}
 
 	public String getDiscountCode() {
@@ -85,8 +102,9 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory + ", country=" + country
-				+ ", tax=" + tax + ", discountCode=" + discountCode +",filterEL="+filterEL+ "]";
+		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory 
+				+ ", selling country=" + sellingCountry + ", country=" + country
+				+ ", tax=" + tax + ", taxCodeEL=" + taxCodeEL + ", discountCode=" + discountCode +",filterEL="+filterEL+ "]";
 	}
 
 }

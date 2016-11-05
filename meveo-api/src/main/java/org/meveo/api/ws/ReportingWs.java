@@ -1,5 +1,7 @@
 package org.meveo.api.ws;
 
+import java.util.Date;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -11,6 +13,8 @@ import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.dto.dwh.PieChartDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
+import org.meveo.api.dto.response.dwh.GetMeasuredValueResponse;
+import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -68,5 +72,9 @@ public interface ReportingWs extends IBaseWs {
 
     @WebMethod
     public GetChartResponse findChart(@WebParam(name = "chartCode") String chartCode);
+    
+	@WebMethod
+	public GetMeasuredValueResponse findMVByDateAndPeriod(@WebParam(name = "code") String code, @WebParam(name = "fromDate") Date fromDate, @WebParam(name = "toDate") Date toDate,
+			@WebParam(name = "period") MeasurementPeriodEnum period, @WebParam(name = "mqCode") String mqCode);
 
 }

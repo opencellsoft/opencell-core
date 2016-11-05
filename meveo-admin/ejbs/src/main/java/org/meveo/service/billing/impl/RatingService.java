@@ -36,6 +36,8 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -60,6 +62,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.Script;
@@ -104,6 +107,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 	
+
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -697,7 +704,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 				Tax tax = invoiceSubcategoryCountry.getTax();
 				if (tax == null) {
-					throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), operation.getBillingAccount(), null);
+					if (tax == null) {
+						throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					}
 				}
 								
 				operation.setTaxPercent(tax.getPercent());
@@ -757,6 +767,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}		
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -835,6 +855,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceIntance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -895,7 +925,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
-
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}	
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -961,6 +1000,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}

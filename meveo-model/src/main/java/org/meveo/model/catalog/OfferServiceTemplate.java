@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,7 +37,7 @@ public class OfferServiceTemplate extends BaseEntity {
     @NotNull
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = false)
     @JoinColumn(name = "SERVICE_TEMPLATE_ID")
     @NotNull
     private ServiceTemplate serviceTemplate;

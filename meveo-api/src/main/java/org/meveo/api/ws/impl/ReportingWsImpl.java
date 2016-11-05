@@ -1,5 +1,7 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -14,11 +16,13 @@ import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.dto.dwh.PieChartDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
+import org.meveo.api.dto.response.dwh.GetMeasuredValueResponse;
 import org.meveo.api.dwh.ChartApi;
 import org.meveo.api.dwh.MeasurableQuantityApi;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.ReportingWs;
+import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -372,5 +376,25 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
 
         return result;
     }
+
+	@Override
+	public GetMeasuredValueResponse findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode) {
+		GetMeasuredValueResponse result = new GetMeasuredValueResponse();
+		
+        try {
+        	result.setMeasuredValues(measurableQuantityApi.findMVByDateAndPeriod(code, fromDate, toDate, period, mqCode, getCurrentUser()));
+        } catch (MeveoApiException e) {
+        	 result.getActionStatus().setErrorCode(e.getErrorCode());
+             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+             result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+        	log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }   
+        
+        return result;
+	}
 
 }

@@ -366,8 +366,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
                 try {
-                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(currentUser, seller, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,
-                        null, null, null, true);
+                	BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(currentUser, seller,null, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,null, null, null, true);
                     if (unitPrice != null) {
                         oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
                     }

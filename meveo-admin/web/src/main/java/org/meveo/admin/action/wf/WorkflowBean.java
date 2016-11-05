@@ -23,10 +23,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,6 +36,7 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
@@ -98,6 +101,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
     private transient WFTransition wfTransition = new WFTransition();
 
     private transient WFDecisionRule newWFDecisionRule = new WFDecisionRule();
+    
+	@Inject
+	@RequestParam
+	private Instance<String> isDunning;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -621,4 +628,15 @@ public class WorkflowBean extends BaseBean<Workflow> {
 			}
 		}
 	}
+    
+    @Override
+    public Map<String, Object> getFilters() {
+        if (filters == null) {
+            filters = new HashMap<String, Object>();
+        }
+        if(isDunning != null && "true".equals(isDunning.get())){
+        	filters.put("wfType", "org.meveo.admin.wf.types.DunningWF");
+        }
+        return filters;
+    }
 }
