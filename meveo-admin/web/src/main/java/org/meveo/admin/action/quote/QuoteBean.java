@@ -66,6 +66,7 @@ import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.quote.QuoteItemService;
 import org.meveo.service.quote.QuoteService;
+import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -107,6 +108,9 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
+    @Inject
+    private WorkflowService workflowService;
+
     private ParamBean paramBean = ParamBean.getInstance();
 
     private QuoteItem selectedQuoteItem;
@@ -114,6 +118,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     private TreeNode offersTree;
 
     private List<OfferItemInfo> offerConfigurations;
+
+    private Boolean workflowEnabled;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -340,7 +346,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         String result = super.saveOrUpdate(killConversation);
 
         // Execute workflow with every update
-        if (entity.getStatus() != QuoteStatusEnum.IN_PROGRESS) {
+        if (isWorkflowEnabled() && entity.getStatus() != QuoteStatusEnum.IN_PROGRESS) {
             entity = quoteApi.initiateWorkflow(entity, getCurrentUser());
         }
         return result;
@@ -720,5 +726,28 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         }
 
         return editable;
+    }
+
+    public boolean isWorkflowEnabled() {
+        if (workflowEnabled == null) {
+            workflowEnabled = workflowService.isWorkflowSetup(Quote.class, currentUser.getProvider());
+        }
+        return workflowEnabled;
+    }
+
+    @ActionMethod
+    public void createInvoice() {
+        if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() != QuoteStatusEnum.PENDING) {
+            try {
+                entity = quoteService.refreshOrRetrieve(entity);
+                entity = quoteApi.invoiceQuote(entity, getCurrentUser());
+
+                messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
+
+            } catch (BusinessException e) {
+                log.error("Failed to generate invoices for quote {}", entity.getCode());
+                messages.error(new BundleKey("messages", "quote.createInvoices.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+            }
+        }
     }
 }

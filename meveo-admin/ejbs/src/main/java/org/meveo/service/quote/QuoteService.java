@@ -30,7 +30,6 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -68,13 +67,25 @@ public class QuoteService extends BusinessService<Quote> {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    @Inject
-    private BillingAccountService billingAccountService;
-
+    /**
+     * Create a simulated invoice for quote
+     * 
+     * @param quoteCode Quote code
+     * @param cdrs Cdrs for simulation
+     * @param subscription Simulated subscription
+     * @param productInstances Sumulated product instances
+     * @param fromDate Date range for recuring charges - from
+     * @param toDate Date range for recuring charges - to
+     * @param currentUser Current user
+     * @return
+     * @throws BusinessException
+     */
     @SuppressWarnings("unused")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Invoice provideQuote(List<String> cdrs, Subscription subscription, List<ProductInstance> productInstances, Date fromDate, Date toDate, User currentUser)
+    public Invoice provideQuote(String quoteCode, List<String> cdrs, Subscription subscription, List<ProductInstance> productInstances, Date fromDate, Date toDate, User currentUser)
             throws BusinessException {
+
+        log.info("Creating simulated invoice for quote {} dates {}-{} ", quoteCode, fromDate, toDate);
 
         List<WalletOperation> walletOperations = new ArrayList<>();
 

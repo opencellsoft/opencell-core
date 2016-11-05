@@ -89,7 +89,7 @@
 											<p:commandButton icon="ui-icon-close"
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												action="#{invoiceBean.deleteInvoicePdf}"
-												update=":buttonGenerate,@form" />
+												update=":headerForm:tabView:buttonGenerate,@form" />
 										</p:outputPanel>
 										<p:outputPanel
 											rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
@@ -106,7 +106,7 @@
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												icon="ui-icon-close"
 												action="#{invoiceBean.deleteXmlInvoice}"
-												update=":buttonGenerate,@form" />
+												update=":headerForm:tabView:buttonGenerate,@form" />
 										</p:outputPanel>
 									</p:panelGrid>
 								</p:fieldset>

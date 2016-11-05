@@ -40,11 +40,9 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -65,9 +63,6 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private Logger log;
-
-    @Inject
-    private SubscriptionService subscriptionService;
 
     @Inject
     private ProductOfferingService productOfferingService;
@@ -92,9 +87,6 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
-
-    @Inject
-    private BillingAccountService billingAccountService;
 
     @Inject
     InvoiceService invoiceService;
@@ -260,13 +252,10 @@ public class QuoteApi extends BaseApi {
      */
     public Quote initiateWorkflow(Quote quote, User currentUser) throws BusinessException {
 
-        long from = new Date().getTime();
-
         if (workflowService.isWorkflowSetup(Quote.class, currentUser.getProvider())) {
             quote = (Quote) workflowService.executeMatchingWorkflows(quote, currentUser);
 
         } else {
-            log.error("AKK init workflow takes {}", new Date().getTime() - from);
             try {
                 quote = processQuote(quote, currentUser);
             } catch (MeveoApiException e) {
@@ -279,7 +268,7 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Process the quote
+     * Process the quote for workflow
      * 
      * @param quote
      * @param currentUser
@@ -289,7 +278,7 @@ public class QuoteApi extends BaseApi {
     public Quote processQuote(Quote quote, User currentUser) throws BusinessException, MeveoApiException {
 
         // Nothing to process in final state
-        if (quote.getStatus() == QuoteStatusEnum.CANCELLED || quote.getStatus() == QuoteStatusEnum.ACCEPTED) {
+        if (quote.getStatus() == QuoteStatusEnum.CANCELLED || quote.getStatus() == QuoteStatusEnum.ACCEPTED || quote.getStatus() == QuoteStatusEnum.REJECTED) {
             return quote;
         }
 
@@ -303,6 +292,9 @@ public class QuoteApi extends BaseApi {
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
+
+        quote = invoiceQuote(quote, currentUser);
+
         quote = quoteService.update(quote, currentUser);
 
         log.trace("Finished processing quote {}", quote.getCode());
@@ -310,7 +302,60 @@ public class QuoteApi extends BaseApi {
         return quote;
     }
 
+    /**
+     * Process quote item for workflow
+     * 
+     * @param quote Quote
+     * @param quoteItem Quote item
+     * @param currentUser
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
     private void processQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
+
+        log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+
+        log.info("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+    }
+
+    /**
+     * Create invoices for the quote
+     * 
+     * @param quote Quote
+     * @param currentUser Current user
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    public Quote invoiceQuote(Quote quote, User currentUser) throws BusinessException {
+
+        log.info("Creating invoices for quote {}", quote.getCode());
+
+        try {
+            for (QuoteItem quoteItem : quote.getQuoteItems()) {
+                invoiceQuoteItem(quote, quoteItem, currentUser);
+            }
+
+            quote = quoteService.update(quote, currentUser);
+
+        } catch (MeveoApiException e) {
+            throw new BusinessException(e);
+        }
+
+        log.trace("Finished creating invoices for quote {}", quote.getCode());
+
+        return quote;
+    }
+
+    /**
+     * Create invoice for quote item
+     * 
+     * @param quote Quote
+     * @param quoteItem Quote item
+     * @param currentUser Current user
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    private void invoiceQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
 
         log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
@@ -325,7 +370,8 @@ public class QuoteApi extends BaseApi {
         // Just a simple case of ordering a single product
         if (primaryOffering instanceof ProductTemplate) {
 
-            ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, null, currentUser);
+            ProductInstance productInstance = instantiateVirtualProduct((ProductTemplate) primaryOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, null,
+                currentUser);
             productInstances.add(productInstance);
 
             // A complex case of ordering from offer template with services and optional products
@@ -348,13 +394,14 @@ public class QuoteApi extends BaseApi {
             }
 
             // Instantiate a service
-            subscription = instantiateSubscription((OfferTemplate) primaryOffering, productQuoteItem.getProduct(), services, quoteItem, productQuoteItem, currentUser);
+            subscription = instantiateVirtualSubscription((OfferTemplate) primaryOffering, productQuoteItem.getProduct(), services, quoteItem, productQuoteItem, currentUser);
 
             // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
             index = 1;
-            for (Product product : products) {
+            for (@SuppressWarnings("unused")
+            Product product : products) {
                 ProductTemplate productOffering = (ProductTemplate) quoteItem.getProductOfferings().get(index);
-                ProductInstance productInstance = instantiateProduct(productOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, subscription, currentUser);
+                ProductInstance productInstance = instantiateVirtualProduct(productOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, subscription, currentUser);
                 productInstances.add(productInstance);
                 index++;
             }
@@ -384,7 +431,7 @@ public class QuoteApi extends BaseApi {
 
         log.error("AKK date from {} to {}", fromDate, toDate);
         // Create invoices for simulated charges for product instances and subscriptions
-        Invoice invoice = quoteService.provideQuote(productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate, currentUser);
+        Invoice invoice = quoteService.provideQuote(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate, currentUser);
 
         // invoiceService.create(invoice, currentUser);
         quoteItem.setInvoice(invoice);
@@ -395,8 +442,8 @@ public class QuoteApi extends BaseApi {
         log.info("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
     }
 
-    private Subscription instantiateSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
-            User currentUser) throws BusinessException, MeveoApiException {
+    private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem,
+            ProductQuoteItem productQuoteItem, User currentUser) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating virtual subscription from offer template {} for quote {} line {}", offerTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -428,8 +475,8 @@ public class QuoteApi extends BaseApi {
         return subscription;
     }
 
-    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem, Subscription subscription,
-            User currentUser) throws BusinessException {
+    private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
+            Subscription subscription, User currentUser) throws BusinessException {
 
         log.debug("Instantiating virtual product from product template {} for quote {} line {}", productTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -456,7 +503,7 @@ public class QuoteApi extends BaseApi {
         return productInstance;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unused" })
     private CustomFieldsDto extractCustomFields(Product product, Class appliesToClass, Provider provider) {
 
         if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {

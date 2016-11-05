@@ -364,6 +364,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 		this.temporaryInvoiceNumber = temporaryInvoiceNumber;
 	}
 
+    public String getInvoiceNumberOrTemporaryNumber() {
+        if (invoiceNumber != null) {
+            return invoiceNumber;
+        } else {
+            return "[" + temporaryInvoiceNumber + "]";
+        }
+    }
+	
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}
