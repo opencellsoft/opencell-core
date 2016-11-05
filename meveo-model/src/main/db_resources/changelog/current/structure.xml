@@ -2938,4 +2938,8 @@
         <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
+        <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
+    </changeSet>    
 </databaseChangeLog>

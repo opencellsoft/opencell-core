@@ -16,28 +16,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.order;
+package org.meveo.admin.action.quote;
 
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.meveo.admin.action.order.OrderListBean;
+
 @Named
 @ConversationScoped
-public class OrderListBean extends OrderBean {
+public class QuoteListBean extends QuoteBean {
 
-    private static final long serialVersionUID = 6301829745333803753L;
-    public static final String SEARCH_USER_GROUP = "routedToUserGroup";
+    private static final long serialVersionUID = 1954649215739728918L;
 
-    private boolean showMyOrdersOnly = true;
+    private boolean showMyQuotesOnly = true;
 
-    public boolean isShowMyOrdersOnly() {
-        return showMyOrdersOnly;
+    public boolean isShowMyQuotesOnly() {
+        return showMyQuotesOnly;
     }
 
-    public void setShowMyOrdersOnly(boolean showMyOrdersOnly) {
-        this.showMyOrdersOnly = showMyOrdersOnly;
+    public void setShowMyQuotesOnly(boolean showMyQuotesOnly) {
+        this.showMyQuotesOnly = showMyQuotesOnly;
     }
 
     /**
@@ -47,8 +48,8 @@ public class OrderListBean extends OrderBean {
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
         boolean isAdmin = currentUser.hasPermission("administration", "administrationManagement");
-        if (isAdmin && showMyOrdersOnly) {
-            searchCriteria.put(SEARCH_USER_GROUP, getCurrentUser().getUserLevel());
+        if (isAdmin && showMyQuotesOnly) {
+            searchCriteria.put(OrderListBean.SEARCH_USER_GROUP, getCurrentUser().getUserLevel());
         }
 
         return searchCriteria;

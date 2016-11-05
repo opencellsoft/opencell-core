@@ -13,14 +13,15 @@
         <pe:importEnum type="org.meveo.model.order.OrderStatusEnum" var="OrderStatusEnum" />
         <pe:importEnum type="org.meveo.model.order.OrderItemActionEnum" var="OrderItemActionEnum" />
         <pe:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.orders']}" disabled="true" />
-                    <p:menuitem outcome="orders" value="#{messages['menu.orders']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.orders']}" disabled="true" />
+                <p:menuitem outcome="orders" value="#{messages['menu.orders']}" />
+                <p:menuitem value="#{messages['order.new']}" disabled="true" rendered="#{orderBean.entity.transient}" />
+                <p:menuitem value="#{messages['order.editView']} - #{orderBean.entity.descriptionOrCode}" disabled="true" rendered="#{!orderBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
@@ -143,7 +144,8 @@
 
                                 <h:panelGroup>
                                     <hftl:formField id="subscription" entity="#{orderBean.selectedOrderItem}" label="#{messages['access.subscription']}" field="subscription"
-                                        valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
+                                        valueLabelField="code" popup="true" popupId="subscriptionPopup" required="true"
+                                        edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
                                         rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY || orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE)}" />
                                 </h:panelGroup>
                                 <h:panelGroup>
@@ -321,7 +323,7 @@
 
                                                     <div class="clearLeft"></div>
                                                     <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"/>
+                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
                                                 </p:tab>
                                             </c:forEach>

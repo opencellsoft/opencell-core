@@ -439,8 +439,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         if (invoiceAgregateTax.getId() == null) {
                             if (!isVirtual) {
                                 invoiceAgregateService.create(invoiceAgregateTax, currentUser);
-                            } else {
-                                invoice.getInvoiceAgregates().add(invoiceAgregateTax);
                             }
                         }
 
@@ -472,8 +470,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (invoiceAgregateCat.getId() == null) {
                     if (!isVirtual){
                         invoiceAgregateService.create(invoiceAgregateCat, currentUser);
-                    } else {
-                        invoice.getInvoiceAgregates().add(invoiceAgregateCat);
                     }
                 }
 
@@ -513,8 +509,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 if (!isVirtual){
                     invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
-                } else {
-                    invoice.getInvoiceAgregates().add(invoiceAgregateSubcat);
                 }
             }
 
@@ -831,11 +825,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
             if (!isVirtual) {
                 invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
-            } else {
-                invoice.getInvoiceAgregates().add(invoiceAgregateSubcat);
             }
 
-		}}
+		}
+	}
 	
 
 

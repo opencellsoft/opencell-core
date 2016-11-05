@@ -454,6 +454,10 @@ public class UsageRatingService {
         rateUsageWithinTransaction(edr, false, currentUser);
     }
 
+    public List<WalletOperation> rateUsageDontChangeTransaction(EDR edr, boolean isVirtual, User currentUser) throws BusinessException {
+        return rateUsageWithinTransaction(edr, isVirtual, currentUser);
+    }
+    
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual, User currentUser) throws BusinessException {
         BigDecimal originalQuantity = edr.getQuantity();

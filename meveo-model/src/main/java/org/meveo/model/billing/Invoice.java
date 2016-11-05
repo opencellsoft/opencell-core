@@ -65,7 +65,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
-	private BillingAccount billingAccount = new BillingAccount();
+	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
@@ -82,8 +82,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@Size(max = 50)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 20, unique = true)
-	@Size(max = 20)
+	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 60, unique = true)
+	@Size(max = 60)
 	private String temporaryInvoiceNumber;
 
 	@Column(name = "PRODUCT_DATE")

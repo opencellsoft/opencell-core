@@ -298,5 +298,10 @@
         <constraint>currentUser.hasPermission('order','orderManagement')</constraint>
         <constraint type="READ">currentUser.hasPermission('order','orderVisualization')</constraint>
     </page>
+
+    <page view-id=".+\/quote\/.+" >
+        <constraint>currentUser.hasPermission('quote','quoteManagement')</constraint>
+        <constraint type="READ">currentUser.hasPermission('quote','quoteVisualization')</constraint>
+    </page>    
     
 </page-access>

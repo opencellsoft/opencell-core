@@ -1954,7 +1954,19 @@
             <to-view-id>/pages/order/orders/orders.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
-        </navigation-case>    
+        </navigation-case>  
+        <navigation-case>
+            <from-outcome>quoteDetail</from-outcome>
+            <to-view-id>/pages/quote/quotes/quoteDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>quotes</from-outcome>
+            <to-view-id>/pages/quote/quotes/quotes.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>             
 
         <navigation-case>
             <from-outcome>productTemplates</from-outcome>

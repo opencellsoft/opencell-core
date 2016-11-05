@@ -6,24 +6,31 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -61,7 +68,11 @@ public class QuoteService extends BusinessService<Quote> {
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
+    @Inject
+    private BillingAccountService billingAccountService;
+
     @SuppressWarnings("unused")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Invoice provideQuote(List<String> cdrs, Subscription subscription, List<ProductInstance> productInstances, Date fromDate, Date toDate, User currentUser)
             throws BusinessException {
 
@@ -98,7 +109,7 @@ public class QuoteService extends BusinessService<Quote> {
             }
 
             // Process CDRS
-            if (cdrs != null && !cdrs.isEmpty() && subscription!=null) {
+            if (cdrs != null && !cdrs.isEmpty() && subscription != null) {
 
                 cdrParsingService.initByApi(currentUser.getUserName(), "quote");
 
@@ -118,7 +129,7 @@ public class QuoteService extends BusinessService<Quote> {
                 // Rate EDRs
                 for (EDR edr : edrs) {
                     log.debug("edr={}", edr);
-                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageWithinTransaction(edr, true, currentUser);
+                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
                     if (edr.getStatus() == EDRStatusEnum.REJECTED) {
                         log.error("edr rejected={}", edr.getRejectReason());
                         throw new BusinessException(edr.getRejectReason());
@@ -138,6 +149,32 @@ public class QuoteService extends BusinessService<Quote> {
 
         File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
         invoiceService.producePdf(invoice, true, currentUser);
+
+        // Clean up data
+        // invoice.setBillingAccount(null);
+        invoice.setRatedTransactions(null);
+        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+            log.error("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
+            // invoiceAgregate.setBillingAccount(null);
+            // invoiceAgregate.setTradingCurrency(null);
+            // invoiceAgregate.setTradingLanguage(null);
+            // invoiceAgregate.setBillingRun(null);
+            // invoiceAgregate.setUserAccount(null);
+            invoiceAgregate.setAuditable(null);
+            invoiceAgregate.updateAudit(currentUser);
+            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                // ((CategoryInvoiceAgregate)invoiceAgregate).setInvoiceCategory(null);
+                // ((CategoryInvoiceAgregate)invoiceAgregate).setSubCategoryInvoiceAgregates(null);
+            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                // ((TaxInvoiceAgregate)invoiceAgregate).setTax(null);
+            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setInvoiceSubCategory(null);
+                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
+                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
+                ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
+                ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+            }
+        }
 
         invoiceService.create(invoice, currentUser);
         return invoice;

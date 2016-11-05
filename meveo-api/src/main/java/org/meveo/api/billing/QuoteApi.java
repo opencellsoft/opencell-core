@@ -41,6 +41,7 @@ import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -48,15 +49,12 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.order.OrderItemService;
-import org.meveo.service.order.OrderService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
-import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 import org.tmf.dsmapi.quote.ProductQuote;
@@ -84,16 +82,7 @@ public class QuoteApi extends BaseApi {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-    private SubscriptionApi subscriptionApi;
-
-    @Inject
-    private OrderService orderService;
-
-    @Inject
     private QuoteService quoteService;
-
-    @Inject
-    private OrderItemService orderItemService;
 
     @Inject
     private WorkflowService workflowService;
@@ -103,9 +92,12 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
-    
+
     @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    InvoiceService invoiceService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -249,6 +241,9 @@ public class QuoteApi extends BaseApi {
             throw e;
         }
 
+        // Commit before initiating workflow/quote processing
+        quoteService.commit();
+
         quote = initiateWorkflow(quote, currentUser);
 
         return quoteToDto(quote);
@@ -265,10 +260,13 @@ public class QuoteApi extends BaseApi {
      */
     public Quote initiateWorkflow(Quote quote, User currentUser) throws BusinessException {
 
+        long from = new Date().getTime();
+
         if (workflowService.isWorkflowSetup(Quote.class, currentUser.getProvider())) {
             quote = (Quote) workflowService.executeMatchingWorkflows(quote, currentUser);
 
         } else {
+            log.error("AKK init workflow takes {}", new Date().getTime() - from);
             try {
                 quote = processQuote(quote, currentUser);
             } catch (MeveoApiException e) {
@@ -301,14 +299,10 @@ public class QuoteApi extends BaseApi {
             processQuoteItem(quote, quoteItem, currentUser);
         }
 
-        quote.setCompletionDate(new Date());
         quote.setStatus(QuoteStatusEnum.PENDING);
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
-        
-        billingAccountService.refresh(quote.getUserAccount().getBillingAccount());
-        userAccountService.refresh(quote.getUserAccount());
         quote = quoteService.update(quote, currentUser);
 
         log.trace("Finished processing quote {}", quote.getCode());
@@ -391,7 +385,9 @@ public class QuoteApi extends BaseApi {
         log.error("AKK date from {} to {}", fromDate, toDate);
         // Create invoices for simulated charges for product instances and subscriptions
         Invoice invoice = quoteService.provideQuote(productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate, currentUser);
-        //quoteItem.setInvoice(invoice);
+
+        // invoiceService.create(invoice, currentUser);
+        quoteItem.setInvoice(invoice);
 
         // Serialize back the productOrderItem with updated invoice attachments
         quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
@@ -655,20 +651,20 @@ public class QuoteApi extends BaseApi {
     /**
      * Distinguish bundled products which could be either services or products
      * 
-     * @param productOrderItem Product order item DTO
-     * @param orderItem Order item entity
+     * @param productQuoteItem Product order item DTO
+     * @param quoteItem Order item entity
      * @return An array of List<Product> elements, first being list of products, and second - list of services
      */
     @SuppressWarnings("unchecked")
-    public List<Product>[] getProductsAndServices(ProductOrderItem productOrderItem, org.meveo.model.order.OrderItem orderItem) {
+    public List<Product>[] getProductsAndServices(ProductQuoteItem productQuoteItem, QuoteItem quoteItem) {
 
         List<Product> products = new ArrayList<>();
         List<Product> services = new ArrayList<>();
-        if (productOrderItem != null) {
+        if (productQuoteItem != null) {
             int index = 1;
-            if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
-                for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                    if (index < orderItem.getProductOfferings().size()) {
+            if (productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
+                for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
+                    if (index < quoteItem.getProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
                     } else {
                         services.add(productRelationship.getProduct());
