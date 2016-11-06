@@ -54,6 +54,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -718,6 +719,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
+        filters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, provider);
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
         List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
