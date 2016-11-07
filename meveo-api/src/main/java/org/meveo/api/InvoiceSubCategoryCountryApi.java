@@ -94,7 +94,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
-        if (StringUtils.isBlank(postData.getCountry()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
+        if (StringUtils.isBlank(postData.getCountry())) {
             missingParameters.add("country");
         }
         if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
