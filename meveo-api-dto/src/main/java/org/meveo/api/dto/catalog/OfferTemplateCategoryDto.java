@@ -25,8 +25,6 @@ public class OfferTemplateCategoryDto implements Serializable {
 	
 	private String name;
 	
-	private String imageByteValue;
-	
 	private String offerTemplateCategoryCode;
 	
 	private Long id;
@@ -109,22 +107,11 @@ public class OfferTemplateCategoryDto implements Serializable {
 		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
 	}
 
-	public String getImageByteValue() {
-		return imageByteValue;
-	}
-
-	public void setImageByteValue(String imageByteValue) {
-		this.imageByteValue = imageByteValue;
-	}
-
 	@Override
 	public String toString() {
-		return "OfferTemplateCategoryDto [code=" + code + ", description="
-				+ description + ", name=" + name + ", imageByteValue="
-				+ imageByteValue + ", offerTemplateCategoryCode="
-				+ offerTemplateCategoryCode + ", id=" + id + ", href=" + href
-				+ ", version=" + version + ", lastModified=" + lastModified
-				+ "]";
+		return "OfferTemplateCategoryDto [code=" + code + ", description=" + description + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
+				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imageBase64="
+				+ imageBase64 + "]";
 	}
 
 	public Long getId() {
