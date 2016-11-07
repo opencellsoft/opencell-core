@@ -2,9 +2,6 @@ package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -13,33 +10,22 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "13",
- *     "href": "http://serverlocation:port/catalogManagement/serviceSpecification/13",
- *     "name": "specification 1",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     }
- * }
- *
+ * 
+ *         { "id": "13", "href": "http://serverlocation:port/catalogManagement/serviceSpecification/13", "name": "specification 1", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class RequiredSpecification implements Serializable {
 
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "ID", nullable = true)
     private String id;
 
-    @Column(name = "HREF", nullable = true)
     private String href;
 
-    @Column(name = "NAME", nullable = true)
     private String name;
 
     private TimeRange validFor;
@@ -123,7 +109,7 @@ public class RequiredSpecification implements Serializable {
     }
 
     public static RequiredSpecification createProto() {
-        RequiredSpecification requiredSpecification = new RequiredSpecification ();
+        RequiredSpecification requiredSpecification = new RequiredSpecification();
 
         requiredSpecification.id = "id";
         requiredSpecification.href = "href";

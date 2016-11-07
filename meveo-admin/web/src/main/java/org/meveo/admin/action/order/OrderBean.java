@@ -160,7 +160,7 @@ public class OrderBean extends CustomFieldBean<Order> {
                 this.selectedOrderItem = orderItemService.refreshOrRetrieve(orderItemToEdit);
 
                 try {
-                    this.selectedOrderItem.setOrderItemDto(org.tmf.dsmapi.catalog.resource.order.OrderItem.deserializeOrderItem(selectedOrderItem.getSource()));
+                    this.selectedOrderItem.setOrderItemDto(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.deserializeOrderItem(selectedOrderItem.getSource()));
                 } catch (BusinessException e) {
                     log.error("Failed to deserialize order item DTO from a source");
                 }
@@ -211,7 +211,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             selectedOrderItem.getProductOfferings().clear();
             selectedOrderItem.getProductOfferings().add(selectedOrderItem.getMainOffering());
 
-            org.tmf.dsmapi.catalog.resource.order.OrderItem orderItemDto = new org.tmf.dsmapi.catalog.resource.order.OrderItem();
+            org.tmf.dsmapi.catalog.resource.order.ProductOrderItem orderItemDto = new org.tmf.dsmapi.catalog.resource.order.ProductOrderItem();
             orderItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
             orderItemDto.setProduct(new Product());
 
@@ -317,7 +317,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
 
             selectedOrderItem.setOrderItemDto(orderItemDto);
-            selectedOrderItem.setSource(org.tmf.dsmapi.catalog.resource.order.OrderItem.serializeOrderItem(orderItemDto));
+            selectedOrderItem.setSource(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.serializeOrderItem(orderItemDto));
 
             if (selectedOrderItem.getUserAccount() == null && selectedOrderItem.getSubscription() != null) {
                 selectedOrderItem.setUserAccount(userAccountService.refreshOrRetrieve(selectedOrderItem.getSubscription().getUserAccount()));
@@ -387,7 +387,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
         offerConfigurations = new ArrayList<>();
 
-        org.tmf.dsmapi.catalog.resource.order.OrderItem orderItemDto = (org.tmf.dsmapi.catalog.resource.order.OrderItem) this.selectedOrderItem.getOrderItemDto();
+        org.tmf.dsmapi.catalog.resource.order.ProductOrderItem orderItemDto = (org.tmf.dsmapi.catalog.resource.order.ProductOrderItem) this.selectedOrderItem.getOrderItemDto();
 
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);

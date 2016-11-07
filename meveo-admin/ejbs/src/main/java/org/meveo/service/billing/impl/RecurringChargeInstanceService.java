@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
@@ -43,6 +45,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
@@ -133,7 +136,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	}
 
 	public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInst,
-			RecurringChargeTemplate recurringChargeTemplate, Date subscriptionDate, Seller seller, User creator)
+			RecurringChargeTemplate recurringChargeTemplate, Date subscriptionDate, Seller seller, boolean isVirtual, User creator)
 			throws BusinessException {
 
 		if (serviceInst == null) {
@@ -148,12 +151,13 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		}
 		String chargeCode = recurringChargeTemplate.getCode();
 
-		RecurringChargeInstance chargeInst = (RecurringChargeInstance) findByCodeAndService(chargeCode,
-				serviceInst.getId());
-
-		if (chargeInst != null) {
-			throw new BusinessException("charge instance code already exists. code=" + chargeCode + " service instance id " + serviceInst.getId());
-		}
+        if (!isVirtual) {
+            RecurringChargeInstance chargeInst = (RecurringChargeInstance) findByCodeAndService(chargeCode, serviceInst.getId());
+            if (chargeInst != null) {
+                throw new BusinessException("charge instance code already exists. code=" + chargeCode + " service instance id " + serviceInst.getId());
+            }
+        }
+        
 		log.debug("create chargeInstance for charge {}",chargeCode);
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
 		chargeInstance.setCode(chargeCode);
@@ -171,11 +175,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				.getTradingCountry());
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
-		chargeInstance.updateAudit(getCurrentUser());
+		chargeInstance.updateAudit(creator);
 
 		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()
 				.getServiceRecurringChargeByChargeCode(chargeCode);
-		getEntityManager().merge(recChTmplServ);
+//		getEntityManager().merge(recChTmplServ); - does not make sence as merge result is what shoudl be used 
 		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
 
 		if (walletTemplates != null && walletTemplates.size() > 0) {
@@ -190,8 +194,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					chargeInstance.setPrepaid(true);
 				}
 				
-				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
-						serviceInst.getAuditable().getCreator());
+				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate, isVirtual,
+						creator);
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),chargeInstance.getId());
 				chargeInstance.getWalletInstances().add(walletInstance);
 			}
@@ -201,7 +205,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
 		}
 
-		create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
+
+        if (!isVirtual) {
+            create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
+        }
+        
 		return chargeInstance;
 	}
 
@@ -282,8 +290,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				  .setParameter("chargeInstance", activeRecurringChargeInstance).setParameter("provider", user.getProvider())
 							.executeUpdate();
 			  }catch (Exception e) {
-				e.printStackTrace();
-				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
+				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId, e);
 			  }
 			}
 
@@ -346,4 +353,29 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		return nbRating;
 	}
 
+	/**
+	 * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
+	 * 
+	 * @param chargeInstance Recurring charge instance
+     * @param quantity Quantity as calculated
+     * @param fromDate Recurring charge application start
+     * @param toDate Recurring charge application end
+     * @param currentUser Current user
+	 * @return Wallet operations
+	 * @throws BusinessException
+	 */
+    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate, User currentUser)
+            throws BusinessException {
+
+        log.debug("Apply recuring charges on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date range {}-{}", chargeInstance.getUserAccount().getCode(),
+            chargeInstance.getServiceInstance().getSubscription().getOffer().getCode(), chargeInstance.getRecurringChargeTemplate().getCode(), chargeInstance.getServiceInstance()
+                .getQuantity(), fromDate, toDate);
+
+        BigDecimal inputQuantity = chargeInstance.getServiceInstance().getQuantity();
+        BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeInstance.getRecurringChargeTemplate().getUnitMultiplicator(), chargeInstance.getRecurringChargeTemplate()
+            .getUnitNbDecimal(), chargeInstance.getRecurringChargeTemplate().getRoundingMode());
+
+        return walletOperationService.applyReccuringChargeVirtual(chargeInstance, inputQuantity, quantity, fromDate, toDate, currentUser);
+
+    }
 }

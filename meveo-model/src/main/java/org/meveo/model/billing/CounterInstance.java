@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -31,6 +32,7 @@ import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.shared.DateUtils;
 
 @Entity
 @Table(name = "BILLING_COUNTER")
@@ -92,6 +94,13 @@ public class CounterInstance extends BusinessEntity {
 		this.billingAccount = billingAccount;
 	}
 
-	
+	public CounterPeriod getCounterPeriod(Date date){
+	    for (CounterPeriod counterPeriod : counterPeriods) {
+            if (DateUtils.isDateTimeWithinPeriod(date, counterPeriod.getPeriodStartDate(), counterPeriod.getPeriodEndDate())){
+                return counterPeriod;
+            }
+        }
+	    return null;
+	}
 
 }

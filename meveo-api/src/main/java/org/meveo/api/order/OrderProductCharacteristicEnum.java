@@ -5,9 +5,45 @@ import java.util.Date;
 
 public enum OrderProductCharacteristicEnum {
 
-    SERVICE_PRODUCT_QUANTITY("quantity", BigDecimal.class), SUBSCRIPTION_CODE("subscriptionCode", String.class), SERVICE_CODE("serviceCode", String.class), PRODUCT_INSTANCE_CODE(
-            "productInstanceCode", String.class), SUBSCRIPTION_DATE("subscriptionDate", Date.class), SUBSCRIPTION_END_DATE("subscriptionEndDate", Date.class), TERMINATION_DATE(
-            "terminationDate", Date.class), TERMINATION_REASON("terminationReason", String.class);
+    /**
+     * Quantity
+     */
+    SERVICE_PRODUCT_QUANTITY("quantity", BigDecimal.class),
+
+    /**
+     * Subscription code
+     */
+    SUBSCRIPTION_CODE("subscriptionCode", String.class),
+
+    /**
+     * Service code
+     */
+    SERVICE_CODE("serviceCode", String.class),
+
+    /**
+     * Product instance code
+     */
+    PRODUCT_INSTANCE_CODE("productInstanceCode", String.class),
+
+    /**
+     * Subscription date
+     */
+    SUBSCRIPTION_DATE("subscriptionDate", Date.class),
+
+    /**
+     * Subscription end date
+     */
+    SUBSCRIPTION_END_DATE("subscriptionEndDate", Date.class),
+
+    /**
+     * Subscription or service termination date
+     */
+    TERMINATION_DATE("terminationDate", Date.class),
+
+    /**
+     * Subscription or service termination reason
+     */
+    TERMINATION_REASON("terminationReason", String.class);
 
     protected String characteristicName;
 

@@ -40,6 +40,7 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseDto {
 	private String criteria1;
 	private String criteria2;
 	private String criteria3;
+	private String orderNumber;
 
 	public String getOneShotCharge() {
 		return oneShotCharge;
@@ -129,12 +130,20 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseDto {
 		this.criteria3 = criteria3;
 	}
 
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription
 				+ ", wallet=" + wallet + ", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
-				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
+				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 +", orderNumber="+orderNumber+ "]";
 	}
 
 	public String getSubscription() {

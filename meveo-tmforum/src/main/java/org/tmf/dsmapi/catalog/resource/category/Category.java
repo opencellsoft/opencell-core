@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,38 +19,23 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "42",
- *     "version": "1.2",
- *     "href": "http://serverlocation:port/catalogManagement/category/42",
- *     "name": "Cloud Services",
- *     "description": "A category to hold all available cloud service offers",
- *     "lastUpdate": "2013-04-19T16:42:23-04:00",
- *     "lifecycleStatus": "Active",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     },
- *     "parentId": "41",
- *     "isRoot": "false"
- * }
- *
+ * 
+ *         { "id": "42", "version": "1.2", "href": "http://serverlocation:port/catalogManagement/category/42", "name": "Cloud Services", "description":
+ *         "A category to hold all available cloud service offers", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "parentId": "41", "isRoot": "false" }
+ * 
  */
-@MappedSuperclass
 @XmlRootElement
-@JsonInclude(value=Include.NON_NULL)
+@JsonInclude(value = Include.NON_NULL)
 public class Category extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
     private static final Logger logger = Logger.getLogger(Category.class.getName());
 
-    @Column(name = "PARENT_ID", nullable = true)
     private String parentId;
 
-    @Column(name = "IS_ROOT", nullable = true)
     private Boolean isRoot;
 
     public Category() {
@@ -171,15 +154,16 @@ public class Category extends AbstractCatalogEntity implements Serializable {
         category.setHref("href");
         category.setName("name");
         category.setDescription("description");
-        category.setLastUpdate(new Date ());
+        category.setLastUpdate(new Date());
         category.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        category.setValidFor(TimeRange.createProto ());
+        category.setValidFor(TimeRange.createProto());
 
         category.parentId = "parent id";
         category.isRoot = false;
 
         return category;
     }
+
     public static Category createProto(UriInfo uriInfo) {
         Category category = new Category();
 
@@ -188,23 +172,24 @@ public class Category extends AbstractCatalogEntity implements Serializable {
         category.setHref(String.format("%scatalogManagement/category/%s", uriInfo.getBaseUri().toString(), category.getId()));
         category.setName("Default");
         category.setDescription("Default category");
-        category.setLastUpdate(new Date ());
+        category.setLastUpdate(new Date());
         category.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        category.setValidFor(TimeRange.createProto ());
+        category.setValidFor(TimeRange.createProto());
 
         category.parentId = null;
         category.isRoot = Boolean.TRUE;
 
         return category;
     }
-    public CatalogReference getCatalogReference(){
-    	CatalogReference reference=new CatalogReference();
-    	reference.setReferencedId(this.getCatalogId());
-    	reference.setReferencedVersion(this.getVersion());
-    	reference.setReferencedHref(this.getHref());
-    	reference.setReferencedName(this.getName());
-    	reference.setReferencedDescription(this.getDescription());
-    	return reference;
+
+    public CatalogReference getCatalogReference() {
+        CatalogReference reference = new CatalogReference();
+        reference.setReferencedId(this.getCatalogId());
+        reference.setReferencedVersion(this.getVersion());
+        reference.setReferencedHref(this.getHref());
+        reference.setReferencedName(this.getName());
+        reference.setReferencedDescription(this.getDescription());
+        return reference;
     }
 
 }

@@ -2,45 +2,31 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "22",
- *     "href": "http://serverlocation:port/documentManagment/attachment/22",
- *     "description": "Detailed image of the item"
- *     "type": "Picture",
- *     "url": "http://xxxxx"
- * }
- *
+ * 
+ *         { "id": "22", "href": "http://serverlocation:port/documentManagment/attachment/22", "description": "Detailed image of the item" "type": "Picture", "url": "http://xxxxx"
+ *         }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class Attachment implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "ID", nullable = true)
     private String id;
 
-    @Column(name = "HREF", nullable = true)
     private String href;
 
-    @Column(name = "DESCRIPTION", nullable = true)
     private String description;
 
-    @Column(name = "TYPE", nullable = true)
     private String type;
 
-    @Column(name = "URL", nullable = true)
     private String url;
 
     public Attachment() {

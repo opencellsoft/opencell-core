@@ -5,21 +5,12 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.VersionProperty;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,44 +18,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
-@MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
-	private static final long serialVersionUID = 1821894884787055051L;
+    private static final long serialVersionUID = 1821894884787055051L;
 
-	@Id
-    @Column(name = "ID", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
-    @Id
-    @Column(name = "VERSION", nullable = false)
-    @VersionProperty
     private String version;
 
-    @Transient
     @JsonIgnore
     private ParsedVersion parsedVersion;
 
-    @Column(name = "HERF", nullable = true)
     private String href;
 
-    @Column(name = "NAME", nullable = true)
     private String name;
 
-    @Column(name = "DESCRIPTION", nullable = true)
     private String description;
 
-    @Column(name = "LAST_UPDATE", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonSerialize(using=CustomDateSerializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date lastUpdate;
 
-    @Column(name = "LIFECYCLE_STATUS", nullable = true)
     private LifecycleStatus lifecycleStatus;
 
     private TimeRange validFor;
@@ -227,7 +204,8 @@ public abstract class AbstractEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "AbstractEntity{" + "id=" + id + ", version=" + version + ", parsedVersion=" + parsedVersion + ", href=" + href + ", name=" + name + ", description=" + description + ", lastUpdate=" + lastUpdate + ", lifecycleStatus=" + lifecycleStatus + ", validFor=" + validFor + '}';
+        return "AbstractEntity{" + "id=" + id + ", version=" + version + ", parsedVersion=" + parsedVersion + ", href=" + href + ", name=" + name + ", description=" + description
+                + ", lastUpdate=" + lastUpdate + ", lifecycleStatus=" + lifecycleStatus + ", validFor=" + validFor + '}';
     }
 
     @JsonIgnore
@@ -310,7 +288,7 @@ public abstract class AbstractEntity implements Serializable {
     public boolean hasHigherVersionThan(AbstractEntity other) {
         ParsedVersion thisParsedVersion = getParsedVersion();
         if (thisParsedVersion == null) {
-            throw new IllegalArgumentException ("invalid parsed version object");
+            throw new IllegalArgumentException("invalid parsed version object");
         }
 
         return (thisParsedVersion.isGreaterThan((other != null) ? other.getParsedVersion() : null));
@@ -326,12 +304,12 @@ public abstract class AbstractEntity implements Serializable {
 
     @PrePersist
     private void onCreate() {
-        lastUpdate = new Date ();
+        lastUpdate = new Date();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        lastUpdate = new Date ();
+        lastUpdate = new Date();
     }
 
     @PostLoad

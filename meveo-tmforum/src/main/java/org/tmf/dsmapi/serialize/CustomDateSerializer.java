@@ -11,11 +11,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class CustomDateSerializer extends JsonSerializer<Date> {
 
-	@Override
-	public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider)
-			throws IOException, JsonProcessingException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-		String formattedDate = formatter.format(value);
-		jgen.writeString(formattedDate);
-	}
+    @Override
+    public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+        String formattedDate = formatter.format(value);
+        jgen.writeString(formattedDate);
+    }
 }

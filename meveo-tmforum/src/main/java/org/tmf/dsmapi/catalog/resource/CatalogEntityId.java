@@ -5,9 +5,9 @@ import java.io.Serializable;
 import org.tmf.dsmapi.commons.Utilities;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public class CatalogEntityId implements Serializable {
     private final static long serialVersionUID = 1L;
@@ -86,7 +86,7 @@ public class CatalogEntityId implements Serializable {
             return false;
         }
 
-        if (Utilities.areEqual (this.id, other.id) == false) {
+        if (Utilities.areEqual(this.id, other.id) == false) {
             return false;
         }
 

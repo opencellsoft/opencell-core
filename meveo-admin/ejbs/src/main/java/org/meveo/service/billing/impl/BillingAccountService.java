@@ -246,7 +246,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 			log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
 		} else {
-			log.debug("updateBillingAccountTotalAmounts queryResult is null");
+			log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
 		}
 
 		billingAccount.setBillingRun(billingRun);

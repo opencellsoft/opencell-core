@@ -2,9 +2,6 @@ package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -14,30 +11,20 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "23",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     },
- *     "type": "dependency"
- * }
- *
+ * 
+ *         { "id": "23", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "type": "dependency" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class SpecificationCharacteristicRelationship implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "ID", nullable = false)
     private String id;
 
     private TimeRange validFor;
 
-    @Column(name = "TYPE", nullable = true)
     private SpecificationCharacteristicRelationshipType type;
 
     public SpecificationCharacteristicRelationship() {

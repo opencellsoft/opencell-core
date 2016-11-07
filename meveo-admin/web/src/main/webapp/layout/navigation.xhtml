@@ -48,6 +48,7 @@
 	<p:tooltip for="indexing">#{help['menu.indexing']}</p:tooltip>
 
 	<p:tooltip for="orders">#{help['menu.orders']}</p:tooltip>
+    <p:tooltip for="quotes">#{help['menu.quotes']}</p:tooltip>
 	<c:set var="cetIndex" value="0" />
 	<c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
 		<c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
@@ -151,10 +152,11 @@
 			<p:menuitem id="businessAccountModels" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
 		</p:submenu>
 
-		<p:submenu id="orders" label="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
-			<p:menuitem id="order" outcome="orders" value="#{messages['menu.orders']}" />
+		<p:submenu id="orderAndQuotes" label="#{messages['menu.ordersAndQuotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement') or identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
+			<p:menuitem id="quotes" outcome="quotes" value="#{messages['menu.quotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement')}"/>
+            <p:menuitem id="orders" outcome="orders" value="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}"/>
 		</p:submenu>
-
+        
 		<p:submenu label="#{messages['menu.customers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
 			<p:menuitem id="mm_workflows" value="#{messages['menu.marketingManager.workflowList']}" outcome="mm_workflows" />
 		</p:submenu>

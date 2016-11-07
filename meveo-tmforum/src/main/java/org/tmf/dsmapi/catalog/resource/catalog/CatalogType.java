@@ -1,17 +1,16 @@
 package org.tmf.dsmapi.catalog.resource.catalog;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+
 //import org.tmf.dsmapi.commons.exceptions.InvalidEnumeratedValueException;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public enum CatalogType {
-    PRODUCT_CATALOG   ("Product Catalog"),
-    SERVICE_CATALOG   ("Service Catalog"),
-    RESOOURCE_CATALOG ("Resource Catalog");
+    PRODUCT_CATALOG("Product Catalog"), SERVICE_CATALOG("Service Catalog"), RESOOURCE_CATALOG("Resource Catalog");
 
     private String value;
 
@@ -39,17 +38,17 @@ public enum CatalogType {
         return null;
     }
 
-//    @JsonCreator
-//    public static CatalogType fromJson(String value) throws InvalidEnumeratedValueException {
-//        if (value == null) {
-//            return null;
-//        }
-//
-//        CatalogType enumeratedValue = CatalogType.find(value);
-//        if (enumeratedValue != null) {
-//        return enumeratedValue;
-//        }
-//
-//        throw new InvalidEnumeratedValueException(value, EnumSet.allOf(CatalogType.class));
-//    }
+    // @JsonCreator
+    // public static CatalogType fromJson(String value) throws InvalidEnumeratedValueException {
+    // if (value == null) {
+    // return null;
+    // }
+    //
+    // CatalogType enumeratedValue = CatalogType.find(value);
+    // if (enumeratedValue != null) {
+    // return enumeratedValue;
+    // }
+    //
+    // throw new InvalidEnumeratedValueException(value, EnumSet.allOf(CatalogType.class));
+    // }
 }

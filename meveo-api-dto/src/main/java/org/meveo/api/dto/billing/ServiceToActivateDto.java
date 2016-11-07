@@ -32,6 +32,8 @@ public class ServiceToActivateDto implements Serializable {
     private Date subscriptionDate;
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
+    private String orderNumber;
+    
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
     @XmlTransient
@@ -86,7 +88,15 @@ public class ServiceToActivateDto implements Serializable {
         this.chargeInstanceOverrides = chargeInstanceOverrides;
     }
 
-    public CustomFieldsDto getCustomFields() {
+    public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 

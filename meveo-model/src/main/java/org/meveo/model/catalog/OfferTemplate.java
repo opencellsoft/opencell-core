@@ -37,6 +37,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
@@ -69,7 +70,7 @@ public class OfferTemplate extends ProductOffering {
 	public String prefix;
 	
 	@Transient
-	public Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType;
+	public Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 	
 	@Transient
 	public List<ProductTemplate> productTemplates;
@@ -179,7 +180,7 @@ public class OfferTemplate extends ProductOffering {
 	}
 
     @SuppressWarnings("rawtypes")
-    public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
         
         if (serviceTemplatesByChargeType!=null){
             return serviceTemplatesByChargeType;
@@ -190,34 +191,34 @@ public class OfferTemplate extends ProductOffering {
         for (OfferServiceTemplate service : offerServiceTemplates) {
             List charges = service.getServiceTemplate().getServiceRecurringCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("RECURRING")) {
-                    serviceTemplatesByChargeType.put("RECURRING", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("RECURRING").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceUsageCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("USAGE")) {
-                    serviceTemplatesByChargeType.put("USAGE", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("USAGE").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceSubscriptionCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("SUBSCRIPTION")) {
-                    serviceTemplatesByChargeType.put("SUBSCRIPTION", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("SUBSCRIPTION").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceTerminationCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("TERMINATION")) {
-                    serviceTemplatesByChargeType.put("TERMINATION", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("TERMINATION").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
             }
         }
 

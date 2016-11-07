@@ -234,6 +234,10 @@ public class WalletOperation extends BusinessEntity {
 	@JoinColumn(name = "EDR_ID")
 	private EDR edr;
 	
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+	
 	@Transient
 	private BillingAccount billingAccount;
 
@@ -506,6 +510,7 @@ public class WalletOperation extends BusinessEntity {
 		result.setParameter1(parameter1);
 		result.setParameter2(parameter2);
 		result.setParameter3(parameter3);
+		result.setOrderNumber(orderNumber);
 		result.setPriceplan(priceplan);
 		result.setProvider(getProvider());
 		result.setQuantity(quantity);
@@ -582,6 +587,14 @@ public class WalletOperation extends BusinessEntity {
 		this.inputQuantity = inputQuantity;
 	}
 
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "WalletOperation [wallet=" + wallet + ", operationDate=" + operationDate + ", invoicingDate=" + invoicingDate + ", type=" + type + ", chargeInstance="
@@ -591,7 +604,7 @@ public class WalletOperation extends BusinessEntity {
 				+ parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", subscriptionDate=" + subscriptionDate + ", offerCode="
 				+ offerCode + ", status=" + status + ", seller=" + seller + ", priceplan=" + priceplan + ", reratedWalletOperation=" + reratedWalletOperation
 				+ ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
-				+ billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate + "]";
+				+ billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate +", orderNumber="+ orderNumber +"]";
 	}
 	
 

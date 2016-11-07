@@ -65,7 +65,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
-	private BillingAccount billingAccount = new BillingAccount();
+	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
@@ -82,8 +82,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@Size(max = 50)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 20, unique = true)
-	@Size(max = 20)
+	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 60, unique = true)
+	@Size(max = 60)
 	private String temporaryInvoiceNumber;
 
 	@Column(name = "PRODUCT_DATE")
@@ -364,6 +364,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 		this.temporaryInvoiceNumber = temporaryInvoiceNumber;
 	}
 
+    public String getInvoiceNumberOrTemporaryNumber() {
+        if (invoiceNumber != null) {
+            return invoiceNumber;
+        } else {
+            return "[" + temporaryInvoiceNumber + "]";
+        }
+    }
+	
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}
@@ -510,4 +518,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 			invoiceAgregates.add(obj);
 		}
 	}
+
+    public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
+        List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
+
+        for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+                aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
+            }
+        }
+        
+        return aggregates;
+    }
+
+    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+
+        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+
+        for (RatedTransaction ratedTransaction : ratedTransactions) {           
+            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+                ratedTransactionsMatched.add(ratedTransaction);
+            }
+
+        }
+        return ratedTransactionsMatched;
+    }
 }

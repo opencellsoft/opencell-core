@@ -4,7 +4,6 @@
 package org.meveo.admin.async;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -14,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -31,10 +29,7 @@ public class PdfInvoiceAsync {
 
     @Inject
     private InvoiceService invoiceService;
-    
-    @Inject
-    private PDFParametersConstruction pDFParametersConstruction;
-    
+        
     /** Logger. */
     protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -43,8 +38,7 @@ public class PdfInvoiceAsync {
     public Future<String> launchAndForget(List<Invoice> invoices, User currentUser, JobExecutionResultImpl result) {
         for (Invoice invoice : invoices) {
             try {
-                Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
-                invoiceService.producePdf(parameters, currentUser);
+                invoiceService.producePdfInNewTransaction(invoice.getId(), currentUser);
                 result.registerSucces();                              
             } catch (Exception e) {
                 result.registerError(invoice.getInvoiceNumber(), e.getMessage());

@@ -151,6 +151,10 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "IS_PREPAID")
 	protected Boolean prepaid=Boolean.FALSE;
 
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+	
 	public String getCriteria1() {
 		return criteria1;
 	}
@@ -336,6 +340,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setPrepaid(Boolean prepaid) {
 		this.prepaid = prepaid;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 }

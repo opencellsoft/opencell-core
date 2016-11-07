@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
@@ -30,226 +24,48 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "22",
- *     "version": "2.0",
- *     "href": "http://serverlocation:port/catalogManagement/serviceSpecification/22",
- *     "name": "iPhone 42",
- *     "description": "Siri works on this iPhone",
- *     "lastUpdate": "2013-04-19T16:42:23-04:00",
- *     "lifecycleStatus": "Active",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     },
- *     "brand": "Apple",
- *     "attachment": [
- *         {
- *             "id": "56",
- *             "href": "http://serverlocation:port/documentManagment/attachment/56",
- *             "type": "Picture",
- *             "url": "http://xxxxx"
- *         }
- *     ],
- *     "relatedParty": [
- *         {
- *             "role": "Owner",
- *             "id": "1234",
- *             "href": "http ://serverLocation:port/partyManagement/partyRole/1234"
- *         }
- *     ],
- *     "serviceSpecificationRelationship": [
- *         {
- *             "type": "dependency",
- *             "id": "23",
- *             "href": " http://serverlocation:port/catalogManagement/serviceSpecification/23",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ],
- *     "requiredServiceSpecification": [
- *         {
- *             "id": "13",
- *             "href": "http://serverlocation:port/catalogManagement/serviceSpecification/13",
- *             "name": "specification 1",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ],
- *     "requiredResourceSpecification": [
- *         {
- *             "id": "13",
- *             "href": "http://serverlocation:port/catalogManagement/resourceSpecification/13",
- *             "name": "specification 1",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ],
- *     "serviceSpecCharacteristic": [
- *         {
- *             "id": "34",
- *             "name": "Screen Size",
- *             "description": "Screen size",
- *             "valueType": "number",
- *             "configurable": false,
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             },
- *             "serviceSpecCharRelationship": [
- *                 {
- *                     "type": "dependency",
- *                     "id": "43",
- *                     "validFor": {
- *                         "startDateTime": "2013-04-19T16:42:23-04:00",
- *                         "endDateTime": ""
- *                     }
- *                 }
- *             ],
- *             "serviceSpecCharacteristicValue": [
- *                 {
- *                     "valueType": "number",
- *                     "default": true,
- *                     "value": "4.2",
- *                     "unitOfMeasure": "inches",
- *                     "valueFrom": "",
- *                     "valueTo": "",
- *                     "validFor": {
- *                         "startDateTime": "2013-04-19T16:42:23-04:00",
- *                         "endDateTime": ""
- *                     }
- *                 }
- *             ]
- *         },
- *         {
- *             "id": "54",
- *             "name": "Colour",
- *             "description": "Product colour",
- *             "valueType": "string",
- *             "configurable": true,
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             },
- *             "serviceSpecCharRelationship": [
- *                 {
- *                     "type": "dependency",
- *                     "id": "43",
- *                     "validFor": {
- *                         "startDateTime": "2013-04-19T16:42:23-04:00",
- *                         "endDateTime": ""
- *                     }
- *                 }
- *             ],
- *             "serviceSpecCharacteristicValue": [
- *                 {
- *                     "valueType": "string",
- *                     "default": true,
- *                     "value": "Black",
- *                     "unitOfMeasure": "",
- *                     "valueFrom": "",
- *                     "valueTo": "",
- *                     "validFor": {
- *                         "startDateTime": "2013-04-19T16:42:23-04:00",
- *                         "endDateTime": ""
- *                     }
- *                 },
- *                 {
- *                     "valueType": "string",
- *                     "default": false,
- *                     "value": "White",
- *                     "unitOfMeasure": "",
- *                     "valueFrom": "",
- *                     "valueTo": "",
- *                     "validFor": {
- *                         "startDateTime": "2013-04-19T16:42:23-04:00",
- *                         "endDateTime": ""
- *                     }
- *                 }
- *             ]
- *         }
- *     ]
- * }
- *
+ * 
+ *         { "id": "22", "version": "2.0", "href": "http://serverlocation:port/catalogManagement/serviceSpecification/22", "name": "iPhone 42", "description":
+ *         "Siri works on this iPhone", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
+ *         "endDateTime": "2013-06-19T00:00:00-04:00" }, "brand": "Apple", "attachment": [ { "id": "56", "href": "http://serverlocation:port/documentManagment/attachment/56",
+ *         "type": "Picture", "url": "http://xxxxx" } ], "relatedParty": [ { "role": "Owner", "id": "1234", "href": "http ://serverLocation:port/partyManagement/partyRole/1234" }
+ *         ], "serviceSpecificationRelationship": [ { "type": "dependency", "id": "23", "href": " http://serverlocation:port/catalogManagement/serviceSpecification/23", "validFor":
+ *         { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ], "requiredServiceSpecification": [ { "id": "13", "href":
+ *         "http://serverlocation:port/catalogManagement/serviceSpecification/13", "name": "specification 1", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
+ *         "endDateTime": "" } } ], "requiredResourceSpecification": [ { "id": "13", "href": "http://serverlocation:port/catalogManagement/resourceSpecification/13", "name":
+ *         "specification 1", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ], "serviceSpecCharacteristic": [ { "id": "34", "name":
+ *         "Screen Size", "description": "Screen size", "valueType": "number", "configurable": false, "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": ""
+ *         }, "serviceSpecCharRelationship": [ { "type": "dependency", "id": "43", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ],
+ *         "serviceSpecCharacteristicValue": [ { "valueType": "number", "default": true, "value": "4.2", "unitOfMeasure": "inches", "valueFrom": "", "valueTo": "", "validFor": {
+ *         "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ] }, { "id": "54", "name": "Colour", "description": "Product colour", "valueType": "string",
+ *         "configurable": true, "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "serviceSpecCharRelationship": [ { "type": "dependency", "id":
+ *         "43", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ], "serviceSpecCharacteristicValue": [ { "valueType": "string", "default": true,
+ *         "value": "Black", "unitOfMeasure": "", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } }, { "valueType":
+ *         "string", "default": false, "value": "White", "unitOfMeasure": "", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
+ *         "endDateTime": "" } } ] } ] }
+ * 
  */
-@MappedSuperclass
 @XmlRootElement
-@JsonInclude(value=Include.NON_NULL)
+@JsonInclude(value = Include.NON_NULL)
 public class ServiceSpecification extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 
     private final static Logger logger = Logger.getLogger(ServiceSpecification.class.getName());
 
-    @Column(name = "BRAND", nullable = false)
     private String brand;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_ATTACHMENT", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<Attachment> attachment;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_PARTY", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<RelatedParty> relatedParty;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_RELATIONSHIP", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<SpecificationRelationship> serviceSpecificationRelationship;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_REQ_SERVICE_SPEC", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<RequiredSpecification> requiredServiceSpecification;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_REQ_RESOURCE_SPEC", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<RequiredSpecification> requiredResourceSpecification;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_SERVICE_SPEC_R_CHARACTERISTIC", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
     private List<ServiceSpecCharacteristic> serviceSpecCharacteristic;
 
     public ServiceSpecification() {
@@ -398,7 +214,9 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
 
     @Override
     public String toString() {
-        return "ServiceSpecification{<" + super.toString() + ">, brand=" + brand + ", attachment=" + attachment + ", relatedParty=" + relatedParty + ", serviceSpecificationRelationship=" + serviceSpecificationRelationship + ", requiredServiceSpecification=" + requiredServiceSpecification + ", requiredResourceSpecification=" + requiredResourceSpecification + ", serviceSpecCharacteristic=" + serviceSpecCharacteristic + '}';
+        return "ServiceSpecification{<" + super.toString() + ">, brand=" + brand + ", attachment=" + attachment + ", relatedParty=" + relatedParty
+                + ", serviceSpecificationRelationship=" + serviceSpecificationRelationship + ", requiredServiceSpecification=" + requiredServiceSpecification
+                + ", requiredResourceSpecification=" + requiredResourceSpecification + ", serviceSpecCharacteristic=" + serviceSpecCharacteristic + '}';
     }
 
     @Override
@@ -481,9 +299,9 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
         serviceSpecification.setHref("href");
         serviceSpecification.setName("name");
         serviceSpecification.setDescription("description");
-        serviceSpecification.setLastUpdate(new Date ());
+        serviceSpecification.setLastUpdate(new Date());
         serviceSpecification.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        serviceSpecification.setValidFor(TimeRange.createProto ());
+        serviceSpecification.setValidFor(TimeRange.createProto());
 
         serviceSpecification.brand = "brand";
 

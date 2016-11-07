@@ -303,6 +303,7 @@ public class SubscriptionApi extends BaseApi {
                             // // Is there a need to reset it?
                             subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                             subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                            subscriptionServiceInstance.setOrderNumber(serviceToActivateDto.getOrderNumber());
                             serviceInstance = subscriptionServiceInstance;
                             serviceInstances.add(serviceInstance);
                         }
@@ -347,6 +348,7 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                serviceInstance.setOrderNumber(serviceToActivateDto.getOrderNumber());
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
@@ -556,7 +558,7 @@ public class SubscriptionApi extends BaseApi {
         try {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-                postData.getDescription(), currentUser, true);
+                postData.getDescription(),postData.getOrderNumber(), currentUser, true);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
@@ -597,7 +599,7 @@ public class SubscriptionApi extends BaseApi {
 
 		try {
 			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), currentUser);
+					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(),null, currentUser);
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
 					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			for (WalletOperation walletOperation : walletOperations) {

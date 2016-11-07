@@ -33,8 +33,7 @@ import org.meveo.service.base.BusinessService;
  * 
  */
 @Stateless
-public class CounterTemplateService<P extends CounterTemplate> extends
-		BusinessService<P> {
+public class CounterTemplateService extends BusinessService<CounterTemplate> {
 
 	public void removeByPrefix(EntityManager em, String prefix,
 			Provider provider) {
@@ -47,7 +46,7 @@ public class CounterTemplateService<P extends CounterTemplate> extends
 	
  
 	
-	public P findByCode(String code, Provider provider) {
+	public CounterTemplate findByCode(String code, Provider provider) {
 		return findByCode(getEntityManager(), code, provider);
 	}
 	

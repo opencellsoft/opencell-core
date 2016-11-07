@@ -4,25 +4,19 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.CounterTypeEnum;
 
 public class CachedCounterPeriod {
 
     private Long counterPeriodId;
-    private CounterTypeEnum counterType;
     private Date startDate;
     private Date endDate;
     private BigDecimal value;
     private BigDecimal level;
     private boolean dbDirty;
+    private CachedCounterInstance counterInstance;
 
     public Long getCounterPeriodId() {
         return counterPeriodId;
-    }
-
-    public CounterTypeEnum getCounterType() {
-        return counterType;
     }
 
     public Date getStartDate() {
@@ -49,22 +43,26 @@ public class CachedCounterPeriod {
         return dbDirty;
     }
 
+    public CachedCounterInstance getCounterInstance() {
+        return counterInstance;
+    }
+
     public CachedCounterPeriod() {
 
     }
 
-    public CachedCounterPeriod(CounterPeriod counterPeriod, CounterTemplate template) {
-        counterPeriodId = counterPeriod.getId();
-        counterType = template.getCounterType();
-        endDate = counterPeriod.getPeriodEndDate();
-        level = counterPeriod.getLevel();
-        startDate = counterPeriod.getPeriodStartDate();
-        value = counterPeriod.getValue();
+    public CachedCounterPeriod(CounterPeriod counterPeriod, CachedCounterInstance counterInstance) {
+        this.counterPeriodId = counterPeriod.getId();
+        this.endDate = counterPeriod.getPeriodEndDate();
+        this.level = counterPeriod.getLevel();
+        this.startDate = counterPeriod.getPeriodStartDate();
+        this.value = counterPeriod.getValue();
+        this.counterInstance = counterInstance;
     }
 
     @Override
     public String toString() {
-        return String.format("CachedCounterPeriod [counterPeriodId=%s, counterType=%s, startDate=%s, endDate=%s, value=%s, level=%s, dbDirty=%s]", counterPeriodId, counterType,
-            startDate, endDate, value, level, dbDirty);
+        return String.format("CachedCounterPeriod [counterPeriodId=%s, startDate=%s, endDate=%s, value=%s, level=%s, dbDirty=%s]", counterPeriodId, startDate, endDate, value,
+            level, dbDirty);
     }
 }

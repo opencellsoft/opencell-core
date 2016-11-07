@@ -21,14 +21,11 @@ package org.meveo.service.billing.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -37,44 +34,41 @@ import org.meveo.service.base.PersistenceService;
 public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 
-	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
-			Long invoiceSubCategoryId, Long countryId, Provider provider) {
-		return findInvoiceSubCategoryCountry(getEntityManager(),
-				invoiceSubCategoryId, countryId, provider);
-	}
+    @SuppressWarnings("unchecked")
+    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, Long countryId, Provider provider) {
 
-	@SuppressWarnings("unchecked")
-	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
-			EntityManager em, Long invoiceSubCategoryId, Long countryId,
-			Provider provider) {
-		try {
-			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
-					"i");
-			qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId,
-					true);
-			qb.addCriterion("tradingCountry.id", "=", countryId, true);
-			qb.addCriterionEntity("provider", provider);
+        try {
+            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
+            qb.addCriterion("invoiceSubCategory.code", "=", invoiceSubCategoryCode, true);
+            qb.addCriterion("tradingCountry.id", "=", countryId, true);
+            qb.addCriterionEntity("provider", provider);
 
-			List<InvoiceSubcategoryCountry> invoiceSubcategoryiountries = qb
-					.getQuery(em).getResultList();
-			return invoiceSubcategoryiountries.size() > 0 ? invoiceSubcategoryiountries
-					.get(0) : null;
-		} catch (NoResultException ex) {
-			log.warn("failed to find invoice SubCategory Country",ex);
-		}
+            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
+            return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
+        } catch (NoResultException ex) {
+            log.warn("failed to find invoice SubCategory Country", ex);
+        }
 
-		return null;
-	}
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId, Provider provider) {
 
-	public InvoiceSubcategoryCountry findByTaxId(EntityManager em, Tax tax) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "a");
-		qb.addCriterionEntity("tax", tax);
+        try {
+            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
+            qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
+            qb.addCriterion("tradingCountry.id", "=", countryId, true);
+            qb.addCriterionEntity("provider", provider);
 
-		Query query = qb.getQuery(em);
-		query.setMaxResults(1);
+            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
+            return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
+        } catch (NoResultException ex) {
+            log.warn("failed to find invoice SubCategory Country", ex);
+        }
 
-		return (InvoiceSubcategoryCountry) query.getSingleResult();
-	}
+        return null;
+    }
 
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
 			InvoiceSubCategory invoiceSubCategory,
@@ -100,5 +94,4 @@ public class InvoiceSubCategoryCountryService extends
 			return null;
 		}
 	}
-
 }

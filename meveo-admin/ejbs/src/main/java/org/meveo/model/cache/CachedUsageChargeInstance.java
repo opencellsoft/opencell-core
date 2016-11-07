@@ -8,7 +8,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 
@@ -18,16 +17,17 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     private Provider provider;
     private Long currencyId;
     private Date lastUpdate;
-    private BigDecimal unityMultiplicator = BigDecimal.ONE;
-    private int unityNbDecimal = 2;
     int roundingUnityNbDecimal = 2;
     int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
-    private CachedCounterInstance counter;
     private Date chargeDate;
     private Date subscriptionDate;
     private Date terminationDate;
-    private CachedUsageChargeTemplate templateCache;
-    private RoundingModeEnum roundingModeEnum;
+    private String ratingUnitDescription;
+    private CachedUsageChargeTemplate chargeTemplate;
+    private CachedCounterInstance counter;
+    private String description;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithTax;
 
     public Long getId() {
         return id;
@@ -41,21 +41,13 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         return lastUpdate;
     }
 
-    public BigDecimal getUnityMultiplicator() {
-        return unityMultiplicator;
-    }
-
-    public int getUnityNbDecimal() {
-        return unityNbDecimal;
-    }
-
     private void computeRoundingValues() {
         try {
-            if (unityNbDecimal >= BaseEntity.NB_DECIMALS) {
+            if (chargeTemplate.getUnitNbDecimal() >= BaseEntity.NB_DECIMALS) {
                 roundingUnityNbDecimal = BaseEntity.NB_DECIMALS;
             } else {
-                roundingUnityNbDecimal = unityNbDecimal;
-                roundingEdrNbDecimal = (int) Math.round(unityNbDecimal + Math.floor(Math.log10(unityMultiplicator.doubleValue())));
+                roundingUnityNbDecimal = chargeTemplate.getUnitNbDecimal();
+                roundingEdrNbDecimal = (int) Math.round(roundingUnityNbDecimal + Math.floor(Math.log10(chargeTemplate.getUnitMultiplicator().doubleValue())));
                 if (roundingEdrNbDecimal > BaseEntity.NB_DECIMALS) {
                     roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
                 }
@@ -68,68 +60,58 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         return counter;
     }
 
-    public void setCounter(CachedCounterInstance counter) {
-        this.counter = counter;
-    }
-
     public Date getChargeDate() {
         return chargeDate;
-    }
-
-    public void setChargeDate(Date chargeDate) {
-        this.chargeDate = chargeDate;
     }
 
     public Date getSubscriptionDate() {
         return subscriptionDate;
     }
 
-    public void setSubscriptionDate(Date subscriptionDate) {
-        this.subscriptionDate = subscriptionDate;
-    }
-
     public Date getTerminationDate() {
         return terminationDate;
-    }
-
-    public void setTerminationDate(Date terminationDate) {
-        this.terminationDate = terminationDate;
-    }
-
-    public void setCurrencyId(Long currencyId) {
-        this.currencyId = currencyId;
     }
 
     public Long getCurrencyId() {
         return currencyId;
     }
 
-    public CachedUsageChargeTemplate getTemplateCache() {
-        return templateCache;
+    public String getRatingUnitDescription() {
+        return ratingUnitDescription;
     }
 
-    public void setTemplateCache(CachedUsageChargeTemplate templateCache) {
-        this.templateCache = templateCache;
+    public String getDescription() {
+        return description;
+    }
+
+    public CachedUsageChargeTemplate getChargeTemplate() {
+        return chargeTemplate;
+    }
+
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
     }
 
     @Override
     public int compareTo(CachedUsageChargeInstance o) {
-        return this.getTemplateCache().getPriority() - o.getTemplateCache().getPriority();
+        return this.getChargeTemplate().getPriority() - o.getChargeTemplate().getPriority();
     }
 
     public BigDecimal getInChargeUnit(BigDecimal edrUnitValue) throws BusinessException {
-        if (unityMultiplicator == null){
-            unityMultiplicator = BigDecimal.ONE;
-        }        
-        if(edrUnitValue == null){
-        	throw new BusinessException("Cant get countedValue with null quantity");
+
+        if (edrUnitValue == null) {
+            throw new BusinessException("Cant get countedValue with null quantity");
         }
-        BigDecimal  result = NumberUtil.getInChargeUnit(edrUnitValue, unityMultiplicator, unityNbDecimal, roundingModeEnum);
+        BigDecimal result = NumberUtil.getInChargeUnit(edrUnitValue, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
         return result;
     }
 
     public BigDecimal getInEDRUnit(BigDecimal chargeUnitValue) {
-        return chargeUnitValue.divide(unityMultiplicator, roundingEdrNbDecimal,RoundingMode.HALF_UP);
+        return chargeUnitValue.divide(chargeTemplate.getUnitMultiplicator(), roundingEdrNbDecimal, RoundingMode.HALF_UP);
     }
 
     public void populateFromUsageChargeInstance(UsageChargeInstance usageChargeInstance, UsageChargeTemplate usageChargeTemplate, CachedUsageChargeTemplate cachedTemplate,
@@ -141,12 +123,14 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         usageChargeInstance.getProvider().getCode();
         provider = usageChargeInstance.getProvider();
         currencyId = usageChargeInstance.getCurrency().getId();
-        counter = counterCacheValue;
         terminationDate = usageChargeInstance.getTerminationDate();
-        templateCache = cachedTemplate;
-        unityMultiplicator = usageChargeTemplate.getUnitMultiplicator();
-        unityNbDecimal = usageChargeTemplate.getUnitNbDecimal();
-        roundingModeEnum = usageChargeTemplate.getRoundingMode();
+        ratingUnitDescription = usageChargeInstance.getRatingUnitDescription();
+        description = usageChargeInstance.getDescription();
+        amountWithoutTax = usageChargeInstance.getAmountWithoutTax();
+        amountWithTax = usageChargeInstance.getAmountWithTax();
+
+        counter = counterCacheValue;
+        chargeTemplate = cachedTemplate;
         lastUpdate = new Date();
         computeRoundingValues();
     }
@@ -155,16 +139,8 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     public String toString() {
         return String
             .format(
-                "CachedUsageChargeInstance [id=%s, provider=%s, currencyId=%s, lastUpdate=%s, unityMultiplicator=%s, unityNbDecimal=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, counter=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, templateCache=%s,roundingModeEnum=%s]",
-                id, provider, currencyId, lastUpdate, unityMultiplicator, unityNbDecimal, roundingUnityNbDecimal, roundingEdrNbDecimal, counter, chargeDate, subscriptionDate,
-                terminationDate, templateCache,roundingModeEnum);
+                "CachedUsageChargeInstance [id=%s, provider=%s, currencyId=%s, lastUpdate=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, ratingUnitDescription=%s, description=%s, amountWithoutTax=%s, amountWithTax=%s]",
+                id, provider, currencyId, lastUpdate, roundingUnityNbDecimal, roundingEdrNbDecimal, chargeDate, subscriptionDate, terminationDate, ratingUnitDescription,
+                description, amountWithoutTax, amountWithTax);
     }
-
-	public RoundingModeEnum getRoundingModeEnum() {
-		return roundingModeEnum;
-	}
-
-	public void setRoundingModeEnum(RoundingModeEnum roundingModeEnum) {
-		this.roundingModeEnum = roundingModeEnum;
-	}
 }

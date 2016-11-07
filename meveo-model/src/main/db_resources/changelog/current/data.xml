@@ -166,4 +166,32 @@
 			update adm_user set username='OPENCELL.MARKETINGMANAGER', password='8618dab964637c4efa75bca53de7c858258eed5e' where username='MEVEO.MARKETINGMANAGER';]]>
 		</sql>
 	</changeSet>
+
+
+    <changeSet id="#1795_20161101_quotes" author="AndriusKarpavicius">
+    
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-23" />
+            <column name="name" value="Quote visualization" />
+            <column name="permission" value="quoteVisualization" />
+            <column name="ressource" value="quote" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-24" />
+            <column name="name" value="Quote management" />
+            <column name="permission" value="quoteManagement" />
+            <column name="ressource" value="quote" />
+        </insert>    
+        
+
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="-23" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="-24" />
+        </insert>        
+    </changeSet>
+    
 </databaseChangeLog>

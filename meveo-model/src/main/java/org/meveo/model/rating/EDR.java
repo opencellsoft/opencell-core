@@ -173,7 +173,7 @@ public class EDR extends BaseEntity {
 	@JoinColumn(name = "HEADER_EDR_ID")
 	@ManyToOne()
 	private EDR headerEDR;
-
+	
 	public Subscription getSubscription() {
 		return subscription;
 	}
@@ -278,8 +278,6 @@ public class EDR extends BaseEntity {
 		this.lastUpdate = lastUpdate;
 	}
 	
-	
-
 	public String getParameter5() {
 		return parameter5;
 	}
@@ -415,7 +413,7 @@ public class EDR extends BaseEntity {
 	public void setHeaderEDR(EDR headerEDR) {
 		this.headerEDR = headerEDR;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "EDR [subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="

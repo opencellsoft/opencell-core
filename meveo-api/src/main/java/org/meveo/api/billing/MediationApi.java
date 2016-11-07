@@ -97,7 +97,7 @@ public class MediationApi extends BaseApi {
 					log.debug("edr={}", edr);
 					edrService.create(edr, user);
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
@@ -210,7 +210,7 @@ public class MediationApi extends BaseApi {
 					EDR edr = reservation.getOriginEdr();
 					edr.setQuantity(reservationDto.getConsumedQuantity());
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());

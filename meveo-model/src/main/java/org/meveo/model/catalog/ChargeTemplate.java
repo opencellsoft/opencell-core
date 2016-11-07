@@ -63,6 +63,10 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 public class ChargeTemplate extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
+	
+    public enum ChargeTypeEnum {
+        RECURRING, USAGE, SUBSCRIPTION, TERMINATION
+    }
 
 	@Column(name = "CREDIT_DEBIT_FLAG")
 	private OperationTypeEnum type;

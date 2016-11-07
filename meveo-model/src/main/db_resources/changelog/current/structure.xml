@@ -64,7 +64,7 @@
 		</addColumn>
 	</changeSet>
 	
-    <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
+      <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
          <sql>update BILLING_TAX set UUID =concat('TAX-', id) </sql>   
          <sql>update BILLING_CYCLE set UUID = concat('BillingCycle-', id) </sql> 
     </changeSet>  	
@@ -159,8 +159,8 @@
     
    <changeSet author="anasseh (generated)" id="#1841_13072016-165-1" dbms="mysql">
         <dropIndex tableName="ar_action_dunning" indexName="fk_r8q3phft4xgm8lbfu6i7lo3kx"/>
-    </changeSet>       
-     
+    </changeSet>
+ 
     <changeSet author="anasseh (generated)" id="#1841_13072016-27">
         <addUniqueConstraint columnNames="provider_id, code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow"/>
     </changeSet>
@@ -239,8 +239,8 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
 			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
+				<constraints nullable="false" />
+			</column>
 			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
@@ -363,8 +363,8 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
 			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
+				<constraints nullable="false" />
+			</column>
 			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
@@ -420,7 +420,7 @@
 	<changeSet id="#1839_20160713_cat_product_charge_templ"
 		author="SebastienMichea">
 		<createTable tableName="cat_product_charge_templ">
-			<column name="id" type="BIGINT" >
+			<column name="id" type="BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_prod_charge_templ_pkey"/>
 			</column>
 		</createTable>
@@ -533,8 +533,8 @@
 			</column>
 			<column name="version" type="INT4" />
 			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
+				<constraints nullable="false" />
+			</column>
 			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
@@ -613,7 +613,7 @@
             </column>
             <column name="version" type="INT4" />
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false"/>
+                <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
                 <constraints nullable="false" />
@@ -980,13 +980,13 @@
         <dropIndex tableName="ord_order" indexName="fk_ord_order_rt_user" />            
     </changeSet> 
     
-    <changeSet id="#1844_20160903" author="pbach">         
+    <changeSet id="#1844_20160903" author="pbach">
         <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"/>
         <addColumn tableName="ord_order">
             <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
         </addColumn>
     </changeSet>
-        
+    
     <changeSet id="#1889_20160908" author="AndriusKarpavicius">
         <addColumn tableName="ORD_ORDER">
             <column name="UUID" type="VARCHAR(60)"/>
@@ -1099,7 +1099,7 @@
             </column>
             <column name="version" type="INT4" />
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false"/>
+                <constraints nullable="false" />
             </column>
             <column name="created" type="DATETIME">
                 <constraints nullable="false" />
@@ -1173,7 +1173,23 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
     </changeSet>    
-    
+    <changeSet id="#2050_20161031" author="SebastienMichea">
+		<addColumn tableName="BILLING_SERVICE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_PRODUCT_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_CHARGE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_WALLET_OPERATION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_RATED_TRANSACTION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
     	<changeSet author="anasseh" id="#2143_20161025">
 		<addColumn tableName="billing_billing_account">
 			<column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
@@ -2813,5 +2829,126 @@
     
     </changeSet>
 
+    <changeSet id="#1795_20161102_quote" author="AndriusKarpavicius">
 
+        <createSequence sequenceName="ord_quote_seq" />
+
+        <createTable tableName="ord_quote">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_quote_pkey" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="DATETIME" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="external_id" type="VARCHAR(100)" />
+            <column name="quote_version" type="VARCHAR(10)" />
+            <column name="contact" type="VARCHAR(100)" />
+            <column name="quote_date" type="DATETIME">
+                <constraints nullable="false" />
+            </column>
+            <column name="valid_from" type="DATETIME"/>
+            <column name="valid_to" type="DATETIME"/>
+            <column name="REQ_COMPLETION_DATE" type="DATETIME" />
+            <column name="ORDER_START_DATE" type="DATETIME" />
+            <column name="COMPLETION_DATE" type="DATETIME" />
+            <column name="category" type="VARCHAR(200)" />
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
+            <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
+            <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
+            <column name="user_account_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote" constraintName="fk_ord_quote_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ord_quote" constraintName="fk_creator_ord_quote_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ord_quote" constraintName="fk_updater_ord_quote_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addUniqueConstraint columnNames="code,provider_id" constraintName="uk_ord_quote" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="ord_quote" />
+            
+        <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_GROUP_ID" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="HIERARCHY_ENTITY" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+                    
+        <createSequence sequenceName="ord_quote_item_seq" />
+
+        <createTable tableName="ord_quote_item">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="quote_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_id" type="VARCHAR(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="source" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="invoice_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_ord_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_invoice"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_INVOICE" />
+
+
+        <createTable tableName="ORD_QUOT_ITEM_OFFERINGS">
+            <column name="QUOTE_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="PRD_OFFERING_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="QUOTE_ITEM_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote_item" />
+
+        <addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_prd_offering"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+    </changeSet>
+    <changeSet id="#1795_20161102_quote-1" author="AndriusKarpavicius">
+        <addColumn tableName="ORD_QUOTE">
+        <column name="UUID" type="VARCHAR(60)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
+        <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
+    </changeSet>    
 </databaseChangeLog>

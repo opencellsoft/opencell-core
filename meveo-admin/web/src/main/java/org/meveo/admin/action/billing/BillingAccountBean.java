@@ -260,7 +260,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String generateInvoice() {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, currentUser);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null, currentUser);
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
         } catch (Exception e) {
@@ -283,11 +283,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		FacesContext context = FacesContext.getCurrentInstance();
 		String invoiceFilename = null;
 		BillingRun billingRun=invoice.getBillingRun();
-		invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
-		if(billingRun !=null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED){
-		invoiceFilename = "unvalidated-invoice.pdf";
-		}
-		
+        invoiceFilename = (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".pdf";
+        if (billingRun != null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED) {
+            invoiceFilename = "unvalidated-invoice.pdf";
+        }
+
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.setContentType("application/pdf"); // fill in
 		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);

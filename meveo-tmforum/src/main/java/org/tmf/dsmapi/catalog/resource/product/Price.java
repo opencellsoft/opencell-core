@@ -3,9 +3,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.commons.OutputUtilities;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -14,37 +11,25 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author pierregauthier
- *
- * {
- *     "taxIncludedAmount": "12.00",
- *     "dutyFreeAmount": "10.00",
- *     "taxRate": "20.00",
- *     "currencyCode": "EUR",
- *     "percentage": 0
- * }
- *
+ * 
+ *         { "taxIncludedAmount": "12.00", "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0 }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class Price implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "TAX_INCLUDED_AMOUNT", nullable = true)
-    BigDecimal taxIncludedAmount;
+    private BigDecimal taxIncludedAmount;
 
-    @Column(name = "DUTY_FREE_AMOUNT", nullable = true)
-    BigDecimal dutyFreeAmount;
+    private BigDecimal dutyFreeAmount;
 
-    @Column(name = "TAX_RATE", nullable = true)
-    BigDecimal taxRate;
+    private BigDecimal taxRate;
 
-    @Column(name = "CURRENCY_CODE", nullable = true)
-    String currencyCode;
-    
-    @Column(name = "PERCENTAGE", nullable = true)
-    BigDecimal percentage;
+    private String currencyCode;
+
+    private BigDecimal percentage;
 
     public Price() {
     }
@@ -103,7 +88,7 @@ public class Price implements Serializable {
     public String taxRateToJson() {
         return OutputUtilities.formatCurrency(taxRate);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -143,13 +128,14 @@ public class Price implements Serializable {
         if (Utilities.areEqual(this.percentage, other.percentage) == false) {
             return false;
         }
-        
+
         return true;
     }
 
     @Override
     public String toString() {
-        return "Price{" + "taxIncludedAmount=" + taxIncludedAmount + ", dutyFreeAmount=" + dutyFreeAmount + ", taxRate=" + taxRate + ", currencyCode=" + currencyCode + ", percentage=" + percentage + '}';
+        return "Price{" + "taxIncludedAmount=" + taxIncludedAmount + ", dutyFreeAmount=" + dutyFreeAmount + ", taxRate=" + taxRate + ", currencyCode=" + currencyCode
+                + ", percentage=" + percentage + '}';
     }
 
     public static Price createProto() {
