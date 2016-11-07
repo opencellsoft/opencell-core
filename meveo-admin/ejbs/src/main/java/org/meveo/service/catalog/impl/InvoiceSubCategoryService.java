@@ -36,6 +36,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -140,7 +141,8 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		return result;
 	}
 
-	public Tax evaluateTaxCodeEL(String expression, BillingAccount billingAccount, Invoice invoice)  throws BusinessException {
+
+	public Tax evaluateTaxCodeEL(String expression,UserAccount userAccount, BillingAccount billingAccount, Invoice invoice)  throws BusinessException {
 		Tax result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
@@ -160,6 +162,9 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		if (expression.indexOf("ba") >= 0) {
 			userMap.put("ba", billingAccount);
 		}
+		if (expression.indexOf("ua") >= 0) {
+			userMap.put("ua", userAccount);
+		}		
 		if (expression.indexOf("iv") >= 0) {
 			userMap.put("iv", invoice);
 		}

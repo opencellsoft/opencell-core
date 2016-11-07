@@ -709,7 +709,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 				Tax tax = invoiceSubcategoryCountry.getTax();
 				if (tax == null) {
-					tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), operation.getBillingAccount(), null);
+					tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(),operation.getWallet() == null ? null : operation.getWallet().getUserAccount() ,operation.getBillingAccount(), null);
 					if (tax == null) {
 						throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 					}

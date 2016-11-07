@@ -153,7 +153,7 @@ public class InvoiceAgregateHandler {
 		
 		BigDecimal amountTax = BigDecimal.ZERO;
 		BigDecimal amountWithTax = BigDecimal.ZERO;
-		Tax currentTax = getCurrentTax(invoiceSubCategory, billingAccount);		
+		Tax currentTax = getCurrentTax(invoiceSubCategory, userAccount,billingAccount);		
 
 		if (currentTax == null) {
 			throw new BusinessException("Cant find tax for InvoiceSubCategory:" + invoiceSubCategory.getCode());
@@ -277,7 +277,7 @@ public class InvoiceAgregateHandler {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount) throws BusinessException {
+	private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory,UserAccount userAccount, BillingAccount billingAccount) throws BusinessException {
 		Tax currentTax = null;
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
 			if ((invoicesubcatCountry.getSellingCountry()==null || 
@@ -290,7 +290,7 @@ public class InvoiceAgregateHandler {
 				if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
 					currentTax = invoicesubcatCountry.getTax();
 				} else {
-					currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, null);
+					currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, null);
 				}
 				if (currentTax != null) {
 					return currentTax;

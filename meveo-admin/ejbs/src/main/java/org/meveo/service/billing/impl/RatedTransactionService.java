@@ -365,7 +365,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
 								taxes.add(invoicesubcatCountry.getTax());
 							} else {
-								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice));
+								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, invoice));
 							}
 						}
 					}

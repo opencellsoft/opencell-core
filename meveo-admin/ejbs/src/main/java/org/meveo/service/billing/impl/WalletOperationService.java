@@ -386,7 +386,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
@@ -479,7 +479,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
@@ -579,7 +579,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
@@ -708,7 +708,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			Tax tax = invoiceSubcategoryCountry.getTax();
 			if (tax == null) {
-				tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+				tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 				if (tax == null) {
 					throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 				}
@@ -798,7 +798,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
@@ -887,7 +887,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("Tax is null for invoiceSubCategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
@@ -1010,7 +1010,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),chargeInstance.getUserAccount().getBillingAccount(), null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 			}
