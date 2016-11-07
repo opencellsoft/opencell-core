@@ -203,7 +203,7 @@ public class InvoiceApi extends BaseApi {
 							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
 								taxes.add(invoicesubcatCountry.getTax());
 							} else {
-								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice));
+								taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, invoice));
 							}
 						}
 						if(currentTax == null){
@@ -211,7 +211,7 @@ public class InvoiceApi extends BaseApi {
 							if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
 								currentTax = invoicesubcatCountry.getTax();
 							} else {
-								currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),billingAccount, invoice);
+								currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, invoice);
 							}
 						}
 					}

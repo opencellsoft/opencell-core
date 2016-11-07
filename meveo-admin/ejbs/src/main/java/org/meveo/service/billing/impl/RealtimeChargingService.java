@@ -26,9 +26,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-
 import org.slf4j.Logger;
 
 @Stateless
@@ -107,7 +105,7 @@ public class RealtimeChargingService {
 		
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null && ba!=null){
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), ba, null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,ba, null);
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException(
 					"no tax exists for invoiceSubcategoryCountry id="

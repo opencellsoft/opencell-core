@@ -188,7 +188,7 @@ public class UsageRatingService {
 				.getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if(tax==null){
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount().getBillingAccount(), null);
+			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(), chargeInstance.getUserAccount().getBillingAccount(), null);
 		}
 		
 		walletOperation.setChargeInstance(chargeInstance);
