@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 @XmlRootElement(name = "OfferCategory")
@@ -24,8 +25,6 @@ public class OfferTemplateCategoryDto implements Serializable {
 	
 	private String name;
 	
-	private String imageByteValue;
-	
 	private String offerTemplateCategoryCode;
 	
 	private Long id;
@@ -39,6 +38,8 @@ public class OfferTemplateCategoryDto implements Serializable {
 	private boolean active;
 	
 	private Long parentId;
+	
+	private String imageBase64;
 	
 	public OfferTemplateCategoryDto() {
 		
@@ -56,7 +57,7 @@ public class OfferTemplateCategoryDto implements Serializable {
 			this.setActive(offerTemplateCategory.isActive());
 			
 			if (offerTemplateCategory.getImage() != null) {
-				this.setImageByteValue(new String(offerTemplateCategory.getImageAsByteArr()));
+				imageBase64 = Base64.encodeBase64String(offerTemplateCategory.getImageAsByteArr());
 			}
 			
 			OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
@@ -106,22 +107,11 @@ public class OfferTemplateCategoryDto implements Serializable {
 		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
 	}
 
-	public String getImageByteValue() {
-		return imageByteValue;
-	}
-
-	public void setImageByteValue(String imageByteValue) {
-		this.imageByteValue = imageByteValue;
-	}
-
 	@Override
 	public String toString() {
-		return "OfferTemplateCategoryDto [code=" + code + ", description="
-				+ description + ", name=" + name + ", imageByteValue="
-				+ imageByteValue + ", offerTemplateCategoryCode="
-				+ offerTemplateCategoryCode + ", id=" + id + ", href=" + href
-				+ ", version=" + version + ", lastModified=" + lastModified
-				+ "]";
+		return "OfferTemplateCategoryDto [code=" + code + ", description=" + description + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
+				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imageBase64="
+				+ imageBase64 + "]";
 	}
 
 	public Long getId() {
@@ -170,5 +160,13 @@ public class OfferTemplateCategoryDto implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
 	}
 }
