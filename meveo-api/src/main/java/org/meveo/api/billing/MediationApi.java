@@ -1,5 +1,6 @@
 package org.meveo.api.billing;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -48,6 +50,9 @@ public class MediationApi extends BaseApi {
 
 	@Inject
 	private ReservationService reservationService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;	
 
 	Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
@@ -95,6 +100,7 @@ public class MediationApi extends BaseApi {
 				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
+					edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId(), Arrays.asList("offer")));
 					edrService.create(edr, user);
 					try {
 						usageRatingService.rateUsageWithinTransaction(edr, false, user);
