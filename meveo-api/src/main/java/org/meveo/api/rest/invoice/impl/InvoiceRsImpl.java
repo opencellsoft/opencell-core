@@ -13,7 +13,9 @@ import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
@@ -22,6 +24,7 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @RequestScoped
@@ -109,6 +112,16 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
+    public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto) {
+        String invoiceNumber = xmlInvoiceRequestDto.getInvoiceNumber();
+        String invoiceType = xmlInvoiceRequestDto.getInvoiceType();
+        if(StringUtils.isBlank(invoiceType)){
+            invoiceType = invoiceTypeService.getCommercialCode();
+        }
+        return findXMLInvoiceWithType(invoiceNumber, invoiceType);
+    }
+
+    @Override
     public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
@@ -132,16 +145,26 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoice(String InvoiceNumber) {
-        return findPdfInvoiceWithType(InvoiceNumber, invoiceTypeService.getCommercialCode());
+    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
+        return findPdfInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String InvoiceNumber, String invoiceType) {
+    public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto) {
+        String invoiceNumber = pdfInvoiceRequestDto.getInvoiceNumber();
+        String invoiceType = pdfInvoiceRequestDto.getInvoiceType();
+        if(StringUtils.isBlank(invoiceType)){
+            invoiceType = invoiceTypeService.getCommercialCode();
+        }
+        return findPdfInvoiceWithType(invoiceNumber, invoiceType);
+    }
+
+    @Override
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(InvoiceNumber, invoiceType, getCurrentUser()));
+            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (MeveoApiException e) {
