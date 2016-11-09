@@ -138,8 +138,14 @@ public class Authenticator extends BaseAuthenticator {
 		noRoleError = false;
 		passwordExpired = false;
 		User user = null;
-		//set the langauge
-		localeEvent.fire(FacesContext.getCurrentInstance().getViewRoot().getLocale());  
+
+		try {
+			// set the language
+			localeEvent.fire(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		} catch (NullPointerException e) {
+			log.debug("authenticating non gui client...");
+		}
+
 		try {
 
 			/* Authentication check */
