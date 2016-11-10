@@ -401,7 +401,7 @@ public class QuoteApi extends BaseApi {
             for (@SuppressWarnings("unused")
             Product product : products) {
                 ProductTemplate productOffering = (ProductTemplate) quoteItem.getProductOfferings().get(index);
-                ProductInstance productInstance = instantiateVirtualProduct(productOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, subscription, currentUser);
+                ProductInstance productInstance = instantiateVirtualProduct(productOffering, product, quoteItem, productQuoteItem, subscription, currentUser);
                 productInstances.add(productInstance);
                 index++;
             }
