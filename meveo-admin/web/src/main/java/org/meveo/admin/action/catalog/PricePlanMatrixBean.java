@@ -284,7 +284,8 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 		} else {
 			chargeName = "usageChargeTemplates";
 		}
-		return "/pages/catalog/" + chargeName + "/" + backPage + ".xhtml?objectId=" + chargeTemplateId + "&edit=true&faces-redirect=true&includeViewParams=true";
+		
+		return "/pages/catalog/" + chargeName + "/" + backPage + ".xhtml?objectId=" + chargeTemplateId + "&edit=true&tab=2&faces-redirect=true";
 	}
  
 	 @ActionMethod

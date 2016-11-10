@@ -376,7 +376,7 @@ public class OrderApi extends BaseApi {
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
-                    ProductInstance productInstance = instantiateProduct(productOffering, productOrderItem.getProduct(), orderItem, productOrderItem, subscription, orderNumber,
+                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber,
                         currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
