@@ -3,12 +3,12 @@ package org.meveo.api.dto.invoice;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.BaseDto;
 
 
 @XmlRootElement(name = "GetXmlInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetXmlInvoiceRequestDto extends BaseResponse {
+public class GetXmlInvoiceRequestDto extends BaseDto {
     /**
      *
      */

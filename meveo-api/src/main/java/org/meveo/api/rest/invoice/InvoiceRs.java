@@ -99,7 +99,7 @@ public interface InvoiceRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/getXMLInvoice")
+    @Path("/fetchXMLInvoice")
     public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto);
 
     /**
@@ -133,7 +133,7 @@ public interface InvoiceRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/getPdfInvoice")
+    @Path("/fetchPdfInvoice")
     public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto);
 
     /**
