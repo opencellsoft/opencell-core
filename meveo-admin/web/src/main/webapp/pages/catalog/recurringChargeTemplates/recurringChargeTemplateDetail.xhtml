@@ -102,24 +102,29 @@
 
 				</p:tab>
 
-				<hftl:customFields backingBean="#{recurringChargeTemplateBean}" messagesId=":reccuringChargeId:messages"/>
-				
-				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}" >  
-                    <p:panel>
-						<hftl:decorateFormField fieldId="recurringChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
+				<p:tab title="#{messages['pricePlanMatrix.panel']}"
+					rendered="#{chargeTemplateBean.objectId!=null}">
+					<p:panel>
+						<hftl:decorateFormField fieldId="recurringChargeCode"
+							label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="recurringChargeCode"
 								value="#{recurringChargeTemplateBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
-						</hftl:decorateFormField> 
-						
-						<hftl:decorateFormField fieldId="recurringChargeDescription" label="#{messages['businessEntity.description']} :">
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField fieldId="recurringChargeDescription"
+							label="#{messages['businessEntity.description']} :">
 							<h:outputText id="recurringChargeDescription"
-								value="#{recurringChargeTemplateBean.entity.description}" 
+								value="#{recurringChargeTemplateBean.entity.description}"
 								disabled="true" style="font-weight:bold;" />
 						</hftl:decorateFormField>
-                    </p:panel>
-				   <ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />					
-				   </p:tab>
+					</p:panel>
+					<ui:include
+						src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
+				</p:tab>
+
+				<hftl:customFields backingBean="#{recurringChargeTemplateBean}"
+					messagesId=":reccuringChargeId:messages" />
 
 			</p:tabView>
         </hftl:formPanel>
