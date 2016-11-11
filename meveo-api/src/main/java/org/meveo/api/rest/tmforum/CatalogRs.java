@@ -3,6 +3,7 @@ package org.meveo.api.rest.tmforum;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -97,5 +99,56 @@ public interface CatalogRs {
     @POST
     @Path("/createOfferFromBOM")
     public Response createOfferFromBOM(BomOfferDto postData);
+    
+    /**
+     * Get a single productTemplate by its code
+     * 
+     * @param code productTemplate code
+     * @return Single productTemplate information
+     */
+    @GET
+    @Path("/productTemplate/{code}")
+    public Response getProductTemplate(@PathParam("code") String code);
+
+    /**
+     * Create product template
+     * 
+     * @param postData product template information
+     * @return
+     */
+    @POST
+    @Path("/productTemplate")
+    public Response createProductTemplate(ProductTemplateDto postData);
+    
+    /**
+     * Create or update product template
+     * 
+     * @param postData product template information
+     * @return
+     */
+    @POST
+    @Path("/productTemplate/createOrUpdate")
+    public Response createOrUpdateProductTemplate(ProductTemplateDto postData);
+    
+    /**
+     * Update product template
+     * 
+     * @param postData product template information
+     * @return
+     */
+    @PUT
+    @Path("/productTemplate")
+    public Response updateProductTemplate(ProductTemplateDto postData);    
+    
+    /**
+     * Delete a single productTemplate by its code
+     * 
+     * @param code productTemplate code
+     * @return 
+     */
+    @GET
+    @Path("/productTemplate/{code}")
+    public Response removeProductTemplate(@PathParam("code") String code);
+    
 
 }
