@@ -47,5 +47,9 @@ public interface UserHierarchyLevelRs extends IBaseRs {
     @DELETE
     @Path("/{hierarchyLevelCode}")
     ActionStatus remove(@PathParam("hierarchyLevelCode") String hierarchyLevelCode);
+    
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(UserHierarchyLevelDto postData);
 
 }

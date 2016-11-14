@@ -614,4 +614,12 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name="hierarchyLevelCode") String hierarchyLevelCode);
+    
+    /**
+     * createOrUpdate userHierarchyLevel by dto
+     * @param userHierarchyLevelDto
+     * @return
+     */
+    @WebMethod
+    ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);    
 }
