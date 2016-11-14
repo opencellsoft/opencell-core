@@ -526,11 +526,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			log.info("createAgregatesAndInvoice BR_ID=" +( billingRun==null?"null":billingRun.getId() )+ ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
-
-			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
-			rejectedBillingAccountService.create(rejectedBA, currentUser);
+			if(billingRun != null){
+				RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
+				rejectedBillingAccountService.create(rejectedBA, currentUser);
+			}
+			throw e;
 		}		
 		return invoice;
 	}
