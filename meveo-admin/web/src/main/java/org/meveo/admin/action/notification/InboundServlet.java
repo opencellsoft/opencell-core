@@ -16,18 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.util.Base64;
+import org.jboss.seam.security.Credentials;
+import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InactiveUserException;
-import org.meveo.admin.exception.LoginException;
-import org.meveo.admin.exception.PasswordExpiredException;
-import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.notification.InboundRequest;
-import org.meveo.service.admin.impl.UserService;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.InboundRequestService;
+import org.picketlink.idm.impl.api.PasswordCredential;
 import org.slf4j.Logger;
 
 /**
@@ -50,17 +49,21 @@ public class InboundServlet extends HttpServlet {
 	ProviderService providerService;
 
 	@Inject
-	private UserService userService;
-
-	@Inject
 	@InboundRequestReceived
 	protected Event<InboundRequest> eventProducer;
+	
+	@Inject
+	private Identity identity;
+	
+	@Inject
+	private Credentials credentials;
+	
+	private User currentUser;
 
-
-	private User authenticateRequest(HttpServletRequest req) {
+	private void authenticateRequest(HttpServletRequest req, HttpServletResponse res) {
         final String authorization = req.getHeader("Authorization");
-        User user = null;
-        // If no authorization information present; block access
+        
+        // If no authorization information present; block access        
         if (authorization == null || authorization.isEmpty()) {
             log.error("Missing Authorization header");
         } else {
@@ -80,29 +83,31 @@ public class InboundServlet extends HttpServlet {
                 String password = tokenizer.nextToken();
 
                 log.debug("InboundServlet call basic authentication. Username={}", username);
+                
+                credentials.setUsername(username);
+				credentials.setCredential(new PasswordCredential(password));
 
-                try {
-                    user = userService.loginChecks(username, password, false);
-                    log.debug("REST login successfull with username={}", username);
-                } catch (LoginException e) {
-                    log.error("Login failed for the user {} for reason {} {}", new Object[]{username, e.getClass().getName(), e.getMessage()});
-                    if (e instanceof InactiveUserException) {
-                        log.error("login failed with username=" + username + " and password=" + password + " : cause Business Account or user is not active");
-                    } else if (e instanceof UnknownUserException) {
-                        log.error("login failed with username=" + username + " and password=" + password + " : cause unknown username/password");
-                    } else if (e instanceof PasswordExpiredException) {
-                        log.error("The password of user " + username + " has expired.");
-                    }
-                }
+				String result = identity.login();
+
+				if (result.equals(Identity.RESPONSE_LOGIN_SUCCESS)) {
+					res.setStatus(200);
+					return;
+				}
             }
         }
-        return user;
+        
+        res.setStatus(401);
 	}
 
 	private void doService(HttpServletRequest req, HttpServletResponse res) {
 		log.debug("doService.....");
-        User user = authenticateRequest(req);
-        if(user == null){
+        authenticateRequest(req, res);
+        
+        if (identity != null && identity.isLoggedIn()) {
+            currentUser = ((MeveoUser) identity.getUser()).getUser();
+        }
+        
+        if(currentUser == null){
             res.addHeader("WWW-Authenticate",  "Basic");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -112,8 +117,8 @@ public class InboundServlet extends HttpServlet {
         log.debug("received request for method {} , path={}", req.getMethod(),path);
 
 		InboundRequest inReq = new InboundRequest();
-		inReq.setAuditable(new Auditable(user));
-		inReq.setProvider(user.getProvider());
+		inReq.setAuditable(new Auditable(currentUser));
+		inReq.setProvider(currentUser.getProvider());
 		inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
 
 		inReq.setContentLength(req.getContentLength());
@@ -203,7 +208,7 @@ public class InboundServlet extends HttpServlet {
 		}
 
 		try {
-			inboundRequestService.create(inReq, user);
+			inboundRequestService.create(inReq, currentUser);
             res.setStatus(200);
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ", e1);
