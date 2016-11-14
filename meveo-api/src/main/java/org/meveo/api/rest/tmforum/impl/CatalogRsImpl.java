@@ -388,4 +388,26 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
+	@Override
+	public Response listProductTemplate() {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(getCurrentUser());
+            responseBuilder = Response.ok().entity(listProductTemplate);
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
 }

@@ -1,6 +1,7 @@
 package org.meveo.api.rest.tmforum;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -146,9 +147,18 @@ public interface CatalogRs {
      * @param code productTemplate code
      * @return 
      */
-    @GET
+    @DELETE
     @Path("/productTemplate/{code}")
     public Response removeProductTemplate(@PathParam("code") String code);
+    
+    
+    /**
+     * List all  productTemplates
+     * @return 
+     */
+    @GET
+    @Path("/productTemplate/list")
+    public Response listProductTemplate();    
     
 
 }

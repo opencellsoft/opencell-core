@@ -1,6 +1,7 @@
 package org.meveo.api.catalog;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -168,6 +169,17 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
 		productTemplateService.remove(productTemplate, currentUser);
+	}
+
+	public List<ProductTemplateDto> list(User currentUser) {
+		List<ProductTemplate> listProductTemplate = productTemplateService.list(currentUser.getProvider());
+		List<ProductTemplateDto> dtos = new ArrayList<ProductTemplateDto>();
+		if(listProductTemplate != null){
+			for(ProductTemplate productTemplate : listProductTemplate){
+				dtos.add(new ProductTemplateDto(productTemplate, null));			
+			}
+		}
+		return dtos;
 	}
 
 }
