@@ -438,7 +438,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
 			if(invoiceAmount == null){
 				throw new BusinessException("Cant compute invoice amount");
-			}
+			}			
 			if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
 				throw new BusinessException("Invoice amount below the threshold");	
 			}
@@ -1082,7 +1082,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
 
-	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws Exception {
+	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws BusinessException {
 		if (invoice.getPdf() == null) {
 			producePdf(invoice.getId(), currentUser);
 		}
