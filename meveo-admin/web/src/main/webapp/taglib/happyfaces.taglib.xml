@@ -163,6 +163,10 @@
         <source>formLanguageFields.xhtml</source>
     </tag>
     <tag>
+        <tag-name>formImageField</tag-name>
+        <source>formImageField.xhtml</source>
+    </tag>
+    <tag>
      <tag-name>displayWorkflowsHistory</tag-name>
         <source>displayWorkflowsHistory.xhtml</source>
     </tag>    

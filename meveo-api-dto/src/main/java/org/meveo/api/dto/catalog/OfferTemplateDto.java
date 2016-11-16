@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -56,7 +55,12 @@ public class OfferTemplateDto extends BaseDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
-    private String imageBase64;    
+    
+    /**
+     * This field is populated on find and list. Use to pull the image from a servlet later on.
+     */
+    private String imagePath;
+    private String imageBase64;
 
     public OfferTemplateDto() {
 
@@ -68,9 +72,7 @@ public class OfferTemplateDto extends BaseDto {
         name = offerTemplate.getName();
         longDescription = offerTemplate.getLongDescription();
         disabled = offerTemplate.isDisabled();
-        if (offerTemplate.getImage() != null) {
-			imageBase64 = Base64.encodeBase64String(offerTemplate.getImageAsByteArr());
-		}
+        imagePath = offerTemplate.getImagePath();
         
         if (offerTemplate.getBusinessOfferModel() != null) {
             bomCode = offerTemplate.getBusinessOfferModel().getCode();
@@ -192,6 +194,14 @@ public class OfferTemplateDto extends BaseDto {
         this.name = name;
     }
 
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
 	public String getImageBase64() {
 		return imageBase64;
 	}
@@ -199,4 +209,5 @@ public class OfferTemplateDto extends BaseDto {
 	public void setImageBase64(String imageBase64) {
 		this.imageBase64 = imageBase64;
 	}
+
 }

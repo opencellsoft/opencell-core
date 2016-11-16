@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 @XmlRootElement(name = "OfferCategory")
@@ -39,6 +38,7 @@ public class OfferTemplateCategoryDto implements Serializable {
 	
 	private Long parentId;
 	
+	private String imagePath;
 	private String imageBase64;
 	
 	public OfferTemplateCategoryDto() {
@@ -55,10 +55,7 @@ public class OfferTemplateCategoryDto implements Serializable {
 			this.setVersion(offerTemplateCategory.getVersion());
 			this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
 			this.setActive(offerTemplateCategory.isActive());
-			
-			if (offerTemplateCategory.getImage() != null) {
-				imageBase64 = Base64.encodeBase64String(offerTemplateCategory.getImageAsByteArr());
-			}
+			this.imagePath = offerTemplateCategory.getImagePath();
 			
 			OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
 			
@@ -110,8 +107,8 @@ public class OfferTemplateCategoryDto implements Serializable {
 	@Override
 	public String toString() {
 		return "OfferTemplateCategoryDto [code=" + code + ", description=" + description + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
-				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imageBase64="
-				+ imageBase64 + "]";
+				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath=" + imagePath
+				+ "]";
 	}
 
 	public Long getId() {
@@ -160,6 +157,14 @@ public class OfferTemplateCategoryDto implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 
 	public String getImageBase64() {

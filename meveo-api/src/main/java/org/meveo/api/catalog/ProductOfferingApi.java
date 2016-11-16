@@ -1,13 +1,9 @@
 package org.meveo.api.catalog;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
@@ -69,20 +65,6 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, offerTemplateCategoryDto.getCode());
 				}
 				productTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
-	}
-
-	protected void processImage(ProductTemplateDto postData, ProductTemplate productTemplate) throws MeveoApiException {
-		if (postData.getImageValue() != null) {
-			byte[] byteContent = postData.getImageValue().getBytes();
-			try {
-				Blob blobImg = new SerialBlob(byteContent);
-				productTemplate.setImage(blobImg);
-			} catch (SerialException e) {
-				throw new MeveoApiException("Invalid base64 encoded image string.");
-			} catch (SQLException e) {
-				throw new MeveoApiException("System error.");
 			}
 		}
 	}

@@ -16,6 +16,7 @@
 
 	<c:set var="mainBackingBean" value="#{backingBean}" />	
 
+	<hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="product" />
 	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 		required="true" validateUnique="true" />
     <hftl:formField label="#{messages['commons.name']}" field="name"
@@ -37,27 +38,6 @@
 	<hftl:formField label="#{messages['billingCycle.calendar']}"
 		field="invoicingCalendar" valueLabelField="code" popup="false"
 		listBean="#{calendarBean}" />
-	<hftl:decorateFormField fieldId="productImageUpload"
-		rendered="#{mainBackingBean.entity.transient}"
-		label="#{messages['commons.image']}" newLine="true">
-		<p:fileUpload id="productImageUpload" auto="false" skinSimple="true"
-			mode="simple" value="#{mainBackingBean.uploadedFile}" />
-	</hftl:decorateFormField>
-	<hftl:decorateFormField fieldId="productImage"
-		rendered="#{not mainBackingBean.entity.transient}"
-		label="#{messages['commons.image']}" newLine="true">
-		<p:outputPanel autoUpdate="true">
-			<p:graphicImage id="productImage" cache="false"
-				value="#{productTemplateImageStreamer.image}" height="150"
-				width="150">
-				<f:param name="id" value="#{mainBackingBean.entity.id}"></f:param>
-			</p:graphicImage>
-			<p:fileUpload
-				fileUploadListener="#{mainBackingBean.handleFileUpload}"
-				mode="advanced" update=":formId:messages" auto="true"
-				sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-		</p:outputPanel>
-	</hftl:decorateFormField>
 	<hftl:formField id="offerTemplateCategories"
 		label="#{messages['productOffering.offerTemplateCategories']}"
 		field="offerTemplateCategories" listType="pickUpList"

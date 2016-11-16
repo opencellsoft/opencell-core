@@ -29,10 +29,14 @@
                         <p:panelGrid styleClass="ui-panelgrid-blank">
                             <p:row>
                                 <p:column rowspan="2">
-                                    <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="100">
-                                        <f:param name="id" value="#{prod.id}"></f:param>
-                                    </p:graphicImage>
-                                </p:column>
+									<p:graphicImage value="#{defaultImageStreamer.image}"
+										cache="false" width="100" height="100">
+										<f:param name="providerCode"
+											value="#{productTemplateListBean.currentProvider.code}"></f:param>
+										<f:param name="fileName" value="#{prod.imagePath}"></f:param>
+										<f:param name="pictureGroupName" value="product"></f:param>
+									</p:graphicImage>
+								</p:column>
                                 <p:column>
                                     <h:outputText value="#{prod.name}"></h:outputText>
                                 </p:column>

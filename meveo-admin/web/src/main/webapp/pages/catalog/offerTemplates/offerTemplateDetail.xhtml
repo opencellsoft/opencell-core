@@ -33,18 +33,10 @@
 
                     <hf:namingContainer id="offerInfo">
 
-                        <p:panelGrid columns="2" columnClasses="Wid20 Responsive100 VAlignTop, Wid80 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
-
-                            <hftl:decorateFormField fieldId="offerImage" label="#{messages['commons.image']}" rendered="#{not offerTemplateBean.entity.transient}">
-                                <p:graphicImage cache="false" id="offerImage" value="#{offerTemplateImageStreamer.image}" height="150" width="150">
-                                    <f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
-                                </p:graphicImage>
-                                <p:fileUpload fileUploadListener="#{offerTemplateBean.handleFileUpload}" mode="advanced"
-                                    update=":offerForm:tabView:offerInfo:offerImage :offerForm:messages" immediate="false" auto="true" sizeLimit="1000000"
-                                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileLimit="1" />
-                            </hftl:decorateFormField>
+                        <p:panelGrid columns="2" columnClasses="Wid20 Responsive100 VAlignTop, Wid80 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">                           
 
                             <h:panelGroup>
+                            	<hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="offer" />
                                 <hftl:formField label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true"
                                     actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onCodeChange" listenerUpdate="name" />
                                 <hftl:formField id="name" label="#{messages['offerTemplate.name']}" field="name" required="true" />

@@ -66,5 +66,10 @@ public enum MeveoApiErrorCodeEnum {
     /**
      * Action was not allowed to be performed
      */
-    ACTION_FORBIDDEN;
+    ACTION_FORBIDDEN,
+    
+    /**
+     * Could be a wrong content type or invalid image byte[].
+     */
+    INVALID_IMAGE_DATA;
 }

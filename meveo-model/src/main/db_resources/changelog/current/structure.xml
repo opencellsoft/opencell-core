@@ -2950,5 +2950,31 @@
 
     <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
         <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
-    </changeSet>    
+    </changeSet>
+    
+    <changeSet id="#2191_20161110 - Refactor image fields" author="EdwardLegaspi">
+    	<dropColumn tableName="cat_offer_template_category">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template_category">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_offer_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_service_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_service_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>

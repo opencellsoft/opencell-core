@@ -13,18 +13,7 @@
 
     <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
         <p:panel>
-            <hftl:decorateFormField fieldId="productImageUpload" rendered="#{mainBackingBean.entity.transient}" label="#{messages['commons.image']}">
-                <p:fileUpload id="productImageUpload" auto="false" skinSimple="true" mode="simple" value="#{mainBackingBean.uploadedFile}" />
-            </hftl:decorateFormField>
-            <hftl:decorateFormField fieldId="productImage" rendered="#{not mainBackingBean.entity.transient}" label="#{messages['commons.image']}">
-                <p:outputPanel autoUpdate="false">
-                    <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="150" width="150">
-                        <f:param name="id" value="#{mainBackingBean.entity.id}"></f:param>
-                    </p:graphicImage>
-                    <p:fileUpload rendered="#{mainBackingBean.edit}" fileUploadListener="#{mainBackingBean.handleFileUpload}" mode="advanced" update=":formId:messages" auto="true"
-                        sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                </p:outputPanel>
-            </hftl:decorateFormField>
+            <hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="product" />
             <p:outputPanel>
                 <p:panel rendered="#{not mainBackingBean.edit}">
                     <ul class="ListNoStyle" style="margin: 0px; padding: 0px;">
@@ -131,10 +120,14 @@
                     paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                     styleClass="ui-panelgrid-blank custom-grid" widgetVar="bundleList">
                     <p:column>
-                        <p:graphicImage id="productImageForBundle" cache="false" value="#{productTemplateImageStreamer.image}" height="150" width="150">
-                            <f:param name="id" value="#{prod.productTemplate.id}"></f:param>
-                        </p:graphicImage>
-                    </p:column>
+						<p:graphicImage value="#{defaultImageStreamer.image}"
+							cache="false" width="100" height="100">
+							<f:param name="providerCode"
+								value="#{mainBackingBean.currentProvider.code}"></f:param>
+							<f:param name="fileName" value="#{prod.imagePath}"></f:param>
+							<f:param name="pictureGroupName" value="product"></f:param>
+						</p:graphicImage>
+					</p:column>
                     <p:column headerText="#{messages['commons.name']}">
                         <p:link outcome="mm_productTemplateDetail" value="#{prod.productTemplate.name}">
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />

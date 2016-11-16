@@ -1,15 +1,14 @@
 package org.meveo.admin.web.servlet;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.meveo.admin.util.ModuleUtil;
-import org.meveo.model.catalog.ProductOffering;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.catalog.impl.ProductOfferingService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -17,23 +16,34 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.meveo.admin.util.ModuleUtil;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.ProductOfferingService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix
+ * or  /meveo/picture/provider/offerCategory/offerCategoryCode
  * or  /meveo/picture/provider/offer/offerCode
  * or  /meveo/picture/provider/service/serviceCode
+ * or  /meveo/picture/provider/product/productCode
  * <p>
  * 3 provider code
- * 4 group : module or offer or service
+ * 4 group : module or offerCategory or offer or service or product
  * 5 tmp, read pictures from tmp folder
- * 6 picture filename like entity's code with suffix png,gif,jpeg,jpg
+ * 6 picture filename like entity's code with suffix png, gif, jpeg, jpg. In case no extension is provided it is assumed as entity's code.
+ * </p>
  */
 @WebServlet(name = "pictureServlet", urlPatterns = "/picture/*", loadOnStartup = 1000)
 public class PictureServlet extends HttpServlet {
@@ -44,8 +54,10 @@ public class PictureServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Log log = LogFactory.getLog(PictureServlet.class);
 
-	private static final String DEFAULT_OFFER_IMAGE = "offer_default.png";
-	private static final String DEFAULT_SERVICE_IMAGE = "service_default.png";
+	public static final String DEFAULT_OFFER_CAT_IMAGE = "offer_cat_default.png";
+	public static final String DEFAULT_OFFER_IMAGE = "offer_default.png";
+	public static final String DEFAULT_SERVICE_IMAGE = "service_default.png";
+	public static final String DEFAULT_PRODUCT_IMAGE = "product_default.png";
 	private Map<String, byte[]> cachedDefaultImages = new HashMap<>();
 
 	@Inject
@@ -56,6 +68,12 @@ public class PictureServlet extends HttpServlet {
 
 	@Inject
 	ServiceTemplateService serviceTemplateService;
+	
+	@Inject
+	private OfferTemplateCategoryService offerTemplateCategoryService;
+	
+	@Inject
+	private ProductTemplateService productTemplateService;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -94,7 +112,7 @@ public class PictureServlet extends HttpServlet {
 		}
 
 		byte[] data = null;
-		if (filename.indexOf(".") > 0 || (!groupname.equals("offer") && !groupname.equals("service"))) {
+		if (filename.indexOf(".") > 0 || (!groupname.equals("offerCategory") && !groupname.equals("offer") && !groupname.equals("service") && !groupname.equals("product"))) {
 			String destfile = rootPath + File.separator + filename;
 			data = loadImage(destfile);
 		} else {
@@ -103,14 +121,43 @@ public class PictureServlet extends HttpServlet {
 				log.error("Provider " + provider + " does not exist");
 				return;
 			}
-			if ("offer".equals(groupname)) {
-				ProductOffering offering = productOfferingService.findByCode(filename, providerEntity);
-				if (offering == null) {
-					log.error("Product, bundle or offer with code " + offering + " does not exist");
+			if ("offerCategory".equals(groupname)) {
+				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(filename, providerEntity);
+				if (offerTemplateCategory == null) {
+					log.error("Offer category with code " + filename + " does not exist");
 					return;
 				}
-				// load image from DB
-				data = offering.getImageAsByteArr();
+				
+				try {
+					data = Files.readAllBytes(Paths.get(rootPath + File.separator + offerTemplateCategory.getImagePath()));
+				} catch (IOException e) {
+					log.error("Offer category with code " + filename + " does not exist in filesystem");
+				}
+				
+				if (data == null) {
+					// load from cached default images
+					data = cachedDefaultImages.get(DEFAULT_OFFER_IMAGE);
+				}
+				
+				if (data == null) {
+					// load from default images directory
+					String imageFile = rootPath + File.separator + DEFAULT_OFFER_CAT_IMAGE;
+					data = loadImage(imageFile);
+					cachedDefaultImages.put(imageFile, data);
+				}
+			} else if ("offer".equals(groupname)) {
+				ProductOffering offering = productOfferingService.findByCode(filename, providerEntity);
+				if (offering == null) {
+					log.error("Offer with code " + filename + " does not exist");
+					return;
+				}
+				
+				try {
+					data = Files.readAllBytes(Paths.get(rootPath + File.separator + offering.getImagePath()));
+				} catch (IOException e) {
+					log.error("Offer with code " + filename + " does not exist in filesystem");
+				}
+				
 				if (data == null) {
 					// load from cached default images
 					data = cachedDefaultImages.get(DEFAULT_OFFER_IMAGE);
@@ -121,13 +168,20 @@ public class PictureServlet extends HttpServlet {
 					data = loadImage(imageFile);
 					cachedDefaultImages.put(imageFile, data);
 				}
+				
 			} else if ("service".equals(groupname)) {
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(filename, providerEntity);
 				if (serviceTemplate == null) {
-					log.error("Service with code " + serviceTemplate + " does not exist");
+					log.error("Service with code " + filename + " does not exist");
 					return;
 				}
-				data = serviceTemplate.getImageAsByteArr();
+
+				try {
+					data = Files.readAllBytes(Paths.get(rootPath + File.separator + serviceTemplate.getImagePath()));
+				} catch (IOException e) {
+					log.error("Service with code " + filename + " does not exist in filesystem");
+				}
+				
 				if (data == null) {
 					// load from cached default images
 					data = cachedDefaultImages.get(DEFAULT_SERVICE_IMAGE);
@@ -138,8 +192,32 @@ public class PictureServlet extends HttpServlet {
 					data = loadImage(imageFile);
 					cachedDefaultImages.put(imageFile, data);
 				}
+			} else if ("product".equals(groupname)) {
+				ProductTemplate productTemplate = productTemplateService.findByCode(filename, providerEntity);
+				if (productTemplate == null) {
+					log.error("Product with code " + filename + " does not exist");
+					return;
+				}
+
+				try {
+					data = Files.readAllBytes(Paths.get(rootPath + File.separator + productTemplate.getImagePath()));
+				} catch (IOException e) {
+					log.error("Product with code " + filename + " does not exist in filesystem");
+				}
+				
+				if (data == null) {
+					// load from cached default images
+					data = cachedDefaultImages.get(DEFAULT_PRODUCT_IMAGE);
+				}
+				if (data == null) {
+					// load from default images directory
+					String imageFile = rootPath + File.separator + DEFAULT_SERVICE_IMAGE;
+					data = loadImage(imageFile);
+					cachedDefaultImages.put(imageFile, data);
+				}
 			}
 		}
+		
 		if (data != null) {
 			InputStream in = null;
 			OutputStream out = null;

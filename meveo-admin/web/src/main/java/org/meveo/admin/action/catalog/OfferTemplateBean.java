@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -57,9 +55,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.UploadedFile;
 
 /**
  * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -101,7 +97,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private DualListModel<ServiceTemplate> incompatibleServices;
     private OfferServiceTemplate offerServiceTemplate;
     private OfferProductTemplate offerProductTemplate;
-    private UploadedFile uploadedFile;
     private BusinessOfferModel businessOfferModel;
 
     /**
@@ -400,34 +395,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     public void setIncompatibleServices(DualListModel<ServiceTemplate> incompatibleServices) {
         this.incompatibleServices = incompatibleServices;
-    }
-
-    public UploadedFile getUploadedFile() {
-        return uploadedFile;
-    }
-
-    public void setUploadedFile(UploadedFile uploadedFile) {
-        this.uploadedFile = uploadedFile;
-    }
-
-    public void handleFileUpload(FileUploadEvent event) throws BusinessException {
-        uploadedFile = event.getFile();
-
-        if (uploadedFile != null) {
-            byte[] contents = uploadedFile.getContents();
-            try {
-                entity.setImage(new SerialBlob(contents));
-            } catch (SQLException e) {
-                entity.setImage(null);
-            }
-            entity.setImageContentType(uploadedFile.getContentType());
-
-            saveOrUpdate(entity);
-
-            initEntity();
-
-            messages.info(new BundleKey("messages", "message.upload.succesful"));
-        }
     }
 
     public OfferProductTemplate getOfferProductTemplate() {

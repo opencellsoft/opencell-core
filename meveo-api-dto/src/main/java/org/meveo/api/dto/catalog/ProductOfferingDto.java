@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.codec.binary.Base64;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.DigitalResource;
@@ -47,12 +46,11 @@ public class ProductOfferingDto extends BaseDto {
 
 	private Date validTo;
 
-	private String imageValue;
-
 	private LifeCycleStatusEnum lifeCycleStatus;
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
+	private String imagePath;
 	private String imageBase64;
 
 	public ProductOfferingDto() {
@@ -65,12 +63,8 @@ public class ProductOfferingDto extends BaseDto {
 		this.setValidFrom(product.getValidFrom());
 		this.setValidTo(product.getValidTo());
 		this.setLifeCycleStatus(product.getLifeCycleStatus());
-		if (product.getImage() != null) {
-			imageBase64 = Base64.encodeBase64String(product.getImageAsByteArr());
-		}
-		if (product.getImage() != null) {
-			// this.setImageValue(new String(product.getImageAsByteArr()));
-		}
+		this.imagePath = product.getImagePath();
+		
 		List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
 			this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
@@ -152,14 +146,6 @@ public class ProductOfferingDto extends BaseDto {
 		this.validTo = validTo;
 	}
 
-	public String getImageValue() {
-		return imageValue;
-	}
-
-	public void setImageValue(String imageValue) {
-		this.imageValue = imageValue;
-	}
-
 	public LifeCycleStatusEnum getLifeCycleStatus() {
 		return lifeCycleStatus;
 	}
@@ -174,6 +160,14 @@ public class ProductOfferingDto extends BaseDto {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 
 	public String getImageBase64() {

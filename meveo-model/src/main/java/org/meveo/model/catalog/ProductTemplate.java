@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.annotation.ImageType;
 
 /**
  * @author Edward P. Legaspi
@@ -26,6 +27,7 @@ import org.meveo.model.ICustomFieldEntity;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
+@ImageType
 @NamedQueries({
 		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false and provider=:provider"),
 		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true and provider=:provider"),

@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -108,8 +110,12 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setValidFrom(postData.getValidFrom());
 		bundleTemplate.setValidTo(postData.getValidTo());
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
-
-		processImage(postData, bundleTemplate);
+		try {
+			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
+		}
 
 		// save product template now so that they can be referenced by the
 		// related entities below.
@@ -155,8 +161,12 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setValidFrom(postData.getValidFrom());
 		bundleTemplate.setValidTo(postData.getValidTo());
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
-
-		processImage(postData, bundleTemplate);
+		try {
+			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
+		}
 
 		processProductChargeTemplate(postData, bundleTemplate, provider);
 
@@ -182,6 +192,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		if (bundleTemplate == null) {
 			throw new EntityDoesNotExistsException(BundleTemplate.class, code);
 		}
+		
+		deleteImage(bundleTemplate, currentUser.getProvider().getCode());
 
 		bundleTemplateService.remove(bundleTemplate, currentUser);
 	}
