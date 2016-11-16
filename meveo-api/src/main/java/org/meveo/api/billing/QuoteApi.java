@@ -113,22 +113,8 @@ public class QuoteApi extends BaseApi {
         if (productQuote.getQuoteDate() == null) {
             missingParameters.add("orderDate");
         }
-        if (productQuote.getBillingAccount() == null || productQuote.getBillingAccount().isEmpty()) {
-            missingParameters.add("billingAccount");
-        }
-
-        String billingAccountId = productQuote.getBillingAccount().get(0).getId();
-        if (StringUtils.isEmpty(billingAccountId)) {
-            missingParameters.add("billingAccount");
-        }
 
         handleMissingParameters();
-
-        UserAccount userAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
-        if (userAccount == null) {
-            throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-        }
-
         Provider provider = currentUser.getProvider();
 
         Quote quote = new Quote();
@@ -140,8 +126,7 @@ public class QuoteApi extends BaseApi {
         quote.setReceivedFromApp("API");
         quote.setQuoteDate(productQuote.getQuoteDate() != null ? productQuote.getQuoteDate() : new Date());
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
-        quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
-        quote.setUserAccount(userAccount);
+        quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());        
         if (productQuote.getValidFor() != null) {
             quote.setValidFrom(productQuote.getValidFor().getStartDateTime());
             quote.setValidTo(productQuote.getValidFor().getEndDateTime());
@@ -154,6 +139,19 @@ public class QuoteApi extends BaseApi {
         }
 
         for (ProductQuoteItem productQuoteItem : productQuote.getQuoteItem()) {
+        	
+            if (productQuoteItem.getBillingAccount() == null || productQuoteItem.getBillingAccount().isEmpty()) {
+                missingParameters.add("billingAccount");
+            }
+            String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
+            if (StringUtils.isEmpty(billingAccountId)) {
+                missingParameters.add("billingAccount");
+            }
+            handleMissingParameters();
+            UserAccount userAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
+            if (userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+            }
 
             List<ProductOffering> productOfferings = new ArrayList<>();
             // For modify and delete actions, product offering might not be specified
@@ -185,6 +183,7 @@ public class QuoteApi extends BaseApi {
             quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
             quoteItem.setProductOfferings(productOfferings);
             quoteItem.setProvider(currentUser.getProvider());
+            quoteItem.setUserAccount(userAccount);
 
             if (productQuoteItem.getState() != null) {
                 quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
@@ -452,7 +451,7 @@ public class QuoteApi extends BaseApi {
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
-        subscription.setUserAccount(quoteItem.getQuote().getUserAccount());
+        subscription.setUserAccount(quoteItem.getUserAccount());
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
@@ -487,7 +486,7 @@ public class QuoteApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
-        ProductInstance productInstance = new ProductInstance(quoteItem.getQuote().getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
+        ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), null, currentUser);
         productInstance.setProvider(currentUser.getProvider());
 

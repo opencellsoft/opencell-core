@@ -281,12 +281,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     continue;
                 }
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
-                	if(ratedTransaction.getStatus() != RatedTransactionStatusEnum.OPEN){
-                		throw new BusinessException("ratedTransactionFilter should return only opened rated transactions");
+                	if (ratedTransactionFilter != null){
+	                	if(ratedTransaction.getStatus() != RatedTransactionStatusEnum.OPEN){
+	                		throw new BusinessException("ratedTransactionFilter should return only opened rated transactions");
+	                	}	
+	                	if(!ratedTransaction.getWallet().getUserAccount().getBillingAccount().equals(billingAccount)  ){
+	                		throw new BusinessException("ratedTransactionFilter should return only rated transaction for billingAccount:"+billingAccount.getCode());
+	                	}   
                 	}
-                	if(ratedTransaction.getWallet().getUserAccount().getBillingAccount().equals(billingAccount)  ){
-                		throw new BusinessException("ratedTransactionFilter should return only rated transaction for billingAccount:"+billingAccount.getCode());
-                	}                	
                     Object[] record = new Object[5];
                     record[0] = ratedTransaction.getInvoiceSubCategory().getId();
                     record[1] = ratedTransaction.getAmountWithoutTax();

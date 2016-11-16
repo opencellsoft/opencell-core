@@ -119,13 +119,7 @@ public class Quote extends BusinessCFEntity {
     @Column(name = "STATUS_MESSAGE", length = 2000)
     private String statusMessage;
 
-    /**
-     * Associated user account
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID", nullable = false)
-    @NotNull
-    private UserAccount userAccount;
+
 
     /**
      * A list of qupte items. Not modifiable once send to customer for approval.
@@ -234,14 +228,6 @@ public class Quote extends BusinessCFEntity {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
     }
 
     public List<QuoteItem> getQuoteItems() {

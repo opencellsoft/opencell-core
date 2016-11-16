@@ -35,8 +35,7 @@
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['quotes.title']}" sortBy="quoteDate" sortQuote="DESCENDING" backingBean="#{quoteListBean}">
-            <hftl:column label="#{messages['quote.quoteDate']}" field="quoteDate" isDate="true" />
-            <hftl:column label="#{messages['quote.userAccount']}" field="userAccount.descriptionOrCode" />
+            <hftl:column label="#{messages['quote.quoteDate']}" field="quoteDate" isDate="true" />          
             <hftl:column label="#{messages['businessEntity.code']}" field="code" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
             <hftl:column label="#{messages['commons.status']}" field="status" isMessage="true" messagePrefix="QuoteStatusEnum" />
