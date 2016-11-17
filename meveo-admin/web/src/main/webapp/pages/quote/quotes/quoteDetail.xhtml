@@ -25,7 +25,7 @@
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
             column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
-            selection="#{quoteBean.selectedQuoteItem.userAccount}" updateField=":quoteForm:tabView:quoteItemDetails:userAccount :quoteForm:tabView:quoteItemDetails:userAccount_text">
+            selection="#{quoteBean.selectedQuoteItem.userAccount}" updateField=":quoteForm:tabView:userAccount :quoteForm:tabView:userAccount_text">
         </hftl:entityPopup>
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['access.subscription']}"
             updateField=":quoteForm:tabView:subscription :quoteForm:tabView:subscription_text :quoteForm:tabView:offerTree  :quoteForm:tabView:offerConfigurations"
