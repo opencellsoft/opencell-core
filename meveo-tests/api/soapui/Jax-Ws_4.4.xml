@@ -13112,7 +13112,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:endpoint>${#Project#meveoEndPoint}/FilterWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -13196,14 +13196,14 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33adf161-c4b4-4e52-8116-b8f1aaec37f3"/><con:assertion type="Simple Contains" id="f615d175-e7ec-4f1b-b85a-34bf30d56b5c" name="Contains"><con:configuration><token>&lt;message>Invoice amount below the threshold&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33adf161-c4b4-4e52-8116-b8f1aaec37f3"/><con:assertion type="Simple Contains" id="f615d175-e7ec-4f1b-b85a-34bf30d56b5c" name="Contains"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/>
     </con:testCase><con:properties>
       
       
       
       <con:property>
         <con:name>ticket</con:name>
-        <con:value>2141</con:value>
+        <con:value>2141bis</con:value>
       </con:property>
     </con:properties>
   </con:testSuite><con:properties>
