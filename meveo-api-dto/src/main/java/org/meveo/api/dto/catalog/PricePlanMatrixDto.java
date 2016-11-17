@@ -92,6 +92,8 @@ public class PricePlanMatrixDto extends BaseDto {
         maxSubscriptionAgeInMonth = e.getMaxSubscriptionAgeInMonth();
         amountWithoutTax = e.getAmountWithoutTax();
         amountWithTax = e.getAmountWithTax();
+        amountWithoutTaxEL = e.getAmountWithoutTaxEL();
+        amountWithTaxEL = e.getAmountWithTaxEL();
         priority = e.getPriority();
         criteria1 = e.getCriteria1Value();
         criteria2 = e.getCriteria2Value();
