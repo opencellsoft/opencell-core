@@ -64,7 +64,8 @@ public class BusinessOfferApi extends BaseApi {
 			ServiceTemplate serviceTemplate = ost.getServiceTemplate();
 
 			for (ServiceConfigurationDto serviceCodeDto : postData.getServicesToActivate()) {
-				String serviceCode = postData.getPrefix() + "_" + serviceCodeDto.getCode();
+				//Caution the servicode building algo must match that of BusinessOfferModelService.createOfferFromBOM
+				String serviceCode = ost.getOfferTemplate().getId() + "_" + serviceCodeDto.getCode();
 				if (serviceCode.equals(serviceTemplate.getCode())) {
 					if (serviceCodeDto.getCustomFields() != null) {
 						try {
