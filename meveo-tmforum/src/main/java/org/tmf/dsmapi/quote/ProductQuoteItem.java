@@ -26,6 +26,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
+import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
 import org.tmf.dsmapi.catalog.resource.order.Note;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -77,6 +78,7 @@ public class ProductQuoteItem implements Serializable {
     protected ProductOffering productOffering;
     protected Product product;
     protected List<QuoteProductOfferingPrice> itemQuoteProductOfferingPrice;
+    protected List<BillingAccount> billingAccount;
 
     protected TimeRange subscriptionPeriod;
     protected List<String> consumptionCdr;
@@ -349,8 +351,19 @@ public class ProductQuoteItem implements Serializable {
     public void setConsumptionCdr(List<String> consumptionCdr) {
         this.consumptionCdr = consumptionCdr;
     }
+    
+	public List<BillingAccount> getBillingAccount() {
+        if (billingAccount == null) {
+            this.billingAccount = new ArrayList<BillingAccount>();
+        }
+        return this.billingAccount;
+	}
 
-    /**
+	public void setBillingAccount(List<BillingAccount> billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+
+	/**
      * Serialize orderItem DTO into a string
      * 
      * @param productQuoteItem Quote item to serialize

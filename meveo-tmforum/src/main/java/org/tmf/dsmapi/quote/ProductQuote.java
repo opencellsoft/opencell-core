@@ -76,8 +76,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value = Include.NON_NULL)
 public class ProductQuote implements Serializable {
 
-    private final static long serialVersionUID = 11L;
-    protected List<BillingAccount> billingAccount;
+    private final static long serialVersionUID = 11L;  
     protected String state;
     protected String id;
     protected String href;
@@ -106,6 +105,14 @@ public class ProductQuote implements Serializable {
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
     /**
+     * #########################################################
+     * 
+     * The BillingAccount is moved to ProductQuoteItem, to be like order.
+     * will think to keep tmforum compatipility
+     * 
+     *  #########################################################
+     * 
+     * 
      * Gets the value of the billingAccount property.
      * 
      * <p>
@@ -123,22 +130,9 @@ public class ProductQuote implements Serializable {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link BillingAccount }
      * 
-     * 
+     *
      */
-    public List<BillingAccount> getBillingAccount() {
-        if (billingAccount == null) {
-            billingAccount = new ArrayList<BillingAccount>();
-        }
-        return this.billingAccount;
-    }
-
-    /**
-     * 
-     * 
-     */
-    public void setBillingAccount(List<BillingAccount> billingAccount) {
-        this.billingAccount = billingAccount;
-    }
+ 
 
     /**
      * Obtient la valeur de la propriété state.

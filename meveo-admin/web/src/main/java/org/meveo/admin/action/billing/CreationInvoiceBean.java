@@ -469,8 +469,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			}
 	
 			try {
+				invoiceService.commit();
 				invoiceService.generateXmlAndPdfInvoice(entity, getCurrentUser());
-			} catch (Exception e) {
+			} catch (Exception e) {				
 				messages.error("Error generating xml / pdf invoice=" + e.getMessage());
 			}
 	

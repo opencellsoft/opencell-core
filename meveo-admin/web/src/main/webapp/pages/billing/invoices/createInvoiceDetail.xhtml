@@ -19,7 +19,7 @@
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
-				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text"
+				updateField=":formId:tabView:linkedInvoices :invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text :formId:tabView:panelAddLinkedInvoice"
 				selection="#{creationInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
@@ -29,7 +29,7 @@
 				column2="description">
 			</hftl:entityPopup>
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
-				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs"
+				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs  :formId:tabView:panelAddLinkedInvoice"
 				selection="#{creationInvoiceBean.invoiceToAdd}"
 				dataModel="#{creationInvoiceBean.getInvoicesByTypeAndBA()}"
 				backingBean="#{creationInvoiceBean}" selectionListenerBean="#{creationInvoiceBean}" selectionListenerMethod="onInvoiceSelect"
