@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpStatus;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductOffering;
@@ -100,7 +101,7 @@ public class PictureServlet extends HttpServlet {
 				rootPath = ModuleUtil.getTmpRootPath(provider);
 				filename = path[6];
 			} else if (path.length == 6) {
-				rootPath = ModuleUtil.getPicturePath(provider, groupname);
+				rootPath = ModuleUtil.getPicturePath(provider, groupname, false);
 				filename = path[5];
 			} else {
 				log.error("error context path " + url);
@@ -125,6 +126,7 @@ public class PictureServlet extends HttpServlet {
 				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(filename, providerEntity);
 				if (offerTemplateCategory == null) {
 					log.error("Offer category with code " + filename + " does not exist");
+					resp.setStatus(HttpStatus.SC_NOT_FOUND);
 					return;
 				}
 				
@@ -149,6 +151,7 @@ public class PictureServlet extends HttpServlet {
 				ProductOffering offering = productOfferingService.findByCode(filename, providerEntity);
 				if (offering == null) {
 					log.error("Offer with code " + filename + " does not exist");
+					resp.setStatus(HttpStatus.SC_NOT_FOUND);
 					return;
 				}
 				
@@ -173,6 +176,7 @@ public class PictureServlet extends HttpServlet {
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(filename, providerEntity);
 				if (serviceTemplate == null) {
 					log.error("Service with code " + filename + " does not exist");
+					resp.setStatus(HttpStatus.SC_NOT_FOUND);
 					return;
 				}
 
@@ -196,6 +200,7 @@ public class PictureServlet extends HttpServlet {
 				ProductTemplate productTemplate = productTemplateService.findByCode(filename, providerEntity);
 				if (productTemplate == null) {
 					log.error("Product with code " + filename + " does not exist");
+					resp.setStatus(HttpStatus.SC_NOT_FOUND);
 					return;
 				}
 
@@ -236,6 +241,9 @@ public class PictureServlet extends HttpServlet {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
 			}
+			resp.setStatus(HttpStatus.SC_OK);
+		} else {
+			resp.setStatus(HttpStatus.SC_NOT_FOUND);
 		}
 	}
 
