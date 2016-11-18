@@ -777,10 +777,16 @@ public abstract class BaseApi {
         return persistenceService;
     }
     
-    protected void saveImage(IEntity entity, String imagePath, String imageData, String providerCode) throws IOException, InvalidImageData {
+    protected void saveImage(IEntity entity, String imagePath, String imageData, String providerCode) throws IOException, InvalidImageData, MissingParameterException {
 		if (StringUtils.isBlank(imageData)) {
 			return;
+		} else {
+			if (StringUtils.isBlank(imagePath)) {
+				missingParameters.add("imagePath");
+				handleMissingParameters();
+			}
 		}
+		
 		try {
 			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
 			imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
