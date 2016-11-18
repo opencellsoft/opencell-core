@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -687,9 +688,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             JRXmlDataSource dataSource = null;
 
             if (node != null) {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             } else {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
 
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
