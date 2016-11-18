@@ -13103,7 +13103,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           <con:value>794</con:value>
         </con:property>
       </con:properties>
-    </con:testCase><con:testCase id="b5a05d56-5917-4a2e-9641-af472c7dd1ee" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Generate invoice" searchProperties="true">
+    </con:testCase><con:testCase id="b5a05d56-5917-4a2e-9641-af472c7dd1ee" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Generate invoice" searchProperties="true" disabled="true">
       <con:settings/>
       
       
@@ -13187,6 +13187,34 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           </con:request>
         </con:config>
       </con:testStep><con:testStep type="request" name="generate invoice" id="f6206336-b010-4841-b06c-03b64973d398"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="generate invoice" id="c56f693a-bdee-4ef3-9c91-b3970ed61df8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData><!--Optional:-->
+         <generateInvoiceRequest>
+            <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
+            <invoicingDate>2016-11-06</invoicingDate>
+            <!--Optional:-->
+            <lastTransactionDate>2016-11-06</lastTransactionDate>
+            <!--Optional:-->
+            <filter code="OPENED_RTS" />
+             
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33adf161-c4b4-4e52-8116-b8f1aaec37f3"/><con:assertion type="Simple Contains" id="f615d175-e7ec-4f1b-b85a-34bf30d56b5c" name="Contains"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="generate invoice 2" id="4923f783-8b81-4065-9444-bf9c66c7cef5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="generate invoice 2" id="c56f693a-bdee-4ef3-9c91-b3970ed61df8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData><!--Optional:-->
+         <generateInvoiceRequest>
+            <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
+            <invoicingDate>2016-11-06</invoicingDate>
+            <!--Optional:-->
+            <lastTransactionDate>2016-11-06</lastTransactionDate>
+           
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="33adf161-c4b4-4e52-8116-b8f1aaec37f3"/><con:assertion type="Simple Contains" id="f615d175-e7ec-4f1b-b85a-34bf30d56b5c" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="generate invoice3" id="e4039fc5-7477-47f9-bf59-7198ad4f4d25"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>generateInvoiceData</con:operation><con:request name="generate invoice3" id="c56f693a-bdee-4ef3-9c91-b3970ed61df8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:generateInvoiceData><!--Optional:-->
