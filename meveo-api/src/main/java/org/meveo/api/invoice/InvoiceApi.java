@@ -509,7 +509,8 @@ public class InvoiceApi extends BaseApi {
 			}
 		}		
 		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), currentUser);				
-        if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
+		invoiceService.commit();
+		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
         	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
         }
         if(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()){
@@ -517,8 +518,8 @@ public class InvoiceApi extends BaseApi {
         }
         if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
         	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
-        }        
-		
+        }    
+        
 		return new GenerateInvoiceResultDto(invoice);
 	}
 
