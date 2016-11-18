@@ -1155,10 +1155,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		
 		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, invoiceDate);				
-				
-		//TODO me the same check too for filter and orderNumber
 		if(ratedTxFilter == null && StringUtils.isBlank(orderNumber)){			
 			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, lastTransactionDate)){
+				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
+			}
+		}
+		if(!StringUtils.isBlank(orderNumber)){			
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber)){
 				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
 			}
 		}

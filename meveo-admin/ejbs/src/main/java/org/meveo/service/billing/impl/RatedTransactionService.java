@@ -47,6 +47,7 @@ import javax.persistence.criteria.Root;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -107,6 +108,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@Inject
 	private FilterService filterService;
+	
+	@Inject
+	private ResourceBundle resourceMessages;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -261,6 +265,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, currentUser);
+            if(ratedTransactions == null || ratedTransactions.isEmpty()){
+            	throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+            }            	
         }
         for (UserAccount userAccount : userAccounts) {
             WalletInstance wallet = userAccount.getWallet();
@@ -640,6 +647,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		log.debug("isBillingAccountBillable code={},lastTransactionDate={}) : {}",billingAccount.getCode(),lastTransactionDate,count);
 		return count > 0 ? true : false;
 	}
+	
+	public Boolean isBillingAccountBillable(BillingAccount billingAccount,String orderNumber) {
+		long count = 0;
+		TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countListToInvoiceByOrderNumber", Long.class);
+		count = q.setParameter("orderNumber", orderNumber).getSingleResult();
+		log.debug("isBillingAccountBillable code={},orderNumber={}) : {}",billingAccount.getCode(),orderNumber,count);
+		return count > 0 ? true : false;
+	}	
+	
 	/**
 	 * This method is only for generating Xml invoice {@link org.meveo.service.billing.impl.XMLInvoiceCreator 
 	 * #createXMLInvoice(Long, java.io.File, boolean, boolean) createXMLInvoice}
