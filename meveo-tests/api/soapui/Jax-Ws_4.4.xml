@@ -1084,7 +1084,7 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="6a1a2dcc-3af4-4284-8709-07ed19a4e739" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://192.168.10.14:8080/meveo/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="6a1a2dcc-3af4-4284-8709-07ed19a4e739" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/meveo/ScriptInstanceWs</con:endpoint>
@@ -11654,7 +11654,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
       </con:testStep>
       
       <con:properties/>
-    </con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ticket_2086</con:value></con:property></con:properties></con:testSuite><con:testSuite id="b44f2a6c-661e-4fa8-81bd-593883407838" name="#2143 - invoicing threshold amount on BA">
+    </con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ticket_2086</con:value></con:property></con:properties></con:testSuite><con:testSuite id="b44f2a6c-661e-4fa8-81bd-593883407838" name="#2143-#2186 - invoicing threshold amount on BA">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="b4debf51-c5ac-4526-a7d3-f68a83a57903">
@@ -12344,7 +12344,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:createBillingAccount>
+      <ws:updateBillingAccount>
          <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestCase#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -12371,7 +12371,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
-            <invoicingThreshold>2000</invoicingThreshold>
+            <invoicingThreshold>10</invoicingThreshold>
             <bankCoordinates>
               <!--Optional:-->
               <bankCode>BP</bankCode>
@@ -12399,7 +12399,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
               <ics>NA1</ics>
 		</bankCoordinates>
          </billingAccount>
-      </ws:createBillingAccount>
+      </ws:updateBillingAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="e4221569-02a7-4e93-938c-b8c67430eaeb"/>
@@ -12432,6 +12432,11 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
             <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
             <invoicingDate>2016-11-06</invoicingDate>
             <lastTransactionDate>2016-11-06</lastTransactionDate>
+             <generateXML>true</generateXML>
+            <!--Optional:-->
+            <generatePDF>true</generatePDF>
+            <!--Optional:-->
+            <generateAO>true</generateAO>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -12439,7 +12444,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
     </con:testCase><con:properties>
       <con:property>
         <con:name>ticket</con:name>
-        <con:value>2143</con:value>
+        <con:value>2143_2186</con:value>
       </con:property>
     </con:properties>
   </con:testSuite><con:testSuite id="0004313f-e933-4cbc-88cd-7a5e7dc11dc7" name="#2141 - Filter RT, need to set the current BA and 'Open' status">
