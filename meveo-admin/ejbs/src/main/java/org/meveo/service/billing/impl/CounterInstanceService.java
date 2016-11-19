@@ -205,6 +205,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setDescription(counterTemplate.getDescription());
         counterPeriod.setLevel(initialValue);
         counterPeriod.setCounterType(counterTemplate.getCounterType());
+        counterPeriod.setProvider(counterTemplate.getProvider());
         return counterPeriod;
     }
 
