@@ -15,15 +15,18 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
+import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
+import org.meveo.model.catalog.ProductTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -49,6 +52,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Inject
     private OfferTemplateCategoryApi offerTemplateCategoryApi;
+    
+    @Inject
+    private ProductTemplateApi productTemplateApi;
 
     @Override
     public Response findCategories(UriInfo info) {
@@ -269,4 +275,139 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }
+
+	@Override
+	public Response getProductTemplate(String code) {
+        log.debug("getProductTemplate by code {}", code);
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code, getCurrentUser());
+            responseBuilder = Response.ok().entity(productTemplateDto);
+
+        } catch (EntityDoesNotExistsException e) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+	@Override
+	public Response createProductTemplate(ProductTemplateDto postData) {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	ProductTemplate productTemplate = productTemplateApi.create(postData, getCurrentUser());
+            responseBuilder = Response.ok().entity(productTemplate);
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+	@Override
+	public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	ProductTemplate productTemplate = productTemplateApi.createOrUpdate(postData, getCurrentUser());
+            responseBuilder = Response.ok().entity(productTemplate);
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+	@Override
+	public Response updateProductTemplate(ProductTemplateDto postData) {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	ProductTemplate productTemplate = productTemplateApi.update(postData, getCurrentUser());
+            responseBuilder = Response.ok().entity(productTemplate);
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+	@Override
+	public Response removeProductTemplate(String code) {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	 productTemplateApi.remove(code, getCurrentUser());
+            responseBuilder = Response.ok();
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+	@Override
+	public Response listProductTemplate() {
+		Response.ResponseBuilder responseBuilder = null;
+        try {
+        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(getCurrentUser());
+            responseBuilder = Response.ok().entity(listProductTemplate);
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
 }

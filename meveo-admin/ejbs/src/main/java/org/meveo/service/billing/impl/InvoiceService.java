@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -438,7 +439,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
 			if(invoiceAmount == null){
 				throw new BusinessException("Cant compute invoice amount");
-			}
+			}			
 			if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
 				throw new BusinessException("Invoice amount below the threshold");	
 			}
@@ -687,9 +688,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             JRXmlDataSource dataSource = null;
 
             if (node != null) {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             } else {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()), "/invoice");
+                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
 
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
@@ -1084,7 +1085,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
 
-	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws Exception {
+	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber, User currentUser) throws BusinessException {
 		if (invoice.getPdf() == null) {
 			producePdf(invoice.getId(), currentUser);
 		}
@@ -1154,10 +1155,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		
 		ratedTransactionService.createRatedTransaction(billingAccount.getId(), currentUser, invoiceDate);				
-				
-		//TODO me the same check too for filter and orderNumber
 		if(ratedTxFilter == null && StringUtils.isBlank(orderNumber)){			
 			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, lastTransactionDate)){
+				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
+			}
+		}
+		if(!StringUtils.isBlank(orderNumber)){			
+			if( ! ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber)){
 				throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));		
 			}
 		}

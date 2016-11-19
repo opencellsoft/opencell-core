@@ -36,6 +36,7 @@ import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
@@ -311,6 +312,9 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code);
+    
+    @WebMethod
+    GetListProductTemplateResponseDto listProductTemplate();
 
     @WebMethod
     GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code);

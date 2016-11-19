@@ -18,6 +18,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -64,6 +66,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.MeveoParamBean;
 
 @Stateless
@@ -98,6 +101,9 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	private FilteredListApi filteredListApi;
+	
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 	
 	@Inject
 	@MeveoParamBean
@@ -461,15 +467,15 @@ public class InvoiceApi extends BaseApi {
 	 * @param generateInvoiceRequestDto
 	 * @param currentUser
 	 * @return The invoiceNumber
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
 	 * @throws BusinessException
-	 * @throws BusinessApiException
+	 * @throws MeveoApiException 
+	 * @throws FileNotFoundException 
+	 * @throws ImportInvoiceException 
+	 * @throws InvoiceExistException 
 	 * @throws Exception
 	 */
 
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
-            EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -503,7 +509,17 @@ public class InvoiceApi extends BaseApi {
 			}
 		}		
 		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), currentUser);				
-
+		invoiceService.commit();
+		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
+        	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
+        }
+        if(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()){
+       	 invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser);
+        }
+        if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
+        	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
+        }    
+        
 		return new GenerateInvoiceResultDto(invoice);
 	}
 

@@ -54,6 +54,9 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet "
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.orderNumber=:orderNumber and invoice is null order by usageDate desc "),
+		@NamedQuery(name = "RatedTransaction.countListToInvoiceByOrderNumber", query = "SELECT count(r) FROM RatedTransaction r where "
+						+ "r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
+						+ " AND r.orderNumber=:orderNumber and invoice is null order by usageDate desc "),				
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "

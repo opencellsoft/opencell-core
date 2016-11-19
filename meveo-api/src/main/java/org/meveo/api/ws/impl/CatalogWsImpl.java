@@ -64,6 +64,7 @@ import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
@@ -2231,6 +2232,21 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public GetListProductTemplateResponseDto listProductTemplate() {
+		GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+		result.getActionStatus().setMessage("");
+
+		try {
+			result.setListProductTemplate(productTemplateApi.list(getCurrentUser()));
+			
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
 		}
 		return result;
 	}

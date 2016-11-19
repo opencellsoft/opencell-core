@@ -29,6 +29,10 @@ public class GenerateInvoiceRequestDto {
 	@XmlElement()
 	private String orderNumber;
 	
+	private Boolean generateXML;
+	private Boolean generatePDF;
+	private Boolean generateAO;
+	
 	public GenerateInvoiceRequestDto(){
 		
 	}
@@ -81,17 +85,6 @@ public class GenerateInvoiceRequestDto {
 		this.lastTransactionDate = lastTransactionDate;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode +
-				", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + 
-				", filter="+filter+", orderNumber="+orderNumber+"]";
-	}
-
-
 	public FilterDto getFilter() {
 		return filter;
 	}
@@ -108,5 +101,66 @@ public class GenerateInvoiceRequestDto {
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
 	}
+
+
+
+	/**
+	 * @return the generateXML
+	 */
+	public Boolean getGenerateXML() {
+		return generateXML;
+	}
+
+
+
+	/**
+	 * @param generateXML the generateXML to set
+	 */
+	public void setGenerateXML(Boolean generateXML) {
+		this.generateXML = generateXML;
+	}
+
+
+
+	/**
+	 * @return the generatePDF
+	 */
+	public Boolean getGeneratePDF() {
+		return generatePDF;
+	}
+
+
+
+	/**
+	 * @param generatePDF the generatePDF to set
+	 */
+	public void setGeneratePDF(Boolean generatePDF) {
+		this.generatePDF = generatePDF;
+	}
+
+
+
+	/**
+	 * @return the generateAO
+	 */
+	public Boolean getGenerateAO() {
+		return generateAO;
+	}
+
+
+
+	/**
+	 * @param generateAO the generateAO to set
+	 */
+	public void setGenerateAO(Boolean generateAO) {
+		this.generateAO = generateAO;
+	}
+
+	@Override
+	public String toString() {
+		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + ", filter=" + (filter == null ? null : filter) + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
+	}
+	
+	
 
 }
