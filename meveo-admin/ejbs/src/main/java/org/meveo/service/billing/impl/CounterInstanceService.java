@@ -166,6 +166,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterInstance;
     }
 
+    //we must make sure the counter period is persisted in db before storing it in cache
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance, User currentUser)
             throws BusinessException {
         refresh(counterInstance);
