@@ -23,18 +23,7 @@
 
             <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
                 <p:panel>
-                    <hftl:decorateFormField fieldId="offerImageUpload" rendered="#{offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:fileUpload id="offerImageUpload" auto="false" skinSimple="true" mode="simple" value="#{offerTemplateBean.uploadedFile}" />
-                    </hftl:decorateFormField>
-                    <hftl:decorateFormField fieldId="offerImage" rendered="#{not offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:outputPanel autoUpdate="false" style="border: 1px solid #ddd;">
-                            <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateImageStreamer.image}" height="150" width="150">
-                                <f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
-                            </p:graphicImage>
-                            <p:fileUpload rendered="#{offerTemplateBean.edit}" fileUploadListener="#{offerTemplateBean.handleFileUpload}" mode="advanced"
-                                update=":offerForm:messages" auto="true" sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                        </p:outputPanel>
-                    </hftl:decorateFormField>
+                    <hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="offer" />
                     <p:outputPanel>
                         <p:panel rendered="#{not offerTemplateBean.edit}">
                             <ul class="list-inline">
@@ -111,10 +100,14 @@
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         styleClass="ui-panelgrid-blank custom-grid" lazy="false" widgetVar="productList" rowKey="#{entity.id}">
                         <p:column>
-                            <p:graphicImage cache="false" value="#{productTemplateImageStreamer.image}" height="150" width="150">
-                                <f:param name="id" value="#{entity.productTemplate.id}"></f:param>
-                            </p:graphicImage>
-                        </p:column>
+							<p:graphicImage value="#{defaultImageStreamer.image}"
+								cache="false" width="100" height="100">
+								<f:param name="providerCode"
+									value="#{offerTemplateBean.currentProvider.code}"></f:param>
+								<f:param name="fileName" value="#{entity.productTemplate.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
                         <p:column headerText="#{messages['commons.name']}">
                             <p:link outcome="mm_productTemplateDetail" value="#{entity.productTemplate.name}">
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
@@ -234,10 +227,14 @@
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         lazy="true" styleClass="ui-panelgrid-blank">
                         <p:column>
-                            <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="100">
-                                <f:param name="id" value="#{entity.id}"></f:param>
-                            </p:graphicImage>
-                        </p:column>
+							<p:graphicImage value="#{defaultImageStreamer.image}"
+								cache="false" width="100" height="100">
+								<f:param name="providerCode"
+									value="#{productTemplateListBean.currentProvider.code}"></f:param>
+								<f:param name="fileName" value="#{entity.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
 
                         <hftl:column label="#{messages['commons.name']}" field="name" />
                         <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />

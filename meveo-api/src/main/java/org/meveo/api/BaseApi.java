@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
@@ -27,11 +30,13 @@ import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -771,4 +776,32 @@ public abstract class BaseApi {
 
         return persistenceService;
     }
+    
+    protected void saveImage(IEntity entity, String imagePath, String imageData, String providerCode) throws IOException, InvalidImageData, MissingParameterException {
+		if (StringUtils.isBlank(imageData)) {
+			return;
+		} else {
+			if (StringUtils.isBlank(imagePath)) {
+				missingParameters.add("imagePath");
+				handleMissingParameters();
+			}
+		}
+		
+		try {
+			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
+			imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
+		} catch (IOException e) {
+			throw new InvalidImageData();
+		}
+	}
+	
+	protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {		
+		try {
+			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
+			imageUploadEventHandler.deleteImage(entity, providerCode);
+		} catch (IOException e) {
+			throw new InvalidImageData("Failed deleting image.");
+		}
+	}
+    
 }

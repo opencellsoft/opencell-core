@@ -135,10 +135,12 @@
 										columnClasses="Wid10 Responsive100, Wid60 Responsive100, Wid30 Responsive100">
 
 										<p:panel>
-											<p:graphicImage id="offerImage" cache="false"
-												value="#{offerTemplateImageStreamer.image}" height="100"
-												width="100">
-												<f:param name="id" value="#{entity.id}"></f:param>
+											<p:graphicImage value="#{defaultImageStreamer.image}"
+												cache="false" width="100" height="100">
+												<f:param name="providerCode"
+													value="#{offerTemplateListBean.currentProvider.code}"></f:param>
+												<f:param name="fileName" value="#{entity.imagePath}"></f:param>
+												<f:param name="pictureGroupName" value="offer"></f:param>
 											</p:graphicImage>
 										</p:panel>
 

@@ -1,22 +1,21 @@
 package org.meveo.api.catalog;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.sql.rowset.serial.SerialBlob;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -60,13 +59,11 @@ public class OfferTemplateCategoryApi extends BaseApi {
             offerTemplateCategory.setCode(postData.getCode());
             offerTemplateCategory.setDescription(postData.getDescription());
             offerTemplateCategory.setName(postData.getName());
-
-            if (!StringUtils.isBlank(postData.getImageBase64())) {
-    			try {
-    				offerTemplateCategory.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
-    			} catch (SQLException e) {
-    				throw new MeveoApiException("Invalid image data.");
-    			}
+            try {
+    			saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+    		} catch (IOException e1) {
+    			log.error("Invalid image data={}", e1.getMessage());
+    			throw new InvalidImageData();
     		}
 
             String parentCode = postData.getOfferTemplateCategoryCode();
@@ -122,13 +119,12 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
-
-        if (!StringUtils.isBlank(postData.getImageBase64())) {
-			try {
-				offerTemplateCategory.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
-			} catch (SQLException e) {
-				throw new MeveoApiException("Invalid image data.");
-			}
+        
+        try {
+			saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
 		}
 
         String parentCode = postData.getOfferTemplateCategoryCode();
@@ -226,6 +222,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
 
+        deleteImage(offerTemplateCategory, currentUser.getProvider().getCode());
         offerTemplateCategoryService.remove(offerTemplateCategory, currentUser);
 
     }

@@ -43,9 +43,14 @@ public class ModuleUtil {
 			+File.separator+"media";
 		return getPath(path);
 	}
+	
 	public static String getPicturePath(String provider,String group){
+		return getPicturePath(provider, group, true);
+	}
+	
+	public static String getPicturePath(String provider,String group, boolean createDir){
 		String path=getRootPicturePath(provider)+File.separator+group+File.separator+"pictures";
-		return getPath(path);
+		return getPath(path, createDir);
 	}
 	public static String getModulePicturePath(String provider){
 		return getPicturePath(provider,"module");
@@ -58,9 +63,14 @@ public class ModuleUtil {
 		}
 		return getPath(tmpFolder+File.separator+provider);
 	}
+	
 	private static String getPath(String path){
+		return getPath(path, true);
+	}
+	
+	private static String getPath(String path, boolean createDir){
 		File file=new File(path);
-		if(!file.exists()){
+		if(createDir && !file.exists()){
 			file.mkdirs();
 		}
 		return path;

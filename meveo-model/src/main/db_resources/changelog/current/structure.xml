@@ -2942,15 +2942,6 @@
         <addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_prd_offering"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
     </changeSet>
-    <changeSet id="#1795_20161102_quote-1" author="AndriusKarpavicius">
-        <addColumn tableName="ORD_QUOTE">
-        <column name="UUID" type="VARCHAR(60)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
-        <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
-    </changeSet>    
     
     <changeSet id="#2203_20161116_quote-1" author="anasseh">  
         <dropUniqueConstraint tableName="ord_quote" constraintName="fk_ord_quote_user_account" />  
@@ -2962,5 +2953,42 @@
            <addNotNullConstraint columnName="user_account_id" tableName="ord_quote_item"/>
  		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_user_account"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />        
-    </changeSet>    
+    </changeSet>
+
+    <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
+        <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
+    </changeSet>
+    
+    <changeSet id="#1795_20161102_quote-3" author="EdwardLegaspi">
+	    <addColumn tableName="ord_quote">    
+	    	<column name="UUID" type="VARCHAR(60)"/>
+	    </addColumn>
+    </changeSet>
+    
+    <changeSet id="#2191_20161110 - Refactor image fields" author="EdwardLegaspi">
+    	<dropColumn tableName="cat_offer_template_category">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template_category">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_offer_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_service_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_service_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    </changeSet>
+
 </databaseChangeLog>

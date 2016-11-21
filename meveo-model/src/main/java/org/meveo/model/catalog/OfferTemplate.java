@@ -37,11 +37,13 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.annotation.ImageType;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 @DiscriminatorValue("OFFER")
+@ImageType
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
 		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
 		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })

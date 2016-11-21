@@ -1,15 +1,11 @@
 package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -39,9 +35,7 @@ import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
@@ -85,8 +79,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	private DualListModel<DigitalResource> attachmentsDM;
 	private DualListModel<BusinessAccountModel> bamDM;
 	private DualListModel<Channel> channelDM;
-
-	private UploadedFile uploadedFile;
 
 	public BundleTemplateBean() {
 		super(BundleTemplate.class);
@@ -177,27 +169,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		}
 
 		return outcome;
-	}
-
-	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
-		uploadedFile = event.getFile();
-
-		if (uploadedFile != null) {
-			byte[] contents = uploadedFile.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				entity.setImage(null);
-			}
-			entity.setImageContentType(uploadedFile.getContentType());
-
-			saveOrUpdate(entity);
-
-			initEntity();
-
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
 	}
 
 	public void addProductTemplateToBundle(ProductTemplate prodTemplate) {

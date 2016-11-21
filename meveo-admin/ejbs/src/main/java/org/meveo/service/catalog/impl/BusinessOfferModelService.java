@@ -129,7 +129,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
 		newOfferTemplate.setValidTo(bomOffer.getValidTo());
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
-		newOfferTemplate.setImage(bomOffer.getImage());
+		newOfferTemplate.setImagePath(bomOffer.getImagePath());
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
 		}

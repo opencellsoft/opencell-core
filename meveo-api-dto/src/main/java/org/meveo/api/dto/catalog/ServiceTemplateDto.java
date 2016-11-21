@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -49,7 +48,7 @@ public class ServiceTemplateDto extends BaseDto {
      * BusinessServiceModel code.
      */
     private String somCode;
-    
+    private String imagePath;
     private String imageBase64;
 
     public ServiceTemplateDto() {
@@ -60,9 +59,7 @@ public class ServiceTemplateDto extends BaseDto {
         description = serviceTemplate.getDescription();
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
-        if (serviceTemplate.getImage() != null) {
-			imageBase64 = Base64.encodeBase64String(serviceTemplate.getImageAsByteArr());
-		}
+        imagePath = serviceTemplate.getImagePath();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -202,12 +199,12 @@ public class ServiceTemplateDto extends BaseDto {
     }
 
     @Override
-    public String toString() {
-        return "ServiceTemplateDto [code=" + code + ", description=" + description + ", invoicingCalendar=" + invoicingCalendar + ", serviceChargeTemplateRecurrings="
-                + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions + ", serviceChargeTemplateTerminations="
-                + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields + ", mandatory="
-                + mandatory + ", somCode=" + somCode + "]";
-    }
+	public String toString() {
+		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
+				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
+				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields="
+				+ customFields + ", mandatory=" + mandatory + ", somCode=" + somCode + ", imagePath=" + imagePath + "]";
+	}
 
     public CustomFieldsDto getCustomFields() {
         return customFields;
@@ -245,6 +242,14 @@ public class ServiceTemplateDto extends BaseDto {
 
 	public void setLongDescription(String longDescription) {
 		this.longDescription = longDescription;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 
 	public String getImageBase64() {

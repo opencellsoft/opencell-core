@@ -1,6 +1,5 @@
 package org.meveo.admin.action.catalog;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 @Named
 @ConversationScoped
@@ -67,19 +64,6 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 		if (ptToExport.contains(pt)) {
 			ptToExport.remove(pt);
 		}
-	}
-
-	public StreamedContent getImage(ProductTemplate obj) throws IOException {
-
-		return new DefaultStreamedContent(new ByteArrayInputStream(getImageArr(obj)));
-
-	}
-
-	public byte[] getImageArr(ProductTemplate obj) {
-		if (obj.getImageAsByteArr() == null) {
-			return downloadUrl(getClass().getClassLoader().getResource("img/no_picture.png"));
-		}
-		return obj.getImageAsByteArr();
 	}
 
 	protected byte[] downloadUrl(URL toDownload) {

@@ -1,28 +1,26 @@
 package org.meveo.admin.action.catalog;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ExistsRelatedEntityException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
@@ -35,8 +33,6 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;
-
-    private UploadedFile uploadedFile;
 
     private SortedTreeNode rootOfferTemplateCategory;
 
@@ -79,34 +75,6 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         }
         isEdit = true;
         return null;
-    }
-
-    public void handleFileUpload(FileUploadEvent event) throws BusinessException {
-        uploadedFile = event.getFile();
-
-        if (uploadedFile != null) {
-            byte[] contents = uploadedFile.getContents();
-            try {
-                entity.setImage(new SerialBlob(contents));
-            } catch (SQLException e) {
-                entity.setImage(null);
-            }
-            entity.setImageContentType(uploadedFile.getContentType());
-
-            saveOrUpdate(entity);
-
-            initEntity();
-
-            messages.info(new BundleKey("messages", "message.upload.succesful"));
-        }
-    }
-
-    public UploadedFile getUploadedFile() {
-        return uploadedFile;
-    }
-
-    public void setUploadedFile(UploadedFile uploadedFile) {
-        this.uploadedFile = uploadedFile;
     }
 
     public SortedTreeNode getRootOfferTemplateCategory() {
@@ -192,6 +160,16 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
                 selectedOfferTemplateCategory.getParent().getChildren().remove(selectedOfferTemplateCategory);
                 selectedOfferTemplateCategory = null;
                 initEntity();
+                
+                if (isImageUpload()) {
+        			try {
+        				ImageUploadEventHandler<OfferTemplateCategory> imageUploadEventHandler = new ImageUploadEventHandler<>();
+        				imageUploadEventHandler.deleteImage(offerTemplateCategory, getCurrentProvider().getCode());
+        			} catch (IOException e) {
+        				log.error("Failed moving image file");
+        			}
+        		}
+                
                 messages.info(new BundleKey("messages", "delete.successful"));
             } catch (ExistsRelatedEntityException e) {
                 messages.error(new BundleKey("messages", "offerTemplateCategory.errorDelete"));
@@ -450,4 +428,5 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             return null;
         }
     }
+    
 }

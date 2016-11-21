@@ -1,19 +1,18 @@
 package org.meveo.api.catalog;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.sql.rowset.serial.SerialBlob;
 
-import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -89,17 +88,13 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidFrom(postData.getValidFrom());
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
-		
-		if (!StringUtils.isBlank(postData.getImageBase64())) {
-			try {
-				productTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
-			} catch (SQLException e) {
-				throw new MeveoApiException("Invalid image data.");
-			}
+		try {
+			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
 		}
-
-		processImage(postData, productTemplate);
-
+		
 		// save product template now so that they can be referenced by the
 		// related entities below.
 		productTemplateService.create(productTemplate, currentUser);
@@ -135,17 +130,13 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidFrom(postData.getValidFrom());
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
-		
-		if (!StringUtils.isBlank(postData.getImageBase64())) {
-			try {
-				productTemplate.setImage(new SerialBlob(Base64.decodeBase64(postData.getImageBase64())));
-			} catch (SQLException e) {
-				throw new MeveoApiException("Invalid image data.");
-			}
+		try {
+			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
 		}
-
-		processImage(postData, productTemplate);
-
+		
 		processProductChargeTemplate(postData, productTemplate, provider);
 
 		processOfferTemplateCategories(postData, productTemplate, provider);
@@ -168,6 +159,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
+		deleteImage(productTemplate, currentUser.getProvider().getCode());
 		productTemplateService.remove(productTemplate, currentUser);
 	}
 

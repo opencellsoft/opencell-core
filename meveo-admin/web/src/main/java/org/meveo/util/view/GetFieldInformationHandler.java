@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.IEntity;
+import org.meveo.model.annotation.ImageType;
 import org.meveo.util.view.FieldInformation.FieldNumberTypeEnum;
 import org.meveo.util.view.FieldInformation.FieldTypeEnum;
 import org.slf4j.Logger;
@@ -145,14 +146,19 @@ public class GetFieldInformationHandler extends TagHandler {
 
         FieldInformation fieldInfo = new FieldInformation();
         if (fieldClassType == String.class) {
-            fieldInfo.fieldType = FieldTypeEnum.Text;
+			if (field.isAnnotationPresent(ImageType.class)) {
+				fieldInfo.fieldType = FieldTypeEnum.Image;
+				
+			} else {
+				fieldInfo.fieldType = FieldTypeEnum.Text;
 
-            if (field.isAnnotationPresent(Size.class)) {
-                int maxLength = field.getAnnotation(Size.class).max();
-                if (maxLength > 0) {
-                    fieldInfo.maxLength = maxLength;
-                }
-            }
+				if (field.isAnnotationPresent(Size.class)) {
+					int maxLength = field.getAnnotation(Size.class).max();
+					if (maxLength > 0) {
+						fieldInfo.maxLength = maxLength;
+					}
+				}
+			}
 
         } else if (fieldClassType == Boolean.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("boolean"))) {
             fieldInfo.fieldType = FieldTypeEnum.Boolean;

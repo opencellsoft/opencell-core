@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
@@ -58,6 +60,7 @@ import org.meveo.model.IProvider;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -77,9 +80,11 @@ import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,6 +203,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private int activeMainTab = 0;
 
     private Map<String, Boolean> writeAccessMap;
+    
+    protected ParamBean paramBean = ParamBean.getInstance();
+    protected String providerFilePath = paramBean.getProperty("providers.rootDir", "/tmp/meveo/");
+    
+    private UploadedFile uploadedFile;    
 
     /**
      * Constructor
@@ -327,6 +337,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private boolean isPartOfModules() {
         return clazz.isAnnotationPresent(ModuleItem.class);
     }
+    
+    protected boolean isImageUpload() {
+        return clazz.isAnnotationPresent(ImageType.class);
+    }
 
     private void loadPartOfModules() {
         if ((entity instanceof BusinessEntity) && isPartOfModules()) {
@@ -387,6 +401,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
+        
+		if (isImageUpload()) {
+			try {
+				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
+				imageUploadEventHandler.saveImageUpload(entity, getCurrentProvider().getCode());
+			} catch (IOException e) {
+				log.error("Failed moving image file");
+			}
+		}
 
         // Save description translations
         if (!isMultilanguageEntity()) {
@@ -587,6 +610,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id, getCurrentUser());
+            
+            if (isImageUpload()) {
+    			try {
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
+    				imageUploadEventHandler.deleteImage(entity, getCurrentProvider().getCode());
+    			} catch (IOException e) {
+    				log.error("Failed deleting image file");
+    			}
+    		}
+            
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -607,6 +640,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
             getPersistenceService().remove((Long) getEntity().getId(), getCurrentUser());
+            
+            if (isImageUpload()) {
+    			try {
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
+    				imageUploadEventHandler.deleteImage(entity, getCurrentProvider().getCode());
+    			} catch (IOException e) {
+    				log.error("Failed deleting image file");
+    			}
+    		}
+            
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -1276,5 +1319,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return null;
     }
+    
+	public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
+		uploadedFile = event.getFile();
+		String code = ((BusinessEntity) entity).getCode();
+
+		try {
+			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>();
+			uploadHandler.handleImageUpload(entity, code, uploadedFile, getCurrentProvider().getCode());
+			messages.info(new BundleKey("messages", "message.upload.succesful"));
+		} catch (Exception e) {
+			messages.info(new BundleKey("messages", "message.upload.fail"));
+		}
+	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
 
 }
