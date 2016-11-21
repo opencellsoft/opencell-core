@@ -189,9 +189,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 }
             }
 
-            OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null,
-                offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations,
-                entity.getChannels(), entity.getBusinessAccountModels(), entity.getOfferTemplateCategories(), currentUser);
+			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null,
+					offerTemplateService.findDuplicateCode(entity, " - Instance", currentUser), entity.getName(), entity.getDescription(), servicesConfigurations,
+					entity.getChannels(), entity.getBusinessAccountModels(), entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), currentUser);
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {

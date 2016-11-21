@@ -91,14 +91,42 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	@Inject
 	private OfferModelScriptService offerModelScriptService;
 
+	/**
+	 * Creates an offer given a BusinessOfferModel.
+	 * @param businessOfferModel
+	 * @param customFields
+	 * @param code
+	 * @param name
+	 * @param offerDescription
+	 * @param serviceCodes
+	 * @param currentUser
+	 * @return
+	 * @throws BusinessException
+	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
-		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, currentUser);
+		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, LifeCycleStatusEnum.IN_DESIGN, currentUser);
 	}
 
-	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name,
-			String offerDescription, List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams,
-			List<OfferTemplateCategory> offerTemplateCategories, User currentUser) throws BusinessException {
+	/**
+	 * Creates an offer given a BusinessOfferModel.
+	 * @param businessOfferModel
+	 * @param customFields
+	 * @param code
+	 * @param name
+	 * @param offerDescription
+	 * @param serviceCodes
+	 * @param channels
+	 * @param bams
+	 * @param offerTemplateCategories
+	 * @param currentUser
+	 * @param lifeCycleStatusEnum
+	 * @return
+	 * @throws BusinessException
+	 */
+	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
+			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
+			LifeCycleStatusEnum lifeCycleStatusEnum, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -143,7 +171,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.getBusinessAccountModels().addAll(bams);
 		}
 		newOfferTemplate.setActive(true);
-		newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
+		newOfferTemplate.setLifeCycleStatus(lifeCycleStatusEnum);
 
 		offerTemplateService.create(newOfferTemplate, currentUser);
 
