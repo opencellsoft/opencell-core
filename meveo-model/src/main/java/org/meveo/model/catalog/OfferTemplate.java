@@ -44,9 +44,9 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 @DiscriminatorValue("OFFER")
 @ImageType
-@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider and businessOfferModel is not null"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider and businessOfferModel is not null"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider and businessOfferModel is not null") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
