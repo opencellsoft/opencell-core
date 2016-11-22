@@ -39,13 +39,13 @@
 					required="true" />
 			</p:fieldset>
 
-			<p:fieldset legend="#{messages['commons.contacts']}">
+			<p:fieldset legend="#{messages['commons.contacts']} *">
 				<hftl:formField label="#{messages['contactInformation.email']}"
 					field="email" size="50" maxlength="100" useConverter="false"
-					required="true" validateEmail="true" />
+					required="false" validateEmail="true" />
 				<hftl:formField label="#{messages['contactInformation.genericMail']}"
 					field="genericMail" size="50" maxlength="100" useConverter="false"
-					required="true" validateEmail="true" />
+					required="false" validateEmail="true" />
 				<hftl:formField label="#{messages['contactInformation.phone']}"
 					field="phone" size="50" maxlength="15" />
 				<hftl:formField label="#{messages['contactInformation.mobile']}"
@@ -66,14 +66,14 @@
 						size="80" maxlength="80" />
 
 					<hftl:formField label="#{messages['address.zipCode']}" size="10"
-						required="true" id="zipCode" field="address" childField="zipCode"
+						required="false" id="zipCode" field="address" childField="zipCode"
 						length="10" maxlength="10" />
 
 					<hftl:formField label="#{messages['address.city']}"
-						required="true" id="city" field="address" childField="city"
+						required="false" id="city" field="address" childField="city"
 						maxlength="50" />
 					<hftl:formField label="#{messages['address.country']}"
-						required="true" id="country" field="address" childField="country"
+						required="false" id="country" field="address" childField="country"
 						maxlength="50" />
 
 			</p:fieldset>
