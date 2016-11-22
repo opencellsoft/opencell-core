@@ -2990,5 +2990,11 @@
     		<column name="image_path" type="VARCHAR(100)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#2220_20161122 - add el filter to recurring charge template" author="EdwardLegaspi">
+    	<addColumn tableName="cat_recurring_charge_templ">
+    		<column name="filter_expression" type="VARCHAR(2000)" />
+    	</addColumn>
+    </changeSet>
 
 </databaseChangeLog>
