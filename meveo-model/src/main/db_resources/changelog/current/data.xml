@@ -194,4 +194,12 @@
         </insert>        
     </changeSet>
     
+    <changeSet id="#2193_20161122 - change default contact to Opencell" author="EdwardLegaspi">
+    	<sql>
+			<![CDATA[
+			update crm_provider_contact set code='OPENCELL', description='Opencell Software', firstname=null, lastname=null, email='sales@opencellsoft.com', phone=null, mobile='+33607899813', fax=null, generic_mail=null, address_1='14 rue Crespin du Gast', address_2=null, address_3=null, address_zipcode='75011', address_city='Paris', address_country='France', address_state=null where code='DEMO_ADMIN';
+			]]>
+		</sql>			
+    </changeSet>    
+    
 </databaseChangeLog>
