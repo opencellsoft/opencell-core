@@ -65,6 +65,11 @@
 			<if>#{identity.loggedIn}</if>
 			<to-view-id>/loginRedirect.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-action>loginRedirect</from-action>			
+			<to-view-id>/loginRedirect.xhtml</to-view-id>
+		</navigation-case>
 
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>

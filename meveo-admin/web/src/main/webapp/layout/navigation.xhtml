@@ -57,7 +57,11 @@
 		</c:if>
 	</c:forEach>
 
-	<p:menubar styleClass="horizontal-nav" rendered="#{identity.loggedIn}">
+	<p:panel styleClass="FLeft Wid5">
+		<a href="/meveo/loginRedirect.jsf" class="fa fw fa-home"></a>
+	</p:panel>
+	
+	<p:menubar styleClass="horizontal-nav FLeft Wid90" rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 			<p:menuitem id="providers" outcome="providers" value="#{messages['menu.providers']}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
 			<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.provider']}" rendered="#{identity.hasPermission('administration','administrationManagement')}">

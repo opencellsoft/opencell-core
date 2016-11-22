@@ -77,7 +77,9 @@
 	</div>
 	<div id="top-menu-cover" class="FLeft">		
 		 <c:if test="#{!hideNavigation}">
-  			<ui:include src="/layout/navigation.xhtml" />
+		 	<h:form>
+  				<ui:include src="/layout/navigation.xhtml" />
+ 			</h:form>
  		</c:if>
 	</div>
 
