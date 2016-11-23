@@ -791,6 +791,7 @@ public abstract class BaseApi {
 			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
 			imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
 		} catch (IOException e) {
+			log.error("Error saving image={}", e.getMessage());
 			throw new InvalidImageData();
 		}
 	}
