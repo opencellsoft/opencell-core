@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -14,7 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
-import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -37,7 +36,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductInstance;
