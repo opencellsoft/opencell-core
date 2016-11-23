@@ -12,6 +12,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -115,6 +116,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
 
+            addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Failed to instantiate EL custom function mv:xx", e);
@@ -683,5 +685,24 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return DateUtils.formatDateWithPattern(new Date(), dateFormatPattern);
         }
         return DateUtils.formatDateWithPattern(date, dateFormatPattern);
+    }
+    
+    
+    public static Object call(String className, String method,String signature, Object... inputParams) throws Exception{
+    	String[] classNames = signature.split(",");
+        Class<?>[] classes = new Class[classNames.length];
+        Object[] params = new Object[inputParams.length];
+        for(int i=0;i<classNames.length;i++){
+        	classes[i]=Class.forName(classNames[i]);
+        }
+        for(int i=0;i<inputParams.length;i++){
+        	try{
+        		ConvertUtils.convert(inputParams[i], classes[i]);
+        	} catch(Exception e){
+        		params[i]=inputParams[i];
+        	}
+        }
+        Method met = Class.forName(className).getMethod(method, classes);
+        return met.invoke(null, params);
     }
 }
