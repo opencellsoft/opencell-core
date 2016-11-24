@@ -3,6 +3,7 @@ package org.meveo.api;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -790,17 +791,21 @@ public abstract class BaseApi {
 		try {
 			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
 			imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
+		} catch (AccessDeniedException e1) {
+			throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
 		} catch (IOException e) {
-			throw new InvalidImageData();
+			throw new InvalidImageData("Failed saving image. " + e.getMessage());
 		}
 	}
 	
-	protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {		
+	protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {
 		try {
 			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
 			imageUploadEventHandler.deleteImage(entity, providerCode);
+		} catch (AccessDeniedException e1) {
+			throw new InvalidImageData("Failed deleting image. Access is denied: " + e1.getMessage());
 		} catch (IOException e) {
-			throw new InvalidImageData("Failed deleting image.");
+			throw new InvalidImageData("Failed deleting image. " + e.getMessage());
 		}
 	}
     

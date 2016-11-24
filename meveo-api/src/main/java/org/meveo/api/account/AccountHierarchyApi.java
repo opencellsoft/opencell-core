@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -26,7 +27,6 @@ import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomerAccountDto;

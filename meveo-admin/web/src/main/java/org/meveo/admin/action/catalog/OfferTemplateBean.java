@@ -112,6 +112,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         if (bomId != null) {
             businessOfferModel = businessOfferModelService.findById(bomId);
+            entity.setCode(null);
         }
 
         return result;
