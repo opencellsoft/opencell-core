@@ -202,4 +202,242 @@
 		</sql>			
     </changeSet>    
     
+	
+	<changeSet id="#2119_20161027-Update titles" author="EdwardPLegaspi" failOnError="false" onValidationFail="MARK_RAN">
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="ASSOC" />
+			<column name="description" value="Assoc." />
+			<column name="is_company" valueNumeric="1" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="CIE" />
+			<column name="description" value="Cie." />
+			<column name="is_company" valueNumeric="1" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MR" />
+			<column name="description" value="Mr." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MRS" />
+			<column name="description" value="Mrs." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MS" />
+			<column name="description" value="Ms." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="DR" />
+			<column name="description" value="Dr." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="PROF" />
+			<column name="description" value="Prof." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+	</changeSet>
+	<changeSet id="#2119_20161027-Update title on user and account entity" author="EdwardPLegaspi">
+		<sql>
+			<!-- update users -->
+			<![CDATA[
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES')); 
+			]]>
+		</sql>
+		<sql>
+			<!-- update account entity -->
+			<![CDATA[
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES'));
+			]]>
+		</sql>
+		<sql>
+			<!-- update adm_title -->
+			<![CDATA[
+			DELETE FROM adm_title WHERE code NOT IN ('ASSOC', 'CIE', 'MR', 'MRS', 'MS', 'DR', 'PROF');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="#2119_20161028-Update title messages" author="EdwardPLegaspi" failOnError="false" onValidationFail="MARK_RAN">
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Assoc." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="ASSOC" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Assoc." />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="ASSOC" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Cie." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="CIE" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Sté" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="CIE" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mr." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="M." />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MR" />						
+		</insert>		
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mrs." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MRS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mme" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MRS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Ms." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mlle" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-11" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Dr." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="DR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-12" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Dr" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="DR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-13" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Prof." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="PROF" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Pr" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="PROF" />						
+		</insert>		
+	</changeSet>
+
 </databaseChangeLog>

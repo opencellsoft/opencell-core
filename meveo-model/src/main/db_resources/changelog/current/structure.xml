@@ -2870,9 +2870,6 @@
             <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
             <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
             <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
-            <column name="user_account_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
             
         </createTable>
 
@@ -2891,9 +2888,6 @@
         <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_GROUP_ID" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="HIERARCHY_ENTITY" />
 
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
-                    
         <createSequence sequenceName="ord_quote_item_seq" />
 
         <createTable tableName="ord_quote_item">
@@ -2915,6 +2909,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="invoice_id" type="BIGINT" />
+            <column name="user_account_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_crm_provider" deferrable="false"
@@ -2926,6 +2923,8 @@
         <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_invoice"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_INVOICE" />
 
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
 
         <createTable tableName="ORD_QUOT_ITEM_OFFERINGS">
             <column name="QUOTE_ITEM_ID" type="BIGINT">
@@ -2941,18 +2940,6 @@
 
         <addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_prd_offering"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
-    </changeSet>
-    
-    <changeSet id="#2203_20161116_quote-1" author="anasseh">  
-        <dropUniqueConstraint tableName="ord_quote" constraintName="fk_ord_quote_user_account" />  
-         <addColumn tableName="ord_quote_item">
-	       			 <column name="user_account_id" type="BIGINT"/>  	         
-        </addColumn>
-         <sql>update ord_quote_item as oqi set user_account_id=  oq.user_account_id from ord_quote as oq where  oq.id = oqi.quote_id</sql>
-    	<dropColumn tableName="ord_quote" columnName="user_account_id"/>
-           <addNotNullConstraint columnName="user_account_id" tableName="ord_quote_item"/>
- 		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_user_account"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />        
     </changeSet>
 
     <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
