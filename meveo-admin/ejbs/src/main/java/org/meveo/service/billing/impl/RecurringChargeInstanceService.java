@@ -37,6 +37,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -267,7 +268,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		try {
 			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId, user.getProvider());
 			
-			if (!isChargeMatch(activeRecurringChargeInstance, ((RecurringChargeTemplate) activeRecurringChargeInstance.getChargeTemplate()).getFilterExpression())) {
+			if (!isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
 				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
 				return nbRating;
 			}
@@ -364,6 +365,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	private boolean isChargeMatch(RecurringChargeInstance activeRecurringChargeInstance, String filterExpression) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("ci", activeRecurringChargeInstance);
+		if (StringUtils.isBlank(filterExpression)) {
+			return true;
+		}
 		return (Boolean) ValueExpressionWrapper.evaluateExpression(filterExpression, userMap, Boolean.class);
 	}
 	
@@ -386,7 +390,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeInstance.getServiceInstance().getSubscription().getOffer().getCode(), chargeInstance.getRecurringChargeTemplate().getCode(), chargeInstance.getServiceInstance()
                 .getQuantity(), fromDate, toDate);
         
-		if (!isChargeMatch(chargeInstance, ((RecurringChargeTemplate) chargeInstance.getChargeTemplate()).getFilterExpression())) {
+		if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
 			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
 			return null;
 		}
