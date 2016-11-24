@@ -59,7 +59,7 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    ProviderContactResponseDto find(@QueryParam("code") String code);
+    ProviderContactResponseDto find(@QueryParam("providerContactCode") String code);
 
     /**
      * remove a providerContact by code
@@ -68,7 +68,7 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
-    ActionStatus remove(@PathParam("code") String code);
+    ActionStatus remove(@PathParam("providerContactCode") String code);
 
     /**
      * list providerContacts

@@ -76,9 +76,18 @@ public class ProviderContactApi extends BaseApi {
 	}
 	public void update(ProviderContactDto providerContactDto,User currentUser) throws MeveoApiException, BusinessException{
 		if (StringUtils.isBlank(providerContactDto.getCode())) {
-			missingParameters.add("code");
-		}
+            missingParameters.add("code");
+        }
+		if (StringUtils.isBlank(providerContactDto.getDescription())) {
+            missingParameters.add("description");
+        }		
 		handleMissingParameters();
+		
+		if (StringUtils.isBlank(providerContactDto.getEmail()) && StringUtils.isBlank(providerContactDto.getGenericMail()) && StringUtils.isBlank(providerContactDto.getPhone())
+				&& StringUtils.isBlank(providerContactDto.getMobile())) {
+			throw new MeveoApiException("At least 1 of the field in Contact Information tab is required [email, genericEmail, phone, mobile].");
+		}		
+		
 		Provider provider = currentUser.getProvider();
 		ProviderContact providerContact=providerContactService.findByCode(providerContactDto.getCode(), provider);
 		if(providerContact==null){
