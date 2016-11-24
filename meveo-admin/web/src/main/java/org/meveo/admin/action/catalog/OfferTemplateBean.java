@@ -192,7 +192,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
 					entity.getName(), entity.getDescription(), servicesConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), currentUser);
+					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), currentUser);
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -217,6 +217,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             // populate offer cf
             customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
 
+			// detach
+            offerTemplateService.detach(entity);
+    		entity.setId(null);
+            
             return back();
         } else {
             boolean newEntity = (entity.getId() == null);

@@ -105,7 +105,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, User currentUser) throws BusinessException {
-		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, LifeCycleStatusEnum.IN_DESIGN, currentUser);
+		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, LifeCycleStatusEnum.IN_DESIGN, null, currentUser);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
-			LifeCycleStatusEnum lifeCycleStatusEnum, User currentUser) throws BusinessException {
+			LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath, User currentUser) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -157,7 +157,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
 		newOfferTemplate.setValidTo(bomOffer.getValidTo());
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
-		newOfferTemplate.setImagePath(bomOffer.getImagePath());
+		newOfferTemplate.setImagePath(imagePath);
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
 		}
