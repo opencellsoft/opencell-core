@@ -855,9 +855,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (e instanceof BaseEntity) {
                 boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
                 if (notSameProvider) {
-                    log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}",
-                        new Object[] { getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
-                    throw new ProviderNotAllowedException();
+					if (!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
+						log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}", new Object[] { getCurrentProvider().getId(),
+								((BaseEntity) e).getProvider().getId() });
+						throw new ProviderNotAllowedException();
+					}
                 }
             }
         }
