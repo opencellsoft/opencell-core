@@ -27,6 +27,7 @@
 		<hftl:dataList label="#{messages['user.title']}"
 			backingBean="#{userListBean}" sortBy="userName">
 			<hftl:column label="#{messages['user.userName']}" field="userName" entityView="userDetail" valueIdField="id"/>
+            <hftl:column label="#{messages['user.name']}" field="name.fullName"/>
             <hftl:column label="#{messages['user.userGroupLevel']}" field="userLevel.descriptionOrCode"/>
 			<hftl:column label="#{messages['user.roles']}" field="roles"
 				valueLabelField="name" isList="true" sort="false" />
