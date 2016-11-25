@@ -15696,7 +15696,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomer>
          <customer code="${#Project#baseEntityPrefix}_CUST" description="Customer">
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15758,7 +15758,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15816,7 +15816,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15881,7 +15881,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -16047,7 +16047,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"27/02/2016"
+                  "value":"2016-02-27"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -16069,7 +16069,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -16183,7 +16183,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -16792,7 +16792,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"02/07/2016"
+                           "value":"2016-07-02"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -17117,7 +17117,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"terminationDate",
-                           "value":"29/02/2016"
+                           "value":"2016-02-29"
                         },
                         {
                            "name":"terminationReason",
@@ -17497,7 +17497,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
            "productCharacteristic":[
               {
                  "name":"terminationDate",
-                 "value":"29/02/2016"
+                 "value":"2016-02-29"
               },
               {
                  "name":"terminationReason",
@@ -17797,6 +17797,27 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product order" id="dfa47440-6b6c-47b3-9799-4ee876a4f186">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - findProductOrders" resourcePath="/api/rest/orderManagement/productOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product order" id="7d8ab5b8-dfc0-47e4-90e5-1537e5324db1" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
         </con:config>
       </con:testStep>
       <con:properties/>
