@@ -23,9 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -37,7 +35,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -55,7 +52,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 @Stateless
@@ -268,7 +264,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		try {
 			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId, user.getProvider());
 			
-			if (!isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+			if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
 				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
 				return nbRating;
 			}
@@ -360,17 +356,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             throw new BusinessException(e);
         }
 		return nbRating;
-	}
-
-	private boolean isChargeMatch(RecurringChargeInstance activeRecurringChargeInstance, String filterExpression) throws BusinessException {
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ci", activeRecurringChargeInstance);
-		if (StringUtils.isBlank(filterExpression)) {
-			return true;
-		}
-		return (Boolean) ValueExpressionWrapper.evaluateExpression(filterExpression, userMap, Boolean.class);
-	}
-	
+	}	
 
 	/**
 	 * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
@@ -390,7 +376,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeInstance.getServiceInstance().getSubscription().getOffer().getCode(), chargeInstance.getRecurringChargeTemplate().getCode(), chargeInstance.getServiceInstance()
                 .getQuantity(), fromDate, toDate);
         
-		if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+		if (!walletOperationService.isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
 			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
 			return null;
 		}
