@@ -15,12 +15,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
+@ExportIdentifier({ "offerTemplate.code", "productTemplate.code", "provider" })
 @Table(name = "CAT_OFFER_PRODUCT_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_PRODUCT_TEMPLATE_SEQ")
 public class OfferProductTemplate implements IEntity {

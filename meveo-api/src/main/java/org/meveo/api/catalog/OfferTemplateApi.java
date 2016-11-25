@@ -107,53 +107,15 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 				}
 				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
 			}
-		}
-
-		offerTemplateService.create(offerTemplate, currentUser);
+		}		
 
 		// check service templates
-		if (postData.getOfferServiceTemplates() != null && postData.getOfferServiceTemplates().size() > 0) {
-			List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-			for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
-				ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
-				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
-				if (serviceTemplate == null) {
-					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
-				}
-
-				OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-				if (offerServiceTemplateDto.getMandatory() == null) {
-					offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
-				} else {
-					offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
-				}
-				offerServiceTemplate.setOfferTemplate(offerTemplate);
-				offerServiceTemplate.setServiceTemplate(serviceTemplate);
-				offerServiceTemplate.setProvider(currentUser.getProvider());
-
-				if (offerServiceTemplateDto.getIncompatibleServices() != null) {
-					List<ServiceTemplate> incompatibleServices = new ArrayList<>();
-					for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
-						ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode(), provider);
-						if (incompatibleService == null) {
-							throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
-						}
-						incompatibleServices.add(incompatibleService);
-					}
-					offerServiceTemplate.setIncompatibleServices(incompatibleServices);
-				}
-
-				offerServiceTemplates.add(offerServiceTemplate);
-			}
-			if (offerServiceTemplates.size() > 0) {
-				offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
-			}
-			offerTemplateService.update(offerTemplate, currentUser);
-		}
+		processOfferServiceTemplates(postData, offerTemplate, currentUser);
 
 		// check offer product templates
 		processOfferProductTemplates(postData, offerTemplate, currentUser);
-		offerTemplateService.update(offerTemplate, currentUser);
+		
+		offerTemplateService.create(offerTemplate, currentUser);
 
 		// populate customFields
 		try {
@@ -222,156 +184,11 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		}
 
 		// check service templates
-		if (postData.getOfferServiceTemplates() != null && postData.getOfferServiceTemplates().size() > 0) {
-			if (offerTemplate.getOfferServiceTemplates() != null) {
-				List<OfferServiceTemplate> toBeDeleted = new ArrayList<>();
-				List<OfferServiceTemplateDto> toBeAdded = new ArrayList<>();
-
-				for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
-					boolean found = false;
-
-					// check if already exists
-					OfferServiceTemplate tempOfferServicetemTemplate = null;
-					for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
-						if (offerServiceTemplate.getServiceTemplate().getCode().equals(offerServiceTemplateDto.getServiceTemplate().getCode())) {
-							found = true;
-							tempOfferServicetemTemplate = offerServiceTemplate;
-							break;
-						}
-					}
-
-					if (!found) {
-						toBeAdded.add(offerServiceTemplateDto);
-					} else {
-						// update
-						if (offerServiceTemplateDto.getMandatory() == null) {
-							tempOfferServicetemTemplate.setMandatory(offerServiceTemplateDto.getServiceTemplate().isMandatory());
-						} else {
-							tempOfferServicetemTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
-						}
-					}
-				}
-
-				// check if it doesn't exists
-				for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
-					boolean found = false;
-
-					for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
-						if (offerServiceTemplate.getServiceTemplate().getCode().equals(offerServiceTemplateDto.getServiceTemplate().getCode())) {
-							found = true;
-							break;
-						}
-					}
-
-					if (!found) {
-						toBeDeleted.add(offerServiceTemplate);
-					}
-				}
-
-				// update incompatible services
-				for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
-					// check if already exists
-					for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
-						if (offerServiceTemplate.getServiceTemplate().getCode().equals(offerServiceTemplateDto.getServiceTemplate().getCode())) {
-							if (offerServiceTemplateDto.getIncompatibleServices() != null && offerServiceTemplateDto.getIncompatibleServices().size() > 0) {
-								offerServiceTemplate.getIncompatibleServices().clear();
-								for (ServiceTemplateDto serviceTemplateDto : offerServiceTemplateDto.getIncompatibleServices()) {
-									ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
-									if (serviceTemplate == null) {
-										throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
-									}
-									offerServiceTemplate.getIncompatibleServices().add(serviceTemplate);
-								}
-							}
-						}
-					}
-				}
-
-				if (toBeDeleted.size() > 0) {
-					for (OfferServiceTemplate offerServiceTemplate : toBeDeleted) {
-						offerTemplate.getOfferServiceTemplates().remove(offerServiceTemplate);
-					}
-				}
-
-				if (toBeAdded.size() > 0) {
-					for (OfferServiceTemplateDto offerServiceTemplateDto : toBeAdded) {
-						ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
-						ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
-						if (serviceTemplate == null) {
-							throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
-						}
-
-						OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-						if (offerServiceTemplateDto.getMandatory() == null) {
-							offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
-						} else {
-							offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
-						}
-						offerServiceTemplate.setOfferTemplate(offerTemplate);
-						offerServiceTemplate.setServiceTemplate(serviceTemplate);
-						offerServiceTemplate.setProvider(currentUser.getProvider());
-
-						if (offerServiceTemplateDto.getIncompatibleServices() != null) {
-							List<ServiceTemplate> incompatibleServices = new ArrayList<>();
-							for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
-								ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode(), provider);
-								if (incompatibleService == null) {
-									throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
-								}
-								incompatibleServices.add(incompatibleService);
-							}
-							offerServiceTemplate.setIncompatibleServices(incompatibleServices);
-						}
-
-						offerTemplate.getOfferServiceTemplates().add(offerServiceTemplate);
-					}
-
-				}
-			} else {
-				List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-				for (OfferServiceTemplateDto offerServiceTemplateDto : postData.getOfferServiceTemplates()) {
-					ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
-					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), provider);
-					if (serviceTemplate == null) {
-						throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
-					}
-
-					OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-					if (offerServiceTemplateDto.getMandatory() == null) {
-						offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
-					} else {
-						offerServiceTemplate.setMandatory(offerServiceTemplateDto.getMandatory());
-					}
-					offerServiceTemplate.setOfferTemplate(offerTemplate);
-					offerServiceTemplate.setServiceTemplate(serviceTemplate);
-					offerServiceTemplate.setProvider(currentUser.getProvider());
-
-					if (offerServiceTemplateDto.getIncompatibleServices() != null) {
-						List<ServiceTemplate> incompatibleServices = new ArrayList<>();
-						for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
-							ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode(), provider);
-							if (incompatibleService == null) {
-								throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
-							}
-							incompatibleServices.add(incompatibleService);
-						}
-						offerServiceTemplate.setIncompatibleServices(incompatibleServices);
-					}
-
-					offerServiceTemplates.add(offerServiceTemplate);
-				}
-
-				if (offerServiceTemplates.size() > 0) {
-					offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
-				}
-
-			}
-		}
-
-		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
+		processOfferServiceTemplates(postData, offerTemplate, currentUser);
 
 		// check offer product templates
 		processOfferProductTemplates(postData, offerTemplate, currentUser);
+	
 		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
@@ -383,6 +200,36 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         }
 		
 		return offerTemplate;
+	}
+	
+	private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
+		List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
+		boolean hasOfferServiceTemplateDtos = offerServiceTemplateDtos != null && !offerServiceTemplateDtos.isEmpty();
+		
+		List<OfferServiceTemplate> existingServiceTemplates = offerTemplate.getOfferServiceTemplates();
+		boolean hasExistingServiceTemplates = existingServiceTemplates != null && !existingServiceTemplates.isEmpty();
+	
+		if (hasOfferServiceTemplateDtos) {
+			List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+			OfferServiceTemplate offerServiceTemplate = null;
+			for (OfferServiceTemplateDto offerServiceTemplateDto : offerServiceTemplateDtos) {
+				offerServiceTemplate = getOfferServiceTemplatesFromDto(offerServiceTemplateDto, currentUser);
+				offerServiceTemplate.setOfferTemplate(offerTemplate);
+				newOfferServiceTemplates.add(offerServiceTemplate);
+			}
+			
+			if (hasExistingServiceTemplates) {
+				List<OfferServiceTemplate> offerServiceTemplatesForRemoval = new ArrayList<>(existingServiceTemplates);
+				offerServiceTemplatesForRemoval.removeAll(newOfferServiceTemplates);
+				newOfferServiceTemplates.removeAll(new ArrayList<>(existingServiceTemplates));
+				offerTemplate.getOfferServiceTemplates().removeAll(new ArrayList<>(offerServiceTemplatesForRemoval));
+			}
+			
+			offerTemplate.getOfferServiceTemplates().addAll(newOfferServiceTemplates);
+			
+		} else if (hasExistingServiceTemplates) {
+			offerTemplate.getOfferServiceTemplates().removeAll(existingServiceTemplates);
+		}
 	}
 
 	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
@@ -422,6 +269,39 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			// }
 			offerTemplate.getOfferProductTemplates().removeAll(existingProductTemplates);
 		}
+	}
+	
+	private OfferServiceTemplate getOfferServiceTemplatesFromDto(OfferServiceTemplateDto offerServiceTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
+
+		ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
+		ServiceTemplate serviceTemplate = null;
+		if (serviceTemplateDto != null) {
+			serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), currentUser.getProvider());
+			if (serviceTemplate == null) {
+				throw new MeveoApiException(String.format("ServiceTemplatecode = %s]does not exist.", serviceTemplateDto.getCode()));
+			}
+		}
+
+		OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+		Boolean mandatory = offerServiceTemplateDto.getMandatory();
+		mandatory = mandatory == null ? false : mandatory;
+
+		offerServiceTemplate.setServiceTemplate(serviceTemplate);
+		offerServiceTemplate.setMandatory(mandatory);
+		
+		if (offerServiceTemplateDto.getIncompatibleServices() != null) {
+			List<ServiceTemplate> incompatibleServices = new ArrayList<>();
+			for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
+				ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode(), currentUser.getProvider());
+				if (incompatibleService == null) {
+					throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
+				}
+				incompatibleServices.add(incompatibleService);
+			}
+			offerServiceTemplate.setIncompatibleServices(incompatibleServices);
+		}
+
+		return offerServiceTemplate;
 	}
 
 	private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto, User currentUser) throws MeveoApiException, BusinessException {

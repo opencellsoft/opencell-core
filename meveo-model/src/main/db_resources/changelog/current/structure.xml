@@ -2977,5 +2977,12 @@
     		<column name="image_path" type="VARCHAR(100)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#2167 - Process mandatory field in offerServiceTemplate. Refactor model." author="EdwardLegaspi">
+    	<dropColumn tableName="cat_offer_serv_templates">
+    		<column name="provider_id"></column>
+    		<column name="version"></column>
+    	</dropColumn>
+    </changeSet>
 
 </databaseChangeLog>

@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -16,21 +21,24 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IEntity;
 
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code", "provider" })
-@Table(name = "CAT_OFFER_SERV_TEMPLATES", uniqueConstraints = @UniqueConstraint(columnNames = { "OFFER_TEMPLATE_ID", "SERVICE_TEMPLATE_ID", "PROVIDER_ID" }))
+@Table(name = "CAT_OFFER_SERV_TEMPLATES")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_SERV_TEMPLT_SEQ")
-public class OfferServiceTemplate extends BaseEntity {
-
-    private static final long serialVersionUID = -1872859127097329926L;
+public class OfferServiceTemplate implements IEntity {
+    
+    @Id
+	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+	@Column(name = "ID")
+	@Access(AccessType.PROPERTY)
+	protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "OFFER_TEMPLATE_ID")
@@ -156,5 +164,18 @@ public class OfferServiceTemplate extends BaseEntity {
 
 	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public boolean isTransient() {
+		return id == null;
 	}
 }
