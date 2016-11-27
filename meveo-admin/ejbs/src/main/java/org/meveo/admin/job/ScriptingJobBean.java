@@ -22,6 +22,12 @@ public class ScriptingJobBean {
 
 	@Inject
 	ScriptInstanceService scriptInstanceService;
+	
+	private final String RESULT_REPORT="RESULT_REPORT";
+	private final String RESULT_TO_PROCESS="RESULT_TO_PROCESS";
+	private final String RESULT_NB_OK="RESULT_NB_OK";
+	private final String RESULT_NB_WARN="RESULT_NB_WARN";
+	private final String RESULT_NB_KO="RESULT_NB_KO";
 
 	
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -43,6 +49,23 @@ public class ScriptingJobBean {
 		try {
 			script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);			
 			script.execute(context, currentUser);
+			if(context.containsKey(RESULT_NB_OK)){
+				result.setNbItemsCorrectlyProcessed((long) context.get(RESULT_NB_OK));
+			} else {
+				result.registerSucces();
+			}
+			if(context.containsKey(RESULT_NB_WARN)){
+				result.setNbItemsProcessedWithWarning((long) context.get(RESULT_NB_WARN));
+			}
+			if(context.containsKey(RESULT_NB_KO)){
+				result.setNbItemsProcessedWithError((long) context.get(RESULT_NB_KO));
+			}
+			if(context.containsKey(RESULT_TO_PROCESS)){
+				result.setNbItemsToProcess((long) context.get(RESULT_TO_PROCESS));
+			}
+			if(context.containsKey(RESULT_REPORT)){
+				result.setNbItemsToProcess((long) context.get(RESULT_REPORT));
+			}
 		} catch (Exception e) {
 			log.error("Exception on execute script", e);
 			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());

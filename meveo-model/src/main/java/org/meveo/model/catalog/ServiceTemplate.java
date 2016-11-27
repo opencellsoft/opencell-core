@@ -70,16 +70,16 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
 	@ManyToOne

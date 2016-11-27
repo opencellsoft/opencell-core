@@ -374,7 +374,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
 
-		deleteImage(offerTemplate, currentUser.getProvider().getCode());
+		//deleteImage(offerTemplate, currentUser.getProvider().getCode());
 		offerTemplateService.remove(offerTemplate, currentUser);
 	}
 	
