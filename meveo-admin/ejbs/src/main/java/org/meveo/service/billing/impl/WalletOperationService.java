@@ -557,6 +557,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 //        return chargeApplication;
 //    }
 
+	//Be careful to use this method only for the first application of a recurring charge
 	public Date getNextApplicationDate(RecurringChargeInstance chargeInstance) {
 		Date applicationDate = chargeInstance.getSubscriptionDate();
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
@@ -565,7 +566,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = DateUtils.setTimeToZero(chargeInstance.getSubscriptionDate());
 		}
 		chargeInstance.setChargeDate(applicationDate);
-		cal.setInitDate(chargeInstance.getSubscriptionDate());
+		cal.setInitDate(applicationDate);
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			nextapplicationDate = DateUtils.setTimeToZero(nextapplicationDate);
