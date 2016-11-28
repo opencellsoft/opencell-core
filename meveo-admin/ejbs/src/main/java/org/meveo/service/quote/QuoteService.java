@@ -114,9 +114,12 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 // Add recurring charges
-                for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                    walletOperations.addAll(recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, fromDate, toDate, currentUser));
-                }
+				for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+					List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, fromDate, toDate, currentUser);
+					if (walletOperations != null) {
+						walletOperations.addAll(walletOps);
+					}
+				}
             }
 
             // Process CDRS
