@@ -116,7 +116,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
 
-            addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
+            //addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Failed to instantiate EL custom function mv:xx", e);
@@ -687,8 +687,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return DateUtils.formatDateWithPattern(date, dateFormatPattern);
     }
     
+   /*
+    * stupid piece of code : better switch to javaEE7 and EL3
+    * 
+      public static Object call(String className, String method,String signature, Object... inputParams) throws Exception{
     
-    public static Object call(String className, String method,String signature, Object... inputParams) throws Exception{
     	String[] classNames = signature.split(",");
         Class<?>[] classes = new Class[classNames.length];
         Object[] params = new Object[inputParams.length];
@@ -704,5 +707,5 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
         Method met = Class.forName(className).getMethod(method, classes);
         return met.invoke(null, params);
-    }
+    }*/
 }
