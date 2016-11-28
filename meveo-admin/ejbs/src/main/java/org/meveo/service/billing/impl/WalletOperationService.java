@@ -593,11 +593,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
 		Calendar cal = recurringChargeTemplate.getCalendar();
-		cal.setInitDate(subscriptionDate);
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
+			subscriptionDate = DateUtils.setTimeToZero(subscriptionDate);
 		}
+		cal.setInitDate(subscriptionDate);
 		log.debug("rateSubscription subscriptionDate={} applicationDate={}, nextapplicationDate={},previousapplicationDate={}",subscriptionDate, applicationDate, nextapplicationDate, previousapplicationDate);
 
 		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance().getQuantity();
