@@ -368,20 +368,25 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        // override price
+        // override price and description
         for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
-                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode())) {
                         ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId(), InstanceStatusEnum.INACTIVE);
                         if (chargeInstance == null) {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
 
                         if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
-                            chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-                            if (!currentUser.getProvider().isEntreprise()) {
+                            if(chargeInstanceOverrideDto.getAmountWithoutTax()!=null){
+                            	chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+                            }
+                            if (!currentUser.getProvider().isEntreprise() && chargeInstanceOverrideDto.getAmountWithTax()!=null) {
                                 chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
+                            }
+                            if(!StringUtils.isBlank(chargeInstanceOverrideDto.getDescription())){
+                            	chargeInstance.setDescription(chargeInstanceOverrideDto.getDescription());
                             }
                         }
                     } else {
