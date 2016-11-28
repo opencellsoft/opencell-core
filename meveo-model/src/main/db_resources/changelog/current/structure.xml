@@ -2990,5 +2990,19 @@
     		<column name="filter_expression" type="VARCHAR(2000)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#2230_20161128" author="anasseh">
+        <addColumn tableName="ar_account_operation">
+    		<column name="order_num" type="VARCHAR(500)" />
+    	</addColumn>
+        <createTable tableName="billing_invoices_orders">
+            <column name="invoice_id" type="BIGINT" />
+            <column name="order_id" type="BIGINT" />
+        </createTable>    	
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoices_orders" constraintName="fk_invoice_id_bill_invoices-orders" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />   
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoices_orders" constraintName="fk_order_id_bill_invoices-orders" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />               	
+    </changeSet>
 
 </databaseChangeLog>

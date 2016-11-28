@@ -97,6 +97,9 @@ public class RecordedInvoice extends AccountOperation {
 	
 	@OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
+	
+	@Column(name = "ORDER_NUM")   
+	private String orderNumber;// order number, '|' will be used as seperator if many orders
 
 	public Date getProductionDate() {
 		return productionDate;
@@ -223,6 +226,21 @@ public class RecordedInvoice extends AccountOperation {
 	 */
 	public void setDdrequestItems(List<DDRequestItem> ddrequestItems) {
 		this.ddrequestItems = ddrequestItems;
+	}
+
+	
+	/**
+	 * @return the orderNumber
+	 */
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	/**
+	 * @param orderNumber the orderNumber to set
+	 */
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 	@Transient

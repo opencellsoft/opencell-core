@@ -318,11 +318,18 @@
 
 								<p:column width="20%">
 									<f:facet name="header">
-										<h:outputText
-											value="#{messages['accountOperation.occDescription']}" />
+										<h:outputText value="#{messages['accountOperation.occDescription']}" />
 									</f:facet>
 									<h:outputText value="#{entity.occDescription}" />
 								</p:column>
+								
+								<p:column width="10%" >
+									<f:facet name="header">
+										<h:outputText value="#{messages['order.number']}" />
+									</f:facet>
+									<h:outputText value="#{entity.orderNumber}" />
+								</p:column>
+								
 								<hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" isDate="true" width="10%"/>
 								<hftl:column label="#{messages['accountOperation.dueDate']}" field="dueDate" isDate="true" width="10%"/>
                                 <p:column headerText="#{messages['accountOperation.debit']}" width="10%">

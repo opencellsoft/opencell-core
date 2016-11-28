@@ -105,6 +105,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
@@ -113,6 +114,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -162,6 +164,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
       
 	 @Inject
 	 private ResourceBundle resourceMessages;
+	 
+	 @Inject
+	 private OrderService orderService;
 	
 
 
@@ -523,6 +528,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
 			// getEntityManager().merge(invoice);
+				
+			List<String> orderNums = new ArrayList<String>();
+			if(!StringUtils.isBlank(orderNumber)){
+				orderNums.add(orderNumber);
+			}else{
+				ratedTransactionService.commit();				
+				orderNums = (List<String>) getEntityManager().createNamedQuery("RatedTransaction.getDistinctOrderNumsByInvoice", String.class).setParameter("invoice", invoice).getResultList();
+			}			
+			List<Order> orders = new ArrayList<Order>();
+			for(String orderNum : orderNums){
+				orders.add(orderService.findByCode(orderNum, invoice.getProvider()));
+			}
+			invoice.setOrders(orders);
+			
 			Long endDate = System.currentTimeMillis();
 
 			log.info("createAgregatesAndInvoice BR_ID=" +( billingRun==null?"null":billingRun.getId() )+ ", BA_ID=" + billingAccount.getId()
