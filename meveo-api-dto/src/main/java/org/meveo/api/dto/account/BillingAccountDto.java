@@ -54,7 +54,8 @@ public class BillingAccountDto extends AccountDto {
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 	private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
-	private BigDecimal invoicingThreshold; 
+	private BigDecimal invoicingThreshold;
+	private String discountPlan;
 	
 	/**
 	 * Use for GET / LIST only.
@@ -134,7 +135,8 @@ public class BillingAccountDto extends AccountDto {
 		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
 				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
 				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate=" + statusDate + ",terminationReason=" + terminationReason
-				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + ", invoicingThreshold="+invoicingThreshold+"]";
+				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + ", invoicingThreshold=" + invoicingThreshold
+				+ ", discountPlan=" + discountPlan + "]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -222,7 +224,12 @@ public class BillingAccountDto extends AccountDto {
 	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
 		this.invoicingThreshold = invoicingThreshold;
 	}
-	
-	
 
+	public String getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(String discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 }

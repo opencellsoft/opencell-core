@@ -78,7 +78,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private AccountStatusEnum baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private BigDecimal invoicingThreshold; 
+	private BigDecimal invoicingThreshold;
+	private String discountPlan;
 	
 	// user account
 	private AccountStatusEnum uaStatus;
@@ -368,7 +369,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 				+ country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms
 				+ ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email
 				+ ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields
-				 + ", invoicingThreshold="+invoicingThreshold+"]";
+				+ ", invoicingThreshold=" + invoicingThreshold + ", invoicingThreshold=" + invoicingThreshold + "]";
 	}
 
 	public AccountStatusEnum getUaStatus() {
@@ -496,4 +497,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.invoicingThreshold = invoicingThreshold;
 	}
 
+	public String getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(String discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 }

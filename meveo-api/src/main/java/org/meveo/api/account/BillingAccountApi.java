@@ -33,6 +33,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -41,6 +42,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -75,6 +77,9 @@ public class BillingAccountApi extends AccountApi {
 
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
+
+	@Inject
+	private DiscountPlanService discountPlanService;
 
 	public void create(BillingAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		create(postData, currentUser, true);
@@ -146,6 +151,12 @@ public class BillingAccountApi extends AccountApi {
 		billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 		billingAccount.setTerminationDate(postData.getTerminationDate());
 		billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+		if(!StringUtils.isBlank(postData.getDiscountPlan())){
+			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan(), provider);
+			billingAccount.setDiscountPlan(discountPlan);
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
 		if (postData.getElectronicBilling() == null) {
 			billingAccount.setElectronicBilling(false);
 		} else {
@@ -291,7 +302,14 @@ public class BillingAccountApi extends AccountApi {
 		}
 		if (postData.getInvoicingThreshold() != null) {
 			billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-		}		
+		}
+		if(!StringUtils.isBlank(postData.getDiscountPlan())){
+			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan(), provider);
+			billingAccount.setDiscountPlan(discountPlan);
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
+
 		if (postData.getBankCoordinates() != null) {
 			BankCoordinates bankCoordinates = new BankCoordinates();
 			if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
