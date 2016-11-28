@@ -564,6 +564,8 @@ public class OrderApi extends BaseApi {
             productTemplate.getDescription(), orderNumber, currentUser);
         productInstance.setProvider(currentUser.getProvider());
 
+        productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+        
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
             populateCustomFields(customFields, productInstance, true, currentUser, true);
@@ -571,7 +573,7 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+        
         return productInstance;
     }
 

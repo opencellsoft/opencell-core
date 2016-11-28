@@ -15617,7 +15617,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <fieldType>STRING</fieldType>
             <appliesTo>PRODUCT</appliesTo>
             <storageType>SINGLE</storageType>
-            <valueRequired>false</valueRequired>
+            <valueRequired>true</valueRequired>
             <versionable>false</versionable>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
          </customField>
@@ -16162,6 +16162,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   "type":"bundled",
                   "product":{
                      "productCharacteristic":[
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value2"
+		              },
                         {
                            "name":"quantity",
                            "value":"5"
@@ -17835,14 +17839,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
    "quoteDate":"2015-10-25T15:50:48+08",
-   "billingAccount":[
-	  {
-	     "id":"${#Project#baseEntityPrefix}_UA"
-	  }
-   ],
    "quoteItem":[
       {
          "id":"03",
+	    "billingAccount":[
+		  {
+		     "id":"${#Project#baseEntityPrefix}_UA"
+		  }
+	    ],
          "productOffering":{         	
             "id":"${#Project#baseEntityPrefix}_PRODUCT1"
          },
@@ -18129,10 +18133,52 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="b3e2dbad-a406-4ec1-a741-e904ddce3cf7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data cleanup" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Update CF for ProductInstance - PROD_CF_STRING" id="98445589-5e43-41a6-bbc3-f8930ea2c1fc">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Update CF for ProductInstance - PROD_CF_STRING" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateField>
+         <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
+            <fieldType>STRING</fieldType>
+            <appliesTo>PRODUCT</appliesTo>
+            <storageType>SINGLE</storageType>
+            <valueRequired>false</valueRequired>
+            <versionable>false</versionable>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="73ed937e-5ed3-4e1d-a707-4ed1ea8d4892"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>11</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
