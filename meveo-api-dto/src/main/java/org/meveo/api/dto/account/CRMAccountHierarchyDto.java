@@ -86,10 +86,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private CustomFieldDto cfToAdd = new CustomFieldDto();
 	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
 
-	private String offerCode;
-	private String serviceCode;
-	private String access;
-
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public String getCrmAccountType() {
@@ -408,51 +404,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	 */
 	public void setCfToAdd(CustomFieldDto cfToAdd) {
 		customFields.getCustomField().add(cfToAdd);
-	}
-
-	/**
-	 * @return the offerCode
-	 */
-	public String getOfferCode() {
-		return offerCode;
-	}
-
-	/**
-	 * @param offerCode
-	 *            the offerCode to set
-	 */
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
-
-	/**
-	 * @return the serviceCode
-	 */
-	public String getServiceCode() {
-		return serviceCode;
-	}
-
-	/**
-	 * @param serviceCode
-	 *            the serviceCode to set
-	 */
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-
-	/**
-	 * @return the access
-	 */
-	public String getAccess() {
-		return access;
-	}
-
-	/**
-	 * @param access
-	 *            the access to set
-	 */
-	public void setAccess(String access) {
-		this.access = access;
 	}
 
 	/**
