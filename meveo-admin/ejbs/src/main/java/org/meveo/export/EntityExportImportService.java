@@ -1180,7 +1180,7 @@ public class EntityExportImportService implements Serializable {
                 }
 
             } catch (IllegalAccessException | IllegalArgumentException e) {
-                throw new RuntimeException("Failed to access field " + field.getName() + " in class " + entityToSave.getClass().getName(), e);
+                throw new RuntimeException("Failed to access field " + entityToSave.getClass().getName() + "." + field.getName(), e);
             }
 
         }
@@ -1311,7 +1311,7 @@ public class EntityExportImportService implements Serializable {
                     }
 
                 } catch (IllegalAccessException | IllegalArgumentException e) {
-                    throw new RuntimeException("Failed to access field " + field.getName() + " in class " + clazz.getName(), e);
+                    throw new RuntimeException("Failed to access field " + clazz.getName() + "." + field.getName(), e);
                 }
             }
             cls = cls.getSuperclass();
@@ -1346,7 +1346,7 @@ public class EntityExportImportService implements Serializable {
                     saveNotManagedField(null, entityDeserialized, field, lookupById, importStats, clazz, forceToProvider, currentUser);
 
                 } catch (IllegalAccessException | IllegalArgumentException e) {
-                    throw new RuntimeException("Failed to access field " + clazz.getSimpleName() + "." + field.getName(), e);
+                    throw new RuntimeException("Failed to access field " + clazz.getName() + "." + field.getName(), e);
                 }
             }
             cls = cls.getSuperclass();
@@ -1575,7 +1575,7 @@ public class EntityExportImportService implements Serializable {
                     parameters.put(attributeName, attrValue);
                 }
             } catch (IllegalAccessException | IllegalArgumentException e) {
-                throw new RuntimeException("Failed to access " + entityToSave.getClass().getName() + "." + attributeName + "field", e);
+                throw new RuntimeException("Failed to access field " + entityToSave.getClass().getName() + "." + attributeName, e);
             }
         }
 
