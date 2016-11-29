@@ -404,12 +404,12 @@
 					</p:tab>
 				</p:tabView>
 
-				<hftl:exportToXmlDialogs
-					messagesId=":#{p:component('main_messages')}" />
 			</p:panel>
 		</div>
 
-		<p:dialog header="#{messages['offerTemplates']}"
+        <hftl:exportToXmlDialogs messagesId=":#{p:component('main_messages')}" />
+
+        <p:dialog header="#{messages['offerTemplates']}"
 			widgetVar="exportableOffers" minHeight="40" width="800"
 			dynamic="true" modal="true" appendTo="@(body)">
 			<h:form id="dlgOfferExport">
