@@ -29,10 +29,12 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -244,7 +246,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		recordedInvoice.setAmountWithoutTax(amountWithoutTax);
 		recordedInvoice.setTaxAmount(amountTax);
 		recordedInvoice.setNetToPay(invoice.getNetToPay());
-
+		List<String> orderNums = new ArrayList<String>();
+		for(Order order : invoice.getOrders()){
+			orderNums.add(order.getCode());
+		}
+		recordedInvoice.setOrderNumber(StringUtils.concatenate("\\|", orderNums));
+		
 		try {
 			recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
 		} catch (Exception e) {

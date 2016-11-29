@@ -112,6 +112,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	@Inject
 	private ResourceBundle resourceMessages;
 
+
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
@@ -629,7 +630,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 			netToPay = invoice.getAmountWithTax().add(balance);
 		}
-		invoice.setNetToPay(netToPay);
+		invoice.setNetToPay(netToPay);	
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate, UserAccount userAccount) {

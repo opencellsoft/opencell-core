@@ -95,8 +95,9 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.setStatusToCanceled", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
 				+ " where rt.walletOperationId IN :notBilledWalletIdList"),
 		@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
-		@NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
-				+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice") })
+ 		@NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
+				+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
+		@NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice")})
 public class RatedTransaction extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

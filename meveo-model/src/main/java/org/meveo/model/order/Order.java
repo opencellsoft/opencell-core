@@ -13,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -26,6 +27,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
@@ -131,6 +133,9 @@ public class Order extends BusinessCFEntity {
 
     @Column(name = "RECEIVED_FROM", length = 50)
     private String receivedFromApp;
+    
+ 	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "orders")		
+	private List<Invoice> invoices = new ArrayList<Invoice>();
 
     public String getExternalId() {
         return externalId;
@@ -258,8 +263,24 @@ public class Order extends BusinessCFEntity {
     public void setReceivedFromApp(String receivedFromApp) {
         this.receivedFromApp = receivedFromApp;
     }
+    
+    
 
-    public Set<UserAccount> getUserAccounts() {
+    /**
+	 * @return the invoices
+	 */
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	/**
+	 * @param invoices the invoices to set
+	 */
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+
+	public Set<UserAccount> getUserAccounts() {
 
         Set<UserAccount> userAccounts = new HashSet<>();
         for (OrderItem orderItem : orderItems) {
