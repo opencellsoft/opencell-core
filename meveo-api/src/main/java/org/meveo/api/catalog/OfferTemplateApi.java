@@ -59,61 +59,20 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
+		if (StringUtils.isBlank(postData.getName())) {
+			missingParameters.add("name");
+		}
+		handleMissingParameters();
 
 		Provider provider = currentUser.getProvider();
 
 		if (offerTemplateService.findByCode(postData.getCode(), provider) != null) {
 			throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
-		}
-
-		BusinessOfferModel businessOffer = null;
-		if (!StringUtils.isBlank(postData.getBomCode())) {
-			businessOffer = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
-			if (businessOffer == null) {
-				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
-			}
-		}
+		}		
 
 		OfferTemplate offerTemplate = new OfferTemplate();
-		offerTemplate.setBusinessOfferModel(businessOffer);
-		offerTemplate.setProvider(provider);
-		offerTemplate.setCode(postData.getCode());
-		offerTemplate.setDescription(postData.getDescription());
-		offerTemplate.setName(postData.getName());
-		offerTemplate.setLongDescription(postData.getLongDescription());
-		offerTemplate.setDisabled(postData.isDisabled());
-		try {
-			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
-
-		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
-			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode(), currentUser.getProvider());
-			if (offerTemplateCategory == null) {
-				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
-			}
-			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-		}
-
-		if (postData.getOfferTemplateCategories() != null) {
-			for (String categoryCode : postData.getOfferTemplateCategories()) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
-				if (offerTemplateCategory == null) {
-					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
-				}
-				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
-
-		// check service templates
-		processOfferServiceTemplates(postData, offerTemplate, currentUser);
-
-		// check offer product templates
-		processOfferProductTemplates(postData, offerTemplate, currentUser);
+		populateFromDto(offerTemplate, postData, currentUser);
 
 		offerTemplateService.create(offerTemplate, currentUser);
 
@@ -131,63 +90,20 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
 		}
-
+		if (StringUtils.isBlank(postData.getName())) {
+			missingParameters.add("name");
+		}
+		handleMissingParameters();
+		
 		Provider provider = currentUser.getProvider();
 
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), provider);
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 		}
-
-		BusinessOfferModel businessOffer = null;
-		if (!StringUtils.isBlank(postData.getBomCode())) {
-			businessOffer = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
-			if (businessOffer == null) {
-				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
-			}
-			offerTemplate.setBusinessOfferModel(businessOffer);
-		}
-
-		offerTemplate.setBusinessOfferModel(businessOffer);
-		offerTemplate.setDescription(postData.getDescription());
-		offerTemplate.setName(postData.getName());
-		offerTemplate.setLongDescription(postData.getLongDescription());
-		offerTemplate.setDisabled(postData.isDisabled());
-
-		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
-			offerTemplate.getOfferTemplateCategories().clear();
-			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode(), currentUser.getProvider());
-			if (offerTemplateCategory == null) {
-				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
-			}
-			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-		}
-
-		if (postData.getOfferTemplateCategories() != null) {
-			offerTemplate.getOfferTemplateCategories().clear();
-			for (String categoryCode : postData.getOfferTemplateCategories()) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, currentUser.getProvider());
-				if (offerTemplateCategory == null) {
-					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
-				}
-				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
-
-		try {
-			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
-
-		// check service templates
-		processOfferServiceTemplates(postData, offerTemplate, currentUser);
-
-		// check offer product templates
-		processOfferProductTemplates(postData, offerTemplate, currentUser);
+		
+		populateFromDto(offerTemplate, postData, currentUser);
 
 		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
@@ -200,6 +116,55 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		}
 
 		return offerTemplate;
+	}
+	
+	private void populateFromDto(OfferTemplate offerTemplate, OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+		Provider provider = currentUser.getProvider();
+	
+		BusinessOfferModel businessOffer = null;
+		if (!StringUtils.isBlank(postData.getBomCode())) {
+			businessOffer = businessOfferModelService.findByCode(postData.getBomCode(), provider);
+			if (businessOffer == null) {
+				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
+			}
+		}
+		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
+			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode(), provider);
+			if (offerTemplateCategory == null) {
+				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
+			}
+			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+		}
+		if (postData.getOfferTemplateCategories() != null) {
+			for (String categoryCode : postData.getOfferTemplateCategories()) {
+				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, provider);
+				if (offerTemplateCategory == null) {
+					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
+				}
+				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+			}
+		}
+		
+		offerTemplate.setBusinessOfferModel(businessOffer);
+		offerTemplate.setProvider(provider);
+		offerTemplate.setCode(postData.getCode());
+		offerTemplate.setDescription(postData.getDescription());
+		offerTemplate.setName(postData.getName());
+		offerTemplate.setLongDescription(postData.getLongDescription());
+		offerTemplate.setDisabled(postData.isDisabled());
+		
+		try {
+			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
+		}
+
+		// check service templates
+		processOfferServiceTemplates(postData, offerTemplate, currentUser);
+
+		// check offer product templates
+		processOfferProductTemplates(postData, offerTemplate, currentUser);
 	}
 
 	private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate, User currentUser) throws MeveoApiException, BusinessException {
