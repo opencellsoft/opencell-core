@@ -206,10 +206,10 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 	
 	@Override
-	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType) {
+	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
 		GetInvoiceResponseDto result = new GetInvoiceResponseDto();
 		try {
-            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, getCurrentUser().getProvider()));
+            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions, getCurrentUser().getProvider()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

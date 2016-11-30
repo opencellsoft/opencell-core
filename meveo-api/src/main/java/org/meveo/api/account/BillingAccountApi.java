@@ -19,6 +19,7 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -74,6 +75,9 @@ public class BillingAccountApi extends AccountApi {
 
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
+	
+	@Inject
+	private InvoiceApi invoiceApi;
 
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
@@ -432,7 +436,7 @@ public class BillingAccountApi extends AccountApi {
 					if (invoices != null && invoices.size() > 0) {
 						for (Invoice invoice : invoices) {
 							if (invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
-								InvoiceDto invoiceDto = new InvoiceDto(invoice);
+								InvoiceDto invoiceDto = invoiceApi.invoiceToDto(invoice, false);
 								invoicesDto.add(invoiceDto);
 							}
 						}

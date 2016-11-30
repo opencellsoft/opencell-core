@@ -40,13 +40,14 @@ public interface InvoiceRs extends IBaseRs {
      * @param id  invoice id
      * @param invoiceNumber invoice number
      * @param invoiceType invoice type
+     * @param includeTransactions Should transactions, associated to an invoice, be listed
      * @return GetInvoiceResponseDto
      */
     @GET
     @Path("/")
     public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, 
     		@QueryParam("invoiceNumber") String invoiceNumber, 
-    		@QueryParam("invoiceType") String invoiceType);
+    		@QueryParam("invoiceType") String invoiceType, @QueryParam("includeTransactions") boolean includeTransactions);
 
     /**
      * Create invoice. Invoice number depends on invoice type
