@@ -226,10 +226,9 @@ public class User extends AuditableEntity {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof User)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof User)) {
             return false;
         }
 

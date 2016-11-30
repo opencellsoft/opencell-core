@@ -125,18 +125,21 @@ public class NotificationHistory extends AuditableEntity {
 	public void setStatus(NotificationHistoryStatusEnum status) {
 		this.status = status;
 	}
-	
-	public boolean equals(Object obj) {
-		boolean result=false;
-		if(obj instanceof NotificationHistory){
-			NotificationHistory other = (NotificationHistory)obj;
-			boolean inReq = this.inboundRequest!=null && other.getInboundRequest()!=null 
-					&& this.inboundRequest.getCode().equals(other.getInboundRequest().getCode());
-			boolean notif = this.notification!=null && other.getNotification()!=null 
-			&& this.notification.getCode().equals(other.getNotification().getCode());
-			result = inReq && notif;
-		}
-		return result;
-	}
+
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof NotificationHistory)) {
+            return false;
+        }
+
+        NotificationHistory other = (NotificationHistory) obj;
+        boolean inReq = this.inboundRequest != null && other.getInboundRequest() != null && this.inboundRequest.getCode().equals(other.getInboundRequest().getCode());
+        boolean notif = this.notification != null && other.getNotification() != null && this.notification.getCode().equals(other.getNotification().getCode());
+        return inReq && notif;
+    }
 	
 }

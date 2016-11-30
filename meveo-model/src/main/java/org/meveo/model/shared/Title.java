@@ -80,12 +80,15 @@ public class Title extends BusinessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Title)) {
+            return false;
+        }
+        
 		Title other = (Title) obj;
 		if (code == null) {
 			if (other.code != null)

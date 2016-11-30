@@ -64,15 +64,15 @@ public class SecuredEntity implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object that) {
-		if (this == that) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (that == null) {
+		if (obj == null) {
 			return false;
 		}
-		boolean isSecuredEntity = that instanceof SecuredEntity;
-		boolean isBusinessEntity = that instanceof BusinessEntity;
+		boolean isSecuredEntity = obj instanceof SecuredEntity;
+		boolean isBusinessEntity = obj instanceof BusinessEntity;
 		if (!isSecuredEntity && !isBusinessEntity) {
 			return false;
 		}
@@ -80,12 +80,12 @@ public class SecuredEntity implements Serializable {
 		String thatCode = null;
 		String thatClass = null;
 		if (isSecuredEntity) {
-			thatCode = ((SecuredEntity) that).getCode();
-			thatClass = ((SecuredEntity) that).getEntityClass();
+			thatCode = ((SecuredEntity) obj).getCode();
+			thatClass = ((SecuredEntity) obj).getEntityClass();
 		}
 		if (isBusinessEntity) {
-			thatCode = ((BusinessEntity) that).getCode();
-			thatClass = ReflectionUtils.getCleanClassName(((BusinessEntity) that).getClass().getName());
+			thatCode = ((BusinessEntity) obj).getCode();
+			thatClass = ReflectionUtils.getCleanClassName(((BusinessEntity) obj).getClass().getName());
 		}
 
 		thatCode = thatClass + "-_-" + thatCode;

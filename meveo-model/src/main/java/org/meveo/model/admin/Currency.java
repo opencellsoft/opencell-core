@@ -76,12 +76,14 @@ public class Currency extends ProviderlessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Currency)) {
+            return false;
+        }
+        
 		Currency other = (Currency) obj;
 		if (currencyCode == null) {
 			if (other.currencyCode != null)

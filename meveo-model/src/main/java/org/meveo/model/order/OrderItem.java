@@ -224,7 +224,16 @@ public class OrderItem extends BaseEntity {
      * Interested in comparing order items within the order only
      */
     @Override
-    public boolean equals(Object other) {
-        return StringUtils.compare(getItemId(), ((OrderItem) other).getItemId()) == 0;
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof OrderItem)) {
+            return false;
+        }
+
+        return StringUtils.compare(getItemId(), ((OrderItem) obj).getItemId()) == 0;
     }
 }

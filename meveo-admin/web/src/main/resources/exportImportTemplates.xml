@@ -194,8 +194,13 @@
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateUsage</java-class>
             <java-class>org.meveo.model.billing.WalletInstance</java-class>
             <java-class>org.meveo.model.catalog.DiscountPlan</java-class>
+            <java-class>org.meveo.model.module.MeveoModule</java-class>
+            <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
         </classesToExportAsFull>
         <relatedEntities>
+            <relatedEntity pathToEntityRelatedTo="businessOfferModel">
+                <entityClass>org.meveo.model.catalog.BusinessOfferModel</entityClass>
+            </relatedEntity>
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
                 <selection>
@@ -318,12 +323,12 @@
             <template ref="WalletTemplate" />
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />  
+            <template ref="OfferTemplateCategory" /> 
             <template ref="ProductTemplate" /> 
             <template ref="BundleTemplate" />
             <template ref="ChargeTemplate" />
             <template ref="ScriptInstance" />            
-            <template ref="MeveoModule" />
-            <template ref="OfferTemplateCategory" />            
+            <template ref="MeveoModule" />           
             <template ref="ServiceTemplate" />   
             <template ref="OfferTemplate" />   
             <template ref="PricePlanMatrix" />

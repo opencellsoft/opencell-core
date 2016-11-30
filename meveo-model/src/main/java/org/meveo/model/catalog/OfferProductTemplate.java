@@ -99,14 +99,14 @@ public class OfferProductTemplate implements IEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		} else if (!(obj instanceof OfferProductTemplate)) {
-			return false;
-		}
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof OfferProductTemplate)) {
+            return false;
+        }
 
 		OfferProductTemplate that = (OfferProductTemplate) obj;
 
