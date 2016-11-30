@@ -18,10 +18,12 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -38,16 +40,15 @@ public class ProductChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRODUCT_TMPL_ID")
-	private ProductTemplate productTemplate;
+	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "productChargeTemplates")		
+	private List<ProductTemplate> productTemplates = new ArrayList<>();
 
-	public ProductTemplate getProductTemplate() {
-		return productTemplate;
+	public List<ProductTemplate> getProductTemplates() {
+		return productTemplates;
 	}
 
-	public void setProductTemplate(ProductTemplate productTemplate) {
-		this.productTemplate = productTemplate;
+	public void setProductTemplates(List<ProductTemplate> productTemplates) {
+		this.productTemplates = productTemplates;
 	}
 
 }
