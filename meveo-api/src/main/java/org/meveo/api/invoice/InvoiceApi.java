@@ -833,7 +833,7 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate || invoiceAgregate instanceof TaxInvoiceAgregate) {
                 continue;
 
             } else if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
@@ -879,28 +879,27 @@ public class InvoiceApi extends BaseApi {
 
                     categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
                 }
-            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-                subCategoryInvoiceAgregateDto.setType("T");
-                subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
-                subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-                subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
-                subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-                subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-                subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-
-                CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = null;
-                if (invoiceDto.getCategoryInvoiceAgregates().size() > 0) {
-                    categoryInvoiceAgregateDto = invoiceDto.getCategoryInvoiceAgregates().get(0);
-                } else {
-                    categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-                    invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
-                }
-
-                categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-
+                // } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                // SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+                // subCategoryInvoiceAgregateDto.setType("T");
+                // subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+                // subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                // subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+                // subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+                // subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+                // subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+                // subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+                // subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+                //
+                // CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = null;
+                // if (invoiceDto.getCategoryInvoiceAgregates().size() > 0) {
+                // categoryInvoiceAgregateDto = invoiceDto.getCategoryInvoiceAgregates().get(0);
+                // } else {
+                // categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
+                // invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+                // }
+                //
+                // categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
             }
         }
 
