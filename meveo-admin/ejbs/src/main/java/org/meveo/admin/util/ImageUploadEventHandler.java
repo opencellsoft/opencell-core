@@ -154,4 +154,21 @@ public class ImageUploadEventHandler<T extends IEntity> {
 			Files.deleteIfExists(source);
 		}
 	}
+
+	public String duplicateImage(T entity, String sourceFilename, String targetFilename, String providerCode) throws IOException {
+		String folder = getPicturePath(entity, providerCode);
+		Path target = null;		
+
+		if (!org.meveo.commons.utils.StringUtils.isBlank(sourceFilename)) {
+			String extension = FilenameUtils.getExtension(sourceFilename);
+			String targetFile = targetFilename + "." + extension;
+			Path source = Paths.get(folder, sourceFilename);
+			target = Paths.get(folder, targetFile);
+			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+			return targetFile;
+		}
+
+		return null;
+	}
 }
