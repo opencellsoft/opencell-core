@@ -1,6 +1,7 @@
 package org.meveo.api.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,7 +47,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 		if(productChargeTemplates != null) {
 			for(ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
 				if (productChargeTemplate != null) {
-					productChargeTemplate.setProductTemplate(productTemplate);
+					productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
 					productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate));
 					chargeDtos.add(productChargeTemplateDto);
 				}
@@ -99,7 +100,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 			if (productChargeTemplate == null) {
 				throw new EntityDoesNotExistsException(ProductChargeTemplate.class, productChargeTemplateDto.getCode());
 			}
-			productChargeTemplate.setProductTemplate(productTemplate);
+			productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
 			newProductChargeTemplates.add(productChargeTemplate);
 		}
 		

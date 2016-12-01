@@ -39,7 +39,9 @@ public class ProductTemplate extends ProductOffering {
 	@Transient
 	public static final String CF_CATALOG_PRICE = "CATALOG_PRICE";
 
-	@OneToMany(mappedBy = "productTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_PRODUCT_TEMPL_CHARGE_TEMPL", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_CHARGE_TEMPLATE_ID"))	
 	private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
 
 	@ManyToOne
