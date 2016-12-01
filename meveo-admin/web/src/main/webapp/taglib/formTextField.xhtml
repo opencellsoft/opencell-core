@@ -9,40 +9,8 @@
     <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
         style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
         inputWidth="#{inputWidth}">
-        
-        <c:if test="#{not isHtml and not textArea and listValues == null and !isAutocomplete and not popup and edit and defaultValue != null}">
 
-            <p:inputText id="#{id}" value="#{defaultValue}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
-
-                <c:if test="#{not empty converter}">
-                    <f:converter converterId="#{converter}" />
-                </c:if>
-                <c:if test="#{useConverter}">
-                    <f:converter converterId="stringConverter" />
-                </c:if>
-                <c:if test="#{validateEmail}">
-                    <!-- <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
-                    <o:validator validatorId="javax.faces.RegularExpression" pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" message="#{messages['validator.email.invalid']}" />
-                </c:if>
-                <c:if test="#{not empty validatorId}">
-                    <f:validator validatorId="#{validatorId}" />
-                </c:if>
-                <c:if test="#{validateUnique}">
-                    <f:validator validatorId="uniqueConstraintValidator" />
-                    <f:attribute name="className" value="#{entity.getClass().getSimpleName()}" />
-                    <f:attribute name="fieldName" value="#{field}" />
-                    <f:attribute name="idValue" value="#{entity.getId()}" />
-                </c:if>
-                <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
-                    <p:ajax update="#{listenerUpdate}" event="change" />
-                </c:if>
-                <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
-                    <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
-                </c:if>
-            </p:inputText>
-        </c:if>
-
-        <c:if test="#{not isHtml and not textArea and listValues == null and !isAutocomplete and not popup and edit and defaultValue == null}">
+        <c:if test="#{not isHtml and not textArea and listValues == null and !isAutocomplete and not popup and edit}">
 
             <p:inputText id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
 

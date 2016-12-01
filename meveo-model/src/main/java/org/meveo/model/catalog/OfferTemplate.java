@@ -76,6 +76,9 @@ public class OfferTemplate extends ProductOffering {
 	
 	@Transient
 	public List<ProductTemplate> productTemplates;
+	
+	@Transient
+	private String transientCode;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -240,5 +243,13 @@ public class OfferTemplate extends ProductOffering {
 		}
 
 		return productTemplates;
+	}
+
+	public String getTransientCode() {
+		return null;
+	}
+
+	public void setTransientCode(String transientCode) {
+		code = transientCode;
 	}
 }
