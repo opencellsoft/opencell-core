@@ -54,7 +54,8 @@ public class AccountHierarchyDto implements Serializable {
 	private String state;
 	private String city;
 	private Boolean usePrefix;
-	private BigDecimal invoicingThreshold; 
+	private BigDecimal invoicingThreshold;
+	private String discountPlan;
 	private CustomFieldsDto customFields;
 
 	@XmlTransient
@@ -250,7 +251,7 @@ public class AccountHierarchyDto implements Serializable {
 				+ countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate
 				+ ", phoneNumber=" + phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3
 				+ ", zipCode=" + zipCode + ", state=" + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index="
-				+ index + ", invoicingThreshold="+invoicingThreshold+"]";
+				+ index + ", invoicingThreshold=" + invoicingThreshold + ", discountPlan=" + discountPlan + "]";
 	}
 
 	public int getLimit() {
@@ -344,7 +345,12 @@ public class AccountHierarchyDto implements Serializable {
 	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
 		this.invoicingThreshold = invoicingThreshold;
 	}
-	
-	
 
+	public String getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(String discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 }

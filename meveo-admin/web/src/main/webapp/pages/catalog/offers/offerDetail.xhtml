@@ -48,12 +48,13 @@
                     <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
                         <h:outputText value="#{offerTemplateBean.entity.nameOrCode}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
                         <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
-                        <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
                         <c:if test="#{offerTemplateBean.bomId eq null}">
+                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
                             <hftl:formField label="#{messages['marketingManager.catalog.family']}" allowEdit="false" field="businessOfferModel" valueLabelField="code"
                                 listBean="#{businessOfferModelBean}" />
                         </c:if>
                         <c:if test="#{offerTemplateBean.bomId ne null}">
+                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" defaultValue=""  />
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
                             </hftl:decorateFormField>
@@ -177,7 +178,7 @@
 
 							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
                                 <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
-                                    <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
+                                    <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}" componentWidth="5">
                                         <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
 

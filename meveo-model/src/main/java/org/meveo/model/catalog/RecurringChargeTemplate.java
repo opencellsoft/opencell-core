@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
@@ -80,6 +81,10 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	@Enumerated(EnumType.STRING)
 	@Column(name= "SHARE_LEVEL",length=20)
 	private LevelEnum shareLevel;
+	
+	@Column(name = "FILTER_EXPRESSION", length = 2000)
+	@Size(max = 2000)
+	private String filterExpression = null;
 	
 	public Calendar getCalendar() {
 		return calendar;
@@ -135,6 +140,14 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
 	public void setShareLevel(LevelEnum shareLevel) {
 		this.shareLevel = shareLevel;
+	}
+
+	public String getFilterExpression() {
+		return filterExpression;
+	}
+
+	public void setFilterExpression(String filterExpression) {
+		this.filterExpression = filterExpression;
 	}
 
 }

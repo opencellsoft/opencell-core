@@ -29,7 +29,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 @Entity
-@ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code", "provider" })
+@ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code", "offerTemplate.provider" })
 @Table(name = "CAT_OFFER_SERV_TEMPLATES")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_SERV_TEMPLT_SEQ")
 public class OfferServiceTemplate implements IEntity {

@@ -123,6 +123,9 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "EXCLUDED_FROM_DUNNING")
 	private boolean excludedFromDunning;
 	
+	@Column(name = "ORDER_NUM")   
+	private String orderNumber;// order number, '|' will be used as seperator if many orders
+	
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
@@ -300,6 +303,20 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 		@Override
 		public ICustomFieldEntity[] getParentCFEntities() {
 			return null;
+		}
+
+		/**
+		 * @return the orderNumber
+		 */
+		public String getOrderNumber() {
+			return orderNumber;
+		}
+
+		/**
+		 * @param orderNumber the orderNumber to set
+		 */
+		public void setOrderNumber(String orderNumber) {
+			this.orderNumber = orderNumber;
 		}	
 
 }

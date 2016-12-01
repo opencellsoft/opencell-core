@@ -427,20 +427,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         setAllWalletTemplatesToNull(serviceTemplate);
         
-        deleteImage(serviceTemplate, currentUser.getProvider().getCode());
-
-        // remove serviceChargeTemplateRecurring
-        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceChargeTemplateSubscription
-        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceChargeTemplateTermination
-        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceUsageChargeTemplate
-        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
+        //deleteImage(serviceTemplate, currentUser.getProvider().getCode());
+        
         serviceTemplateService.remove(serviceTemplate, currentUser);
 
     }

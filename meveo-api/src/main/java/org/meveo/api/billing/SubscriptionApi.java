@@ -368,23 +368,30 @@ public class SubscriptionApi extends BaseApi {
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
             }
-        }
-
-        // override price
-        for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+            
+            // override price and description
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
-                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode())) {
                         ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId(), InstanceStatusEnum.INACTIVE);
                         if (chargeInstance == null) {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
-
                         if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
-                            chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-                            if (!currentUser.getProvider().isEntreprise()) {
+                            if(chargeInstanceOverrideDto.getAmountWithoutTax()!=null){
+                            	log.debug("override AmountWithoutTax:{}", chargeInstanceOverrideDto.getAmountWithoutTax());
+                            	chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+                            }
+                            if (!currentUser.getProvider().isEntreprise() && chargeInstanceOverrideDto.getAmountWithTax()!=null) {
+                            	log.debug("override AmountWithTax:{}", chargeInstanceOverrideDto.getAmountWithTax());
                                 chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
                             }
+                            if(!StringUtils.isBlank(chargeInstanceOverrideDto.getDescription())){
+                            	log.debug("override description:{}", chargeInstanceOverrideDto.getDescription());
+                            	chargeInstance.setDescription(chargeInstanceOverrideDto.getDescription());
+                            }
+                        } else{
+                        	log.warn("Charge with code {} is not overrideable", chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
                     } else {
                         log.warn("chargeInstance.code and amountWithoutTax must not be null.");

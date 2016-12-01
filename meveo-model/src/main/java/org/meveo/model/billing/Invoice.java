@@ -51,6 +51,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 
@@ -169,6 +170,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@ManyToMany
 	@JoinTable(name = "BILLING_LINKED_INVOICES", joinColumns = { @JoinColumn(name = "ID") }, inverseJoinColumns = { @JoinColumn(name = "LINKED_INVOICE_ID") })
 	private Set<Invoice> linkedInvoices = new HashSet<>();
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "BILLING_INVOICES_ORDERS", joinColumns = @JoinColumn(name = "INVOICE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID"))	
+	private List<Order> orders = new ArrayList<Order>();	
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -482,6 +487,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	 */
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+	
+	
+
+	/**
+	 * @return the orders
+	 */
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	/**
+	 * @param orders the orders to set
+	 */
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 
 	@Override

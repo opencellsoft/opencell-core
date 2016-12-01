@@ -84,7 +84,12 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
             return null;
         }
 
-        return getListViewName();
+        return getEditViewName();
+    }
+    
+    public String saveOrUpdate(boolean killConversation) throws BusinessException{
+    	super.saveOrUpdate(killConversation);
+    	return getEditViewName();
     }
 
     protected String getListViewName() {

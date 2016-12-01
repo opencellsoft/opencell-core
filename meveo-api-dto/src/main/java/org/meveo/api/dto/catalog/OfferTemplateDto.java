@@ -32,6 +32,7 @@ public class OfferTemplateDto extends BaseDto {
     @XmlAttribute()
     private String description;
 
+	@XmlElement(required = true)
     private String name;
 
     private String longDescription;

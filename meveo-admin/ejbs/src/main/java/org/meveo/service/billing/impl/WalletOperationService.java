@@ -23,7 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -43,6 +45,7 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -76,6 +79,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.slf4j.Logger;
@@ -557,6 +561,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 //        return chargeApplication;
 //    }
 
+	//Be careful to use this method only for the first application of a recurring charge
 	public Date getNextApplicationDate(RecurringChargeInstance chargeInstance) {
 		Date applicationDate = chargeInstance.getSubscriptionDate();
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
@@ -565,7 +570,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = DateUtils.setTimeToZero(chargeInstance.getSubscriptionDate());
 		}
 		chargeInstance.setChargeDate(applicationDate);
-		cal.setInitDate(chargeInstance.getSubscriptionDate());
+		cal.setInitDate(applicationDate);
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			nextapplicationDate = DateUtils.setTimeToZero(nextapplicationDate);
@@ -588,11 +593,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
 		Calendar cal = recurringChargeTemplate.getCalendar();
-		cal.setInitDate(subscriptionDate);
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
+			subscriptionDate = DateUtils.setTimeToZero(subscriptionDate);
 		}
+		cal.setInitDate(subscriptionDate);
 		log.debug("rateSubscription subscriptionDate={} applicationDate={}, nextapplicationDate={},previousapplicationDate={}",subscriptionDate, applicationDate, nextapplicationDate, previousapplicationDate);
 
 		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance().getQuantity();
@@ -682,6 +688,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 		Date nextapplicationDate = getNextApplicationDate(chargeInstance);
+		
+		if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+			chargeInstance.setNextChargeDate(nextapplicationDate);
+			return;
+		}
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
 			WalletOperation chargeApplication = rateSubscription(chargeInstance.getSubscriptionDate(), chargeInstance, nextapplicationDate,creator);
@@ -692,6 +704,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		}
 
+	}
+	
+	public boolean isChargeMatch(RecurringChargeInstance activeRecurringChargeInstance, String filterExpression) throws BusinessException {
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ci", activeRecurringChargeInstance);
+		if (StringUtils.isBlank(filterExpression)) {
+			return true;
+		}
+		
+		return (Boolean) ValueExpressionWrapper.evaluateExpression(filterExpression, userMap, Boolean.class);
 	}
 
 	public void applyReimbursment(RecurringChargeInstance chargeInstance, User creator) throws BusinessException {

@@ -260,9 +260,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	public int applyRecurringCharge(Long chargeInstanceId, Date maxDate,User user) throws BusinessException {
 		int MaxRecurringRatingHistory=Integer.parseInt(ParamBean.getInstance().getProperty("rating.recurringMaxRetry", "100"));
 		int nbRating=0;
+		
 		try {
-
 			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId, user.getProvider());
+			
+			if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
+				return nbRating;
+			}
 
 			RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 					.getRecurringChargeTemplate();
@@ -351,7 +356,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             throw new BusinessException(e);
         }
 		return nbRating;
-	}
+	}	
 
 	/**
 	 * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
@@ -370,6 +375,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         log.debug("Apply recuring charges on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date range {}-{}", chargeInstance.getUserAccount().getCode(),
             chargeInstance.getServiceInstance().getSubscription().getOffer().getCode(), chargeInstance.getRecurringChargeTemplate().getCode(), chargeInstance.getServiceInstance()
                 .getQuantity(), fromDate, toDate);
+        
+		if (!walletOperationService.isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+			return null;
+		}
 
         BigDecimal inputQuantity = chargeInstance.getServiceInstance().getQuantity();
         BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeInstance.getRecurringChargeTemplate().getUnitMultiplicator(), chargeInstance.getRecurringChargeTemplate()

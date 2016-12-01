@@ -33,7 +33,7 @@ import org.meveo.model.annotation.ImageType;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
-public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory> {
+public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
 
     private static final long serialVersionUID = -5088201294684394309L;
 

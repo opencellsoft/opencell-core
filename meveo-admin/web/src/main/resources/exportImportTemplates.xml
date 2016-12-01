@@ -246,13 +246,6 @@
             <java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
         </classesToExportAsFull>
     </template>
-    <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
-        <classesToExportAsFull>
-            <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
-            <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
-            <java-class>org.meveo.model.catalog.BundleProductTemplate</java-class>
-        </classesToExportAsFull>
-    </template>
 
     <template name="Users and roles">
         <parameters>
@@ -324,13 +317,15 @@
             <template ref="Configuration" />
             <template ref="WalletTemplate" />
             <template ref="TriggeredEDRTemplate" />
-            <template ref="CounterTemplate" />
+            <template ref="CounterTemplate" />  
+            <template ref="ProductTemplate" /> 
+            <template ref="BundleTemplate" />
             <template ref="ChargeTemplate" />
             <template ref="ScriptInstance" />            
             <template ref="MeveoModule" />
             <template ref="OfferTemplateCategory" />            
-            <template ref="ServiceTemplate" />
-            <template ref="OfferTemplate" />
+            <template ref="ServiceTemplate" />   
+            <template ref="OfferTemplate" />   
             <template ref="PricePlanMatrix" />
             <template ref="DiscountPlan" />
         </groupedTemplates>
@@ -362,6 +357,7 @@
             <template ref="Customer hierarchy" />
             <template ref="Subscription" />
             <template ref="Access" />
+            <template ref="ProductInstance" />
         </groupedTemplates>
     </template>
 

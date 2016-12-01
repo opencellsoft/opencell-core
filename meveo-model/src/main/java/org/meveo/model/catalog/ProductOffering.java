@@ -44,7 +44,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class ProductOffering extends BusinessCFEntity {
+public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
 
 	private static final long serialVersionUID = 6877386866687396135L;
 

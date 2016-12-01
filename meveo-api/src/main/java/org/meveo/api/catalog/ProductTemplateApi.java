@@ -159,7 +159,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
-		deleteImage(productTemplate, currentUser.getProvider().getCode());
+		//deleteImage(productTemplate, currentUser.getProvider().getCode());
 		productTemplateService.remove(productTemplate, currentUser);
 	}
 

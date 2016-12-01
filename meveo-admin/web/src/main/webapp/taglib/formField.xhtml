@@ -56,6 +56,7 @@
         validatorId - validator to apply
         listenerUpdate - components (ids) to update when value changes 
         actionListenerBean and actionListenerMethod - action listener bean and method to execute when value changes
+        defaultValue - override initial default value
           
         
      Additional attributes applicable to Number type fields
@@ -261,7 +262,7 @@
                 textArea="${textArea}" cols="${cols}" rows="${rows}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
                 autocompleteMethod="#{autocompleteMethod}" listValues="${listValues}" popup="${popup}" popupId="${popupId}" useConverter="${useConverter}" converter="${converter}"
                 validateUnique="${validateUnique}" validateRib="${validateRib}" validateEmail="${validateEmail}" validatorId="${validatorId}" listenerUpdate="${listenerUpdate}"
-                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
+                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" defaultValue="#{defaultValue}" />
         </c:if>
 
         <!--  Enter map values -->
