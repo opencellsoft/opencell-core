@@ -328,6 +328,9 @@ public class EntityExportImportService implements Serializable {
 
             exportTemplate.addRelatedEntity(null, null, cfSelect, cfParameters, CustomFieldInstance.class);
 
+            if (exportTemplate.getClassesToExportAsFull()==null){
+                exportTemplate.setClassesToExportAsFull(new ArrayList<Class<? extends IEntity>>());
+            }
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
         }
 
