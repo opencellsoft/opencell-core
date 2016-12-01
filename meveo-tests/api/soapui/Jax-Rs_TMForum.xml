@@ -14923,6 +14923,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER1" description="Offer 1">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER1</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
@@ -14979,6 +14980,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER2" description="Offer 2">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER2</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>\r
@@ -15128,6 +15130,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER3" description="Offer 3">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER3</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
