@@ -54,7 +54,9 @@
                                 listBean="#{businessOfferModelBean}" />
                         </c:if>
                         <c:if test="#{offerTemplateBean.bomId ne null}">
-                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" defaultValue=""  />
+                        	<hftl:decorateFormField fieldId="transientCode" label="#{messages['offerTemplate.code']}">
+                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" />
+                            </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
                             </hftl:decorateFormField>
