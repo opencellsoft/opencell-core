@@ -832,55 +832,75 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setPdfPresent(invoice.getPdf() != null);
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
-        SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
-        CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-           
-            subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+                continue;
 
-            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("R");
+            } else if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
                 categoryInvoiceAgregateDto.setCategoryInvoiceCode(((CategoryInvoiceAgregate) invoiceAgregate).getInvoiceCategory().getCode());
-            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("F");
-                subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().getCode());
 
-                if (includeTransactions) {
+                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+                subCategoryInvoiceAgregateDto.setType("R");
+                subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+                subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+                subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+                subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+                subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+                subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
 
-                    List<RatedTransaction> ratedTransactions = ratedTransactionService.getListByInvoiceAndSubCategory(invoice,
-                        ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory());
+                categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
 
-                    for (RatedTransaction ratedTransaction : ratedTransactions) {
-                        subCategoryInvoiceAgregateDto.getRatedTransactions().add(new RatedTransactionDto(ratedTransaction));
-                    }
-                }
-
-            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("T");
-            }
-
-            subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-            subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
-            subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-            subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-            subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
-            subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-            subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-            subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-
-            categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-
-            boolean agregateAlreadyExists = false;
-            for (CategoryInvoiceAgregateDto ciadto : invoiceDto.getCategoryInvoiceAgregates()) {
-                if (ciadto.getCategoryInvoiceCode() != null && ciadto.getCategoryInvoiceCode().equals(categoryInvoiceAgregateDto.getCategoryInvoiceCode())) {
-                    agregateAlreadyExists = true;
-                    break;
-                }
-            }
-
-            if (!agregateAlreadyExists) {
                 invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+
+                for (SubCategoryInvoiceAgregate subCategoryAggregate : ((CategoryInvoiceAgregate) invoiceAgregate).getSubCategoryInvoiceAgregates()) {
+                    subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+                    subCategoryInvoiceAgregateDto.setType("F");
+                    subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
+                    subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+                    subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+                    subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+                    subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+                    subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+
+                    if (includeTransactions) {
+
+                        List<RatedTransaction> ratedTransactions = ratedTransactionService.getListByInvoiceAndSubCategory(invoice, subCategoryAggregate.getInvoiceSubCategory());
+
+                        for (RatedTransaction ratedTransaction : ratedTransactions) {
+                            subCategoryInvoiceAgregateDto.getRatedTransactions().add(new RatedTransactionDto(ratedTransaction));
+                        }
+                    }
+
+                    categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+                }
+            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+                subCategoryInvoiceAgregateDto.setType("T");
+                subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
+                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
+                subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
+                subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
+                subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
+                subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
+                subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+
+                CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = null;
+                if (invoiceDto.getCategoryInvoiceAgregates().size() > 0) {
+                    categoryInvoiceAgregateDto = invoiceDto.getCategoryInvoiceAgregates().get(0);
+                } else {
+                    categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
+                    invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+                }
+
+                categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+
             }
         }
 
