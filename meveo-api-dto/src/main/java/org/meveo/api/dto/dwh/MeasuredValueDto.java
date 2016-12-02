@@ -1,9 +1,11 @@
 package org.meveo.api.dto.dwh;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -13,11 +15,12 @@ public class MeasuredValueDto {
 	private String measurableQuantityCode;
 	protected String code;
 	private MeasurementPeriodEnum measurementPeriod;
-	private Date date;
+	private String date;
 	private String dimension1;
 	private String dimension2;
 	private String dimension3;
 	private String dimension4;
+	private BigDecimal value;
 
 	public MeasuredValueDto() {
 
@@ -27,11 +30,12 @@ public class MeasuredValueDto {
 		measurableQuantityCode = e.getMeasurableQuantity().getCode();
 		code = e.getCode();
 		measurementPeriod = e.getMeasurementPeriod();
-		date = e.getDate();
+		date = DateUtils.formatDateWithPattern(e.getDate(), "YYYY-MM-DD'T'hh:mm:ss");
 		dimension1 = e.getDimension1();
 		dimension2 = e.getDimension2();
 		dimension3 = e.getDimension3();
 		dimension4 = e.getDimension4();
+		value      = e.getValue();
 	}
 
 	public String getMeasurableQuantityCode() {
@@ -58,11 +62,11 @@ public class MeasuredValueDto {
 		this.measurementPeriod = measurementPeriod;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -98,4 +102,17 @@ public class MeasuredValueDto {
 		this.dimension4 = dimension4;
 	}
 
+	/**
+	 * @return the value
+	 */
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
 }

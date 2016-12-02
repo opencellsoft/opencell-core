@@ -199,7 +199,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		QueryBuilder queryBuilder = new QueryBuilder("FROM " + MeasuredValue.class.getName() + " m ");
 
 		if (code != null) {
-			queryBuilder.addSql(" m.measurableQuantity.code = '" + code.toUpperCase() + "' ");
+			queryBuilder.addSql(" m.code = '" + code.toUpperCase() + "' ");
 		}
 
 		if (fromDate != null && toDate == null) {

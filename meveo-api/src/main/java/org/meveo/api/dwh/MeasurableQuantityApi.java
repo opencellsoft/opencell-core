@@ -156,9 +156,6 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
     
 	public List<MeasuredValueDto> findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode, User currentUser)
 			throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("code");
-		}
 
 		if (StringUtils.isBlank(mqCode)) {
 			missingParameters.add("mqCode");
@@ -173,6 +170,9 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
 		List<MeasuredValueDto> result = new ArrayList<>();
 
+		if(period == null){
+			period = mq.getMeasurementPeriod();
+		}
 		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, fromDate, toDate, period, mq);
 		if (measuredValues != null) {
 			for (MeasuredValue mv : measuredValues) {
