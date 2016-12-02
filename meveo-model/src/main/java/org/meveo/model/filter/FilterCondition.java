@@ -59,13 +59,18 @@ public class FilterCondition extends BaseEntity {
 		this.filterConditionType = filterConditionType;
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (other == null || !(other instanceof FilterCondition)) {
-			return false;
-		}
-		FilterCondition o = (FilterCondition) other;
-		return (o.getId() != null) && o.getId().equals(this.getId());
-	}
+    @Override
+    public boolean equals(Object obj) {
 
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof FilterCondition)) {
+            return false;
+        }
+
+        FilterCondition other = (FilterCondition) obj;
+        return (other.getId() != null) && other.getId().equals(this.getId());
+    }
 }

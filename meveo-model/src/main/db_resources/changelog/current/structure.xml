@@ -3005,9 +3005,19 @@
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />               	
     </changeSet>
     
- <changeSet id="#2158_20161124" author="anasseh"> 	
-  <dropForeignKeyConstraint  baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" />
-  <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />   
+    <changeSet id="#2158_20161124-0" author="anasseh" dbms="mysql">
+        <dropForeignKeyConstraint  baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" />
+        <dropIndex tableName="cat_offer_template" indexName="fk_cat_off_tpl_prod_chrg_tpl"/>
+        <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
+        <dropIndex tableName="CAT_PRODUCT_CHARGE_TEMPL" indexName="fk_cat_prod_tpl_prod_chrg_tpl"/>
+    </changeSet>
+    
+    <changeSet id="#2158_20161124-1" author="anasseh" dbms="postgresql">
+        <dropForeignKeyConstraint  baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" />
+        <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
+    </changeSet>        
+ 
+    <changeSet id="#2158_20161124" author="anasseh"> 	         
       	<dropColumn tableName="CAT_PRODUCT_CHARGE_TEMPL">
     		<column name="product_tmpl_id" />
     	</dropColumn>  
@@ -3015,12 +3025,12 @@
             <column name="PRODUCT_CHARGE_TEMPLATE_ID" type="BIGINT"/>
             <column name="PRODUCT_TEMPLATE_ID" type="BIGINT"/>                   
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="PRODUCT_CHARGE_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_id_CAT_PRODUCT_CHARGE_TEMPLE_on_cat_product_templ_charge_templ"
+        <addForeignKeyConstraint baseColumnNames="PRODUCT_CHARGE_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pct_id"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_PRODUCT_CHARGE_TEMPL" />
-        <addForeignKeyConstraint baseColumnNames="PRODUCT_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_id_CAT_OFFER_TEMPLATE_on_cat_product_templ_charge_templ"
+        <addForeignKeyConstraint baseColumnNames="PRODUCT_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pt_id"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />            
-
- </changeSet>    
+    
+    </changeSet>    
 
 
  

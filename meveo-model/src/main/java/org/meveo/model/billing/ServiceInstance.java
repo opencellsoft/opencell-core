@@ -250,10 +250,10 @@ public class ServiceInstance extends BusinessCFEntity {
 	}
 
 	public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
         } else if (!(obj instanceof ServiceInstance)) {
             return false;

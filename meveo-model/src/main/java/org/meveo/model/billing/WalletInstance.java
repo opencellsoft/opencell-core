@@ -168,12 +168,21 @@ public class WalletInstance extends BusinessEntity {
         this.lowBalanceLevel = lowBalanceLevel;
     }
 
-    public boolean equals(WalletInstance w) {
-        if (w == null) {
+    public boolean equals(Object obj) {
+                
+        if (this == obj) {
             return true;
-        } else if (id != null && w.getId() != null && id.equals(w.getId())) {
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WalletInstance)) {
+            return false;
+        }
+
+        WalletInstance other = (WalletInstance) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        return (w.getCode().equals(this.code));
+        return (other.getCode().equals(this.code));
     }
 }

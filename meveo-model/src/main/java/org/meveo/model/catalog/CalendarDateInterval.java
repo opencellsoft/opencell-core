@@ -147,12 +147,15 @@ public class CalendarDateInterval extends BaseProviderlessEntity implements Comp
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (getClass() != obj.getClass()) {
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof CalendarDateInterval)) {
             return false;
         }
+        
         CalendarDateInterval other = (CalendarDateInterval) obj;
         return intervalBegin == other.getIntervalBegin() && intervalEnd == other.getIntervalEnd();
     }

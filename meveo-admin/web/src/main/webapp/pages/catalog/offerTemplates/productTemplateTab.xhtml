@@ -15,7 +15,7 @@
         backingBean="#{productTemplateBean}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
         column1="code"></hftl:entityPopup>
 
-    <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" paginator="false" rows="10" lazy="false" styleClass="custom-grid"
+    <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" paginator="false" rows="30" lazy="false" styleClass="custom-grid"
         rowIndexVar="rowIndex" resizableColumns="true">
 
         <hftl:column label="#{messages['productTemplate.title']}" field="productTemplate.code" entityView="productTemplateDetail" valueIdField="productTemplate.id" />

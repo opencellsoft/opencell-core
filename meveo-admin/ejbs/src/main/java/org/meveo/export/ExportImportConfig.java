@@ -147,7 +147,14 @@ public class ExportImportConfig {
     public boolean isIgnoreFKToClass(Class<? extends IEntity> clazz) {
         log.error("classesToIgnoreFKNotFound check " + clazz + " classesToIgnoreFKNotFound contains " + classesToIgnoreFKNotFound);
         if (classesToIgnoreFKNotFound != null) {
-            return classesToIgnoreFKNotFound.contains(clazz);
+
+            Class<?> classToCheck = clazz;
+            while (!Object.class.equals(classToCheck)) {
+                if (classesToIgnoreFKNotFound.contains(classToCheck)) {
+                    return true;
+                }
+                classToCheck = classToCheck.getSuperclass();
+            }
         }
         return false;
     }

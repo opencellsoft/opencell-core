@@ -257,6 +257,8 @@ public class SubscriptionApi extends BaseApi {
         Provider provider = currentUser.getProvider();
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
+        subscription.getOffer().getOfferServiceTemplates().size();
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }

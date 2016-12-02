@@ -8,6 +8,8 @@
     <property name="type.boolean" value="integer" dbms="mysql" />
     <property name="type.byte" value="smallint" dbms="postgresql" />
     <property name="type.byte" value="tinyint(1)" dbms="mysql" />
+    <property name="type.longText" value="text" dbms="postgresql" />
+    <property name="type.longText" value="longtext" dbms="mysql" />
     <property name="cast.long" value="bigint" dbms="postgresql" />
     <property name="cast.long" value="UNSIGNED " dbms="mysql" />
     <property name="id.auto" value="false" dbms="postgresql" />

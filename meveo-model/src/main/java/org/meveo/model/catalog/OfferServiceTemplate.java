@@ -24,7 +24,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
@@ -117,12 +116,12 @@ public class OfferServiceTemplate implements IEntity {
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof BusinessEntity)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof OfferServiceTemplate)) {
             return false;
         }
 

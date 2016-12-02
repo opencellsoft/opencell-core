@@ -116,10 +116,14 @@ public class SubscriptionTerminationReason extends BaseEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof SubscriptionTerminationReason)) {
+            return false;
+        }
 
 		SubscriptionTerminationReason other = (SubscriptionTerminationReason) obj;
 		if (other.getId() == getId())

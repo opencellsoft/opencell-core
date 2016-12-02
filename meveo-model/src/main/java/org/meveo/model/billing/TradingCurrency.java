@@ -91,12 +91,18 @@ public class TradingCurrency extends AuditableEntity {
 		this.currencyCode = currencyCode;
 	}
 	
-	public boolean equals(Object other){
-		if(other==null || !(other instanceof TradingCurrency)){
-			return false;
-		}
-		TradingCurrency o = (TradingCurrency) other;
-		return getId()!=null &&getId().equals(o.getId());
+	public boolean equals(Object obj){
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof TradingCurrency)) {
+            return false;
+        }
+        
+		TradingCurrency other = (TradingCurrency) obj;
+		return getId()!=null &&getId().equals(other.getId());
 //		return (o.currency!=null) && o.currency.equals(this.currency);
 	}
 

@@ -143,18 +143,18 @@ public class MeasuredValue extends BaseEntity {
 	
 	@Override
 	public boolean equals(Object obj) {
-	        if (this == obj) {
-	            return true;
-	        }
-	        if (obj == null) {
-	            return false;
-	        } else if (!(obj instanceof MeasuredValue)) { // Fails with proxed objects: getClass() != obj.getClass()){
-	            return false;
-	        }
+        
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof MeasuredValue)) {
+            return false;
+        }
 
-	        MeasuredValue other = (MeasuredValue) obj;
+        MeasuredValue other = (MeasuredValue) obj;
 
-	        return getId().equals(other.getId());
-	    }
+        return getId().equals(other.getId());
+    }
 
 }

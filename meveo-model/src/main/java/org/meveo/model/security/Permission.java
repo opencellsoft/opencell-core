@@ -111,12 +111,12 @@ public class Permission implements IEntity, Serializable {
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof Permission)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof Permission)) {
             return false;
         }
 

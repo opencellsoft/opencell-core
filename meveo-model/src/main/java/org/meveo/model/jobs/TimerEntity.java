@@ -206,25 +206,29 @@ public class TimerEntity extends BusinessEntity{
 		return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);    
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (other != null && other instanceof TimerEntity) {
-			if (this == other) {
-				return true;
-			}
-			TimerEntity timer = (TimerEntity) other;
+    @Override
+    public boolean equals(Object obj) {
 
-			if (this.getId() == timer.getId()) {
-				return true;
-			}
-			
-			if (this.getCode() == timer.getCode()) {
-				return true;
-			}
-			
-		}
-		return false;
-	}
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof TimerEntity)) {
+            return false;
+        }
+
+        TimerEntity other = (TimerEntity) obj;
+
+        if (this.getId() == other.getId()) {
+            return true;
+        }
+
+        if (this.getCode() == other.getCode()) {
+            return true;
+        }
+
+        return false;
+    }
 
 
 	/* (non-Javadoc)

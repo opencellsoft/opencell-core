@@ -24,7 +24,6 @@
             </p:breadCrumb>
         </h:form>
 
-
         <hftl:formPanel formId="offerForm" ajaxSubmit="true" submitPartialProcess=":offerForm:tabView:offerInfo" backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
             updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}" enctype="multipart/form-data">
 
@@ -62,7 +61,7 @@
 
                 <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
-                    <p:dataTable id="offerServices" var="entity" value="#{offerTemplateBean.entity.offerServiceTemplates}" paginator="false" rows="10" lazy="false"
+                    <p:dataTable id="offerServices" var="entity" value="#{offerTemplateBean.entity.offerServiceTemplates}" paginator="false" rows="30" lazy="false"
                         styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true">
                         <hftl:column label="#{messages['offerServiceTemplate.serviceTemplate']}" field="serviceTemplate.code" entityView="serviceTemplateDetail"
                             valueIdField="serviceTemplate.id" />
@@ -122,6 +121,7 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                
                 <p:tab title="#{messages['menu.productTemplates']}">
                     <ui:include src="productTemplateTab.xhtml">
                         <ui:param name="backingBean" value="#{offerTemplateBean}" />

@@ -96,8 +96,7 @@ public class TradingLanguage extends AuditableEntity {
         
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
         } else if (!(obj instanceof TradingLanguage)) {
             return false;

@@ -22,7 +22,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
@@ -40,7 +39,6 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -87,11 +85,6 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
-
-    @Inject
-    InvoiceService invoiceService;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Register a quote from TMForumApi
@@ -397,8 +390,7 @@ public class QuoteApi extends BaseApi {
 
             // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
             index = 1;
-            for (@SuppressWarnings("unused")
-            Product product : products) {
+            for (Product product : products) {
                 ProductTemplate productOffering = (ProductTemplate) quoteItem.getProductOfferings().get(index);
                 ProductInstance productInstance = instantiateVirtualProduct(productOffering, product, quoteItem, productQuoteItem, subscription, currentUser);
                 productInstances.add(productInstance);
@@ -551,7 +543,7 @@ public class QuoteApi extends BaseApi {
 
                 }
                 if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
+                    value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
                 }
             }
 

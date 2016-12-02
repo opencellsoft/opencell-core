@@ -121,12 +121,15 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof DiscountPlanItem)) {
+            return false;
+        }
+        
 		DiscountPlanItem other = (DiscountPlanItem) obj;
 		if (code == null) {
 			if (other.code != null)
