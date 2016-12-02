@@ -3252,7 +3252,7 @@
             <column name="string_value" type="text" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
-            <column name="SERIALIZED_VALUE" type="text" />
+            <column name="SERIALIZED_VALUE" type="${type.longText}" />
             <column name="APPLIES_TO_UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
