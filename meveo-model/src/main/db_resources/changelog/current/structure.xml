@@ -3006,14 +3006,11 @@
     </changeSet>
     
     <changeSet id="#2158_20161124-0" author="anasseh" dbms="mysql">
-        <dropForeignKeyConstraint  baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" />
-        <dropIndex tableName="cat_offer_template" indexName="fk_cat_off_tpl_prod_chrg_tpl"/>
         <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
         <dropIndex tableName="CAT_PRODUCT_CHARGE_TEMPL" indexName="fk_cat_prod_tpl_prod_chrg_tpl"/>
     </changeSet>
     
     <changeSet id="#2158_20161124-1" author="anasseh" dbms="postgresql">
-        <dropForeignKeyConstraint  baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" />
         <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
     </changeSet>        
  
