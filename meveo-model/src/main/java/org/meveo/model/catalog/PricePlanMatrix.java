@@ -392,12 +392,15 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || (getClass() != obj.getClass())) {
-			return false;
-		}
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof PricePlanMatrix)) {
+            return false;
+        }
+        
 		PricePlanMatrix other = (PricePlanMatrix) obj;
 		if (criteria1Value == null) {
 			if (other.criteria1Value != null)

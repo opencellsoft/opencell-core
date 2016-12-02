@@ -136,12 +136,15 @@ public class WFDecisionRule extends AuditableEntity implements Comparable<WFDeci
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WFDecisionRule)) {
+            return false;
+        }
+        
 		WFDecisionRule other = (WFDecisionRule) obj;
 		if (getId() == null) {
 			if (other.getId() != null)

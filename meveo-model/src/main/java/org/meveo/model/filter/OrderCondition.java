@@ -62,12 +62,17 @@ public class OrderCondition extends BaseEntity {
 	}
 	
 	@Override
-	public boolean equals(Object other) {
-		if (other == null || !(other instanceof FilterSelector)) {
-			return false;
-		}
-		OrderCondition o = (OrderCondition) other;
-		return (o.getId() != null) && o.getId().equals(this.getId());
-	}
+	public boolean equals(Object obj) {
 
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof OrderCondition)) {
+            return false;
+        }
+        
+		OrderCondition other = (OrderCondition) obj;
+		return (other.getId() != null) && other.getId().equals(this.getId());
+	}
 }

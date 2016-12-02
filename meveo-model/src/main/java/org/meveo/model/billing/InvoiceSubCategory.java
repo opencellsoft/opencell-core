@@ -117,12 +117,13 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceSubCategory)) {
+            return false;
+        }
 		
 		InvoiceSubCategory other = (InvoiceSubCategory) obj;
 		if (code == null) {

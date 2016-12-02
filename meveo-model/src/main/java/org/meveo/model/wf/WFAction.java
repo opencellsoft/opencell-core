@@ -33,9 +33,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @ExportIdentifier({ "uuid", "provider" })
@@ -145,15 +145,15 @@ public class WFAction extends AuditableEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-        if (obj == null) {
-			return false;
-        }
+
         if (this == obj) {
-			return true;
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WFAction)) {
+            return false;
         }
-        if (getClass() != obj.getClass()) {
-			return false;
-        }
+        
 		WFAction other = (WFAction) obj;
 		if (getId() == null) {
             if (other.getId() != null) {

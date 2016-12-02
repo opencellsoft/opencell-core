@@ -313,7 +313,16 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) {	    
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceAgregate)) {
+            return false;
+        }
+        
 		InvoiceAgregate temp = (InvoiceAgregate) obj;
 		if (temp instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
 			CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;

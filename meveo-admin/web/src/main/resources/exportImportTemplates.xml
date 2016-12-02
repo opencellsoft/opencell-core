@@ -72,7 +72,11 @@
             <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
-
+    <template name="OfferTemplateCategory" entityToExport="org.meveo.model.catalog.OfferTemplateCategory">
+        <classesToIgnoreFKNotFound>
+            <java-class>org.meveo.model.catalog.ProductOffering</java-class>
+        </classesToIgnoreFKNotFound>
+    </template>
     <template name="Filter" entityToExport="org.meveo.model.filter.Filter">
         <classesToExportAsFull>
             <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
@@ -182,20 +186,26 @@
         </classesToExportAsFull>
     </template>
     <template name="Offers" entityToExport="org.meveo.model.catalog.OfferTemplate">
+        <exportAllClassesAsFull>true</exportAllClassesAsFull>
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.OfferServiceTemplate</java-class>
-            <java-class>org.meveo.model.catalog.ServiceTemplate</java-class>
+<!--             <java-class>org.meveo.model.catalog.ServiceTemplate</java-class> -->
             <java-class>org.meveo.model.catalog.TriggeredEDRTemplate</java-class>
-            <java-class>org.meveo.model.catalog.CounterTemplate</java-class>
-            <java-class>org.meveo.model.catalog.ChargeTemplate</java-class>
+<!--             <java-class>org.meveo.model.catalog.CounterTemplate</java-class> -->
+<!--             <java-class>org.meveo.model.catalog.ChargeTemplate</java-class> -->
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateSubscription</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateTermination</java-class>
             <java-class>org.meveo.model.catalog.ServiceChargeTemplateUsage</java-class>
             <java-class>org.meveo.model.billing.WalletInstance</java-class>
             <java-class>org.meveo.model.catalog.DiscountPlan</java-class>
+            <java-class>org.meveo.model.module.MeveoModule</java-class>
+            <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
         </classesToExportAsFull>
         <relatedEntities>
+            <relatedEntity pathToEntityRelatedTo="businessOfferModel">
+                <entityClass>org.meveo.model.catalog.BusinessOfferModel</entityClass>
+            </relatedEntity>
             <relatedEntity>
                 <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
                 <selection>
@@ -318,12 +328,12 @@
             <template ref="WalletTemplate" />
             <template ref="TriggeredEDRTemplate" />
             <template ref="CounterTemplate" />  
+            <template ref="OfferTemplateCategory" /> 
             <template ref="ProductTemplate" /> 
             <template ref="BundleTemplate" />
             <template ref="ChargeTemplate" />
             <template ref="ScriptInstance" />            
-            <template ref="MeveoModule" />
-            <template ref="OfferTemplateCategory" />            
+            <template ref="MeveoModule" />           
             <template ref="ServiceTemplate" />   
             <template ref="OfferTemplate" />   
             <template ref="PricePlanMatrix" />

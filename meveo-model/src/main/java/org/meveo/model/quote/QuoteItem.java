@@ -177,7 +177,16 @@ public class QuoteItem extends BaseEntity {
      * Interested in comparing quote items within the quote only
      */
     @Override
-    public boolean equals(Object other) {
-        return StringUtils.compare(getItemId(), ((QuoteItem) other).getItemId()) == 0;
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof QuoteItem)) {
+            return false;
+        }
+        
+        return StringUtils.compare(getItemId(), ((QuoteItem) obj).getItemId()) == 0;
     }
 }

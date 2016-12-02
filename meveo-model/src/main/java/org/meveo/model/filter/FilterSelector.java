@@ -75,12 +75,18 @@ public class FilterSelector extends BaseEntity {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if (other == null || !(other instanceof FilterSelector)) {
-			return false;
-		}
-		FilterSelector o = (FilterSelector) other;
-		return (o.getId() != null) && o.getId().equals(this.getId());
+	public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof FilterSelector)) {
+            return false;
+        }
+        
+		FilterSelector other = (FilterSelector) obj;
+		return (other.getId() != null) && other.getId().equals(this.getId());
 	}
 
 	public List<String> getDisplayFields() {

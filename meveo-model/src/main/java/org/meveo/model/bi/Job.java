@@ -145,12 +145,14 @@ public class Job extends ProviderlessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Job)) {
+            return false;
+        }
+        
 		Job other = (Job) obj;
 		if (jobRepositoryId == null) {
 			if (other.jobRepositoryId != null)

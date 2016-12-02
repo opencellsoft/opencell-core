@@ -71,12 +71,12 @@ public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomF
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof CustomFieldMatrixColumn)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof CustomFieldMatrixColumn)) {
             return false;
         }
 
