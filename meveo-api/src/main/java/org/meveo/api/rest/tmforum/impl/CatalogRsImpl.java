@@ -304,8 +304,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplate productTemplate = productTemplateApi.create(postData, getCurrentUser());
-            responseBuilder = Response.ok().entity(productTemplate);
+        	productTemplateApi.create(postData, getCurrentUser());
+            responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -326,8 +326,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplate productTemplate = productTemplateApi.createOrUpdate(postData, getCurrentUser());
-            responseBuilder = Response.ok().entity(productTemplate);
+        	productTemplateApi.createOrUpdate(postData, getCurrentUser());
+            responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -348,8 +348,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response updateProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplate productTemplate = productTemplateApi.update(postData, getCurrentUser());
-            responseBuilder = Response.ok().entity(productTemplate);
+        	productTemplateApi.update(postData, getCurrentUser());
+            responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
