@@ -58,7 +58,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 
 	protected void processOfferTemplateCategories(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws EntityDoesNotExistsException {
 		List<OfferTemplateCategoryDto> offerTemplateCategories = postData.getOfferTemplateCategories();
-		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
+		if (offerTemplateCategories != null ) {
 			productTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 			for (OfferTemplateCategoryDto offerTemplateCategoryDto : offerTemplateCategories) {
 				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode(), provider);

@@ -61,6 +61,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
+		if (StringUtils.isBlank(postData.getName())) {
+			missingParameters.add("name");
+		}		
 
 		if (postData.getProductChargeTemplates() != null) {
 			List<ProductChargeTemplateDto> productChargeTemplateDtos = postData.getProductChargeTemplates();
@@ -113,9 +116,12 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 	public ProductTemplate update(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-			handleMissingParameters();
+			missingParameters.add("code");			
 		}
+		if (StringUtils.isBlank(postData.getName())) {
+			missingParameters.add("name");
+		}
+		handleMissingParameters();
 
 		Provider provider = currentUser.getProvider();
 
