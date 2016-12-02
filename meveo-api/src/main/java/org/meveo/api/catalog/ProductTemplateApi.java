@@ -102,11 +102,15 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		// related entities below.
 		productTemplateService.create(productTemplate, currentUser);
 		
-		processProductChargeTemplate(postData, productTemplate, provider);
-
-		processDigitalResources(postData, productTemplate, currentUser);
-
-		processOfferTemplateCategories(postData, productTemplate, provider);
+		if(postData.getProductChargeTemplates()!= null){
+			processProductChargeTemplate(postData, productTemplate, provider);
+		}
+		if(postData.getAttachments() != null){
+			processDigitalResources(postData, productTemplate, currentUser);
+		}
+		if( postData.getOfferTemplateCategories() != null){
+			processOfferTemplateCategories(postData, productTemplate, provider);
+		}
 
 		productTemplateService.update(productTemplate, currentUser);
 
@@ -143,12 +147,15 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 			throw new InvalidImageData();
 		}
 		
-		processProductChargeTemplate(postData, productTemplate, provider);
-
-		processOfferTemplateCategories(postData, productTemplate, provider);
-
-		processDigitalResources(postData, productTemplate, currentUser);
-
+		if(postData.getProductChargeTemplates()!= null){
+			processProductChargeTemplate(postData, productTemplate, provider);	
+		}		
+		if( postData.getOfferTemplateCategories() != null){
+			processOfferTemplateCategories(postData, productTemplate, provider);
+		}
+		if(postData.getAttachments() != null){
+			processDigitalResources(postData, productTemplate, currentUser);
+		}
 		productTemplate= productTemplateService.update(productTemplate, currentUser);
 
 		return productTemplate;
