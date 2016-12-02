@@ -245,12 +245,15 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof AccountOperation)) {
+            return false;
+        }
+        
 		AccountOperation other = (AccountOperation) obj;
 		if (occCode == null) {
 			if (other.occCode != null)

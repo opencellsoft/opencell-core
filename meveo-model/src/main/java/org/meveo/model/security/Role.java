@@ -118,6 +118,7 @@ public class Role extends BaseEntity {
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -125,6 +126,7 @@ public class Role extends BaseEntity {
         } else if (!(obj instanceof Role)) {
             return false;
         }
+        
         final Role other = (Role) obj;
         if (getId() == null) {
             return false;

@@ -24,16 +24,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -44,6 +42,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -233,15 +232,15 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
+
         if (this == obj) {
             return true;
-        }
-        if (getClass() != obj.getClass()) {
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WFTransition)) {
             return false;
         }
+        
         WFTransition other = (WFTransition) obj;
         if (getId() == null) {
             if (other.getId() != null) {

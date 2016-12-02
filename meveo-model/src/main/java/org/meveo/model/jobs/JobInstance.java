@@ -152,16 +152,20 @@ public class JobInstance extends BusinessCFEntity {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other != null && other instanceof JobInstance) {
-            if (this == other) {
-                return true;
-            }
-            JobInstance job = (JobInstance) other;
+    public boolean equals(Object obj) {
 
-            if (this.getId() == job.getId()) {
-                return true;
-            }
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof JobInstance)) {
+            return false;
+        }
+        
+        JobInstance other = (JobInstance) obj;
+
+        if (this.getId() == other.getId()) {
+            return true;
         }
         return false;
     }

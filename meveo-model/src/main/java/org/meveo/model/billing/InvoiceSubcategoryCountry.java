@@ -125,10 +125,9 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 	public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof InvoiceSubcategoryCountry)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof InvoiceSubcategoryCountry)) {
             return false;
         }
         

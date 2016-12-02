@@ -14923,6 +14923,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER1" description="Offer 1">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER1</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
@@ -14979,6 +14980,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER2" description="Offer 2">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER2</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>\r
@@ -15128,6 +15130,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER3" description="Offer 3">\r
             <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER3</name>
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
@@ -15617,7 +15620,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <fieldType>STRING</fieldType>
             <appliesTo>PRODUCT</appliesTo>
             <storageType>SINGLE</storageType>
-            <valueRequired>false</valueRequired>
+            <valueRequired>true</valueRequired>
             <versionable>false</versionable>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
          </customField>
@@ -15696,7 +15699,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomer>
          <customer code="${#Project#baseEntityPrefix}_CUST" description="Customer">
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15758,7 +15761,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15816,7 +15819,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -15881,7 +15884,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
-               <title>M</title>
+               <title>MR</title>
                <firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
@@ -16047,7 +16050,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"27/02/2016"
+                  "value":"2016-02-27"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -16069,7 +16072,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -16162,6 +16165,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   "type":"bundled",
                   "product":{
                      "productCharacteristic":[
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value2"
+		              },
                         {
                            "name":"quantity",
                            "value":"5"
@@ -16183,7 +16190,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -16792,7 +16799,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"02/07/2016"
+                           "value":"2016-07-02"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -17117,7 +17124,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"terminationDate",
-                           "value":"29/02/2016"
+                           "value":"2016-02-29"
                         },
                         {
                            "name":"terminationReason",
@@ -17497,7 +17504,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
            "productCharacteristic":[
               {
                  "name":"terminationDate",
-                 "value":"29/02/2016"
+                 "value":"2016-02-29"
               },
               {
                  "name":"terminationReason",
@@ -17799,6 +17806,27 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="restrequest" name="Get Product order" id="dfa47440-6b6c-47b3-9799-4ee876a4f186">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - findProductOrders" resourcePath="/api/rest/orderManagement/productOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product order" id="7d8ab5b8-dfc0-47e4-90e5-1537e5324db1" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="c223b2c9-5871-46b6-988c-cb9659ec97bf" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Quote" searchProperties="true">
@@ -17814,14 +17842,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
    "quoteDate":"2015-10-25T15:50:48+08",
-   "billingAccount":[
-	  {
-	     "id":"${#Project#baseEntityPrefix}_UA"
-	  }
-   ],
    "quoteItem":[
       {
          "id":"03",
+	    "billingAccount":[
+		  {
+		     "id":"${#Project#baseEntityPrefix}_UA"
+		  }
+	    ],
          "productOffering":{         	
             "id":"${#Project#baseEntityPrefix}_PRODUCT1"
          },
@@ -18108,10 +18136,52 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="b3e2dbad-a406-4ec1-a741-e904ddce3cf7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data cleanup" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Update CF for ProductInstance - PROD_CF_STRING" id="98445589-5e43-41a6-bbc3-f8930ea2c1fc">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Update CF for ProductInstance - PROD_CF_STRING" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateField>
+         <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
+            <fieldType>STRING</fieldType>
+            <appliesTo>PRODUCT</appliesTo>
+            <storageType>SINGLE</storageType>
+            <valueRequired>false</valueRequired>
+            <versionable>false</versionable>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+         </customField>
+      </ws:createOrUpdateField>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="73ed937e-5ed3-4e1d-a707-4ed1ea8d4892"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>11</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

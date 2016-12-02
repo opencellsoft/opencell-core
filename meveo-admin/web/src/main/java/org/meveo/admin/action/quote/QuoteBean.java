@@ -582,7 +582,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             } else if (valueClazz == BigDecimal.class) {
                 values.put(characteristicEnum, new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
-                values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+                values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), DateUtils.DATE_PATTERN));
             }
         }
         return values;
@@ -609,7 +609,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 if (valueClazz == String.class || valueClazz == BigDecimal.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
-                    productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+                    productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), DateUtils.DATE_PATTERN));
                 }
             }
         }

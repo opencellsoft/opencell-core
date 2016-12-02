@@ -436,12 +436,15 @@ public class EDR extends BaseEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof EDR)) {
+            return false;
+        }
+        
 		EDR other = (EDR) obj;
 		return this.toString().equals(other.toString());
 	}
