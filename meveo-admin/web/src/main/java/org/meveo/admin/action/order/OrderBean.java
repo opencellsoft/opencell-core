@@ -71,6 +71,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
@@ -212,6 +213,14 @@ public class OrderBean extends CustomFieldBean<Order> {
             selectedOrderItem.getProductOfferings().add(selectedOrderItem.getMainOffering());
 
             org.tmf.dsmapi.catalog.resource.order.ProductOrderItem orderItemDto = new org.tmf.dsmapi.catalog.resource.order.ProductOrderItem();
+            orderItemDto.setAction(selectedOrderItem.getAction().name().toLowerCase());
+            
+            
+            List<BillingAccount> billingAccountDtos = new ArrayList<>();
+            BillingAccount billingAccountDto = new BillingAccount();
+            billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
+            billingAccountDtos.add(billingAccountDto);
+            orderItemDto.setBillingAccount(billingAccountDtos);
             orderItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
             orderItemDto.setProduct(new Product());
 
@@ -636,7 +645,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             } else if (valueClazz == BigDecimal.class) {
                 values.put(characteristicEnum, new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
-                values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+                values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), DateUtils.DATE_PATTERN));
             }
         }
         return values;
@@ -663,7 +672,7 @@ public class OrderBean extends CustomFieldBean<Order> {
                 if (valueClazz == String.class || valueClazz == BigDecimal.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
-                    productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+                    productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), DateUtils.DATE_PATTERN));
                 }
             }
         }

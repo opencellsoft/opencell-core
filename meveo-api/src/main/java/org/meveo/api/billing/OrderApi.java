@@ -27,7 +27,6 @@ import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -48,6 +47,7 @@ import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
@@ -78,6 +78,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -93,8 +96,6 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private WorkflowService workflowService;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Register an order from TMForumApi
@@ -253,6 +254,9 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        // Commit before initiating workflow/order processing
+        orderService.commit();
 
         order = initiateWorkflow(order, currentUser);
 
@@ -306,8 +310,8 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order {}", order.getCode());
 
-        // order = orderService.refreshOrRetrieve(order);
-
+        order = orderService.refreshOrRetrieve(order);
+        
         order.setStartDate(new Date());
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
@@ -376,6 +380,7 @@ public class OrderApi extends BaseApi {
                 index = 1;
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
+                    productOffering = productTemplateService.refreshOrRetrieve(productOffering);
                     ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber,
                         currentUser);
                     if (productInstance != null) {
@@ -559,6 +564,8 @@ public class OrderApi extends BaseApi {
             productTemplate.getDescription(), orderNumber, currentUser);
         productInstance.setProvider(currentUser.getProvider());
 
+        productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+        
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
             populateCustomFields(customFields, productInstance, true, currentUser, true);
@@ -566,7 +573,7 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+        
         return productInstance;
     }
 
@@ -619,7 +626,7 @@ public class OrderApi extends BaseApi {
 
                 }
                 if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
+                    value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
                 }
             }
 

@@ -2,7 +2,9 @@ package org.meveo.model.quote;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,11 +26,12 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
-@CustomFieldEntity(cftCodePrefix = "ORDER")
+@CustomFieldEntity(cftCodePrefix = "QUOTE")
 @Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_QUOTE_SEQ")
 public class Quote extends BusinessCFEntity {
@@ -117,8 +120,6 @@ public class Quote extends BusinessCFEntity {
 
     @Column(name = "STATUS_MESSAGE", length = 2000)
     private String statusMessage;
-
-
 
     /**
      * A list of qupte items. Not modifiable once send to customer for approval.
@@ -258,5 +259,14 @@ public class Quote extends BusinessCFEntity {
 
     public void setReceivedFromApp(String receivedFromApp) {
         this.receivedFromApp = receivedFromApp;
+    }
+
+    public Set<UserAccount> getUserAccounts() {
+
+        Set<UserAccount> userAccounts = new HashSet<>();
+        for (QuoteItem quoteItem : quoteItems) {
+            userAccounts.add(quoteItem.getUserAccount());
+        }
+        return userAccounts;
     }
 }
