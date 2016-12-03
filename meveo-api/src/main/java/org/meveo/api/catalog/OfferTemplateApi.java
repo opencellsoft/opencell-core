@@ -61,7 +61,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			missingParameters.add("code");
 		}
 		if (StringUtils.isBlank(postData.getName())) {
-			missingParameters.add("name");
+			postData.setName(postData.getCode());
 		}
 		handleMissingParameters();
 
@@ -92,7 +92,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			missingParameters.add("code");
 		}
 		if (StringUtils.isBlank(postData.getName())) {
-			missingParameters.add("name");
+		    postData.setName(postData.getCode());
 		}
 		handleMissingParameters();
 		

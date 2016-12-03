@@ -20,7 +20,6 @@ import javax.persistence.EntityManager;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEntity;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
@@ -47,17 +46,17 @@ public class WebHookNotifier {
     @Inject
     ScriptInstanceService scriptInstanceService;
 
-    private String evaluate(String expression, IEntity e, Map<String, Object> context) throws BusinessException {
+    private String evaluate(String expression, Object entityOrEvent, Map<String, Object> context) throws BusinessException {
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("event", e);
+        userMap.put("event", entityOrEvent);
         userMap.put("context", context);
         return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
 
-    private Map<String, String> evaluateMap(Map<String, String> map, IEntity e, Map<String, Object> context) throws BusinessException {
+    private Map<String, String> evaluateMap(Map<String, String> map, Object entityOrEvent, Map<String, Object> context) throws BusinessException {
         Map<String, String> result = new HashMap<String, String>();
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("event", e);
+        userMap.put("event", entityOrEvent);
         userMap.put("context", context);
 
         for (String key : map.keySet()) {
@@ -68,7 +67,7 @@ public class WebHookNotifier {
     }
 
     @Asynchronous
-    public void sendRequest(WebHook webHook, IEntity entity, Map<String, Object> context) {
+    public void sendRequest(WebHook webHook, Object entityOrEvent, Map<String, Object> context) {
         log.debug("webhook sendRequest");
         String result = "";
 
@@ -79,10 +78,10 @@ public class WebHookNotifier {
             }
 
             if (!StringUtils.isBlank(webHook.getPage())) {
-                String page = evaluate(webHook.getPage(), entity, context);
+                String page = evaluate(webHook.getPage(), entityOrEvent, context);
                 url += ((url.endsWith("/") || page.startsWith("/")) ? "" : "/") + page;
             }
-            Map<String, String> params = evaluateMap(webHook.getWebhookParams(), entity, context);
+            Map<String, String> params = evaluateMap(webHook.getWebhookParams(), entityOrEvent, context);
 
             String paramQuery = "";
             String sep = "";
@@ -95,7 +94,7 @@ public class WebHookNotifier {
             if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
                 url += "?" + paramQuery;
             } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
-                bodyEL_evaluated = evaluate(webHook.getBodyEL(), entity, context);
+                bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
                 if (StringUtils.isBlank(bodyEL_evaluated)) {
                     paramQuery += "&" + bodyEL_evaluated;
@@ -106,7 +105,7 @@ public class WebHookNotifier {
 
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
-            Map<String, String> headers = evaluateMap(webHook.getHeaders(), entity, context);
+            Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
             if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
                 byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
                 headers.put("Authorization", "Basic " + new String(bytes));
@@ -149,14 +148,14 @@ public class WebHookNotifier {
             if (responseCode != 200) {
                 try {
                     log.debug("webhook httpStatus error : " + responseCode + " response=" + result);
-                    notificationHistoryService.create(webHook, entity, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
+                    notificationHistoryService.create(webHook, entityOrEvent, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
                 } catch (BusinessException e2) {
-                    log.error("Failed to create webhook ", entity);
+                    log.error("Failed to create webhook ", entityOrEvent);
                 }
             } else {
                 if (webHook.getScriptInstance() != null) {
                     HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-                    userMap.put("event", entity);
+                    userMap.put("event", entityOrEvent);
                     userMap.put("response", result);
 
                     try {
@@ -174,13 +173,13 @@ public class WebHookNotifier {
                     }
                 }
                 log.debug("webhook answer : " + result);
-                notificationHistoryService.create(webHook, entity, result, NotificationHistoryStatusEnum.SENT);
+                notificationHistoryService.create(webHook, entityOrEvent, result, NotificationHistoryStatusEnum.SENT);
 
             }
         } catch (Exception e) {
             try {
                 log.debug("webhook business error : ", e);
-                notificationHistoryService.create(webHook, entity, e.getMessage(), e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY
+                notificationHistoryService.create(webHook, entityOrEvent, e.getMessage(), e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY
                         : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history", e2);

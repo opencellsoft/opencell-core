@@ -208,6 +208,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setLevel(initialValue);
         counterPeriod.setCounterType(counterTemplate.getCounterType());
         counterPeriod.setProvider(counterTemplate.getProvider());
+        counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
         return counterPeriod;
     }
 

@@ -12,7 +12,6 @@ import javax.mail.Session;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEntity;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -36,10 +35,10 @@ public class InstantMessagingNotifier {
     // Jabber jabber = new Jabber();
 
     @Asynchronous
-    public void sendInstantMessage(InstantMessagingNotification notification, IEntity entity) {
+    public void sendInstantMessage(InstantMessagingNotification notification, Object entityOrEvent) {
         try {
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-            userMap.put("event", entity);
+            userMap.put("event", entityOrEvent);
             Set<String> imIdSet = notification.getIds();
             if (imIdSet == null) {
                 imIdSet = new HashSet<String>();
@@ -66,13 +65,13 @@ public class InstantMessagingNotifier {
             case YAHOO_MESSENGER:
                 break;
             }
-            notificationHistoryService.create(notification, entity, "", NotificationHistoryStatusEnum.SENT);
+            notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
 
         } catch (Exception e) {
             try {
-                notificationHistoryService.create(notification, entity, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                notificationHistoryService.create(notification, entityOrEvent, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
-                log.error("Failed to create notification history", entity);
+                log.error("Failed to create notification history", e2);
             }
         }
     }

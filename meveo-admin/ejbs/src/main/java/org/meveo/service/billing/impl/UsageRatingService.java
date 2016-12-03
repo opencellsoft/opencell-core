@@ -257,6 +257,8 @@ public class UsageRatingService {
         }
 
         if (cachedCounterPeriod != null) {
+            BigDecimal initialValue = cachedCounterPeriod.getValue();
+            
             synchronized (cachedCounterPeriod) {
                 BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
                 log.debug("value to deduce {} * {} = {} from current value {}", new Object[] { cachedCharge.getInChargeUnit(edr.getQuantity()),
@@ -293,21 +295,26 @@ public class UsageRatingService {
 
                 log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
             }
-            if (cachedCounterPeriod.getValue().compareTo(BigDecimal.ZERO) == 0 || cachedCounterPeriod.getValue() == null) {
+            
+            List<BigDecimal> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(initialValue, cachedCounterPeriod.getValue());
+
+            if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
                 CounterPeriod counterPeriod = counterPeriodService.findById(cachedCounterPeriod.getCounterPeriodId());
-                triggerCounterPeriodEvent(counterPeriod);
+                triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
             }
         }
         return deducedQuantityInEDRUnit;
     }
 
-    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod) {
-        try {
-            CounterPeriodEvent event = new CounterPeriodEvent();
-            event.setCounterPeriod(counterPeriod);
-            counterPeriodEvent.fire(event);
-        } catch (Exception e) {
-            log.error("Failed to executing trigger counterPeriodEvent", e);
+    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<BigDecimal> counterValues) {
+        for (BigDecimal counterValue : counterValues) {
+            try {
+                CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue);
+                event.setCounterPeriod(counterPeriod);
+                counterPeriodEvent.fire(event);
+            } catch (Exception e) {
+                log.error("Failed to executing trigger counterPeriodEvent", e);
+            }
         }
     }
 

@@ -7,7 +7,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.IEntity;
 import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.job.JobInstanceService;
@@ -33,22 +32,21 @@ public class JobTriggerLauncher {
     private Logger log;
 
     @Asynchronous
-    public void launch(JobTrigger jobTrigger, IEntity entity) {
+    public void launch(JobTrigger jobTrigger, Object entityOrEvent) {
         try {
             log.debug("launch jobTrigger:{}", jobTrigger);
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-            userMap.put("event", entity);
+            userMap.put("event", entityOrEvent);
             jobInstanceService.triggerExecution(jobTrigger.getJobInstance().getCode(), jobTrigger.getJobParams(), jobTrigger.getAuditable().getCreator());
             log.debug("launch jobTrigger:{} launched", jobTrigger);
 
-            notificationHistoryService.create(jobTrigger, entity, "", NotificationHistoryStatusEnum.SENT);
-            
+            notificationHistoryService.create(jobTrigger, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
 
         } catch (Exception e) {
             try {
-                notificationHistoryService.create(jobTrigger, entity, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
+                notificationHistoryService.create(jobTrigger, entityOrEvent, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
-                log.error("Failed to create notification history", entity);
+                log.error("Failed to create notification history", e2);
             }
         }
     }

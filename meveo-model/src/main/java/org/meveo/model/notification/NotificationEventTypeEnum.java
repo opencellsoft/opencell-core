@@ -17,7 +17,7 @@ FILE_UPLOAD(13,"enum.notificationEventTypeEnum.FILE_UPLOAD"),
 FILE_DOWNLOAD(14,"enum.notificationEventTypeEnum.FILE_DOWNLOAD"),
 FILE_RENAME(15,"enum.notificationEventTypeEnum.FILE_RENAME"),
 FILE_DELETE(16,"enum.notificationEventTypeEnum.FILE_DELETE"),
-ZERO_COUNTER(17,"enum.notificationEventTypeEnum.ZERO_COUNTER");
+COUNTER_DEDUCED(17,"enum.notificationEventTypeEnum.COUNTER_DEDUCED");
 
 private Integer id;
 private String label;

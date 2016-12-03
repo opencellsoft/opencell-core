@@ -37,6 +37,7 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
     private boolean disabled;
     private CounterTemplateLevel counterLevel;
     private String ceilingExpressionEl;
+    private String notificationLevels;
 
     public CounterTemplateDto() {
     }
@@ -51,6 +52,7 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
         calendar = e.getCalendar().getCode();
         counterLevel = e.getCounterLevel();
         ceilingExpressionEl = e.getCeilingExpressionEl();
+        notificationLevels = e.getNotificationLevels();
     }
 
     public String getCode() {
@@ -125,10 +127,20 @@ public class CounterTemplateDto extends BaseDto implements Serializable {
         this.ceilingExpressionEl = ceilingExpressionEl;
     }
 
+    public String getNotificationLevels() {
+        return notificationLevels;
+    }
+
+    public void setNotificationLevels(String notificationLevels) {
+        this.notificationLevels = notificationLevels;
+    }
+
     @Override
     public String toString() {
-        return "CounterTemplateDto [code=" + code + ", description=" + description + ", unity=" + unity + ", type=" + type + ", ceiling=" + ceiling + ", counterLevel="
-                + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + ", ceilingExpressionEl=" + ceilingExpressionEl + "]";
+        return String
+            .format(
+                "CounterTemplateDto [code=%s, description=%s, calendar=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s]",
+                code, description, calendar, unity, type, ceiling, disabled, counterLevel, ceilingExpressionEl, notificationLevels);
     }
 
     @Override
