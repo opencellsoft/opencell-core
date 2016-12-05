@@ -474,8 +474,10 @@ public class InvoiceApi extends BaseApi {
 	 * @throws InvoiceExistException 
 	 * @throws Exception
 	 */
-
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+	 public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+		 return generateInvoice(generateInvoiceRequestDto,false, currentUser);
+	 }
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -495,7 +497,7 @@ public class InvoiceApi extends BaseApi {
 		}
 
 		handleMissingParameters();
-
+		
 		BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), currentUser.getProvider(), Arrays.asList("billingRun"));
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
@@ -508,19 +510,26 @@ public class InvoiceApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
 			}
 		}		
-		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), currentUser);				
+		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), 
+				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft,currentUser);				
 		invoiceService.commit();
-		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
+		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())
+				|| isDraft){
         	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
         }
-        if(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()){
-       	 invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser);
+        if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()) || isDraft){
+        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser));
         }
         if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
         	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
         }    
         
-		return new GenerateInvoiceResultDto(invoice);
+        GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto(invoice);
+        if(isDraft){        	
+        	invoiceService.cancelInvoice(invoice);
+        }
+        
+		return generateInvoiceResultDto;
 	}
 
 	public String getXMLInvoice(String invoiceNumber, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
@@ -640,20 +649,7 @@ public class InvoiceApi extends BaseApi {
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 		}
-		if (!StringUtils.isBlank(invoice.getInvoiceNumber())) {
-			throw new MeveoApiException("Invoice already validated");
-		}
-		for(RatedTransaction rt : ratedTransactionService.listByInvoice(invoice)) {
-			if(rt.getWalletOperationId() != null){
-				rt.setStatus(RatedTransactionStatusEnum.OPEN);
-				rt.setInvoice(null);
-				ratedTransactionService.update(rt,currentUser);
-			}else{
-				ratedTransactionService.remove(rt, currentUser);
-			}
-		}
-				
-		invoiceService.remove(invoice, currentUser);
+		invoiceService.cancelInvoice(invoice);
 	}
 
 	/**

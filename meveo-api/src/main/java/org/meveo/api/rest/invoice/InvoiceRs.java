@@ -170,4 +170,8 @@ public interface InvoiceRs extends IBaseRs {
     @GET
     @Path("/listPresentInAR")
     public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode);
+    
+    @POST
+    @Path("/generateDraftInvoice")
+    public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 }
