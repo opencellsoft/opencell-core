@@ -90,7 +90,7 @@
 			<p:tabView id="tabView"
 				activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
-				<p:outputPanel autoUpdate="true">
+				<p:outputPanel autoUpdate="false">
 					<hftl:formPanel backingBean="#{serviceTemplateBean}"
 						showEnableDisableButton="true"
 						updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
