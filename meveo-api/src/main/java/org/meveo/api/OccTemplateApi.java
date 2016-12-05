@@ -1,10 +1,12 @@
 package org.meveo.api;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OccTemplateDto;
+import org.meveo.api.dto.OccTemplatesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -128,5 +130,27 @@ public class OccTemplateApi extends BaseApi {
         } else {
             update(postData, currentUser);
         }
+    }
+
+    /**
+     * retrieve a list of occ templates
+     *
+     * @param provider
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    public OccTemplatesDto list(Provider provider) throws MeveoApiException {
+        OccTemplatesDto occTemplatesDto = new OccTemplatesDto();
+        List<OCCTemplate> occTemplates = occTemplateService.list(provider);
+
+        if (occTemplates != null) {
+            OccTemplateDto occTemplateDto;
+            for (OCCTemplate occTemplate : occTemplates) {
+                occTemplateDto = new OccTemplateDto(occTemplate);
+                occTemplatesDto.getOccTemplate().add(occTemplateDto);
+            }
+        }
+
+        return occTemplatesDto;
     }
 }
