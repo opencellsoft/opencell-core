@@ -19,6 +19,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -35,6 +36,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -45,12 +47,16 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.quote.QuoteInvoiceInfo;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
+import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
+import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
+import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 import org.tmf.dsmapi.quote.ProductQuote;
@@ -86,6 +92,9 @@ public class QuoteApi extends BaseApi {
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
+    @Inject
+    private OrderApi orderApi;
+
     /**
      * Register a quote from TMForumApi
      * 
@@ -119,7 +128,7 @@ public class QuoteApi extends BaseApi {
         quote.setReceivedFromApp("API");
         quote.setQuoteDate(productQuote.getQuoteDate() != null ? productQuote.getQuoteDate() : new Date());
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
-        quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());        
+        quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
         if (productQuote.getValidFor() != null) {
             quote.setValidFrom(productQuote.getValidFor().getStartDateTime());
             quote.setValidTo(productQuote.getValidFor().getEndDateTime());
@@ -131,20 +140,48 @@ public class QuoteApi extends BaseApi {
             quote.setStatus(QuoteStatusEnum.IN_PROGRESS);
         }
 
+        UserAccount quoteLevelUserAccount = null;
+
+        if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
+            String billingAccountId = productQuote.getBillingAccount().get(0).getId();
+            if (!StringUtils.isEmpty(billingAccountId)) {
+
+                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
+                if (quoteLevelUserAccount == null) {
+                    throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+                }
+            }
+        }
+
         for (ProductQuoteItem productQuoteItem : productQuote.getQuoteItem()) {
-        	
-            if (productQuoteItem.getBillingAccount() == null || productQuoteItem.getBillingAccount().isEmpty()) {
-                missingParameters.add("billingAccount");
+
+            UserAccount itemLevelUserAccount = null;
+
+            if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
+                String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
+                if (!StringUtils.isEmpty(billingAccountId)) {
+                    itemLevelUserAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
+                    if (itemLevelUserAccount == null) {
+                        throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+                    }
+
+                    if (quoteLevelUserAccount != null && !quoteLevelUserAccount.getBillingAccount().equals(itemLevelUserAccount.getBillingAccount())) {
+                        throw new InvalidParameterException("Accounts declared on quote level and item level don't belong to the same billing account");
+                    }
+                }
             }
-            String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
-            if (StringUtils.isEmpty(billingAccountId)) {
+
+            if (itemLevelUserAccount == null && quoteLevelUserAccount == null) {
                 missingParameters.add("billingAccount");
+
+            } else if (itemLevelUserAccount == null && quoteLevelUserAccount != null) {
+                productQuoteItem.setBillingAccount(new ArrayList<BillingAccount>());
+                BillingAccount billingAccount = new BillingAccount();
+                billingAccount.setId(quoteLevelUserAccount.getCode());
+                productQuoteItem.getBillingAccount().add(billingAccount);
             }
+
             handleMissingParameters();
-            UserAccount userAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
-            if (userAccount == null) {
-                throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-            }
 
             List<ProductOffering> productOfferings = new ArrayList<>();
             // For modify and delete actions, product offering might not be specified
@@ -176,7 +213,7 @@ public class QuoteApi extends BaseApi {
             quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
             quoteItem.setProductOfferings(productOfferings);
             quoteItem.setProvider(currentUser.getProvider());
-            quoteItem.setUserAccount(userAccount);
+            quoteItem.setUserAccount(itemLevelUserAccount != null ? itemLevelUserAccount : quoteLevelUserAccount);
 
             if (productQuoteItem.getState() != null) {
                 quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
@@ -220,6 +257,10 @@ public class QuoteApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true, currentUser);
+
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -323,9 +364,15 @@ public class QuoteApi extends BaseApi {
         log.info("Creating invoices for quote {}", quote.getCode());
 
         try {
+
+            List<QuoteInvoiceInfo> quoteInvoiceInfos = new ArrayList<>();
+
             for (QuoteItem quoteItem : quote.getQuoteItems()) {
-                invoiceQuoteItem(quote, quoteItem, currentUser);
+                quoteInvoiceInfos.add(preInvoiceQuoteItem(quote, quoteItem, currentUser));
             }
+
+            Invoice invoice = quoteService.provideQuote(quoteInvoiceInfos, currentUser);
+            quote.setInvoice(invoice);
 
             quote = quoteService.update(quote, currentUser);
 
@@ -339,15 +386,16 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Create invoice for quote item
+     * Prepare info for invoicing for quote item
      * 
      * @param quote Quote
      * @param quoteItem Quote item
      * @param currentUser Current user
+     * @return Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    private void invoiceQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
+    private QuoteInvoiceInfo preInvoiceQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
 
         log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
@@ -421,16 +469,16 @@ public class QuoteApi extends BaseApi {
         }
 
         log.error("AKK date from {} to {}", fromDate, toDate);
-        // Create invoices for simulated charges for product instances and subscriptions
-        Invoice invoice = quoteService.provideQuote(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate, currentUser);
 
-        // invoiceService.create(invoice, currentUser);
-        quoteItem.setInvoice(invoice);
+        QuoteInvoiceInfo quoteInvoiceInfo = new org.meveo.service.quote.QuoteInvoiceInfo(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances,
+            fromDate, toDate);
 
         // Serialize back the productOrderItem with updated invoice attachments
         quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
 
         log.info("Finished processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
+
+        return quoteInvoiceInfo;
     }
 
     private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem,
@@ -455,6 +503,9 @@ public class QuoteApi extends BaseApi {
         // CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class, currentUser.getProvider());
         // try {
         // populateCustomFields(customFields, subscription, true, currentUser, true);
+        // } catch (MissingParameterException e) {
+        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+        // throw e;
         // } catch (Exception e) {
         // log.error("Failed to associate custom field instance to an entity", e);
         // throw new BusinessException("Failed to associate custom field instance to an entity", e);
@@ -487,6 +538,9 @@ public class QuoteApi extends BaseApi {
         // try {
         // CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
         // populateCustomFields(customFields, productInstance, true, currentUser, true);
+        // } catch (MissingParameterException e) {
+        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+        // throw e;
         // } catch (Exception e) {
         // log.error("Failed to associate custom field instance to an entity", e);
         // throw new BusinessException("Failed to associate custom field instance to an entity", e);
@@ -614,6 +668,9 @@ public class QuoteApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -712,5 +769,46 @@ public class QuoteApi extends BaseApi {
             }
         }
         return new List[] { products, services };
+    }
+
+    /**
+     * Place an order from a quote
+     * 
+     * @param quote Quote to convert to an order
+     * @param currentUser Current user
+     * @return Product order DTO object
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    public ProductOrder placeOrder(String quoteCode, User currentUser) throws BusinessException, MeveoApiException {
+
+        if (StringUtils.isEmpty(quoteCode)) {
+            missingParameters.add("quoteCode");
+        }
+
+        handleMissingParameters();
+
+        Quote quote = quoteService.findByCode(quoteCode, currentUser.getProvider());
+        ProductOrder productOrder = new ProductOrder();
+        productOrder.setOrderDate(new Date());
+        productOrder.setDescription(quote.getDescription());
+        productOrder.setOrderItem(new ArrayList<ProductOrderItem>());
+
+        for (QuoteItem quoteItem : quote.getQuoteItems()) {
+            ProductQuoteItem productQuoteItem = ProductQuoteItem.deserializeQuoteItem(quoteItem.getSource());
+
+            ProductOrderItem orderItem = new ProductOrderItem();
+            orderItem.setId(productQuoteItem.getId());
+            orderItem.setAction(OrderItemActionEnum.ADD.toString().toLowerCase());
+            orderItem.setBillingAccount(productQuoteItem.getBillingAccount());
+            orderItem.setProduct(productQuoteItem.getProduct());
+            orderItem.setProductOffering(productQuoteItem.getProductOffering());
+
+            productOrder.getOrderItem().add(orderItem);
+        }
+
+        productOrder = orderApi.createProductOrder(productOrder, currentUser);
+
+        return productOrder;
     }
 }

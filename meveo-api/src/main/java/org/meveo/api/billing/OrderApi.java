@@ -78,7 +78,7 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
-    
+
     @Inject
     private ProductTemplateService productTemplateService;
 
@@ -102,15 +102,11 @@ public class OrderApi extends BaseApi {
      * 
      * @param productOrder Product order
      * @param currentUser Current user
-     * @return Product order updated
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
+     * @return Product order DTO updated
      * @throws BusinessException
-     * @throws EntityDoesNotExistsException
-     * @throws Exception
+     * @throws MeveoApiException
      */
-    public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException, EntityDoesNotExistsException, Exception {
+    public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser) throws BusinessException, MeveoApiException {
 
         if (productOrder.getOrderItem() == null || productOrder.getOrderItem().isEmpty()) {
             missingParameters.add("orderItem");
@@ -250,11 +246,14 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         // Commit before initiating workflow/order processing
         orderService.commit();
 
@@ -311,7 +310,7 @@ public class OrderApi extends BaseApi {
         log.info("Processing order {}", order.getCode());
 
         order = orderService.refreshOrRetrieve(order);
-        
+
         order.setStartDate(new Date());
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
@@ -381,8 +380,7 @@ public class OrderApi extends BaseApi {
                 for (Product product : products) {
                     ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
                     productOffering = productTemplateService.refreshOrRetrieve(productOffering);
-                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber,
-                        currentUser);
+                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber, currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
@@ -443,6 +441,9 @@ public class OrderApi extends BaseApi {
 
                 try {
                     populateCustomFields(customFields, subscription, true, currentUser, true);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw e;
@@ -527,8 +528,8 @@ public class OrderApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(),
-            Date.class, null));
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
+            OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
         subscriptionService.create(subscription, currentUser);
 
@@ -537,6 +538,9 @@ public class OrderApi extends BaseApi {
 
         try {
             populateCustomFields(customFields, subscription, true, currentUser, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
@@ -565,15 +569,18 @@ public class OrderApi extends BaseApi {
         productInstance.setProvider(currentUser.getProvider());
 
         productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
-        
+
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
             populateCustomFields(customFields, productInstance, true, currentUser, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        
+
         return productInstance;
     }
 
@@ -730,6 +737,9 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;

@@ -19,6 +19,7 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -190,8 +191,11 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 
@@ -364,8 +368,11 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 

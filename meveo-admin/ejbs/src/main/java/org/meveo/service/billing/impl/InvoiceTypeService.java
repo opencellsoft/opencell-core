@@ -18,8 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Arrays;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -105,6 +103,10 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		return getDefaultType(getCommercialCode(), currentUser);
 	}
 
+    public InvoiceType getDefaultQuote(User currentUser) throws BusinessException {
+        return getDefaultType(getQuoteCode(), currentUser);
+    }
+
 	public String getCommercialCode() {
 		return param.getProperty("invoiceType.commercial.code", "COM");
 	}
@@ -112,4 +114,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	public String getAdjustementCode() {
 		return param.getProperty("invoiceType.adjustement.code", "ADJ");
 	}
+
+    public String getQuoteCode() {
+        return param.getProperty("invoiceType.quote.code", "QUOTE");
+    }
 }

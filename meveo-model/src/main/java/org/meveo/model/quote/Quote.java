@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
@@ -133,6 +134,20 @@ public class Quote extends BusinessCFEntity {
 
     @Column(name = "RECEIVED_FROM", length = 50)
     private String receivedFromApp;
+
+    /**
+     * Associated user account
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ACCOUNT_ID")
+    private UserAccount userAccount;
+
+    /**
+     * Associated invoice
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INVOICE_ID")
+    private Invoice invoice;
 
     public String getExternalId() {
         return externalId;
@@ -261,12 +276,31 @@ public class Quote extends BusinessCFEntity {
         this.receivedFromApp = receivedFromApp;
     }
 
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
     public Set<UserAccount> getUserAccounts() {
 
         Set<UserAccount> userAccounts = new HashSet<>();
+        if (userAccount != null) {
+            userAccounts.add(userAccount);
+        }
         for (QuoteItem quoteItem : quoteItems) {
             userAccounts.add(quoteItem.getUserAccount());
         }
         return userAccounts;
+    }
+
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 }

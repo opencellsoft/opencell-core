@@ -41,7 +41,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -56,6 +55,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.order.Order;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -64,6 +64,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.quote.QuoteItemService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
@@ -73,6 +74,7 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
+import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
@@ -111,7 +113,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     @Inject
     private WorkflowService workflowService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    @Inject
+    private OrderService orderService;
 
     private QuoteItem selectedQuoteItem;
 
@@ -737,7 +740,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     @ActionMethod
     public void createInvoice() {
-        if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() != QuoteStatusEnum.PENDING) {
+        if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
                 entity = quoteService.refreshOrRetrieve(entity);
                 entity = quoteApi.invoiceQuote(entity, getCurrentUser());
@@ -749,5 +752,25 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 messages.error(new BundleKey("messages", "quote.createInvoices.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             }
         }
+    }
+
+    @ActionMethod
+    public String placeOrder() {
+        if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
+            try {
+                ProductOrder productOrder = quoteApi.placeOrder(entity.getCode(), getCurrentUser());
+                Order order = orderService.findByCode(productOrder.getId(), getCurrentProvider());
+
+                messages.info(new BundleKey("messages", "quote.placeOrder.ok"));
+
+                return "orderDetail?objectId=" + order.getId();
+
+            } catch (Exception e) {
+                log.error("Failed to place an order for quote {}", entity.getCode());
+                messages.error(new BundleKey("messages", "quote.placeOrder.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+                return null;
+            }
+        }
+        return null;
     }
 }

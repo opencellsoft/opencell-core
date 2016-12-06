@@ -13943,6 +13943,21 @@
     <con:resource name="productQuote" path="quoteManagement/productQuote" id="bfe8e51f-2c4d-41bf-9909-c40a5eb74b6a">
       <con:settings/>
       <con:parameters/>
+      <con:resource name="{quoteId}" path="placeOrder/{quoteId}" id="9d039ef1-7717-437b-a172-0701731289cc">
+        <con:settings/>
+        <con:parameters>
+          <con:parameter>
+            <con:name>quoteId</con:name>
+            <con:value>quoteId</con:value>
+            <con:style>TEMPLATE</con:style>
+            <con:default>quoteId</con:default>
+          </con:parameter>
+        </con:parameters>
+        <con:method name="Method 1" id="cc90927d-768d-4450-8c34-d48dd5526289" method="POST">
+          <con:settings/>
+          <con:parameters/>
+        </con:method>
+      </con:resource>
       <con:method name="findProductQuotes" id="e4523492-4dd3-4bc2-9df3-c8c9bc7f24e5" method="GET">
         <con:settings/>
         <con:parameters/>
@@ -16019,7 +16034,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:testCase>
     <con:testCase id="6c766dce-ec7e-42a8-b1fc-c8f85d7c2956" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Product ordering" searchProperties="true">
       <con:settings/>
-      <con:testStep type="restrequest" name="Create Product order" id="21c070a9-438c-45ce-9f13-19fc8ad824d4">
+      <con:testStep type="restrequest" name="Create Product order - 2 items" id="21c070a9-438c-45ce-9f13-19fc8ad824d4">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Create Product order" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
@@ -17861,7 +17876,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               },
               {
 			  "name":"productInstanceCode",
-			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_3_Instance"
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_1_Instance"
               },
               {
                   "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
@@ -17896,7 +17911,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Create Product quote  - 3 items" id="71192e8c-2844-4892-a850-e23949fdcd96" disabled="true">
+      <con:testStep type="restrequest" name="Create Product quote  - 3 items" id="71192e8c-2844-4892-a850-e23949fdcd96">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Create Product quote  - 3 items" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
@@ -17905,8 +17920,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:settings>
             <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
             <con:request>{
-   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
-   "quoteDate":"2015-10-25T15:50:48+08","billingAccount":[
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote multi item",
+   "quoteDate":"2015-10-25T15:50:48+08",
+   "billingAccount":[
        {
           "id":"${#Project#baseEntityPrefix}_UA"
        }
@@ -17925,7 +17941,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"27/02/2016"
+                  "value":"2016-02-27"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -17947,7 +17963,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -18017,8 +18033,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
 		                  "name":"productInstanceCode",
-		                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Product_1_Instance"
-		               }
+		                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_Sub_2_2_Instance"
+		               },
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value"
+		              }
                      ]
                   }
                },
@@ -18029,7 +18049,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         {
                            "name":"quantity",
                            "value":"5"
-                        }
+                        },
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value2"
+		              }
                      ]
                   }
                },
@@ -18047,7 +18071,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"27/01/2016"
+                           "value":"2016-01-27"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -18099,11 +18123,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               },
               {
 			  "name":"productInstanceCode",
-			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_3_Instance"
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_Sub_2_3_Instance"
               },
               {
                   "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
-                  "value":"Product CF value"
+                  "value":"Product CF value3"
               },
               {
                  "name":"${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP",
@@ -18132,6 +18156,288 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsPropertyConfig/>
             <con:parameters/>
           </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Set quote code" id="8e960864-9a91-4188-a83b-fd4e6ee188cb">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set product quote code - 3 items</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>Create Product quote  - 3 items</con:sourceStep>
+            <con:sourcePath>$.id</con:sourcePath>
+            <con:targetType>quoteId</con:targetType>
+            <con:targetStep>Place order - 3 items</con:targetStep>
+            <con:type>JSONPATH</con:type>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Place order - 3 items" id="7933e314-33f0-4b9c-82a7-200a76a1a23d">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="Method 1" resourcePath="/api/rest/quoteManagement/productQuote/placeOrder/{quoteId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Place order - 3 items" id="a4674823-90bd-4861-8459-e955dea23e38" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/meveo/api/rest/quoteManagement/productQuote/placeOrder/cddba703-f378-4989-86f0-aaf0171dea05</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="quoteId" value="001a8fc4-91a3-41cc-8194-07a9d85c3796" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription 1" id="5c68db4e-49a1-4f7b-ba7b-ca981f87e2f1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription 1" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}:00</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
+                <content>1.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Third|Fourth</key>
+      <value>
+        <stringValue>15</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>First|Second</key>
+      <value>
+        <stringValue>10</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
+                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  &lt;stringValue>Service CF value&lt;/stringValue>
+&lt;/customField></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}:00</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription 2" id="a8be2992-3855-4f3b-98ec-cec1a6f3946f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription 2" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="4eac1304-44ea-4e7c-b9ce-a0261ed2772a" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER3&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
+                <content>3.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
         </con:config>
       </con:testStep>
       <con:properties/>
@@ -18181,7 +18487,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>11</con:value>
+        <con:value>13</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

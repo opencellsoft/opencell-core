@@ -10,6 +10,7 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -72,8 +73,11 @@ public class BusinessOfferApi extends BaseApi {
 							CustomFieldsDto cfsDto = new CustomFieldsDto();
 							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
 							populateCustomFields(cfsDto, serviceTemplate, true, currentUser);
-						} catch (Exception e) {
-						    log.error("Failed to associate custom field instance to an entity", e);
+			            } catch (MissingParameterException e) {
+			                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			                throw e;
+			            } catch (Exception e) {
+			                log.error("Failed to associate custom field instance to an entity", e);
 							throw e;
 						}
 						break;
@@ -88,7 +92,10 @@ public class BusinessOfferApi extends BaseApi {
 				CustomFieldsDto cfsDto = new CustomFieldsDto();
 				cfsDto.setCustomField(postData.getCustomFields());
 				populateCustomFields(cfsDto, newOfferTemplate, true, currentUser);
-			} catch (Exception e) {
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
 			}
