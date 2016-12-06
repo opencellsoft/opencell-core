@@ -5,8 +5,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
@@ -19,7 +17,6 @@ import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -69,16 +66,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         try {
             result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+			processException(e, result.getActionStatus());
+		}
 
         return result;
     }
@@ -87,20 +77,10 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
         GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
         try {
-
             result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+        	processException(e, result.getActionStatus());            
         }
         log.info("generateInvoice Response={}", result);
         return result;
@@ -129,17 +109,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+			processException(e, result.getActionStatus());
+		}
         log.info("getXMLInvoice Response={}", result);
         return result;
     }
@@ -167,17 +139,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+			processException(e, result.getActionStatus());
+		}
         log.info("getPdfInvoice Response={}", result);
         return result;
     }
@@ -211,35 +175,34 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		try {
             result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, getCurrentUser().getProvider()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+			processException(e, result.getActionStatus());
+		}
 
         return result;
 	}
-		@Override
-		public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
-			CustomerInvoicesResponse result = new CustomerInvoicesResponse();
-			try {
-				result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode, getCurrentUser().getProvider()));
-			} catch (MeveoApiException e) {
-				result.getActionStatus().setErrorCode(e.getErrorCode());
-				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-				result.getActionStatus().setMessage(e.getMessage());
-			} catch (Exception e) {
-				log.error("Failed to execute API", e);
-				result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-				result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-				result.getActionStatus().setMessage(e.getMessage());
-			}
-			return result;
+	@Override
+	public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
+		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+		try {
+			result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode, getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
 		}
+		return result;
+	}
+
+	@Override
+	public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
+		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
+		try {
+			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, true,getCurrentUser()));
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+		log.info("generateInvoice Response={}", result);
+		return result;
+	}
 	
 }

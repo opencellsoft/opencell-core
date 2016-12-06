@@ -124,4 +124,6 @@ public interface InvoiceWs extends IBaseWs {
 	@WebMethod
 	public CustomerInvoicesResponse listPresentInAR(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
+	@WebMethod
+	public GenerateInvoiceResponseDto generateDraftInvoice(@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
 }
