@@ -32,11 +32,10 @@
 			<p:fileUpload id="#{id}" disabled="#{disabled}"
 				required="#{required}"
 				fileUploadListener="#{backingBean.hfHandleFileUpload}"
-				mode="advanced" update="#{id}_display #{id}_message2" auto="true"
+				mode="advanced" update="#{id}_display :#{p:component('messages')}" auto="true"
 				fileLimit="10" sizeLimit="1000000"
 				allowTypes="/(\.|\/)(jpe?g|png)$/" />
 			<p:message for="#{id}" id="#{id}_message" />
-			<p:messages id="#{id}_message2" />
 		</c:if>
 		
 		<c:if test="#{!edit}">
