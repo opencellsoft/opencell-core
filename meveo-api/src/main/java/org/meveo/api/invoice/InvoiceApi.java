@@ -513,11 +513,10 @@ public class InvoiceApi extends BaseApi {
 		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), 
 				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft,currentUser);				
 		invoiceService.commit();
-		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())
-				|| isDraft){
+		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
         	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
         }
-        if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()) || isDraft){
+        if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
         	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser));
         }
         if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
