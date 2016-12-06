@@ -55,7 +55,7 @@
                         </c:if>
                         <c:if test="#{offerTemplateBean.bomId ne null}">
                         	<hftl:decorateFormField fieldId="transientCode" label="#{messages['offerTemplate.code']}">
-                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" />
+                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" required="true" />
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
