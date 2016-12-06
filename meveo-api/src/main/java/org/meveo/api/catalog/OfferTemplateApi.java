@@ -128,20 +128,23 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
 		}
+		
 		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
 			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode(), provider);
 			if (offerTemplateCategory == null) {
 				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
 			}
-			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+			offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
 		}
+		
 		if (postData.getOfferTemplateCategories() != null) {
+			offerTemplate.getOfferTemplateCategories().clear();
 			for (String categoryCode : postData.getOfferTemplateCategories()) {
 				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, provider);
 				if (offerTemplateCategory == null) {
 					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
 				}
-				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+				offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
 			}
 		}
 		

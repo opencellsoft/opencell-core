@@ -93,28 +93,36 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
 		if (getOfferTemplateCategories() == null) {
 			offerTemplateCategories = new ArrayList<>();
 		}
-		offerTemplateCategories.add(offerTemplateCategory);
+		if (!offerTemplateCategories.contains(offerTemplateCategory)) {
+			offerTemplateCategories.add(offerTemplateCategory);
+		}
 	}
 
 	public void addAttachment(DigitalResource attachment) {
 		if (getAttachments() == null) {
 			attachments = new ArrayList<>();
 		}
-		attachments.add(attachment);
+		if (!attachments.contains(attachment)) {
+			attachments.add(attachment);
+		}
 	}
 
 	public void addBusinessAccountModel(BusinessAccountModel businessAccountModel) {
 		if (getBusinessAccountModels() == null) {
 			businessAccountModels = new ArrayList<>();
 		}
-		businessAccountModels.add(businessAccountModel);
+		if (!businessAccountModels.contains(businessAccountModel)) {
+			businessAccountModels.add(businessAccountModel);
+		}
 	}
 
 	public void addChannel(Channel channel) {
 		if (getChannels() == null) {
 			channels = new ArrayList<>();
 		}
-		channels.add(channel);
+		if (!channels.contains(channel)) {
+			channels.add(channel);
+		}
 	}
 
 	public String getName() {
