@@ -16037,7 +16037,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create Product order - 2 items" id="21c070a9-438c-45ce-9f13-19fc8ad824d4">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create Product order" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create Product order - 2 items" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
