@@ -171,7 +171,7 @@ public class ValueExpressionWrapper {
         }
         try {
             result = ValueExpressionWrapper.getValue(expression, userMap, resultClass);
-            log.trace("EL {} => {}", expression, result);
+            log.debug("EL {} => {}", expression, result);
 
         } catch (Exception e) {
             log.warn("EL {} throw error with variables {}", expression, userMap, e);
