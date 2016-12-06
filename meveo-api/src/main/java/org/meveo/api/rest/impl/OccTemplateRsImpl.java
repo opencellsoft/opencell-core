@@ -11,6 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
+import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.OccTemplateRs;
@@ -122,6 +123,25 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
             result.setMessage(e.getMessage());
         }
 
+        return result;
+    }
+
+    @Override
+    public GetOccTemplatesResponseDto list() {
+        GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
+
+        try {
+            result.setOccTemplates(occTemplateApi.list(getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
         return result;
     }
 }
