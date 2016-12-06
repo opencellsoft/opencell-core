@@ -31,7 +31,7 @@ public class GenerateInvoiceRequestDto {
 	
 	private Boolean generateXML;
 	private Boolean generatePDF;
-	private Boolean generateAO;
+	private Boolean generateAO;	
 	
 	public GenerateInvoiceRequestDto(){
 		
@@ -158,9 +158,8 @@ public class GenerateInvoiceRequestDto {
 
 	@Override
 	public String toString() {
-		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + ", filter=" + (filter == null ? null : filter) + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
+		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
 	}
-	
-	
+
 
 }
