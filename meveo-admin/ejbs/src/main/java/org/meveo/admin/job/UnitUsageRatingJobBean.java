@@ -47,7 +47,7 @@ public class UnitUsageRatingJobBean {
     @EJB
     private UnitUsageRatingJobBean unitUsageRatingJobBean;
 
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
         log.debug("Running for user={}, edrId={}", currentUser, edrId);
