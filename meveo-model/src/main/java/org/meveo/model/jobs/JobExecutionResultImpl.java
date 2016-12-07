@@ -68,7 +68,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Transient
     private List<String> errors = new ArrayList<String>();
 
-    @Column(name = "REPORT", columnDefinition="TEXT")
+    @Column(name = "REPORT", columnDefinition="LONGTEXT")
     private String report;
 
     public synchronized void registerSucces() {
