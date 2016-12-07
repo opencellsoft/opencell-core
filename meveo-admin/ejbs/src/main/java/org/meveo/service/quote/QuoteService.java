@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -114,12 +115,12 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 // Add recurring charges
-				for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-					List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, fromDate, toDate, currentUser);
-					if (walletOperations != null) {
-						walletOperations.addAll(walletOps);
-					}
-				}
+                for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+                    List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, fromDate, toDate, currentUser);
+                    if (walletOperations != null) {
+                        walletOperations.addAll(walletOps);
+                    }
+                }
             }
 
             // Process CDRS
@@ -143,12 +144,22 @@ public class QuoteService extends BusinessService<Quote> {
                 // Rate EDRs
                 for (EDR edr : edrs) {
                     log.debug("edr={}", edr);
-                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
-                    if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                        log.error("edr rejected={}", edr.getRejectReason());
-                        throw new BusinessException(edr.getRejectReason());
+                    try {
+                        List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
+                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
+                            log.error("edr rejected={}", edr.getRejectReason());
+                            throw new BusinessException(edr.getRejectReason());
+                        }
+                        walletOperations.addAll(walletOperationsFromEdr);
+
+                    } catch (BusinessException e) {
+                        if (e instanceof InsufficientBalanceException) {
+                            log.error("edr rejected={}", edr.getRejectReason());
+                        } else {
+                            log.error("Exception rating edr={}", e);
+                        }
+                        throw e;
                     }
-                    walletOperations.addAll(walletOperationsFromEdr);
                 }
             }
         }
