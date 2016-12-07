@@ -114,11 +114,12 @@ public interface InvoiceWs extends IBaseWs {
      * @param id  invoice id
      * @param invoiceNumber invoice number
      * @param invoiceType invoice type
+     * @param includeTransactions Should transactions, associated to an invoice, be listed
      * @return GetInvoiceResponseDto
      */
 	@WebMethod
 	public GetInvoiceResponseDto findInvoiceByIdOrType(@WebParam(name = "id") Long id, @WebParam(name = "invoiceNumber") String invoiceNumber,
-			@WebParam(name = "invoiceType") String invoiceType);
+			@WebParam(name = "invoiceType") String invoiceType, @WebParam(name = "includeTransations") boolean includeTransactions);
 	
 	
 	@WebMethod

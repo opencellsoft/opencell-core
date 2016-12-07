@@ -164,10 +164,10 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 	
 	@Override
-	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType) {
+	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
 		GetInvoiceResponseDto result = new GetInvoiceResponseDto();
 		try {
-            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, getCurrentUser().getProvider()));
+            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions, getCurrentUser().getProvider()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
