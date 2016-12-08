@@ -96,9 +96,10 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 		for (BundleProductTemplate bpt : bundleProductTemplates) {
 			ids.add(bpt.getProductTemplate().getId());
 		}
-
 		filters.put("ne code", bt.getCode());
-		filters.put("ne id", ids);
+        if (!ids.isEmpty()) {
+            filters.put("ne id", ids);
+        }
 
 		return getLazyDataModel();
 	}
