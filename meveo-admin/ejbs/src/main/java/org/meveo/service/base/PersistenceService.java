@@ -664,7 +664,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         continue;
                     }
 
-                    // condition field1 field2
+					// condition field1 field2
+					// example1 ne code, condition=code, fieldName=code, fieldName2=null
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];

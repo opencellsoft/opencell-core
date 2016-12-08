@@ -38,7 +38,7 @@
 			<h:form id="addBundleProductForm">
 				<p:panel id="headerPanel">
 					<p:dataTable id="productTemplatesTable" var="prodT"
-						value="#{productTemplateListBean.listAll(bundleTemplateBean.entity)}"
+						value="#{productTemplateListBean.listAll(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
 						paginator="true" rows="5" paginatorPosition="top"
 						paginatorAlwaysVisible="true"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -72,7 +72,7 @@
 						<p:column headerText="#{messages['commons.actions']}">
 							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
 								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
-								update=":#{p:component('bundleTemplateList')} :#{p:component('messages')}"
+								update=":#{p:component('bundleTemplateList')} :#{p:component('messages')} :selectProduct"
 								oncomplete="PF('selectProduct').hide()">
 							</p:commandButton>
 						</p:column>
