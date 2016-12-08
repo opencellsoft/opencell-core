@@ -24,6 +24,7 @@ import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
@@ -84,7 +85,8 @@ public class MeveoModuleDto extends BaseDataModelDto {
             @XmlElement(name = "counterTemplate", type = CounterTemplateDto.class), @XmlElement(name = "pricePlanMatrix", type = PricePlanMatrixDto.class),
             @XmlElement(name = "entityCustomAction", type = EntityCustomActionDto.class), @XmlElement(name = "workflow", type = WorkflowDto.class),
             @XmlElement(name = "offerTemplate", type = OfferTemplateDto.class), @XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
-            @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class) })
+            @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
+            @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class) })
     private List<BaseDto> moduleItems;
 
     public MeveoModuleDto() {

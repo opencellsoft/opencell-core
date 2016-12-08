@@ -124,7 +124,7 @@
 							cache="false" width="100" height="100">
 							<f:param name="providerCode"
 								value="#{mainBackingBean.currentProvider.code}"></f:param>
-							<f:param name="fileName" value="#{prod.imagePath}"></f:param>
+							<f:param name="fileName" value="#{prod.productTemplate.imagePath}"></f:param>
 							<f:param name="pictureGroupName" value="product"></f:param>
 						</p:graphicImage>
 					</p:column>
@@ -140,9 +140,6 @@
                     <p:column headerText="#{messages['BusinessEntity.description']}">
                         <h:outputText value="#{prod.productTemplate.description}" />
                     </p:column>
-                    <!-- 					<p:column headerText="#{messages['productTemplate.catalogPrice']}"> -->
-                    <!-- 						<h:outputText value="0.00" /> -->
-                    <!-- 					</p:column> -->
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"
@@ -155,7 +152,6 @@
         </p:panel>
     </c:if>
 
-
     <p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
         <f:facet name="header">
             <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
@@ -166,11 +162,11 @@
 
         <!-- custom fields -->
         <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() == 1}">
-            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" ignoredFields="CATALOG_PRICE" />
         </c:if>
         <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() > 1}">
             <p:tabView>
-                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" ignoredFields="CATALOG_PRICE" />
             </p:tabView>
         </c:if>
     </p:panel>

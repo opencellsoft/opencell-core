@@ -242,7 +242,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		if (productTemplateDto != null) {
 			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), provider);
 			if (productTemplate == null) {
-				throw new MeveoApiException(String.format("ProductTemplate[code = %s]does not exist.", productTemplateDto.getCode()));
+				throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
 			}
 		}
 

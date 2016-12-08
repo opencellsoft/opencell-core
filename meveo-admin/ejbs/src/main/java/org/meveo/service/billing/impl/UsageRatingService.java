@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
@@ -535,17 +536,20 @@ public class UsageRatingService {
                 return null;
             }
 
-        } catch (Exception e) {
-            log.error("failed to rate usage Within Transaction", e);
+        } catch (BusinessException e) {
+            if (e instanceof InsufficientBalanceException) {
+                log.error("failed to rate usage Within Transaction: {}", e.getMessage());
+            } else {
+                log.error("failed to rate usage Within Transaction", e);
+            }
             edr.setStatus(EDRStatusEnum.REJECTED);
             edr.setRejectReason((e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
-            return null;
-            // throw new BusinessException(e);
+            throw e;
+
+        } finally {
+            // put back the original quantity in edr (could have been decrease by counters)
+            edr.setQuantity(originalQuantity);
         }
-
-        // put back the original quantity in edr (could have been decrease by counters)
-        edr.setQuantity(originalQuantity);
-
         return walletOperations;
     }
 

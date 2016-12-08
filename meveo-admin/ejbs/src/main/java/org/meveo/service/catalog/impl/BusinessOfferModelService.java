@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
@@ -146,7 +148,15 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			}
 		}
 		
-		newOfferTemplate.setCode(code);		
+		newOfferTemplate.setCode(code);
+		
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
+		try {
+			String newImagePath = offerImageUploadEventHandler.duplicateImage(newOfferTemplate, imagePath, code, currentUser.getProvider().getCode());
+			newOfferTemplate.setImagePath(newImagePath);
+		} catch (IOException e1) {
+			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
+		}
 		
 		newOfferTemplate.setDescription(offerDescription);
 		if (StringUtils.isBlank(name)) {
@@ -156,8 +166,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
 		newOfferTemplate.setValidTo(bomOffer.getValidTo());
-		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
-		newOfferTemplate.setImagePath(imagePath);
+		newOfferTemplate.setBusinessOfferModel(businessOfferModel);		
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
 		}
@@ -257,6 +266,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
 					newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 					newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+					try {
+						ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
+						String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode(), currentUser.getProvider().getCode());
+						newServiceTemplate.setImagePath(newImagePath);
+					} catch (IOException e1) {
+						log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
+					}
 					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
 
 					serviceTemplateService.create(newOfferServiceTemplate.getServiceTemplate(), currentUser);

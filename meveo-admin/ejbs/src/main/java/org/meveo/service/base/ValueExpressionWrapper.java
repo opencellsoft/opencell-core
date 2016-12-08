@@ -1,5 +1,6 @@
 package org.meveo.service.base;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -170,7 +171,7 @@ public class ValueExpressionWrapper {
         }
         try {
             result = ValueExpressionWrapper.getValue(expression, userMap, resultClass);
-            log.trace("EL {} => {}", expression, result);
+            log.debug("EL {} => {}", expression, result);
 
         } catch (Exception e) {
             log.warn("EL {} throw error with variables {}", expression, userMap, e);
@@ -223,4 +224,9 @@ public class ValueExpressionWrapper {
         simpleELResolver.setUserMap(userMap);
         return ve.getValue(context);
     }
+ 
+	public static boolean collectionContains(String[] collection, String key) {
+		return Arrays.asList(collection).contains(key);
+	}
+    
 }

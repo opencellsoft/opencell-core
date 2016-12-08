@@ -39,6 +39,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -1349,7 +1350,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		BigDecimal totalBalance = walletCacheContainerProvider.getReservedBalance(walletIds);
 		log.debug("chargeOnWalletIds remainingAmountToCharge={}, totalBalance={}", remainingAmountToCharge, totalBalance);
 		if (remainingAmountToCharge.compareTo(totalBalance) > 0 && walletCacheContainerProvider.isReservedBalanceCached(walletIds.get(walletIds.size() - 1))) {
-			throw new BusinessException("INSUFFICIENT_BALANCE");
+			throw new InsufficientBalanceException();
 		}
 		for (Long walletId : walletIds) {
 			BigDecimal balance = walletCacheContainerProvider.getReservedBalance(walletId);

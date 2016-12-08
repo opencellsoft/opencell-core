@@ -24,6 +24,8 @@ public class GenerateInvoiceResultDto {
 	
 	private BigDecimal amountTax;
 	
+	private byte[] pdf;
+	
 	public GenerateInvoiceResultDto(){
 		
 	}
@@ -35,6 +37,7 @@ public class GenerateInvoiceResultDto {
 	 this.amountWithoutTax=invoice.getAmountWithoutTax();
 	 this.amountWithTax=invoice.getAmountWithTax();
 	 this.amountTax=invoice.getAmountTax();
+	 this.pdf = invoice.getPdf();
 	}
 	
 	/**
@@ -89,6 +92,21 @@ public class GenerateInvoiceResultDto {
 
 	public void setAmountTax(BigDecimal amountTax) {
 		this.amountTax = amountTax;
+	}
+	
+
+	/**
+	 * @return the pdf
+	 */
+	public byte[] getPdf() {
+		return pdf;
+	}
+
+	/**
+	 * @param pdf the pdf to set
+	 */
+	public void setPdf(byte[] pdf) {
+		this.pdf = pdf;
 	}
 
 	/* (non-Javadoc)

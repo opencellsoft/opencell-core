@@ -80,7 +80,9 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
+import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
+
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -713,10 +715,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+           
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
             log.info(String.format("PDF file '%s' produced", pdfFileName));
+            if(invoice.getInvoiceNumber() == null){            	
+            	 PdfWaterMark.add(pdfFileName, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
+            }            
 
         } catch (IOException |JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
@@ -732,6 +738,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			byte[] fileBytes = new byte[(int) file.length()];
 			fileInputStream = new FileInputStream(file);
 			fileInputStream.read(fileBytes);
+			
 			invoice.setPdf(fileBytes);	
             if (!isVirtual) {
                 update(invoice, currentUser);
@@ -1152,7 +1159,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,String orderNumber,User currentUser ) throws BusinessException {
+	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,String orderNumber,boolean isDraft,User currentUser ) throws BusinessException {
 
 		if (StringUtils.isBlank(billingAccount)) {
 			throw new BusinessException("billingAccount is null");
@@ -1185,11 +1192,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 		}
 		
-		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTxFilter, orderNumber,invoiceDate,lastTransactionDate,currentUser);
-		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
+		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTxFilter, orderNumber,invoiceDate,lastTransactionDate,currentUser);		
+		if(!isDraft){
+			invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
+		}
 		invoice.setPdf(null);							
 		update(invoice, currentUser);						
 		
 		return invoice;
+	}
+	
+	public void cancelInvoice(Invoice invoice) throws BusinessException {		
+		if(invoice.getInvoiceNumber() != null){
+			throw new BusinessException("Can't cancel an invoice validated");
+		}
+		if(invoice.getRecordedInvoice() != null){
+			throw new BusinessException("Can't cancel an invoice that present in AR");
+		}
+		Query queryTrans = getEntityManager().createQuery("update "+ RatedTransaction.class.getName()+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where invoice=:invoice");
+		queryTrans.setParameter("invoice", invoice);
+		queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
+		queryTrans.executeUpdate();		
+		Query queryAgregate = getEntityManager().createQuery("from "+ InvoiceAgregate.class.getName()+" where invoice=:invoice");
+		queryAgregate.setParameter("invoice", invoice);
+		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
+		for(InvoiceAgregate invoiceAgregate:invoiceAgregates){			
+			if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
+				((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
+			}
+		}
+		Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
+		dropAgregats.setParameter("invoice",invoice);
+		dropAgregats.executeUpdate();		
+		getEntityManager().flush();				
+		Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where id=:id");
+		queryInvoices.setParameter("id", invoice.getId());
+		queryInvoices.executeUpdate();
+		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
 	}
 }
