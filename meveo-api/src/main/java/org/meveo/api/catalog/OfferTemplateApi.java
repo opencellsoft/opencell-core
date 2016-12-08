@@ -243,7 +243,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (serviceTemplateDto != null) {
 			serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), currentUser.getProvider());
 			if (serviceTemplate == null) {
-				throw new MeveoApiException(String.format("ServiceTemplatecode = %s]does not exist.", serviceTemplateDto.getCode()));
+				throw new MeveoApiException(String.format("ServiceTemplatecode %s does not exist.", serviceTemplateDto.getCode()));
 			}
 		}
 
@@ -276,7 +276,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (productTemplateDto != null) {
 			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
 			if (productTemplate == null) {
-				throw new MeveoApiException(String.format("ProductTemplate[code = %s]does not exist.", productTemplateDto.getCode()));
+				throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
 			}
 		}
 

@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -26,7 +26,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 
 @Stateless
-public class OfferTemplateCategoryApi extends BaseApi {
+public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory, OfferTemplateCategoryDto> {
 
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;
@@ -38,7 +38,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void create(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OfferTemplateCategory create(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -53,42 +53,42 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         if (offerTemplateCategoryService.findByCode(postData.getCode(), provider) != null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
-        } else {
+        }
 
-            OfferTemplateCategory offerTemplateCategory = new OfferTemplateCategory();
-            offerTemplateCategory.setCode(postData.getCode());
-            offerTemplateCategory.setDescription(postData.getDescription());
-            offerTemplateCategory.setName(postData.getName());
-            try {
-    			saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
-    		} catch (IOException e1) {
-    			log.error("Invalid image data={}", e1.getMessage());
-    			throw new InvalidImageData();
-    		}
+        OfferTemplateCategory offerTemplateCategory = new OfferTemplateCategory();
+        offerTemplateCategory.setCode(postData.getCode());
+        offerTemplateCategory.setDescription(postData.getDescription());
+        offerTemplateCategory.setName(postData.getName());
+        try {
+            saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
 
-            String parentCode = postData.getOfferTemplateCategoryCode();
-            if (!StringUtils.isBlank(parentCode)) {
-                if (postData.getCode().equals(parentCode)) {
-                    throw new InvalidParameterException("Invalid parent offer template category code - can not point to itself");
-                }
-
-                OfferTemplateCategory parentOfferTemplateCategory = offerTemplateCategoryService.findByCode(parentCode, provider, Arrays.asList("children"));
-                if (parentOfferTemplateCategory == null) {
-                    throw new EntityDoesNotExistsException(OfferTemplateCategory.class, parentCode);
-                }
-
-                if (CollectionUtils.isNotEmpty(parentOfferTemplateCategory.getChildren())) {
-                    OfferTemplateCategory lastChild = parentOfferTemplateCategory.getChildren().get(parentOfferTemplateCategory.getChildren().size() - 1);
-                    offerTemplateCategory.setOrderLevel(lastChild.getOrderLevel() + 1);
-                } else {
-                    offerTemplateCategory.setOrderLevel(1);
-                }
-                offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
+        String parentCode = postData.getOfferTemplateCategoryCode();
+        if (!StringUtils.isBlank(parentCode)) {
+            if (postData.getCode().equals(parentCode)) {
+                throw new InvalidParameterException("Invalid parent offer template category code - can not point to itself");
             }
 
-            offerTemplateCategoryService.create(offerTemplateCategory, currentUser);
+            OfferTemplateCategory parentOfferTemplateCategory = offerTemplateCategoryService.findByCode(parentCode, provider, Arrays.asList("children"));
+            if (parentOfferTemplateCategory == null) {
+                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, parentCode);
+            }
 
+            if (CollectionUtils.isNotEmpty(parentOfferTemplateCategory.getChildren())) {
+                OfferTemplateCategory lastChild = parentOfferTemplateCategory.getChildren().get(parentOfferTemplateCategory.getChildren().size() - 1);
+                offerTemplateCategory.setOrderLevel(lastChild.getOrderLevel() + 1);
+            } else {
+                offerTemplateCategory.setOrderLevel(1);
+            }
+            offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
         }
+
+        offerTemplateCategoryService.create(offerTemplateCategory, currentUser);
+
+        return offerTemplateCategory;
     }
 
     /**
@@ -98,7 +98,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void update(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OfferTemplateCategory update(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -119,13 +119,13 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
-        
+
         try {
-			saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
+            saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
 
         String parentCode = postData.getOfferTemplateCategoryCode();
         if (!StringUtils.isBlank(parentCode)) {
@@ -147,7 +147,9 @@ public class OfferTemplateCategoryApi extends BaseApi {
             offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
         }
 
-        offerTemplateCategoryService.update(offerTemplateCategory, currentUser);
+        offerTemplateCategory = offerTemplateCategoryService.update(offerTemplateCategory, currentUser);
+
+        return offerTemplateCategory;
     }
 
     /**
@@ -157,7 +159,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @return
      * @throws MeveoApiException
      */
-    public OfferTemplateCategoryDto find(String code, Provider provider) throws MeveoApiException {
+    public OfferTemplateCategoryDto find(String code, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
@@ -166,7 +168,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
 
         OfferTemplateCategoryDto offerTemplateCategoryDto = null;
 
-        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, provider);
+        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code, currentUser.getProvider());
 
         if (offerTemplateCategory == null) {
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
@@ -234,7 +236,7 @@ public class OfferTemplateCategoryApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public void createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
         String code = postData.getCode();
 
@@ -244,9 +246,9 @@ public class OfferTemplateCategoryApi extends BaseApi {
         }
 
         if (offerTemplateCategoryService.findByCode(code, currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+            return create(postData, currentUser);
         } else {
-            update(postData, currentUser);
+            return update(postData, currentUser);
         }
     }
 

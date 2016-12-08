@@ -20,6 +20,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
 
@@ -29,6 +30,7 @@ import org.meveo.model.annotation.ImageType;
 @Entity
 @ObservableEntity
 @ImageType
+@ModuleItem
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
