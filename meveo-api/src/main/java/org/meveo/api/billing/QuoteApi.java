@@ -141,6 +141,7 @@ public class QuoteApi extends BaseApi {
         }
 
         UserAccount quoteLevelUserAccount = null;
+        org.meveo.model.billing.BillingAccount billingAccount = null; // user for validation only
 
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
@@ -150,6 +151,7 @@ public class QuoteApi extends BaseApi {
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
+                billingAccount = quoteLevelUserAccount.getBillingAccount();
             }
         }
 
@@ -165,8 +167,10 @@ public class QuoteApi extends BaseApi {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }
 
-                    if (quoteLevelUserAccount != null && !quoteLevelUserAccount.getBillingAccount().equals(itemLevelUserAccount.getBillingAccount())) {
-                        throw new InvalidParameterException("Accounts declared on quote level and item level don't belong to the same billing account");
+                    if (billingAccount != null && !billingAccount.equals(itemLevelUserAccount.getBillingAccount())) {
+                        throw new InvalidParameterException("Accounts declared on quote level and/or item levels don't belong to the same billing account");
+                    } else if (billingAccount == null) {
+                        billingAccount = itemLevelUserAccount.getBillingAccount();
                     }
                 }
             }
@@ -176,9 +180,9 @@ public class QuoteApi extends BaseApi {
 
             } else if (itemLevelUserAccount == null && quoteLevelUserAccount != null) {
                 productQuoteItem.setBillingAccount(new ArrayList<BillingAccount>());
-                BillingAccount billingAccount = new BillingAccount();
-                billingAccount.setId(quoteLevelUserAccount.getCode());
-                productQuoteItem.getBillingAccount().add(billingAccount);
+                BillingAccount billingAccountDto = new BillingAccount();
+                billingAccountDto.setId(quoteLevelUserAccount.getCode());
+                productQuoteItem.getBillingAccount().add(billingAccountDto);
             }
 
             handleMissingParameters();

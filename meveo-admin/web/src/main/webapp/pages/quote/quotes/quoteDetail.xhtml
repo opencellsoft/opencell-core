@@ -22,6 +22,11 @@
             </p:breadCrumb>
         </h:form>
 
+        <hftl:entityPopup id="userAccountPopupQuote" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
+            selection="#{quoteBean.entity.userAccount}" updateField=":quoteForm:tabView:quoteInfo:userAccountQuote :quoteForm:tabView:quoteInfo:userAccountQuote_text">
+        </hftl:entityPopup>
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
             column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
@@ -51,6 +56,9 @@
                         <hftl:formField label="#{messages['quote.validFrom']}" field="validFrom" newLine="true" />
                         <hftl:formField label="#{messages['quote.validTo']}" field="validTo" />
                         <hftl:formField label="#{messages['quote.category']}" field="category" />
+
+                        <hftl:formField id="userAccountQuote" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code" popup="true"
+                            popupId="userAccountPopupQuote" />
 
                         <hftl:formField label="#{messages['quote.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{quoteBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['quote.externalId']}" field="externalId" edit="false"
@@ -134,7 +142,7 @@
 
                                 <hftl:formField entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.itemId']}" field="itemId" edit="false" componentWidth="10" />
                                 <hftl:formField id="userAccount" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.userAccount']}" field="userAccount"
-                                    valueLabelField="code" required="true" popup="true" popupId="userAccountPopup" />
+                                    valueLabelField="code" required="#{quoteBean.entity.userAccount==null}" popup="true" popupId="userAccountPopup" />
                                 <hftl:formField id="offer" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.mainOffering']}" field="mainOffering"
                                     valueLabelField="code" popup="true" popupId="offerPopup" required="true" edit="#{quoteBean.quoteEditable}" />
 
