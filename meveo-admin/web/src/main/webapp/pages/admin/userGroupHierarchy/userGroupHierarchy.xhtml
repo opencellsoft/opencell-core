@@ -27,6 +27,9 @@
                             <h:outputText value="#{messages['userGroupHierarchy.noGroups']}" rendered="#{userHierarchyLevelBean.rootNode.childCount==0}" />
                         </p:outputPanel>
                     </p:panel>
+                    <p:panel>
+                    	<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}" styleClass="Blue"></h:outputLabel>
+                   	</p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="col2 Responsive">
                     <p:panel styleClass="form-panel">
