@@ -20,7 +20,9 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.dwh.MeasurableQuantityRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
+import org.meveo.model.shared.DateUtils;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -69,13 +71,30 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
         return result;
     }
 
+	/**
+	 * 
+	 * @param code
+	 * @param fromDate format yyyy-MM-dd'T'hh:mm:ss
+	 * @param toDate   format yyyy-MM-dd'T'hh:mm:ss
+	 * @param period
+	 * @param mqCode
+	 * @return
+	 */    
 	@Override
-	public Response findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode) {
+	public Response findMVByDateAndPeriod(String code, String fromDate, String toDate, MeasurementPeriodEnum period, String mqCode) {
 		Response.ResponseBuilder responseBuilder = null;
 		List<MeasuredValueDto> result = new ArrayList<>();
 		
         try {
-        	result = measurableQuantityApi.findMVByDateAndPeriod(code, fromDate, toDate, period, mqCode, getCurrentUser());
+        	Date from = null,to = null;
+        	if(!StringUtils.isBlank(fromDate)){
+        		from = DateUtils.parseDateWithPattern(fromDate, "yyyy-MM-dd'T'hh:mm:ss");
+        	}
+        	if(!StringUtils.isBlank(toDate)){
+        		to = DateUtils.parseDateWithPattern(toDate, "yyyy-MM-dd'T'hh:mm:ss");
+        	}
+        		
+        	result = measurableQuantityApi.findMVByDateAndPeriod(code,from , to, period, mqCode, getCurrentUser());
         	responseBuilder = Response.ok();
 			responseBuilder.entity(result);
         } catch (MeveoApiException e) {

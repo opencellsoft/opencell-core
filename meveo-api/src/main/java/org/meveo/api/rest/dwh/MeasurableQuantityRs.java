@@ -1,7 +1,5 @@
 package org.meveo.api.rest.dwh;
 
-import java.util.Date;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,9 +36,18 @@ public interface MeasurableQuantityRs extends IBaseRs {
 	@Path("/")
 	public ActionStatus update(MeasurableQuantityDto postData);
 
+	/**
+	 * 
+	 * @param code
+	 * @param fromDate format yyyy-MM-dd'T'hh:mm:ss
+	 * @param toDate   format yyyy-MM-dd'T'hh:mm:ss
+	 * @param period
+	 * @param mqCode
+	 * @return
+	 */
 	@GET
 	@Path("/findMVByDateAndPeriod")
-	public Response findMVByDateAndPeriod(@QueryParam("code") String code, @QueryParam("fromDate") Date fromDate, @QueryParam("toDate") Date toDate,
+	public Response findMVByDateAndPeriod(@QueryParam("code") String code, @QueryParam("fromDate") String fromDate, @QueryParam("toDate") String toDate,
 			@QueryParam("period") MeasurementPeriodEnum period, @QueryParam("mqCode") String mqCode);
 
 }
