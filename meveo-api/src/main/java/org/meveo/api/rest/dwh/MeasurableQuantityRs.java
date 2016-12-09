@@ -39,8 +39,8 @@ public interface MeasurableQuantityRs extends IBaseRs {
 	/**
 	 * 
 	 * @param code
-	 * @param fromDate format yyyy-MM-dd'T'hh:mm:ss
-	 * @param toDate   format yyyy-MM-dd'T'hh:mm:ss
+	 * @param fromDate format yyyy-MM-dd'T'hh:mm:ss or yyyy-MM-dd
+	 * @param toDate   format yyyy-MM-dd'T'hh:mm:ss or yyyy-MM-dd
 	 * @param period
 	 * @param mqCode
 	 * @return
