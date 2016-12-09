@@ -440,4 +440,19 @@
 		</insert>		
 	</changeSet>
 
+    <changeSet id="#2212_20161205" author="AndriusKarpavicius">
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="QUOTE" />
+            <column name="description" value="Invoice for quote" />
+            <column name="provider_id" valueNumeric="1" />
+            <column name="creator_id" valueNumeric="1" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="occ_template_id" value="25" />    
+            <column name="MATCHING_AUTO" valueNumeric="0" />        
+        </insert>
+    </changeSet>
 </databaseChangeLog>

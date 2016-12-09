@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 
@@ -65,13 +64,6 @@ public class QuoteItem extends BaseEntity {
     @NotNull
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
 
-    /**
-     * Associated invoice
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_ID")
-    private Invoice invoice;
-    
     /**
      * Associated user account
      */
@@ -126,14 +118,6 @@ public class QuoteItem extends BaseEntity {
         this.status = status;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
     public Object getQuoteItemDto() {
         return quoteItemDto;
     }
@@ -141,7 +125,7 @@ public class QuoteItem extends BaseEntity {
     public void setQuoteItemDto(Object quoteItemDto) {
         this.quoteItemDto = quoteItemDto;
     }
-    
+
     public UserAccount getUserAccount() {
         return userAccount;
     }
@@ -186,7 +170,7 @@ public class QuoteItem extends BaseEntity {
         } else if (!(obj instanceof QuoteItem)) {
             return false;
         }
-        
+
         return StringUtils.compare(getItemId(), ((QuoteItem) obj).getItemId()) == 0;
     }
 }

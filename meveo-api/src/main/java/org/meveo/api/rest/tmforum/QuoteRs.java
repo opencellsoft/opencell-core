@@ -81,4 +81,15 @@ public interface QuoteRs {
     @DELETE
     @Path("/{quoteId}")
     public Response deleteProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
+
+    /**
+     * Place an order based on a product quote
+     * 
+     * @param id Product quote code
+     * @param info Http request context
+     * @return
+     */
+    @POST
+    @Path("/placeOrder/{quoteId}")
+    public Response placeOrder(@PathParam("quoteId") String id, @Context UriInfo info);
 }

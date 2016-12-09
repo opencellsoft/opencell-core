@@ -34,6 +34,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -158,6 +159,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -225,6 +229,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -257,11 +264,12 @@ public class SubscriptionApi extends BaseApi {
         Provider provider = currentUser.getProvider();
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
-        subscription = subscriptionService.refreshOrRetrieve(subscription);
-        subscription.getOffer().getOfferServiceTemplates().size();
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
+        
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
+        subscription.getOffer().getOfferServiceTemplates().size();
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
@@ -363,6 +371,9 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", serviceToActivateDto.getCode(), e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToActivateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
@@ -509,6 +520,9 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", serviceToInstantiateDto.getCode(), e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToInstantiateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
