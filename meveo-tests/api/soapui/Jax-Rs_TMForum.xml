@@ -14578,6 +14578,63 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create One shot charge template - termination - CMP_DATA" id="7871ba48-1120-46d0-8804-bb778fa0412b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create One shot charge template - termination - CMP_DATA" id="d9542c29-a06b-4ce5-8235-e683e3a9f01a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOneShotChargeTemplate>
+         <!--Optional:-->
+         <oneShotChargeTemplate code="${#Project#baseEntityPrefix}_OST" description="One shot termination charge">
+            <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>false</amountEditable>
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test 685</description>
+            </languageDescriptions>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>TERMINATION</oneShotChargeTemplateType>
+            <immediateInvoicing>false</immediateInvoicing>
+         </oneShotChargeTemplate>
+      </ws:createOrUpdateOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1a93f06d-6749-4edb-a2d4-0c994cb38225"/>
+            <con:assertion type="Simple Contains" id="dcdaa9c5-b51e-4c01-b525-1208052824e1" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create Usage charge template" id="fa0f2e50-54e4-41dd-a5db-13c946e6c7c5">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -14782,6 +14839,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <counterTemplate></counterTemplate>
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
+            <serviceChargeTemplateTerminations>
+               <serviceChargeTemplateTermination>
+                  <code>${#Project#baseEntityPrefix}_OST</code>
+               </serviceChargeTemplateTermination>
+            </serviceChargeTemplateTerminations>
          </serviceTemplate>
       </ws:createOrUpdateServiceTemplate>
    </soapenv:Body>
@@ -14842,6 +14904,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <counterTemplate></counterTemplate>
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
+            <serviceChargeTemplateTerminations>
+               <serviceChargeTemplateTermination>
+                  <code>${#Project#baseEntityPrefix}_OST</code>
+               </serviceChargeTemplateTermination>
+            </serviceChargeTemplateTerminations>
          </serviceTemplate>
       </ws:createOrUpdateServiceTemplate>
    </soapenv:Body>
@@ -14894,6 +14961,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <code>${#Project#baseEntityPrefix}_OS2</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
+            <serviceChargeTemplateTerminations>
+               <serviceChargeTemplateTermination>
+                  <code>${#Project#baseEntityPrefix}_OST</code>
+               </serviceChargeTemplateTermination>
+            </serviceChargeTemplateTerminations>
          </serviceTemplate>
       </ws:createOrUpdateServiceTemplate>
    </soapenv:Body>
@@ -15298,6 +15370,51 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <eventCode>${#Project#baseEntityPrefix}_OS2</eventCode>
             <amountWithoutTax>20</amountWithoutTax>
             <amountWithTax>22</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createOrUpdatePricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="55eb95e0-43c4-4625-9a83-abac3cb26699"/>
+            <con:assertion type="Simple Contains" name="Contains" id="518de297-32d0-4589-990d-e1683fecaf11">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Priceplan termination - CMP_DATA" id="4d4ce95b-16e4-412b-85f8-445f148e018e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdatePricePlan</con:operation>
+          <con:request name="Create Priceplan termination - CMP_DATA" id="e0d242e1-a9e7-4d97-baf4-8727ef61fbef">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdatePricePlan>
+         <pricePlan code="${#Project#baseEntityPrefix}_OST" description="PP for OST">
+            <eventCode>${#Project#baseEntityPrefix}_OST</eventCode>
+            <amountWithoutTax>41</amountWithoutTax>
+            <amountWithTax>48</amountWithTax>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -18191,7 +18308,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="9ed67bbc-57df-4d99-8e90-47f71d2609bc" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="58705b6a-45f4-4ce0-8234-0cbfebf57beb" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -18566,7 +18683,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create Product quote - no match parent BA" id="6a754afc-c04b-4779-a475-93898aec6d43">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Copy of Create Product quote" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create Product quote - no match parent BA" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -18965,7 +19082,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>15</con:value>
+        <con:value>16</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

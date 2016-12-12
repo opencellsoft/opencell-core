@@ -3052,4 +3052,27 @@
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
     </changeSet>
+    
+    <changeSet id="#2050_20161212" author="AndriusKarpavicius">
+        <delete tableName="ORD_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_item_offerings_seq"/>
+        <delete tableName="ORD_QUOT_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_QUOT_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_quot_item_offerings_seq"/>
+    </changeSet>     
 </databaseChangeLog>

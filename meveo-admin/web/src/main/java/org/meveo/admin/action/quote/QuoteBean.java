@@ -60,6 +60,7 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
+import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -244,8 +245,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         try {
 
             // Reconstruct product offerings - add main offering. Related product offerings are added later bellow
-            selectedQuoteItem.getProductOfferings().clear();
-            selectedQuoteItem.getProductOfferings().add(selectedQuoteItem.getMainOffering());
+            selectedQuoteItem.getQuoteItemProductOfferings().clear();
+            selectedQuoteItem.getQuoteItemProductOfferings().add(new QuoteItemProductOffering(selectedQuoteItem, selectedQuoteItem.getMainOffering(), 0));
 
             ProductQuoteItem quoteItemDto = new ProductQuoteItem();
             quoteItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
@@ -304,7 +305,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                     int index = 0;
                     for (ProductTemplate productTemplate : productTemplates) {
 
-                        selectedQuoteItem.getProductOfferings().add(productTemplate);
+                        selectedQuoteItem.getQuoteItemProductOfferings().add(
+                            new QuoteItemProductOffering(selectedQuoteItem, productTemplate, selectedQuoteItem.getQuoteItemProductOfferings().size()));
 
                         BundledProductReference productOffering = new BundledProductReference();
                         productOffering.setReferencedId(productTemplate.getCode());
@@ -385,18 +387,20 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             billingAccount = billingAccountService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount());
         }
 
-        for (QuoteItem quoteItem : entity.getQuoteItems()) {
-            if (quoteItem.getUserAccount() == null && entity.getUserAccount() != null) {
-                quoteItem.setUserAccount(entity.getUserAccount());
-            }
-            if (billingAccount == null) {
-                billingAccount = billingAccountService.refreshOrRetrieve(quoteItem.getUserAccount().getBillingAccount());
-            } else {
-                UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
-                if (!billingAccount.equals(itemUa.getBillingAccount())) {
-                    messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
-                    FacesContext.getCurrentInstance().validationFailed();
-                    return null;
+        if (entity.getQuoteItems() != null) {
+            for (QuoteItem quoteItem : entity.getQuoteItems()) {
+                if (quoteItem.getUserAccount() == null && entity.getUserAccount() != null) {
+                    quoteItem.setUserAccount(entity.getUserAccount());
+                }
+                if (billingAccount == null) {
+                    billingAccount = billingAccountService.refreshOrRetrieve(quoteItem.getUserAccount().getBillingAccount());
+                } else {
+                    UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
+                    if (!billingAccount.equals(itemUa.getBillingAccount())) {
+                        messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
                 }
             }
         }
@@ -529,7 +533,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
 
             // Show products - all or only the ones quoteed
-            if ((showAvailableProducts || this.selectedQuoteItem.getProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
+            if ((showAvailableProducts || this.selectedQuoteItem.getQuoteItemProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
                 TreeNode productsNode = null;
                 productsNode = new DefaultTreeNode("ProductList", "Product", mainOfferingNode);
                 productsNode.setSelectable(false);
@@ -540,7 +544,9 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                     // Find a matching quoteed product offering
                     Product productProductMatched = null;
                     int index = 0;
-                    for (ProductOffering offering : this.selectedQuoteItem.getProductOfferings().subList(1, this.selectedQuoteItem.getProductOfferings().size())) {
+                    for (QuoteItemProductOffering quoteItemoffering : this.selectedQuoteItem.getQuoteItemProductOfferings().subList(1,
+                        this.selectedQuoteItem.getQuoteItemProductOfferings().size())) {
+                        ProductOffering offering = quoteItemoffering.getProductOffering();
                         if (offerProductTemplate.getProductTemplate().equals(offering)) {
                             productProductMatched = productsAndServices[0].get(index);
                             break;

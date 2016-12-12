@@ -22,7 +22,6 @@ import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -39,16 +38,12 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 @Stateless
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> {
 
 	@EJB
 	private RecurringChargeInstanceService recurringChargeInstanceService;
-
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
 
 	@SuppressWarnings("unchecked")
 	public P findByCodeAndService(String code, Long subscriptionId) {
@@ -128,51 +123,10 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 				.getTradingCountry());
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
-
+        chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
+        
 		recurringChargeInstanceService.create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
 		return chargeInstance;
-	}
-
-	public void recurringChargeInstanciation(EntityManager em, ServiceInstance serviceInst, String chargeCode,
-			Date subscriptionDate, Seller seller, User creator) throws BusinessException {
-
-		if (serviceInst == null) {
-			throw new BusinessException("service instance does not exist.");
-		}
-
-		if (serviceInst.getStatus() == InstanceStatusEnum.CANCELED
-				|| serviceInst.getStatus() == InstanceStatusEnum.TERMINATED
-				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
-			throw new BusinessException("service instance is " + serviceInst.getStatus() + ". code="
-					+ serviceInst.getCode());
-		}
-
-		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
-				.findByCodeAndService(chargeCode, serviceInst.getId());
-
-		if (chargeInst != null) {
-			throw new BusinessException("charge instance code already exists. code=" + chargeCode);
-		}
-
-		RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService.findByCode(chargeCode,
-				serviceInst.getProvider());
-		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
-		chargeInstance.setCode(chargeCode);
-		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
-		chargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
-		chargeInstance.setChargeDate(subscriptionDate);
-		chargeInstance.setSubscriptionDate(subscriptionDate);
-		chargeInstance.setSubscription(serviceInst.getSubscription());
-		chargeInstance.setChargeTemplate(recurringChargeTemplate);
-		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
-		chargeInstance.setServiceInstance(serviceInst);
-		chargeInstance.setSeller(seller);
-		chargeInstance.setCountry(serviceInst.getSubscription().getUserAccount().getBillingAccount()
-				.getTradingCountry());
-		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
-				.getCustomerAccount().getTradingCurrency());
-
-		recurringChargeInstanceService.create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
 	}
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate, User updater)

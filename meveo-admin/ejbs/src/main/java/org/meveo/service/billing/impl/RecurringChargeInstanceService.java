@@ -175,6 +175,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				.getTradingCountry());
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
+		chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
 		chargeInstance.updateAudit(creator);
 
 		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()

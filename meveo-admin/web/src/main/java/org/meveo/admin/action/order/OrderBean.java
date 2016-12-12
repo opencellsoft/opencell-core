@@ -58,6 +58,7 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -209,13 +210,12 @@ public class OrderBean extends CustomFieldBean<Order> {
 
         try {
             // Reconstruct product offerings - add main offering. Related product offerings are added later bellow
-            selectedOrderItem.getProductOfferings().clear();
-            selectedOrderItem.getProductOfferings().add(selectedOrderItem.getMainOffering());
+            selectedOrderItem.getOrderItemProductOfferings().clear();
+            selectedOrderItem.getOrderItemProductOfferings().add(new OrderItemProductOffering(selectedOrderItem, selectedOrderItem.getMainOffering(), 0));
 
             org.tmf.dsmapi.catalog.resource.order.ProductOrderItem orderItemDto = new org.tmf.dsmapi.catalog.resource.order.ProductOrderItem();
             orderItemDto.setAction(selectedOrderItem.getAction().name().toLowerCase());
-            
-            
+
             List<BillingAccount> billingAccountDtos = new ArrayList<>();
             BillingAccount billingAccountDto = new BillingAccount();
             billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
@@ -281,7 +281,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                     int index = 0;
                     for (ProductTemplate productTemplate : productTemplates) {
 
-                        selectedOrderItem.getProductOfferings().add(productTemplate);
+                        selectedOrderItem.getOrderItemProductOfferings().add(
+                            new OrderItemProductOffering(selectedOrderItem, productTemplate, selectedOrderItem.getOrderItemProductOfferings().size()));
 
                         BundledProductReference productOffering = new BundledProductReference();
                         productOffering.setReferencedId(productTemplate.getCode());
@@ -359,7 +360,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         String result = super.saveOrUpdate(killConversation);
-        
+
         // Execute workflow with every update
         if (entity.getStatus() != OrderStatusEnum.IN_CREATION) {
             entity = orderApi.initiateWorkflow(entity, getCurrentUser());
@@ -486,7 +487,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
 
             // Show products - all or only the ones ordered
-            if ((showAvailableProducts || this.selectedOrderItem.getProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
+            if ((showAvailableProducts || this.selectedOrderItem.getOrderItemProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
                 TreeNode productsNode = null;
                 productsNode = new DefaultTreeNode("ProductList", "Product", mainOfferingNode);
                 productsNode.setSelectable(false);
@@ -497,7 +498,10 @@ public class OrderBean extends CustomFieldBean<Order> {
                     // Find a matching ordered product offering
                     Product productProductMatched = null;
                     int index = 0;
-                    for (ProductOffering offering : this.selectedOrderItem.getProductOfferings().subList(1, this.selectedOrderItem.getProductOfferings().size())) {
+                    for (OrderItemProductOffering orderItemOffering : this.selectedOrderItem.getOrderItemProductOfferings().subList(1,
+                        this.selectedOrderItem.getOrderItemProductOfferings().size())) {
+                        ProductOffering offering = orderItemOffering.getProductOffering();
+
                         if (offerProductTemplate.getProductTemplate().equals(offering)) {
                             productProductMatched = productsAndServices[0].get(index);
                             break;

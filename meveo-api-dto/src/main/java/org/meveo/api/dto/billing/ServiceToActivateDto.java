@@ -31,8 +31,6 @@ public class ServiceToActivateDto implements Serializable {
 
     private Date subscriptionDate;
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
-
-    private String orderNumber;
     
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -87,14 +85,6 @@ public class ServiceToActivateDto implements Serializable {
     public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
         this.chargeInstanceOverrides = chargeInstanceOverrides;
     }
-
-    public String getOrderNumber() {
-		return orderNumber;
-	}
-
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
 
 	public CustomFieldsDto getCustomFields() {
         return customFields;

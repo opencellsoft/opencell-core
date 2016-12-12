@@ -105,8 +105,8 @@
                         <hftl:column label="#{messages['quote.itemId']}" field="itemId" />
                         <hftl:column label="#{messages['quote.userAccount']}" field="userAccount.code" />
                         <p:column headerText="#{messages['quote.productOfferings']}">
-                            <ui:repeat value="#{entity.productOfferings.toArray()}" var="c">
-                                <h:outputText value="#{c.code}" />
+                            <ui:repeat value="#{entity.quoteItemProductOfferings.toArray()}" var="c">
+                                <h:outputText value="#{c.productOffering.code}" />
                                 <br />
                             </ui:repeat>
                         </p:column>

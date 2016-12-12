@@ -357,7 +357,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 */
 
 	public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity, Date applicationDate,
-			boolean isVirtual, User creator) throws BusinessException {
+			boolean isVirtual, String orderNumberOverride, User creator) throws BusinessException {
 
         if (chargeInstance.getChargeTemplate() == null) {
             throw new IncorrectChargeTemplateException("ChargeTemplate is null for chargeInstance id=" + chargeInstance.getId() + ", code=" + chargeInstance.getCode());
@@ -399,14 +399,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
-				chargeInstance.getCriteria3(),chargeInstance.getOrderNumber(), null,
+				chargeInstance.getCriteria3(),orderNumberOverride!=null?(orderNumberOverride.equals("")?null:orderNumberOverride):chargeInstance.getOrderNumber(), null,
 				null, null, false, isVirtual, creator);
 
 		return chargeApplication;
 	}
 
 	public WalletOperation oneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity,
-			Date applicationDate, boolean isVirtual, User creator) throws BusinessException {
+			Date applicationDate, boolean isVirtual, String orderNumberOverride, User creator) throws BusinessException {
 
 		if (chargeInstance == null) {
 			throw new IncorrectChargeInstanceException("charge instance is null");
@@ -419,7 +419,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] {
 				subscription.getId(), quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId(),chargeInstance.getDescription() });
 
-		WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantity, applicationDate, isVirtual, creator);
+		WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantity, applicationDate, isVirtual, orderNumberOverride, creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
 		if (isVirtual){

@@ -39,6 +39,7 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
+import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -187,14 +188,16 @@ public class QuoteApi extends BaseApi {
 
             handleMissingParameters();
 
-            List<ProductOffering> productOfferings = new ArrayList<>();
+            QuoteItem quoteItem = new QuoteItem();
+            List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
+
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), provider);
                 if (productOfferingInDB == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId());
                 }
-                productOfferings.add(productOfferingInDB);
+                productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, 0));
 
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
@@ -202,7 +205,7 @@ public class QuoteApi extends BaseApi {
                         if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
                         }
-                        productOfferings.add(productOfferingInDB);
+                        productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }
                 }
             } else {
@@ -210,12 +213,11 @@ public class QuoteApi extends BaseApi {
                 throw new MissingParameterException("productOffering");
             }
 
-            QuoteItem quoteItem = new QuoteItem();
             quoteItem.setItemId(productQuoteItem.getId());
 
             quoteItem.setQuote(quote);
             quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
-            quoteItem.setProductOfferings(productOfferings);
+            quoteItem.setQuoteItemProductOfferings(productOfferings);
             quoteItem.setProvider(currentUser.getProvider());
             quoteItem.setUserAccount(itemLevelUserAccount != null ? itemLevelUserAccount : quoteLevelUserAccount);
 
@@ -409,7 +411,7 @@ public class QuoteApi extends BaseApi {
         ProductQuoteItem productQuoteItem = ProductQuoteItem.deserializeQuoteItem(quoteItem.getSource());
 
         // Ordering a new product
-        ProductOffering primaryOffering = quoteItem.getProductOfferings().get(0);
+        ProductOffering primaryOffering = quoteItem.getMainOffering();
 
         // Just a simple case of ordering a single product
         if (primaryOffering instanceof ProductTemplate) {
@@ -428,7 +430,7 @@ public class QuoteApi extends BaseApi {
             int index = 1;
             if (productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
-                    if (index < quoteItem.getProductOfferings().size()) {
+                    if (index < quoteItem.getQuoteItemProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
                     } else {
                         services.add(productRelationship.getProduct());
@@ -443,7 +445,7 @@ public class QuoteApi extends BaseApi {
             // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
             index = 1;
             for (Product product : products) {
-                ProductTemplate productOffering = (ProductTemplate) quoteItem.getProductOfferings().get(index);
+                ProductTemplate productOffering = (ProductTemplate) quoteItem.getQuoteItemProductOfferings().get(index).getProductOffering();
                 ProductInstance productInstance = instantiateVirtualProduct(productOffering, product, quoteItem, productQuoteItem, subscription, currentUser);
                 productInstances.add(productInstance);
                 index++;
@@ -472,7 +474,7 @@ public class QuoteApi extends BaseApi {
             productQuoteItem.getSubscriptionPeriod().getEndDateTime();
         }
 
-        log.error("AKK date from {} to {}", fromDate, toDate);
+        // log.error("AKK date from {} to {}", fromDate, toDate);
 
         QuoteInvoiceInfo quoteInvoiceInfo = new org.meveo.service.quote.QuoteInvoiceInfo(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances,
             fromDate, toDate);
@@ -763,7 +765,7 @@ public class QuoteApi extends BaseApi {
             int index = 1;
             if (productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
-                    if (index < quoteItem.getProductOfferings().size()) {
+                    if (index < quoteItem.getQuoteItemProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
                     } else {
                         services.add(productRelationship.getProduct());

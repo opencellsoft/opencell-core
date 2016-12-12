@@ -72,7 +72,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, User user)
+    public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, User user)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         if (terminationReason == null) {
@@ -80,7 +80,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
         terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), user);
+            terminationReason.isApplyTerminationCharges(), orderNumber, user);
     }
 
     public void subscriptionCancellation(Subscription subscription, Date cancelationDate, User updater) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
@@ -158,7 +158,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, User user) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, User user) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -169,9 +169,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
                 if (terminationReason != null) {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, user);
+                    serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber, user);
                 } else {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, user, null);
+                    serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, user, null);
                 }
             }
         }

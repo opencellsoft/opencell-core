@@ -3,15 +3,16 @@ package org.meveo.model.quote;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -46,9 +47,9 @@ public class QuoteItem extends BaseEntity {
     /**
      * Product offerings associated to an quote item. In case of bundled offers, the first item in a list is the parent offering.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ORD_QUOT_ITEM_OFFERINGS", joinColumns = @JoinColumn(name = "QUOTE_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "PRD_OFFERING_ID"))
-    private List<ProductOffering> productOfferings = new ArrayList<>();
+    @OneToMany(mappedBy = "quoteItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "ITEM_ORDER")
+    private List<QuoteItemProductOffering> quoteItemProductOfferings = new ArrayList<>();
 
     /**
      * Serialized quoteItem dto.
@@ -94,12 +95,12 @@ public class QuoteItem extends BaseEntity {
         this.itemId = itemId;
     }
 
-    public List<ProductOffering> getProductOfferings() {
-        return productOfferings;
+    public List<QuoteItemProductOffering> getQuoteItemProductOfferings() {
+        return quoteItemProductOfferings;
     }
 
-    public void setProductOfferings(List<ProductOffering> productOfferings) {
-        this.productOfferings = productOfferings;
+    public void setQuoteItemProductOfferings(List<QuoteItemProductOffering> quoteItemProductOfferings) {
+        this.quoteItemProductOfferings = quoteItemProductOfferings;
     }
 
     public String getSource() {
@@ -136,8 +137,8 @@ public class QuoteItem extends BaseEntity {
 
     public ProductOffering getMainOffering() {
 
-        if (mainOffering == null && !productOfferings.isEmpty()) {
-            mainOffering = productOfferings.get(0);
+        if (mainOffering == null && !quoteItemProductOfferings.isEmpty()) {
+            mainOffering = quoteItemProductOfferings.get(0).getProductOffering();
         }
 
         return mainOffering;
@@ -149,9 +150,9 @@ public class QuoteItem extends BaseEntity {
 
     public void resetMainOffering(ProductOffering newMainOffer) {
         this.mainOffering = newMainOffer;
-        productOfferings.clear();
+        quoteItemProductOfferings.clear();
         if (newMainOffer != null) {
-            productOfferings.add(newMainOffer);
+            quoteItemProductOfferings.add(new QuoteItemProductOffering(this, newMainOffer, 0));
         }
         quoteItemDto = null;
         source = null;

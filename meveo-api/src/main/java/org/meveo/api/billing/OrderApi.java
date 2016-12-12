@@ -41,6 +41,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -161,14 +162,16 @@ public class OrderApi extends BaseApi {
                 throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
             }
 
-            List<ProductOffering> productOfferings = new ArrayList<>();
+            org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
+            List<OrderItemProductOffering> productOfferings = new ArrayList<>();
+
             // For modify and delete actions, product offering might not be specified
             if (productOrderItem.getProductOffering() != null) {
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), provider);
                 if (productOfferingInDB == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId());
                 }
-                productOfferings.add(productOfferingInDB);
+                productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
 
                 if (productOrderItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
@@ -176,7 +179,7 @@ public class OrderApi extends BaseApi {
                         if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
                         }
-                        productOfferings.add(productOfferingInDB);
+                        productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }
                 }
             } else {
@@ -184,7 +187,6 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("productOffering");
             }
 
-            org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
             orderItem.setItemId(productOrderItem.getId());
             try {
                 orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
@@ -194,7 +196,7 @@ public class OrderApi extends BaseApi {
             orderItem.setOrder(order);
             orderItem.setUserAccount(userAccount);
             orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
-            orderItem.setProductOfferings(productOfferings);
+            orderItem.setOrderItemProductOfferings(productOfferings);
             orderItem.setProvider(currentUser.getProvider());
 
             if (productOrderItem.getState() != null) {
@@ -333,20 +335,20 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order item {} {}", order.getCode(), orderItem.getItemId());
 
-        String orderNumber = StringUtils.isBlank(order.getExternalId()) ? order.getCode() : order.getExternalId();
+        String orderNumber = order.getOrderNumber();
         orderItem.setStatus(OrderStatusEnum.IN_PROGRESS);
 
         ProductOrderItem productOrderItem = ProductOrderItem.deserializeOrderItem(orderItem.getSource());
 
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
-            ProductOffering primaryOffering = orderItem.getProductOfferings().get(0);
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
                 ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem, null,
-                    orderNumber, currentUser);
+                    order.getOrderNumber(), currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -362,7 +364,7 @@ public class OrderApi extends BaseApi {
                 int index = 1;
                 if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                     for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                        if (index < orderItem.getProductOfferings().size()) {
+                        if (index < orderItem.getOrderItemProductOfferings().size()) {
                             products.add(productRelationship.getProduct());
                         } else {
                             services.add(productRelationship.getProduct());
@@ -378,7 +380,7 @@ public class OrderApi extends BaseApi {
                 // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
                 index = 1;
                 for (Product product : products) {
-                    ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
+                    ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
                     productOffering = productTemplateService.refreshOrRetrieve(productOffering);
                     ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber, currentUser);
                     if (productInstance != null) {
@@ -400,12 +402,8 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("product.id");
             }
 
-            ProductOffering primaryOffering = null;
-
             // For modify and delete actions, product offering might not be specified
-            if (orderItem.getProductOfferings() != null && !orderItem.getProductOfferings().isEmpty()) {
-                primaryOffering = orderItem.getProductOfferings().get(0);
-            }
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             // We need productOffering so we know if product is subscription or productInstance
             if (primaryOffering == null) {
@@ -469,12 +467,8 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("product.id");
             }
 
-            ProductOffering primaryOffering = null;
-
             // For modify and delete actions, product offering might not be specified
-            if (orderItem.getProductOfferings() != null && !orderItem.getProductOfferings().isEmpty()) {
-                primaryOffering = orderItem.getProductOfferings().get(0);
-            }
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             if (primaryOffering == null) {
                 throw new MissingParameterException("productOffering");
@@ -500,7 +494,7 @@ public class OrderApi extends BaseApi {
             terminateSubscription.setTerminationReason((String) getProductCharacteristic(productOrderItem.getProduct(),
                 OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
 
-            subscriptionApi.terminateSubscription(terminateSubscription, currentUser);
+            subscriptionApi.terminateSubscription(terminateSubscription, orderNumber, currentUser);
 
         }
 
@@ -669,7 +663,6 @@ public class OrderApi extends BaseApi {
                     BigDecimal.class, new BigDecimal(1)));
                 service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
                     DateUtils.setTimeToZero(new Date())));
-                service.setOrderNumber(orderNumber);
 
                 // FIX - no way to set value via API
                 // service.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
@@ -695,11 +688,11 @@ public class OrderApi extends BaseApi {
 
         // Activate services
         if (!activateServicesRequestDto.getServicesToActivateDto().getService().isEmpty()) {
-            subscriptionApi.activateServices(activateServicesRequestDto, currentUser, true);
+            subscriptionApi.activateServices(activateServicesRequestDto, orderNumber, currentUser, true);
         }
         if (!servicesToTerminate.isEmpty()) {
             for (TerminateSubscriptionServicesRequestDto terminationDto : servicesToTerminate) {
-                subscriptionApi.terminateServices(terminationDto, currentUser);
+                subscriptionApi.terminateServices(terminationDto, orderNumber, currentUser);
             }
         }
     }
@@ -831,7 +824,7 @@ public class OrderApi extends BaseApi {
             int index = 1;
             if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                    if (index < orderItem.getProductOfferings().size()) {
+                    if (index < orderItem.getOrderItemProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
                     } else {
                         services.add(productRelationship.getProduct());
