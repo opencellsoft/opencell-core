@@ -847,7 +847,7 @@ public class SubscriptionApi extends BaseApi {
                 terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
                 terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
                 terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
-                terminateSubscription(terminateSubscriptionDto, null, currentUser);
+                terminateSubscription(terminateSubscriptionDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                 return;
             } else {
 
@@ -909,7 +909,7 @@ public class SubscriptionApi extends BaseApi {
                     terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
-                    terminateServices(terminateServiceDto, null, currentUser);
+                    terminateServices(terminateServiceDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                     continue;
                 }
 

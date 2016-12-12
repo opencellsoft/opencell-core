@@ -399,7 +399,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 				countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
-				chargeInstance.getCriteria3(),orderNumberOverride!=null?(orderNumberOverride.equals("")?null:orderNumberOverride):chargeInstance.getOrderNumber(), null,
+				chargeInstance.getCriteria3(), orderNumberOverride!=null?(orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER)?null:orderNumberOverride):chargeInstance.getOrderNumber(), null,
 				null, null, false, isVirtual, creator);
 
 		return chargeApplication;
