@@ -228,5 +228,18 @@ public class ValueExpressionWrapper {
 	public static boolean collectionContains(String[] collection, String key) {
 		return Arrays.asList(collection).contains(key);
 	}
+	
+	public static String getFormIds(String prefix, int length) {
+		if (length == 0) {
+			return prefix + "_" + 0;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			sb.append(prefix + "_" + i + " ");
+		}
+
+		return sb.deleteCharAt(sb.length() - 1).toString();
+	}
     
 }
