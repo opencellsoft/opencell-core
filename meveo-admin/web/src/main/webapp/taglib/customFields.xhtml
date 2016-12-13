@@ -64,7 +64,7 @@
     	<c:set var="renderForm" value="false" />
     </c:if>
     
-    <c:if test="${empty(formId)}">
+    <c:if test="${empty(cfFormId)}">
     	<c:set var="cfFormId" value="cfForm" />
     </c:if>
 	
@@ -74,8 +74,9 @@
 
 		<c:set var="tabLabel"
 			value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
-
-		<p:tab title="#{tabLabel}">
+		<c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
+		
+		<p:tab title="#{tabLabel}" rendered="#{renderTab}">
 			<c:if test="#{renderForm}">
 				<h:form id="#{cfFormId}_#{index}">
 					<hftl:customElement />	

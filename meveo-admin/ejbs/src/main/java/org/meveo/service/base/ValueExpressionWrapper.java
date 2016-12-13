@@ -231,7 +231,7 @@ public class ValueExpressionWrapper {
 	
 	public static String getFormIds(String prefix, int length) {
 		if (length == 0) {
-			return prefix + "_" + 0;
+			return "";
 		}
 
 		StringBuilder sb = new StringBuilder();
