@@ -58,10 +58,6 @@
 
     <c:set var="index" value="0" />
     
-    <c:if test="${not empty(ignoredFields)}">
-    	<c:set var="fieldsToIgnore" value="${fn:split(ignoredFields,',')}"/>
-    </c:if>
-    
     <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
 
         <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
@@ -72,7 +68,7 @@
                 <c:if test="#{cfFieldOrFg.type == 'field'}">
                     <c:set var="cft" value="#{cfFieldOrFg.data}" />
 					<c:if
-						test="#{(fieldsToIgnore == null or (fieldsToIgnore != null and !exp:collectionContains(fieldsToIgnore, cft.code))) and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+						test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
 						<hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}"
 							messagesId="#{messagesId}" datePattern="#{datePattern}"
 							dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
@@ -83,7 +79,7 @@
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
 							<c:if
-								test="#{(fieldsToIgnore == null or (fieldsToIgnore != null and !exp:collectionContains(fieldsToIgnore, cft.code))) and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+								test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
 								<hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}"
 									messagesId="#{messagesId}" datePattern="#{datePattern}"
 									dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
