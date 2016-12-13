@@ -74,8 +74,8 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 	/**
 	 * 
 	 * @param code
-	 * @param fromDate format yyyy-MM-dd'T'hh:mm:ss or yyyy-MM-dd
-	 * @param toDate   format yyyy-MM-dd'T'hh:mm:ss or yyyy-MM-dd
+	 * @param fromDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
+	 * @param toDate   format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
 	 * @param period
 	 * @param mqCode
 	 * @return
@@ -88,10 +88,10 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
         try {
         	Date from = null,to = null;
         	if(!StringUtils.isBlank(fromDate)){        		
-        		from =DateUtils.guessDate(fromDate, "yyyy-MM-dd","yyyy-MM-dd'T'hh:mm:ss");     		
+        		from =DateUtils.guessDate(fromDate, "yyyy-MM-dd","yyyy-MM-dd'T'HH:mm:ss");     		
         	}
         	if(!StringUtils.isBlank(toDate)){
-        		to =DateUtils.guessDate(toDate, "yyyy-MM-dd","yyyy-MM-dd'T'hh:mm:ss");
+        		to =DateUtils.guessDate(toDate, "yyyy-MM-dd","yyyy-MM-dd'T'HH:mm:ss");
         	}
         		
         	result = measurableQuantityApi.findMVByDateAndPeriod(code,from , to, period, mqCode, getCurrentUser());
