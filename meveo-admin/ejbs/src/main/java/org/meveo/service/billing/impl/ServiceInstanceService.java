@@ -267,7 +267,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             log.debug("serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}", serviceInstance.getSubscriptionChargeInstances().size());
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(),
-                    creator);
+                    null, creator);
                 oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 oneShotChargeInstanceService.update(oneShotChargeInstance, creator);
             }
@@ -309,16 +309,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
     }
 
-    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, User user)
+    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, User user)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+
         terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), user, terminationReason);
+            terminationReason.isApplyTerminationCharges(), orderNumber, user, terminationReason);
         serviceInstance.setSubscriptionTerminationReason(terminationReason);
         update(serviceInstance, user);
     }
 
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            User user, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            String orderNumber, User user, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         if (serviceInstance.getId() != null) {
             log.info("terminateService terminationDate={}, serviceInstanceId={}", terminationDate, serviceInstance.getId());
@@ -383,7 +384,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
                 if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
                     log.debug("applying the termination charge {}", oneShotChargeInstance.getCode());
-                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, serviceInstance.getQuantity(), user);
+                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, serviceInstance.getQuantity(), orderNumber, user);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 } else {
                     log.debug("we do not apply the termination charge because of its status {}", oneShotChargeInstance.getCode(), oneShotChargeInstance.getStatus());
@@ -419,7 +420,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("service instance is not terminated. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
 
-        terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), user, newReason);
+        terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), null, user, newReason);
 
     }
 

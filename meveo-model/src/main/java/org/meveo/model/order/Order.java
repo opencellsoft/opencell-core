@@ -24,6 +24,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -133,9 +134,9 @@ public class Order extends BusinessCFEntity {
 
     @Column(name = "RECEIVED_FROM", length = 50)
     private String receivedFromApp;
-    
- 	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "orders")		
-	private List<Invoice> invoices = new ArrayList<Invoice>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
+    private List<Invoice> invoices = new ArrayList<Invoice>();
 
     public String getExternalId() {
         return externalId;
@@ -263,29 +264,31 @@ public class Order extends BusinessCFEntity {
     public void setReceivedFromApp(String receivedFromApp) {
         this.receivedFromApp = receivedFromApp;
     }
-    
-    
 
     /**
-	 * @return the invoices
-	 */
-	public List<Invoice> getInvoices() {
-		return invoices;
-	}
+     * @return the invoices
+     */
+    public List<Invoice> getInvoices() {
+        return invoices;
+    }
 
-	/**
-	 * @param invoices the invoices to set
-	 */
-	public void setInvoices(List<Invoice> invoices) {
-		this.invoices = invoices;
-	}
+    /**
+     * @param invoices the invoices to set
+     */
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
+    }
 
-	public Set<UserAccount> getUserAccounts() {
+    public Set<UserAccount> getUserAccounts() {
 
         Set<UserAccount> userAccounts = new HashSet<>();
         for (OrderItem orderItem : orderItems) {
             userAccounts.add(orderItem.getUserAccount());
         }
         return userAccounts;
+    }
+
+    public String getOrderNumber() {
+        return StringUtils.isBlank(externalId) ? code : externalId;
     }
 }

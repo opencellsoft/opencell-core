@@ -68,7 +68,12 @@ import org.slf4j.LoggerFactory;
 public class ChargeInstance extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
-
+    
+	/**
+	 * Specifies that charge does not apply to any order
+	 */
+	public static String NO_ORDER_NUMBER ="none";
+    
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;

@@ -111,7 +111,7 @@ public class SubscriptionImportService extends ImportService{
 						subscription,
 						DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(),
 								paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")),
-						subscriptionTerminationType, currentUser);
+						subscriptionTerminationType, null, currentUser);
 				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Terminated");
 

@@ -94,8 +94,8 @@
                             <h:outputText value="#{entity.subscription.code}" rendered="#{entity.action != OrderItemActionEnum.ADD}" />
 
                             <h:panelGroup rendered="#{entity.action == OrderItemActionEnum.ADD}">
-                                <ui:repeat value="#{entity.productOfferings.toArray()}" var="c">
-                                    <h:outputText value="#{c.code}" />
+                                <ui:repeat value="#{entity.orderItemProductOfferings.toArray()}" var="c">
+                                    <h:outputText value="#{c.productOffering.code}" />
                                     <br />
                                 </ui:repeat>
                             </h:panelGroup>

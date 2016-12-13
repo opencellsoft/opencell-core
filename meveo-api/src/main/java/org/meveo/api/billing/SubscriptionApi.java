@@ -250,7 +250,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void activateServices(ActivateServicesRequestDto postData, User currentUser, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
+    public void activateServices(ActivateServicesRequestDto postData, String orderNumber, User currentUser, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -311,7 +311,10 @@ public class SubscriptionApi extends BaseApi {
                             // // Is there a need to reset it?
                             subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                             subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
-                            subscriptionServiceInstance.setOrderNumber(serviceToActivateDto.getOrderNumber());
+                            // Do not update existing value
+                            if (orderNumber != null) {
+                                subscriptionServiceInstance.setOrderNumber(orderNumber);
+                            }
                             serviceInstance = subscriptionServiceInstance;
                             serviceInstances.add(serviceInstance);
                         }
@@ -356,7 +359,8 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
-                serviceInstance.setOrderNumber(serviceToActivateDto.getOrderNumber());
+                serviceInstance.setOrderNumber(orderNumber);
+                
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
@@ -509,6 +513,7 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
+
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
@@ -576,10 +581,10 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        try {
+        try {            
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-                postData.getDescription(),postData.getOrderNumber(), currentUser, true);
+                postData.getDescription(), currentUser, true);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
@@ -633,7 +638,7 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 
-    public void terminateSubscription(TerminateSubscriptionRequestDto postData, User currentUser) throws MeveoApiException {
+    public void terminateSubscription(TerminateSubscriptionRequestDto postData, String orderNumber, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
@@ -664,14 +669,14 @@ public class SubscriptionApi extends BaseApi {
         }
 
         try {
-            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, currentUser);
+            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, orderNumber, currentUser);
         } catch (BusinessException e) {
             log.error("error while setting subscription termination", e);
             throw new MeveoApiException(e.getMessage());
         }
     }
 
-    public void terminateServices(TerminateSubscriptionServicesRequestDto postData, User currentUser) throws MeveoApiException {
+    public void terminateServices(TerminateSubscriptionServicesRequestDto postData, String orderNumber, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
@@ -704,7 +709,7 @@ public class SubscriptionApi extends BaseApi {
             ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(serviceInstanceCode, subscription);
             if (serviceInstance != null) {
                 try {
-                    serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, currentUser);
+                    serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, orderNumber, currentUser);
                 } catch (BusinessException e) {
                     log.error("service termination={}", e.getMessage());
                     throw new MeveoApiException(e.getMessage());
@@ -842,7 +847,7 @@ public class SubscriptionApi extends BaseApi {
                 terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
                 terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
                 terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
-                terminateSubscription(terminateSubscriptionDto, currentUser);
+                terminateSubscription(terminateSubscriptionDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                 return;
             } else {
 
@@ -904,7 +909,7 @@ public class SubscriptionApi extends BaseApi {
                     terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
-                    terminateServices(terminateServiceDto, currentUser);
+                    terminateServices(terminateServiceDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                     continue;
                 }
 
@@ -935,7 +940,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 if (!serviceToActivates.isEmpty()) {
-                    activateServices(activateServicesDto, currentUser, true);
+                    activateServices(activateServicesDto, null, currentUser, true);
                     serviceToActivates.clear();
                 }
             }

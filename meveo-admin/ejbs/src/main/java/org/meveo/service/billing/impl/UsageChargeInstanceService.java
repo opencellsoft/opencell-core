@@ -77,6 +77,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
 		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
+		usageChargeInstance.setOrderNumber(serviceInstance.getOrderNumber());
+        
 		List<WalletTemplate> walletTemplates = serviceUsageChargeTemplate.getWalletTemplates();
 		log.debug("usage charge wallet templates {}, by default we set it to postpaid",walletTemplates);
 		usageChargeInstance.setPrepaid(false);
