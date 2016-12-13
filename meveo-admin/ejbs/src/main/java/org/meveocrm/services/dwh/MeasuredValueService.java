@@ -203,10 +203,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		}
 		
 		if(fromDate != null){
-			queryBuilder.addCriterion("m.date", ">", fromDate, false);
+			queryBuilder.addCriterion("m.date", ">=", fromDate, false);
 		}
 		if(toDate != null){
-			queryBuilder.addCriterion("m.date", "<=", toDate, false);
+			queryBuilder.addCriterion("m.date", "<", toDate, false);
 		}		
 
 		if (period != null) {
