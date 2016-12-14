@@ -722,10 +722,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 			updateNoCheck(operationToRerate);
 			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) { 
-			log.error("Failed to reRate",e);
+			log.error("Failed to reRate", e.getMessage());
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
 			operationToRerate.setReratedWalletOperation(null);
 		}
+		
 		log.debug("end rerate wallet operation");
 	}
 	

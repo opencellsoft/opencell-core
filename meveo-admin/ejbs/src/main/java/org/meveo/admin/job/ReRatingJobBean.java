@@ -59,7 +59,7 @@ public class ReRatingJobBean implements Serializable {
 					result.registerSucces();
 				} catch (Exception e) {
 					//rejectededOperationProducer.fire(walletOperationId);
-				    log.error("Failed to rerate operation {}", walletOperationId, e);
+				    log.error("Failed to rerate operation {}", walletOperationId, e.getMessage());
 					result.registerError(e.getMessage());
 				}
 			}
