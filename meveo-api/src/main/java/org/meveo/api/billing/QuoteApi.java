@@ -170,8 +170,6 @@ public class QuoteApi extends BaseApi {
 
                     if (billingAccount != null && !billingAccount.equals(itemLevelUserAccount.getBillingAccount())) {
                         throw new InvalidParameterException("Accounts declared on quote level and/or item levels don't belong to the same billing account");
-                    } else if (billingAccount == null) {
-                        billingAccount = itemLevelUserAccount.getBillingAccount();
                     }
                 }
             }
