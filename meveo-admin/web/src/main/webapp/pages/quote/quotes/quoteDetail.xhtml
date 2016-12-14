@@ -261,7 +261,7 @@
 
                                                     <div class="clearLeft"></div>
                                                     <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{quoteBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
+                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" cfFormId="offerCFForm_#{itemStatus.index}" />
 
                                                 </p:tab>
                                             </c:forEach>
