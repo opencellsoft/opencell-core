@@ -230,6 +230,11 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
+            
+			if (entity.getQuoteItems() == null) {
+				entity.setQuoteItems(new ArrayList<QuoteItem>());
+			}
+            
             for (QuoteItem quoteItem : entity.getQuoteItems()) {
                 if (quoteItem.getUserAccount() != null) {
                     UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
