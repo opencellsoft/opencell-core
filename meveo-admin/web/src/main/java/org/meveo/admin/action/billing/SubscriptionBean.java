@@ -39,6 +39,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.Auditable;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -308,9 +309,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
                 oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
                 oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
+                
                 oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(),
+					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null,
 					getCurrentUser(), true);
            
             oneShotChargeInstance = null;
@@ -593,7 +595,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             entity.getServiceInstances().add(index, selectedServiceInstance);
             
             if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, getCurrentUser());
+                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
             } else {
                 serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
             }           
@@ -618,7 +620,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     	try { 
 			log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
 					new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
-    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), getCurrentUser());
+    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
     		messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
     	} catch (BusinessException e1) {
     		messages.error(e1.getMessage());

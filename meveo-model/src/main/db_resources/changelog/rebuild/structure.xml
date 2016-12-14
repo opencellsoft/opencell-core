@@ -3820,7 +3820,7 @@
             <column name="nb_error" type="BIGINT" />
             <column name="nb_warning" type="BIGINT" />
             <column name="nb_to_process" type="BIGINT" />
-            <column name="report" type="TEXT" />
+            <column name="report" type="${type.longText}" />
             <column name="start_date" type="DATETIME" />
             <column name="provider_id" type="BIGINT" />
             <column name="job_launcher" type="varchar(255)" />

@@ -187,9 +187,7 @@ public class ProductInstance extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        // FIXME
-        // return new ICustomFieldEntity[]{productTemplate};
-        return null;
+    	return new ICustomFieldEntity[]{productTemplate};        
     }
 
 }

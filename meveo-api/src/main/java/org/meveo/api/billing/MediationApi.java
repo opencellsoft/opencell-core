@@ -14,6 +14,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -109,13 +110,13 @@ public class MediationApi extends BaseApi {
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}",e);
-						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-						} else {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-						}
-
+                        if (e instanceof InsufficientBalanceException) {
+                            log.error("edr rejected={}", edr.getRejectReason());
+                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+                        } else {
+                            log.error("Exception rating edr={}",e);
+                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
+                        }
 					}
 				}
 			} catch (CDRParsingException e) {
@@ -222,13 +223,13 @@ public class MediationApi extends BaseApi {
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}",e);
-						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
+					    if (e instanceof InsufficientBalanceException) {
+                            log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
+						    log.error("Exception rating edr={}",e);
 							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
-
 					}
 				} else {
 					throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");

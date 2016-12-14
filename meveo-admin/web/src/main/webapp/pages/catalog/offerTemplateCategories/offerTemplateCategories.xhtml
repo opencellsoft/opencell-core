@@ -27,8 +27,11 @@
                             </p:tree>
                             <h:outputText value="#{messages['offerTemplateCategory.noOfferTemplateCategory']}"
                                 rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount==0}" />
-                        </p:outputPanel>
+                        </p:outputPanel>                        
                     </p:panel>
+                    <p:panel>
+                    	<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}" styleClass="Blue"></h:outputLabel>
+                   	</p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="col2">
                     <p:panel  styleClass="form-panel">
@@ -45,16 +48,16 @@
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['offerTemplateCategory.addOfferTemplateCategory']}" />
                             </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
-                                <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}"
-                                    update="messages offerCategoryPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['offerTemplateCategory.moveUp']}" />
-                            </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
-                                <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}"
-                                    update="messages offerCategoryPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['offerTemplateCategory.moveDown']}" />
-                            </h:panelGrid>
+<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+<!--                                 <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}" -->
+<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveUp']}" /> -->
+<!--                             </h:panelGrid> -->
+<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+<!--                                 <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}" -->
+<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveDown']}" /> -->
+<!--                             </h:panelGrid> -->
                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                                 <p:commandButton id="deleteOfferTemplateCategory" icon="ui-icon-trash" action="#{offerTemplateCategoryBean.removeOfferTemplateCategory()}"
                                     update="messages offerCategoryPanel offerTemplateCategoryDetailPanel buttons" ajax="true">

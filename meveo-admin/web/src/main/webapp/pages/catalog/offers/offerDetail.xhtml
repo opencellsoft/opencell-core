@@ -55,7 +55,7 @@
                         </c:if>
                         <c:if test="#{offerTemplateBean.bomId ne null}">
                         	<hftl:decorateFormField fieldId="transientCode" label="#{messages['offerTemplate.code']}">
-                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" />
+                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" required="true" />
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
@@ -149,11 +149,11 @@
                 </f:facet>
                 <!-- custom fields -->
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
                 </c:if>
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
                     <p:tabView>
-                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
                     </p:tabView>
                 </c:if>
                 <hftl:displayWorkflowsHistory entity="#{offerTemplateBean.entity}" />
@@ -187,12 +187,12 @@
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
                                     </c:if>
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
                                         </p:tabView>
                                     </c:if>
                                 </p:panel>

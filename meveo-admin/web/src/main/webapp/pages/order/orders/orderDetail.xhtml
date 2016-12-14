@@ -94,8 +94,8 @@
                             <h:outputText value="#{entity.subscription.code}" rendered="#{entity.action != OrderItemActionEnum.ADD}" />
 
                             <h:panelGroup rendered="#{entity.action == OrderItemActionEnum.ADD}">
-                                <ui:repeat value="#{entity.productOfferings.toArray()}" var="c">
-                                    <h:outputText value="#{c.code}" />
+                                <ui:repeat value="#{entity.orderItemProductOfferings.toArray()}" var="c">
+                                    <h:outputText value="#{c.productOffering.code}" />
                                     <br />
                                 </ui:repeat>
                             </h:panelGroup>
@@ -214,7 +214,7 @@
                                                         pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
                                                         <p:calendar id="subscriptionDate_#{itemStatus.index}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
-                                                            required="#{itemConfiguration.isMain()}"
+                                                            required="#{itemConfiguration.isMain()}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
@@ -232,7 +232,7 @@
                                                     <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}"
                                                         pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-                                                        <p:calendar id="subscriptionEndDate_#{itemStatus.index}"
+                                                        <p:calendar id="subscriptionEndDate_#{itemStatus.index}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"

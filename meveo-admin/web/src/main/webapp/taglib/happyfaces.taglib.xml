@@ -71,6 +71,10 @@
         <source>customFields.xhtml</source>
     </tag>
     <tag>
+        <tag-name>customElement</tag-name>
+        <source>customElement.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>customFieldPeriods</tag-name>
         <source>customFieldPeriods.xhtml</source>
     </tag>    

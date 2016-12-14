@@ -40,7 +40,6 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     @Inject
     private NotificationService notificationService;
 
-    @SuppressWarnings("rawtypes")
     @Inject
     private CounterTemplateService counterTemplateService;
 

@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
@@ -146,7 +148,15 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			}
 		}
 		
-		newOfferTemplate.setCode(code);		
+		newOfferTemplate.setCode(code);
+		
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
+		try {
+			String newImagePath = offerImageUploadEventHandler.duplicateImage(newOfferTemplate, imagePath, code, currentUser.getProvider().getCode());
+			newOfferTemplate.setImagePath(newImagePath);
+		} catch (IOException e1) {
+			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
+		}
 		
 		newOfferTemplate.setDescription(offerDescription);
 		if (StringUtils.isBlank(name)) {
@@ -156,8 +166,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
 		newOfferTemplate.setValidTo(bomOffer.getValidTo());
-		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
-		newOfferTemplate.setImagePath(imagePath);
+		newOfferTemplate.setBusinessOfferModel(businessOfferModel);		
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
 		}
@@ -257,6 +266,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
 					newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 					newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+					try {
+						ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
+						String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode(), currentUser.getProvider().getCode());
+						newServiceTemplate.setImagePath(newImagePath);
+					} catch (IOException e1) {
+						log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
+					}
 					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
 
 					serviceTemplateService.create(newOfferServiceTemplate.getServiceTemplate(), currentUser);
@@ -400,14 +416,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							RecurringChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							RecurringChargeTemplate newChargeTemplate = new RecurringChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -416,6 +425,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							recurringChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -435,14 +446,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -451,6 +455,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -470,14 +476,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -486,6 +485,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -505,14 +506,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							UsageChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -521,6 +515,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							usageChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -582,6 +578,33 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// save the cf
 
 		return newOfferTemplate;
+	}
+	
+	private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
+		if (sourceChargeTemplate.getEdrTemplates() != null && sourceChargeTemplate.getEdrTemplates().size() > 0) {
+			for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
+				targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+			}
+		}
+	}
+	
+	/**
+	 * Copy basic properties of a chargeTemplate to another object.
+	 * @param sourceChargeTemplate
+	 * @param targetTemplate
+	 * @param prefix
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 */
+	private void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
+		BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+		targetTemplate.setAuditable(null);
+		targetTemplate.setId(null);
+		targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
+		targetTemplate.clearUuid();
+		targetTemplate.setVersion(0);
+		targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
+		targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
 	}
 	
 	@SuppressWarnings("unchecked")

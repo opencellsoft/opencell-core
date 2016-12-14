@@ -18,6 +18,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -61,7 +62,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			missingParameters.add("code");
 		}
 		if (StringUtils.isBlank(postData.getName())) {
-			postData.setName(postData.getCode());
+		    postData.setName(postData.getCode());
 		}
 		handleMissingParameters();
 
@@ -79,6 +80,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), offerTemplate, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
 		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
@@ -110,6 +114,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
 		} catch (Exception e) {
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
@@ -128,20 +135,23 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
 		}
+		
 		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
 			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode(), provider);
 			if (offerTemplateCategory == null) {
 				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
 			}
-			offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+			offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
 		}
+		
 		if (postData.getOfferTemplateCategories() != null) {
+			offerTemplate.getOfferTemplateCategories().clear();
 			for (String categoryCode : postData.getOfferTemplateCategories()) {
 				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode, provider);
 				if (offerTemplateCategory == null) {
 					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
 				}
-				offerTemplate.getOfferTemplateCategories().add(offerTemplateCategory);
+				offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
 			}
 		}
 		
@@ -240,7 +250,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (serviceTemplateDto != null) {
 			serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(), currentUser.getProvider());
 			if (serviceTemplate == null) {
-				throw new MeveoApiException(String.format("ServiceTemplatecode = %s]does not exist.", serviceTemplateDto.getCode()));
+				throw new MeveoApiException(String.format("ServiceTemplatecode %s does not exist.", serviceTemplateDto.getCode()));
 			}
 		}
 
@@ -273,7 +283,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (productTemplateDto != null) {
 			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
 			if (productTemplate == null) {
-				throw new MeveoApiException(String.format("ProductTemplate[code = %s]does not exist.", productTemplateDto.getCode()));
+				throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
 			}
 		}
 

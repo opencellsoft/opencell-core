@@ -1,7 +1,6 @@
 package org.meveo.api.dto.dwh;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
@@ -30,7 +29,7 @@ public class MeasuredValueDto {
 		measurableQuantityCode = e.getMeasurableQuantity().getCode();
 		code = e.getCode();
 		measurementPeriod = e.getMeasurementPeriod();
-		date = DateUtils.formatDateWithPattern(e.getDate(), "YYYY-MM-DD'T'hh:mm:ss");
+		date = DateUtils.formatDateWithPattern(e.getDate(), "yyyy-MM-dd'T'HH:mm:ss");
 		dimension1 = e.getDimension1();
 		dimension2 = e.getDimension2();
 		dimension3 = e.getDimension3();

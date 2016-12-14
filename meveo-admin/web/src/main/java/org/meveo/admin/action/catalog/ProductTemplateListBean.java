@@ -11,9 +11,12 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.BundleProductTemplate;
+import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
@@ -84,6 +87,21 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 		}
 
 		return outputStream.toByteArray();
+	}
+	
+	public LazyDataModel<ProductTemplate> listAll(BundleTemplate bt, List<BundleProductTemplate> bundleProductTemplates) {
+		filters.clear();
+		
+		List<Long> ids = new ArrayList<>();
+		for (BundleProductTemplate bpt : bundleProductTemplates) {
+			ids.add(bpt.getProductTemplate().getId());
+		}
+		filters.put("ne code", bt.getCode());
+        if (!ids.isEmpty()) {
+            filters.put("ne id", ids);
+        }
+
+		return getLazyDataModel();
 	}
 
 	public MeveoInstance getMeveoInstanceToExport() {

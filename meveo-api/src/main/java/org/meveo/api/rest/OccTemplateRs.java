@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
+import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 @Path("/occTemplate")
@@ -71,5 +72,14 @@ public interface OccTemplateRs extends IBaseRs {
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(OccTemplateDto postData);
+
+    /**
+     * Get List of OccTemplates.
+     *
+     * @return
+     */
+    @Path("/list")
+    @GET
+    GetOccTemplatesResponseDto list();
 
 }

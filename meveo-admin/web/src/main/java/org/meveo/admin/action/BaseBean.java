@@ -1329,7 +1329,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			uploadHandler.handleImageUpload(entity, code, uploadedFile, getCurrentProvider().getCode());
 			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		} catch (Exception e) {
-			messages.info(new BundleKey("messages", "message.upload.fail"));
+			messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());
 		}
 	}
 

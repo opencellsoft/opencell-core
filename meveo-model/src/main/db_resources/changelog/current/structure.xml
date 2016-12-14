@@ -3029,6 +3029,54 @@
     
     </changeSet>    
 
+    <changeSet id="#2212_20161203-0" author="AndriusKarpavicius" dbms="mysql">
+        <dropForeignKeyConstraint  baseTableName="ORD_QUOTE_ITEM" constraintName="fk_ord_quote_item_invoice" />  
+        <dropIndex tableName="ORD_QUOTE_ITEM" indexName="fk_ord_quote_item_invoice"/>
+    </changeSet>
+    
+    <changeSet id="#2212_20161203-1" author="AndriusKarpavicius" dbms="postgresql">
+        <dropForeignKeyConstraint  baseTableName="ORD_QUOTE_ITEM" constraintName="fk_ord_quote_item_invoice" />  
+    </changeSet>      
+
+    <changeSet id="#2212_20161203" author="AndriusKarpavicius">
+        <dropColumn tableName="ORD_QUOTE_ITEM" columnName="invoice_id"/>
+        
+        <addColumn tableName="ORD_QUOTE">        
+            <column name="invoice_id" type="BIGINT" />
+            <column name="user_account_id" type="BIGINT"/>
+        </addColumn>
+ 
+         <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ord_quote" constraintName="fk_ord_quote_invoice"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_INVOICE" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+    </changeSet>
+    
+    <changeSet id="#2050_20161212" author="AndriusKarpavicius">
+        <delete tableName="ORD_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_item_offerings_seq"/>
+        <delete tableName="ORD_QUOT_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_QUOT_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_quot_item_offerings_seq"/>
+    </changeSet>    
+
+
     <changeSet id="#2247_20161202" author="AndriusKarpavicius"> 
         <addColumn tableName="CAT_COUNTER_TEMPLATE">
             <column name="NOTIFICATION_LEVELS" type="VARCHAR(70)"/>
@@ -3042,8 +3090,8 @@
         <update tableName="BILLING_COUNTER_PERIOD">
             <column name="NOTIFICATION_LEVELS" value="0"/>
         </update>
-    </changeSet>
-    
+    </changeSet>    
+
     <changeSet id="#2247_20161202-2" author="AndriusKarpavicius" dbms="postgresql"> 
         <sql>update ADM_NOTIFICATION set EVENT_TYPE_FILTER='COUNTER_DEDUCED' where EVENT_TYPE_FILTER='ZERO_COUNTER'</sql>
         <sql>update ADM_NOTIF_EMAIL set EMAIL_TO_EL= replace(EMAIL_TO_EL, 'event','event.entity') where EMAIL_TO_EL is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
@@ -3057,5 +3105,5 @@
         <sql>update ADM_NOTIF_WEBHOOK_HEADER set headers= replace(headers, 'event','event.entity') where headers is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
-    </changeSet>
+    </changeSet> 
 </databaseChangeLog>

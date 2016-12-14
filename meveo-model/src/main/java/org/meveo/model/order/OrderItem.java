@@ -3,6 +3,7 @@ package org.meveo.model.order;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -64,9 +67,9 @@ public class OrderItem extends BaseEntity {
     /**
      * Product offerings associated to an order item. In case of bundled offers, the first item in a list is the parent offering.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ORD_ITEM_OFFERINGS", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "PRD_OFFERING_ID"))
-    private List<ProductOffering> productOfferings = new ArrayList<>();
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "ITEM_ORDER")
+    private List<OrderItemProductOffering> orderItemProductOfferings = new ArrayList<>();
 
     /**
      * Serialized orderItem dto.
@@ -134,14 +137,6 @@ public class OrderItem extends BaseEntity {
         this.userAccount = userAccount;
     }
 
-    public List<ProductOffering> getProductOfferings() {
-        return productOfferings;
-    }
-
-    public void setProductOfferings(List<ProductOffering> productOfferings) {
-        this.productOfferings = productOfferings;
-    }
-
     public String getSource() {
         return source;
     }
@@ -199,8 +194,8 @@ public class OrderItem extends BaseEntity {
 
     public ProductOffering getMainOffering() {
 
-        if (mainOffering == null && !productOfferings.isEmpty()) {
-            mainOffering = productOfferings.get(0);
+        if (mainOffering == null && orderItemProductOfferings != null && !orderItemProductOfferings.isEmpty()) {
+            mainOffering = orderItemProductOfferings.get(0).getProductOffering();
         }
 
         return mainOffering;
@@ -212,12 +207,20 @@ public class OrderItem extends BaseEntity {
 
     public void resetMainOffering(ProductOffering newMainOffer) {
         this.mainOffering = newMainOffer;
-        productOfferings.clear();
+        orderItemProductOfferings.clear();
         if (newMainOffer != null) {
-            productOfferings.add(newMainOffer);
+            orderItemProductOfferings.add(new OrderItemProductOffering(this, newMainOffer, orderItemProductOfferings.size()));
         }
         orderItemDto = null;
         source = null;
+    }
+
+    public List<OrderItemProductOffering> getOrderItemProductOfferings() {
+        return orderItemProductOfferings;
+    }
+
+    public void setOrderItemProductOfferings(List<OrderItemProductOffering> orderItemProductOfferings) {
+        this.orderItemProductOfferings = orderItemProductOfferings;
     }
 
     /**

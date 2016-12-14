@@ -20,7 +20,7 @@
 		<h:form id="primary-nav-form">
 			<div class="pull-right" id="primary_nav_wrap">
 				<ul id="top-right-menu">
-					<li><a href="#" id=""><i class="fa fa-2x fa-cog"></i></a>
+					<li><a href="#" id="menu1"><i class="fa fa-2x fa-cog"></i></a>
 						<ul style="display: none; z-index: 1">
 							<li><h:commandLink action="#{identity.logout}"
 									value="#{messages['menutop.logout']}"
@@ -30,7 +30,7 @@
 									rendered="#{identity.loggedIn}" styleClass="headerLink"
 									immediate="true" /></li>
 						</ul></li>
-					<li><a href="#"><i class="fa fa-2x fa-question"></i></a>
+					<li><a href="#" id="menu2"><i class="fa fa-2x fa-question"></i></a>
 						<ul style="display: none; z-index: 1">
 							<li><p:link outcome="about"
 									value="#{messages['menu.aboutUs']}"></p:link></li>
@@ -48,6 +48,13 @@
 					$('#top-right-menu li a').click(function(e) {
 						//e.preventDefault();
 						e.stopPropagation();
+						var id = $(this).attr("id");
+						if(id == "menu1") {
+							$("#menu2").parent().find('ul').hide();
+						} else {
+							$("#menu1").parent().find('ul').hide();
+						}
+						
 						$(this).parent().find('ul').slideToggle();
 						$(this).parent().find('ul').delay(5000).fadeOut('slow');
 					});

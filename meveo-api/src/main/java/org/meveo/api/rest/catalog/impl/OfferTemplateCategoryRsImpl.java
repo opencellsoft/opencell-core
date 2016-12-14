@@ -68,7 +68,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         GetOfferTemplateCategoryResponseDto result = new GetOfferTemplateCategoryResponseDto();
 
         try {
-            result.setOfferTemplateCategory(offerTemplateCategoryApi.find(offerTemplateCategoryCode, getCurrentUser().getProvider()));
+            result.setOfferTemplateCategory(offerTemplateCategoryApi.find(offerTemplateCategoryCode, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.RatedTransaction;
+
 /**
  * @author R.AITYAAZZA
  * 
@@ -56,7 +58,27 @@ public class RatedTransactionDto extends BaseDto {
 	private String priceplanCode;
 	private boolean doNotTriggerInvoicing = false;
 
-	public Date getUsageDate() {
+	public RatedTransactionDto(){
+	    
+	}
+	
+	public RatedTransactionDto(RatedTransaction ratedTransaction) {
+        this.setUsageDate(ratedTransaction.getUsageDate());
+        this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
+        this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
+        this.setUnitAmountTax(ratedTransaction.getUnitAmountWithTax());
+        this.setQuantity(ratedTransaction.getQuantity());
+        this.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+        this.setAmountWithTax(ratedTransaction.getAmountWithTax());
+        this.setAmountTax(ratedTransaction.getAmountWithTax());
+        this.setCode(ratedTransaction.getCode());
+        this.setDescription(ratedTransaction.getDescription());
+        this.setUnityDescription(ratedTransaction.getUnityDescription());
+        this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
+        this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
+    }
+
+    public Date getUsageDate() {
 		return usageDate;
 	}
 

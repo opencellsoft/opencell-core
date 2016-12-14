@@ -22,6 +22,11 @@
             </p:breadCrumb>
         </h:form>
 
+        <hftl:entityPopup id="userAccountPopupQuote" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
+            selection="#{quoteBean.entity.userAccount}" updateField=":quoteForm:tabView:quoteInfo:userAccountQuote :quoteForm:tabView:quoteInfo:userAccountQuote_text">
+        </hftl:entityPopup>
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
             column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
@@ -52,9 +57,20 @@
                         <hftl:formField label="#{messages['quote.validTo']}" field="validTo" />
                         <hftl:formField label="#{messages['quote.category']}" field="category" />
 
+                        <hftl:formField id="userAccountQuote" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code" popup="true"
+                            popupId="userAccountPopupQuote" />
+
                         <hftl:formField label="#{messages['quote.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{quoteBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['quote.externalId']}" field="externalId" edit="false"
                             rendered="#{quoteBean.entity.receivedFromApp!=null and quoteBean.entity.externalId!=null}" />
+
+                        <hftl:decorateFormField label="#{messages['quote.invoice']}" rendered="#{quoteBean.entity.invoice!=null}">
+                            <p:link outcome="invoiceDetail" value="#{quoteBean.entity.invoice.invoiceNumberOrTemporaryNumber}">
+                                <f:param name="objectId" value="#{quoteBean.entity.invoice.id}" />
+                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                <f:param name="backView" value="quoteDetail?objectId=#{quoteBean.entity.id}" />
+                            </p:link>
+                        </hftl:decorateFormField>
 
                         <p:fieldset legend="#{messages['quote.processingInstructions']}" styleClass="clearBoth">
                             <hftl:formField label="#{messages['quote.notificationContact']}" field="notificationContact" />
@@ -89,20 +105,11 @@
                         <hftl:column label="#{messages['quote.itemId']}" field="itemId" />
                         <hftl:column label="#{messages['quote.userAccount']}" field="userAccount.code" />
                         <p:column headerText="#{messages['quote.productOfferings']}">
-                            <ui:repeat value="#{entity.productOfferings.toArray()}" var="c">
-                                <h:outputText value="#{c.code}" />
+                            <ui:repeat value="#{entity.quoteItemProductOfferings.toArray()}" var="c">
+                                <h:outputText value="#{c.productOffering.code}" />
                                 <br />
                             </ui:repeat>
                         </p:column>
-                        <p:column headerText="#{messages['quote.invoice']}">
-                            <p:button outcome="invoiceDetail" icon="ui-icon-document" rendered="#{entity.invoice!=null}">
-                                <f:param name="objectId" value="#{entity.invoice.id}"></f:param>
-                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-
-                                <f:param name="backView" value="quoteDetail?objectId=#{entity.quote.id}" />
-                            </p:button>
-                        </p:column>
-
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton icon="ui-icon-document" action="#{quoteBean.editQuoteItem(entity)}"
                                 update=":quoteForm:messages :quoteForm:tabView:quoteItemMessages :quoteForm:tabView:quoteItemDetails" process="@this">
@@ -135,7 +142,7 @@
 
                                 <hftl:formField entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.itemId']}" field="itemId" edit="false" componentWidth="10" />
                                 <hftl:formField id="userAccount" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.userAccount']}" field="userAccount"
-                                    valueLabelField="code" required="true" popup="true" popupId="userAccountPopup" />
+                                    valueLabelField="code" required="#{quoteBean.entity.userAccount==null}" popup="true" popupId="userAccountPopup" />
                                 <hftl:formField id="offer" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.mainOffering']}" field="mainOffering"
                                     valueLabelField="code" popup="true" popupId="offerPopup" required="true" edit="#{quoteBean.quoteEditable}" />
 
@@ -254,7 +261,7 @@
 
                                                     <div class="clearLeft"></div>
                                                     <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{quoteBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
+                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" cfFormId="offerCFForm_#{itemStatus.index}" />
 
                                                 </p:tab>
                                             </c:forEach>
@@ -286,6 +293,8 @@
                 <p:commandButton value="#{messages['quote.sendToProcess']}" action="#{quoteBean.sendToProcess()}" update=":quoteForm:messages @form"
                     rendered="#{quoteBean.workflowEnabled and !quoteBean.entity.transient and quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS}" />
                 <p:commandButton value="#{messages['quote.createInvoice']}" action="#{quoteBean.createInvoice()}" update=":quoteForm:messages @form"
+                    rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
+                <p:commandButton value="#{messages['quote.placeOrder']}" action="#{quoteBean.placeOrder()}" update=":quoteForm:messages @form"
                     rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
 
             </ui:define>

@@ -55,12 +55,11 @@ public class DefaultImageStreamer {
 			String providerCode = context.getExternalContext().getRequestParameterMap().get("providerCode");
 			String groupName = context.getExternalContext().getRequestParameterMap().get("pictureGroupName");
 
-			String imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + fileName;
-
-			log.debug("loading image={}", imagePath);
+			String imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + fileName;			
 			try {
 				streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath));
 			} catch (FileNotFoundException | NullPointerException e) {
+				log.debug("failed loading image={}", imagePath);
 				imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + getDefaultImage(groupName);
 				try {
 					streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath), "image/png");

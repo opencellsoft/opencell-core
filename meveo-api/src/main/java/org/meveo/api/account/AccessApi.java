@@ -12,6 +12,7 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -56,6 +57,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, true, currentUser);
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
             } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
@@ -95,6 +99,9 @@ public class AccessApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, false, currentUser);
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
             } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;

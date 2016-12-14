@@ -33,5 +33,53 @@
 			
 		</hftl:formPanel>
 
+		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
+			modal="true" appendTo="@(body)">
+			<h:form id="addBundleProductForm">
+				<p:panel id="headerPanel">
+					<p:dataTable id="productTemplatesTable" var="prodT"
+						value="#{productTemplateListBean.listAll(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
+						paginator="true" rows="5" paginatorPosition="top"
+						paginatorAlwaysVisible="true"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						lazy="true" styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:graphicImage id="productImage"
+								value="#{defaultImageStreamer.image}" cache="false" width="100"
+								height="100">
+								<f:param name="providerCode"
+									value="#{productTemplateListBean.currentProvider.code}"></f:param>
+								<f:param name="fileName" value="#{prodT.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
+						<p:column headerText="#{messages['commons.name']}">
+							<h:outputText value="#{prodT.name}"></h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['BusinessEntity.description']}">
+							<h:outputText value="#{prodT.description}" />
+						</p:column>
+						<p:column headerText="#{messages['commons.validFrom']}">
+							<h:outputText value="#{prodT.validFrom}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.validTo']}">
+							<h:outputText value="#{prodT.validTo}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.actions']}">
+							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
+								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
+								update=":#{p:component('bundleTemplateList')} :#{p:component('messages')} :selectProduct"
+								oncomplete="PF('selectProduct').hide()">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>

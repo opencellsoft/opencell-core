@@ -30,6 +30,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
@@ -153,6 +154,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -204,6 +208,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -444,6 +451,9 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
