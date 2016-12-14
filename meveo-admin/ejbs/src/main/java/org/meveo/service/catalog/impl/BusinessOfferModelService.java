@@ -416,14 +416,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							RecurringChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							RecurringChargeTemplate newChargeTemplate = new RecurringChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -432,6 +425,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							recurringChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -451,14 +446,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -467,6 +455,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -486,14 +476,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -502,6 +485,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -521,14 +506,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							UsageChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
 							UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
 
-							BeanUtils.copyProperties(newChargeTemplate, chargeTemplate);
-							newChargeTemplate.setAuditable(null);
-							newChargeTemplate.setId(null);
-							newChargeTemplate.setCode(prefix + chargeTemplate.getCode());
-							newChargeTemplate.clearUuid();
-							newChargeTemplate.setVersion(0);
-							newChargeTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-							newChargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
 
 							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
 								continue;
@@ -537,6 +515,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 							}
 
 							usageChargeTemplateService.create(newChargeTemplate, currentUser);
+							
+							copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -598,6 +578,33 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// save the cf
 
 		return newOfferTemplate;
+	}
+	
+	private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
+		if (sourceChargeTemplate.getEdrTemplates() != null && sourceChargeTemplate.getEdrTemplates().size() > 0) {
+			for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
+				targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+			}
+		}
+	}
+	
+	/**
+	 * Copy basic properties of a chargeTemplate to another object.
+	 * @param sourceChargeTemplate
+	 * @param targetTemplate
+	 * @param prefix
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 */
+	private void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
+		BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+		targetTemplate.setAuditable(null);
+		targetTemplate.setId(null);
+		targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
+		targetTemplate.clearUuid();
+		targetTemplate.setVersion(0);
+		targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
+		targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
 	}
 	
 	@SuppressWarnings("unchecked")
