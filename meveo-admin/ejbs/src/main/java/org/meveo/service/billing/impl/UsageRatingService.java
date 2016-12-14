@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -297,7 +298,7 @@ public class UsageRatingService {
                 log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
             }
             
-            List<BigDecimal> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(initialValue, cachedCounterPeriod.getValue());
+            List<Entry<String, BigDecimal>> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(initialValue, cachedCounterPeriod.getValue());
 
             if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
                 CounterPeriod counterPeriod = counterPeriodService.findById(cachedCounterPeriod.getCounterPeriodId());
@@ -307,10 +308,10 @@ public class UsageRatingService {
         return deducedQuantityInEDRUnit;
     }
 
-    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<BigDecimal> counterValues) {
-        for (BigDecimal counterValue : counterValues) {
+    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Entry<String, BigDecimal>> counterPeriodEventLevels) {
+        for (Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
             try {
-                CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue);
+                CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue.getValue(), counterValue.getKey());
                 event.setCounterPeriod(counterPeriod);
                 counterPeriodEvent.fire(event);
             } catch (Exception e) {

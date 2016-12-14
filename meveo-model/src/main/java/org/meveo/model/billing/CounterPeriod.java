@@ -1,10 +1,11 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,14 +25,15 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "COUNTER_INSTANCE_ID",
-		"PERIOD_START_DATE" }))
+@Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "COUNTER_INSTANCE_ID", "PERIOD_START_DATE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_PERIOD_SEQ")
 @NamedQueries({ @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
 public class CounterPeriod extends BusinessEntity {
@@ -61,8 +63,8 @@ public class CounterPeriod extends BusinessEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal value;
 
-    @Column(name = "NOTIFICATION_LEVELS", length = 70)
-    @Size(max = 70)
+    @Column(name = "NOTIFICATION_LEVELS", length = 100)
+    @Size(max = 100)
     private String notificationLevels;
 
     public CounterInstance getCounterInstance() {
@@ -122,36 +124,38 @@ public class CounterPeriod extends BusinessEntity {
     }
 
     /**
-     * Get notification levels converted to a list of big decimal values
+     * Get notification levels converted to a map of big decimal values with key being an original threshold value (that could have been entered as % or a number)
      * 
-     * @return A list of big decimal values
+     * @return A map of big decimal values with original threshold values as a key
      */
-    public List<BigDecimal> getNotificationLevelsAsList() {
-
-        List<BigDecimal> bdLevels = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    public Map<String, BigDecimal> getNotificationLevelsAsMap() {
 
         if (StringUtils.isBlank(notificationLevels)) {
             return null;
         }
+        Map<String, BigDecimal> bdLevelMap = new LinkedHashMap<>();
 
-        String[] levels = notificationLevels.split(",");
-        for (String level : levels) {
-            level = level.trim();
-            if (StringUtils.isBlank(level)) {
-                continue;
-            }
-            try {
-                bdLevels.add(new BigDecimal(level));
+        Map<String, ?> bdLevelMapObj = JsonUtils.toObject(notificationLevels, LinkedHashMap.class);
 
-            } catch (Exception e) {
+        for (Entry<String, ?> mapItem : bdLevelMapObj.entrySet()) {
+
+            if (mapItem.getValue() instanceof String) {
+                bdLevelMap.put(mapItem.getKey(), new BigDecimal((String) mapItem.getValue()));
+            } else if (mapItem.getValue() instanceof Double) {
+                bdLevelMap.put(mapItem.getKey(), new BigDecimal((Double) mapItem.getValue()));
+            } else if (mapItem.getValue() instanceof Integer) {
+                bdLevelMap.put(mapItem.getKey(), new BigDecimal((Integer) mapItem.getValue()));
+            } else if (mapItem.getValue() instanceof Long) {
+                bdLevelMap.put(mapItem.getKey(), new BigDecimal((Long) mapItem.getValue()));
             }
         }
 
-        if (bdLevels.isEmpty()) {
+        if (bdLevelMap.isEmpty()) {
             return null;
         }
 
-        return bdLevels;
+        return bdLevelMap;
     }
 
     /**
@@ -162,7 +166,7 @@ public class CounterPeriod extends BusinessEntity {
      */
     public void setNotificationLevels(String notificationLevels, BigDecimal initialValue) {
 
-        List<BigDecimal> convertedLevels = new ArrayList<>();
+        Map<String, BigDecimal> convertedLevels = new HashMap<>();
 
         if (StringUtils.isBlank(notificationLevels)) {
             this.notificationLevels = null;
@@ -180,21 +184,21 @@ public class CounterPeriod extends BusinessEntity {
                 if (level.endsWith("%") && level.length() > 1) {
                     bdLevel = new BigDecimal(level.substring(0, level.length() - 1));
                     if (bdLevel.compareTo(new BigDecimal(100)) < 0) {
-                        convertedLevels.add(initialValue.multiply(bdLevel).divide(new BigDecimal(100)).setScale(2));
+                        convertedLevels.put(level, initialValue.multiply(bdLevel).divide(new BigDecimal(100)).setScale(2));
                     }
 
                 } else if (!level.endsWith("%")) {
                     bdLevel = new BigDecimal(level);
                     if (initialValue.compareTo(bdLevel) > 0) {
-                        convertedLevels.add(bdLevel);
+                        convertedLevels.put(level, bdLevel);
                     }
                 }
             } catch (Exception e) {
             }
         }
 
-        Collections.sort(convertedLevels);
+        convertedLevels = ListUtils.sortMapByValue(convertedLevels);
 
-        this.notificationLevels = org.meveo.commons.utils.StringUtils.concatenate(",", convertedLevels);
+        this.notificationLevels = JsonUtils.toJson(convertedLevels, false);
     }
 }

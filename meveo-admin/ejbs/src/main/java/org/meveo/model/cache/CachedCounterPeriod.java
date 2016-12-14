@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.meveo.model.billing.CounterPeriod;
 
@@ -16,7 +18,7 @@ public class CachedCounterPeriod {
     private BigDecimal level;
     private boolean dbDirty;
     private CachedCounterInstance counterInstance;
-    private List<BigDecimal> notificationLevels;
+    private Map<String, BigDecimal> notificationLevels;
 
     public Long getCounterPeriodId() {
         return counterPeriodId;
@@ -61,7 +63,7 @@ public class CachedCounterPeriod {
         this.startDate = counterPeriod.getPeriodStartDate();
         this.value = counterPeriod.getValue();
         this.counterInstance = counterInstance;
-        this.notificationLevels = counterPeriod.getNotificationLevelsAsList();
+        this.notificationLevels = counterPeriod.getNotificationLevelsAsMap();
     }
 
     /**
@@ -71,14 +73,14 @@ public class CachedCounterPeriod {
      * @param toValue Counter changed to value
      * @return A list of counter values that match notification levels
      */
-    public List<BigDecimal> getMatchedNotificationLevels(BigDecimal fromValue, BigDecimal toValue) {
+    public List<Entry<String, BigDecimal>> getMatchedNotificationLevels(BigDecimal fromValue, BigDecimal toValue) {
         if (notificationLevels == null) {
             return null;
         }
 
-        List<BigDecimal> matchedLevels = new ArrayList<>();
-        for (BigDecimal notifValue : notificationLevels) {
-            if (fromValue.compareTo(notifValue) > 0 && notifValue.compareTo(toValue) >= 0) {
+        List<Entry<String, BigDecimal>> matchedLevels = new ArrayList<>();
+        for (Entry<String, BigDecimal> notifValue : notificationLevels.entrySet()) {
+            if (fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
                 matchedLevels.add(notifValue);
             }
         }

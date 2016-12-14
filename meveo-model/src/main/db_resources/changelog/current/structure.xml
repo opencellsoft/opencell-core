@@ -3085,7 +3085,7 @@
             <column name="NOTIFICATION_LEVELS" value="0"/>
         </update>
         <addColumn tableName="BILLING_COUNTER_PERIOD">
-            <column name="NOTIFICATION_LEVELS" type="VARCHAR(70)"/>
+            <column name="NOTIFICATION_LEVELS" type="VARCHAR(100)"/>
         </addColumn>
         <update tableName="BILLING_COUNTER_PERIOD">
             <column name="NOTIFICATION_LEVELS" value="0"/>
