@@ -2,9 +2,6 @@ package org.tmf.dsmapi.catalog.resource.specification;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -14,34 +11,23 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "23",
- *     "href": " http://serverlocation:port/catalogManagement/resourceSpecification/23",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     },
- *     "type": "dependency"
- * }
- *
+ * 
+ *         { "id": "23", "href": " http://serverlocation:port/catalogManagement/resourceSpecification/23", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
+ *         "endDateTime": "" }, "type": "dependency" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class SpecificationRelationship implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "ID", nullable = false)
     private String id;
 
-    @Column(name = "HREF", nullable = true)
     private String href;
 
     private TimeRange validFor;
 
-    @Column(name = "TYPE", nullable = true)
     private SpecificationRelationshipType type;
 
     public SpecificationRelationship() {
@@ -83,7 +69,7 @@ public class SpecificationRelationship implements Serializable {
     public TimeRange validForToJson() {
         return (validFor != null && validFor.isEmpty() == false) ? validFor : null;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 3;

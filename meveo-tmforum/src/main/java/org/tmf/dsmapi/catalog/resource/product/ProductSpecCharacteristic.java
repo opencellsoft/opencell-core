@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
@@ -18,48 +16,16 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author pierregauthier
- *
- * {
- *     "id": "42",
- *     "name": "Screen Size",
- *     "description": "Screen size",
- *     "valueType": "number",
- *     "configurable": "false",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     },
- *     "productSpecCharRelationship": [
- *         {
- *             "type": "dependency",
- *             "id": "43",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ],
- *     "productSpecCharacteristicValue": [
- *         {
- *             "valueType": "number",
- *             "default": "true",
- *             "value": "4.2",
- *             "unitOfMeasure": "inches",
- *             "valueFrom": "",
- *             "valueTo": "",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": ""
- *             }
- *         }
- *     ]
- * }
- *
+ * 
+ *         { "id": "42", "name": "Screen Size", "description": "Screen size", "valueType": "number", "configurable": "false", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "productSpecCharRelationship": [ { "type": "dependency", "id": "43", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ], "productSpecCharacteristicValue": [ { "valueType": "number", "default": "true", "value": "4.2", "unitOfMeasure":
+ *         "inches", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ] }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ProductSpecCharacteristic implements Serializable {
     public final static long serialVersionUID = 1L;
 
@@ -214,7 +180,9 @@ public class ProductSpecCharacteristic implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductSpecCharacteristic{" + "id=" + id + ", name=" + name + ", description=" + description + ", valueType=" + valueType + ", configurable=" + configurable + ", validFor=" + validFor + ", productSpecCharRelationship=" + productSpecCharRelationship + ", productSpecCharacteristicValue=" + productSpecCharacteristicValue + '}';
+        return "ProductSpecCharacteristic{" + "id=" + id + ", name=" + name + ", description=" + description + ", valueType=" + valueType + ", configurable=" + configurable
+                + ", validFor=" + validFor + ", productSpecCharRelationship=" + productSpecCharRelationship + ", productSpecCharacteristicValue=" + productSpecCharacteristicValue
+                + '}';
     }
 
     @JsonIgnore
@@ -244,7 +212,7 @@ public class ProductSpecCharacteristic implements Serializable {
 
         return true;
     }
-    
+
     public static ProductSpecCharacteristic createProto() {
         ProductSpecCharacteristic productSpecCharacteristic = new ProductSpecCharacteristic();
 
@@ -259,7 +227,7 @@ public class ProductSpecCharacteristic implements Serializable {
         productSpecCharacteristic.productSpecCharRelationship.add(SpecificationCharacteristicRelationship.createProto());
 
         productSpecCharacteristic.productSpecCharacteristicValue = new ArrayList<SpecificationCharacteristicValue>();
-        productSpecCharacteristic.productSpecCharacteristicValue.add (SpecificationCharacteristicValue.createProto());
+        productSpecCharacteristic.productSpecCharacteristicValue.add(SpecificationCharacteristicValue.createProto());
 
         return productSpecCharacteristic;
     }

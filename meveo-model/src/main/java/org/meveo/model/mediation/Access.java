@@ -40,7 +40,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
 
@@ -53,7 +52,7 @@ import org.meveo.model.billing.Subscription;
 @ExportIdentifier({ "accessUserId", "subscription.code", "provider" })
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
-@NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a where a.disabled=false order by a.accessUserId") })
+@NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId") })
 public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -134,14 +133,16 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Access)) {
             return false;
         }
 
-        IEntity other = (IEntity) obj;
+        Access other = (Access) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             return true;

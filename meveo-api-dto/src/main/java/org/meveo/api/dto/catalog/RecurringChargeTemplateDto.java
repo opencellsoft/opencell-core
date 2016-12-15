@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,6 +26,8 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	private Boolean terminationProrata;
 	private Boolean applyInAdvance=false;
 	private Integer shareLevel;
+	@Size(max = 255)
+	private String filterExpression = null;
 
 	public RecurringChargeTemplateDto() {
 
@@ -36,6 +39,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 		subscriptionProrata = e.getSubscriptionProrata();
 		terminationProrata = e.getTerminationProrata();
 		applyInAdvance = e.getApplyInAdvance();
+		filterExpression = e.getFilterExpression();
 		if (e.getShareLevel() != null) {
 			shareLevel = e.getShareLevel().getId();
 		}
@@ -101,6 +105,14 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 				+ ", toString()=" + super.toString() + ", getAmountEditable()=" + getAmountEditable()
 				+ ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
+	}
+
+	public String getFilterExpression() {
+		return filterExpression;
+	}
+
+	public void setFilterExpression(String filterExpression) {
+		this.filterExpression = filterExpression;
 	}
 
 }

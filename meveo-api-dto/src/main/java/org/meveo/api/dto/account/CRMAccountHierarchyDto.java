@@ -1,5 +1,6 @@
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -77,16 +78,14 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private AccountStatusEnum baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-
+	private BigDecimal invoicingThreshold;
+	private String discountPlan;
+	
 	// user account
 	private AccountStatusEnum uaStatus;
 
 	private CustomFieldDto cfToAdd = new CustomFieldDto();
 	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
-
-	private String offerCode;
-	private String serviceCode;
-	private String access;
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -366,7 +365,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 				+ country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms
 				+ ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email
 				+ ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields
-				+ "]";
+				+ ", invoicingThreshold=" + invoicingThreshold + ", invoicingThreshold=" + invoicingThreshold + "]";
 	}
 
 	public AccountStatusEnum getUaStatus() {
@@ -409,51 +408,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	}
 
 	/**
-	 * @return the offerCode
-	 */
-	public String getOfferCode() {
-		return offerCode;
-	}
-
-	/**
-	 * @param offerCode
-	 *            the offerCode to set
-	 */
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
-
-	/**
-	 * @return the serviceCode
-	 */
-	public String getServiceCode() {
-		return serviceCode;
-	}
-
-	/**
-	 * @param serviceCode
-	 *            the serviceCode to set
-	 */
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-
-	/**
-	 * @return the access
-	 */
-	public String getAccess() {
-		return access;
-	}
-
-	/**
-	 * @param access
-	 *            the access to set
-	 */
-	public void setAccess(String access) {
-		this.access = access;
-	}
-
-	/**
 	 * @return the cfMapToAdd
 	 */
 	public CustomFieldDto getCfMapToAdd() {
@@ -480,4 +434,25 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		}
 	}
 
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+
+	public String getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(String discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 }

@@ -78,12 +78,15 @@ public class HourInDay extends BaseProviderlessEntity implements Comparable<Hour
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (getClass() != obj.getClass()) {
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof HourInDay)) {
             return false;
         }
+        
         HourInDay other = (HourInDay) obj;
         if (hour == null) {
             if (other.hour != null) {

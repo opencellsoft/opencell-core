@@ -23,6 +23,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,10 @@ public class InvoiceAgregateHandler {
 	BigDecimal invoiceAmountTax = BigDecimal.ZERO;
 	BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
 
-	public InvoiceAgregateHandler() {
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
+	public InvoiceAgregateHandler(InvoiceSubCategoryService invoiceSubCategoryService) {
+		this.invoiceSubCategoryService=invoiceSubCategoryService;
 	}
 
 	/**
@@ -149,7 +153,7 @@ public class InvoiceAgregateHandler {
 		
 		BigDecimal amountTax = BigDecimal.ZERO;
 		BigDecimal amountWithTax = BigDecimal.ZERO;
-		Tax currentTax = getCurrentTax(invoiceSubCategory, billingAccount);		
+		Tax currentTax = getCurrentTax(invoiceSubCategory, userAccount,billingAccount);		
 
 		if (currentTax == null) {
 			throw new BusinessException("Cant find tax for InvoiceSubCategory:" + invoiceSubCategory.getCode());
@@ -273,13 +277,21 @@ public class InvoiceAgregateHandler {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount) throws BusinessException {
+	private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory,UserAccount userAccount, BillingAccount billingAccount) throws BusinessException {
 		Tax currentTax = null;
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-			if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) && matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
+			if ((invoicesubcatCountry.getSellingCountry()==null || 
+            		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
+                     && invoicesubcatCountry.getSellingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
+                 && (invoicesubcatCountry.getTradingCountry()==null || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
+					&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
 
-				currentTax = invoicesubcatCountry.getTax();
 
+				if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
+					currentTax = invoicesubcatCountry.getTax();
+				} else {
+					currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, null);
+				}
 				if (currentTax != null) {
 					return currentTax;
 				}

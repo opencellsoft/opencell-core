@@ -3,7 +3,6 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,12 +12,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.annotation.ImageType;
 
 /**
  * @author Edward P. Legaspi
@@ -26,6 +25,7 @@ import org.meveo.model.ICustomFieldEntity;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
+@ImageType
 @NamedQueries({
 		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false and provider=:provider"),
 		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true and provider=:provider"),
@@ -37,7 +37,9 @@ public class ProductTemplate extends ProductOffering {
 	@Transient
 	public static final String CF_CATALOG_PRICE = "CATALOG_PRICE";
 
-	@OneToMany(mappedBy = "productTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_PRODUCT_TEMPL_CHARGE_TEMPL", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_CHARGE_TEMPLATE_ID"))	
 	private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
 
 	@ManyToOne

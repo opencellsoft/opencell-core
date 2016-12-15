@@ -63,6 +63,9 @@ public class CustomEntityInstanceApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -97,6 +100,9 @@ public class CustomEntityInstanceApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;

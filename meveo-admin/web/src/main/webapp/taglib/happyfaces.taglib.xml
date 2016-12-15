@@ -71,6 +71,10 @@
         <source>customFields.xhtml</source>
     </tag>
     <tag>
+        <tag-name>customElement</tag-name>
+        <source>customElement.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>customFieldPeriods</tag-name>
         <source>customFieldPeriods.xhtml</source>
     </tag>    
@@ -161,6 +165,10 @@
     <tag>
         <tag-name>formLanguageFields</tag-name>
         <source>formLanguageFields.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formImageField</tag-name>
+        <source>formImageField.xhtml</source>
     </tag>
     <tag>
      <tag-name>displayWorkflowsHistory</tag-name>

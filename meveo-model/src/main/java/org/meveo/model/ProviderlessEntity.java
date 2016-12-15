@@ -25,6 +25,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -40,7 +41,7 @@ public abstract class ProviderlessEntity implements Serializable, IEntity, IAudi
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "ID")
     @Access(AccessType.PROPERTY)
     protected Long id;

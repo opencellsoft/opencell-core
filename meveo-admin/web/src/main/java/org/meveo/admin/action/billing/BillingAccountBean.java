@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -58,16 +57,6 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfGState;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
@@ -255,6 +244,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
         return getEditViewName();
 	}
+	
+
+	public String generateInvoice() {
+		log.info("generateInvoice billingAccountId:" + entity.getId());
+		try {
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,true, currentUser);
+			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
+			
+        } catch (Exception e) {
+            log.error("Failed to generateInvoice ", e);
+            messages.error(e.getMessage());
+        }
+        return getEditViewName();
+	}
 
 	// TODO: @Factory("getInvoices")
 	@Produces
@@ -269,55 +272,25 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		FacesContext context = FacesContext.getCurrentInstance();
 		String invoiceFilename = null;
 		BillingRun billingRun=invoice.getBillingRun();
-		invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
-		if(billingRun !=null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED){
-		invoiceFilename = "unvalidated-invoice.pdf";
-		}
-		
+        invoiceFilename = (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".pdf";
+        if (billingRun != null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED) {
+            invoiceFilename = "unvalidated-invoice.pdf";
+        }
+
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.setContentType("application/pdf"); // fill in
 		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
 
 		try {
-			OutputStream os = response.getOutputStream();
-			Document document = new Document(PageSize.A4);
-			if (billingRun !=null && invoice.getBillingRun().getStatus() != BillingRunStatusEnum.VALIDATED) {
-				// Add watemark image
-				PdfReader reader = new PdfReader(invoicePdf);
-				int n = reader.getNumberOfPages();
-				PdfStamper stamp = new PdfStamper(reader, os);
-				PdfContentByte over = null;
-				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-				PdfGState gs = new PdfGState();
-				gs.setFillOpacity(0.5f);
-				int i = 1;
-				while (i <= n) {
-					over = stamp.getOverContent(i);
-					over.setGState(gs);
-					over.beginText();
-					System.out.println("top=" + document.top() + ",bottom=" + document.bottom());
-					over.setTextMatrix(document.top(), document.bottom());
-					over.setFontAndSize(bf, 150);
-					over.setColorFill(Color.GRAY);
-					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize().getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
-					over.endText();
-					i++;
-				}
-
-				stamp.close();
-			} else {
-				os.write(invoicePdf); // fill in PDF with bytes
-			}
-
+			OutputStream os = response.getOutputStream();				
+			os.write(invoicePdf); // fill in PDF with bytes	
 			// contentType
 			os.flush();
 			os.close();
 			context.responseComplete();
 		} catch (IOException e) {
 			log.error("failed to generate PDF ",e);
-		} catch (DocumentException e) {
-			log.error("error in generation PDF ",e);
-		}
+		} 
 	}
 
 	public boolean pdfExists(long invoiceId) {
@@ -480,5 +453,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
 		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
 	}
+	
 
 }

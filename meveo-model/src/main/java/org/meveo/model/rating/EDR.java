@@ -173,7 +173,7 @@ public class EDR extends BaseEntity {
 	@JoinColumn(name = "HEADER_EDR_ID")
 	@ManyToOne()
 	private EDR headerEDR;
-
+	
 	public Subscription getSubscription() {
 		return subscription;
 	}
@@ -278,8 +278,6 @@ public class EDR extends BaseEntity {
 		this.lastUpdate = lastUpdate;
 	}
 	
-	
-
 	public String getParameter5() {
 		return parameter5;
 	}
@@ -415,10 +413,10 @@ public class EDR extends BaseEntity {
 	public void setHeaderEDR(EDR headerEDR) {
 		this.headerEDR = headerEDR;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "EDR [subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="
+		return "EDR [id="+id+", subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="
 				+ originBatch + ", originRecord=" + originRecord
 				+ ", eventDate=" + eventDate + ", quantity=" + quantity+ ", access=" + accessCode
 				+ ", parameter1=" + parameter1 + ", parameter2=" + parameter2
@@ -438,12 +436,15 @@ public class EDR extends BaseEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof EDR)) {
+            return false;
+        }
+        
 		EDR other = (EDR) obj;
 		return this.toString().equals(other.toString());
 	}

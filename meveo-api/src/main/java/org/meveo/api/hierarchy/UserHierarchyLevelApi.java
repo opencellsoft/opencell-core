@@ -118,7 +118,9 @@ public class UserHierarchyLevelApi extends BaseApi {
             if (userHierarchyLevel.getParentLevel() != null) {
                 userHierarchyLevelDto.setParentLevel(userHierarchyLevel.getParentLevel().getCode());
             }
-            userHierarchyLevelDto.setChildLevels(convertToUserHierarchyLevelDto(userHierarchyLevel.getChildLevels()));
+            if (!userHierarchyLevel.getChildLevels().isEmpty()){
+                userHierarchyLevelDto.setChildLevels(convertToUserHierarchyLevelDto(userHierarchyLevel.getChildLevels()));
+            }
             return userHierarchyLevelDto;
         }
         throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
@@ -152,6 +154,30 @@ public class UserHierarchyLevelApi extends BaseApi {
         }
     }
 
+    
+    /**
+     * Create or Update a User Hierarchy Level Entity based on title code.
+     *
+     * @param postData
+     * @param currentUser
+     * @throws org.meveo.api.exception.MeveoApiException
+     * @throws org.meveo.admin.exception.BusinessException
+     */
+    public void createOrUpdate(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+        String hierarchyLevelCode = postData.getCode();   
+        if (StringUtils.isBlank(hierarchyLevelCode)) {
+            missingParameters.add("hierarchyLevelCode");
+        }
+        handleMissingParameters();
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        if (userHierarchyLevel != null) {
+           update(postData, currentUser);
+        } else {
+            create(postData, currentUser);
+        }
+    }
+    
+    
     @SuppressWarnings("rawtypes")
     private List<UserHierarchyLevelDto> convertToUserHierarchyLevelDto(Set<HierarchyLevel> userHierarchyLevels) {
         List<UserHierarchyLevelDto> userHierarchyLevelDtos = new ArrayList<>();

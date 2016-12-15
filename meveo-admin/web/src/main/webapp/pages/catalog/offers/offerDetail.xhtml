@@ -23,18 +23,7 @@
 
             <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
                 <p:panel>
-                    <hftl:decorateFormField fieldId="offerImageUpload" rendered="#{offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:fileUpload id="offerImageUpload" auto="false" skinSimple="true" mode="simple" value="#{offerTemplateBean.uploadedFile}" />
-                    </hftl:decorateFormField>
-                    <hftl:decorateFormField fieldId="offerImage" rendered="#{not offerTemplateBean.entity.transient}" label="#{messages['commons.image']}">
-                        <p:outputPanel autoUpdate="false" style="border: 1px solid #ddd;">
-                            <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateImageStreamer.image}" height="150" width="150">
-                                <f:param name="id" value="#{offerTemplateBean.entity.id}"></f:param>
-                            </p:graphicImage>
-                            <p:fileUpload rendered="#{offerTemplateBean.edit}" fileUploadListener="#{offerTemplateBean.handleFileUpload}" mode="advanced"
-                                update=":offerForm:messages" auto="true" sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                        </p:outputPanel>
-                    </hftl:decorateFormField>
+                    <hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="offer" />
                     <p:outputPanel>
                         <p:panel rendered="#{not offerTemplateBean.edit}">
                             <ul class="list-inline">
@@ -58,14 +47,16 @@
                 <p:panel>
                     <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
                         <h:outputText value="#{offerTemplateBean.entity.nameOrCode}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
-                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}"
-                            actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onNameChange" listenerUpdate="code" />
-                        <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
+                        <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
                         <c:if test="#{offerTemplateBean.bomId eq null}">
+                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
                             <hftl:formField label="#{messages['marketingManager.catalog.family']}" allowEdit="false" field="businessOfferModel" valueLabelField="code"
                                 listBean="#{businessOfferModelBean}" />
                         </c:if>
                         <c:if test="#{offerTemplateBean.bomId ne null}">
+                        	<hftl:decorateFormField fieldId="transientCode" label="#{messages['offerTemplate.code']}">
+                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" required="true" />
+                            </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
                             </hftl:decorateFormField>
@@ -88,9 +79,16 @@
                     <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
                         valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
                 </h:panelGrid>
+                
             </p:panelGrid>
 
-            <p:panel>
+			<p:panel>
+				<p:panel style="margin: 0 auto;">
+					<hr class="Separator" />
+				</p:panel>
+			</p:panel>
+
+			<p:panel>
                 <f:facet name="header">
                     <h:outputText value="#{messages['menu.marketingManager.products']}" styleClass="SubHeader" />
                 </f:facet>
@@ -104,10 +102,14 @@
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         styleClass="ui-panelgrid-blank custom-grid" lazy="false" widgetVar="productList" rowKey="#{entity.id}">
                         <p:column>
-                            <p:graphicImage cache="false" value="#{productTemplateImageStreamer.image}" height="150" width="150">
-                                <f:param name="id" value="#{entity.productTemplate.id}"></f:param>
-                            </p:graphicImage>
-                        </p:column>
+							<p:graphicImage value="#{defaultImageStreamer.image}"
+								cache="false" width="100" height="100">
+								<f:param name="providerCode"
+									value="#{offerTemplateBean.currentProvider.code}"></f:param>
+								<f:param name="fileName" value="#{entity.productTemplate.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
                         <p:column headerText="#{messages['commons.name']}">
                             <p:link outcome="mm_productTemplateDetail" value="#{entity.productTemplate.name}">
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
@@ -130,8 +132,14 @@
                     </p:dataTable>
                 </p:panel>
             </p:panel>
+            
+            <p:panel>
+				<p:panel style="margin: 0 auto;">
+					<hr class="Separator" />
+				</p:panel>
+			</p:panel>
 
-            <p:panel id="customFieldsWrappPanel">
+            <p:panel id="customFieldsWrappPanel" rendered="false">
                 <f:facet name="header">
                     <h:outputText value="#{messages['marketingManager.catalog.offer']} #{messages['productTemplate.attributes']}" styleClass="SubHeader" />
                     <p:commandLink id="customizeOfferCF" action="#{customEntityTemplateBean.initCustomization(offerTemplateBean.entity.class.name)}"
@@ -141,11 +149,11 @@
                 </f:facet>
                 <!-- custom fields -->
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
                 </c:if>
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
                     <p:tabView>
-                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
                     </p:tabView>
                 </c:if>
                 <hftl:displayWorkflowsHistory entity="#{offerTemplateBean.entity}" />
@@ -156,28 +164,35 @@
 
                 <p:panel>
                     <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost" varStatus="loopStatus">
-                        <h:panelGrid columns="3" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Responsive Wid2, Wid27 Responsive50, TexAlLeft Wid70 Responsive100">
-                            <p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
-                                <p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
-                            </p:selectBooleanCheckbox>
+                        <h:panelGrid columns="2" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Wid25 Responsive100 VAlignTop Padding5, TexAlLeft Wid75 Responsive100 VAlignTop">
+					
+							<p:panel>
+								<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" style="margin-right: 2px; position: relative; top: 5px"
+									rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
+								</p:selectBooleanCheckbox>
+								
+								<p:inplace id="serviceDescription_#{loopStatus.index}" editor="true" rendered="#{offerTemplateBean.edit}">
+						            <p:inputText value="#{ost.serviceTemplate.description}" required="true" label="text" />
+						        </p:inplace>
+ 								<h:outputText value=" #{ost.serviceTemplate.description}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
+ 							</p:panel>
 
-                            <h:outputText value=" #{ost.serviceTemplate.descriptionOrCode}"></h:outputText>
-
-                            <p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
+							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
                                 <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
-                                    <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}">
-                                        <p:selectBooleanCheckbox id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
+                                    <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}" componentWidth="5">
+                                        <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
 
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
                                     </c:if>
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
                                         </p:tabView>
                                     </c:if>
                                 </p:panel>
@@ -214,10 +229,14 @@
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         lazy="true" styleClass="ui-panelgrid-blank">
                         <p:column>
-                            <p:graphicImage id="productImage" cache="false" value="#{productTemplateImageStreamer.image}" height="100">
-                                <f:param name="id" value="#{entity.id}"></f:param>
-                            </p:graphicImage>
-                        </p:column>
+							<p:graphicImage value="#{defaultImageStreamer.image}"
+								cache="false" width="100" height="100">
+								<f:param name="providerCode"
+									value="#{productTemplateListBean.currentProvider.code}"></f:param>
+								<f:param name="fileName" value="#{entity.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
 
                         <hftl:column label="#{messages['commons.name']}" field="name" />
                         <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />

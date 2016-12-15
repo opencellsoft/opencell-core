@@ -2,12 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -16,78 +10,39 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "name": "Monthly Price",
- *     "description": "monthlyprice",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     },
- *     "priceType": "recurring",
- *     "unitOfMeasure": "",
- *     "price": {
- *         "taxIncludedAmount": "12.00",
- *         "dutyFreeAmount": "10.00",
- *         "taxRate": "20.00",
- *         "currencyCode": "EUR",
- *         "percentage": 0
- *     },
- *     "recurringChargePeriod": "monthly",
- *      "productOfferPriceAlteration": {
- *          "name": "Shipping Discount",
- *          "description": "One time shipping discount",
- *          "validFor": {
- *              "startDateTime": "2013-04-19T16:42:23.0Z"
- *          },
- *          "priceType": "One Time discount",
- *          "unitOfMeasure": "",
- *          "price": {
- *              "percentage": 100
- *          },
- *          "recurringChargePeriod": "",
- *          "priceCondition": "apply if total amount of the  order is greater than 300.00"
- *      }
- * }
- *
+ * 
+ *         { "name": "Monthly Price", "description": "monthlyprice", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" },
+ *         "priceType": "recurring", "unitOfMeasure": "", "price": { "taxIncludedAmount": "12.00", "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR",
+ *         "percentage": 0 }, "recurringChargePeriod": "monthly", "productOfferPriceAlteration": { "name": "Shipping Discount", "description": "One time shipping discount",
+ *         "validFor": { "startDateTime": "2013-04-19T16:42:23.0Z" }, "priceType": "One Time discount", "unitOfMeasure": "", "price": { "percentage": 100 },
+ *         "recurringChargePeriod": "", "priceCondition": "apply if total amount of the  order is greater than 300.00" } }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ProductOfferingPrice implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "PRICE_NAME", nullable = true)
     @JsonProperty(value = "name")
     private String priceName;
 
-    @Column(name = "PRICE_DESCRIPTION", nullable = true)
     @JsonProperty(value = "description")
     private String priceDescription;
 
-    @AttributeOverrides({
-        @AttributeOverride(name = "startDateTime", column = @Column(name = "PRICE_START_DATE_TIME")),
-        @AttributeOverride(name = "endDateTime", column = @Column(name = "PRICE_END_DATE_TIME"))
-    })
     @JsonProperty(value = "validFor")
     private TimeRange priceValidFor;
 
-    @Column(name = "PRICE_TYPE", nullable = true)
     private ProductOfferingPriceType priceType;
 
-    @Column(name = "UNIT_OF_MEASURE", nullable = true)
     private String unitOfMeasure;
 
-    @Embedded
     private Price price;
 
-    @Column(name = "RECURRING_CHARGE_PERIOD", nullable = true)
     private String recurringChargePeriod;
 
-    @Embedded
     private ProductOfferPriceAlteration productOfferPriceAlteration;
-    
+
     public ProductOfferingPrice() {
     }
 
@@ -209,13 +164,15 @@ public class ProductOfferingPrice implements Serializable {
         if (Utilities.areEqual(this.productOfferPriceAlteration, other.productOfferPriceAlteration) == false) {
             return false;
         }
-        
+
         return true;
     }
 
     @Override
     public String toString() {
-        return "ProductOfferingPrice{" + "priceName=" + priceName + ", priceDescription=" + priceDescription + ", priceValidFor=" + priceValidFor + ", priceType=" + priceType + ", unitOfMeasure=" + unitOfMeasure + ", price=" + price + ", recurringChargePeriod=" + recurringChargePeriod + ", productOfferPriceAlteration=" + productOfferPriceAlteration + '}';
+        return "ProductOfferingPrice{" + "priceName=" + priceName + ", priceDescription=" + priceDescription + ", priceValidFor=" + priceValidFor + ", priceType=" + priceType
+                + ", unitOfMeasure=" + unitOfMeasure + ", price=" + price + ", recurringChargePeriod=" + recurringChargePeriod + ", productOfferPriceAlteration="
+                + productOfferPriceAlteration + '}';
     }
 
     public static ProductOfferingPrice createProto() {
@@ -223,14 +180,14 @@ public class ProductOfferingPrice implements Serializable {
 
         productOfferingPrice.priceName = "name";
         productOfferingPrice.priceDescription = "description";
-        productOfferingPrice.priceValidFor = TimeRange.createProto ();
+        productOfferingPrice.priceValidFor = TimeRange.createProto();
 
         productOfferingPrice.priceType = ProductOfferingPriceType.RECURRING;
         productOfferingPrice.unitOfMeasure = "unit of measure";
         productOfferingPrice.price = Price.createProto();
         productOfferingPrice.recurringChargePeriod = "recurring charge period";
         productOfferingPrice.productOfferPriceAlteration = ProductOfferPriceAlteration.createProto();
-        
+
         return productOfferingPrice;
     }
 

@@ -28,7 +28,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
@@ -64,18 +66,25 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	@Column(name = "DURATION_TERM_IN_MONTH")
 	private Integer durationTermInMonth;
 
-	@Column(name = "SUBSCRIPTION_PRORATA")
+	@Type(type="numeric_boolean")
+    @Column(name = "SUBSCRIPTION_PRORATA")
 	private Boolean subscriptionProrata;
 
-	@Column(name = "TERMINATION_PRORATA")
+	@Type(type="numeric_boolean")
+    @Column(name = "TERMINATION_PRORATA")
 	private Boolean terminationProrata;
 
-	@Column(name = "APPLY_IN_ADVANCE")
+	@Type(type="numeric_boolean")
+    @Column(name = "APPLY_IN_ADVANCE")
 	private Boolean applyInAdvance;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name= "SHARE_LEVEL",length=20)
 	private LevelEnum shareLevel;
+	
+	@Column(name = "FILTER_EXPRESSION", length = 2000)
+	@Size(max = 2000)
+	private String filterExpression = null;
 	
 	public Calendar getCalendar() {
 		return calendar;
@@ -131,6 +140,14 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
 	public void setShareLevel(LevelEnum shareLevel) {
 		this.shareLevel = shareLevel;
+	}
+
+	public String getFilterExpression() {
+		return filterExpression;
+	}
+
+	public void setFilterExpression(String filterExpression) {
+		this.filterExpression = filterExpression;
 	}
 
 }

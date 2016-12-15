@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -33,9 +34,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -68,43 +71,29 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
-	public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance,User user,boolean persist) throws BusinessException {
-		List<WalletOperation> result=null;
-		ChargeTemplate chargeTemplate=productChargeInstance.getProductChargeTemplate();
-		List<WalletTemplate> walletTemplates = productChargeInstance.getProductInstance().getProductTemplate().getWalletTemplates();
-		productChargeInstance.setPrepaid(false);
-		if (walletTemplates != null && walletTemplates.size() > 0) {
-			log.debug("found {} wallets",walletTemplates.size());
-			for (WalletTemplate walletTemplate : walletTemplates) {
-				log.debug("walletTemplate {}",walletTemplate.getCode());
-				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
-					log.debug("this wallet is prepaid, we set the charge instance itself as being prepaid");
-					productChargeInstance.setPrepaid(true);
+    public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, User currentUser, boolean isVirtual) throws BusinessException {
 
-				}
-				WalletInstance walletInstance=walletService.getWalletInstance(productChargeInstance.getUserAccount(),
-						walletTemplate, user);
-				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),productChargeInstance.getId());
-				productChargeInstance.getWalletInstances().add(walletInstance);
-			}
-		} else {
-			log.debug("as the charge is postpaid, we add the principal wallet");
-			productChargeInstance.getWalletInstances().add(
-					productChargeInstance.getUserAccount().getWallet());
-		}
-		BigDecimal inputQuantity = productChargeInstance.getQuantity();
-		BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
-				chargeTemplate.getRoundingMode());
-		WalletOperation walletOperation =  walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, user);
-		if(persist){
-			result=walletOperationService.chargeWalletOperation(walletOperation, user);
-		} else {
-			result = new ArrayList<>();
-			result.add(walletOperation);
-		}
-		return result;
-	}
+        List<WalletOperation> walletOperations = null;
+        ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
 
+        log.debug("Apply product charge. User account {}, subscription {}, offer {}, charge {}, quantity {}, date {}",
+            productChargeInstance.getUserAccount() != null ? productChargeInstance.getUserAccount().getCode() : null,
+            productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(), productChargeInstance
+                .getQuantity(), productChargeInstance.getChargeDate());
+
+        BigDecimal inputQuantity = productChargeInstance.getQuantity();
+        BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
+            chargeTemplate.getRoundingMode());
+        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual, currentUser);
+        if (!isVirtual) {
+            walletOperations = walletOperationService.chargeWalletOperation(walletOperation, currentUser);
+        } else {
+            walletOperations = new ArrayList<>();
+            walletOperations.add(walletOperation);
+        }
+        return walletOperations;
+    }
+	
 	@SuppressWarnings("unchecked")
 	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);

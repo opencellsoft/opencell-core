@@ -6,8 +6,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui" contentType="text/html"
 	locale="#{localeSelector.currentLocale}">
-	<html>
 
+	<ui:insert name="metadata" />
+
+	<html>
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
@@ -23,6 +25,7 @@
 	<link rel="stylesheet" type="text/css"
 		href="#{request.contextPath}/stylesheet/custom.css" />
 	<ui:insert name="head" />
+	<meta http-equiv="Refresh" content="1740; URL=login.jsf" />
 </h:head>
 
 <h:body>

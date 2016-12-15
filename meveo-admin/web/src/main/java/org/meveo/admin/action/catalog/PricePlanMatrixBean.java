@@ -37,12 +37,14 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -78,6 +80,9 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
+	
+	@Inject
+	private ProductChargeTemplateService productChargeTemplateService;
 	
 	@Inject
 	@RequestParam
@@ -144,6 +149,16 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 							obj.setSequence(getNextSequence(usageCharge));
 						}
 						backPage = "usageChargeTemplateDetail";
+					} else {
+						ProductChargeTemplate productCharge = productChargeTemplateService
+								.findById(chargeId.get());
+						if (getObjectId() == null) {
+							obj.setCode(getPricePlanCode(productCharge));
+							obj.setEventCode(productCharge.getCode());
+							obj.setDescription(productCharge.getDescription());
+							obj.setSequence(getNextSequence(productCharge));
+						}
+						backPage = "productChargeTemplateDetail";
 					}
 				}
 			}
@@ -248,27 +263,30 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	}
 	
 	@Override
-    @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
-		   if(chargeTemplateId!=0){ 
-		    super.saveOrUpdate(killConversation); 
-		    return getBackCharge();
-		   }else{
-			   return  super.saveOrUpdate(killConversation);
-		   }  
-           } 
+	@ActionMethod
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if (chargeTemplateId != 0) {
+			super.saveOrUpdate(killConversation);
+			return getBackCharge();
+		} else {
+			return super.saveOrUpdate(killConversation);
+		}
+	}
   
-	 public String getBackCharge() {
-		 String chargeName=null;
-		  if(backPage.equals("recurringChargeTemplateDetail")){
-			  chargeName="recurringChargeTemplates";
-		   }else if(backPage.equals("oneShotChargeTemplateDetail")){
-			   chargeName="oneShotChargeTemplates";
-		   }else{
-			   chargeName="usageChargeTemplates";
-		   }
-   	      return "/pages/catalog/"+chargeName+"/"+backPage+".xhtml?objectId="+chargeTemplateId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
-	    }
+	public String getBackCharge() {
+		String chargeName = null;
+		if (backPage.equals("recurringChargeTemplateDetail")) {
+			chargeName = "recurringChargeTemplates";
+		} else if (backPage.equals("oneShotChargeTemplateDetail")) {
+			chargeName = "oneShotChargeTemplates";
+		} else if (backPage.equals("productChargeTemplateDetail")) {
+			chargeName = "productChargeTemplates";
+		} else {
+			chargeName = "usageChargeTemplates";
+		}
+		
+		return "/pages/catalog/" + chargeName + "/" + backPage + ".xhtml?objectId=" + chargeTemplateId + "&edit=true&tab=1&faces-redirect=true";
+	}
  
 	 @ActionMethod
 	 public void duplicate(){

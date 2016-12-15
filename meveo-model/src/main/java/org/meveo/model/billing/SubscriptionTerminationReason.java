@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -45,13 +46,16 @@ public class SubscriptionTerminationReason extends BaseEntity {
     @Size(max = 255)
 	private String description;
 
-	@Column(name = "APPLY_AGREEMENT")
+	@Type(type="numeric_boolean")
+    @Column(name = "APPLY_AGREEMENT")
 	private boolean applyAgreement;
 
-	@Column(name = "APPLY_REIMBURSMENT")
+	@Type(type="numeric_boolean")
+    @Column(name = "APPLY_REIMBURSMENT")
 	private boolean applyReimbursment;
 
-	@Column(name = "APPLY_TERMINATION_CHARGES")
+	@Type(type="numeric_boolean")
+    @Column(name = "APPLY_TERMINATION_CHARGES")
 	private boolean applyTerminationCharges;
 
 	public String getCode() {
@@ -112,10 +116,14 @@ public class SubscriptionTerminationReason extends BaseEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof SubscriptionTerminationReason)) {
+            return false;
+        }
 
 		SubscriptionTerminationReason other = (SubscriptionTerminationReason) obj;
 		if (other.getId() == getId())

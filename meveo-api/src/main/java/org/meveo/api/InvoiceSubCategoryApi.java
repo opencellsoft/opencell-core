@@ -13,6 +13,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -103,6 +104,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, currentUser, true);
 
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -178,6 +182,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, currentUser, true);
 
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;

@@ -382,7 +382,7 @@ public class WalletApi extends BaseApi {
             walletTemplate.setCode(WalletTemplate.PRINCIPAL);
         }
 
-        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser);
+        WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, false, currentUser);
         if (walletInstance == null) {
             throw new EntityDoesNotExistsException(WalletInstance.class, walletTemplate.getCode());
         }
@@ -426,6 +426,7 @@ public class WalletApi extends BaseApi {
         walletOperation.setParameter1(postData.getParameter1());
         walletOperation.setParameter2(postData.getParameter2());
         walletOperation.setParameter3(postData.getParameter3());
+        walletOperation.setOrderNumber(postData.getOrderNumber());
         walletOperation.setStartDate(postData.getStartDate());
         walletOperation.setEndDate(postData.getEndDate());
         walletOperation.setSubscriptionDate(postData.getSubscriptionDate());

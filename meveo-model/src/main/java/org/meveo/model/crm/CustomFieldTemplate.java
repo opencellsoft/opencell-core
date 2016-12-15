@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -69,6 +70,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @NotNull
     private String appliesTo;
 
+    @Type(type="numeric_boolean")
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
 
@@ -86,6 +88,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Transient
     private boolean matrixColumnsSorted;
 
+    @Type(type="numeric_boolean")
     @Column(name = "VERSIONABLE")
     private boolean versionable;
 
@@ -116,6 +119,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
+    @Type(type="numeric_boolean")
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
 
@@ -123,10 +127,12 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 100)
     private String guiPosition;
 
+    @Type(type="numeric_boolean")
     @Column(name = "ALLOW_EDIT")
     @NotNull
     private boolean allowEdit = true;
 
+    @Type(type="numeric_boolean")
     @Column(name = "HIDE_ON_NEW")
     @NotNull
     private boolean hideOnNew;
@@ -145,6 +151,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 2000)
     private String applicableOnEl;
 
+    @Type(type="numeric_boolean")
     @Column(name = "CACHE_VALUE")
     @NotNull
     private boolean cacheValue;
@@ -454,14 +461,12 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Override
     public boolean equals(Object obj) {
-
+        
         if (this == obj) {
             return true;
-        }
-
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof CustomFieldTemplate)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof CustomFieldTemplate)) {
             return false;
         }
 

@@ -1,16 +1,11 @@
 package org.meveo.model.catalog;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -25,18 +20,22 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.annotation.ImageType;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
 @ObservableEntity
+@ImageType
+@ModuleItem
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
-public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory> {
+public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
 
     private static final long serialVersionUID = -5088201294684394309L;
 
@@ -44,15 +43,6 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
     @Size(max = 100)
     @NotNull
     private String name;
-
-    @Column(name = "IMAGE")
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private Blob image;
-
-    @Column(name = "IMAGE_CONTENT_TYPE", length = 50)
-    @Size(max = 50)
-    private String imageContentType;
 
     @ManyToOne
     @JoinColumn(name = "OFFER_TEMPLATE_CATEGORY_ID")
@@ -66,6 +56,11 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
 
     @Column(name = "LEVEL")
     private int orderLevel = 1;
+    
+    @ImageType
+	@Column(name = "IMAGE_PATH", length = 100)
+	@Size(max = 100)
+    private String imagePath;
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
@@ -91,14 +86,6 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
         }
     }
 
-    public Blob getImage() {
-        return image;
-    }
-
-    public void setImage(Blob image) {
-        this.image = image;
-    }
-
     public OfferTemplateCategory getOfferTemplateCategory() {
         return offerTemplateCategory;
     }
@@ -113,30 +100,6 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
 
     public void setOrderLevel(int level) {
         this.orderLevel = level;
-    }
-
-    public byte[] getImageAsByteArr() {
-        if (image != null) {
-            int blobLength;
-            try {
-                blobLength = (int) image.length();
-                byte[] blobAsBytes = image.getBytes(1, blobLength);
-
-                return blobAsBytes;
-            } catch (SQLException e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    public String getImageContentType() {
-        return imageContentType;
-    }
-
-    public void setImageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
     }
 
     public List<OfferTemplateCategory> getChildren() {
@@ -177,4 +140,12 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
         }
         return false;
     }
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
 }

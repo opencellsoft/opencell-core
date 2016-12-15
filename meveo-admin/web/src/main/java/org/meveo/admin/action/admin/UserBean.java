@@ -61,6 +61,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
+import org.meveo.model.shared.Name;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
@@ -122,7 +123,7 @@ public class UserBean extends BaseBean<User> {
 
     /**
      * For showing change password panel
-     */
+     */ 
     private boolean show = false;
 
     private DualListModel<Role> rolesDM;
@@ -172,6 +173,15 @@ public class UserBean extends BaseBean<User> {
             setSelectedFolder(null);
         }
 		initSelectionOptions();
+    }
+    
+    @Override
+    public User initEntity() {
+        super.initEntity();
+        if (entity.getName() == null) {
+             entity.setName(new Name());
+        }
+        return entity;
     }
 
     public TreeNode getUserGroupRootNode() {

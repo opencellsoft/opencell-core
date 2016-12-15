@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -29,7 +30,8 @@ public class OrderCondition extends BaseEntity {
 	@Column(name = "FIELD_NAME")
 	private List<String> fieldNames = new ArrayList<String>();
 
-	@Column(name = "ASCENDING")
+	@Type(type="numeric_boolean")
+    @Column(name = "ASCENDING")
 	private boolean ascending;
 
 	@OneToOne(mappedBy = "orderCondition")
@@ -60,12 +62,17 @@ public class OrderCondition extends BaseEntity {
 	}
 	
 	@Override
-	public boolean equals(Object other) {
-		if (other == null || !(other instanceof FilterSelector)) {
-			return false;
-		}
-		OrderCondition o = (OrderCondition) other;
-		return (o.getId() != null) && o.getId().equals(this.getId());
-	}
+	public boolean equals(Object obj) {
 
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof OrderCondition)) {
+            return false;
+        }
+        
+		OrderCondition other = (OrderCondition) obj;
+		return (other.getId() != null) && other.getId().equals(this.getId());
+	}
 }

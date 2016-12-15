@@ -64,12 +64,15 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-//		if (!super.equals(obj))
-//			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ServiceChargeTemplateRecurring)) {
+            return false;
+        }
+                
 		ServiceChargeTemplateRecurring other = (ServiceChargeTemplateRecurring) obj;
 		if (getId() == null) {
 			if (other.getId() != null)

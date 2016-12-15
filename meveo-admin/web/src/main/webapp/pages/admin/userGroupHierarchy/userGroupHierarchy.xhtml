@@ -27,6 +27,9 @@
                             <h:outputText value="#{messages['userGroupHierarchy.noGroups']}" rendered="#{userHierarchyLevelBean.rootNode.childCount==0}" />
                         </p:outputPanel>
                     </p:panel>
+                    <p:panel>
+                    	<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}" styleClass="Blue"></h:outputLabel>
+                   	</p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="col2 Responsive">
                     <p:panel styleClass="form-panel">
@@ -43,16 +46,16 @@
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupLevel']}" />
                             </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
-                                <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}"
-                                    update="messages userGroupPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['userGroupHierarchy.moveUp']}" />
-                            </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
-                                <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}"
-                                    update="messages userGroupPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['userGroupHierarchy.moveDown']}" />
-                            </h:panelGrid>
+<!--                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}"> -->
+<!--                                 <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}" -->
+<!--                                     update="messages userGroupPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['userGroupHierarchy.moveUp']}" /> -->
+<!--                             </h:panelGrid> -->
+<!--                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}"> -->
+<!--                                 <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}" -->
+<!--                                     update="messages userGroupPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['userGroupHierarchy.moveDown']}" /> -->
+<!--                             </h:panelGrid> -->
                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                                 <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}"
                                     update="messages userGroupPanel buttons userGroupLevelDetailPanel" ajax="true">

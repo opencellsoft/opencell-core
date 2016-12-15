@@ -53,7 +53,7 @@ public interface OrderRs {
      * Get a list of product orders optionaly filtered by some criteria
      * 
      * @param info Http request context
-     * @return A list of product offers matching search criteria
+     * @return A list of product orders matching search criteria
      */
     @GET
     @Path("/")

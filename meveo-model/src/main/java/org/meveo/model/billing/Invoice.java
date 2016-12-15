@@ -35,6 +35,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -45,12 +46,15 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.quote.Quote;
 
 @Entity
 @ObservableEntity
@@ -63,7 +67,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
-	private BillingAccount billingAccount = new BillingAccount();
+	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
@@ -80,8 +84,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@Size(max = 50)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 20, unique = true)
-	@Size(max = 20)
+	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 60, unique = true)
+	@Size(max = 60)
 	private String temporaryInvoiceNumber;
 
 	@Column(name = "PRODUCT_DATE")
@@ -144,9 +148,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
+	@Lob
 	private byte[] pdf;
 
-	@Column(name = "DETAILED_INVOICE")
+	@Type(type="numeric_boolean")
+    @Column(name = "DETAILED_INVOICE")
 	private boolean isDetailedInvoice = true;
 
 	@ManyToOne
@@ -165,6 +171,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@ManyToMany
 	@JoinTable(name = "BILLING_LINKED_INVOICES", joinColumns = { @JoinColumn(name = "ID") }, inverseJoinColumns = { @JoinColumn(name = "LINKED_INVOICE_ID") })
 	private Set<Invoice> linkedInvoices = new HashSet<>();
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "BILLING_INVOICES_ORDERS", joinColumns = @JoinColumn(name = "INVOICE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID"))	
+	private List<Order> orders = new ArrayList<Order>();	
+	
+    @ManyToOne
+    @JoinColumn(name = "QUOTE_ID")
+    private Quote quote;
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -360,6 +374,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 		this.temporaryInvoiceNumber = temporaryInvoiceNumber;
 	}
 
+    public String getInvoiceNumberOrTemporaryNumber() {
+        if (invoiceNumber != null) {
+            return invoiceNumber;
+        } else {
+            return "[" + temporaryInvoiceNumber + "]";
+        }
+    }
+	
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}
@@ -442,12 +464,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Invoice)) {
+            return false;
+        }
+        
 		Invoice other = (Invoice) obj;
 		if (other.getId() == null) {
 			return false;
@@ -470,6 +495,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	 */
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+	
+	
+
+	/**
+	 * @return the orders
+	 */
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	/**
+	 * @param orders the orders to set
+	 */
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 
 	@Override
@@ -506,4 +547,44 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 			invoiceAgregates.add(obj);
 		}
 	}
+
+    public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
+        List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
+
+        for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+                aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
+            }
+        }
+        
+        return aggregates;
+    }
+
+    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+
+        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+
+        for (RatedTransaction ratedTransaction : ratedTransactions) {           
+            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+                ratedTransactionsMatched.add(ratedTransaction);
+            }
+
+        }
+        return ratedTransactionsMatched;
+    }
+
+	/**
+	 * @return the quote
+	 */
+	public Quote getQuote() {
+		return quote;
+	}
+
+	/**
+	 * @param quote the quote to set
+	 */
+	public void setQuote(Quote quote) {
+		this.quote = quote;
+	}
+    
 }

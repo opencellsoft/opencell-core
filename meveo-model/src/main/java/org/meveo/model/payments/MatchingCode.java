@@ -125,12 +125,15 @@ public class MatchingCode extends AuditableEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+        
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof MatchingCode)) {
+            return false;
+        }
+        
 		MatchingCode other = (MatchingCode) obj;
 		if (getId() == null) {
 			if (other.getId() != null)

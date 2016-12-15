@@ -2,7 +2,7 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:c="http://java.sun.com/jstl/core"
     xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="body">
+	<ui:define name="body">
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -27,8 +27,11 @@
                             </p:tree>
                             <h:outputText value="#{messages['offerTemplateCategory.noOfferTemplateCategory']}"
                                 rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount==0}" />
-                        </p:outputPanel>
+                        </p:outputPanel>                        
                     </p:panel>
+                    <p:panel>
+                    	<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}" styleClass="Blue"></h:outputLabel>
+                   	</p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="col2">
                     <p:panel  styleClass="form-panel">
@@ -45,16 +48,16 @@
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['offerTemplateCategory.addOfferTemplateCategory']}" />
                             </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
-                                <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}"
-                                    update="messages offerCategoryPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['offerTemplateCategory.moveUp']}" />
-                            </h:panelGrid>
-                            <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
-                                <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}"
-                                    update="messages offerCategoryPanel buttons" ajax="true" />
-                                <p:outputLabel value="#{messages['offerTemplateCategory.moveDown']}" />
-                            </h:panelGrid>
+<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+<!--                                 <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}" -->
+<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveUp']}" /> -->
+<!--                             </h:panelGrid> -->
+<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+<!--                                 <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}" -->
+<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveDown']}" /> -->
+<!--                             </h:panelGrid> -->
                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
                                 <p:commandButton id="deleteOfferTemplateCategory" icon="ui-icon-trash" action="#{offerTemplateCategoryBean.removeOfferTemplateCategory()}"
                                     update="messages offerCategoryPanel offerTemplateCategoryDetailPanel buttons" ajax="true">
@@ -70,15 +73,7 @@
 
                                     <p:tabView id="tabView" style="margin-left: -30px;" activeIndex="#{offerTemplateCategoryBean.activeTab}">
                                         <p:tab title="#{messages['customer.tab.information']}">
-                                            <hftl:decorateFormField fieldId="offerImage" rendered="#{not offerTemplateCategoryBean.entity.transient}"
-                                                label="#{messages['commons.image']}">
-                                                <p:graphicImage id="offerImage" cache="false" value="#{offerTemplateCategoryImageStreamer.image}" height="150" width="150">
-                                                    <f:param name="id" value="#{offerTemplateCategoryBean.entity.id}"></f:param>
-                                                </p:graphicImage>
-                                                <p:fileUpload fileUploadListener="#{offerTemplateCategoryBean.handleFileUpload}" mode="advanced"
-                                                    update=":formId:tabView:offerImage :messages" auto="true" fileLimit="1" sizeLimit="1000000"
-                                                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
-                                            </hftl:decorateFormField>
+											<hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="offerCategory" />
                                             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
                                             <hftl:formField label="#{messages['commons.name']}" field="name" required="true" />
                                             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />

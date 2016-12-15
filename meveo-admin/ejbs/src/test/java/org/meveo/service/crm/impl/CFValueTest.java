@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +68,8 @@ public class CFValueTest {
         Assert.assertEquals("A123", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2004.99, "France", 95));
         Assert.assertEquals("A123456", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2006, "Vilnius", 201));
         Assert.assertEquals("A1234567", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2007, "Vilnius", 304.999));
+        Assert.assertEquals("A1234567", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2007, "Vilnius", new BigDecimal(304.999)));
+        Assert.assertEquals("A1234567", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, (Object[]) "2007|Vilnius|304.999".split("\\|")));
 
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2007, "Vilnius"));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 2007, "Vilnius", 15, "Vilnius"));
@@ -92,6 +95,7 @@ public class CFValueTest {
 
         Assert.assertEquals("A1", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, 15));
         Assert.assertEquals("A1", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, 18.99));
+        Assert.assertEquals("A1", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, new BigDecimal(18.99)));
         Assert.assertEquals("A1234", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, -5));
         Assert.assertEquals("A12", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, 15000L));
         Assert.assertEquals("A123", CustomFieldInstanceService.matchRangeOfNumbersValue(mapValue, 7));

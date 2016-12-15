@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -12,6 +12,8 @@
     </ui:define>
 
 	<ui:define name="body">
+        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    
 		<p:panel>
 			
 					<hftl:formPanel label="#{messages['invoice.panel']} #{invoiceBean.entity.invoiceType.description}"
@@ -87,7 +89,7 @@
 											<p:commandButton icon="ui-icon-close"
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												action="#{invoiceBean.deleteInvoicePdf}"
-												update=":buttonGenerate,@form" />
+												update=":headerForm:tabView:buttonGenerate,@form" />
 										</p:outputPanel>
 										<p:outputPanel
 											rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
@@ -104,7 +106,7 @@
 												rendered="#{invoiceBean.entity.invoiceNumber==null}"
 												icon="ui-icon-close"
 												action="#{invoiceBean.deleteXmlInvoice}"
-												update=":buttonGenerate,@form" />
+												update=":headerForm:tabView:buttonGenerate,@form" />
 										</p:outputPanel>
 									</p:panelGrid>
 								</p:fieldset>
@@ -170,6 +172,11 @@
 													value="#{subCat.ratedTransactions}" paginator="true"
 													rows="30"
 													paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                                    <p:column headerText="#{messages['ratedTransaction.usageDate']}">
+                                                        <h:outputText value="#{rated.usageDate}">
+                                                            <f:convertDateTime pattern="#{datePattern}" />
+                                                        </h:outputText>
+                                                    </p:column>
 													<p:column headerText="#{messages['subscription.offer']}">
 														<h:outputText value="#{rated.offerCode}" />
 													</p:column>

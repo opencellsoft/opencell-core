@@ -62,10 +62,15 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ServiceChargeTemplateSubscription)) {
+            return false;
+        }
+        
 		ServiceChargeTemplateSubscription other = (ServiceChargeTemplateSubscription) obj;
 		if (getId() == null) {
 			if (other.getId() != null)

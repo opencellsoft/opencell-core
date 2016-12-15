@@ -26,6 +26,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -41,7 +42,8 @@ public class MessageTemplateVariable extends BusinessEntity {
 	@JoinColumn(name = "TEMPLATE_ID")
 	private MessageTemplate messageTemplate;
 
-	@Column(name = "MANDATORY")
+	@Type(type="numeric_boolean")
+    @Column(name = "MANDATORY")
 	private boolean mandatory;
 
 	public MessageTemplate getMessageTemplate() {

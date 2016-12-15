@@ -32,6 +32,7 @@ public class OfferTemplateDto extends BaseDto {
     @XmlAttribute()
     private String description;
 
+	@XmlElement(required = true)
     private String name;
 
     private String longDescription;
@@ -55,6 +56,12 @@ public class OfferTemplateDto extends BaseDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
+    
+    /**
+     * This field is populated on find and list. Use to pull the image from a servlet later on.
+     */
+    private String imagePath;
+    private String imageBase64;
 
     public OfferTemplateDto() {
 
@@ -66,6 +73,8 @@ public class OfferTemplateDto extends BaseDto {
         name = offerTemplate.getName();
         longDescription = offerTemplate.getLongDescription();
         disabled = offerTemplate.isDisabled();
+        imagePath = offerTemplate.getImagePath();
+        
         if (offerTemplate.getBusinessOfferModel() != null) {
             bomCode = offerTemplate.getBusinessOfferModel().getCode();
         }
@@ -83,6 +92,7 @@ public class OfferTemplateDto extends BaseDto {
                 offerServiceTemplates.add(new OfferServiceTemplateDto(st));
             }
         }
+        
         customFields = customFieldInstances;
     }
 
@@ -184,4 +194,21 @@ public class OfferTemplateDto extends BaseDto {
     public void setName(String name) {
         this.name = name;
     }
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
+	}
+
 }

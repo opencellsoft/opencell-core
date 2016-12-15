@@ -1,6 +1,7 @@
 package org.meveo.api.dwh;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,13 +10,17 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
+import org.meveo.api.dto.dwh.MeasuredValueDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.dwh.MeasurableQuantity;
+import org.meveo.model.dwh.MeasuredValue;
+import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
+import org.meveocrm.services.dwh.MeasuredValueService;
 
 /**
  * @author Andrius Karpavicius
@@ -25,6 +30,9 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     @Inject
     private MeasurableQuantityService measurableQuantityService;
+    
+    @Inject
+    private MeasuredValueService mvService;
 
     public MeasurableQuantity create(MeasurableQuantityDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -145,4 +153,34 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
         return mq;
     }
+    
+	public List<MeasuredValueDto> findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode, User currentUser)
+			throws MeveoApiException {
+
+		if (StringUtils.isBlank(mqCode)) {
+			missingParameters.add("mqCode");
+		}
+
+		handleMissingParameters();
+
+		MeasurableQuantity mq = measurableQuantityService.findByCode(mqCode, currentUser.getProvider());
+		if (mq == null) {
+			throw new EntityDoesNotExistsException(MeasurableQuantity.class, mqCode);
+		}
+
+		List<MeasuredValueDto> result = new ArrayList<>();
+
+		if(period == null){
+			period = mq.getMeasurementPeriod();
+		}
+		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, fromDate, toDate, period, mq);
+		if (measuredValues != null) {
+			for (MeasuredValue mv : measuredValues) {
+				result.add(new MeasuredValueDto(mv));
+			}
+		}
+
+		return result;
+	}
+	
 }

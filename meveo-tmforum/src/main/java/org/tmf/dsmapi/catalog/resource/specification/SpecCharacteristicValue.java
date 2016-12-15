@@ -8,22 +8,12 @@ import org.tmf.dsmapi.commons.Utilities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * 
  * @author pierregauthier
- *
- * {
- *     "valueType": "number",
- *     "default": "true",
- *     "value": "4.2",
- *     "unitOfMeasure": "inches",
- *     "valueFrom": "",
- *     "valueTo": "",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": ""
- *     }
- * }
- *
+ * 
+ *         { "valueType": "number", "default": "true", "value": "4.2", "unitOfMeasure": "inches", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } }
+ * 
  */
 public class SpecCharacteristicValue implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -149,13 +139,14 @@ public class SpecCharacteristicValue implements Serializable {
         if (Utilities.areEqual(this.validFor, other.validFor) == false) {
             return false;
         }
-        
+
         return true;
     }
 
     @Override
     public String toString() {
-        return "SpecCharacteristicValue{" + "valueType=" + valueType + ", defaultValue=" + defaultValue + ", value=" + value + ", unitOfMeasure=" + unitOfMeasure + ", valueFrom=" + valueFrom + ", valueTo=" + valueTo + ", validFor=" + validFor + '}';
+        return "SpecCharacteristicValue{" + "valueType=" + valueType + ", defaultValue=" + defaultValue + ", value=" + value + ", unitOfMeasure=" + unitOfMeasure + ", valueFrom="
+                + valueFrom + ", valueTo=" + valueTo + ", validFor=" + validFor + '}';
     }
 
     public static SpecCharacteristicValue createProto() {

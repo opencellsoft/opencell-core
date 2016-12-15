@@ -27,7 +27,6 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -39,11 +38,6 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link PricePlanMatrix} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@SuppressWarnings("rawtypes")
 	@Inject
 	private CounterTemplateService counterTemplateService;
 
@@ -58,7 +52,6 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IPersistenceService<CounterTemplate> getPersistenceService() {
 		return counterTemplateService;

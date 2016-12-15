@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
 	<changeSet id="#1803_20160628" author="TonyAlejandro">
         <createTable tableName="ADM_SECURED_ENTITY">
@@ -14,9 +14,9 @@
 			<column name="entity_class" type="VARCHAR(255)" />
 		</createTable>
 
-		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" />
-        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" />
-        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" />
+		<addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="user_id" columnDataType="BIGINT" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="code" columnDataType="VARCHAR(60)" />
+        <addNotNullConstraint tableName="ADM_SECURED_ENTITY" columnName="entity_class" columnDataType="VARCHAR(255)" />
 		<addForeignKeyConstraint
         	constraintName="FK_SECURED_ENTITY_USER" 
         	referencedTableName="ADM_USER" 
@@ -27,12 +27,12 @@
 	
 	<changeSet id="#1821_20160707" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
-			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_from" type="DATETIME"></column>
+			<column name="valid_to" type="DATETIME"></column>
 		</addColumn>
 		<addColumn tableName="cat_offer_serv_templates">
-			<column name="valid_from" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-			<column name="valid_to" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="valid_from" type="DATETIME"></column>
+			<column name="valid_to" type="DATETIME"></column>
 		</addColumn>
 	</changeSet>
 	
@@ -60,13 +60,13 @@
           <column name="UUID" type="VARCHAR(60)"/>
 		</addColumn>
 		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-			<column name="DISPLAY_BILLING_CYCLE" type="BOOL" defaultValueBoolean="false"></column> 
+			<column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueNumeric="0"/> 
 		</addColumn>
 	</changeSet>
 	
       <changeSet id="#1890_#1889_UIID_20160801" author="Mbarek">
-         <sql>update BILLING_TAX set UUID ='TAX-'|| id </sql>   
-        <sql>update BILLING_CYCLE set UUID ='BillingCycle-'|| id </sql> 
+         <sql>update BILLING_TAX set UUID =concat('TAX-', id) </sql>   
+         <sql>update BILLING_CYCLE set UUID = concat('BillingCycle-', id) </sql> 
     </changeSet>  	
 
     <changeSet author="anasseh (generated)" id="#1841_13072016-1">
@@ -80,17 +80,17 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-4">
         <createTable tableName="wf_action">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_action_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="action_el" type="VARCHAR(2000)"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="priority" type="INT4"/>
@@ -102,17 +102,17 @@
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-5">
         <createTable tableName="wf_transition">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_transition_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="from_status" type="VARCHAR(255)"/>
             <column name="to_status" type="VARCHAR(255)"/>
@@ -120,27 +120,31 @@
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
             <column name="workflow_id" type="BIGINT"/>
+            <column name="priority" type="INT4" />
+            <column name="description" type="VARCHAR(100)"/>        
         </createTable>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-6">
         <createTable tableName="wf_workflow">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_workflow_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="code" type="VARCHAR(60)">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(100)"/>
-            <column name="enable_hostory" type="BOOL"/>
-            <column name="export_lot" type="BOOL"/>
+            <column name="enable_hostory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="export_lot" type="${type.boolean}"/>
             <column name="status" type="VARCHAR(255)"/>
             <column name="wf_type" type="VARCHAR(255)"/>
             <column name="provider_id" type="BIGINT"/>
@@ -153,24 +157,10 @@
         <dropForeignKeyConstraint  baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" />
     </changeSet>   
     
-    <changeSet author="anasseh (generated)" id="#1841_13072016-18">
-        <addPrimaryKey columnNames="id" constraintName="wf_action_pkey" tableName="wf_action"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-19">
-        <addPrimaryKey columnNames="id" constraintName="wf_transition_pkey" tableName="wf_transition"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-20">
-        <addPrimaryKey columnNames="id" constraintName="wf_workflow_pkey" tableName="wf_workflow"/>
+   <changeSet author="anasseh (generated)" id="#1841_13072016-165-1" dbms="mysql">
+        <dropIndex tableName="ar_action_dunning" indexName="fk_r8q3phft4xgm8lbfu6i7lo3kx"/>
     </changeSet>
  
-    <changeSet author="anasseh (generated)" id="#1841_13072016-23">
-        <addUniqueConstraint columnNames="from_status, to_status, workflow_id, provider_id" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
-    </changeSet>
-
-    <changeSet author="anasseh (generated)" id="#1841_13072016-25">
-        <addUniqueConstraint columnNames="priority, wf_transition_id, provider_id" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_action"/>
-    </changeSet>
-
     <changeSet author="anasseh (generated)" id="#1841_13072016-27">
         <addUniqueConstraint columnNames="provider_id, code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow"/>
     </changeSet>
@@ -207,56 +197,14 @@
     <changeSet author="anasseh (generated)" id="#1841_13072016-61">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_action" constraintName="fk_q7dvcjiuap29yhvq884lt0die" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
     </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-63">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_24c5wf8u9a35yf8uutjf5qwwf"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-64">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_3nhld7nla1pv1t8eejdl4dn6p"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-69">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_78p10vstesm3xr605s46qn3gq"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-70">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_8q1jrqq9e8xru7m27nbwrxp3k"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-72">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_ar_credit_category_ar_dunning_plan"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-80">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_ecur7dwit9crb6cbhlubxs3jn"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-81">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_eu7ekseo196cq1qgyg7xm7vs5"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-82">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_gc1m3d2m0dsqcaek8rxrk0u87"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-84">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan" constraintName="fk_j0vlitgsqwnnkry67xwuead15"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-86">
-        <dropForeignKeyConstraint baseTableName="ar_dunning_plan_transition" constraintName="fk_jpipfg980fcv7pq4s9tnb35ik"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-87">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_k9j7i31wmyhrw11lyxkdnpymr"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-95">
-        <dropForeignKeyConstraint baseTableName="ar_action_plan_item" constraintName="fk_n5ax6w0qt9pum3oc3n2b3hgxw"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-101">
-        <dropUniqueConstraint constraintName="uk_ewwxy8ieo179rif5ud8hduqkt" tableName="ar_dunning_plan_transition"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-103">
-        <dropUniqueConstraint constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" tableName="ar_dunning_plan"/>
-    </changeSet>   
     <changeSet author="anasseh (generated)" id="#1841_13072016-104">
         <dropTable tableName="ar_action_plan_item"/>
     </changeSet>
-    <changeSet author="anasseh (generated)" id="#1841_13072016-105">
-        <dropTable tableName="ar_dunning_plan"/>
-    </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-106">
         <dropTable tableName="ar_dunning_plan_transition"/>
+    </changeSet>
+    <changeSet author="anasseh (generated)" id="#1841_13072016-105">
+        <dropTable tableName="ar_dunning_plan"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-144">
         <dropSequence sequenceName="ar_dunning_plan_seq"/>
@@ -269,7 +217,7 @@
     </changeSet>	
     <changeSet id="#1885_20160815_service_entity" author="EdwardPLegaspi">
     	<addColumn tableName="cat_service_template">
-    		<column name="image" type="oid" />
+    		<column name="image" type="${type.blob}" />
 			<column name="image_content_type" type="VARCHAR(50)" />
     	</addColumn>
     </changeSet>  
@@ -285,18 +233,18 @@
     	
 	<changeSet id="#1839_20160713_channel" author="EdwardLegaspi">
 		<createTable tableName="cat_channel">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_channel_pkey" />
 			</column>
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -306,8 +254,7 @@
 		</createTable>
 
 		<createSequence sequenceName="cat_channel_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_channel_pkey"
-			tableName="cat_channel" />
+
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_cat_channel" deferrable="false" disabled="false"
 			initiallyDeferred="false" tableName="cat_channel" />
@@ -329,17 +276,10 @@
 		author="EdwardLegaspi">
 		<createTable tableName="cat_business_product_model">
 			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="pk_cat_business_product_model" />
 			</column>
 		</createTable>
 
-		<addPrimaryKey columnNames="id"
-			constraintName="pk_cat_business_product_model" tableName="cat_business_product_model" />
-	</changeSet>
-
-	<changeSet id="#1839_20160719_bam" author="EdwardPLegaspi">
-		<addPrimaryKey tableName="crm_business_account_model"
-			columnNames="id" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_offering" author="EdwardLegaspi">
@@ -352,11 +292,6 @@
 		
 		<sql>UPDATE cat_offer_template SET TYPE='OFFER'</sql>
 		
-		<addForeignKeyConstraint baseColumnNames="cat_offer_template_cat_id"
-			baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_tpl_cat"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="cat_offer_template_category" />
 		<addForeignKeyConstraint baseColumnNames="business_offer_model_id"
 			baseTableName="cat_offer_template" constraintName="fk_prod_offer_template_bom"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -422,18 +357,18 @@
 
 	<changeSet id="#1839_20160713_digital_resource" author="EdwardLegaspi">
 		<createTable tableName="cat_digital_resource">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_digital_resource_pkey" />
 			</column>
 			<column name="provider_id" type="BIGINT" />
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
@@ -445,8 +380,7 @@
 		</createTable>
 
 		<createSequence sequenceName="cat_digital_resource_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_digital_resource_pkey"
-			tableName="cat_digital_resource" />
+
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_digital_resource" deferrable="false" disabled="false"
 			initiallyDeferred="false" tableName="cat_digital_resource" />
@@ -487,11 +421,9 @@
 		author="SebastienMichea">
 		<createTable tableName="cat_product_charge_templ">
 			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_prod_charge_templ_pkey"/>
 			</column>
 		</createTable>
-		<addPrimaryKey columnNames="id" constraintName="cat_prod_charge_templ_pkey"
-			tableName="cat_product_charge_templ" />
 	</changeSet>
 
 	<changeSet id="#1839_20160713_cat_product_template" author="EdwardLegaspi">
@@ -531,23 +463,18 @@
 	<changeSet id="#1839_20160713_cat_offer_product_template"
 		author="EdwardLegaspi">
 		<createTable tableName="cat_offer_product_template">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_product_template_pkey" />
 			</column>
-			<column name="provider_id" type="BIGINT" />
-			<column name="version" type="INT4" />
 			<column name="offer_template_id" type="BIGINT" />
 			<column name="product_template_id" type="BIGINT" />
-			<column name="mandatory" type="BOOL" />
+			<column name="mandatory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
 		</createTable>
 
 		<createSequence sequenceName="cat_offer_product_template_seq" />
-		<addPrimaryKey columnNames="id"
-			constraintName="cat_offer_product_template_pkey" tableName="cat_offer_product_template" />
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="cat_offer_product_template" constraintName="fk_cat_off_prod_tpl_crm_provider"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
 		<addForeignKeyConstraint baseColumnNames="offer_template_id"
 			baseTableName="cat_offer_product_template" constraintName="fk_cat_off_pro_tpl_offer_template"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -561,23 +488,16 @@
 	<changeSet id="#1839_20160713_cat_bundle_product_template"
 		author="EdwardLegaspi">
 		<createTable tableName="cat_bundle_product_template">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="cat_bundle_prod_tpl_pkey" />
 			</column>
-			<column name="provider_id" type="BIGINT" />
-			<column name="version" type="INT4" />
 			<column name="product_template_id" type="BIGINT" />
 			<column name="bundle_template_id" type="BIGINT" />
 			<column name="quantity" type="INT4" />
 		</createTable>
 
 		<createSequence sequenceName="cat_bundle_product_template_seq" />
-		<addPrimaryKey columnNames="id" constraintName="cat_bundle_prod_tpl_pkey"
-			tableName="cat_bundle_product_template" />
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_prod_tpl_crm_prov"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+        
 		<addForeignKeyConstraint baseColumnNames="product_template_id"
 			baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_pro_tpl_prod_off_tpl"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -608,17 +528,17 @@
 	<changeSet id="#1839_20160713_billing_product_inst"
 		author="SebastienMichea">
 		<createTable tableName="billing_product_instance">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="billing_product_instance_pkey" />
 			</column>
 			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+			<column name="created" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="updated" type="DATETIME" />
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
@@ -630,11 +550,9 @@
 			<column name="product_template_id" type="BIGINT" />
 			<column name="quantity" type="numeric(23, 12)" />
 			<column name="user_account_id" type="BIGINT"></column>
-			<column name="application_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="application_date" type="DATETIME" />
 		</createTable>
 		<createSequence sequenceName="billing_product_instance_seq" />
-		<addPrimaryKey columnNames="id" constraintName="billing_product_instance_pkey"
-			tableName="billing_product_instance" />
 			
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_product_instance" deferrable="false" disabled="false"
@@ -666,15 +584,15 @@
 		author="SebastienMichea">
 		<createTable tableName="billing_product_charge_inst">
 			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"  primaryKey="true" primaryKeyName="billing_prod_chg_inst_pkey" />
 			</column>
 			<column name="product_instance_id" type="BIGINT" />
 			<column name="product_chrg_tmpl_id" type="BIGINT" />
 			<column name="quantity" type="numeric(23, 12)" />
 		</createTable>
+        
 		<createSequence sequenceName="billing_product_charge_inst_seq" />
-		<addPrimaryKey columnNames="id" constraintName="billing_prod_chg_inst_pkey"
-			tableName="billing_product_charge_inst" />
+
 		<addForeignKeyConstraint baseColumnNames="product_instance_id"
 			baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodins"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -690,17 +608,17 @@
         <createSequence sequenceName="ord_order_seq" />
 
         <createTable tableName="ord_order">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_order_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="updated" type="DATETIME" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -710,21 +628,19 @@
             <column name="description" type="VARCHAR(100)" />
             <column name="external_id" type="VARCHAR(100)" />
             <column name="delivery_instructions" type="TEXT" />
-            <column name="order_date" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="order_date" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="REQ_START_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="REQ_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="EXP_COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="COMPLETION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="REQ_START_DATE" type="DATETIME" />
+            <column name="REQ_COMPLETION_DATE" type="DATETIME" />
+            <column name="EXP_COMPLETION_DATE" type="DATETIME" />
+            <column name="COMPLETION_DATE" type="DATETIME" />
             <column name="priority" type="int" defaultValueNumeric="2" />
             <column name="category" type="VARCHAR(200)" />
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false" />
             </column>
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="ord_order_pkey" tableName="ord_order" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order" constraintName="fk_ord_order_crm_provider" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -741,8 +657,8 @@
         <createSequence sequenceName="ord_order_item_seq" />
 
         <createTable tableName="ord_order_item">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_order_item_pkey" />
             </column>
             <column name="version" type="INT4" />
             <column name="provider_id" type="BIGINT" />
@@ -766,8 +682,6 @@
             </column>
             <column name="subscription_id" type="BIGINT" />
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="ord_order_item_pkey" tableName="ord_order_item" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_crm_provider" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -821,7 +735,7 @@
             <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
             <column name="ROUTED_TO_USER_ID" type="BIGINT"/>
             <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
-            <column name="start_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="start_date" type="DATETIME"/>
         </addColumn>
         
         <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_ID" baseTableName="ORD_ORDER" constraintName="fk_ord_order_rt_user"
@@ -829,24 +743,31 @@
         
     </changeSet>
     
+    <changeSet id="#1839_20160810_offer_template_category-0" author="EdwardLegaspi" dbms="mysql">
+      
+        <dropForeignKeyConstraint baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_template_category"/>
+        <dropIndex tableName="cat_offer_template" indexName="fk_cat_offer_template_offer_template_category"/>
+    </changeSet>
+    
 	<changeSet id="#1839_20160810_offer_template_category" author="EdwardLegaspi">
 		<sql>INSERT INTO CAT_PRODUCT_OFFER_TMPL_CAT (product_id, offer_template_cat_id, indx) SELECT id, cat_offer_template_cat_id, 0 FROM cat_offer_template WHERE cat_offer_template_cat_id IS NOT NULL;</sql>
+
 		<dropColumn tableName="cat_offer_template" columnName="cat_offer_template_cat_id"/>
 	</changeSet>
 	     
     <changeSet author="pbach (generated)" id="#1863_04082016-165">
         <createTable tableName="hierarchy_entity">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="hierarchy_entity_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="code" type="VARCHAR(60)">
                 <constraints nullable="false"/>
             </column>
@@ -860,8 +781,7 @@
         </createTable>
         
         <createSequence sequenceName="hierarchy_entity_seq" />
-        <addPrimaryKey columnNames="id" constraintName="hierarchy_entity_pkey"
-                       tableName="hierarchy_entity" />
+        
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_crm_provider"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -901,13 +821,20 @@
 			where a.address_country in (select c.country_code from adm_country c);
 		</sql>
     </changeSet>
+    
+    
+    <changeSet id="#1637_20160819_1-0" author="TyshanShi" dbms="mysql">
+        <dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+        <dropIndex tableName="ADM_MESSAGES" indexName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
+        <dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+        <dropIndex tableName="ADM_MESSAGES" indexName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
+    </changeSet>
+    
     <changeSet id="#1637_20160819_1" author="TyshanShi">
     	<addColumn tableName="ADM_MESSAGES">
     		<column name="ENTITY_CLASS" type="varchar(60)"/>
     		<column name="ENTITY_CODE" type="varchar(60)"/>
     	</addColumn>
-    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s"/>
-    	<dropForeignKeyConstraint baseTableName="ADM_MESSAGES" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="disabled"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="created"/>
     	<dropColumn tableName="ADM_MESSAGES" columnName="updated"/>
@@ -923,111 +850,31 @@
     	</createIndex>
     </changeSet>  
     	
-    <changeSet id="#1637_20160819_2" author="TyshanShi">
+    <changeSet id="#1637_20160819_2" author="TyshanShi" dbms="postgresql" >
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_CHARGE_TEMPLATE where 
-				id =(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				id =(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where  a.id=b.id)) where a.code like 'RecurringChargeTemplate_%' or a.code like
 				'OneShotChargeTemplate_%' or a.code like 'UsageChargeTemplate_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_CAT where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_INVOICE_SUB_CAT where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'InvoiceSubCategory_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from BILLING_TAX where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'Tax_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from CAT_PRICE_PLAN_MATRIX where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where a.code like 'PricePlanMatrix_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CODE =(select (code) from ADM_TITLE where id = 
-				(select cast(substring(code, position('_' in code)+1) as bigint) from 
+				(select cast(substring(code, position('_' in code)+1) as ${cast.long}) from 
 				ADM_MESSAGES b  where a.id=b.id)) where  a.code like 'Title_%'</sql>
 		<sql>update ADM_MESSAGES a set ENTITY_CLASS =(select substring(code,0, position('_' in code)) from 
 				ADM_MESSAGES b where a.id=b.id) where a.code like '%_%'</sql>
 		<sql>alter table ADM_MESSAGES drop column code</sql>
 	</changeSet>
     	
-    <changeSet author="pbach (generated)" id="#1861_16082016-165">
-        <createTable tableName="wf_transition_rule">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="condition_el" type="VARCHAR(2000)"/>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="value" type="VARCHAR(255)"/>
-            <column name="provider_id" type="BIGINT"/>
-            <column name="creator_id" type="BIGINT"/>
-            <column name="updater_id" type="BIGINT"/>
-            <column name="priority" type="INT4"/>
-            <column name="type" type="VARCHAR(255)"/>
-            <column name="model" type="BOOL"/>
-        </createTable>
-    
-        <addPrimaryKey columnNames="id" constraintName="wf_wf_transition_rule_pkey"
-                       tableName="wf_transition_rule" />
-
-        <addForeignKeyConstraint baseColumnNames="provider_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_provider_wf_transition_rule_crm_provider"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-
-        <addForeignKeyConstraint baseColumnNames="creator_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_creator_wf_transition_rule_adm_user"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
-        <addForeignKeyConstraint baseColumnNames="updater_id"
-                                 baseTableName="wf_transition_rule" constraintName="fk_updater_wf_transition_rule_adm_user"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
-        <addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_name_value_provider_id" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="wf_transition_rule" />
-
-        <createTable tableName="wf_transition_transition_rule">
-            <column name="transition_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="transition_rule_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="transition_id"
-                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_id_wf_transition"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
-
-        <addForeignKeyConstraint baseColumnNames="transition_rule_id"
-                                 baseTableName="wf_transition_transition_rule" constraintName="fk_transition_rule_id_transition_rule"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition_rule" />
-
-        <createSequence sequenceName="wf_transition_rule_seq" />
-    </changeSet>
-
-
-    <changeSet author="pbach (generated)" id="#1861_26082016-166">
-        <addColumn tableName="wf_transition">
-            <column name="priority" type="INT4" />
-        </addColumn>
-        <addColumn tableName="wf_transition">
-            <column name="description" type="VARCHAR(100)"/>
-        </addColumn>
-        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_7xdivt2yngk5mmjfdy2x73cad" />
-
-        <addUniqueConstraint columnNames="from_status, to_status, priority, workflow_id, provider_id" constraintName="uk_from_status_to_status_priority_workflow_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition"/>
-    </changeSet>
-
 	<changeSet id="#cat_bundle_template_add_uk" author="EdwardLegaspi">
 		<addUniqueConstraint
 			columnNames="product_template_id, bundle_template_id"
@@ -1035,27 +882,19 @@
 			disabled="false" initiallyDeferred="false" tableName="cat_bundle_product_template" />
 	</changeSet>
 
-	<changeSet id="#cat_offer_product_template_cat_bundle_product_template" author="EdwardLegaspi">
-		<dropColumn tableName="cat_offer_product_template" columnName="version"/>
-		<dropColumn tableName="cat_offer_product_template" columnName="provider_id"/>
-		<dropColumn tableName="cat_bundle_product_template" columnName="version"/>
-		<dropColumn tableName="cat_bundle_product_template" columnName="provider_id"/>
-	</changeSet>
-	
-
     <changeSet author="pbach (generated)" id="#1861_05092016-167">
         <createTable tableName="wf_decision_rule">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_wf_decision_rule_pkey" />
             </column>
             <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated" type="DATETIME"/>
             <column name="condition_el" type="VARCHAR(2000)"/>
             <column name="name" type="VARCHAR(255)"/>
             <column name="value" type="VARCHAR(255)"/>
@@ -1063,11 +902,10 @@
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
             <column name="type" type="VARCHAR(255)"/>
-            <column name="model" type="BOOL"/>
+            <column name="model" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-
-        <addPrimaryKey columnNames="id" constraintName="wf_wf_decision_rule_pkey"
-                       tableName="wf_decision_rule" />
 
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="wf_decision_rule" constraintName="fk_provider_wf_decision_rule_crm_provider"
@@ -1106,10 +944,8 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />
 
-        <createSequence sequenceName="wf_decision_rule_seq" />
+        <createSequence sequenceName="wf_decision_rule_seq" startValue="10" />
 
-        <dropUniqueConstraint tableName="wf_transition" constraintName="uk_from_status_to_status_priority_workflow_provider" />
-        <dropUniqueConstraint tableName="wf_action" constraintName="uk_cr97e5dxkl6ps0coltjw6i28y" />
         <addColumn tableName="wf_transition">
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
@@ -1120,22 +956,11 @@
                              initiallyDeferred="false" tableName="wf_transition" />
         <addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_action" />
-        <sql>
-            INSERT INTO wf_decision_rule SELECT id, version, disabled, created, updated, condition_el, name,
-            value, provider_id, creator_id, updater_id, type, model
-            FROM wf_transition_rule;
-            INSERT INTO wf_transition_decision_rule select * from wf_transition_transition_rule;
-            SELECT SETVAL('wf_decision_rule_seq', (SELECT MAX(id) FROM wf_decision_rule) + 1);
-            update wf_transition set UUID='TRANSITION-'||id where UUID is null;
-            update wf_action set UUID='ACTION-'||id where UUID is null;
-        </sql>
 
-        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID"/>
-        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID"/>
 
-        <dropTable tableName="wf_transition_transition_rule"/>
-        <dropTable tableName="wf_transition_rule"/>
-        <dropSequence sequenceName="wf_transition_rule_seq"/>
+        <addNotNullConstraint tableName="WF_TRANSITION" columnName="UUID" columnDataType="VARCHAR(60)" />
+        <addNotNullConstraint tableName="WF_ACTION" columnName="UUID" columnDataType="VARCHAR(60)"/>
+
         <dropColumn tableName="WF_WORKFLOW" columnName="status"/>
     </changeSet>
     
@@ -1149,8 +974,14 @@
         </addColumn>
     </changeSet> 
 
+
+    <changeSet id="#1844_20160903-0" author="pbach" dbms="mysql">    
+        <dropForeignKeyConstraint baseTableName="ord_order" constraintName="fk_ord_order_rt_user"/>
+        <dropIndex tableName="ord_order" indexName="fk_ord_order_rt_user" />            
+    </changeSet> 
+    
     <changeSet id="#1844_20160903" author="pbach">
-        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"></dropColumn>
+        <dropColumn tableName="ord_order" columnName="ROUTED_TO_USER_ID"/>
         <addColumn tableName="ord_order">
             <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
         </addColumn>
@@ -1161,11 +992,11 @@
             <column name="UUID" type="VARCHAR(60)"/>
         </addColumn>
         <sql>update ORD_ORDER set UUID ='ORDER-'|| id </sql>   
-        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID"/> 
+        <addNotNullConstraint tableName="ORD_ORDER" columnName="UUID" columnDataType="VARCHAR(60)"/> 
         
-        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID"/> 
-        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID"/> 
-        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID"/> 
+        <addNotNullConstraint tableName="BILLING_TAX" columnName="UUID" columnDataType="VARCHAR(60)"/> 
+        <addNotNullConstraint tableName="BILLING_CYCLE" columnName="UUID" columnDataType="VARCHAR(60)"/> 
+        <addNotNullConstraint tableName="billing_product_instance" columnName="UUID" columnDataType="VARCHAR(60)"/> 
     </changeSet>
 
     <changeSet id="#1844_20160910" author="pbach">
@@ -1184,6 +1015,15 @@
         <sql>
             update WF_TRANSITION set FROM_STATUS = 'ACKNOWLEDGED', TO_STATUS = 'IN_PROGRESS' where FROM_STATUS is NULL and TO_STATUS is NULL and WORKFLOW_ID in (select id from wf_workflow where wf_type='org.meveo.admin.wf.types.OrderWF');
         </sql>
+    </changeSet>
+    
+    <changeSet id="#2043_20160922" author="smichea">
+        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+            <column name="SELLING_COUNTRY_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+            <column name="TAX_CODE_EL" type="VARCHAR(2000)"/>
+        </addColumn>
     </changeSet>
 
 	<changeSet id="#1839_20160717_cat_product_charge_templ" author="TonyAlejandro">
@@ -1204,8 +1044,16 @@
 			constraintName="uk_product_instance" />
 	</changeSet>
 
+
+    <changeSet id="#2060_20160928_remove_offer_template-0" author="SebastienMichea" dbms="mysql">
+        
+        <dropForeignKeyConstraint baseTableName="billing_charge_instance" constraintName="fk_chrg_instance_offer"/>
+        <dropIndex tableName="billing_charge_instance" indexName="fk_chrg_instance_offer"/>
+    </changeSet>
+
 	<changeSet id="#2060_20160928_remove_offer_template"
 		author="SebastienMichea">
+        
 		<dropColumn tableName="billing_charge_instance" columnName="offer_template_id"/>
 		<addColumn tableName="billing_product_instance">
 			<column name="subscription_id" type="BIGINT" />
@@ -1246,17 +1094,17 @@
 	     
 	     
         <createTable tableName="WF_HISTORY">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="WF_HISTORY_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+            <column name="created" type="DATETIME">
                 <constraints nullable="false" />
             </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="updated" type="DATETIME" />
             <column name="provider_id" type="BIGINT"/>
             <column name="creator_id" type="BIGINT"/>
             <column name="updater_id" type="BIGINT"/>
@@ -1270,13 +1118,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="TRANSITION_NAME" type="varchar(255)"/>
-            <column name="ACTION_DATE" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="ACTION_DATE" type="DATETIME" />
             <column name="WORKFLOW_ID" type="BIGINT" />                              
         </createTable>
         
        <createTable tableName="WF_HISTORY_ACTION">    
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="WF_HISTORY_ACTION_pkey" />
             </column>
             <column name="version" type="INT4" />  
              <column name="provider_id" type="BIGINT"/>    
@@ -1285,10 +1133,6 @@
             <column name="WF_HISTORY_ID" type="BIGINT" />                              
         </createTable>
     
-       
-        <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_pkey"  tableName="WF_HISTORY" />
-         <addPrimaryKey columnNames="id" constraintName="WF_HISTORY_ACTION_pkey"  tableName="WF_HISTORY_ACTION" />
-
         <addForeignKeyConstraint baseColumnNames="provider_id"
                                  baseTableName="WF_HISTORY" constraintName="fk_provider_WF_HISTORY_crm_provider"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -1329,5 +1173,1919 @@
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.LineChart' where ITEM_TYPE='org.meveocrm.model.dwh.LineChart'</sql>
         <sql>update MEVEO_MODULE_ITEM set ITEM_TYPE = 'org.meveo.model.dwh.PieChart' where ITEM_TYPE='org.meveocrm.model.dwh.PieChart'</sql>
     </changeSet>    
+    <changeSet id="#2050_20161031" author="SebastienMichea">
+		<addColumn tableName="BILLING_SERVICE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_PRODUCT_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_CHARGE_INSTANCE">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_WALLET_OPERATION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+		<addColumn tableName="BILLING_RATED_TRANSACTION">
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
+    	<changeSet author="anasseh" id="#2143_20161025">
+		<addColumn tableName="billing_billing_account">
+			<column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
+		</addColumn>
+    </changeSet>
 
+    <changeSet id="#2049_20161021" author="AndriusKarpavicius">
+        <dropColumn tableName="BILLING_RESERVATION" columnName="ORIGIN_EDR"/>
+        <addColumn tableName="BILLING_RESERVATION">
+            <column name="ORIGIN_EDR_ID" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="ORIGIN_EDR_ID" baseTableName="BILLING_RESERVATION" constraintName="fk_reservation_edr"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />                               
+                                                      
+    </changeSet>
+
+
+    <!-- migrate boolean fields, migrate billing_invoice.pdf from bytea to oid -->
+    <changeSet id="#2049_20161024" author="AndriusKarpavicius" dbms="postgresql" >
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="migration" value="true"/>         
+        </preConditions>
+
+        <renameColumn tableName="DWH_CHART" oldColumnName="VISIBLE" newColumnName="VISIBLE_BOOL" />
+        <addColumn tableName="DWH_CHART">
+            <column name="VISIBLE" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update DWH_CHART set VISIBLE= case when VISIBLE_BOOL then 1 else 0 end where VISIBLE_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART" columnName="VISIBLE_BOOL" />
+
+        <renameColumn tableName="BILLING_SUBSCRIPTION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_SUBSCRIPTION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_SUBSCRIPTION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_SUBSCRIPTION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="USE_SSL" newColumnName="USE_SSL_BOOL" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="USE_SSL" type="${type.boolean}" />
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set USE_SSL= case when USE_SSL_BOOL then 1 else 0 end where USE_SSL_BOOL is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="USE_SSL_BOOL" />
+
+        <renameColumn tableName="BILLING_SUBSCRIPTION" oldColumnName="DEFAULT_LEVEL" newColumnName="DEFAULT_LEVEL_BOOL" />
+        <addColumn tableName="BILLING_SUBSCRIPTION">
+            <column name="DEFAULT_LEVEL" type="${type.boolean}" defaultValueNumeric="1" />
+        </addColumn>
+        <sql>update BILLING_SUBSCRIPTION set DEFAULT_LEVEL= case when DEFAULT_LEVEL_BOOL then 1 else 0 end where DEFAULT_LEVEL_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_SUBSCRIPTION" columnName="DEFAULT_LEVEL_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="STACKED" newColumnName="STACKED_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="STACKED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set STACKED= case when STACKED_BOOL then 1 else 0 end where STACKED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="STACKED_BOOL" />
+
+        <renameColumn tableName="CUST_CET" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CUST_CET">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CUST_CET set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CUST_CET" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ACCOUNT_ENTITY" oldColumnName="DEFAULT_LEVEL" newColumnName="DEFAULT_LEVEL_BOOL" />
+        <addColumn tableName="ACCOUNT_ENTITY">
+            <column name="DEFAULT_LEVEL" type="${type.boolean}" />
+        </addColumn>
+        <sql>update ACCOUNT_ENTITY set DEFAULT_LEVEL= case when DEFAULT_LEVEL_BOOL then 1 else 0 end where DEFAULT_LEVEL_BOOL is not null </sql>
+        <dropColumn tableName="ACCOUNT_ENTITY" columnName="DEFAULT_LEVEL_BOOL" />
+
+        <renameColumn tableName="BILLING_TRADING_LANGUAGE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_TRADING_LANGUAGE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_TRADING_LANGUAGE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_TRADING_LANGUAGE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_PRICE_PLAN_MATRIX" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_PRICE_PLAN_MATRIX set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_PRICE_PLAN_MATRIX" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="WF_DECISION_RULE" oldColumnName="MODEL" newColumnName="MODEL_BOOL" />
+        <addColumn tableName="WF_DECISION_RULE">
+            <column name="MODEL" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_DECISION_RULE set MODEL= case when MODEL_BOOL then 1 else 0 end where MODEL_BOOL is not null </sql>
+        <dropColumn tableName="WF_DECISION_RULE" columnName="MODEL_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="FILLED" newColumnName="FILLED_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="FILLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set FILLED= case when FILLED_BOOL then 1 else 0 end where FILLED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="FILLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="RECOGNIZE_REVENUE" newColumnName="RECOGNIZE_REVENUE_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="RECOGNIZE_REVENUE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set RECOGNIZE_REVENUE= case when RECOGNIZE_REVENUE_BOOL then 1 else 0 end where RECOGNIZE_REVENUE_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="RECOGNIZE_REVENUE_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_PRICEPLANS" newColumnName="DISPLAY_PRICEPLANS_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_PRICEPLANS" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_PRICEPLANS= case when DISPLAY_PRICEPLANS_BOOL then 1 else 0 end where DISPLAY_PRICEPLANS_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_PRICEPLANS_BOOL" />
+
+        <renameColumn tableName="BI_JOB" oldColumnName="ACTIVE" newColumnName="ACTIVE_BOOL" />
+        <addColumn tableName="BI_JOB">
+            <column name="ACTIVE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BI_JOB set ACTIVE= case when ACTIVE_BOOL then 1 else 0 end where ACTIVE_BOOL is not null </sql>
+        <dropColumn tableName="BI_JOB" columnName="ACTIVE_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_PIE" oldColumnName="FILLED" newColumnName="FILLED_BOOL" />
+        <addColumn tableName="DWH_CHART_PIE">
+            <column name="FILLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_PIE set FILLED= case when FILLED_BOOL then 1 else 0 end where FILLED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_PIE" columnName="FILLED_BOOL" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_TYPE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_TYPE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_TYPE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_TYPE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_PIE" oldColumnName="SHOW_DATA_LABELS" newColumnName="SHOW_DATA_LABELS_BOOL" />
+        <addColumn tableName="DWH_CHART_PIE">
+            <column name="SHOW_DATA_LABELS" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_PIE set SHOW_DATA_LABELS= case when SHOW_DATA_LABELS_BOOL then 1 else 0 end where SHOW_DATA_LABELS_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_PIE" columnName="SHOW_DATA_LABELS_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_PROVIDER" newColumnName="DISPLAY_PROVIDER_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_PROVIDER" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_PROVIDER= case when DISPLAY_PROVIDER_BOOL then 1 else 0 end where DISPLAY_PROVIDER_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_PROVIDER_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="AMOUNT_VALIDATION" newColumnName="AMOUNT_VALIDATION_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="AMOUNT_VALIDATION" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set AMOUNT_VALIDATION= case when AMOUNT_VALIDATION_BOOL then 1 else 0 end where AMOUNT_VALIDATION_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="AMOUNT_VALIDATION_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_OFFERS" newColumnName="DISPLAY_OFFERS_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_OFFERS" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_OFFERS= case when DISPLAY_OFFERS_BOOL then 1 else 0 end where DISPLAY_OFFERS_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_OFFERS_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_SUB_CAT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_SUB_CAT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_SUB_CAT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_SUB_CAT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_ONE_SHOT_CHARGE_TEMPL" oldColumnName="IMMEDIATE_INVOICING" newColumnName="IMMEDIATE_INVOICING_BOOL" />
+        <addColumn tableName="CAT_ONE_SHOT_CHARGE_TEMPL">
+            <column name="IMMEDIATE_INVOICING" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update CAT_ONE_SHOT_CHARGE_TEMPL set IMMEDIATE_INVOICING= case when IMMEDIATE_INVOICING_BOOL then 1 else 0 end where IMMEDIATE_INVOICING_BOOL is not null </sql>
+        <dropColumn tableName="CAT_ONE_SHOT_CHARGE_TEMPL" columnName="IMMEDIATE_INVOICING_BOOL" />
+
+        <renameColumn tableName="MEVEO_MODULE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEVEO_MODULE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_MODULE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_MODULE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER_CONTACT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_PROVIDER_CONTACT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER_CONTACT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER_CONTACT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_DETAIL" newColumnName="DISPLAY_DETAIL_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_DETAIL" type="${type.boolean}" defaultValueNumeric="1">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_DETAIL= case when DISPLAY_DETAIL_BOOL then 1 else 0 end where DISPLAY_DETAIL_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_DETAIL_BOOL" />
+
+        <renameColumn tableName="BILLING_COUNTER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_COUNTER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_COUNTER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_COUNTER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="MEVEO_MODULE" oldColumnName="INSTALLED" newColumnName="INSTALLED_BOOL" />
+        <addColumn tableName="MEVEO_MODULE">
+            <column name="INSTALLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_MODULE set INSTALLED= case when INSTALLED_BOOL then 1 else 0 end where INSTALLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_MODULE" columnName="INSTALLED_BOOL" />
+
+        <renameColumn tableName="AR_DUNNING_LOT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_DUNNING_LOT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DUNNING_LOT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DUNNING_LOT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_RATED_TRANSACTION" oldColumnName="DO_NOT_TRIGGER_INVOICING" newColumnName="DO_NOT_TRIGGER_INVOICING_BOOL" />
+        <addColumn tableName="BILLING_RATED_TRANSACTION">
+            <column name="DO_NOT_TRIGGER_INVOICING" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_RATED_TRANSACTION set DO_NOT_TRIGGER_INVOICING= case when DO_NOT_TRIGGER_INVOICING_BOOL then 1 else 0 end where DO_NOT_TRIGGER_INVOICING_BOOL is not
+            null </sql>
+        <dropColumn tableName="BILLING_RATED_TRANSACTION" columnName="DO_NOT_TRIGGER_INVOICING_BOOL" />
+
+        <renameColumn tableName="WF_WORKFLOW" oldColumnName="ENABLE_HOSTORY" newColumnName="ENABLE_HOSTORY_BOOL" />
+        <addColumn tableName="WF_WORKFLOW">
+            <column name="ENABLE_HOSTORY" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_WORKFLOW set ENABLE_HOSTORY= case when ENABLE_HOSTORY_BOOL then 1 else 0 end where ENABLE_HOSTORY_BOOL is not null </sql>
+        <dropColumn tableName="WF_WORKFLOW" columnName="ENABLE_HOSTORY_BOOL" />
+
+        <renameColumn tableName="BILLING_BILLING_ACCOUNT" oldColumnName="ELECTRONIC_BILLING" newColumnName="ELECTRONIC_BILLING_BOOL" />
+        <addColumn tableName="BILLING_BILLING_ACCOUNT">
+            <column name="ELECTRONIC_BILLING" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update BILLING_BILLING_ACCOUNT set ELECTRONIC_BILLING= case when ELECTRONIC_BILLING_BOOL then 1 else 0 end where ELECTRONIC_BILLING_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_BILLING_ACCOUNT" columnName="ELECTRONIC_BILLING_BOOL" />
+
+        <renameColumn tableName="CAT_CALENDAR" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_CALENDAR">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_CALENDAR set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_CALENDAR" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_TAX_LANGUAGE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_TAX_LANGUAGE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_TAX_LANGUAGE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_TAX_LANGUAGE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="VALUE_REQUIRED" newColumnName="VALUE_REQUIRED_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="VALUE_REQUIRED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set VALUE_REQUIRED= case when VALUE_REQUIRED_BOOL then 1 else 0 end where VALUE_REQUIRED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="VALUE_REQUIRED_BOOL" />
+
+        <renameColumn tableName="BILLING_CYCLE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_CYCLE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_CYCLE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_CYCLE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_MSG_TMPL_VARIABLE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_MSG_TMPL_VARIABLE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_MSG_TMPL_VARIABLE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="WF_WORKFLOW" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="WF_WORKFLOW">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_WORKFLOW set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="WF_WORKFLOW" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="FTP_IMPORTED_FILE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="FTP_IMPORTED_FILE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update FTP_IMPORTED_FILE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="FTP_IMPORTED_FILE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_TRADING_COUNTRY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_TRADING_COUNTRY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_TRADING_COUNTRY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_TRADING_COUNTRY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_DISCOUNT_LANGUAGE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_DISCOUNT_LANGUAGE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_DISCOUNT_LANGUAGE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_DISCOUNT_LANGUAGE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_RECURRING_CHARGE_TEMPL" oldColumnName="TERMINATION_PRORATA" newColumnName="TERMINATION_PRORATA_BOOL" />
+        <addColumn tableName="CAT_RECURRING_CHARGE_TEMPL">
+            <column name="TERMINATION_PRORATA" type="${type.boolean}" />
+        </addColumn>
+        <sql>update CAT_RECURRING_CHARGE_TEMPL set TERMINATION_PRORATA= case when TERMINATION_PRORATA_BOOL then 1 else 0 end where TERMINATION_PRORATA_BOOL is not null </sql>
+        <dropColumn tableName="CAT_RECURRING_CHARGE_TEMPL" columnName="TERMINATION_PRORATA_BOOL" />
+
+        <renameColumn tableName="AR_DDREQUEST_LOT_OP" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_DDREQUEST_LOT_OP">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DDREQUEST_LOT_OP set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DDREQUEST_LOT_OP" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_PRODUCT_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_PRODUCT_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_PRODUCT_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_PRODUCT_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_ACCOUNT_OPERATION" oldColumnName="EXCLUDED_FROM_DUNNING" newColumnName="EXCLUDED_FROM_DUNNING_BOOL" />
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="EXCLUDED_FROM_DUNNING" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_ACCOUNT_OPERATION set EXCLUDED_FROM_DUNNING= case when EXCLUDED_FROM_DUNNING_BOOL then 1 else 0 end where EXCLUDED_FROM_DUNNING_BOOL is not null </sql>
+        <dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="EXCLUDED_FROM_DUNNING_BOOL" />
+
+        <renameColumn tableName="CAT_CHARGE_TEMPLATE" oldColumnName="AMOUNT_EDITABLE" newColumnName="AMOUNT_EDITABLE_BOOL" />
+        <addColumn tableName="CAT_CHARGE_TEMPLATE">
+            <column name="AMOUNT_EDITABLE" type="${type.boolean}" />
+        </addColumn>
+        <sql>update CAT_CHARGE_TEMPLATE set AMOUNT_EDITABLE= case when AMOUNT_EDITABLE_BOOL then 1 else 0 end where AMOUNT_EDITABLE_BOOL is not null </sql>
+        <dropColumn tableName="CAT_CHARGE_TEMPLATE" columnName="AMOUNT_EDITABLE_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOMER_BRAND" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_CUSTOMER_BRAND">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOMER_BRAND set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOMER_BRAND" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ACCOUNT_ENTITY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ACCOUNT_ENTITY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ACCOUNT_ENTITY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ACCOUNT_ENTITY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_COUNTER_PERIOD" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_COUNTER_PERIOD">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_COUNTER_PERIOD set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_COUNTER_PERIOD" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_WALLET_TEMPLATE" oldColumnName="CONSUMPTION_ALERT_SET" newColumnName="CONSUMPTION_ALERT_SET_BOOL" />
+        <addColumn tableName="CAT_WALLET_TEMPLATE">
+            <column name="CONSUMPTION_ALERT_SET" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_WALLET_TEMPLATE set CONSUMPTION_ALERT_SET= case when CONSUMPTION_ALERT_SET_BOOL then 1 else 0 end where CONSUMPTION_ALERT_SET_BOOL is not null </sql>
+        <dropColumn tableName="CAT_WALLET_TEMPLATE" columnName="CONSUMPTION_ALERT_SET_BOOL" />
+
+        <renameColumn tableName="BILLING_BILLING_RUN_LIST" oldColumnName="INVOICE" newColumnName="INVOICE_BOOL" />
+        <addColumn tableName="BILLING_BILLING_RUN_LIST">
+            <column name="INVOICE" type="${type.boolean}" />
+        </addColumn>
+        <sql>update BILLING_BILLING_RUN_LIST set INVOICE= case when INVOICE_BOOL then 1 else 0 end where INVOICE_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_BILLING_RUN_LIST" columnName="INVOICE_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_BAR" oldColumnName="STACKED" newColumnName="STACKED_BOOL" />
+        <addColumn tableName="DWH_CHART_BAR">
+            <column name="STACKED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_BAR set STACKED= case when STACKED_BOOL then 1 else 0 end where STACKED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_BAR" columnName="STACKED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="ALLOW_EDIT" newColumnName="ALLOW_EDIT_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="ALLOW_EDIT" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set ALLOW_EDIT= case when ALLOW_EDIT_BOOL then 1 else 0 end where ALLOW_EDIT_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="ALLOW_EDIT_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="MULTILANGUAGE_FLAG" newColumnName="MULTILANGUAGE_FLAG_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="MULTILANGUAGE_FLAG" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set MULTILANGUAGE_FLAG= case when MULTILANGUAGE_FLAG_BOOL then 1 else 0 end where MULTILANGUAGE_FLAG_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="MULTILANGUAGE_FLAG_BOOL" />
+
+        <renameColumn tableName="BILLING_BILLING_RUN_LIST" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_BILLING_RUN_LIST">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_BILLING_RUN_LIST set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_BILLING_RUN_LIST" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_SERVICE_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_SERVICE_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_SERVICE_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_SERVICE_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_WALLET_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_WALLET_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_WALLET_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_WALLET_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" oldColumnName="APPLY_AGREEMENT" newColumnName="APPLY_AGREEMENT_BOOL" />
+        <addColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON">
+            <column name="APPLY_AGREEMENT" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_SUBSCRIP_TERMIN_REASON set APPLY_AGREEMENT= case when APPLY_AGREEMENT_BOOL then 1 else 0 end where APPLY_AGREEMENT_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" columnName="APPLY_AGREEMENT_BOOL" />
+
+        <renameColumn tableName="MEDINA_ACCESS" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEDINA_ACCESS">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEDINA_ACCESS set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEDINA_ACCESS" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_COUNTER_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_COUNTER_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_COUNTER_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_COUNTER_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_CHARGE_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_CHARGE_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_CHARGE_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CUST_CEI" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CUST_CEI">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CUST_CEI set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CUST_CEI" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_OCC_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_OCC_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_OCC_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_OCC_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_PIE" oldColumnName="SHADOW" newColumnName="SHADOW_BOOL" />
+        <addColumn tableName="DWH_CHART_PIE">
+            <column name="SHADOW" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_PIE set SHADOW= case when SHADOW_BOOL then 1 else 0 end where SHADOW_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_PIE" columnName="SHADOW_BOOL" />
+
+        <renameColumn tableName="ADM_TITLE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ADM_TITLE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ADM_TITLE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ADM_TITLE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="MULTICURRENCY_FLAG" newColumnName="MULTICURRENCY_FLAG_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="MULTICURRENCY_FLAG" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set MULTICURRENCY_FLAG= case when MULTICURRENCY_FLAG_BOOL then 1 else 0 end where MULTICURRENCY_FLAG_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="MULTICURRENCY_FLAG_BOOL" />
+
+        <renameColumn tableName="CAT_CHANNEL" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_CHANNEL">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_CHANNEL set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_CHANNEL" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_TYPE" oldColumnName="MATCHING_AUTO" newColumnName="MATCHING_AUTO_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_TYPE">
+            <column name="MATCHING_AUTO" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_TYPE set MATCHING_AUTO= case when MATCHING_AUTO_BOOL then 1 else 0 end where MATCHING_AUTO_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_TYPE" columnName="MATCHING_AUTO_BOOL" />
+
+        <renameColumn tableName="COM_MSG_VAR_VALUE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_MSG_VAR_VALUE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_MSG_VAR_VALUE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_MSG_VAR_VALUE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_DUE_DATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_DUE_DATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DUE_DATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DUE_DATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_BILLING_RUN" oldColumnName="XML_INVOICE_GENERATED" newColumnName="XML_INVOICE_GENERATED_BOOL" />
+        <addColumn tableName="BILLING_BILLING_RUN">
+            <column name="XML_INVOICE_GENERATED" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update BILLING_BILLING_RUN set XML_INVOICE_GENERATED= case when XML_INVOICE_GENERATED_BOOL then 1 else 0 end where XML_INVOICE_GENERATED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_BILLING_RUN" columnName="XML_INVOICE_GENERATED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CAT_LANG" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CAT_LANG">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CAT_LANG set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CAT_LANG" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="addaddressfrontpage" newColumnName="addaddressfrontpage_bool" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="addaddressfrontpage" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set addaddressfrontpage = case when addaddressfrontpage_bool then 1 else 0 end where addaddressfrontpage_bool is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="addaddressfrontpage_bool" />
+
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="printrectoverso" newColumnName="printrectoverso_bool" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="printrectoverso" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set printrectoverso = case when printrectoverso_bool then 1 else 0 end where printrectoverso_bool is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="printrectoverso_bool" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="usecolor" newColumnName="usecolor_bool" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="usecolor" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set usecolor = case when useColor_bool then 1 else 0 end where usecolor_bool is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="usecolor_bool" />
+
+        <renameColumn tableName="CAT_BUSINESS_SERV_MODEL" oldColumnName="DUPLICATE_PRICE_PLAN" newColumnName="DUPLICATE_PRICE_PLAN_BOOL" />
+        <addColumn tableName="CAT_BUSINESS_SERV_MODEL">
+            <column name="DUPLICATE_PRICE_PLAN" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_BUSINESS_SERV_MODEL set DUPLICATE_PRICE_PLAN= case when DUPLICATE_PRICE_PLAN_BOOL then 1 else 0 end where DUPLICATE_PRICE_PLAN_BOOL is not null </sql>
+        <dropColumn tableName="CAT_BUSINESS_SERV_MODEL" columnName="DUPLICATE_PRICE_PLAN_BOOL" />
+
+        <renameColumn tableName="AR_ACCOUNT_OPERATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_ACCOUNT_OPERATION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ADM_CURRENCY" oldColumnName="SYSTEM_CURRENCY" newColumnName="SYSTEM_CURRENCY_BOOL" />
+        <addColumn tableName="ADM_CURRENCY">
+            <column name="SYSTEM_CURRENCY" type="${type.boolean}" />
+        </addColumn>
+        <sql>update ADM_CURRENCY set SYSTEM_CURRENCY= case when SYSTEM_CURRENCY_BOOL then 1 else 0 end where SYSTEM_CURRENCY_BOOL is not null </sql>
+        <dropColumn tableName="ADM_CURRENCY" columnName="SYSTEM_CURRENCY_BOOL" />
+
+        <renameColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" oldColumnName="APPLY_TERMINATION_CHARGES" newColumnName="APPLY_TERMINATION_CHARGES_BOOL" />
+        <addColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON">
+            <column name="APPLY_TERMINATION_CHARGES" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_SUBSCRIP_TERMIN_REASON set APPLY_TERMINATION_CHARGES= case when APPLY_TERMINATION_CHARGES_BOOL then 1 else 0 end where APPLY_TERMINATION_CHARGES_BOOL is
+            not null </sql>
+        <dropColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" columnName="APPLY_TERMINATION_CHARGES_BOOL" />
+
+        <renameColumn tableName="DWH_MEASURABLE_QUANT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="DWH_MEASURABLE_QUANT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_MEASURABLE_QUANT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_MEASURABLE_QUANT" oldColumnName="ADDITIVE" newColumnName="ADDITIVE_BOOL" />
+        <addColumn tableName="DWH_MEASURABLE_QUANT">
+            <column name="ADDITIVE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_MEASURABLE_QUANT set ADDITIVE= case when ADDITIVE_BOOL then 1 else 0 end where ADDITIVE_BOOL is not null </sql>
+        <dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="ADDITIVE_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="ENTREPRISE" newColumnName="ENTREPRISE_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="ENTREPRISE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set ENTREPRISE= case when ENTREPRISE_BOOL then 1 else 0 end where ENTREPRISE_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="ENTREPRISE_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE" oldColumnName="DETAILED_INVOICE" newColumnName="DETAILED_INVOICE_BOOL" />
+        <addColumn tableName="BILLING_INVOICE">
+            <column name="DETAILED_INVOICE" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE set DETAILED_INVOICE= case when DETAILED_INVOICE_BOOL then 1 else 0 end where DETAILED_INVOICE_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE" columnName="DETAILED_INVOICE_BOOL" />
+
+        <renameColumn tableName="AR_BANK_OPERATION" oldColumnName="IS_VALID" newColumnName="IS_VALID_BOOL" />
+        <addColumn tableName="AR_BANK_OPERATION">
+            <column name="IS_VALID" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_BANK_OPERATION set IS_VALID= case when IS_VALID_BOOL then 1 else 0 end where IS_VALID_BOOL is not null </sql>
+        <dropColumn tableName="AR_BANK_OPERATION" columnName="IS_VALID_BOOL" />
+
+        <renameColumn tableName="JOB_EXECUTION" oldColumnName="JOB_DONE" newColumnName="JOB_DONE_BOOL" />
+        <addColumn tableName="JOB_EXECUTION">
+            <column name="JOB_DONE" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update JOB_EXECUTION set JOB_DONE= case when JOB_DONE_BOOL then 1 else 0 end where JOB_DONE_BOOL is not null </sql>
+        <dropColumn tableName="JOB_EXECUTION" columnName="JOB_DONE_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="BREAK_ON_NULL" newColumnName="BREAK_ON_NULL_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="BREAK_ON_NULL" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set BREAK_ON_NULL= case when BREAK_ON_NULL_BOOL then 1 else 0 end where BREAK_ON_NULL_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="BREAK_ON_NULL_BOOL" />
+
+        <renameColumn tableName="CRM_SELLER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_SELLER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_SELLER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_SELLER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_OFFER_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_OFFER_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_OFFER_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_OFFER_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="LEVEL_DUPLICATION" newColumnName="LEVEL_DUPLICATION_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="LEVEL_DUPLICATION" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set LEVEL_DUPLICATION= case when LEVEL_DUPLICATION_BOOL then 1 else 0 end where LEVEL_DUPLICATION_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="LEVEL_DUPLICATION_BOOL" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="USE_ACK" newColumnName="USE_ACK_BOOL" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="USE_ACK" type="${type.boolean}" />
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set USE_ACK= case when USE_ACK_BOOL then 1 else 0 end where USE_ACK_BOOL is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="USE_ACK_BOOL" />
+
+        <renameColumn tableName="ADM_INBOUND_REQUEST" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ADM_INBOUND_REQUEST">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ADM_INBOUND_REQUEST set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ADM_INBOUND_REQUEST" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_CAMPAIGN" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_CAMPAIGN">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_CAMPAIGN set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_CAMPAIGN" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="MEVEO_FILTER_ORDER_CONDITION" oldColumnName="ASCENDING" newColumnName="ASCENDING_BOOL" />
+        <addColumn tableName="MEVEO_FILTER_ORDER_CONDITION">
+            <column name="ASCENDING" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_FILTER_ORDER_CONDITION set ASCENDING= case when ASCENDING_BOOL then 1 else 0 end where ASCENDING_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_FILTER_ORDER_CONDITION" columnName="ASCENDING_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="MULTICOUNTRY_FLAG" newColumnName="MULTICOUNTRY_FLAG_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="MULTICOUNTRY_FLAG" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set MULTICOUNTRY_FLAG= case when MULTICOUNTRY_FLAG_BOOL then 1 else 0 end where MULTICOUNTRY_FLAG_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="MULTICOUNTRY_FLAG_BOOL" />
+
+        <renameColumn tableName="DWH_MEASURABLE_QUANT" oldColumnName="EDITABLE" newColumnName="EDITABLE_BOOL" />
+        <addColumn tableName="DWH_MEASURABLE_QUANT">
+            <column name="EDITABLE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_MEASURABLE_QUANT set EDITABLE= case when EDITABLE_BOOL then 1 else 0 end where EDITABLE_BOOL is not null </sql>
+        <dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="EDITABLE_BOOL" />
+
+        <renameColumn tableName="BILLING_WALLET" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_WALLET">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_WALLET set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_WALLET" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="MEVEO_SCRIPT_INSTANCE" oldColumnName="IS_ERROR" newColumnName="IS_ERROR_BOOL" />
+        <addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+            <column name="IS_ERROR" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update MEVEO_SCRIPT_INSTANCE set IS_ERROR= case when IS_ERROR_BOOL then 1 else 0 end where IS_ERROR_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_SCRIPT_INSTANCE" columnName="IS_ERROR_BOOL" />
+
+        <renameColumn tableName="DWH_CHART" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="DWH_CHART">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_AGREGATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_AGREGATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_AGREGATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_AGREGATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="MEVEO_FILTER" oldColumnName="SHARED" newColumnName="SHARED_BOOL" />
+        <addColumn tableName="MEVEO_FILTER">
+            <column name="SHARED" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update MEVEO_FILTER set SHARED= case when SHARED_BOOL then 1 else 0 end where SHARED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_FILTER" columnName="SHARED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="AUTOMATIC_INVOICING" newColumnName="AUTOMATIC_INVOICING_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="AUTOMATIC_INVOICING" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set AUTOMATIC_INVOICING= case when AUTOMATIC_INVOICING_BOOL then 1 else 0 end where AUTOMATIC_INVOICING_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="AUTOMATIC_INVOICING_BOOL" />
+
+        <renameColumn tableName="COM_CAMPAIGN" oldColumnName="USE_ANY_MEDIA" newColumnName="USE_ANY_MEDIA_BOOL" />
+        <addColumn tableName="COM_CAMPAIGN">
+            <column name="USE_ANY_MEDIA" type="${type.boolean}" />
+        </addColumn>
+        <sql>update COM_CAMPAIGN set USE_ANY_MEDIA= case when USE_ANY_MEDIA_BOOL then 1 else 0 end where USE_ANY_MEDIA_BOOL is not null </sql>
+        <dropColumn tableName="COM_CAMPAIGN" columnName="USE_ANY_MEDIA_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_BILLING_CYCLE" newColumnName="DISPLAY_BILLING_CYCLE_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_BILLING_CYCLE= case when DISPLAY_BILLING_CYCLE_BOOL then 1 else 0 end where DISPLAY_BILLING_CYCLE_BOOL is not null
+        </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_BILLING_CYCLE_BOOL" />
+
+        <renameColumn tableName="ADM_NOTIFICATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ADM_NOTIFICATION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ADM_NOTIFICATION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ADM_NOTIFICATION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_DISCOUNT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_DISCOUNT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_DISCOUNT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_DISCOUNT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_REJECTED_BILLING_ACCOUNTS set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_BUSINESS_SERV_MODEL" oldColumnName="DUPLICATE_SERVICE" newColumnName="DUPLICATE_SERVICE_BOOL" />
+        <addColumn tableName="CAT_BUSINESS_SERV_MODEL">
+            <column name="DUPLICATE_SERVICE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_BUSINESS_SERV_MODEL set DUPLICATE_SERVICE= case when DUPLICATE_SERVICE_BOOL then 1 else 0 end where DUPLICATE_SERVICE_BOOL is not null </sql>
+        <dropColumn tableName="CAT_BUSINESS_SERV_MODEL" columnName="DUPLICATE_SERVICE_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOMER_CATEGORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_CUSTOMER_CATEGORY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOMER_CATEGORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOMER_CATEGORY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_DISCOUNT_PLAN_ITEM" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_DISCOUNT_PLAN_ITEM">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_DISCOUNT_PLAN_ITEM set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_DISCOUNT_PLAN_ITEM" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_MATCHING_CODE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_MATCHING_CODE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_MATCHING_CODE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_MATCHING_CODE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_TRADING_CURRENCY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_TRADING_CURRENCY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_TRADING_CURRENCY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_TRADING_CURRENCY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_SERVICES" newColumnName="DISPLAY_SERVICES_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_SERVICES" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_SERVICES= case when DISPLAY_SERVICES_BOOL then 1 else 0 end where DISPLAY_SERVICES_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_SERVICES_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="SHOW_DATA_TIP" newColumnName="SHOW_DATA_TIP_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="SHOW_DATA_TIP" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set SHOW_DATA_TIP= case when SHOW_DATA_TIP_BOOL then 1 else 0 end where SHOW_DATA_TIP_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="SHOW_DATA_TIP_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOMER_CATEGORY" oldColumnName="EXONERATED_FROM_TAXES" newColumnName="EXONERATED_FROM_TAXES_BOOL" />
+        <addColumn tableName="CRM_CUSTOMER_CATEGORY">
+            <column name="EXONERATED_FROM_TAXES" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOMER_CATEGORY set EXONERATED_FROM_TAXES= case when EXONERATED_FROM_TAXES_BOOL then 1 else 0 end where EXONERATED_FROM_TAXES_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOMER_CATEGORY" columnName="EXONERATED_FROM_TAXES_BOOL" />
+
+        <renameColumn tableName="COM_MEVEO_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_MEVEO_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_MEVEO_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_MEVEO_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_RECURRING_CHARGE_TEMPL" oldColumnName="APPLY_IN_ADVANCE" newColumnName="APPLY_IN_ADVANCE_BOOL" />
+        <addColumn tableName="CAT_RECURRING_CHARGE_TEMPL">
+            <column name="APPLY_IN_ADVANCE" type="${type.boolean}" />
+        </addColumn>
+        <sql>update CAT_RECURRING_CHARGE_TEMPL set APPLY_IN_ADVANCE= case when APPLY_IN_ADVANCE_BOOL then 1 else 0 end where APPLY_IN_ADVANCE_BOOL is not null </sql>
+        <dropColumn tableName="CAT_RECURRING_CHARGE_TEMPL" columnName="APPLY_IN_ADVANCE_BOOL" />
+
+        <renameColumn tableName="AR_DDREQUEST_ITEM" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_DDREQUEST_ITEM">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DDREQUEST_ITEM set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DDREQUEST_ITEM" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_BAR" oldColumnName="SHOW_DATA_TIP" newColumnName="SHOW_DATA_TIP_BOOL" />
+        <addColumn tableName="DWH_CHART_BAR">
+            <column name="SHOW_DATA_TIP" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_BAR set SHOW_DATA_TIP= case when SHOW_DATA_TIP_BOOL then 1 else 0 end where SHOW_DATA_TIP_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_BAR" columnName="SHOW_DATA_TIP_BOOL" />
+
+        <renameColumn tableName="MEVEO_TIMER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEVEO_TIMER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_TIMER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_TIMER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="TRIGGER_END_PERIOD_EVENT" newColumnName="TRIGGER_END_PERIOD_EVENT_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="TRIGGER_END_PERIOD_EVENT" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set TRIGGER_END_PERIOD_EVENT= case when TRIGGER_END_PERIOD_EVENT_BOOL then 1 else 0 end where TRIGGER_END_PERIOD_EVENT_BOOL is not null
+        </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="TRIGGER_END_PERIOD_EVENT_BOOL" />
+
+        <renameColumn tableName="CAT_DIGITAL_RESOURCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_DIGITAL_RESOURCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_DIGITAL_RESOURCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_DIGITAL_RESOURCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="WF_DECISION_RULE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="WF_DECISION_RULE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_DECISION_RULE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="WF_DECISION_RULE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_REVENUE_RECOG_RULE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_REVENUE_RECOG_RULE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_REVENUE_RECOG_RULE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_REVENUE_RECOG_RULE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_BAR" oldColumnName="ZOOM" newColumnName="ZOOM_BOOL" />
+        <addColumn tableName="DWH_CHART_BAR">
+            <column name="ZOOM" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_BAR set ZOOM= case when ZOOM_BOOL then 1 else 0 end where ZOOM_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_BAR" columnName="ZOOM_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="CACHE_VALUE" newColumnName="CACHE_VALUE_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="CACHE_VALUE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set CACHE_VALUE= case when CACHE_VALUE_BOOL then 1 else 0 end where CACHE_VALUE_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="CACHE_VALUE_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_SUBSCRIPTIONS" newColumnName="DISPLAY_SUBSCRIPTIONS_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_SUBSCRIPTIONS" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_SUBSCRIPTIONS= case when DISPLAY_SUBSCRIPTIONS_BOOL then 1 else 0 end where DISPLAY_SUBSCRIPTIONS_BOOL is not null
+        </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_SUBSCRIPTIONS_BOOL" />
+
+        <renameColumn tableName="CAT_CHARGE_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_CHARGE_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_CHARGE_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_CHARGE_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_BAR" oldColumnName="BREAK_ON_NULL" newColumnName="BREAK_ON_NULL_BOOL" />
+        <addColumn tableName="DWH_CHART_BAR">
+            <column name="BREAK_ON_NULL" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_BAR set BREAK_ON_NULL= case when BREAK_ON_NULL_BOOL then 1 else 0 end where BREAK_ON_NULL_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_BAR" columnName="BREAK_ON_NULL_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="VERSIONABLE" newColumnName="VERSIONABLE_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="VERSIONABLE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set VERSIONABLE= case when VERSIONABLE_BOOL then 1 else 0 end where VERSIONABLE_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="VERSIONABLE_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_CHARGES_PERIODS" newColumnName="DISPLAY_CHARGES_PERIODS_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_CHARGES_PERIODS" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_CHARGES_PERIODS= case when DISPLAY_CHARGES_PERIODS_BOOL then 1 else 0 end where DISPLAY_CHARGES_PERIODS_BOOL is not
+            null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_CHARGES_PERIODS_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_INST" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_INST set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="SHADOW" newColumnName="SHADOW_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="SHADOW" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set SHADOW= case when SHADOW_BOOL then 1 else 0 end where SHADOW_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="SHADOW_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="ZOOM" newColumnName="ZOOM_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="ZOOM" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set ZOOM= case when ZOOM_BOOL then 1 else 0 end where ZOOM_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="ZOOM_BOOL" />
+
+        <renameColumn tableName="ORD_ORDER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ORD_ORDER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ORD_ORDER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ORD_ORDER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="RM_SERVICE_PARAM_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="RM_SERVICE_PARAM_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update RM_SERVICE_PARAM_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="RM_SERVICE_PARAM_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_BAR" oldColumnName="ANIMATE" newColumnName="ANIMATE_BOOL" />
+        <addColumn tableName="DWH_CHART_BAR">
+            <column name="ANIMATE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_BAR set ANIMATE= case when ANIMATE_BOOL then 1 else 0 end where ANIMATE_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_BAR" columnName="ANIMATE_BOOL" />
+
+        <renameColumn tableName="AR_DDREQUEST_LOT" oldColumnName="IS_PAYMENT_CREATED" newColumnName="IS_PAYMENT_CREATED_BOOL" />
+        <addColumn tableName="AR_DDREQUEST_LOT">
+            <column name="IS_PAYMENT_CREATED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DDREQUEST_LOT set IS_PAYMENT_CREATED= case when IS_PAYMENT_CREATED_BOOL then 1 else 0 end where IS_PAYMENT_CREATED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DDREQUEST_LOT" columnName="IS_PAYMENT_CREATED_BOOL" />
+
+        <renameColumn tableName="WF_ACTION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="WF_ACTION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_ACTION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="WF_ACTION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_RESERVATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_RESERVATION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_RESERVATION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_RESERVATION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_CONTACT_COORDS" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_CONTACT_COORDS">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_CONTACT_COORDS set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_CONTACT_COORDS" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_DISCOUNT_PLAN" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_DISCOUNT_PLAN">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_DISCOUNT_PLAN set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_DISCOUNT_PLAN" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_MSG_TMPL_VARIABLE" oldColumnName="MANDATORY" newColumnName="MANDATORY_BOOL" />
+        <addColumn tableName="COM_MSG_TMPL_VARIABLE">
+            <column name="MANDATORY" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_MSG_TMPL_VARIABLE set MANDATORY= case when MANDATORY_BOOL then 1 else 0 end where MANDATORY_BOOL is not null </sql>
+        <dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="MANDATORY_BOOL" />
+
+        <renameColumn tableName="WF_TRANSITION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="WF_TRANSITION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_TRANSITION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="WF_TRANSITION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE" oldColumnName="MANDATORY" newColumnName="MANDATORY_BOOL" />
+        <addColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE">
+            <column name="MANDATORY" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_OFFER_PRODUCT_TEMPLATE set MANDATORY= case when MANDATORY_BOOL then 1 else 0 end where MANDATORY_BOOL is not null </sql>
+        <dropColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE" columnName="MANDATORY_BOOL" />
+
+        <renameColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" oldColumnName="APPLY_REIMBURSMENT" newColumnName="APPLY_REIMBURSMENT_BOOL" />
+        <addColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON">
+            <column name="APPLY_REIMBURSMENT" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_SUBSCRIP_TERMIN_REASON set APPLY_REIMBURSMENT= case when APPLY_REIMBURSMENT_BOOL then 1 else 0 end where APPLY_REIMBURSMENT_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" columnName="APPLY_REIMBURSMENT_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CAT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CAT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CAT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CAT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_PROVIDER" oldColumnName="DISPLAY_FREE_TX_IN_INVOICE" newColumnName="DISPLAY_FREE_TX_IN_INVOICE_BOOL" />
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="DISPLAY_FREE_TX_IN_INVOICE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_PROVIDER set DISPLAY_FREE_TX_IN_INVOICE= case when DISPLAY_FREE_TX_IN_INVOICE_BOOL then 1 else 0 end where DISPLAY_FREE_TX_IN_INVOICE_BOOL is not null </sql>
+        <dropColumn tableName="CRM_PROVIDER" columnName="DISPLAY_FREE_TX_IN_INVOICE_BOOL" />
+
+        <renameColumn tableName="COM_SENDER_CONFIG" oldColumnName="MANAGE_NON_DISTRIB" newColumnName="MANAGE_NON_DISTRIB_BOOL" />
+        <addColumn tableName="COM_SENDER_CONFIG">
+            <column name="MANAGE_NON_DISTRIB" type="${type.boolean}" />
+        </addColumn>
+        <sql>update COM_SENDER_CONFIG set MANAGE_NON_DISTRIB= case when MANAGE_NON_DISTRIB_BOOL then 1 else 0 end where MANAGE_NON_DISTRIB_BOOL is not null </sql>
+        <dropColumn tableName="COM_SENDER_CONFIG" columnName="MANAGE_NON_DISTRIB_BOOL" />
+
+        <renameColumn tableName="MEVEO_JOB_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEVEO_JOB_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_JOB_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_CHARGE_INSTANCE" oldColumnName="IS_PREPAID" newColumnName="IS_PREPAID_BOOL" />
+        <addColumn tableName="BILLING_CHARGE_INSTANCE">
+            <column name="IS_PREPAID" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update BILLING_CHARGE_INSTANCE set IS_PREPAID= case when IS_PREPAID_BOOL then 1 else 0 end where IS_PREPAID_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="IS_PREPAID_BOOL" />
+
+        <renameColumn tableName="HIERARCHY_ENTITY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="HIERARCHY_ENTITY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update HIERARCHY_ENTITY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="HIERARCHY_ENTITY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ADM_TITLE" oldColumnName="IS_COMPANY" newColumnName="IS_COMPANY_BOOL" />
+        <addColumn tableName="ADM_TITLE">
+            <column name="IS_COMPANY" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <sql>update ADM_TITLE set IS_COMPANY= case when IS_COMPANY_BOOL then 1 else 0 end where IS_COMPANY_BOOL is not null </sql>
+        <dropColumn tableName="ADM_TITLE" columnName="IS_COMPANY_BOOL" />
+
+        <renameColumn tableName="AR_ACTION_DUNNING" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_ACTION_DUNNING">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_ACTION_DUNNING set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_ACTION_DUNNING" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_MATCHING_AMOUNT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_MATCHING_AMOUNT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_MATCHING_AMOUNT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_MATCHING_AMOUNT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_BANK_OPERATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_BANK_OPERATION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_BANK_OPERATION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_BANK_OPERATION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INV_SUB_CAT_COUNTRY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="DWH_CHART_LINE" oldColumnName="ANIMATE" newColumnName="ANIMATE_BOOL" />
+        <addColumn tableName="DWH_CHART_LINE">
+            <column name="ANIMATE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update DWH_CHART_LINE set ANIMATE= case when ANIMATE_BOOL then 1 else 0 end where ANIMATE_BOOL is not null </sql>
+        <dropColumn tableName="DWH_CHART_LINE" columnName="ANIMATE_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_CF_AS_XML" newColumnName="DISPLAY_CF_AS_XML_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_CF_AS_XML" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_CF_AS_XML= case when DISPLAY_CF_AS_XML_BOOL then 1 else 0 end where DISPLAY_CF_AS_XML_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_CF_AS_XML_BOOL" />
+
+        <renameColumn tableName="BILLING_BILLING_RUN" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_BILLING_RUN">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_BILLING_RUN set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_BILLING_RUN" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_FIELD_TMPL" oldColumnName="HIDE_ON_NEW" newColumnName="HIDE_ON_NEW_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="HIDE_ON_NEW" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set HIDE_ON_NEW= case when HIDE_ON_NEW_BOOL then 1 else 0 end where HIDE_ON_NEW_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="HIDE_ON_NEW_BOOL" />
+
+        <renameColumn tableName="MEVEO_FILTER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEVEO_FILTER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_FILTER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_FILTER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_AGREGATE" oldColumnName="DISCOUNT_AGGREGATE" newColumnName="DISCOUNT_AGGREGATE_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_AGREGATE">
+            <column name="DISCOUNT_AGGREGATE" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_AGREGATE set DISCOUNT_AGGREGATE= case when DISCOUNT_AGGREGATE_BOOL then 1 else 0 end where DISCOUNT_AGGREGATE_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_AGREGATE" columnName="DISCOUNT_AGGREGATE_BOOL" />
+
+        <renameColumn tableName="BILLING_WALLET_OPERATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_WALLET_OPERATION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_WALLET_OPERATION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_WALLET_OPERATION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_TRIGGERED_EDR" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_TRIGGERED_EDR">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_TRIGGERED_EDR set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_TRIGGERED_EDR" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_OFFER_TEMPLATE_CATEGORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_DISCPLAN_INST" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_DISCPLAN_INST">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_DISCPLAN_INST set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_DISCPLAN_INST" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_TAX" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_TAX">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_TAX set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_TAX" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CRM_CUSTOM_ACTION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="CRM_CUSTOM_ACTION">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CRM_CUSTOM_ACTION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="CRM_CUSTOM_ACTION" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ADM_NOTIF_HISTORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ADM_NOTIF_HISTORY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ADM_NOTIF_HISTORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ADM_NOTIF_HISTORY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_SERVICE_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="BILLING_SERVICE_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update BILLING_SERVICE_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_SERVICE_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="WF_HISTORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="WF_HISTORY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update WF_HISTORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="WF_HISTORY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="COM_MESSAGE_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="COM_MESSAGE_TEMPLATE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update COM_MESSAGE_TEMPLATE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="COM_MESSAGE_TEMPLATE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="BILLING_INVOICE_CONFIGURATION" oldColumnName="DISPLAY_EDRS" newColumnName="DISPLAY_EDRS_BOOL" />
+        <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+            <column name="DISPLAY_EDRS" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <sql>update BILLING_INVOICE_CONFIGURATION set DISPLAY_EDRS= case when DISPLAY_EDRS_BOOL then 1 else 0 end where DISPLAY_EDRS_BOOL is not null </sql>
+        <dropColumn tableName="BILLING_INVOICE_CONFIGURATION" columnName="DISPLAY_EDRS_BOOL" />
+
+        <renameColumn tableName="CAT_OFFER_SERV_TEMPLATES" oldColumnName="MANDATORY" newColumnName="MANDATORY_BOOL" />
+        <addColumn tableName="CAT_OFFER_SERV_TEMPLATES">
+            <column name="MANDATORY" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_OFFER_SERV_TEMPLATES set MANDATORY= case when MANDATORY_BOOL then 1 else 0 end where MANDATORY_BOOL is not null </sql>
+        <dropColumn tableName="CAT_OFFER_SERV_TEMPLATES" columnName="MANDATORY_BOOL" />
+
+        <renameColumn tableName="AR_CREDIT_CATEGORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_CREDIT_CATEGORY">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_CREDIT_CATEGORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_CREDIT_CATEGORY" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="AR_DDREQUEST_LOT" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="AR_DDREQUEST_LOT">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update AR_DDREQUEST_LOT set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="AR_DDREQUEST_LOT" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="MEVEO_SCRIPT_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update MEVEO_SCRIPT_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="MEVEO_SCRIPT_INSTANCE" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="ADM_USER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
+        <addColumn tableName="ADM_USER">
+            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ADM_USER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
+        <dropColumn tableName="ADM_USER" columnName="DISABLED_BOOL" />
+
+        <renameColumn tableName="CAT_RECURRING_CHARGE_TEMPL" oldColumnName="SUBSCRIPTION_PRORATA" newColumnName="SUBSCRIPTION_PRORATA_BOOL" />
+        <addColumn tableName="CAT_RECURRING_CHARGE_TEMPL">
+            <column name="SUBSCRIPTION_PRORATA" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update CAT_RECURRING_CHARGE_TEMPL set SUBSCRIPTION_PRORATA= case when SUBSCRIPTION_PRORATA_BOOL then 1 else 0 end where SUBSCRIPTION_PRORATA_BOOL is not null </sql>
+        <dropColumn tableName="CAT_RECURRING_CHARGE_TEMPL" columnName="SUBSCRIPTION_PRORATA_BOOL" />
+        
+    </changeSet>
+
+    <changeSet id="#2049_20161024-1" author="AndriusKarpavicius" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="migration" value="true"/>     
+        </preConditions>
+        
+        <renameColumn tableName="BILLING_INVOICE" oldColumnName="PDF" newColumnName="PDF_BYTE" />
+        <addColumn tableName="BILLING_INVOICE">
+            <column name="PDF" type="${type.blob}"/>
+        </addColumn>
+<!--         <sql>update BILLING_INVOICE set PDF= PDF_BYTE where PDF_BYTE is not null </sql> -->
+<!--         <dropColumn tableName="BILLING_INVOICE" columnName="PDF_BYTE" /> -->
+    
+    </changeSet>
+
+    <changeSet id="#1795_20161102_quote" author="AndriusKarpavicius">
+
+        <createSequence sequenceName="ord_quote_seq" />
+
+        <createTable tableName="ord_quote">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_quote_pkey" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="DATETIME" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(100)" />
+            <column name="external_id" type="VARCHAR(100)" />
+            <column name="quote_version" type="VARCHAR(10)" />
+            <column name="contact" type="VARCHAR(100)" />
+            <column name="quote_date" type="DATETIME">
+                <constraints nullable="false" />
+            </column>
+            <column name="valid_from" type="DATETIME"/>
+            <column name="valid_to" type="DATETIME"/>
+            <column name="REQ_COMPLETION_DATE" type="DATETIME" />
+            <column name="ORDER_START_DATE" type="DATETIME" />
+            <column name="COMPLETION_DATE" type="DATETIME" />
+            <column name="category" type="VARCHAR(200)" />
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="STATUS_MESSAGE" type="VARCHAR(2000)"/>
+            <column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT"/>
+            <column name="RECEIVED_FROM" type="VARCHAR(50)"/>
+            
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote" constraintName="fk_ord_quote_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ord_quote" constraintName="fk_creator_ord_quote_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ord_quote" constraintName="fk_updater_ord_quote_adm_user" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addUniqueConstraint columnNames="code,provider_id" constraintName="uk_ord_quote" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="ord_quote" />
+            
+        <addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_GROUP_ID" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="HIERARCHY_ENTITY" />
+
+        <createSequence sequenceName="ord_quote_item_seq" />
+
+        <createTable tableName="ord_quote_item">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false"  primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="quote_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_id" type="VARCHAR(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="source" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="invoice_id" type="BIGINT" />
+            <column name="user_account_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_crm_provider" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_ord_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_invoice"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_INVOICE" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+
+        <createTable tableName="ORD_QUOT_ITEM_OFFERINGS">
+            <column name="QUOTE_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="PRD_OFFERING_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="QUOTE_ITEM_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_order" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote_item" />
+
+        <addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_prd_offering"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+    </changeSet>
+
+    <changeSet id="#1795_20161102_quote-2" author="AndriusKarpavicius">
+        <modifyDataType tableName="BILLING_INVOICE" columnName="TEMPORARY_INVOICE_NUMBER" newDataType="VARCHAR(60)"/>
+    </changeSet>
+    
+    <changeSet id="#1795_20161102_quote-3" author="EdwardLegaspi">
+	    <addColumn tableName="ord_quote">    
+	    	<column name="UUID" type="VARCHAR(60)"/>
+	    </addColumn>
+    </changeSet>
+    
+    <changeSet id="#2191_20161110 - Refactor image fields" author="EdwardLegaspi">
+    	<dropColumn tableName="cat_offer_template_category">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template_category">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_offer_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_offer_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    	
+    	<dropColumn tableName="cat_service_template">
+    		<column name="image"></column>
+    		<column name="image_content_type"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_service_template">
+    		<column name="image_path" type="VARCHAR(100)" />
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="#2167 - Process mandatory field in offerServiceTemplate. Refactor model." author="EdwardLegaspi">
+    	<dropColumn tableName="cat_offer_serv_templates">
+    		<column name="provider_id"></column>
+    		<column name="version"></column>
+    	</dropColumn>
+    </changeSet>
+
+    <changeSet id="#2220_20161122 - add el filter to recurring charge template" author="EdwardLegaspi">
+    	<addColumn tableName="cat_recurring_charge_templ">
+    		<column name="filter_expression" type="VARCHAR(2000)" />
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="#2230_20161128" author="anasseh">
+        <addColumn tableName="ar_account_operation">
+    		<column name="order_num" type="VARCHAR(500)" />
+    	</addColumn>
+        <createTable tableName="billing_invoices_orders">
+            <column name="invoice_id" type="BIGINT" />
+            <column name="order_id" type="BIGINT" />
+        </createTable>    	
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoices_orders" constraintName="fk_invoice_id_bill_invoices-orders" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />   
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoices_orders" constraintName="fk_order_id_bill_invoices-orders" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />               	
+    </changeSet>
+    
+    <changeSet id="#2158_20161124-0" author="anasseh" dbms="mysql">
+        <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
+        <dropIndex tableName="CAT_PRODUCT_CHARGE_TEMPL" indexName="fk_cat_prod_tpl_prod_chrg_tpl"/>
+    </changeSet>
+    
+    <changeSet id="#2158_20161124-1" author="anasseh" dbms="postgresql">
+        <dropForeignKeyConstraint  baseTableName="CAT_PRODUCT_CHARGE_TEMPL" constraintName="fk_cat_prod_tpl_prod_chrg_tpl" />  
+    </changeSet>        
+ 
+    <changeSet id="#2158_20161124" author="anasseh"> 	         
+      	<dropColumn tableName="CAT_PRODUCT_CHARGE_TEMPL">
+    		<column name="product_tmpl_id" />
+    	</dropColumn>  
+        <createTable tableName="cat_product_templ_charge_templ">
+            <column name="PRODUCT_CHARGE_TEMPLATE_ID" type="BIGINT"/>
+            <column name="PRODUCT_TEMPLATE_ID" type="BIGINT"/>                   
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="PRODUCT_CHARGE_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pct_id"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_PRODUCT_CHARGE_TEMPL" />
+        <addForeignKeyConstraint baseColumnNames="PRODUCT_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pt_id"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />            
+    
+    </changeSet>    
+
+    <changeSet id="#2212_20161203-0" author="AndriusKarpavicius" dbms="mysql">
+        <dropForeignKeyConstraint  baseTableName="ORD_QUOTE_ITEM" constraintName="fk_ord_quote_item_invoice" />  
+        <dropIndex tableName="ORD_QUOTE_ITEM" indexName="fk_ord_quote_item_invoice"/>
+    </changeSet>
+    
+    <changeSet id="#2212_20161203-1" author="AndriusKarpavicius" dbms="postgresql">
+        <dropForeignKeyConstraint  baseTableName="ORD_QUOTE_ITEM" constraintName="fk_ord_quote_item_invoice" />  
+    </changeSet>      
+
+    <changeSet id="#2212_20161203" author="AndriusKarpavicius">
+        <dropColumn tableName="ORD_QUOTE_ITEM" columnName="invoice_id"/>
+        
+        <addColumn tableName="ORD_QUOTE">        
+            <column name="invoice_id" type="BIGINT" />
+            <column name="user_account_id" type="BIGINT"/>
+        </addColumn>
+ 
+         <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ord_quote" constraintName="fk_ord_quote_invoice"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_INVOICE" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+    </changeSet>
+    
+    <changeSet id="#2050_20161212" author="AndriusKarpavicius">
+        <delete tableName="ORD_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_item_offerings_seq"/>
+        <delete tableName="ORD_QUOT_ITEM_OFFERINGS"/>
+        <addColumn tableName="ORD_QUOT_ITEM_OFFERINGS">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offer_pkey" />
+            </column>        
+            <column name="ITEM_ORDER" type="int">
+                <constraints nullable="false"/>
+            </column>        
+        </addColumn>
+        <createSequence sequenceName="ord_quot_item_offerings_seq"/>
+    </changeSet>   
+    
+    <changeSet id="#2212_20161215" author="anasseh">
+        <dropForeignKeyConstraint  baseTableName="ord_quote" constraintName="fk_ord_quote_invoice" /> 
+        <dropColumn tableName="ord_quote" columnName="invoice_id"/>  
+         
+        <addColumn tableName="billing_invoice">        
+            <column name="quote_id" type="BIGINT" />           
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="billing_invoice" constraintName="fk_bill_invoice_quote"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+            
+    </changeSet>  
 </databaseChangeLog>

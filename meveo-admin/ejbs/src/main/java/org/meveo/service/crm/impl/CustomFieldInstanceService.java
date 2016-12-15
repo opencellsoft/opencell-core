@@ -1,7 +1,6 @@
 package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1305,7 +1304,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, null);
         Object valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, numberToMatch);
 
-        log.trace("Found matrix value match {} for numberToMatch={}", valueMatched, numberToMatch);
+        log.trace("Found map value match {} for numberToMatch={}", valueMatched, numberToMatch);
         return valueMatched;
 
     }
@@ -1450,6 +1449,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return True if number have matched
      */
     private static boolean isNumberRangeMatch(String numberRange, Object numberToMatchObj) {
+        if (numberToMatchObj == null) {
+            return false;
+        }
+        
         String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
         Double fromNumber = null;
         try {
@@ -1475,11 +1478,24 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         } else if (numberToMatchObj instanceof Long) {
             numberToMatchDbl = ((Long) numberToMatchObj).doubleValue();
 
-        } else if (numberToMatchObj instanceof BigInteger) {
-            numberToMatchDbl = ((BigInteger) numberToMatchObj).doubleValue();
+        } else if (numberToMatchObj instanceof BigDecimal) {
+            numberToMatchDbl = ((BigDecimal) numberToMatchObj).doubleValue();
+            
+        } else if (numberToMatchObj instanceof String) {
+            try {
+                numberToMatchDbl = Double.parseDouble(((String) numberToMatchObj));
+                
+            } catch (NumberFormatException e) {
+                Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
+                log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
+                    numberToMatchObj != null ? numberToMatchObj.getClass() : null);
+                return false;
+            }
+            
         } else {
             Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
-            log.error("Failed to match CF value for a range of numbers. Value passed is not a number {}", numberToMatchDbl);
+            log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
+                numberToMatchObj != null ? numberToMatchObj.getClass() : null);
             return false;
         }
 

@@ -53,7 +53,7 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
     WebHookService webHookService;
     
     @Inject
-    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
+    CounterTemplateService counterTemplateService;
     
     @Inject
     ScriptInstanceService scriptInstanceService;

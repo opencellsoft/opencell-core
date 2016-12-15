@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -26,7 +27,6 @@ import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -60,6 +60,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -77,6 +78,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountModelScriptService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -169,6 +171,9 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
+
+	@Inject
+	private DiscountPlanService discountPlanService;
 
 	@Inject
 	@MeveoParamBean
@@ -327,6 +332,8 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountDto.setLanguage(postData.getLanguageCode());
 		billingAccountDto.setBillingCycle(billingCycleCode);
 		billingAccountDto.setAddress(address);
+		billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+		billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
 
 		billingAccountApi.create(billingAccountDto, currentUser);
 
@@ -502,6 +509,8 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountDto.setLanguage(postData.getLanguageCode());
 		billingAccountDto.setBillingCycle(billingCycleCode);
 		billingAccountDto.setAddress(address);
+		billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+		billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
 
 		billingAccountApi.createOrUpdate(billingAccountDto, currentUser);
 
@@ -1034,6 +1043,8 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setStatus(postData.getBaStatus());
 			billingAccountDto.setTerminationReason(postData.getTerminationReason());
 			billingAccountDto.setEmail(postData.getEmail());
+			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+			billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
 				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
@@ -1311,6 +1322,8 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setStatus(postData.getBaStatus());
 			billingAccountDto.setTerminationReason(postData.getTerminationReason());
 			billingAccountDto.setEmail(postData.getEmail());
+			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+			billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
 				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
@@ -1762,6 +1775,10 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		dto.setLoaded(true);
+
+		if(ba.getDiscountPlan() != null){
+			dto.setDiscountPlan(ba.getDiscountPlan().getCode());
+		}
 
 		return dto;
 

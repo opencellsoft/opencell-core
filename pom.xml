@@ -4,7 +4,7 @@
     <groupId>org.meveo</groupId>
     <artifactId>meveo</artifactId>
     <packaging>pom</packaging>
-    <version>4.4-SNAPSHOT</version>
+    <version>4.4</version>
     <name>MEVEO Parent Project</name>
     <url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
@@ -650,6 +650,31 @@
                     <version>3.0</version>
                     <scope>provided</scope>
                 </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>dev-mysql</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>dev-mysql</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- Properties for liquibase plugin -->
+                <db.driver>org.mariadb.jdbc.Driver</db.driver>
+                <db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
+                <db.username>root</db.username>
+                <db.password></db.password>
+            </properties>
+            <dependencies>
+                <!-- Dependency for liquibase plugin -->
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                    <version>1.5.4</version>
+                </dependency>   
             </dependencies>
         </profile>
 

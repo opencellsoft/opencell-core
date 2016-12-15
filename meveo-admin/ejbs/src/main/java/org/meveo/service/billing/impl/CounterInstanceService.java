@@ -37,7 +37,6 @@ import javax.persistence.TemporalType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -58,258 +57,259 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
-	@Inject
-	private UserAccountService userAccountService;
+    @Inject
+    private UserAccountService userAccountService;
 
-	@Inject
-	private BillingAccountService billingAccountService;
+    @Inject
+    private BillingAccountService billingAccountService;
 
-	@Inject
-	private CounterPeriodService counterPeriodService;
-	 
+    @Inject
+    private CounterPeriodService counterPeriodService;
 
-	public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, User creator)
-			throws BusinessException {
-		CounterInstance result = null;
+    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual, User creator) throws BusinessException {
+        CounterInstance result = null;
 
-		if (userAccount == null) {
-			throw new BusinessException("userAccount is null");
-		}
+        if (userAccount == null) {
+            throw new BusinessException("userAccount is null");
+        }
 
-		if (counterTemplate == null) {
-			throw new BusinessException("counterTemplate is null");
-		}
+        if (counterTemplate == null) {
+            throw new BusinessException("counterTemplate is null");
+        }
 
-		if (creator == null) {
-			throw new BusinessException("creator is null");
-		}
+        if (creator == null) {
+            throw new BusinessException("creator is null");
+        }
 
-		// we instanciate the counter only if there is no existing instance for
-		// the same template
-		if (counterTemplate.getCounterLevel() == CounterTemplateLevel.BA) {
-			BillingAccount billingAccount = userAccount.getBillingAccount();
-			if (!billingAccount.getCounters().containsKey(counterTemplate.getCode())) {
-				result = new CounterInstance();
-				result.setCounterTemplate(counterTemplate);
-				result.setBillingAccount(billingAccount);
-				create(result, creator); // AKK was with billingAccount.getProvider()
+        // we instanciate the counter only if there is no existing instance for
+        // the same template
+        if (counterTemplate.getCounterLevel() == CounterTemplateLevel.BA) {
+            BillingAccount billingAccount = userAccount.getBillingAccount();
+            if (!billingAccount.getCounters().containsKey(counterTemplate.getCode())) {
+                result = new CounterInstance();
+                result.setCounterTemplate(counterTemplate);
+                result.setBillingAccount(billingAccount);
+                
+                if (!isVirtual){
+                    create(result, creator); // AKK was with billingAccount.getProvider()
+                }
+                
+                billingAccount.getCounters().put(counterTemplate.getCode(), result);
+                
+                if (!isVirtual){
+                    billingAccountService.update(billingAccount, creator);
+                }
+            } else {
+                result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
+            }
+        } else {
+            if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
+                result = new CounterInstance();
+                result.setCounterTemplate(counterTemplate);
+                result.setUserAccount(userAccount);
 
-				billingAccount.getCounters().put(counterTemplate.getCode(), result);
-				billingAccountService.update(billingAccount, creator);
-			} else {
-				result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
-			}
-		} else {
-			if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
-				result = new CounterInstance();
-				result.setCounterTemplate(counterTemplate);
-				result.setUserAccount(userAccount);
-				create(result, creator); // AKK was with userAccount.getProvider()
+                if (!isVirtual){
+                    create(result, creator); // AKK was with userAccount.getProvider()
+                }
+                userAccount.getCounters().put(counterTemplate.getCode(), result);
 
-				userAccount.getCounters().put(counterTemplate.getCode(), result);
-				userAccountService.update(userAccount, creator);
-			} else {
-				result = userAccount.getCounters().get(counterTemplate.getCode());
-			}
-		}
+                if (!isVirtual){
+                    userAccountService.update(userAccount, creator);
+                }
+            } else {
+                result = userAccount.getCounters().get(counterTemplate.getCode());
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate, User creator)
-			throws BusinessException {
-		return counterInstanciation(getEntityManager(), notification, counterTemplate, creator);
-	}
+    public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate, User creator) throws BusinessException {
+        return counterInstanciation(getEntityManager(), notification, counterTemplate, creator);
+    }
 
-	public CounterInstance counterInstanciation(EntityManager em, Notification notification,
-			CounterTemplate counterTemplate, User creator) throws BusinessException {
-		CounterInstance counterInstance = null;
+    public CounterInstance counterInstanciation(EntityManager em, Notification notification, CounterTemplate counterTemplate, User creator) throws BusinessException {
+        CounterInstance counterInstance = null;
 
-		if (notification == null) {
-			throw new BusinessException("notification is null");
-		}
+        if (notification == null) {
+            throw new BusinessException("notification is null");
+        }
 
-		if (counterTemplate == null) {
-			throw new BusinessException("counterTemplate is null");
-		}
+        if (counterTemplate == null) {
+            throw new BusinessException("counterTemplate is null");
+        }
 
-		if (creator == null) {
-			throw new BusinessException("creator is null");
-		}
+        if (creator == null) {
+            throw new BusinessException("creator is null");
+        }
 
-		// Remove current counter instance if it does not match the counter
-		// template to be instantiated
-		if (notification.getCounterInstance() != null
-				&& !counterTemplate.getId().equals(notification.getCounterInstance().getCounterTemplate().getId())) {
-			CounterInstance ci = notification.getCounterInstance();
-			notification.setCounterInstance(null);
-			remove(ci, creator);
-		}
+        // Remove current counter instance if it does not match the counter
+        // template to be instantiated
+        if (notification.getCounterInstance() != null && !counterTemplate.getId().equals(notification.getCounterInstance().getCounterTemplate().getId())) {
+            CounterInstance ci = notification.getCounterInstance();
+            notification.setCounterInstance(null);
+            remove(ci, creator);
+        }
 
-		// Instantiate counter instance if there is not one yet
-		if (notification.getCounterInstance() == null) {
-			counterInstance = new CounterInstance();
-			counterInstance.setCounterTemplate(counterTemplate);
-			create(counterInstance, creator); // AKK was with notification.getProvider()
+        // Instantiate counter instance if there is not one yet
+        if (notification.getCounterInstance() == null) {
+            counterInstance = new CounterInstance();
+            counterInstance.setCounterTemplate(counterTemplate);
+            create(counterInstance, creator); // AKK was with notification.getProvider()
 
-			notification.setCounterTemplate(counterTemplate);
-			notification.setCounterInstance(counterInstance);
-		} else {
-			counterInstance = notification.getCounterInstance();
-		}
+            notification.setCounterTemplate(counterTemplate);
+            notification.setCounterInstance(counterInstance);
+        } else {
+            counterInstance = notification.getCounterInstance();
+        }
 
-		return counterInstance;
-	}
+        return counterInstance;
+    }
 
-	public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate,Date initDate,UsageChargeInstance usageChargeInstance,  User currentUser) throws BusinessException {
-		refresh(counterInstance);
-		counterInstance = (CounterInstance) attach(counterInstance);
-		CounterPeriod counterPeriod = new CounterPeriod();
-		counterPeriod.setCounterInstance(counterInstance);
-		Calendar cal = counterInstance.getCounterTemplate().getCalendar();
-		cal.setInitDate(initDate);
-		Date startDate = cal.previousCalendarDate(chargeDate);
-		if (startDate == null) {
-			log.info("cannot create counter for the date {} (not in calendar)", chargeDate);
-			return null;
-		}
-		Date endDate = cal.nextCalendarDate(startDate);
-		BigDecimal initialValue=counterInstance.getCounterTemplate().getCeiling();
-		log.info("create counter period from {} to {}", startDate, endDate);
-		if(!StringUtils.isBlank(counterInstance.getCounterTemplate().getCeilingExpressionEl()) && usageChargeInstance!=null){
-		    initialValue=evaluateCeilingElExpression(counterInstance.getCounterTemplate().getCeilingExpressionEl(), 
-		    	usageChargeInstance, usageChargeInstance.getServiceInstance(), usageChargeInstance.getSubscription());
-			}
-		counterPeriod.setPeriodStartDate(startDate);
-		counterPeriod.setPeriodEndDate(endDate);
-		counterPeriod.setProvider(counterInstance.getProvider());
-		counterPeriod.setValue(initialValue);
-		counterPeriod.setCode(counterInstance.getCode());
-		counterPeriod.setDescription(counterInstance.getDescription());
-		counterPeriod.setLevel(initialValue);
-		counterPeriod.setCounterType(counterInstance.getCounterTemplate().getCounterType());
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(counterInstance.getAuditable().getCreator());
-		counterPeriod.setAuditable(auditable);
-		counterPeriodService.create(counterPeriod, counterInstance.getAuditable().getCreator()); // AKK was with counterInstance.getProvider()
+    //we must make sure the counter period is persisted in db before storing it in cache
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance, User currentUser)
+            throws BusinessException {
+        refresh(counterInstance);
+        counterInstance = (CounterInstance) attach(counterInstance);
 
-		counterInstance.getCounterPeriods().add(counterPeriod);
-		counterInstance.updateAudit(currentUser);
+        CounterPeriod counterPeriod = instantiateCounterPeriod(counterInstance.getCounterTemplate(), chargeDate, initDate, usageChargeInstance);                                
+        counterPeriod.setCounterInstance(counterInstance);
+        counterPeriod.setProvider(counterInstance.getProvider());
+        counterPeriodService.create(counterPeriod, counterInstance.getAuditable().getCreator()); // AKK was with counterInstance.getProvider()
 
-		return counterPeriod;
-	}
+        counterInstance.getCounterPeriods().add(counterPeriod);
+        counterInstance.updateAudit(currentUser);
 
-	/**
-	 * Find or create a counter period for a given date
-	 * 
-	 * @param counterInstance
-	 *            Counter instance
-	 * @param date
-	 *            Date to match
-	 * @param currentUser
-	 *            User performing operation
-	 * @return Found or created counter period
-	 * @throws BusinessException 
-	 */
-	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) throws BusinessException {
-		Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
-		query.setParameter("counterInstance", counterInstance);
-		query.setParameter("date", date, TemporalType.TIMESTAMP);
+        return counterPeriod;
+    }
 
-		try {
-			return (CounterPeriod) query.getSingleResult();
-		} catch (NoResultException e) {
-			return createPeriod(counterInstance, date, initDate,null, currentUser);
-		}
-	}
+    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
+        CounterPeriod counterPeriod = new CounterPeriod();
+        Calendar cal = counterTemplate.getCalendar();
+        cal.setInitDate(initDate);
+        Date startDate = cal.previousCalendarDate(chargeDate);
+        if (startDate == null) {
+            log.info("cannot create counter for the date {} (not in calendar)", chargeDate);
+            return null;
+        }
+        Date endDate = cal.nextCalendarDate(startDate);
+        BigDecimal initialValue = counterTemplate.getCeiling();
+        log.info("create counter period from {} to {}", startDate, endDate);
+        if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && usageChargeInstance != null) {
+            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), usageChargeInstance,
+                usageChargeInstance.getServiceInstance(), usageChargeInstance.getSubscription());
+        }
+        counterPeriod.setPeriodStartDate(startDate);
+        counterPeriod.setPeriodEndDate(endDate);
+        counterPeriod.setValue(initialValue);
+        counterPeriod.setCode(counterTemplate.getCode());
+        counterPeriod.setDescription(counterTemplate.getDescription());
+        counterPeriod.setLevel(initialValue);
+        counterPeriod.setCounterType(counterTemplate.getCounterType());
+        counterPeriod.setProvider(counterTemplate.getProvider());
+        return counterPeriod;
+    }
 
-	/**
-	 * Update counter period value
-	 * 
-	 * @param counterPeriodId
-	 *            Counter period identifier
-	 * @param value
-	 *            Value to set to
-	 * @param currentUser
-	 *            User performing an action
-	 * @throws BusinessException
-	 */
-	public void updatePeriodValue(Long counterPeriodId, BigDecimal value, User currentUser) throws BusinessException {
-		CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
+    /**
+     * Find or create a counter period for a given date
+     * 
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @param currentUser User performing operation
+     * @return Found or created counter period
+     * @throws BusinessException
+     */
+    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) throws BusinessException {
+        Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
+        query.setParameter("counterInstance", counterInstance);
+        query.setParameter("date", date, TemporalType.TIMESTAMP);
 
-		if (counterPeriod == null) {
-			throw new BusinessException("CounterPeriod with id=" + counterPeriodId + " does not exists.");
-		}
+        try {
+            return (CounterPeriod) query.getSingleResult();
+        } catch (NoResultException e) {
+            return createPeriod(counterInstance, date, initDate, null, currentUser);
+        }
+    }
 
-		counterPeriod.setValue(value);
-		counterPeriod.updateAudit(currentUser);
-	}
+    /**
+     * Update counter period value
+     * 
+     * @param counterPeriodId Counter period identifier
+     * @param value Value to set to
+     * @param currentUser User performing an action
+     * @throws BusinessException
+     */
+    public void updatePeriodValue(Long counterPeriodId, BigDecimal value, User currentUser) throws BusinessException {
+        CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
 
-	/**
-	 * Deduce a given value from a counter
-	 * 
-	 * @param counterInstance
-	 *            Counter instance
-	 * @param date
-	 *            Date of event
-	 * @param value
-	 *            Value to deduce
-	 * @param currentUser
-	 *            User performing an action
-	 * @return
-	 * @throws CounterValueInsufficientException
-	 * @throws BusinessException 
-	 */
-	public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value,
-			User currentUser) throws CounterValueInsufficientException, BusinessException {
+        if (counterPeriod == null) {
+            throw new BusinessException("CounterPeriod with id=" + counterPeriodId + " does not exists.");
+        }
 
-		CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate, currentUser);
+        counterPeriod.setValue(value);
+        counterPeriod.updateAudit(currentUser);
+    }
 
-		if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
-			throw new CounterValueInsufficientException();
+    /**
+     * Deduce a given value from a counter
+     * 
+     * @param counterInstance Counter instance
+     * @param date Date of event
+     * @param value Value to deduce
+     * @param currentUser User performing an action
+     * @return
+     * @throws CounterValueInsufficientException
+     * @throws BusinessException
+     */
+    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value, User currentUser) throws CounterValueInsufficientException,
+            BusinessException {
 
-		} else {
-			counterPeriod.setValue(counterPeriod.getValue().subtract(value));
-			counterPeriod.updateAudit(currentUser);
-			return counterPeriod.getValue();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<CounterInstance> findByCounterTemplate(CounterTemplate counterTemplate){
-		QueryBuilder qb=new QueryBuilder(CounterInstance.class,"c");
-		qb.addCriterionEntity("counterTemplate", counterTemplate);
-		return qb.find(getEntityManager());
-	}
-	
-    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance,Subscription subscription)
-			throws BusinessException {
-    	int rounding = subscription.getProvider().getRounding() == null ? 3 : subscription.getProvider().getRounding();
-    	BigDecimal result = null;
-		if (StringUtils.isBlank(expression)) {
-			return result;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>(); 
-		if(expression.indexOf("charge") >= 0){
-			userMap.put("charge",charge); 
-		}
-		if(expression.indexOf("service") >= 0){ 
-			userMap.put("service",serviceInstance); 
-		} 
-		if(expression.indexOf("sub") >= 0){ 
-			userMap.put("sub",subscription); 
-		}
+        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate, currentUser);
 
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-		try {
-			result = (BigDecimal) res;
-			result = result.setScale(rounding,RoundingMode.HALF_UP);
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
-		}
-		return result;
-	}
+        if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
+            throw new CounterValueInsufficientException();
+
+        } else {
+            counterPeriod.setValue(counterPeriod.getValue().subtract(value));
+            counterPeriod.updateAudit(currentUser);
+            return counterPeriod.getValue();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CounterInstance> findByCounterTemplate(CounterTemplate counterTemplate) {
+        QueryBuilder qb = new QueryBuilder(CounterInstance.class, "c");
+        qb.addCriterionEntity("counterTemplate", counterTemplate);
+        return qb.find(getEntityManager());
+    }
+
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
+        int rounding = subscription.getProvider().getRounding() == null ? 3 : subscription.getProvider().getRounding();
+        BigDecimal result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (expression.indexOf("charge") >= 0) {
+            userMap.put("charge", charge);
+        }
+        if (expression.indexOf("service") >= 0) {
+            userMap.put("service", serviceInstance);
+        }
+        if (expression.indexOf("sub") >= 0) {
+            userMap.put("sub", subscription);
+        }
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        try {
+            result = (BigDecimal) res;
+            result = result.setScale(rounding, RoundingMode.HALF_UP);
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
+        }
+        return result;
+    }
 
     /**
      * Count counter periods which end date is older then a given date

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -32,6 +34,7 @@ import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 
+@Stateless
 public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate, ProductChargeTemplateDto> {
 
 	@Inject
@@ -138,6 +141,9 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -276,6 +282,9 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -312,14 +321,14 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
-			missingParameters.add("usageChargeTemplateCode");
+			missingParameters.add("productChargeTemplateCode");
 			handleMissingParameters();
 		}
 
 		// check if code already exists
 		ProductChargeTemplate chargeTemplate = productChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory"));
 		if (chargeTemplate == null) {
-			throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
+			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, code);
 		}
 
 		productChargeTemplateService.remove(chargeTemplate, currentUser);

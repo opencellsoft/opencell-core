@@ -37,13 +37,16 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.annotation.ImageType;
+import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 @DiscriminatorValue("OFFER")
-@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider") })
+@ImageType
+@NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and provider=:provider and businessOfferModel is not null"),
+		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and provider=:provider and businessOfferModel is not null"),
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and provider=:provider and businessOfferModel is not null") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
@@ -69,10 +72,13 @@ public class OfferTemplate extends ProductOffering {
 	public String prefix;
 	
 	@Transient
-	public Map<String, List<ServiceTemplate>> serviceTemplatesByChargeType;
+	public Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 	
 	@Transient
 	public List<ProductTemplate> productTemplates;
+	
+	@Transient
+	private String transientCode;
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -179,7 +185,7 @@ public class OfferTemplate extends ProductOffering {
 	}
 
     @SuppressWarnings("rawtypes")
-    public Map<String, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
         
         if (serviceTemplatesByChargeType!=null){
             return serviceTemplatesByChargeType;
@@ -190,34 +196,34 @@ public class OfferTemplate extends ProductOffering {
         for (OfferServiceTemplate service : offerServiceTemplates) {
             List charges = service.getServiceTemplate().getServiceRecurringCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("RECURRING")) {
-                    serviceTemplatesByChargeType.put("RECURRING", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("RECURRING").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceUsageCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("USAGE")) {
-                    serviceTemplatesByChargeType.put("USAGE", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("USAGE").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceSubscriptionCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("SUBSCRIPTION")) {
-                    serviceTemplatesByChargeType.put("SUBSCRIPTION", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("SUBSCRIPTION").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
             }
 
             charges = service.getServiceTemplate().getServiceTerminationCharges();
             if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey("TERMINATION")) {
-                    serviceTemplatesByChargeType.put("TERMINATION", new ArrayList<ServiceTemplate>());
+                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
+                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
                 }
-                serviceTemplatesByChargeType.get("TERMINATION").add(service.getServiceTemplate());
+                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
             }
         }
 
@@ -237,5 +243,13 @@ public class OfferTemplate extends ProductOffering {
 		}
 
 		return productTemplates;
+	}
+
+	public String getTransientCode() {
+		return null;
+	}
+
+	public void setTransientCode(String transientCode) {
+		code = transientCode;
 	}
 }

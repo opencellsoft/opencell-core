@@ -47,7 +47,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "invoiceSubCategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
 	@JoinTable(name = "BILLING_INVOICE_AGREGATE_TAXES", joinColumns = @JoinColumn(name = "SUB_CAT_INVOICE_AGGREGAT_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_ID"))
 	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
 
@@ -206,12 +206,15 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof SubCategoryInvoiceAgregate)) {
+            return false;
+        }
+        
 		SubCategoryInvoiceAgregate other = (SubCategoryInvoiceAgregate) obj;
 		if (invoiceSubCategory == null) {
 			if (other.getInvoiceSubCategory() != null)
@@ -226,8 +229,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	 */
 	@Override
 	public String toString() {
-		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + invoiceSubCategory + ", subCategoryTaxes=" + subCategoryTaxes + ", categoryInvoiceAgregate=" + categoryInvoiceAgregate + ", wallet=" + wallet + ", ratedtransactions=" + ratedtransactions + ", discountPlanCode=" + discountPlanCode + ", discountPlanItemCode=" + discountPlanItemCode + ", discountPercent=" + discountPercent + ", oldAmountWithoutTax=" + oldAmountWithoutTax + ", oldAmountWithTax="
-				+ oldAmountWithTax + "]";
+		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + (invoiceSubCategory == null ? null:invoiceSubCategory.getCode() )+ ", oldAmountWithoutTax=" +
+	oldAmountWithoutTax + ", oldAmountWithTax="+ oldAmountWithTax + "]";
 	}
 
 }

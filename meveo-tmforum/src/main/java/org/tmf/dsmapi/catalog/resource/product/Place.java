@@ -2,37 +2,26 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "id": "12",
- *     "href": "http://serverlocation:port/marketSales/place/12",
- *     "name": "France"
- * }
- *
+ * 
+ *         { "id": "12", "href": "http://serverlocation:port/marketSales/place/12", "name": "France" }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class Place implements Serializable {
     public final static long serialVersionUID = 1L;
 
-    @Column(name = "PLACE_ID", nullable = true)
     private String id;
 
-    @Column(name = "PLACE_HREF", nullable = true)
     private String href;
 
-    @Column(name = "PLACE_NAME", nullable = true)
     private String name;
 
     public Place() {

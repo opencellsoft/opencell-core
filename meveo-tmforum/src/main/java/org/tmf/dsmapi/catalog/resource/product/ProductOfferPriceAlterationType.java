@@ -1,17 +1,16 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+
 //import org.tmf.dsmapi.commons.exceptions.InvalidEnumeratedValueException;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
+ * 
  */
 public enum ProductOfferPriceAlterationType {
-    RECURRING ("recurring"),
-    ONE_TIME  ("one time"),
-    USAGE     ("usage");
+    RECURRING("recurring"), ONE_TIME("one time"), USAGE("usage");
 
     private String value;
 
@@ -38,18 +37,18 @@ public enum ProductOfferPriceAlterationType {
 
         return null;
     }
-//
-//    @JsonCreator
-//    public static ProductOfferPriceAlterationType fromJson(String value) throws InvalidEnumeratedValueException {
-//        if (value == null) {
-//            return null;
-//        }
-//
-//        ProductOfferPriceAlterationType enumeratedValue = ProductOfferPriceAlterationType.find(value);
-//        if (enumeratedValue != null) {
-//            return enumeratedValue;
-//        }
-//
-//        throw new InvalidEnumeratedValueException(value, EnumSet.allOf(ProductOfferPriceAlterationType.class));
-//    }
+    //
+    // @JsonCreator
+    // public static ProductOfferPriceAlterationType fromJson(String value) throws InvalidEnumeratedValueException {
+    // if (value == null) {
+    // return null;
+    // }
+    //
+    // ProductOfferPriceAlterationType enumeratedValue = ProductOfferPriceAlterationType.find(value);
+    // if (enumeratedValue != null) {
+    // return enumeratedValue;
+    // }
+    //
+    // throw new InvalidEnumeratedValueException(value, EnumSet.allOf(ProductOfferPriceAlterationType.class));
+    // }
 }

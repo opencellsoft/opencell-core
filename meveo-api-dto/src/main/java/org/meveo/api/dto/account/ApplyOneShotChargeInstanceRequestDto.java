@@ -134,7 +134,7 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseDto {
 		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription
 				+ ", wallet=" + wallet + ", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
-				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
+				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 +"]";
 	}
 
 	public String getSubscription() {

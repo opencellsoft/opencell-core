@@ -14,11 +14,13 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.invoice.Invoice4_2Dto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -33,6 +35,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -41,13 +44,14 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
  **/
-@SuppressWarnings("deprecation")
+
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BillingAccountApi extends AccountApi {
@@ -74,7 +78,13 @@ public class BillingAccountApi extends AccountApi {
 	private AccountHierarchyApi accountHierarchyApi;
 
 	@Inject
+	private InvoiceApi invoiceApi;
+
+	@Inject
 	private InvoiceTypeService invoiceTypeService;
+
+	@Inject
+	private DiscountPlanService discountPlanService;
 
 	public void create(BillingAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
 		create(postData, currentUser, true);
@@ -145,6 +155,13 @@ public class BillingAccountApi extends AccountApi {
 		billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 		billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 		billingAccount.setTerminationDate(postData.getTerminationDate());
+		billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+		if(!StringUtils.isBlank(postData.getDiscountPlan())){
+			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan(), provider);
+			billingAccount.setDiscountPlan(discountPlan);
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
 		if (postData.getElectronicBilling() == null) {
 			billingAccount.setElectronicBilling(false);
 		} else {
@@ -178,8 +195,11 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 
@@ -288,6 +308,16 @@ public class BillingAccountApi extends AccountApi {
 		if (!StringUtils.isBlank(postData.getEmail())) {
 			billingAccount.setEmail(postData.getEmail());
 		}
+		if (postData.getInvoicingThreshold() != null) {
+			billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+		}
+		if(!StringUtils.isBlank(postData.getDiscountPlan())){
+			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan(), provider);
+			billingAccount.setDiscountPlan(discountPlan);
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
+
 		if (postData.getBankCoordinates() != null) {
 			BankCoordinates bankCoordinates = new BankCoordinates();
 			if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
@@ -342,8 +372,11 @@ public class BillingAccountApi extends AccountApi {
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 
@@ -406,12 +439,11 @@ public class BillingAccountApi extends AccountApi {
 
 				List<Invoice> invoices = ba.getInvoices();
 				if (invoices != null && invoices.size() > 0) {
-					List<Invoice4_2Dto> invoicesDto = new ArrayList<Invoice4_2Dto>();
-					String billingAccountCode = ba.getCode();
+					List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();					
 					if (invoices != null && invoices.size() > 0) {
-						for (Invoice i : invoices) {
-							if (invoiceTypeService.getAdjustementCode().equals(i.getInvoiceType().getCode())) {
-								Invoice4_2Dto invoiceDto = new Invoice4_2Dto(i, billingAccountCode);
+						for (Invoice invoice : invoices) {
+							if (invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
+								InvoiceDto invoiceDto = invoiceApi.invoiceToDto(invoice, false);
 								invoicesDto.add(invoiceDto);
 							}
 						}
@@ -534,6 +566,9 @@ public class BillingAccountApi extends AccountApi {
 				if (!StringUtils.isBlank(billingAccountDto.getEmail())) {
 					existedBillingAccountDto.setEmail(billingAccountDto.getEmail());
 				}
+				if (billingAccountDto.getInvoicingThreshold() != null) {
+					existedBillingAccountDto.setInvoicingThreshold(billingAccountDto.getInvoicingThreshold());
+				}				
 				//
 				accountHierarchyApi.populateNameAddress(existedBillingAccountDto, billingAccountDto, currentUser);
 				if (!StringUtils.isBlank(billingAccountDto.getCustomFields())) {

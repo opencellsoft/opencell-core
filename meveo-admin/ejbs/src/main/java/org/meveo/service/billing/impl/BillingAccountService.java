@@ -218,65 +218,64 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun,
-			User currentUser) {
+	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun, User currentUser) {
 
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
-
 		billingAccount = findById(billingAccount.getId(), true);
-		
-		//FIXE ME : api caller
-		log.debug("billingRun.id:"+((billingRun==null)?"null":billingRun.getId()));
-		billingRun = billingRunService.findById(billingRun.getId(),true);
-		log.debug(" refresh billingRun.id:"+((billingRun==null)?"null":billingRun.getId()));
 
-		Query q = null;
-		if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-			 log.debug("updateBillingAccountTotalAmounts isDisplayFreeTransacInInvoice : true");
-			 q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree").setParameter("billingAccount", billingAccount);
+		// FIXE ME : api caller
+		billingRun = billingRunService.findById(billingRun.getId(), true);
+
+		BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
+		if (invoiceAmount != null) {
+
+			BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
+
+			log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
+			if (invoicingThreshold != null) {
+				if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
+					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+					return false;
+				} else {
+					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+				}
+			} else {
+				log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
+			}
+			billingAccount.setBrAmountWithoutTax(invoiceAmount);
+
+			log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
 		} else {
-			 log.debug("updateBillingAccountTotalAmounts isDisplayFreeTransacInInvoice : false");
-			 q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount);
-		}
-		log.debug("updateBillingAccountTotalAmounts lastTransactionDate is {}",billingRun.getLastTransactionDate());
-		@SuppressWarnings("unchecked")
-		List<Object[]> queryResults = q.setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getResultList();
-		Object[] queryResult = queryResults.size() > 0 ? queryResults.get(0) : null;
-
-		if (queryResult != null) {		
-			 log.debug("updateBillingAccountTotalAmounts queryResult [] is {}",queryResult);
-		    if(queryResult[0]==null){
-		    	log.debug("updateBillingAccountTotalAmounts queryResult is empty");
-		        return false;
-		    }
-		    log.debug("updateBillingAccountTotalAmounts queryResult is {}",(BigDecimal) queryResult[0]);
-		    BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
-		    log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}",invoicingThreshold);
-		    if(invoicingThreshold != null){
-		    	if(invoicingThreshold.compareTo((BigDecimal) queryResult[0]) > 0 	){
-		    		log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}",billingAccount.getCode(),(BigDecimal) queryResult[0],invoicingThreshold);
-		    		return false;
-		    	}else{
-		    		log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}",billingAccount.getCode(),(BigDecimal) queryResult[0],invoicingThreshold);
-		    	}
-		    }else{
-		    	log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
-		    }
-			billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
-			billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
-			log.debug("set brAmount {} in BA {}", queryResult[0], billingAccount.getId());
-		}else{
-			log.debug("updateBillingAccountTotalAmounts queryResult is null");
+			log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
 		}
 
 		billingAccount.setBillingRun(billingRun);
 		billingAccount.updateAudit(currentUser);
 		updateNoCheck(billingAccount);
 		getEntityManager().flush();
-		
 
 		return true;
 	}
+	
+	
+	
+	/**
+	 * Compute  the invoice amount for billingAccount
+	 * 
+	 * @param billingAccount
+	 * @param lastTransactionDate
+	 * @return
+	 */
+	public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount,Date lastTransactionDate){
+		Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount).setParameter("lastTransactionDate", lastTransactionDate);
+		BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();		
+		if(sumAmountWithouttax == null){
+			sumAmountWithouttax = BigDecimal.ZERO;		
+		}
+	    return sumAmountWithouttax;
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {

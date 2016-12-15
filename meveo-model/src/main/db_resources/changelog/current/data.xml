@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="#1821_20160711" author="EdwardLegaspi">
 		<insert tableName="adm_permission">
-			<column name="id" value="17" />
+			<column name="id" value="-17" />
 			<column name="name" value="Marketing Catalog"></column>
 			<column name="ressource" value="marketing"></column>
 			<column name="permission" value="marketingCatalogManager"></column>
 		</insert>
-		
-		<sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
-	</changeSet>
-		
-	<changeSet id="#1839_20160720_add_marketing_manager_role"
-		author="EdwardPLegaspi">
 		<insert tableName="adm_role">
-			<column name="id" value="5"></column>
-			<column name="version" value="0"></column>
-			<column name="role_description" value="Marketing "></column>
-			<column name="role_name" value="MARKETING_MANAGER"></column>
-			<column name="provider_id" value="1"></column>
+			<column name="id" value="-5"/>
+			<column name="version" value="0"/>
+			<column name="role_description" value="Marketing "/>
+			<column name="role_name" value="MARKETING_MANAGER"/>
+			<column name="provider_id" value="1"/>
 		</insert>
-		
-		<sql>ALTER SEQUENCE adm_role_seq RESTART WITH 6;</sql>
-		
+				
 		 <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="5" />
-            <column name="permission_id" valueNumeric="17" />
+            <column name="role_id" valueNumeric="-5" />
+            <column name="permission_id" valueNumeric="-17" />
         </insert>   
         
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-5" />
+            <column name="permission_id" valueNumeric="13" />
+        </insert>        
+        
         <insert tableName="adm_user">
-            <column name="id" valueNumeric="3" />
+            <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueBoolean="false" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:09.787" />
             <column name="email" />
             <column name="last_password_modification" valueDate="current_date" />
@@ -46,70 +43,49 @@
             <column name="title_id" />
         </insert>
         <insert tableName="adm_user_role">
-            <column name="user_id" valueNumeric="3" />
-            <column name="role_id" valueNumeric="5" />
-        </insert>        
-        
-        <sql>ALTER SEQUENCE adm_user_seq RESTART WITH 4;</sql>
+            <column name="user_id" valueNumeric="-3" />
+            <column name="role_id" valueNumeric="-5" />
+        </insert>                
 	</changeSet> 
     
     <changeSet id="#1844_20160722_orders" author="AndriusKarpavicius">
     
         <insert tableName="adm_permission">
-            <column name="id" valueNumeric="18" />
+            <column name="id" valueNumeric="-18" />
             <column name="name" value="Orders visualization" />
             <column name="permission" value="orderVisualization" />
             <column name="ressource" value="order" />
         </insert>
         <insert tableName="adm_permission">
-            <column name="id" valueNumeric="19" />
+            <column name="id" valueNumeric="-19" />
             <column name="name" value="Order management" />
             <column name="permission" value="orderManagement" />
             <column name="ressource" value="order" />
         </insert>    
         
-        <sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 20</sql>   
 
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="1" />
-            <column name="permission_id" valueNumeric="18" />
+            <column name="permission_id" valueNumeric="-18" />
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="1" />
-            <column name="permission_id" valueNumeric="19" />
+            <column name="permission_id" valueNumeric="-19" />
         </insert>        
     </changeSet>
 
     <changeSet id="#1861_20160817" author="pbach">
         <sql>
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, false, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, false, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, false, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, false);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, false, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, true);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, false, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, true);
-            ALTER SEQUENCE wf_decision_rule_seq RESTART WITH 10;
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 1, 1, NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 1, 1, NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 1, 1, NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, provider_id, creator_id, updater_id, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 1, 1, NULL, 1);
         </sql>
     </changeSet>
 
-    <changeSet id="#1839_20160901" author="AndriusKarpavicius">
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="5" />
-            <column name="permission_id" valueNumeric="13" />
-        </insert>
-    </changeSet>
-    
-    <changeSet id="#1849_20160909" author="LuisMance">
-    	<sql>
-            <![CDATA[INSERT INTO dwh_measurable_quant (id, version, disabled, created, updated, code, description, editable, measurement_period, sql_query, provider_id, creator_id, additive) VALUES (nextval('dwh_measurable_quant_seq'), 0, false, '2016-09-09 09:36:00.00', '2016-09-09 09:36:00.00', 'CHURN2', 'Churn', false, 'MONTHLY', 'WITH acc_new AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date >= "#{date}" AND ua.subscription_date < "#{nextDate}" AND (ua.termination_date IS NULL OR ua.termination_date >= "#{nextDate}")AND ae.provider_id = #{provider}),acc_end AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.termination_date >= "#{date}" AND ua.termination_date < "#{nextDate}" AND ae.provider_id = #{provider}),acc_period AS(SELECT  count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date < "#{date}" AND  (ua.termination_date IS NULL  OR ua.termination_date>="#{nextDate}") AND ae.provider_id = #{provider}) SELECT CASE  WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2) <> 0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2) ELSE 0 END as churn FROM acc_new ,acc_end,acc_period', 1, 1, false);]]>
-        </sql>
-        <sql>
-            <![CDATA[INSERT INTO dwh_measurable_quant (id, version, disabled, created, updated, code, description, dimension_1, dimension_2, dimension_3, dimension_4, editable, measurement_period, sql_query, provider_id, creator_id, additive) VALUES (nextval('dwh_measurable_quant_seq'), 0, false, '2016-09-09 09:36:00.00', '2016-09-09 09:36:00.00', 'MRR2', 'MRR', 'Offer', 'BA', 'CA', 'Cust', false, 'MONTHLY', '	SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value, wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code FROM billing_wallet_operation wo LEFT JOIN crm_provider p ON p.id=wo.provider_id LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id LEFT JOIN billing_wallet w ON w.id=wo.wallet_id LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id LEFT JOIN account_entity ua ON ua.id= uaa.id LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id LEFT JOIN account_entity ba ON ba.id= baa.id LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id LEFT JOIN account_entity ca ON ca.id= caa.id LEFT JOIN crm_customer custa ON custa.id= caa.customer_id LEFT JOIN account_entity cust ON cust.id= custa.id WHERE wo.disabled=FALSE AND wo.provider_id=#{provider} AND NOT(wo.end_date IS NULL) AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0 AND (wo.start_date <= "#{date}") AND (wo.end_date > "#{date}")', 1, 1, false);]]>
-        </sql>
-    </changeSet>
-
-	<changeSet id="#1849_20160909" author="EdwardPLegaspi">
-		<sql><![CDATA[DELETE FROM dwh_measurable_quant WHERE code IN ('MRR2', 'CHURN2');]]></sql>
+	<changeSet id="#1849_20160909" author="EdwardPLegaspi" dbms="postgresql">
 
 		<insert tableName="meveo_timer">
 			<column name="id" valueSequenceNext="meveo_timer_seq" />
@@ -123,14 +99,14 @@
 			<column name="sc_year" value="*" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="code" value="Monthly" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2015-03-19 00:04:19.913" />
 		</insert>
 
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="job_category" value="DWH" />
 			<column name="job_template" value="DWHQueryJob" />
@@ -145,7 +121,7 @@
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="2016-09-14 00:00:00.000" />
 			<column name="job_category" value="DWH" />
 			<column name="job_template" value="DWHQueryJob" />
@@ -164,19 +140,19 @@
 	
     <changeSet id="#2087_20161013" author="anasseh">
 		<insert tableName="adm_permission">
-			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="id" valueNumeric="-20" />
 			<column name="name" value="Finance visualization"></column>
 			<column name="ressource" value="finance"></column>
 			<column name="permission" value="financeVisualization"></column>
 		</insert>		
 		<insert tableName="adm_permission">
-			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="id" valueNumeric="-21" />
 			<column name="name" value="Finance management"></column>
 			<column name="ressource" value="finance"></column>
 			<column name="permission" value="financeManagement"></column>
 		</insert>
 		<insert tableName="adm_permission">
-			<column name="id" valueSequenceNext="adm_permission_seq" />
+			<column name="id" valueNumeric="-22" />
 			<column name="name" value="Marketing Catalog visualization"></column>
 			<column name="ressource" value="marketing"></column>
 			<column name="permission" value="marketingCatalogVisualization"></column>
@@ -190,4 +166,293 @@
 			update adm_user set username='OPENCELL.MARKETINGMANAGER', password='8618dab964637c4efa75bca53de7c858258eed5e' where username='MEVEO.MARKETINGMANAGER';]]>
 		</sql>
 	</changeSet>
+
+
+    <changeSet id="#1795_20161101_quotes" author="AndriusKarpavicius">
+    
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-23" />
+            <column name="name" value="Quote visualization" />
+            <column name="permission" value="quoteVisualization" />
+            <column name="ressource" value="quote" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-24" />
+            <column name="name" value="Quote management" />
+            <column name="permission" value="quoteManagement" />
+            <column name="ressource" value="quote" />
+        </insert>    
+        
+
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="-23" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="-24" />
+        </insert>        
+    </changeSet>
+    
+    <changeSet id="#2193_20161122 - change default contact to Opencell" author="EdwardLegaspi">
+    	<sql>
+			<![CDATA[
+			update crm_provider_contact set code='OPENCELL', description='Opencell Software', firstname=null, lastname=null, email='sales@opencellsoft.com', phone=null, mobile='+33607899813', fax=null, generic_mail=null, address_1='14 rue Crespin du Gast', address_2=null, address_3=null, address_zipcode='75011', address_city='Paris', address_country='France', address_state=null where code='DEMO_ADMIN';
+			]]>
+		</sql>			
+    </changeSet>    
+    
+	
+	<changeSet id="#2119_20161027-Update titles" author="EdwardPLegaspi" failOnError="false" onValidationFail="MARK_RAN">
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="ASSOC" />
+			<column name="description" value="Assoc." />
+			<column name="is_company" valueNumeric="1" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="CIE" />
+			<column name="description" value="Cie." />
+			<column name="is_company" valueNumeric="1" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MR" />
+			<column name="description" value="Mr." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MRS" />
+			<column name="description" value="Mrs." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="MS" />
+			<column name="description" value="Ms." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="DR" />
+			<column name="description" value="Dr." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+		<insert tableName="adm_title">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="creator_id" valueNumeric="1" />
+			<column name="created" valueDate="2016-11-03 00:00:00.000" />
+			<column name="code" value="PROF" />
+			<column name="description" value="Prof." />
+			<column name="is_company" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1" />			
+		</insert>
+	</changeSet>
+	<changeSet id="#2119_20161027-Update title on user and account entity" author="EdwardPLegaspi">
+		<sql>
+			<!-- update users -->
+			<![CDATA[
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE adm_user SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES')); 
+			]]>
+		</sql>
+		<sql>
+			<!-- update account entity -->
+			<![CDATA[
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='ASSOC') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('AGCE','ASSO'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='CIE') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('CAB','COLL','COM','COPR','CSSE','EARL','ETS','EURL','GAEC','HLM','HOPI','INST','LABO','SA','SARL','SCEA','SCI','SCM','SCP','SELARL','SNC','SNI','STE','SUCC','SYNDCOP','SYNDIC'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MR') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('M','MLLE_M','MM','MME_M','MTRE'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MRS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MME','MMES'));
+			UPDATE account_entity SET title_id=(SELECT id FROM adm_title WHERE code='MS') WHERE title_id IN (SELECT id FROM adm_title WHERE code IN ('MLLE','MLLES'));
+			]]>
+		</sql>
+		<sql>
+			<!-- update adm_title -->
+			<![CDATA[
+			DELETE FROM adm_title WHERE code NOT IN ('ASSOC', 'CIE', 'MR', 'MRS', 'MS', 'DR', 'PROF');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="#2119_20161028-Update title messages" author="EdwardPLegaspi" failOnError="false" onValidationFail="MARK_RAN">
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Assoc." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="ASSOC" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Assoc." />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="ASSOC" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Cie." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="CIE" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Sté" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="CIE" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mr." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="M." />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MR" />						
+		</insert>		
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mrs." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MRS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mme" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MRS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Ms." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Mlle" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="MS" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-11" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Dr." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="DR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-12" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Dr" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="DR" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-13" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Prof." />
+			<column name="language_code" value="ENG" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="PROF" />						
+		</insert>
+		<insert tableName="adm_messages">
+			<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="description" value="Pr" />
+			<column name="language_code" value="FRA" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="entity_class" value="Title" />
+			<column name="entity_code" value="PROF" />						
+		</insert>		
+	</changeSet>
+
+    <changeSet id="#2212_20161205" author="AndriusKarpavicius">
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="QUOTE" />
+            <column name="description" value="Invoice for quote" />
+            <column name="provider_id" valueNumeric="1" />
+            <column name="creator_id" valueNumeric="1" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="occ_template_id" value="25" />    
+            <column name="MATCHING_AUTO" valueNumeric="0" />        
+        </insert>
+    </changeSet>
 </databaseChangeLog>

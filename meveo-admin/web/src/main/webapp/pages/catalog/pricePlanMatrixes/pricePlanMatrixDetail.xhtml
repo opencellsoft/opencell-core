@@ -220,7 +220,7 @@
 				</p:tabView>
 				<ui:param name="buttons" value="true" />
 				<ui:define name="buttons">
-					<p:commandButton id="backButton" value="#{messages['action.back']}"
+					<p:commandButton id="backButton" value="#{messages['action.back']}" immediate="true"
 						rendered="#{pricePlanMatrixBean.chargeTemplateId!=null and pricePlanMatrixBean.chargeTemplateId!=0}"
 						action="#{pricePlanMatrixBean.getBackCharge()}" />
 				</ui:define>

@@ -2,11 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -14,38 +9,23 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- *
+ * 
  * @author bahman.barzideh
- *
- * {
- *     "name": "12 Month",
- *     "description": "12 month contract",
- *     "duration": "12",
- *     "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     }
- * }
- *
+ * 
+ *         { "name": "12 Month", "description": "12 month contract", "duration": "12", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" } }
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class ProductOfferingTerm implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "OFFERING_TERM_NAME", nullable = true)
     private String name;
 
-    @Column(name = "OFFERING_TERM_DESCRIPTION", nullable = true)
     private String description;
 
-    @Column(name = "OFFERING_TERM_DURATION", nullable = true)
     private String duration;
 
-    @AttributeOverrides({
-        @AttributeOverride(name = "startDateTime", column = @Column(name = "OFFERING_TERM_START_DATE_TIME")),
-        @AttributeOverride(name = "endDateTime", column = @Column(name = "OFFERING_TERM_END_DATE_TIME"))
-    })
     private TimeRange validFor;
 
     public ProductOfferingTerm() {

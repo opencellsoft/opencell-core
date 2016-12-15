@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -14,7 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
-import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -35,9 +34,9 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductInstance;
@@ -54,6 +53,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -159,6 +159,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -226,6 +229,9 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -244,7 +250,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void activateServices(ActivateServicesRequestDto postData, User currentUser, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
+    public void activateServices(ActivateServicesRequestDto postData, String orderNumber, User currentUser, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -261,6 +267,9 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
+        
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
+        subscription.getOffer().getOfferServiceTemplates().size();
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
@@ -302,6 +311,10 @@ public class SubscriptionApi extends BaseApi {
                             // // Is there a need to reset it?
                             subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                             subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                            // Do not update existing value
+                            if (orderNumber != null) {
+                                subscriptionServiceInstance.setOrderNumber(orderNumber);
+                            }
                             serviceInstance = subscriptionServiceInstance;
                             serviceInstances.add(serviceInstance);
                         }
@@ -346,6 +359,8 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                serviceInstance.setOrderNumber(orderNumber);
+                
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
@@ -360,28 +375,38 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", serviceToActivateDto.getCode(), e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToActivateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
             }
-        }
-
-        // override price
-        for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+            
+            // override price and description
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
-                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+                    if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode())) {
                         ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId(), InstanceStatusEnum.INACTIVE);
                         if (chargeInstance == null) {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
-
                         if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
-                            chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-                            if (!currentUser.getProvider().isEntreprise()) {
+                            if(chargeInstanceOverrideDto.getAmountWithoutTax()!=null){
+                            	log.debug("override AmountWithoutTax:{}", chargeInstanceOverrideDto.getAmountWithoutTax());
+                            	chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+                            }
+                            if (!currentUser.getProvider().isEntreprise() && chargeInstanceOverrideDto.getAmountWithTax()!=null) {
+                            	log.debug("override AmountWithTax:{}", chargeInstanceOverrideDto.getAmountWithTax());
                                 chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
                             }
+                            if(!StringUtils.isBlank(chargeInstanceOverrideDto.getDescription())){
+                            	log.debug("override description:{}", chargeInstanceOverrideDto.getDescription());
+                            	chargeInstance.setDescription(chargeInstanceOverrideDto.getDescription());
+                            }
+                        } else{
+                        	log.warn("Charge with code {} is not overrideable", chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
                     } else {
                         log.warn("chargeInstance.code and amountWithoutTax must not be null.");
@@ -488,6 +513,7 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
+
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
@@ -499,6 +525,9 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true, currentUser);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", serviceToInstantiateDto.getCode(), e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToInstantiateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
@@ -552,7 +581,7 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        try {
+        try {            
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
                 postData.getDescription(), currentUser, true);
@@ -596,7 +625,7 @@ public class SubscriptionApi extends BaseApi {
 
 		try {
 			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), currentUser);
+					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(),null, currentUser);
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
 					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			for (WalletOperation walletOperation : walletOperations) {
@@ -609,7 +638,7 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 
-    public void terminateSubscription(TerminateSubscriptionRequestDto postData, User currentUser) throws MeveoApiException {
+    public void terminateSubscription(TerminateSubscriptionRequestDto postData, String orderNumber, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
@@ -640,14 +669,14 @@ public class SubscriptionApi extends BaseApi {
         }
 
         try {
-            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, currentUser);
+            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, orderNumber, currentUser);
         } catch (BusinessException e) {
             log.error("error while setting subscription termination", e);
             throw new MeveoApiException(e.getMessage());
         }
     }
 
-    public void terminateServices(TerminateSubscriptionServicesRequestDto postData, User currentUser) throws MeveoApiException {
+    public void terminateServices(TerminateSubscriptionServicesRequestDto postData, String orderNumber, User currentUser) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
@@ -680,7 +709,7 @@ public class SubscriptionApi extends BaseApi {
             ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(serviceInstanceCode, subscription);
             if (serviceInstance != null) {
                 try {
-                    serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, currentUser);
+                    serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, orderNumber, currentUser);
                 } catch (BusinessException e) {
                     log.error("service termination={}", e.getMessage());
                     throw new MeveoApiException(e.getMessage());
@@ -718,6 +747,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
+        filters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, provider);
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
         List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
@@ -817,7 +847,7 @@ public class SubscriptionApi extends BaseApi {
                 terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
                 terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
                 terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
-                terminateSubscription(terminateSubscriptionDto, currentUser);
+                terminateSubscription(terminateSubscriptionDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                 return;
             } else {
 
@@ -879,7 +909,7 @@ public class SubscriptionApi extends BaseApi {
                     terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
-                    terminateServices(terminateServiceDto, currentUser);
+                    terminateServices(terminateServiceDto, ChargeInstance.NO_ORDER_NUMBER, currentUser);
                     continue;
                 }
 
@@ -910,7 +940,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 if (!serviceToActivates.isEmpty()) {
-                    activateServices(activateServicesDto, currentUser, true);
+                    activateServices(activateServicesDto, null, currentUser, true);
                     serviceToActivates.clear();
                 }
             }

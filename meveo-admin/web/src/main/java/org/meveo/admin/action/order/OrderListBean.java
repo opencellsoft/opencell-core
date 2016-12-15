@@ -28,7 +28,7 @@ import javax.inject.Named;
 public class OrderListBean extends OrderBean {
 
     private static final long serialVersionUID = 6301829745333803753L;
-    private static final String SEARCH_USER_GROUP = "routedToUserGroup";
+    public static final String SEARCH_USER_GROUP = "routedToUserGroup";
 
     private boolean showMyOrdersOnly = true;
 

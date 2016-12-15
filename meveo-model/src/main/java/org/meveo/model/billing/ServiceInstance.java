@@ -38,6 +38,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BusinessCFEntity;
@@ -116,6 +117,10 @@ public class ServiceInstance extends BusinessCFEntity {
     @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+	
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -236,11 +241,19 @@ public class ServiceInstance extends BusinessCFEntity {
             return status.name();
     }
 
-    public boolean equals(Object obj) {
+    public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
         } else if (!(obj instanceof ServiceInstance)) {
             return false;

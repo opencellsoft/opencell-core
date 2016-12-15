@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,11 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 @XmlRootElement(name = "OfferCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferTemplateCategoryDto implements Serializable {
+public class OfferTemplateCategoryDto extends BaseDto {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -23,8 +23,6 @@ public class OfferTemplateCategoryDto implements Serializable {
 	private String description;
 	
 	private String name;
-	
-	private String imageByteValue;
 	
 	private String offerTemplateCategoryCode;
 	
@@ -40,6 +38,9 @@ public class OfferTemplateCategoryDto implements Serializable {
 	
 	private Long parentId;
 	
+	private String imagePath;
+	private String imageBase64;
+	
 	public OfferTemplateCategoryDto() {
 		
 	}
@@ -54,10 +55,7 @@ public class OfferTemplateCategoryDto implements Serializable {
 			this.setVersion(offerTemplateCategory.getVersion());
 			this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
 			this.setActive(offerTemplateCategory.isActive());
-			
-			if (offerTemplateCategory.getImage() != null) {
-				this.setImageByteValue(new String(offerTemplateCategory.getImageAsByteArr()));
-			}
+			this.imagePath = offerTemplateCategory.getImagePath();
 			
 			OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
 			
@@ -106,21 +104,10 @@ public class OfferTemplateCategoryDto implements Serializable {
 		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
 	}
 
-	public String getImageByteValue() {
-		return imageByteValue;
-	}
-
-	public void setImageByteValue(String imageByteValue) {
-		this.imageByteValue = imageByteValue;
-	}
-
 	@Override
 	public String toString() {
-		return "OfferTemplateCategoryDto [code=" + code + ", description="
-				+ description + ", name=" + name + ", imageByteValue="
-				+ imageByteValue + ", offerTemplateCategoryCode="
-				+ offerTemplateCategoryCode + ", id=" + id + ", href=" + href
-				+ ", version=" + version + ", lastModified=" + lastModified
+		return "OfferTemplateCategoryDto [code=" + code + ", description=" + description + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
+				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath=" + imagePath
 				+ "]";
 	}
 
@@ -170,5 +157,21 @@ public class OfferTemplateCategoryDto implements Serializable {
 
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getImageBase64() {
+		return imageBase64;
+	}
+
+	public void setImageBase64(String imageBase64) {
+		this.imageBase64 = imageBase64;
 	}
 }

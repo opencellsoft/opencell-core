@@ -32,6 +32,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -64,6 +65,7 @@ public class WFDecisionRule extends AuditableEntity implements Comparable<WFDeci
     @NotNull
 	private String conditionEl;
 
+	@Type(type="numeric_boolean")
     @Column(name = "MODEL")
     private boolean model = false;
 
@@ -134,12 +136,15 @@ public class WFDecisionRule extends AuditableEntity implements Comparable<WFDeci
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WFDecisionRule)) {
+            return false;
+        }
+        
 		WFDecisionRule other = (WFDecisionRule) obj;
 		if (getId() == null) {
 			if (other.getId() != null)

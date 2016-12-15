@@ -24,6 +24,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 
@@ -49,7 +50,8 @@ public class Currency extends ProviderlessEntity {
 	private String descriptionEn;
 
 	/** Flag field that indicates if it is system currency. */
-	@Column(name = "SYSTEM_CURRENCY")
+	@Type(type="numeric_boolean")
+    @Column(name = "SYSTEM_CURRENCY")
 	private Boolean systemCurrency;
 
 	public String getCurrencyCode() {
@@ -74,12 +76,14 @@ public class Currency extends ProviderlessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Currency)) {
+            return false;
+        }
+        
 		Currency other = (Currency) obj;
 		if (currencyCode == null) {
 			if (other.currencyCode != null)

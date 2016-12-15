@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
@@ -40,7 +41,8 @@ public class Title extends BusinessEntity {
 
 	private static final long serialVersionUID = -6827515878506806536L;
 
-	@Column(name = "IS_COMPANY")
+	@Type(type="numeric_boolean")
+    @Column(name = "IS_COMPANY")
 	private Boolean isCompany = Boolean.FALSE;
 
 	public Title() {
@@ -78,12 +80,15 @@ public class Title extends BusinessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Title)) {
+            return false;
+        }
+        
 		Title other = (Title) obj;
 		if (code == null) {
 			if (other.code != null)

@@ -36,6 +36,8 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -60,6 +62,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.Script;
@@ -104,6 +107,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 	
+
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -203,55 +210,59 @@ public class RatingService extends BusinessService<WalletOperation>{
 	 */
 
 	// used to prerate a oneshot or recurring charge
-	public WalletOperation prerateChargeApplication(String code, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
-			Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+	public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
+			Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, String languageCode,
 			BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
-			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode,User currentUser) throws BusinessException {
+			String criteria3, String orderNumber, Date startdate, Date endDate, ChargeApplicationModeEnum mode, UserAccount userAccount, User currentUser) throws BusinessException {
 
-		WalletOperation result = new WalletOperation();
+		WalletOperation walletOperation = new WalletOperation();
 		Auditable auditable=new Auditable();
 		auditable.setCreated(new Date());
-		auditable.setCreator(chargeInstance.getAuditable().getCreator());
-		result.setAuditable(auditable);
+		auditable.setCreator(currentUser);
+		walletOperation.setAuditable(auditable);
+        walletOperation.setProvider(currentUser.getProvider());
+        
 		//TODO do this in the right place (one time by userAccount)				
-	    boolean  isExonerated = billingAccountService.isExonerated(chargeInstance.getUserAccount().getBillingAccount()); 
+	    boolean  isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount()); 
 
-		if (chargeInstance instanceof RecurringChargeInstance) {
-			result.setSubscriptionDate(subscriptionDate);
+		if (chargeTemplate instanceof RecurringChargeTemplate) {
+			walletOperation.setSubscriptionDate(subscriptionDate);
 		}
 		
-        result.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode()));
+        walletOperation.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         
-		result.setInputQuantity(inputQuantity);
-		result.setRatingUnitDescription(chargeInstance.getChargeTemplate().getRatingUnitDescription());
-		result.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
+		walletOperation.setInputQuantity(inputQuantity);
+		walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+		walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+		walletOperation.setOperationDate(applicationDate);
+		walletOperation.setOrderNumber(orderNumber);
+		walletOperation.setParameter1(criteria1);
+		walletOperation.setParameter2(criteria2);
+		walletOperation.setParameter3(criteria3);
+        if (chargeInstance != null) {
+            walletOperation.setChargeInstance(chargeInstance);
+            if (chargeInstance.getInvoicingCalendar() != null) {
+                chargeInstance.getInvoicingCalendar().setInitDate(subscriptionDate);
 
-		Provider provider = chargeInstance.getProvider();
-
-		result.setOperationDate(applicationDate);
-		result.setParameter1(criteria1);
-		result.setParameter2(criteria2);
-		result.setParameter3(criteria3);
-		result.setProvider(provider);
-		result.setChargeInstance(chargeInstance);
-		if(chargeInstance.getInvoicingCalendar()!=null){
-			chargeInstance.getInvoicingCalendar().setInitDate(subscriptionDate);
-			
-			result.setInvoicingDate(
-					chargeInstance.getInvoicingCalendar().nextCalendarDate(
-							result.getOperationDate()));
-		}
-		result.setCode(code);
-		result.setDescription(chargeInstance.getDescription());
-		result.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
-		result.setCurrency(tCurrency.getCurrency());
-		result.setStartDate(startdate);
-		result.setEndDate(endDate);
-		result.setOfferCode(offerCode);
-		result.setStatus(WalletOperationStatusEnum.OPEN);
-		result.setSeller(chargeInstance.getSeller());
+                walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
+            }
+        }
+		walletOperation.setCode(chargeTemplate.getCode());
+        walletOperation.setDescription(catMessagesService.getMessageDescription(chargeInstance!=null?chargeInstance:chargeTemplate, languageCode));
+        walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
+		walletOperation.setCurrency(tCurrency.getCurrency());
+		walletOperation.setStartDate(startdate);
+		walletOperation.setEndDate(endDate);
+		walletOperation.setOfferCode(offerCode);
+		walletOperation.setInvoiceSubCategory(invoiceSubCategory);
+		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
+        if (chargeInstance != null) {
+            walletOperation.setSeller(chargeInstance.getSeller());
+        } else {
+            walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        }
 		// TODO:check that setting the principal wallet at this stage is correct
-		result.setWallet(chargeInstance.getUserAccount().getWallet());
+		walletOperation.setWallet(userAccount.getWallet());
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
@@ -260,112 +271,103 @@ public class RatingService extends BusinessService<WalletOperation>{
 			unitPriceWithTax = amountWithTax;
 		}
 
-		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, currentUser);
-        log.debug(" wo amountWithoutTax =",result.getAmountWithoutTax());
-		return result;
+		rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, currentUser);
+        log.debug(" wo amountWithoutTax =",walletOperation.getAmountWithoutTax());
+		return walletOperation;
 
 	}
-
-	// used to rate a oneshot or recurring charge and triggerEDR
-	public WalletOperation rateChargeApplication(String code, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
+	
+	// used to rate a oneshot, recurring or product charge and triggerEDR
+	public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
-			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
-			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule,User currentUser) throws BusinessException {
+			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate,
+			Date endDate, ChargeApplicationModeEnum mode,boolean forSchedule, boolean isVirtual, User currentUser) throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
 		}
 
-		WalletOperation result = prerateChargeApplication(code, subscriptionDate, chargeInstance.getSubscription() == null ? null : chargeInstance.getSubscription().getOffer().getCode(),
-				chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, taxPercent, discountPercent,
-				nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate, mode,currentUser);
-
-		chargeInstance.getWalletOperations().add(result);
-		
-		String chargeInstnceLabel = null;
 		UserAccount ua = chargeInstance.getUserAccount();
-		try {
-			String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode);
-		} catch (Exception e) {
-			log.error("failed to rate charge application",e);
-		}
+        String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        
+		WalletOperation walletOperation = prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate, chargeInstance.getSubscription() == null ? null : chargeInstance.getSubscription().getOffer().getCode(),
+				chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, languageCode, taxPercent, discountPercent,
+				nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount(), currentUser);
+		
+		chargeInstance.getWalletOperations().add(walletOperation);
+			
+        // handle associated edr creation unless it is a Scheduled or virtual operation
+        if (forSchedule || isVirtual){
+            return walletOperation;
+        }
 
-		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel : chargeInstance.getDescription());
+        
+        List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeInstance.getChargeTemplate().getEdrTemplates();
+        for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
 
-		List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeInstance.getChargeTemplate().getEdrTemplates();
-		if (!forSchedule && triggeredEDRTemplates.size() > 0) {
-			for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
+            boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl())
+                    || matchExpression(triggeredEDRTemplate.getConditionEl(), walletOperation, ua, walletOperation.getPriceplan());
+            log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(), triggeredEDRTemplate.getConditionEl(), conditionCheck);
+            if (conditionCheck) {
+                if (triggeredEDRTemplate.getMeveoInstance() == null) {
+                    EDR newEdr = new EDR();
+                    newEdr.setCreated(new Date());
+                    newEdr.setEventDate(applicationDate);
+                    newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+                    newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + applicationDate.getTime());
+                    newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua));
+                    newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua));
+                    newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua));
+                    newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua));
+                    newEdr.setProvider(chargeInstance.getProvider());
+                    newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua)));
+                    newEdr.setStatus(EDRStatusEnum.OPEN);
+                    Subscription sub = null;
+                    if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+                        sub = chargeInstance.getSubscription();
+                    } else {
+                        String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua);
+                        sub = subscriptionService.findByCode(entityManager, subCode, chargeInstance.getProvider());
+                        if (sub == null) {
+                            log.info("could not find subscription for code =" + subCode + " (EL=" + triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
+                                    + triggeredEDRTemplate.getCode());
+                        }
+                    }
+                    if (sub != null) {
+                        newEdr.setSubscription(sub);
+                        log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+                        if (chargeInstance.getAuditable() == null) {
+                            log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+                        } else {
+                            edrService.create(newEdr, chargeInstance.getAuditable().getCreator());
+                        }
+                    } else {
+                        throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
+                    }
+                } else {
+                    CDR cdr = new CDR();
+                    String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua);
+                    cdr.setAccess_id(subCode);
+                    cdr.setTimestamp(applicationDate);
+                    cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua));
+                    cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua));
+                    cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua));
+                    cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua));
+                    cdr.setProvider(chargeInstance.getProvider());
+                    cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua)));
+                    String url = "api/rest/billing/mediation/chargeCdr";
+                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRTemplate.getMeveoInstance(), cdr.toCsv());
+                    ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+                    log.debug("response {}", actionStatus);
+                    if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+                        throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                    }
+                }
+            }
+        }
 
-				boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null
-						|| "".equals(triggeredEDRTemplate.getConditionEl())
-						|| matchExpression(triggeredEDRTemplate.getConditionEl(), result, ua,result.getPriceplan());
-				log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(),
-						triggeredEDRTemplate.getConditionEl(), conditionCheck);
-				if (conditionCheck) {
-					if(triggeredEDRTemplate.getMeveoInstance()==null){
-						EDR newEdr = new EDR();
-						newEdr.setCreated(new Date());
-						newEdr.setEventDate(applicationDate);
-						newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-						newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + applicationDate.getTime());
-						newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result, ua));
-						newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result, ua));
-						newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result, ua));
-						newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result, ua));
-						newEdr.setProvider(chargeInstance.getProvider());
-						newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(),
-								result, ua)));
-						newEdr.setStatus(EDRStatusEnum.OPEN);
-						Subscription sub = null;
-						if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
-							sub = chargeInstance.getSubscription();
-						} else {
-							String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
-							sub = subscriptionService.findByCode(entityManager, subCode, chargeInstance.getProvider());
-							if (sub == null) {
-								log.info("could not find subscription for code =" + subCode + " (EL="
-										+ triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
-										+ triggeredEDRTemplate.getCode());
-							}
-						}
-						if (sub != null) {
-							newEdr.setSubscription(sub);
-							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-							if (chargeInstance.getAuditable() == null) {
-								log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-							} else {
-								edrService.create(newEdr, chargeInstance.getAuditable().getCreator());
-							}
-						} else {
-							throw new BusinessException("cannot find subscription for the trigerred EDR with code "+triggeredEDRTemplate.getCode());
-						}
-					} else {
-						CDR cdr = new CDR();
-						String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
-						cdr.setAccess_id(subCode);
-						cdr.setTimestamp(applicationDate);
-						cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result, ua));
-						cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result, ua));
-						cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result, ua));
-						cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result, ua));
-						cdr.setProvider(chargeInstance.getProvider());
-						cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(),
-								result, ua)));
-						String url="api/rest/billing/mediation/chargeCdr";
-						Response response = meveoInstanceService.callTextServiceMeveoInstance(url,triggeredEDRTemplate.getMeveoInstance(),cdr.toCsv());
-						ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-			            log.debug("response {}", actionStatus);
-			            if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-			                throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-			            }
-					}
-				}
-			}
-		}
-
-		return result;
+		return walletOperation;
 	}
 
 	// used to rate or rerate a bareWalletOperation
@@ -702,7 +704,10 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 				Tax tax = invoiceSubcategoryCountry.getTax();
 				if (tax == null) {
-					throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(),operation.getWallet() == null ? null : operation.getWallet().getUserAccount() ,operation.getBillingAccount(), null);
+					if (tax == null) {
+						throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+					}
 				}
 								
 				operation.setTaxPercent(tax.getPercent());
@@ -717,10 +722,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 			updateNoCheck(operationToRerate);
 			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) { 
-			log.error("Failed to reRate",e);
+			log.error("Failed to reRate", e.getMessage());
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
 			operationToRerate.setReratedWalletOperation(null);
 		}
+		
 		log.debug("end rerate wallet operation");
 	}
 	
@@ -746,22 +752,32 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
-		if(expression.indexOf("serviceInstance") >= 0){
+		if (expression.indexOf("serviceInstance") >= 0) {
 			ServiceInstance service = null;
-			if(bareOperation.getChargeInstance() instanceof RecurringChargeInstance){
-				service=((RecurringChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
-			}else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance){
-				service=((UsageChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
-			}else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance){
-				service=((OneShotChargeInstance)bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
-				if(service==null){
-					((OneShotChargeInstance)bareOperation.getChargeInstance()).getTerminationServiceInstance();
+			if (bareOperation.getChargeInstance() instanceof RecurringChargeInstance) {
+				service = ((RecurringChargeInstance) bareOperation.getChargeInstance()).getServiceInstance();
+			} else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) bareOperation.getChargeInstance()).getServiceInstance();
+			} else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance) {
+				service = ((OneShotChargeInstance) bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if (service == null) {
+					service = ((OneShotChargeInstance) bareOperation.getChargeInstance()).getTerminationServiceInstance();
 				}
 			}
-			if(service !=null){
+			if (service != null) {
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}		
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -840,6 +856,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceIntance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -900,7 +926,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
-
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}	
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);
@@ -966,6 +1001,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
+		if(expression.indexOf("productInstance") >= 0){
+			ProductInstance productInstance = null;
+			if(walletOperation.getChargeInstance() instanceof ProductChargeInstance){
+				productInstance=((ProductChargeInstance)walletOperation.getChargeInstance()).getProductInstance();
+			
+			}
+			if(productInstance !=null){
+				userMap.put("productInstance", productInstance);
+			}
+		}			
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", ua);
 		}

@@ -18,26 +18,41 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
+	
+	@Inject
+	private InvoiceService invoiceService;
+	
 
 	public void addLitigation(Long recordedInvoiceId, User user)
 			throws BusinessException {
@@ -163,5 +178,112 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 				.setParameter("matchingStatus", MatchingStatusEnum.O)
 				.setParameter("paymentMethod", PaymentMethodEnum.DIRECTDEBIT)
 				.setParameter("providerCode", providerCode).getResultList();
+	}
+	
+	public void generateRecordedInvoice(Invoice invoice,User currentUser) throws InvoiceExistException, ImportInvoiceException, BusinessException{
+	
+		CustomerAccount customerAccount = null;
+		RecordedInvoice recordedInvoice = new RecordedInvoice();
+		BillingAccount billingAccount = invoice.getBillingAccount();
+
+		if (isRecordedInvoiceExist(invoice.getInvoiceNumber(), invoice.getProvider())) {
+			throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
+		}
+
+		try {
+			customerAccount = invoice.getBillingAccount().getCustomerAccount();
+			recordedInvoice.setCustomerAccount(customerAccount);
+			recordedInvoice.setProvider(customerAccount.getProvider());
+		} catch (Exception e) {
+			log.error("error while getting customer account ", e);
+			throw new ImportInvoiceException("Cant find customerAccount");
+		}
+		if (invoice.getNetToPay() == null) {
+			throw new ImportInvoiceException("Net to pay is null");
+		}
+		if (invoice.getInvoiceType() == null) {
+			throw new ImportInvoiceException("Invoice type is null");
+		}
+		
+		OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
+		if (invoiceTemplate == null) {
+			throw new ImportInvoiceException("Cant find OccTemplate");
+		}
+		BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
+		BigDecimal amountTax = invoice.getAmountTax();
+		BigDecimal amountWithTax = invoice.getAmountWithTax();
+		BigDecimal netToPay = invoice.getNetToPay();
+
+		if (netToPay.compareTo(BigDecimal.ZERO) < 0) {				
+			invoiceTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+			if (invoiceTemplate == null) {
+				throw new ImportInvoiceException("Cant find negative OccTemplate");
+			}
+			netToPay = netToPay.abs();
+			if (amountWithoutTax != null) {
+				amountWithoutTax = amountWithoutTax.abs();
+			}
+			if (amountTax != null ) {
+				amountTax = amountTax.abs();
+			}
+			if (amountWithTax != null) {
+				amountWithTax = amountWithTax.abs();
+			}
+		}
+
+
+		recordedInvoice.setReference(invoice.getInvoiceNumber());
+		recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
+		recordedInvoice.setOccCode(invoiceTemplate.getCode());
+		recordedInvoice.setOccDescription(invoiceTemplate.getDescription());
+		recordedInvoice.setTransactionCategory(invoiceTemplate.getOccCategory());
+		recordedInvoice.setAccountCodeClientSide(invoiceTemplate.getAccountCodeClientSide());
+
+		recordedInvoice.setAmount(amountWithTax);
+		recordedInvoice.setUnMatchingAmount(amountWithTax);
+		recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
+
+		recordedInvoice.setAmountWithoutTax(amountWithoutTax);
+		recordedInvoice.setTaxAmount(amountTax);
+		recordedInvoice.setNetToPay(invoice.getNetToPay());
+		List<String> orderNums = new ArrayList<String>();
+		for(Order order : invoice.getOrders()){
+			orderNums.add(order.getCode());
+		}
+		recordedInvoice.setOrderNumber(StringUtils.concatenate("\\|", orderNums));
+		
+		try {
+			recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
+		} catch (Exception e) {
+			log.error("error with due date ", e);
+			throw new ImportInvoiceException("Error on DueDate");
+		}
+
+		try {
+			recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+			recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+		} catch (Exception e) {
+			log.error("error with invoice date", e);
+			throw new ImportInvoiceException("Error on invoiceDate");
+		}
+
+		recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
+
+		if (billingAccount.getBankCoordinates() != null) {
+			recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
+			recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
+			recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
+			recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
+			recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
+			recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
+			recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
+			recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
+		}
+
+		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
+		create(recordedInvoice, currentUser);
+		invoice.setRecordedInvoice(recordedInvoice);
+		invoice.updateAudit(currentUser);
+		invoiceService.updateNoCheck(invoice);
 	}
 }

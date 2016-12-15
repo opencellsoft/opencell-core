@@ -30,6 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 
@@ -54,7 +55,8 @@ public class Job extends ProviderlessEntity {
 	@Column(name = "NEXT_EXECUTION_DATE")
 	private Date nextExecutionDate;
 
-	@Column(name = "ACTIVE")
+	@Type(type="numeric_boolean")
+    @Column(name = "ACTIVE")
 	private boolean active;
 
 	@Column(name = "JOB_FREQUENCY")
@@ -143,12 +145,14 @@ public class Job extends ProviderlessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Job)) {
+            return false;
+        }
+        
 		Job other = (Job) obj;
 		if (jobRepositoryId == null) {
 			if (other.jobRepositoryId != null)

@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -57,6 +58,7 @@ public class Chart extends BusinessEntity {
     @Size(max = 255)
     private String extender;
 
+    @Type(type="numeric_boolean")
     @Column(name = "VISIBLE")
     private Boolean visible = false;
 

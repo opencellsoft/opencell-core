@@ -71,10 +71,15 @@ public class DayInYear extends ProviderlessEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof DayInYear)) {
+            return false;
+        }
+        
 		DayInYear other = (DayInYear) obj;
 		if (day == null) {
 			if (other.day != null)

@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
@@ -131,11 +132,17 @@ public class Country extends ProviderlessEntity {
 	}
 
 	@Override
-	public boolean equals(Object other){
-		if(other==null || !(other instanceof Country)){
-			return false;
-		}
-		Country o = (Country) other;
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Country)) {
+            return false;
+        }
+        
+		Country o = (Country) obj;
 		return (o.countryCode!=null) && o.countryCode.equals(this.countryCode);
 	}
 }

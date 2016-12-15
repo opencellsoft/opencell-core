@@ -14,7 +14,9 @@ import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
@@ -38,13 +40,14 @@ public interface InvoiceRs extends IBaseRs {
      * @param id  invoice id
      * @param invoiceNumber invoice number
      * @param invoiceType invoice type
+     * @param includeTransactions Should transactions, associated to an invoice, be listed
      * @return GetInvoiceResponseDto
      */
     @GET
     @Path("/")
     public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, 
     		@QueryParam("invoiceNumber") String invoiceNumber, 
-    		@QueryParam("invoiceType") String invoiceType);
+    		@QueryParam("invoiceType") String invoiceType, @QueryParam("includeTransactions") boolean includeTransactions);
 
     /**
      * Create invoice. Invoice number depends on invoice type
@@ -90,6 +93,17 @@ public interface InvoiceRs extends IBaseRs {
     public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
 
     /**
+     * Finds an invoice based on its invoice number and optionally an invoice type and return it as
+     * xml string
+     *
+     * @param xmlInvoiceRequestDto contains invoice number and optionally an invoice type
+     * @return
+     */
+    @POST
+    @Path("/fetchXMLInvoice")
+    public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto);
+
+    /**
      * Finds an invoice based on invoice number and invoice type. It returns the result as xml string
      * 
      * @param invoiceNumber Invoice number
@@ -110,6 +124,18 @@ public interface InvoiceRs extends IBaseRs {
     @POST
     @Path("/getPdfInvoice")
     public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
+
+    /**
+     * Finds an invoice based on invoice number and optionally an invoice type and
+     * return it as pdf as byte [].  Invoice is not recreated, instead invoice stored
+     * as pdf in database is returned.
+     *
+     * @param pdfInvoiceRequestDto contains an invoice number and optionally an invoice type
+     * @return
+     */
+    @POST
+    @Path("/fetchPdfInvoice")
+    public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto);
 
     /**
      * Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. 
@@ -145,4 +171,8 @@ public interface InvoiceRs extends IBaseRs {
     @GET
     @Path("/listPresentInAR")
     public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode);
+    
+    @POST
+    @Path("/generateDraftInvoice")
+    public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 }

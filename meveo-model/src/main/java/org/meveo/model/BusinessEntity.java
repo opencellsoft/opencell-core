@@ -115,10 +115,10 @@ public class BusinessEntity extends AuditableEntity {
 
     @Override
     public boolean equals(Object obj) {
+        
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null) {
             return false;
         } else if (!(obj instanceof BusinessEntity)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
@@ -126,8 +126,8 @@ public class BusinessEntity extends AuditableEntity {
 
         BusinessEntity other = (BusinessEntity) obj;
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+             return true;
         }
         if (code == null) {
             if (other.getCode() != null) {
@@ -143,4 +143,9 @@ public class BusinessEntity extends AuditableEntity {
     public String toString() {
         return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
     }
+    
+    public void setDescriptionOrCode(String val) {
+    	setDescription(val);
+    }
+    
 }

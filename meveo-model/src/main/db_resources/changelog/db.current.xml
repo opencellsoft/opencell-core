@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-	<include file="current/structure.xml" relativeToChangelogFile="true"/>
-	<include file="current/data.xml"  relativeToChangelogFile="true"/>
+    <property name="type.blob" value="blob" dbms="postgresql" />
+    <property name="type.blob" value="longblob" dbms="mysql" />
+    <property name="type.boolean" value="INT4" dbms="postgresql" />
+    <property name="type.boolean" value="integer" dbms="mysql" />
+    <property name="type.byte" value="smallint" dbms="postgresql" />
+    <property name="type.byte" value="tinyint(1)" dbms="mysql" />
+    <property name="type.longText" value="text" dbms="postgresql" />
+    <property name="type.longText" value="longtext" dbms="mysql" />
+    <property name="cast.long" value="bigint" dbms="postgresql" />
+    <property name="cast.long" value="UNSIGNED " dbms="mysql" />
+    <property name="id.auto" value="false" dbms="postgresql" />
+    <property name="id.auto" value="true" dbms="mysql" />
+    <property name="migration" value="true" />
+
+    <include file="current/structure.xml" relativeToChangelogFile="true" />
+    <include file="current/data.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

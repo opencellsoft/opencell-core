@@ -48,6 +48,7 @@
 	<p:tooltip for="indexing">#{help['menu.indexing']}</p:tooltip>
 
 	<p:tooltip for="orders">#{help['menu.orders']}</p:tooltip>
+    <p:tooltip for="quotes">#{help['menu.quotes']}</p:tooltip>
 	<c:set var="cetIndex" value="0" />
 	<c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
 		<c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
@@ -56,7 +57,11 @@
 		</c:if>
 	</c:forEach>
 
-	<p:menubar styleClass="horizontal-nav" rendered="#{identity.loggedIn}">
+	<p:panel styleClass="FLeft Wid5">
+		<a href="/meveo/loginRedirect.jsf" class="fa fw fa-home"></a>
+	</p:panel>
+	
+	<p:menubar styleClass="horizontal-nav FLeft Wid90" rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 			<p:menuitem id="providers" outcome="providers" value="#{messages['menu.providers']}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
 			<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.provider']}" rendered="#{identity.hasPermission('administration','administrationManagement')}">
@@ -131,11 +136,11 @@
 			</p:submenu>
 		</p:submenu>
 
-		<p:submenu label="#{messages['menu.offers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
-			<p:menuitem id="mmOffers" outcome="mm_offers" value="#{messages['menu.marketingManager.catalogList']}" />
+		<p:submenu styleClass="mmOffersSM" label="#{messages['menu.offers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
+			<p:menuitem outcome="mm_offers" value="#{messages['menu.marketingManager.catalogList']}" />
 		</p:submenu>
 
-		<p:submenu label="#{messages['menu.marketingManager.products']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
+		<p:submenu styleClass="mmProductsSM" label="#{messages['menu.marketingManager.products']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
 			<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
 		</p:submenu>
 
@@ -151,11 +156,12 @@
 			<p:menuitem id="businessAccountModels" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
 		</p:submenu>
 
-		<p:submenu id="orders" label="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
-			<p:menuitem id="order" outcome="orders" value="#{messages['menu.orders']}" />
+		<p:submenu id="orderAndQuotes" label="#{messages['menu.ordersAndQuotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement') or identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
+			<p:menuitem id="quotes" outcome="quotes" value="#{messages['menu.quotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement')}"/>
+            <p:menuitem id="orders" outcome="orders" value="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}"/>
 		</p:submenu>
-
-		<p:submenu label="#{messages['menu.customers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
+        
+		<p:submenu styleClass="mmCustomersSM" label="#{messages['menu.customers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
 			<p:menuitem id="mm_workflows" value="#{messages['menu.marketingManager.workflowList']}" outcome="mm_workflows" />
 		</p:submenu>
 
@@ -181,10 +187,14 @@
 			</p:submenu>
 		</p:submenu>
 
-		<p:submenu id="payment" label="#{messages['menu.Recouvrement']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
-			<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />
+		<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">			
+	   	 	<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
+		
+		<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
+			<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
+		</p:submenu>		
 		
 		<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{identity.hasPermission('finance','financeVisualization') or identity.hasPermission('finance','financeManagement') }">
 			<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
@@ -215,7 +225,7 @@
 			<p:menuitem id="mmUserGroups" outcome="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}" />			
 		</p:submenu>
 
-		<p:submenu id="settings" label="#{messages['menu.settings']}" rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
+		<p:submenu styleClass="mmSettingsSM" id="settings" label="#{messages['menu.settings']}" rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
 			<p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories" value="#{messages['menu.marketingManager.manageCategories']}" />
 		</p:submenu>
 
@@ -250,4 +260,13 @@
 			<p:menuitem id="indexing" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="indexing" value="#{messages['menu.indexing']}" />
 		</p:submenu>
 	</p:menubar>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".mmOffersSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/offers/offers.jsf?tab=0"; });
+			$(".mmProductsSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/products/productTemplates.jsf?tab=0"; });
+			$(".mmCustomersSM").bind("click",function(){ window.location="#{request.contextPath}/pages/order/workflows/workflows.jsf"; });
+			$(".mmSettingsSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/offerTemplateCategories/offerTemplateCategories.jsf"; });
+        });
+	</script>
 </h:form>

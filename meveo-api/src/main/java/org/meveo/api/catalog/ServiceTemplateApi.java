@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,9 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -80,7 +83,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     @Inject
     private ServiceChargeTemplateUsageService serviceUsageChargeTemplateService;
 
-    @SuppressWarnings("rawtypes")
     @Inject
     private CounterTemplateService counterTemplateService;
     
@@ -263,12 +265,21 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setProvider(provider);
+        try {
+			saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
+		}
 
         serviceTemplateService.create(serviceTemplate, currentUser);
 
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -324,12 +335,21 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		serviceTemplate.setBusinessServiceModel(businessService);
 
         setAllWalletTemplatesToNull(serviceTemplate);
+        try {
+			saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+		} catch (IOException e1) {
+			log.error("Invalid image data={}", e1.getMessage());
+			throw new InvalidImageData();
+		}
 
         serviceTemplate = serviceTemplateService.update(serviceTemplate, currentUser);
 
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -413,19 +433,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
 
         setAllWalletTemplatesToNull(serviceTemplate);
-
-        // remove serviceChargeTemplateRecurring
-        serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceChargeTemplateSubscription
-        serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceChargeTemplateTermination
-        serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
-        // remove serviceUsageChargeTemplate
-        serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate, currentUser.getProvider());
-
+        
+        //deleteImage(serviceTemplate, currentUser.getProvider().getCode());
+        
         serviceTemplateService.remove(serviceTemplate, currentUser);
 
     }

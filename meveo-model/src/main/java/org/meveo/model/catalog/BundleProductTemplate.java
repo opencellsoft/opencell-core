@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,7 +27,7 @@ import org.meveo.model.IEntity;
 public class BundleProductTemplate implements IEntity {
 
 	@Id
-	@GeneratedValue(generator = "ID_GENERATOR")
+	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
 	@Column(name = "ID")
 	@Access(AccessType.PROPERTY)
 	protected Long id;
@@ -98,14 +99,14 @@ public class BundleProductTemplate implements IEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		} else if (!(obj instanceof BundleProductTemplate)) {
-			return false;
-		}
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof BundleProductTemplate)) {
+            return false;
+        }
 
 		BundleProductTemplate that = (BundleProductTemplate) obj;
 

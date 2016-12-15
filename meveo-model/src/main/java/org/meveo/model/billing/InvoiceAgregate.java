@@ -33,6 +33,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 @Entity
@@ -107,7 +108,8 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Size(max = 50)
 	private String prDescription;
 
-	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
+	@Type(type="numeric_boolean")
+    @Column(name = "DISCOUNT_AGGREGATE", nullable = false)
 	@NotNull
 	private boolean discountAggregate;
 	
@@ -311,7 +313,16 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) {	    
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceAgregate)) {
+            return false;
+        }
+        
 		InvoiceAgregate temp = (InvoiceAgregate) obj;
 		if (temp instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
 			CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;

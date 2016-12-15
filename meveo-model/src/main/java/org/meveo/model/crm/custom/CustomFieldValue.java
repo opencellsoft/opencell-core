@@ -76,7 +76,7 @@ public class CustomFieldValue implements Serializable {
     @Column(name = "DOUBLE_VALUE")
     private Double doubleValue;
 
-    @Column(name = "SERIALIZED_VALUE", columnDefinition = "TEXT")
+    @Column(name = "SERIALIZED_VALUE", columnDefinition = "LONGTEXT")
     private String serializedValue;
 
     /**

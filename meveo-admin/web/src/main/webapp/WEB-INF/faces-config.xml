@@ -65,6 +65,11 @@
 			<if>#{identity.loggedIn}</if>
 			<to-view-id>/loginRedirect.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-action>loginRedirect</from-action>			
+			<to-view-id>/loginRedirect.xhtml</to-view-id>
+		</navigation-case>
 
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>
@@ -1085,9 +1090,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>workflows</from-outcome>
+			<from-outcome>dunning_workflows</from-outcome>
 			<to-view-id>/pages/admin/workflow/workflows.xhtml</to-view-id>
-			<redirect />
+			<redirect include-view-params="true">
+				<view-param>
+					<name>isDunning</name>
+					<value>true</value>
+				</view-param>
+			</redirect>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>workflows</from-outcome>
+			<to-view-id>/pages/admin/workflow/workflows.xhtml</to-view-id>			
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>workflowHistory</from-outcome>
@@ -1954,7 +1968,19 @@
             <to-view-id>/pages/order/orders/orders.xhtml
             </to-view-id>
             <redirect include-view-params="true" />
-        </navigation-case>    
+        </navigation-case>  
+        <navigation-case>
+            <from-outcome>quoteDetail</from-outcome>
+            <to-view-id>/pages/quote/quotes/quoteDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>quotes</from-outcome>
+            <to-view-id>/pages/quote/quotes/quotes.xhtml
+            </to-view-id>
+            <redirect include-view-params="true" />
+        </navigation-case>             
 
         <navigation-case>
             <from-outcome>productTemplates</from-outcome>

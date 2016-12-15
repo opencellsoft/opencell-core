@@ -82,7 +82,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		}
 	}
 
-	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator) throws BusinessException {
+	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, boolean isVirtual, User creator) throws BusinessException {
 		String walletCode = walletTemplate.getCode();
 		log.debug("get wallet instance for userAccount {} and wallet template {}", userAccount.getCode(), walletCode);
 		if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
@@ -91,10 +91,17 @@ public class WalletService extends PersistenceService<WalletInstance> {
 				wallet.setCode(walletCode);
 				wallet.setWalletTemplate(walletTemplate);
 				wallet.setUserAccount(userAccount);
-				create(wallet, creator);
+                
+				if (!isVirtual) {
+                    create(wallet, creator);
+                }
+				
 				log.debug("add prepaid wallet {} to useraccount {}", walletCode, userAccount.getCode());
 				userAccount.getPrepaidWallets().put(walletCode, wallet);
-				getEntityManager().merge(userAccount);
+
+                if (!isVirtual) {
+                    getEntityManager().merge(userAccount);
+                }
 			}
 
 			return userAccount.getPrepaidWallets().get(walletCode);

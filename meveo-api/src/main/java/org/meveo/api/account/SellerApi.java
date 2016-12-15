@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -18,6 +19,7 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -141,7 +143,9 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
-
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -244,7 +248,9 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
-
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;

@@ -52,11 +52,13 @@
 
 						<div class="Container40 Responsive100 VAlignTop">
 							<p:panel styleClass="Wid25 Responsive100">
-								<p:graphicImage id="offerImage" cache="false"
-									rendered="#{entity.offerTemplate ne null}"
-									value="#{offerTemplateImageStreamer.image}" height="100"
-									width="100">
-									<f:param name="id" value="#{entity.offerTemplate.id}"></f:param>
+								<p:graphicImage
+									value="#{defaultImageStreamer.image}" cache="false" width="100"
+									height="100">
+									<f:param name="providerCode"
+										value="#{businessOfferModelListBean.currentProvider.code}"></f:param>
+									<f:param name="fileName" value="#{entity.offerTemplate.imagePath}"></f:param>
+									<f:param name="pictureGroupName" value="offer"></f:param>
 								</p:graphicImage>
 							</p:panel>
 

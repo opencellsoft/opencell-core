@@ -91,24 +91,30 @@
 
 				</p:tab>
 
-				<hftl:customFields backingBean="#{oneShotChargeTemplateBean}" messagesId=":formId:messages"/>
-				
-				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}" >  
-                    <p:panel>
-						<hftl:decorateFormField fieldId="oneShotChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
+				<p:tab title="#{messages['pricePlanMatrix.panel']}"
+					rendered="#{chargeTemplateBean.objectId!=null}">
+					<p:panel>
+						<hftl:decorateFormField fieldId="oneShotChargeCode"
+							label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="oneShotChargeCode"
-								value="#{oneShotChargeTemplateBean.entity.code}"
-								disabled="true" style="font-weight:bold;" />
-						</hftl:decorateFormField> 
-						
-						<hftl:decorateFormField fieldId="oneShotChargeDescription" label="#{messages['businessEntity.description']} :">
+								value="#{oneShotChargeTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField fieldId="oneShotChargeDescription"
+							label="#{messages['businessEntity.description']} :">
 							<h:outputText id="oneShotChargeDescription"
-								value="#{oneShotChargeTemplateBean.entity.description}" 
+								value="#{oneShotChargeTemplateBean.entity.description}"
 								disabled="true" style="font-weight:bold;" />
 						</hftl:decorateFormField>
-                    </p:panel>
-					<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />					
-				   </p:tab>
+					</p:panel>
+					<ui:include
+						src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
+				</p:tab>
+
+				<hftl:customFields backingBean="#{oneShotChargeTemplateBean}"
+					messagesId=":formId:messages" />
+
 			</p:tabView>
 
 		</hftl:formPanel>

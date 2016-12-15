@@ -1,5 +1,6 @@
 package org.meveo.api.billing;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -27,6 +29,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -48,6 +51,9 @@ public class MediationApi extends BaseApi {
 
 	@Inject
 	private ReservationService reservationService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;	
 
 	Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
@@ -95,21 +101,22 @@ public class MediationApi extends BaseApi {
 				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
+					edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId(), Arrays.asList("offer")));
 					edrService.create(edr, user);
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}",e);
-						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-						} else {
-							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-						}
-
+                        if (e instanceof InsufficientBalanceException) {
+                            log.error("edr rejected={}", edr.getRejectReason());
+                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+                        } else {
+                            log.error("Exception rating edr={}",e);
+                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
+                        }
 					}
 				}
 			} catch (CDRParsingException e) {
@@ -210,19 +217,19 @@ public class MediationApi extends BaseApi {
 					EDR edr = reservation.getOriginEdr();
 					edr.setQuantity(reservationDto.getConsumedQuantity());
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false, user);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}",e);
-						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
+					    if (e instanceof InsufficientBalanceException) {
+                            log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
+						    log.error("Exception rating edr={}",e);
 							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
-
 					}
 				} else {
 					throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");

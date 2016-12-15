@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -58,6 +59,7 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     @Size(max = 255)
     private String logoPicture;
 
+    @Type(type="numeric_boolean")
     @Column(name = "INSTALLED")
     private boolean installed;
 

@@ -97,7 +97,7 @@ public class RecordedInvoice extends AccountOperation {
 	
 	@OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
-
+	
 	public Date getProductionDate() {
 		return productionDate;
 	}

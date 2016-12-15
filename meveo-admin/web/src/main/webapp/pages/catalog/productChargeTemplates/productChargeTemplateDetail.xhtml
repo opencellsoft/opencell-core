@@ -88,9 +88,6 @@
 						newLine="true" />
 				</p:tab>
 
-				<hftl:customFields backingBean="#{productChargeTemplateBean}"
-					messagesId=":formId:messages" />
-
 				<p:tab title="#{messages['pricePlanMatrix.panel']}"
 					rendered="#{chargeTemplateBean.objectId!=null}">
 					<p:panel>
@@ -111,6 +108,10 @@
 					<ui:include
 						src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
 				</p:tab>
+
+				<hftl:customFields backingBean="#{productChargeTemplateBean}"
+					messagesId=":formId:messages" />
+
 			</p:tabView>
 
 		</hftl:formPanel>

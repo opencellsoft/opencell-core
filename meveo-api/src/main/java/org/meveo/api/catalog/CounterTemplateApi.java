@@ -24,7 +24,7 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemplateDto> {
 
     @Inject
-    private CounterTemplateService<CounterTemplate> counterTemplateService;
+    private CounterTemplateService counterTemplateService;
 
     @Inject
     private CalendarService calendarService;

@@ -60,7 +60,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
     private StrategyImportTypeEnum strategyImportType;
 
     @Inject
-    CounterTemplateService<? extends CounterTemplate> counterTemplateService;
+    CounterTemplateService counterTemplateService;
 
     ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;

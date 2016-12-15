@@ -3,11 +3,6 @@ package org.tmf.dsmapi.catalog.resource;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,23 +11,18 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- *
+ * 
  * @author pierregauthier
- *
+ * 
  */
-@JsonInclude(value=Include.NON_NULL)
-@Embeddable
+@JsonInclude(value = Include.NON_NULL)
 public class TimeRange implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "START_DATE_TIME", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonSerialize(using=CustomDateSerializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date startDateTime;
 
-    @Column(name = "END_DATE_TIME", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonSerialize(using=CustomDateSerializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date endDateTime;
 
     public Date getStartDateTime() {
@@ -60,7 +50,7 @@ public class TimeRange implements Serializable {
     public boolean isEmpty() {
         return (startDateTime == null && endDateTime == null) ? true : false;
     }
-    
+
     @JsonIgnore
     public boolean isValid() {
         if (startDateTime == null || endDateTime == null) {
@@ -82,5 +72,4 @@ public class TimeRange implements Serializable {
 
         return timeRange;
     }
-
 }

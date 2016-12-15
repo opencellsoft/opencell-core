@@ -1,47 +1,32 @@
 package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.util.EntityCustomizationUtils;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
@@ -62,12 +47,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	private OfferTemplateCategoryService offerTemplateCategoryService;
 
 	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
-
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
-
-	@Inject
 	private ChannelService channelService;
 
 	@Inject
@@ -86,8 +65,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	private DualListModel<BusinessAccountModel> bamDM;
 	private DualListModel<Channel> channelDM;
 
-	private UploadedFile uploadedFile;
-
 	public BundleTemplateBean() {
 		super(BundleTemplate.class);
 	}
@@ -100,47 +77,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	@Override
 	public BundleTemplate initEntity() {
 		BundleTemplate result = super.initEntity();
-
-		createMissingCustomFields();
-		initPricePlan();
-
-		return result;
-	}
-
-	private void initPricePlan() {
-
-		Double catalogPriceCFValue = (Double) customFieldInstanceService.getCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, getCurrentUser());
-		if (catalogPriceCFValue != null) {
-			catalogPrice = new BigDecimal(catalogPriceCFValue);
-		}
-
-		// Verify that CFT catalog price exists
-		if (customFieldTemplateService.findByCodeAndAppliesTo(ProductTemplate.CF_CATALOG_PRICE, entity) == null) {
-			messages.warn(new BundleKey("messages", "message.marketingManager.product.catalogPrice.missing"));
-		}
 		
-		if (entity.getProductChargeTemplates() != null) {
-			for (ProductChargeTemplate productChargetemplate : entity.getProductChargeTemplates()) {
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(productChargetemplate.getCode(), currentUser.getProvider(), "priority");
-				if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
-					for (PricePlanMatrix ppMatrix : pricePlanMatrixes) {
-						if (!StringUtils.isBlank(ppMatrix.getEventCode()) && ppMatrix.getEventCode().equals(productChargetemplate.getCode())) {
-							salesPrice = ppMatrix.getAmountWithoutTax();
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public BigDecimal computeDiscountAmount() {
-		BigDecimal result = new BigDecimal(0);
-
-		if (salesPrice != null && catalogPrice != null && catalogPrice.compareTo(BigDecimal.ZERO) != 0) {
-			result = salesPrice.subtract(catalogPrice);
-			result = NumberUtils.round(result, currentUser.getProvider().getRounding() != null ? currentUser.getProvider().getRounding() : 2);
-		}
-
 		return result;
 	}
 
@@ -170,34 +107,11 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 		String outcome = super.saveOrUpdate(killConversation);
 
-		savePricePlanMatrix();
-
 		if (editMode != null && editMode.length() > 0) {
 			outcome = "mm_productTemplates";
 		}
 
 		return outcome;
-	}
-
-	public void handleFileUpload(FileUploadEvent event) throws BusinessException {
-		uploadedFile = event.getFile();
-
-		if (uploadedFile != null) {
-			byte[] contents = uploadedFile.getContents();
-			try {
-				entity.setImage(new SerialBlob(contents));
-			} catch (SQLException e) {
-				entity.setImage(null);
-			}
-			entity.setImageContentType(uploadedFile.getContentType());
-
-			saveOrUpdate(entity);
-
-			initEntity();
-
-			FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
-		}
 	}
 
 	public void addProductTemplateToBundle(ProductTemplate prodTemplate) {
@@ -212,46 +126,21 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 			BundleProductTemplate bpt = new BundleProductTemplate();
 			bpt.setProductTemplate(prodTemplate);
 			bpt.setBundleTemplate(entity);
+			
+			entity.addBundleProductTemplate(bpt);
 
-			try {
-				entity.addBundleProductTemplate(bpt);
-				entity = getPersistenceService().update(entity, currentUser);
-			} catch (BusinessException e) {
-				log.error("IPIEL: fail creating opt {}", e.getMessage());
-				messages.error(e.getMessage());
-			}
+			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.create.successful"));
 		}
 	}
 
 	public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
-		entity.getBundleProducts().remove(bundleProductTemplate);
-		entity = getPersistenceService().update(entity, getCurrentUser());
+		try {
+			entity.getBundleProducts().remove(bundleProductTemplate);
 
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
-
-	private void savePricePlanMatrix() throws BusinessException {
-
-		if (entity.getProductChargeTemplates() != null) {
-			for (ProductChargeTemplate productChargeTemplate : entity.getProductChargeTemplates()) {
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCodeWithOrder(productChargeTemplate.getCode(), currentUser.getProvider(), "priority");
-				if (pricePlanMatrixes != null && pricePlanMatrixes.size() > 0) {
-					PricePlanMatrix pricePlan = pricePlanMatrixes.get(0);
-					pricePlan.setAmountWithoutTax(salesPrice);
-					pricePlanMatrixService.update(pricePlan, getCurrentUser());
-
-				} else {
-					PricePlanMatrix pricePlan = new PricePlanMatrix();
-					pricePlan.setCode(productChargeTemplate.getCode());
-					pricePlan.setEventCode(productChargeTemplate.getCode());
-					pricePlan.setAmountWithoutTax(salesPrice);
-					pricePlanMatrixService.create(pricePlan, getCurrentUser());
-				}
-			}
-
+			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.delete.successful"));
+		} catch (Exception e) {
+			messages.error(new BundleKey("messages", "error.delete.unexpected"));
 		}
-
-		customFieldInstanceService.setCFValue(entity, ProductTemplate.CF_CATALOG_PRICE, catalogPrice == null ? null : catalogPrice.doubleValue(), getCurrentUser());
 	}
 
 	public BigDecimal getCatalogPrice() {
@@ -412,27 +301,4 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 		}
 	}
 
-	/**
-	 * Create missing custom fields required for price calculation
-	 * 
-	 * @throws BusinessException
-	 */
-	private void createMissingCustomFields() {
-		List<CustomFieldTemplate> cfts = new ArrayList<CustomFieldTemplate>();
-
-		CustomFieldTemplate cft = new CustomFieldTemplate();
-		cft.setCode(ProductTemplate.CF_CATALOG_PRICE);
-		cft.setAppliesTo(EntityCustomizationUtils.getAppliesTo(BundleTemplate.class, null));
-		cft.setActive(true);
-		cft.setDescription("Catalog price");
-		cft.setFieldType(CustomFieldTypeEnum.DOUBLE);
-		cft.setValueRequired(false);
-		cfts.add(cft);
-
-		try {
-			customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, cfts, getCurrentUser());
-		} catch (BusinessException e) {
-			log.error("Failed to create missing custom field templates", e);
-		}
-	}
 }

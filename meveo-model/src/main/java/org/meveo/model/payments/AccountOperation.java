@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -118,8 +119,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 	private String occDescription;
 	
 	
-	@Column(name = "EXCLUDED_FROM_DUNNING")
+	@Type(type="numeric_boolean")
+    @Column(name = "EXCLUDED_FROM_DUNNING")
 	private boolean excludedFromDunning;
+	
+	@Column(name = "ORDER_NUM")   
+	private String orderNumber;// order number, '|' will be used as seperator if many orders
 	
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
@@ -240,12 +245,15 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof AccountOperation)) {
+            return false;
+        }
+        
 		AccountOperation other = (AccountOperation) obj;
 		if (occCode == null) {
 			if (other.occCode != null)
@@ -298,6 +306,20 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 		@Override
 		public ICustomFieldEntity[] getParentCFEntities() {
 			return null;
+		}
+
+		/**
+		 * @return the orderNumber
+		 */
+		public String getOrderNumber() {
+			return orderNumber;
+		}
+
+		/**
+		 * @param orderNumber the orderNumber to set
+		 */
+		public void setOrderNumber(String orderNumber) {
+			this.orderNumber = orderNumber;
 		}	
 
 }

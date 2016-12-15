@@ -27,7 +27,6 @@ import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -42,22 +41,24 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
-import org.tmf.dsmapi.catalog.resource.order.OrderItem;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
+import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
@@ -80,6 +81,9 @@ public class OrderApi extends BaseApi {
     private ProductInstanceService productInstanceService;
 
     @Inject
+    private ProductTemplateService productTemplateService;
+
+    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
@@ -94,22 +98,16 @@ public class OrderApi extends BaseApi {
     @Inject
     private WorkflowService workflowService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     /**
      * Register an order from TMForumApi
      * 
      * @param productOrder Product order
      * @param currentUser Current user
-     * @return Product order updated
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
+     * @return Product order DTO updated
      * @throws BusinessException
-     * @throws EntityDoesNotExistsException
-     * @throws Exception
+     * @throws MeveoApiException
      */
-    public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException, EntityDoesNotExistsException, Exception {
+    public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser) throws BusinessException, MeveoApiException {
 
         if (productOrder.getOrderItem() == null || productOrder.getOrderItem().isEmpty()) {
             missingParameters.add("orderItem");
@@ -127,10 +125,10 @@ public class OrderApi extends BaseApi {
         order.setCategory(productOrder.getCategory());
         // order.setDeliveryInstructions("");
         order.setDescription(productOrder.getDescription());
-        order.setExternalId(productOrder.getExternalld());
+        order.setExternalId(productOrder.getExternalId());
         order.setReceivedFromApp("API");
 
-        order.setOrderDate(productOrder.getOrderDate());
+        order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
         if (!StringUtils.isBlank(productOrder.getPriority())) {
             order.setPriority(Integer.parseInt(productOrder.getPriority()));
         }
@@ -142,13 +140,13 @@ public class OrderApi extends BaseApi {
             order.setStatus(OrderStatusEnum.ACKNOWLEDGED);
         }
 
-        for (OrderItem productOrderItem : productOrder.getOrderItem()) {
+        for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
 
-        	if (org.meveo.commons.utils.StringUtils.isBlank(productOrderItem.getAction())) {
-				missingParameters.add("orderItem.action");
-				handleMissingParameters();
-			}	
-        	
+            if (org.meveo.commons.utils.StringUtils.isBlank(productOrderItem.getAction())) {
+                missingParameters.add("orderItem.action");
+                handleMissingParameters();
+            }
+
             // Validate billing account
             if (productOrderItem.getBillingAccount() == null || productOrderItem.getBillingAccount().isEmpty()) {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
@@ -164,14 +162,16 @@ public class OrderApi extends BaseApi {
                 throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
             }
 
-            List<ProductOffering> productOfferings = new ArrayList<>();
+            org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
+            List<OrderItemProductOffering> productOfferings = new ArrayList<>();
+
             // For modify and delete actions, product offering might not be specified
             if (productOrderItem.getProductOffering() != null) {
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), provider);
                 if (productOfferingInDB == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId());
                 }
-                productOfferings.add(productOfferingInDB);
+                productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
 
                 if (productOrderItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
@@ -179,7 +179,7 @@ public class OrderApi extends BaseApi {
                         if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
                         }
-                        productOfferings.add(productOfferingInDB);
+                        productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }
                 }
             } else {
@@ -187,17 +187,16 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("productOffering");
             }
 
-            org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
             orderItem.setItemId(productOrderItem.getId());
             try {
-				orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
-			} catch (IllegalArgumentException e) {
-				throw new InvalidEnumValueException(OrderItemActionEnum.class.getSimpleName(), productOrderItem.getAction());
-			}
+                orderItem.setAction(OrderItemActionEnum.valueOf(productOrderItem.getAction().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValueException(OrderItemActionEnum.class.getSimpleName(), productOrderItem.getAction());
+            }
             orderItem.setOrder(order);
             orderItem.setUserAccount(userAccount);
-            orderItem.setSource(OrderItem.serializeOrderItem(productOrderItem));
-            orderItem.setProductOfferings(productOfferings);
+            orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
+            orderItem.setOrderItemProductOfferings(productOfferings);
             orderItem.setProvider(currentUser.getProvider());
 
             if (productOrderItem.getState() != null) {
@@ -249,10 +248,16 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        // Commit before initiating workflow/order processing
+        orderService.commit();
 
         order = initiateWorkflow(order, currentUser);
 
@@ -306,7 +311,7 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order {}", order.getCode());
 
-        // order = orderService.refreshOrRetrieve(order);
+        order = orderService.refreshOrRetrieve(order);
 
         order.setStartDate(new Date());
 
@@ -330,19 +335,20 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order item {} {}", order.getCode(), orderItem.getItemId());
 
+        String orderNumber = order.getOrderNumber();
         orderItem.setStatus(OrderStatusEnum.IN_PROGRESS);
 
-        OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
+        ProductOrderItem productOrderItem = ProductOrderItem.deserializeOrderItem(orderItem.getSource());
 
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
-            ProductOffering primaryOffering = orderItem.getProductOfferings().get(0);
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
-                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
-                    null,currentUser);
+                ProductInstance productInstance = instantiateProduct((ProductTemplate) primaryOffering, productOrderItem.getProduct(), orderItem, productOrderItem, null,
+                    order.getOrderNumber(), currentUser);
                 if (productInstance != null) {
                     orderItem.addProductInstance(productInstance);
                     productOrderItem.getProduct().setId(productInstance.getCode());
@@ -358,7 +364,7 @@ public class OrderApi extends BaseApi {
                 int index = 1;
                 if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                     for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                        if (index < orderItem.getProductOfferings().size()) {
+                        if (index < orderItem.getOrderItemProductOfferings().size()) {
                             products.add(productRelationship.getProduct());
                         } else {
                             services.add(productRelationship.getProduct());
@@ -367,17 +373,16 @@ public class OrderApi extends BaseApi {
                     }
                 }
 
-          
                 // Instantiate a service
                 Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, productOrderItem.getProduct(), services, orderItem, productOrderItem,
-                    currentUser);
+                    orderNumber, currentUser);
                 orderItem.setSubscription(subscription);
                 // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
                 index = 1;
                 for (Product product : products) {
-                    ProductTemplate productOffering = (ProductTemplate) orderItem.getProductOfferings().get(index);
-                    ProductInstance productInstance = instantiateProduct(productOffering, productOrderItem.getProduct(), orderItem, productOrderItem,
-                    		subscription,currentUser);
+                    ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
+                    productOffering = productTemplateService.refreshOrRetrieve(productOffering);
+                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber, currentUser);
                     if (productInstance != null) {
                         orderItem.addProductInstance(productInstance);
                         product.setId(productInstance.getCode());
@@ -389,7 +394,7 @@ public class OrderApi extends BaseApi {
             }
 
             // Serialize back the productOrderItem with updated product ids
-            orderItem.setSource(OrderItem.serializeOrderItem(productOrderItem));
+            orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
 
         } else if (orderItem.getAction() == OrderItemActionEnum.MODIFY) {
 
@@ -397,12 +402,8 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("product.id");
             }
 
-            ProductOffering primaryOffering = null;
-
             // For modify and delete actions, product offering might not be specified
-            if (orderItem.getProductOfferings() != null && !orderItem.getProductOfferings().isEmpty()) {
-                primaryOffering = orderItem.getProductOfferings().get(0);
-            }
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             // We need productOffering so we know if product is subscription or productInstance
             if (primaryOffering == null) {
@@ -438,6 +439,9 @@ public class OrderApi extends BaseApi {
 
                 try {
                     populateCustomFields(customFields, subscription, true, currentUser, true);
+                } catch (MissingParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                    throw e;
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw e;
@@ -452,7 +456,7 @@ public class OrderApi extends BaseApi {
                     }
                 }
 
-                processServices(subscription, services, currentUser);
+                processServices(subscription, services, orderNumber, currentUser);
 
                 orderItem.setSubscription(subscription);
 
@@ -463,12 +467,8 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("product.id");
             }
 
-            ProductOffering primaryOffering = null;
-
             // For modify and delete actions, product offering might not be specified
-            if (orderItem.getProductOfferings() != null && !orderItem.getProductOfferings().isEmpty()) {
-                primaryOffering = orderItem.getProductOfferings().get(0);
-            }
+            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             if (primaryOffering == null) {
                 throw new MissingParameterException("productOffering");
@@ -494,7 +494,7 @@ public class OrderApi extends BaseApi {
             terminateSubscription.setTerminationReason((String) getProductCharacteristic(productOrderItem.getProduct(),
                 OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
 
-            subscriptionApi.terminateSubscription(terminateSubscription, currentUser);
+            subscriptionApi.terminateSubscription(terminateSubscription, orderNumber, currentUser);
 
         }
 
@@ -505,7 +505,7 @@ public class OrderApi extends BaseApi {
     }
 
     private Subscription instantiateSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem, User currentUser) throws BusinessException, MeveoApiException {
+            ProductOrderItem productOrderItem, String orderNumber, User currentUser) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -522,6 +522,8 @@ public class OrderApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
+            OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
         subscriptionService.create(subscription, currentUser);
 
@@ -530,19 +532,22 @@ public class OrderApi extends BaseApi {
 
         try {
             populateCustomFields(customFields, subscription, true, currentUser, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
 
         // instantiate and activate services
-        processServices(subscription, services, currentUser);
+        processServices(subscription, services, orderNumber, currentUser);
 
         return subscription;
     }
 
-    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem,
-            OrderItem productOrderItem,Subscription subscription, User currentUser) throws BusinessException {
+    private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
+            Subscription subscription, String orderNumber, User currentUser) throws BusinessException {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -553,18 +558,23 @@ public class OrderApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
-        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(),subscription, productTemplate, quantity, chargeDate, code, productTemplate.getDescription(),
-                currentUser);
-            productInstance.setProvider(currentUser.getProvider());
+        ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
+            productTemplate.getDescription(), orderNumber, currentUser);
+        productInstance.setProvider(currentUser.getProvider());
+
+        productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
 
         try {
-        	CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
+            CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
             populateCustomFields(customFields, productInstance, true, currentUser, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
-           log.error("Failed to associate custom field instance to an entity", e);
-           throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        }    
-        productInstanceService.applyProductInstance(productInstance,null,null,null,currentUser, true);
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new BusinessException("Failed to associate custom field instance to an entity", e);
+        }
+
         return productInstance;
     }
 
@@ -617,7 +627,7 @@ public class OrderApi extends BaseApi {
 
                 }
                 if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
+                    value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
                 }
             }
 
@@ -628,8 +638,8 @@ public class OrderApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException, MeveoApiException {
+    private void processServices(Subscription subscription, List<Product> services, String orderNumber, User currentUser) throws IncorrectSusbcriptionException,
+            IncorrectServiceInstanceException, BusinessException, MeveoApiException {
 
         ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
         activateServicesRequestDto.setSubscription(subscription.getCode());
@@ -637,44 +647,6 @@ public class OrderApi extends BaseApi {
         List<TerminateSubscriptionServicesRequestDto> servicesToTerminate = new ArrayList<>();
 
         for (Product serviceProduct : services) {
-
-            // // ID is a service code. If missing - list of services is provided as product characteristic with name "service" - OLD implementation.
-            // if (StringUtils.isBlank(serviceProduct.getId()) && serviceProduct.getProductCharacteristic() != null) {
-            //
-            // // Services will be instantiated and activated
-            // if (getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_DATE, Date.class, null) == null) {
-            //
-            // for (ProductCharacteristic c : serviceProduct.getProductCharacteristic()) {
-            // if ("service".equalsIgnoreCase(c.getName()) && !StringUtils.isBlank(c.getValue())) {
-            //
-            // ServiceToActivateDto service = new ServiceToActivateDto();
-            // service.setCode(c.getValue());
-            // service.setQuantity(new BigDecimal(1));
-            // service.setSubscriptionDate(DateUtils.setTimeToZero(new Date()));
-            //
-            // activateServicesRequestDto.getServicesToActivateDto().addService(service);
-            // }
-            // }
-            //
-            // // Services will be terminated
-            // } else {
-            //
-            // for (ProductCharacteristic c : serviceProduct.getProductCharacteristic()) {
-            // if ("service".equalsIgnoreCase(c.getName()) && !StringUtils.isBlank(c.getValue())) {
-            //
-            // TerminateSubscriptionServicesRequestDto terminationDto = new TerminateSubscriptionServicesRequestDto();
-            // terminationDto.setSubscriptionCode(subscription.getCode());
-            // terminationDto.setTerminationDate((Date) getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_DATE, Date.class, null));
-            // terminationDto.setTerminationReason((String) getProductCharacteristic(serviceProduct, CHARACTERISTIC_TERMINATION_REASON, String.class, null));
-            // terminationDto.getServices().add(c.getValue());
-            // servicesToTerminate.add(terminationDto);
-            // }
-            // }
-            //
-            // }
-            //
-            // // If ID is represent - product represents a service and product characteristics define custom fields and other service attributes
-            // } else if (!StringUtils.isBlank(serviceProduct.getId())) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
 
@@ -691,6 +663,11 @@ public class OrderApi extends BaseApi {
                     BigDecimal.class, new BigDecimal(1)));
                 service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
                     DateUtils.setTimeToZero(new Date())));
+
+                // FIX - no way to set value via API
+                // service.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+                // null));
+
                 service.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class, currentUser.getProvider()));
 
                 activateServicesRequestDto.getServicesToActivateDto().addService(service);
@@ -711,11 +688,11 @@ public class OrderApi extends BaseApi {
 
         // Activate services
         if (!activateServicesRequestDto.getServicesToActivateDto().getService().isEmpty()) {
-            subscriptionApi.activateServices(activateServicesRequestDto, currentUser, true);
+            subscriptionApi.activateServices(activateServicesRequestDto, orderNumber, currentUser, true);
         }
         if (!servicesToTerminate.isEmpty()) {
             for (TerminateSubscriptionServicesRequestDto terminationDto : servicesToTerminate) {
-                subscriptionApi.terminateServices(terminationDto, currentUser);
+                subscriptionApi.terminateServices(terminationDto, orderNumber, currentUser);
             }
         }
     }
@@ -753,6 +730,9 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
@@ -791,7 +771,7 @@ public class OrderApi extends BaseApi {
         productOrder.setCompletionDate(order.getCompletionDate());
         productOrder.setDescription(order.getDescription());
         productOrder.setExpectedCompletionDate(order.getExpectedCompletionDate());
-        productOrder.setExternalld(order.getExternalId());
+        productOrder.setExternalId(order.getExternalId());
         productOrder.setOrderDate(order.getOrderDate());
         if (order.getPriority() != null) {
             productOrder.setPriority(order.getPriority().toString());
@@ -800,7 +780,7 @@ public class OrderApi extends BaseApi {
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
         productOrder.setState(order.getStatus().getApiState());
 
-        List<OrderItem> productOrderItems = new ArrayList<>();
+        List<ProductOrderItem> productOrderItems = new ArrayList<>();
         productOrder.setOrderItem(productOrderItems);
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
@@ -819,9 +799,9 @@ public class OrderApi extends BaseApi {
      * @return Order item Dto
      * @throws BusinessException
      */
-    private OrderItem orderItemToDto(org.meveo.model.order.OrderItem orderItem) throws BusinessException {
+    private ProductOrderItem orderItemToDto(org.meveo.model.order.OrderItem orderItem) throws BusinessException {
 
-        OrderItem productOrderItem = OrderItem.deserializeOrderItem(orderItem.getSource());
+        ProductOrderItem productOrderItem = ProductOrderItem.deserializeOrderItem(orderItem.getSource());
         //
         productOrderItem.setState(orderItem.getOrder().getStatus().getApiState());
 
@@ -836,7 +816,7 @@ public class OrderApi extends BaseApi {
      * @return An array of List<Product> elements, first being list of products, and second - list of services
      */
     @SuppressWarnings("unchecked")
-    public List<Product>[] getProductsAndServices(OrderItem productOrderItem, org.meveo.model.order.OrderItem orderItem) {
+    public List<Product>[] getProductsAndServices(ProductOrderItem productOrderItem, org.meveo.model.order.OrderItem orderItem) {
 
         List<Product> products = new ArrayList<>();
         List<Product> services = new ArrayList<>();
@@ -844,7 +824,7 @@ public class OrderApi extends BaseApi {
             int index = 1;
             if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                    if (index < orderItem.getProductOfferings().size()) {
+                    if (index < orderItem.getOrderItemProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
                     } else {
                         services.add(productRelationship.getProduct());

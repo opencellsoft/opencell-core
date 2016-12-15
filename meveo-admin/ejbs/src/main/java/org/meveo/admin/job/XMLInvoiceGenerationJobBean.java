@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +14,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.XmlInvoiceAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
@@ -68,13 +66,8 @@ public class XMLInvoiceGenerationJobBean {
 
 		log.info("billingRuns to process={}", billingRuns.size());
 
-		ParamBean param = ParamBean.getInstance();
-		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-
 		for (BillingRun billingRun : billingRuns) {
 			try {
-				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator + "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
-				billingRundir.mkdirs();
 
 				Long nbRuns = new Long(1);		
 				Long waitingMillis = new Long(0);
@@ -96,7 +89,7 @@ public class XMLInvoiceGenerationJobBean {
 				result.setNbItemsToProcess(subListCreator.getListSize());
 
 				while (subListCreator.isHasNext()) {
-					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir,result));
+					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result));
 					if(result.getNbItemsProcessedWithError()==0){
 					updateBillingRun(billingRun.getId(), currentUser);
 					}

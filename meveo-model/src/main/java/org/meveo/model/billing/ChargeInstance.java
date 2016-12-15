@@ -50,6 +50,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -67,7 +68,12 @@ import org.slf4j.LoggerFactory;
 public class ChargeInstance extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
-
+    
+	/**
+	 * Specifies that charge does not apply to any order
+	 */
+	public static String NO_ORDER_NUMBER ="none";
+    
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
@@ -146,9 +152,14 @@ public class ChargeInstance extends BusinessEntity {
 	@Transient 
 	private List<WalletOperation> sortedWalletOperations;
 
-	@Column(name = "IS_PREPAID", length = 1)
+	@Type(type="numeric_boolean")
+    @Column(name = "IS_PREPAID")
 	protected Boolean prepaid=Boolean.FALSE;
 
+    @Column(name = "ORDER_NUMBER", length = 100)
+    @Size(max = 100)
+    private String orderNumber;
+	
 	public String getCriteria1() {
 		return criteria1;
 	}
@@ -334,6 +345,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setPrepaid(Boolean prepaid) {
 		this.prepaid = prepaid;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 }

@@ -3,6 +3,7 @@ package org.meveo.api.rest.importExport.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -152,13 +153,19 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
     private void cleanupImportResults() {
 
         long hourAgo = (new Date()).getTime() - 3600000;
-        for (String key : executionResults.keySet()) {
 
+        List<String> keysToRemove = new ArrayList<>();
+
+        for (String key : executionResults.keySet()) {
             long exportTime = Long.parseLong(key.substring(0, key.indexOf('_')));
             if (exportTime < hourAgo) {
-                log.debug("Removing remote import execution result {}", key);
-                executionResults.remove(key);
+                keysToRemove.add(key);
             }
+        }
+
+        for (String key : keysToRemove) {
+            log.debug("Removing remote import execution result {}", key);
+            executionResults.remove(key);
         }
     }
 

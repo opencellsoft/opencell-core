@@ -199,34 +199,16 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		QueryBuilder queryBuilder = new QueryBuilder("FROM " + MeasuredValue.class.getName() + " m ");
 
 		if (code != null) {
-			queryBuilder.addSql(" m.measurableQuantity.code = '" + code.toUpperCase() + "' ");
+			queryBuilder.addSql(" m.code = '" + code.toUpperCase() + "' ");
 		}
-
-		if (fromDate != null && toDate == null) {
-			Calendar start = Calendar.getInstance();
-			start.setTime(fromDate);
-			start.set(Calendar.HOUR, 0);
-			start.set(Calendar.MINUTE, 0);
-			start.set(Calendar.SECOND, 0);
-			start.set(Calendar.MILLISECOND, 0);
-			start.add(Calendar.DAY_OF_MONTH, -1);
-			Calendar end = Calendar.getInstance();
-			end.setTime(start.getTime());
-			end.add(Calendar.DAY_OF_MONTH, 1);
-
-			queryBuilder.addCriterion("m.date", ">", start.getTime(), false);
-			queryBuilder.addCriterion("m.date", "<", end.getTime(), false);
-		} else if (fromDate != null && toDate != null) {
-			Calendar start = Calendar.getInstance();
-			start.setTime(fromDate);
-			start.set(Calendar.HOUR, 0);
-			start.set(Calendar.MINUTE, 0);
-			start.set(Calendar.SECOND, 0);
-			start.set(Calendar.MILLISECOND, 0);
-			start.add(Calendar.DAY_OF_MONTH, -1);
-			queryBuilder.addCriterion("m.date", ">", start.getTime(), false);
+		
+		if(fromDate != null){
+			queryBuilder.addCriterion("m.date", ">=", fromDate, false);
+		}
+		if(toDate != null){
 			queryBuilder.addCriterion("m.date", "<", toDate, false);
-		}
+		}		
+
 		if (period != null) {
 			queryBuilder.addCriterion("m.measurementPeriod", "=", period, false);
 		}
