@@ -225,27 +225,11 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         // Validate quote item user account field
         if (selectedQuoteItem.getUserAccount() != null) {
         	UserAccount selectedQuoteItemUA = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
-            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItemUA.getBillingAccount());
-            if (entity.getUserAccount() != null && !entity.getUserAccount().getBillingAccount().equals(itemBillingAccount)) {
-                messages.error(new BundleKey("messages", "quote.billingAccountMissmatch.item"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return;
-            }
+            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItemUA.getBillingAccount());          
             
 			if (entity.getQuoteItems() == null) {
 				entity.setQuoteItems(new ArrayList<QuoteItem>());
-			}
-            
-            for (QuoteItem quoteItem : entity.getQuoteItems()) {
-                if (quoteItem.getUserAccount() != null) {
-                    UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
-                    if (!itemUa.getBillingAccount().equals(itemBillingAccount)) {
-                        messages.error(new BundleKey("messages", "quote.billingAccountMissmatch.item"));
-                        FacesContext.getCurrentInstance().validationFailed();
-                        return;
-                    }
-                }
-            }
+			}                       
         }
 
         try {
