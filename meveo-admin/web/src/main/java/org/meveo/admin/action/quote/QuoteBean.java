@@ -389,19 +389,21 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         // Default quote item user account field to quote user account field value if applicable.
         // Validate that user accounts belong to the same billing account
         BillingAccount billingAccount = null;
-        if (entity.getUserAccount() != null) {
-            billingAccount = billingAccountService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount());
-        }
+		if (entity.getUserAccount() != null) {
+			UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
+			billingAccount = billingAccountService.refreshOrRetrieve(baUserAccount.getBillingAccount());
+		}
 
         if (entity.getQuoteItems() != null) {
             for (QuoteItem quoteItem : entity.getQuoteItems()) {
                 if (quoteItem.getUserAccount() == null && entity.getUserAccount() != null) {
                     quoteItem.setUserAccount(entity.getUserAccount());
                 }
+                
+                UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
                 if (billingAccount == null) {
-                    billingAccount = billingAccountService.refreshOrRetrieve(quoteItem.getUserAccount().getBillingAccount());
-                } else {
-                    UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
+                    billingAccount = billingAccountService.refreshOrRetrieve(itemUa.getBillingAccount());
+                } else {                    
                     if (!billingAccount.equals(itemUa.getBillingAccount())) {
                         messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
                         FacesContext.getCurrentInstance().validationFailed();
