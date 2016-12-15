@@ -85,10 +85,11 @@ public class QuoteService extends BusinessService<Quote> {
      */
     @SuppressWarnings("unused")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Invoice provideQuote(List<QuoteInvoiceInfo> quoteInvoiceInfos, User currentUser) throws BusinessException {
+    public List<Invoice> provideQuote(List<QuoteInvoiceInfo> quoteInvoiceInfos, User currentUser) throws BusinessException {
 
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
         List<RatedTransaction> ratedTransactions = new ArrayList<>();
+        List<Invoice> invoices = new ArrayList<Invoice>();
         BillingAccount billingAccount = null;
 
         for (QuoteInvoiceInfo quoteInvoiceInfo : quoteInvoiceInfos) {
@@ -172,39 +173,40 @@ public class QuoteService extends BusinessService<Quote> {
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true, currentUser));
             }
+        
+	        Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(currentUser), currentUser);
+	
+	        File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
+	        invoiceService.producePdf(invoice, true, currentUser);
+	
+	        // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
+	        // invoice.setBillingAccount(null);
+	        invoice.setRatedTransactions(null);
+	        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+	            log.error("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
+	            // invoiceAgregate.setBillingAccount(null);
+	            // invoiceAgregate.setTradingCurrency(null);
+	            // invoiceAgregate.setTradingLanguage(null);
+	            // invoiceAgregate.setBillingRun(null);
+	            // invoiceAgregate.setUserAccount(null);
+	            invoiceAgregate.setAuditable(null);
+	            invoiceAgregate.updateAudit(currentUser);
+	            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+	                // ((CategoryInvoiceAgregate)invoiceAgregate).setInvoiceCategory(null);
+	                // ((CategoryInvoiceAgregate)invoiceAgregate).setSubCategoryInvoiceAgregates(null);
+	            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+	                // ((TaxInvoiceAgregate)invoiceAgregate).setTax(null);
+	            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setInvoiceSubCategory(null);
+	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
+	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
+	                ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
+	                ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+	            }
+	        }	       	        
+	        invoiceService.create(invoice, currentUser);
+	        invoices.add(invoice);
         }
-        Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(currentUser), currentUser);
-
-        File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-        invoiceService.producePdf(invoice, true, currentUser);
-
-        // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
-        // invoice.setBillingAccount(null);
-        invoice.setRatedTransactions(null);
-        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-            log.error("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
-            // invoiceAgregate.setBillingAccount(null);
-            // invoiceAgregate.setTradingCurrency(null);
-            // invoiceAgregate.setTradingLanguage(null);
-            // invoiceAgregate.setBillingRun(null);
-            // invoiceAgregate.setUserAccount(null);
-            invoiceAgregate.setAuditable(null);
-            invoiceAgregate.updateAudit(currentUser);
-            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                // ((CategoryInvoiceAgregate)invoiceAgregate).setInvoiceCategory(null);
-                // ((CategoryInvoiceAgregate)invoiceAgregate).setSubCategoryInvoiceAgregates(null);
-            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                // ((TaxInvoiceAgregate)invoiceAgregate).setTax(null);
-            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setInvoiceSubCategory(null);
-                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
-                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
-                ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
-            }
-        }
-
-        invoiceService.create(invoice, currentUser);
-        return invoice;
+        return invoices;
     }
 }

@@ -143,11 +143,10 @@ public class Quote extends BusinessCFEntity {
     private UserAccount userAccount;
 
     /**
-     * Associated invoice
+     * Associated invoices
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_ID")
-    private Invoice invoice;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "quote",cascade = CascadeType.ALL, orphanRemoval = true) 
+    private List<Invoice> invoices = new ArrayList<Invoice>();
 
     public String getExternalId() {
         return externalId;
@@ -296,11 +295,19 @@ public class Quote extends BusinessCFEntity {
         return userAccounts;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
+	/**
+	 * @return the invoices
+	 */
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
 
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
+	/**
+	 * @param invoices the invoices to set
+	 */
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+
+   
 }

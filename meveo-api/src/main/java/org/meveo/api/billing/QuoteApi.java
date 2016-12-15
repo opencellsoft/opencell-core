@@ -43,6 +43,7 @@ import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -101,6 +102,9 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private InvoiceService invoiceService;
     
     /**
      * Register a quote from TMForumApi
@@ -408,10 +412,12 @@ public class QuoteApi extends BaseApi {
                 quoteInvoiceInfos.add(preInvoiceQuoteItem(quote, quoteItem, currentUser));
             }
 
-            Invoice invoice = quoteService.provideQuote(quoteInvoiceInfos, currentUser);
-            quote.setInvoice(invoice);
-
+            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos, currentUser);          
             quote = quoteService.update(quote, currentUser);
+            for(Invoice invoice : invoices){
+            	invoice.setQuote(quote);
+            	invoiceService.update(invoice, currentUser);
+            }
 
         } catch (MeveoApiException e) {
             throw new BusinessException(e);

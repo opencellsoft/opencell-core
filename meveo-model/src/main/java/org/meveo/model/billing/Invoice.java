@@ -54,6 +54,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.quote.Quote;
 
 @Entity
 @ObservableEntity
@@ -174,6 +175,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICES_ORDERS", joinColumns = @JoinColumn(name = "INVOICE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID"))	
 	private List<Order> orders = new ArrayList<Order>();	
+	
+    @ManyToOne
+    @JoinColumn(name = "QUOTE_ID")
+    private Quote quote;
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -567,4 +572,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         }
         return ratedTransactionsMatched;
     }
+
+	/**
+	 * @return the quote
+	 */
+	public Quote getQuote() {
+		return quote;
+	}
+
+	/**
+	 * @param quote the quote to set
+	 */
+	public void setQuote(Quote quote) {
+		this.quote = quote;
+	}
+    
 }
