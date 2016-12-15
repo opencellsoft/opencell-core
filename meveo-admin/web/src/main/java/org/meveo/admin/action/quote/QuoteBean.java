@@ -224,7 +224,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         // Validate quote item user account field
         if (selectedQuoteItem.getUserAccount() != null) {
-            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount().getBillingAccount());
+        	UserAccount selectedQuoteItemUA = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
+            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItemUA.getBillingAccount());
             if (entity.getUserAccount() != null && !entity.getUserAccount().getBillingAccount().equals(itemBillingAccount)) {
                 messages.error(new BundleKey("messages", "quote.billingAccountMissmatch.item"));
                 FacesContext.getCurrentInstance().validationFailed();
