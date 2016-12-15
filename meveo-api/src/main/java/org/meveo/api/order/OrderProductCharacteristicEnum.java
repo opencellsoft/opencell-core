@@ -43,8 +43,21 @@ public enum OrderProductCharacteristicEnum {
     /**
      * Subscription or service termination reason
      */
-    TERMINATION_REASON("terminationReason", String.class);
+    TERMINATION_REASON("terminationReason", String.class),
 
+
+    /**
+     * Quote script executed before creating the quote
+     * it is executed with a context containing the productQuote
+     */
+    PRE_QUOTE_SCRIPT("preQuoteScript", String.class),
+
+    /**
+     * Quote script executed after creating the quote but before commiting it
+     * it is executed with a context containing the productQuote and the quote
+     */
+    POST_QUOTE_SCRIPT("postQuoteScript", String.class);
+	
     protected String characteristicName;
 
     @SuppressWarnings("rawtypes")

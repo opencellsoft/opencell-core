@@ -3,6 +3,7 @@ package org.meveo.api.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +51,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteInvoiceInfo;
 import org.meveo.service.quote.QuoteService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
@@ -60,6 +62,7 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
+import org.tmf.dsmapi.quote.Characteristic;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
 
@@ -96,6 +99,9 @@ public class QuoteApi extends BaseApi {
     @Inject
     private OrderApi orderApi;
 
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+    
     /**
      * Register a quote from TMForumApi
      * 
@@ -119,6 +125,19 @@ public class QuoteApi extends BaseApi {
 
         handleMissingParameters();
         Provider provider = currentUser.getProvider();
+        
+        
+        if(productQuote.getCharacteristic().size()>0){
+        	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
+        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT)){
+        			String scriptCode = quoteCharacteristic.getValue();
+        			Map<String, Object> context= new HashMap<>();
+        			context.put("productQuote", productQuote);
+					scriptInstanceService.execute(scriptCode, context, currentUser);
+					break;
+        		}
+        	}
+        }
 
         Quote quote = new Quote();
         quote.setCode(UUID.randomUUID().toString());
@@ -270,6 +289,20 @@ public class QuoteApi extends BaseApi {
             throw e;
         }
 
+        if(productQuote.getCharacteristic().size()>0){
+        	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
+        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT)){
+        			String scriptCode = quoteCharacteristic.getValue();
+        			Map<String, Object> context= new HashMap<>();
+        			context.put("productQuote", productQuote);
+        			context.put("quote", quote);
+					scriptInstanceService.execute(scriptCode, context, currentUser);
+					break;
+        		}
+        	}
+        }
+
+        
         // Commit before initiating workflow/quote processing
         quoteService.commit();
 
