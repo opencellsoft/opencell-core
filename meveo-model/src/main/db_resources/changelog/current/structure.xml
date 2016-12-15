@@ -3087,9 +3087,7 @@
         <addColumn tableName="BILLING_COUNTER_PERIOD">
             <column name="NOTIFICATION_LEVELS" type="VARCHAR(100)"/>
         </addColumn>
-        <update tableName="BILLING_COUNTER_PERIOD">
-            <column name="NOTIFICATION_LEVELS" value="0"/>
-        </update>
+        <sql>update BILLING_COUNTER_PERIOD set NOTIFICATION_LEVELS='{"0":0}'</sql>
     </changeSet>    
 
     <changeSet id="#2247_20161202-2" author="AndriusKarpavicius" dbms="postgresql"> 
