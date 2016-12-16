@@ -287,50 +287,58 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		selectedWalletTemplateCode=null;
 	}
 	
-    public void saveOneShotChargeIns() {
-        log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
-        try {
-        	if(selectedWalletTemplate.getCode()==null){
-        		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
-        	}
-                entity = subscriptionService.attach(entity);
-                String description = oneShotChargeInstance.getDescription();
-                oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
-                oneShotChargeInstance.setDescription(description);
-                if (oneShotChargeInstance.getChargeDate() == null) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(new Date());
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    oneShotChargeInstance.setChargeDate(calendar.getTime());
-                }
+	public void saveOneShotChargeIns() {
+		log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
 
-                oneShotChargeInstance.setSubscription(entity);
-                oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-                oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
-                oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
-                
-                oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
-                    oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null,
-					getCurrentUser(), true);
-           
-            oneShotChargeInstance = null;
-            oneShotChargeInstances = null;
-            clearObjectId();
+		if (oneShotChargeInstance.getChargeTemplate() == null) {
+			messages.error(new BundleKey("messages", "error.codeRequired"));
+			return;
+		}
 
-            showApplyOneShotForm = false;
+		try {
+			if (selectedWalletTemplate.getCode() == null) {
+				selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
+			}
+			
+			entity = subscriptionService.attach(entity);
+			entity.getProvider().getCode();
+			String description = oneShotChargeInstance.getDescription();
+			oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
+			oneShotChargeInstance.setDescription(description);
+			
+			if (oneShotChargeInstance.getChargeDate() == null) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				oneShotChargeInstance.setChargeDate(calendar.getTime());
+			}
 
-            messages.info(new BundleKey("messages", "save.successful"));
+			oneShotChargeInstance.setSubscription(entity);
+			oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+			oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
+			oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 
-        } catch (BusinessException e1) {
-        	log.error("exception when applying one shot charge!", e1);
+			oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
+					oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
+					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null, getCurrentUser(), true);
+
+			oneShotChargeInstance = null;
+			oneShotChargeInstances = null;
+			clearObjectId();
+
+			showApplyOneShotForm = false;
+
+			messages.info(new BundleKey("messages", "save.successful"));
+
+		} catch (BusinessException e1) {
+			log.error("exception when applying one shot charge! {}", e1.getMessage());
 			messages.error(e1.getMessage());
-        } catch (Exception e) {
-            log.error("exception when applying one shot charge!", e);
-            messages.error(e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			log.error("exception when applying one shot charge! {}", e.getMessage());
+			messages.error(e.getMessage());
+		}
+	}
 
 	public void newRecurringChargeInstance() {
 		this.recurringChargeInstance = new RecurringChargeInstance();

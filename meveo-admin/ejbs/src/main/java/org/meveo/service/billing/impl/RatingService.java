@@ -381,7 +381,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if (unitPriceWithoutTax == null) {
             List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(currentUser.getProvider().getId(), bareWalletOperation.getCode());            
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-                throw new RuntimeException("No price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
+                throw new BusinessException("No price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
             }
 			ratePrice = ratePrice(chargePricePlans,bareWalletOperation, countryId, tcurrency,
 					bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
