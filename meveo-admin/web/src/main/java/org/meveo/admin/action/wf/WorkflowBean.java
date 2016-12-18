@@ -208,6 +208,30 @@ public class WorkflowBean extends BaseBean<Workflow> {
         }
     }
 
+    @ActionMethod
+    public void duplicateWfTransition(WFTransition wfTransition) {
+        try {
+            this.wfTransition = wFTransitionService.duplicate(wfTransition, entity, getCurrentUser());
+
+            // Set max priority +1
+            int priority = 1;
+            if (entity.getTransitions().size() > 0) {
+                for (WFTransition wfTransitionInList : entity.getTransitions()) {
+                    if (WfTransitionBean.CATCH_ALL_PRIORITY != wfTransitionInList.getPriority() && priority <= wfTransitionInList.getPriority()) {
+                        priority = wfTransitionInList.getPriority() + 1;
+                    }
+                }
+            }
+            this.wfTransition.setPriority(priority);
+            editWfTransition(this.wfTransition);
+
+        } catch (Exception e) {
+            log.error("Failed to duplicate WF transition!", e);
+            messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+        }
+    }
+    
+    @ActionMethod
     public void editWfTransition(WFTransition transitionToEdit) {
         this.wfTransition = transitionToEdit;
         WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfDecisionRules", "wfActions"), true);
@@ -274,15 +298,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @SuppressWarnings({ "unchecked" })
     public Map<String, String> getTransitionStatusFromWorkflowType() {
         try {
-            Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(), getCurrentProvider());
-            Object obj = clazz.newInstance();
-            Method testMethod = obj.getClass().getMethod("getStatusList");
-            List<String> statusList = (List<String>) testMethod.invoke(obj);
-            Map<String, String> statusMap = new TreeMap<>();
-            for (String s : statusList) {
-                statusMap.put(s, s);
+            if (entity.getWfType() != null) {
+                Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(), getCurrentProvider());
+                Object obj = clazz.newInstance();
+                Method testMethod = obj.getClass().getMethod("getStatusList");
+                List<String> statusList = (List<String>) testMethod.invoke(obj);
+                Map<String, String> statusMap = new TreeMap<>();
+                for (String s : statusList) {
+                    statusMap.put(s, s);
+                }
+                return statusMap;
             }
-            return statusMap;
         } catch (Exception e) {
             log.error("Unable to get/instantiate or retrieve status list for class " + entity.getWfType(), e);
         }

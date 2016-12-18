@@ -39,15 +39,15 @@ import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.wf.WFAction;
-import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.wf.WFActionService;
-import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WFDecisionRuleService;
+import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DefaultTreeNode;
@@ -65,8 +65,9 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final String EL = "#{mv:getBean('OrderService').routeToUserGroup(entity,'%s')}";
 
-    private final String WF_ORDER = "Customer Care Assignation of Orders";
-    private final String CATCH_ALL = "Catch all";
+    private static final String WF_ORDER = "Customer Care Assignation of Orders";
+    private static final String CATCH_ALL = "Catch all";
+    public static final int CATCH_ALL_PRIORITY = 100;
 
     /**
      * Injected @{link DunningPlanTransition} service. Extends {@link PersistenceService}.
@@ -163,11 +164,13 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         entity.setDescription(wfTransition.getDescription());
 
         if (entity.getId() == null) {
+            // Calculate max priority +1
             int priority = 1;
             if (operationList.size() > 0) {
-                WFTransition lastWfTransition = operationList.get(operationList.size() - 1);
-                if (lastWfTransition != null) {
-                    priority = lastWfTransition.getPriority() + 1;
+                for (WFTransition wfTransitionInList : operationList) {
+                    if (CATCH_ALL_PRIORITY != wfTransitionInList.getPriority() && priority <= wfTransitionInList.getPriority()) {
+                        priority = wfTransitionInList.getPriority() + 1;
+                    }
                 }
             }
             entity.setPriority(priority);
@@ -230,9 +233,12 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             if (CollectionUtils.isNotEmpty(operationList)) {
                 Collections.sort(operationList);
                 int indexCatchAll = operationList.size() - 1;
-                catchAll = operationList.get(indexCatchAll);
-                operationList.remove(indexCatchAll);
-            } else {
+                if (operationList.get(indexCatchAll).getPriority() == CATCH_ALL_PRIORITY) {
+                    catchAll = operationList.get(indexCatchAll);
+                    operationList.remove(indexCatchAll);
+                }
+            }
+            if (catchAll == null) {
                 catchAll = createCatchAll();
             }
         }
@@ -241,7 +247,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private WFTransition createCatchAll() throws BusinessException {
         WFTransition catchAllDefault = new WFTransition();
-        catchAllDefault.setPriority(100);
+        catchAllDefault.setPriority(CATCH_ALL_PRIORITY);
         catchAllDefault.setDescription(CATCH_ALL);
         catchAllDefault.setFromStatus(OrderStatusEnum.ACKNOWLEDGED.toString());
         catchAllDefault.setToStatus(OrderStatusEnum.IN_PROGRESS.toString());
@@ -415,7 +421,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 GroupedDecisionRule groupedTransitionRule = new GroupedDecisionRule();
                 groupedTransitionRule.setName(wfTransitionRule.getName());
                 groupedTransitionRule.setValue(wfTransitionRule);
-                List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(wfTransitionRule.getName(), entity.getProvider());
+                List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(wfTransitionRule.getName(), wfTransitionRule.getProvider());
                 Collections.sort(list);
                 wfDecisionRulesByName.add(list);
                 selectedRules.add(groupedTransitionRule);
@@ -436,6 +442,33 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     }
 
     @ActionMethod
+    public String duplicateWfTransition(WFTransition wfTransition) {
+        try {
+            workflowOrder = wfService.refreshOrRetrieve(workflowOrder);
+            this.wfTransition = wfTransitionService.duplicate(wfTransition, workflowOrder, getCurrentUser());
+
+            // Set max priority +1
+            int priority = 1;
+            if (operationList.size() > 0) {
+                for (WFTransition wfTransitionInList : operationList) {
+                    if (CATCH_ALL_PRIORITY != wfTransitionInList.getPriority() && priority <= wfTransitionInList.getPriority()) {
+                        priority = wfTransitionInList.getPriority() + 1;
+                    }
+                }
+            }
+            this.wfTransition.setPriority(priority);
+            this.setObjectId(this.wfTransition.getId());
+            editWfTransition(this.wfTransition);
+            return "mm_workflowDetail";
+
+        } catch (Exception e) {
+            log.error("Failed to duplicate WF transition!", e);
+            messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+            return null;
+        }
+    }
+
+    @ActionMethod
     public void deleteWfTransition(WFTransition wfTransition) {
         try {
             wfTransitionService.remove(wfTransition.getId(), getCurrentUser());
@@ -446,7 +479,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {
-            log.info("Failed to delete!", e);
+            log.error("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }
