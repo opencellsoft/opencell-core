@@ -455,4 +455,10 @@
             <column name="MATCHING_AUTO" valueNumeric="0" />        
         </insert>
     </changeSet>
+    
+    <changeSet id="#2119_20161219-2" author="AndriusKarpavicius">
+        <sql>
+            delete from adm_messages where entity_class='Title' and entity_code not in (select code from adm_title); 
+        </sql>    
+    </changeSet>
 </databaseChangeLog>
