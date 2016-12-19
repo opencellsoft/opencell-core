@@ -306,7 +306,7 @@
 		<sql>
 			<!-- update adm_title -->
 			<![CDATA[
-			DELETE FROM adm_title WHERE code NOT IN ('ASSOC', 'CIE', 'MR', 'MRS', 'MS', 'DR', 'PROF');
+			DELETE FROM adm_title WHERE code NOT IN ('ASSOC', 'CIE', 'MR', 'MRS', 'MS', 'DR', 'PROF') and id not in (select distinct title_id from account_entity where title_id is not null) and id not in (select distinct title_id from adm_user where title_id is not null);
 			]]>
 		</sql>
 	</changeSet>
