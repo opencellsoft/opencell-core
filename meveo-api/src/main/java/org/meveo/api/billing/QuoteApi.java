@@ -52,6 +52,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteInvoiceInfo;
 import org.meveo.service.quote.QuoteService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -133,11 +134,12 @@ public class QuoteApi extends BaseApi {
         
         if(productQuote.getCharacteristic().size()>0){
         	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
-        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT)){
+        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())){
         			String scriptCode = quoteCharacteristic.getValue();
         			Map<String, Object> context= new HashMap<>();
         			context.put("productQuote", productQuote);
 					scriptInstanceService.execute(scriptCode, context, currentUser);
+					productQuote = (ProductQuote)context.get(Script.RESULT_VALUE);
 					break;
         		}
         	}
@@ -295,7 +297,7 @@ public class QuoteApi extends BaseApi {
 
         if(productQuote.getCharacteristic().size()>0){
         	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
-        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT)){
+        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT.getCharacteristicName())){
         			String scriptCode = quoteCharacteristic.getValue();
         			Map<String, Object> context= new HashMap<>();
         			context.put("productQuote", productQuote);

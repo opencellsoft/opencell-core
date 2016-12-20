@@ -1,7 +1,7 @@
 package org.meveo.api.rest.billing;
 
-import javax.jws.WebParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -42,11 +42,11 @@ public interface InvoicingRs extends IBaseRs {
 
     @POST
     @Path("/getPreInvoicingReport")
-    GetPreInvoicingReportsResponseDto getPreInvoicingReport(@WebParam(name = "billingRunId") Long billingRunId);
+    GetPreInvoicingReportsResponseDto getPreInvoicingReport(@FormParam("billingRunId") Long billingRunId);
 
     @POST
     @Path("/getPostInvoicingReport")
-    GetPostInvoicingReportsResponseDto getPostInvoicingReport(@WebParam(name = "billingRunId") Long billingRunId);
+    GetPostInvoicingReportsResponseDto getPostInvoicingReport(@FormParam("billingRunId") Long billingRunId);
 
     /**
      * Depending on the status of the billing run, produce the preinvoicing report, the postInvoicing report or validates a billing run. Sets the next invoice date of a billing
@@ -57,7 +57,7 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/validateBillingRun")
-    ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+    ActionStatus validateBillingRun(@FormParam("billingRunId") Long billingRunId);
 
     /**
      * Cancels a billing run. Sets RatedTransaction.status associated to billingRun to OPEN. Remove aggregates and invoice associated to the billingRun. Set
@@ -68,6 +68,6 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/cancelBillingRun")
-    ActionStatus cancelBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+    ActionStatus cancelBillingRun(@FormParam("billingRunId") Long billingRunId);
 
 }
