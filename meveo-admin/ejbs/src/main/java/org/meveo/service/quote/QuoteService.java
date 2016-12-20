@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -84,7 +82,6 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException
      */
     @SuppressWarnings("unused")
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Invoice> provideQuote(List<QuoteInvoiceInfo> quoteInvoiceInfos, User currentUser) throws BusinessException {
 
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
@@ -183,7 +180,7 @@ public class QuoteService extends BusinessService<Quote> {
 	        // invoice.setBillingAccount(null);
 	        invoice.setRatedTransactions(null);
 	        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-	            log.error("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
+	            log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
 	            // invoiceAgregate.setBillingAccount(null);
 	            // invoiceAgregate.setTradingCurrency(null);
 	            // invoiceAgregate.setTradingLanguage(null);

@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -168,12 +169,12 @@ public class GroupedCustomField implements Serializable {
 		return String.format("GroupedCustomField [type=%s, data=%s, children=%s]", type, data, children != null ? children.subList(0, Math.min(children.size(), maxLen)) : null);
 	}
 
-	public boolean hasVisibleCustomFields(BusinessCFEntity entity, CustomFieldValueHolder cfValueHolder) {
+	public boolean hasVisibleCustomFields(ICustomFieldEntity entity, CustomFieldValueHolder cfValueHolder) {
 		if (getChildCount() == 0) {
 			return false;
 		}
-
-		boolean newEntity = entity.isTransient();
+		
+		boolean newEntity = ((IEntity) entity).isTransient();
 		for (GroupedCustomField cfFieldOrOrg : getChildren()) {
 			if (cfFieldOrOrg.getType().equals(TYPE_FIELD)) {
 				CustomFieldTemplate cft = (CustomFieldTemplate) cfFieldOrOrg.getData();

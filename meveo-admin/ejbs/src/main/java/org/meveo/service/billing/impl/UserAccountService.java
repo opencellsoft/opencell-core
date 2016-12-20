@@ -149,15 +149,17 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	@SuppressWarnings("unchecked")
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
-		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
-		qb.addCriterionEntity("billingAccount", billingAccount);
-
-		try {
-			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
+		return billingAccount.getUsersAccounts();
+//		TODO : why ?
+//		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
+//		qb.addCriterionEntity("billingAccount", billingAccount);
+//
+//		try {
+//			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
+//		} catch (NoResultException e) {
+//			log.warn("error while getting user account list by billing account",e);
+//			return null;
+//		}
 	}
 	
 }

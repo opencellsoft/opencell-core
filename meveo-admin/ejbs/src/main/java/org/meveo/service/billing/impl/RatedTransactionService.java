@@ -255,9 +255,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
-            String orderNumber, Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
-		billingAccount = getEntityManager().merge(billingAccount);
-		
+            String orderNumber, Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {		
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;

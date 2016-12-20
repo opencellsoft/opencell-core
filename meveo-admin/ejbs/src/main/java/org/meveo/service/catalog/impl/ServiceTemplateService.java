@@ -57,7 +57,7 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 	
 	@Inject
 	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-	
+		
 	@Inject
     private CustomFieldInstanceService customFieldInstanceService;
 	
@@ -117,36 +117,43 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		entity.setId(null);
         String sourceAppliesToEntity = entity.clearUuid();
         
-		List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
+		List<ServiceChargeTemplateRecurring> recurrings = entity.getServiceRecurringCharges();
 		entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
-		for(ServiceChargeTemplateRecurring recurring:recurrings){
+		for (ServiceChargeTemplateRecurring recurring : recurrings) {
+			recurring = serviceChargeTemplateRecurringService.findById(recurring.getId());
 			recurring.getWalletTemplates().size();
 			serviceChargeTemplateRecurringService.detach(recurring);
 			recurring.setId(null);
 			recurring.setServiceTemplate(entity);
 			entity.getServiceRecurringCharges().add(recurring);
 		}
-		List<ServiceChargeTemplateSubscription> subscriptions=entity.getServiceSubscriptionCharges();
+	
+		List<ServiceChargeTemplateSubscription> subscriptions = entity.getServiceSubscriptionCharges();
 		entity.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
-		for(ServiceChargeTemplateSubscription subscription:subscriptions){
+		for (ServiceChargeTemplateSubscription subscription : subscriptions) {
+			subscription = serviceChargeTemplateSubscriptionService.findById(subscription.getId());
 			subscription.getWalletTemplates().size();
 			serviceChargeTemplateSubscriptionService.detach(subscription);
 			subscription.setId(null);
 			subscription.setServiceTemplate(entity);
 			entity.getServiceSubscriptionCharges().add(subscription);
 		}
-		List<ServiceChargeTemplateTermination> terminations=entity.getServiceTerminationCharges();
+	
+		List<ServiceChargeTemplateTermination> terminations = entity.getServiceTerminationCharges();
 		entity.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
-		for(ServiceChargeTemplateTermination termination:terminations){
+		for (ServiceChargeTemplateTermination termination : terminations) {
+			termination = serviceChargeTemplateTerminationService.findById(termination.getId());
 			termination.getWalletTemplates().size();
 			serviceChargeTemplateTerminationService.detach(termination);
 			termination.setId(null);
 			termination.setServiceTemplate(entity);
 			entity.getServiceTerminationCharges().add(termination);
 		}
-		List<ServiceChargeTemplateUsage> usages=entity.getServiceUsageCharges();
+	
+		List<ServiceChargeTemplateUsage> usages = entity.getServiceUsageCharges();
 		entity.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-		for(ServiceChargeTemplateUsage usage:usages){
+		for (ServiceChargeTemplateUsage usage : usages) {
+			usage = serviceChargeTemplateUsageService.findById(usage.getId());
 			usage.getWalletTemplates().size();
 			serviceChargeTemplateUsageService.detach(usage);
 			usage.setId(null);

@@ -74,7 +74,9 @@ public class RatedTransactionDto extends BaseDto {
         this.setCode(ratedTransaction.getCode());
         this.setDescription(ratedTransaction.getDescription());
         this.setUnityDescription(ratedTransaction.getUnityDescription());
-        this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
+		if (ratedTransaction.getPriceplan() != null) {
+			this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
+		}
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
     }
 
