@@ -35,6 +35,7 @@ public class GroupedCustomField implements Serializable {
 	private int position;
 
 	private Collection<CustomFieldTemplate> fields = null;
+	private Boolean hasVisibleCustomFields = null; 
 
 	public GroupedCustomField(String type, Object data, GroupedCustomField parent, String position) {
 		this.type = type;
@@ -174,6 +175,12 @@ public class GroupedCustomField implements Serializable {
 			return false;
 		}
 		
+		if(hasVisibleCustomFields != null) {
+			return hasVisibleCustomFields;
+		}
+		
+		hasVisibleCustomFields = false;
+		
 		boolean newEntity = ((IEntity) entity).isTransient();
 		for (GroupedCustomField cfFieldOrOrg : getChildren()) {
 			if (cfFieldOrOrg.getType().equals(TYPE_FIELD)) {
@@ -181,7 +188,7 @@ public class GroupedCustomField implements Serializable {
 				try {
 					if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
 							&& ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)) {
-						return true;
+						hasVisibleCustomFields = true;
 					}
 				} catch (BusinessException e) {
 					continue;
@@ -192,7 +199,8 @@ public class GroupedCustomField implements Serializable {
 					try {
 						if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
 								&& ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)) {
-							return true;
+							hasVisibleCustomFields = true;
+							return hasVisibleCustomFields;
 						}
 					} catch (BusinessException e) {
 						continue;
@@ -201,7 +209,7 @@ public class GroupedCustomField implements Serializable {
 			}
 		}
 
-		return false;
+		return hasVisibleCustomFields;
 	}
 
 }

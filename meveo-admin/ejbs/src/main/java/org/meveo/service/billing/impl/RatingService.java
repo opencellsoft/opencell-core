@@ -392,11 +392,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 			log.debug("found ratePrice:" + ratePrice.getId());
 			unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
 			unitPriceWithTax = ratePrice.getAmountWithTax();
-			if(ratePrice.getAmountWithoutTaxEL()!=null){
-				unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+			if (ratePrice.getAmountWithoutTaxEL() != null) {
+				unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(), ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+						unitPriceWithoutTax);
 			}
-			if(ratePrice.getAmountWithTaxEL()!=null){
-				unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+			if (ratePrice.getAmountWithTaxEL() != null) {
+				unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(), ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+						unitPriceWithoutTax);
 			}
 		}
 		// if the wallet operation correspond to a recurring charge that is
