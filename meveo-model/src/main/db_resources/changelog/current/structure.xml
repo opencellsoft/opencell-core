@@ -3113,8 +3113,8 @@
         <sql>update ADM_NOTIF_IM set MESSAGE= replace(MESSAGE, 'event','event.entity') where MESSAGE is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIF_WEBHOOKS set HTTP_PAGE= replace(HTTP_PAGE, 'event','event.entity') where HTTP_PAGE is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIF_WEBHOOKS set BODY_EL= replace(BODY_EL, 'event','event.entity') where BODY_EL is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
-        <sql>update ADM_NOTIF_WEBHOOK_HEADER set headers= replace(headers, 'event','event.entity') where headers is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
-        <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
-        <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
+        <sql>update ADM_NOTIF_WEBHOOK_HEADER set headers= replace(headers, 'event','event.entity') where headers is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and notification_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
     </changeSet> 
 </databaseChangeLog>
