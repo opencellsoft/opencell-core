@@ -54,21 +54,7 @@
                 <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" displayOneLine="true" labelWidth="40" />
                 <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" displayOneLine="true" labelWidth="40" />
                 <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
-            </h:panelGrid>
-
-			<p:outputPanel id="pricePanel">
-	            <p:panel>
-	            	<hftl:decorateFormField label="#{messages['marketingManager.catalog.salesPrice']}">
-		                <pe:inputNumber id="salesPrice" value="#{mainBackingBean.salesPrice}" decimalPlaces="2" rendered="#{mainBackingBean.edit}">
-	            			<p:ajax event="blur" update=":formId:discountedAmount" onstart="PF('priceBlocker').show();" oncomplete="PF('priceBlocker').hide();"></p:ajax>
-	            		</pe:inputNumber>
-	                    <h:outputText value="#{mainBackingBean.salesPrice}" rendered="#{!mainBackingBean.edit}" styleClass="field-value">
-	                        <f:converter converterId="bigDecimal2DigitsConverter" />
-	                    </h:outputText>                    
-		            </hftl:decorateFormField>
-	            </p:panel>
-            </p:outputPanel>
-            <p:blockUI widgetVar="priceBlocker" block="pricePanel" />
+            </h:panelGrid>			
         </p:panel>
 
         <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
