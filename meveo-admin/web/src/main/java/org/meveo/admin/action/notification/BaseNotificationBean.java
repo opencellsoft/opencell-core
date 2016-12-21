@@ -101,7 +101,7 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
     		}else if(clazzStr.equals(WalletOperation.class.getName())||clazzStr.equals(EDR.class.getName())||clazzStr.equals(RecurringChargeTemplate.class.getName())){
     			events.add(NotificationEventTypeEnum.REJECTED);
     		}else if(clazzStr.equals(CounterPeriod.class.getName())){
-    			events.add(NotificationEventTypeEnum.ZERO_COUNTER);
+    			events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
     		}
     	}else if(hasNotificableEntity(clazz)){
     		if(clazzStr.equals(MeveoFtpFile.class.getName())){

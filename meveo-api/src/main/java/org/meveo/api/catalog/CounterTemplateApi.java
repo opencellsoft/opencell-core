@@ -65,6 +65,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             counterTemplate.setCounterLevel(postData.getCounterLevel());
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
+        counterTemplate.setNotificationLevels(postData.getNotificationLevels());
 
         counterTemplateService.create(counterTemplate, currentUser);
 
@@ -105,6 +106,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             counterTemplate.setCounterLevel(postData.getCounterLevel());
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
+        counterTemplate.setNotificationLevels(postData.getNotificationLevels());
 
         counterTemplate = counterTemplateService.update(counterTemplate, currentUser);
 

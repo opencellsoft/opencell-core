@@ -14,6 +14,7 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
+import org.meveo.event.IEvent;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.notification.Notification;
@@ -129,13 +130,20 @@ public class NotificationCacheContainerProvider {
      * Get a list of notifications that match event type and entity class
      * 
      * @param eventType Event type
-     * @param entity Entity involved
+     * @param entityOrEvent Entity involved or event containing the entity involved
      * @return A list of notifications
      */
-    public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, IProvider entity) {
+    public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
         List<Notification> notifications = new ArrayList<Notification>();
 
-        String cacheKey = entity.getProvider().getId() + "_" + eventType.name();
+        IProvider entity = null;
+        if (entityOrEvent instanceof IProvider) {
+            entity = (IProvider) entityOrEvent;
+        } else if (entityOrEvent instanceof IEvent) {
+            entity = (IProvider) ((IEvent) entityOrEvent).getEntity();
+        }
+
+        String cacheKey = ((IProvider) entity).getProvider().getId() + "_" + eventType.name();
         if (eventNotificationCache.containsKey(cacheKey)) {
             for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
                 if (c.isAssignableFrom(entity.getClass())) {
