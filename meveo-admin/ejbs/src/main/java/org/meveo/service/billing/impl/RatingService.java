@@ -272,7 +272,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 
 		rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, currentUser);
-        log.debug(" wo amountWithoutTax =",walletOperation.getAmountWithoutTax());
+		log.debug(" wo amountWithoutTax={}", walletOperation.getAmountWithoutTax());
 		return walletOperation;
 
 	}
