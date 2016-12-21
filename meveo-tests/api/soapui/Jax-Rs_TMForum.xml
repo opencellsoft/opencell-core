@@ -16041,6 +16041,70 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create billing account 2" id="662e876e-b035-4252-9c60-0b779e109d22">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateBillingAccount</con:operation>
+          <con:request name="Create billing account 2" id="6b69ceda-060b-4f99-a15e-d8738d2b1eb8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateBillingAccount>
+         <billingAccount code="${#Project#baseEntityPrefix}_BA2" description="Billing account2">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>MR</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+         </billingAccount>
+      </ws:createOrUpdateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="056465e5-e164-4e3c-b09c-9b1c53a28343"/>
+            <con:assertion type="Simple Contains" name="Contains" id="9dfd9392-4e67-4562-ae75-3ec50eb6cd62">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create user account" id="a6f94473-5bef-4f58-b51d-8d456907f1ff">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -16058,6 +16122,61 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserAccount>
          <userAccount code="${#Project#baseEntityPrefix}_UA" description="User account">
             <billingAccount>${#Project#baseEntityPrefix}_BA</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>MR</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adress 1</address1>
+               <address2/>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+         </userAccount>
+      </ws:createOrUpdateUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="19c693ec-bbd5-452e-aec8-90f9396852e4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="b314fa8e-c0a6-43bb-86dc-0167c609c022">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create user account 2" id="f292b5b1-2ef2-4a83-a813-cda8051749d8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateUserAccount</con:operation>
+          <con:request name="Create user account 2" id="67c12f86-a95b-455d-a7bb-68955f3ef4a0">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateUserAccount>
+         <userAccount code="${#Project#baseEntityPrefix}_UA2" description="User account 2">
+            <billingAccount>${#Project#baseEntityPrefix}_BA2</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -18064,6 +18183,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <codes>201</codes>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Count" id="7c2bbbd6-523b-42ab-8382-0ea04c5d4753" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username/>
               <con:password/>
@@ -18311,6 +18439,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <codes>201</codes>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Count" id="93cf6ae4-e69f-4791-8077-528caaeac58b" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username/>
               <con:password/>
@@ -18358,7 +18495,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="9e4d45fa-4b8a-40e4-870e-ebf1c1472d5e" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="20911efb-6dd3-4ace-acd9-0e183ee2153e" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -18607,129 +18744,276 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="restrequest" name="Create Product quote  - 3 items - different BAs" id="d646e994-54bd-466a-82a5-7f73149a4108">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product quote  - 3 items - different BAs" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote multi item",
+   "quoteDate":"2015-10-25T15:50:48+08",
+   "quoteItem":[
+      {      	
+         "id":"01",
+	    "billingAccount":[
+	       {
+	          "id":"${#Project#baseEntityPrefix}_UA"
+	       }
+	    ], 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-02-27"
+               },
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {        	
+                  "type":"bundled",
+                  "product":{          
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"1"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "id":"02",
+	    "billingAccount":[
+	       {
+	          "id":"${#Project#baseEntityPrefix}_UA2"
+	       }
+	    ],
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_OFFER3",
+            "bundledProductOffering":[
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+               },
+               {
+                  "id":"${#Project#baseEntityPrefix}_PRODUCT2"
+               }
+            ]
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2"
+               }
+            ],
+            "productRelationship":[
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+		                  "name":"productInstanceCode",
+		                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_Sub_2_2_Instance"
+		               },
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value"
+		              }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"quantity",
+                           "value":"5"
+                        },
+		              {
+		                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+		                  "value":"Product CF value2"
+		              }
+                     ]
+                  }
+               },
+               {               	
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {
+                  "type":"bundled",
+                  "product":{
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"3"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      },   
+      {
+         "id":"03",
+	    "billingAccount":[
+	       {
+	          "id":"${#Project#baseEntityPrefix}_UA"
+	       }
+	    ],
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+         },
+         "product":{
+            "productCharacteristic":[               
+              {
+                 "name":"quantity",
+                 "value":"2"
+              },
+              {
+			  "name":"productInstanceCode",
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_Sub_2_3_Instance"
+              },
+              {
+                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+                  "value":"Product CF value3"
+              },
+              {
+                 "name":"${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP",
+                 "value":"{'One':150,'Two':100}"
+              }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Count" id="5d2fab72-e187-4932-bbed-9d7a00f89782" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="838948d6-1e8c-40e4-ac12-d89226390f67" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Validation" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="Create billing account 2" id="662e876e-b035-4252-9c60-0b779e109d22">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>AccountWsSoapBinding</con:interface>
-          <con:operation>createOrUpdateBillingAccount</con:operation>
-          <con:request name="Create billing account 2" id="6b69ceda-060b-4f99-a15e-d8738d2b1eb8">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateBillingAccount>
-         <billingAccount code="${#Project#baseEntityPrefix}_BA2" description="Billing account2">
-            <externalRef1>EXTREF1</externalRef1>
-            <externalRef2>EXTREF2</externalRef2>
-            <name>
-               <title>MR</title>
-               <firstName>Edward</firstName>
-               <lastName>Legaspi</lastName>
-            </name>
-            <address>
-               <address1>adresse 1</address1>
-               <address2/>
-               <address3>adresse 3</address3>
-               <zipCode>21000</zipCode>
-               <city>Dijon</city>
-               <country>FR</country>
-            </address>
-            <customerAccount>${#Project#baseEntityPrefix}_CA</customerAccount>
-            <billingCycle>CYC_INV_MT_1</billingCycle>
-            <country>FR</country>
-            <language>FRA</language>
-            <paymentMethod>CHECK</paymentMethod>
-            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
-            <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
-            <electronicBilling>true</electronicBilling>
-            <email>613@manaty.net</email>
-         </billingAccount>
-      </ws:createOrUpdateBillingAccount>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="056465e5-e164-4e3c-b09c-9b1c53a28343"/>
-            <con:assertion type="Simple Contains" name="Contains" id="9dfd9392-4e67-4562-ae75-3ec50eb6cd62">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create user account 2" id="f292b5b1-2ef2-4a83-a813-cda8051749d8">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>AccountWsSoapBinding</con:interface>
-          <con:operation>createOrUpdateUserAccount</con:operation>
-          <con:request name="Create user account 2" id="67c12f86-a95b-455d-a7bb-68955f3ef4a0">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUserAccount>
-         <userAccount code="${#Project#baseEntityPrefix}_UA2" description="User account 2">
-            <billingAccount>${#Project#baseEntityPrefix}_BA2</billingAccount>
-            <externalRef1>EXTREF1</externalRef1>
-            <externalRef2>EXTREF2</externalRef2>
-            <name>
-               <title>MR</title>
-               <firstName>Edward</firstName>
-               <lastName>Legaspi</lastName>
-            </name>
-            <address>
-               <address1>adress 1</address1>
-               <address2/>
-               <address3>adress 3</address3>
-               <zipCode>21000</zipCode>
-               <city>Dijon</city>
-               <country>FR</country>
-            </address>
-         </userAccount>
-      </ws:createOrUpdateUserAccount>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="19c693ec-bbd5-452e-aec8-90f9396852e4"/>
-            <con:assertion type="Simple Contains" name="Contains" id="b314fa8e-c0a6-43bb-86dc-0167c609c022">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
       <con:testStep type="restrequest" name="Create Product quote - no match parent BA" id="6a754afc-c04b-4779-a475-93898aec6d43">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -18795,7 +19079,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="528ba33f-c653-40fc-86b5-ae1141676238" name="Contains">
               <con:configuration>
-                <token>Accounts declared on quote level and/or item levels don't belong to the same billing account</token>
+                <token>Accounts declared on quote level and item levels don't belong to the same billing account</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -19054,21 +19338,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:originalUri>http://localhost/meveo/api/rest/orderManagement/productOrder</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
               <con:configuration>
-                <codes>400</codes>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="849f43f4-0aba-4745-88dc-3d967bc4646d" name="Contains">
-              <con:configuration>
-                <token>FAIL</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="1422e46d-a3db-4377-8216-6971421657a4" name="Contains 1">
-              <con:configuration>
-                <token>Accounts declared on quote level and/or item levels don't belong to the same billing account</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <codes>201</codes>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -19090,7 +19360,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>19</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -19391,7 +19661,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>f146b075-ccb2-4836-8a2f-f72a03150aa8</orderNumber>
+            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -19459,8 +19729,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000027</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000001</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -19561,7 +19831,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>f146b075-ccb2-4836-8a2f-f72a03150aa8</orderNumber>
+            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -19752,7 +20022,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>f146b075-ccb2-4836-8a2f-f72a03150aa8</orderNumber>
+            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -19986,7 +20256,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>a40cd6f7-aeee-4976-9bab-7541bdc40940</orderNumber>
+            <orderNumber>9a2221f7-7f85-4ad4-a27c-bac95d8d0495</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20054,8 +20324,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000029</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000002</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -20574,7 +20844,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>+02</con:value>
     </con:property>
     <con:property>
       <con:name>baseEntityPrefix</con:name>
@@ -20586,7 +20856,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>+03</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>

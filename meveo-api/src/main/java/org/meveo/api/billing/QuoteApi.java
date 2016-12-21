@@ -18,6 +18,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -103,10 +104,10 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
     @Inject
     private InvoiceService invoiceService;
-    
+
     /**
      * Register a quote from TMForumApi
      * 
@@ -130,19 +131,18 @@ public class QuoteApi extends BaseApi {
 
         handleMissingParameters();
         Provider provider = currentUser.getProvider();
-        
-        
-        if(productQuote.getCharacteristic().size()>0){
-        	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
-        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())){
-        			String scriptCode = quoteCharacteristic.getValue();
-        			Map<String, Object> context= new HashMap<>();
-        			context.put("productQuote", productQuote);
-					scriptInstanceService.execute(scriptCode, context, currentUser);
-					productQuote = (ProductQuote)context.get(Script.RESULT_VALUE);
-					break;
-        		}
-        	}
+
+        if (productQuote.getCharacteristic().size() > 0) {
+            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+                if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())) {
+                    String scriptCode = quoteCharacteristic.getValue();
+                    Map<String, Object> context = new HashMap<>();
+                    context.put("productQuote", productQuote);
+                    scriptInstanceService.execute(scriptCode, context, currentUser);
+                    productQuote = (ProductQuote) context.get(Script.RESULT_VALUE);
+                    break;
+                }
+            }
         }
 
         Quote quote = new Quote();
@@ -167,7 +167,7 @@ public class QuoteApi extends BaseApi {
         }
 
         UserAccount quoteLevelUserAccount = null;
-        org.meveo.model.billing.BillingAccount billingAccount = null; // user for validation only
+        org.meveo.model.billing.BillingAccount billingAccount = null; // used for validation only
 
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
@@ -194,7 +194,7 @@ public class QuoteApi extends BaseApi {
                     }
 
                     if (billingAccount != null && !billingAccount.equals(itemLevelUserAccount.getBillingAccount())) {
-                        throw new InvalidParameterException("Accounts declared on quote level and/or item levels don't belong to the same billing account");
+                        throw new InvalidParameterException("Accounts declared on quote level and item levels don't belong to the same billing account");
                     }
                 }
             }
@@ -295,20 +295,19 @@ public class QuoteApi extends BaseApi {
             throw e;
         }
 
-        if(productQuote.getCharacteristic().size()>0){
-        	for(Characteristic quoteCharacteristic : productQuote.getCharacteristic()){
-        		if(quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT.getCharacteristicName())){
-        			String scriptCode = quoteCharacteristic.getValue();
-        			Map<String, Object> context= new HashMap<>();
-        			context.put("productQuote", productQuote);
-        			context.put("quote", quote);
-					scriptInstanceService.execute(scriptCode, context, currentUser);
-					break;
-        		}
-        	}
+        if (productQuote.getCharacteristic().size() > 0) {
+            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+                if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT.getCharacteristicName())) {
+                    String scriptCode = quoteCharacteristic.getValue();
+                    Map<String, Object> context = new HashMap<>();
+                    context.put("productQuote", productQuote);
+                    context.put("quote", quote);
+                    scriptInstanceService.execute(scriptCode, context, currentUser);
+                    break;
+                }
+            }
         }
 
-        
         // Commit before initiating workflow/quote processing
         quoteService.commit();
 
@@ -408,18 +407,24 @@ public class QuoteApi extends BaseApi {
 
         try {
 
-            List<QuoteInvoiceInfo> quoteInvoiceInfos = new ArrayList<>();
+            Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos = new HashMap<>();
 
             for (QuoteItem quoteItem : quote.getQuoteItems()) {
-                quoteInvoiceInfos.add(preInvoiceQuoteItem(quote, quoteItem, currentUser));
+                String baCode = quoteItem.getUserAccount().getBillingAccount().getCode();
+                if (!quoteInvoiceInfos.containsKey(baCode)) {
+                    quoteInvoiceInfos.put(baCode, new ArrayList<QuoteInvoiceInfo>());
+                }
+                quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem, currentUser));
             }
 
-            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos, currentUser);          
-            quote = quoteService.update(quote, currentUser);
-            for(Invoice invoice : invoices){
-            	invoice.setQuote(quote);
-            	invoiceService.update(invoice, currentUser);
+            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos, currentUser);
+
+            for (Invoice invoice : invoices) {
+                invoice.setQuote(quote);
+                invoice = invoiceService.update(invoice, currentUser);
+                quote.getInvoices().add(invoice);
             }
+            quote = quoteService.update(quote, currentUser);
 
         } catch (MeveoApiException e) {
             throw new BusinessException(e);
@@ -768,6 +773,14 @@ public class QuoteApi extends BaseApi {
         }
 
         productQuote.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
+
+        if (quote.getInvoices() != null && !quote.getInvoices().isEmpty()) {
+            productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
+            for (Invoice invoice : quote.getInvoices()) {
+                GenerateInvoiceResultDto invoiceDto = new GenerateInvoiceResultDto(invoice, false);
+                productQuote.getInvoices().add(invoiceDto);
+            }
+        }
 
         return productQuote;
     }

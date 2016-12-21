@@ -3,6 +3,8 @@ package org.meveo.service.quote;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -82,127 +84,131 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(List<QuoteInvoiceInfo> quoteInvoiceInfos, User currentUser) throws BusinessException {
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, User currentUser) throws BusinessException {
 
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
-        List<RatedTransaction> ratedTransactions = new ArrayList<>();
-        List<Invoice> invoices = new ArrayList<Invoice>();
-        BillingAccount billingAccount = null;
 
-        for (QuoteInvoiceInfo quoteInvoiceInfo : quoteInvoiceInfos) {
+        List<Invoice> invoices = new ArrayList<Invoice>();
+
+        for (Entry<String, List<QuoteInvoiceInfo>> invoiceInfoEntry : quoteInvoiceInfos.entrySet()) {
 
             List<WalletOperation> walletOperations = new ArrayList<>();
+            List<RatedTransaction> ratedTransactions = new ArrayList<>();
+            BillingAccount billingAccount = null;
 
-            // Add Product charges
-            if (quoteInvoiceInfo.getProductInstances() != null) {
-                for (ProductInstance productInstance : quoteInvoiceInfo.getProductInstances()) {
-                    if (productInstance.getUserAccount() != null) {
-                        billingAccount = productInstance.getUserAccount().getBillingAccount();
-                    }
-                    for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
-                        walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, currentUser, true));
-                    }
-                }
-            }
+            for (QuoteInvoiceInfo quoteInvoiceInfo : invoiceInfoEntry.getValue()) {
 
-            if (quoteInvoiceInfo.getSubscription() != null) {
-                billingAccount = quoteInvoiceInfo.getSubscription().getUserAccount().getBillingAccount();
-
-                // Add subscription charges
-                for (ServiceInstance serviceInstance : quoteInvoiceInfo.getSubscription().getServiceInstances()) {
-                    for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
-                        walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(quoteInvoiceInfo.getSubscription(), subscriptionCharge,
-                            serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(), currentUser));
-                    }
-
-                    // Add recurring charges
-                    for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                        List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
-                            quoteInvoiceInfo.getToDate(), currentUser);
-                        if (walletOperations != null) {
-                            walletOperations.addAll(walletOps);
+                // Add Product charges
+                if (quoteInvoiceInfo.getProductInstances() != null) {
+                    for (ProductInstance productInstance : quoteInvoiceInfo.getProductInstances()) {
+                        if (productInstance.getUserAccount() != null) {
+                            billingAccount = productInstance.getUserAccount().getBillingAccount();
+                        }
+                        for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
+                            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, currentUser, true));
                         }
                     }
                 }
 
-                // Process CDRS
-                if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && quoteInvoiceInfo.getSubscription() != null) {
+                if (quoteInvoiceInfo.getSubscription() != null) {
+                    billingAccount = quoteInvoiceInfo.getSubscription().getUserAccount().getBillingAccount();
 
-                    cdrParsingService.initByApi(currentUser.getUserName(), "quote");
-
-                    List<EDR> edrs = new ArrayList<>();
-
-                    // Parse CDRs to Edrs
-                    try {
-                        for (String cdr : quoteInvoiceInfo.getCdrs()) {
-                            edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, quoteInvoiceInfo.getSubscription(), currentUser));
+                    // Add subscription charges
+                    for (ServiceInstance serviceInstance : quoteInvoiceInfo.getSubscription().getServiceInstances()) {
+                        for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
+                            walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(quoteInvoiceInfo.getSubscription(), subscriptionCharge,
+                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(), currentUser));
                         }
 
-                    } catch (CDRParsingException e) {
-                        log.error("Error parsing cdr={}", e.getRejectionCause());
-                        throw new BusinessException(e.getRejectionCause().toString());
+                        // Add recurring charges
+                        for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+                            List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
+                                quoteInvoiceInfo.getToDate(), currentUser);
+                            if (walletOperations != null) {
+                                walletOperations.addAll(walletOps);
+                            }
+                        }
                     }
 
-                    // Rate EDRs
-                    for (EDR edr : edrs) {
-                        log.debug("edr={}", edr);
+                    // Process CDRS
+                    if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && quoteInvoiceInfo.getSubscription() != null) {
+
+                        cdrParsingService.initByApi(currentUser.getUserName(), "quote");
+
+                        List<EDR> edrs = new ArrayList<>();
+
+                        // Parse CDRs to Edrs
                         try {
-                            List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
-                            if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                                log.error("edr rejected={}", edr.getRejectReason());
-                                throw new BusinessException(edr.getRejectReason());
+                            for (String cdr : quoteInvoiceInfo.getCdrs()) {
+                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, quoteInvoiceInfo.getSubscription(), currentUser));
                             }
-                            walletOperations.addAll(walletOperationsFromEdr);
 
-                        } catch (BusinessException e) {
-                            if (e instanceof InsufficientBalanceException) {
-                                log.error("edr rejected={}", edr.getRejectReason());
-                            } else {
-                                log.error("Exception rating edr={}", e);
+                        } catch (CDRParsingException e) {
+                            log.error("Error parsing cdr={}", e.getRejectionCause());
+                            throw new BusinessException(e.getRejectionCause().toString());
+                        }
+
+                        // Rate EDRs
+                        for (EDR edr : edrs) {
+                            log.debug("edr={}", edr);
+                            try {
+                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
+                                if (edr.getStatus() == EDRStatusEnum.REJECTED) {
+                                    log.error("edr rejected={}", edr.getRejectReason());
+                                    throw new BusinessException(edr.getRejectReason());
+                                }
+                                walletOperations.addAll(walletOperationsFromEdr);
+
+                            } catch (BusinessException e) {
+                                if (e instanceof InsufficientBalanceException) {
+                                    log.error("edr rejected={}", edr.getRejectReason());
+                                } else {
+                                    log.error("Exception rating edr={}", e);
+                                }
+                                throw e;
                             }
-                            throw e;
                         }
                     }
                 }
             }
-
+            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true, currentUser));
             }
-        
-	        Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(currentUser), currentUser);
-	
-	        File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-	        invoiceService.producePdf(invoice, true, currentUser);
-	
-	        // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
-	        // invoice.setBillingAccount(null);
-	        invoice.setRatedTransactions(null);
-	        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-	            log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
-	            // invoiceAgregate.setBillingAccount(null);
-	            // invoiceAgregate.setTradingCurrency(null);
-	            // invoiceAgregate.setTradingLanguage(null);
-	            // invoiceAgregate.setBillingRun(null);
-	            // invoiceAgregate.setUserAccount(null);
-	            invoiceAgregate.setAuditable(null);
-	            invoiceAgregate.updateAudit(currentUser);
-	            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-	                // ((CategoryInvoiceAgregate)invoiceAgregate).setInvoiceCategory(null);
-	                // ((CategoryInvoiceAgregate)invoiceAgregate).setSubCategoryInvoiceAgregates(null);
-	            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-	                // ((TaxInvoiceAgregate)invoiceAgregate).setTax(null);
-	            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setInvoiceSubCategory(null);
-	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
-	                // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
-	                ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-	                ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
-	            }
-	        }	       	        
-	        invoiceService.create(invoice, currentUser);
-	        invoices.add(invoice);
+
+            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(currentUser), currentUser);
+
+            File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
+            invoiceService.producePdf(invoice, true, currentUser);
+
+            // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
+            // invoice.setBillingAccount(null);
+            invoice.setRatedTransactions(null);
+            for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+                log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
+                // invoiceAgregate.setBillingAccount(null);
+                // invoiceAgregate.setTradingCurrency(null);
+                // invoiceAgregate.setTradingLanguage(null);
+                // invoiceAgregate.setBillingRun(null);
+                // invoiceAgregate.setUserAccount(null);
+                invoiceAgregate.setAuditable(null);
+                invoiceAgregate.updateAudit(currentUser);
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                    // ((CategoryInvoiceAgregate)invoiceAgregate).setInvoiceCategory(null);
+                    // ((CategoryInvoiceAgregate)invoiceAgregate).setSubCategoryInvoiceAgregates(null);
+                } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                    // ((TaxInvoiceAgregate)invoiceAgregate).setTax(null);
+                } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+                    // ((SubCategoryInvoiceAgregate)invoiceAgregate).setInvoiceSubCategory(null);
+                    // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
+                    // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                }
+            }
+            invoiceService.create(invoice, currentUser);
+            invoices.add(invoice);
         }
         return invoices;
     }
