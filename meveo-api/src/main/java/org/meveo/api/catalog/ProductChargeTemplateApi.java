@@ -12,6 +12,7 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -24,6 +25,7 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
@@ -341,5 +343,16 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 		} else {
 			return update(postData, currentUser);
 		}
+	}
+	
+	public List<ProductChargeTemplateDto> list(User currentUser) {
+		List<ProductChargeTemplate> listProductChargeTemplate = productChargeTemplateService.list(currentUser.getProvider());
+		List<ProductChargeTemplateDto> dtos = new ArrayList<ProductChargeTemplateDto>();
+		if(listProductChargeTemplate != null){
+			for(ProductChargeTemplate productChargeTemplate : listProductChargeTemplate){
+				dtos.add(new ProductChargeTemplateDto(productChargeTemplate, null));			
+			}
+		}
+		return dtos;
 	}
 }
