@@ -3088,4 +3088,33 @@
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
             
     </changeSet>  
+
+
+    <changeSet id="#2247_20161202" author="AndriusKarpavicius"> 
+        <addColumn tableName="CAT_COUNTER_TEMPLATE">
+            <column name="NOTIFICATION_LEVELS" type="VARCHAR(70)"/>
+        </addColumn>
+        <update tableName="CAT_COUNTER_TEMPLATE">
+            <column name="NOTIFICATION_LEVELS" value="0"/>
+        </update>
+        <addColumn tableName="BILLING_COUNTER_PERIOD">
+            <column name="NOTIFICATION_LEVELS" type="VARCHAR(100)"/>
+        </addColumn>
+        <sql>update BILLING_COUNTER_PERIOD set NOTIFICATION_LEVELS='{"0":0}'</sql>
+    </changeSet>    
+
+    <changeSet id="#2247_20161202-2" author="AndriusKarpavicius" dbms="postgresql"> 
+        <sql>update ADM_NOTIFICATION set EVENT_TYPE_FILTER='COUNTER_DEDUCED' where EVENT_TYPE_FILTER='ZERO_COUNTER'</sql>
+        <sql>update ADM_NOTIF_EMAIL set EMAIL_TO_EL= replace(EMAIL_TO_EL, 'event','event.entity') where EMAIL_TO_EL is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_EMAIL set EMAIL_SUBJECT= replace(EMAIL_SUBJECT, 'event','event.entity') where EMAIL_SUBJECT is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_EMAIL set EMAIL_BODY= replace(EMAIL_BODY, 'event','event.entity') where EMAIL_BODY is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_EMAIL set EMAIL_HTML_BODY= replace(EMAIL_HTML_BODY, 'event','event.entity') where EMAIL_HTML_BODY is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_IM set ID_EXPRESSION= replace(ID_EXPRESSION, 'event','event.entity') where ID_EXPRESSION is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_IM set MESSAGE= replace(MESSAGE, 'event','event.entity') where MESSAGE is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_WEBHOOKS set HTTP_PAGE= replace(HTTP_PAGE, 'event','event.entity') where HTTP_PAGE is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_WEBHOOKS set BODY_EL= replace(BODY_EL, 'event','event.entity') where BODY_EL is not null and id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_WEBHOOK_HEADER set headers= replace(headers, 'event','event.entity') where headers is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
+        <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and notification_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
+    </changeSet> 
 </databaseChangeLog>

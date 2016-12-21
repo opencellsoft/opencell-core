@@ -19,7 +19,6 @@ import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -39,15 +38,15 @@ public class EmailNotifier {
     private Logger log;
 
     @Asynchronous
-    public void sendEmail(EmailNotification notification, IEntity entity, Map<String, Object> context) {
+    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {
         MimeMessage msg = new MimeMessage(mailSession);
         try {
             msg.setFrom(new InternetAddress(notification.getEmailFrom()));
             msg.setSentDate(new Date());
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-            userMap.put("event", entity);
+            userMap.put("event", entityOrEvent);
             userMap.put("context", context);
-            log.debug("event[{}], context[{}]", entity, context);
+            log.debug("event[{}], context[{}]", entityOrEvent, context);
             msg.setSubject((String) ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class));
             if (!StringUtils.isBlank(notification.getHtmlBody())) {
                 String htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
@@ -72,15 +71,15 @@ public class EmailNotifier {
             msg.setReplyTo(replytoAddress);
 
             Transport.send(msg);
-            notificationHistoryService.create(notification, entity, "", NotificationHistoryStatusEnum.SENT);
+            notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
 
         } catch (Exception e) {
             try {
             	log.error("Error occured when sending email",e);
-                notificationHistoryService.create(notification, entity, e.getMessage(), e instanceof MessagingException ? NotificationHistoryStatusEnum.TO_RETRY
+                notificationHistoryService.create(notification, entityOrEvent, e.getMessage(), e instanceof MessagingException ? NotificationHistoryStatusEnum.TO_RETRY
                         : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
-                log.error("Failed to create notification history", entity);
+                log.error("Failed to create notification history", e2);
             }
         }
     }

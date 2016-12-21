@@ -83,8 +83,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 		return offerTemplate;
@@ -117,8 +117,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
 

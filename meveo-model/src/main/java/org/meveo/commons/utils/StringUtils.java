@@ -69,9 +69,10 @@ public class StringUtils {
         return concatenate(separator, Arrays.asList(values));
     }
 
-    public static String concatenate(String separator, Collection<String> values) {
+    @SuppressWarnings("rawtypes")
+    public static String concatenate(String separator, Collection values) {
         StringBuilder sb = new StringBuilder();
-        for (String s : values)
+        for (Object s : values)
             if (!isBlank(s)) {
                 if (sb.length() != 0)
                     sb.append(separator);

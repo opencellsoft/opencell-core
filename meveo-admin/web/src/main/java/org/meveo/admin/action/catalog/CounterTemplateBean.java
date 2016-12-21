@@ -18,13 +18,18 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -36,39 +41,37 @@ import org.primefaces.model.LazyDataModel;
 @ViewScoped
 public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private CounterTemplateService counterTemplateService;
+    @Inject
+    private CounterTemplateService counterTemplateService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CounterTemplateBean() {
-		super(CounterTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CounterTemplateBean() {
+        super(CounterTemplate.class);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<CounterTemplate> getPersistenceService() {
-		return counterTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<CounterTemplate> getPersistenceService() {
+        return counterTemplateService;
+    }
 
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	/**
+    /**
      * DataModel for primefaces lazy loading datatable component.
      * 
      * @return LazyDataModel implementation.
@@ -77,5 +80,50 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
         filters.put("counterType", counterType);
         return getLazyDataModel(filters, false);
     }
-  
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        String notificationLevels = entity.getNotificationLevels();
+        if (!StringUtils.isBlank(notificationLevels)) {
+            String[] levels = notificationLevels.split(",");
+            for (String level : levels) {
+                level = level.trim();
+                if (StringUtils.isBlank(level)) {
+                    continue;
+                }
+                double dblLevel = 0;
+                try {
+                    if (level.endsWith("%") && level.length() == 1) {
+                        FacesContext.getCurrentInstance().validationFailed();
+                        messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels"));
+                        return null;
+
+                    } else if (level.endsWith("%") && level.length() > 1) {
+                        dblLevel = Double.parseDouble(level.substring(0, level.length() - 1));
+                        if (dblLevel >= 100) {
+                            FacesContext.getCurrentInstance().validationFailed();
+                            messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
+                            return null;
+                        }
+
+                    } else if (!level.endsWith("%")) {
+                        dblLevel = Double.parseDouble(level);
+                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(new BigDecimal(dblLevel)) < 0) {
+                            FacesContext.getCurrentInstance().validationFailed();
+                            messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
+                            return null;
+                        }
+                    }
+                } catch (Exception e) {
+                    FacesContext.getCurrentInstance().validationFailed();
+                    messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels"));
+                    return null;
+                }
+            }
+
+        }
+
+        return super.saveOrUpdate(killConversation);
+    }
 }
