@@ -14,6 +14,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplate;
@@ -102,6 +103,17 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		// related entities below.
 		productTemplateService.create(productTemplate, currentUser);
 		
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), productTemplate, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+		
 		if(postData.getProductChargeTemplates()!= null){
 			processProductChargeTemplate(postData, productTemplate, provider);
 		}
@@ -113,6 +125,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		}
 
 		productTemplateService.update(productTemplate, currentUser);
+		
 
 		return productTemplate;
 	}
@@ -157,6 +170,17 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 			processDigitalResources(postData, productTemplate, currentUser);
 		}
 		productTemplate= productTemplateService.update(productTemplate, currentUser);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), productTemplate, false, currentUser);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
 		return productTemplate;
 	}
