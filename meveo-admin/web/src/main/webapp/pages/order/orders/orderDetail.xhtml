@@ -48,7 +48,7 @@
                     <hf:namingContainer id="orderInfo">
                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                        <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" showOnNew="false" allowEdit="false" />
+                        <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" doNotShowOnNew="true" allowEdit="false" />
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
@@ -323,7 +323,8 @@
 
                                                     <div class="clearLeft"></div>
                                                     <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
+                                                        cfFormId="offerCFForm_#{itemStatus.index}" />
 
                                                 </p:tab>
                                             </c:forEach>

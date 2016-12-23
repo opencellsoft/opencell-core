@@ -836,6 +836,7 @@ public class QuoteApi extends BaseApi {
         Quote quote = quoteService.findByCode(quoteCode, currentUser.getProvider());
         ProductOrder productOrder = new ProductOrder();
         productOrder.setOrderDate(new Date());
+        productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());
         productOrder.setDescription(quote.getDescription());
         productOrder.setOrderItem(new ArrayList<ProductOrderItem>());
 

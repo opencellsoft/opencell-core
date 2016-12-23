@@ -75,7 +75,7 @@ public class Quote extends BusinessCFEntity {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "VALID_FROM")
-    private Date validFrom;
+    private Date validFrom = new Date();
 
     /**
      * Quote validity date - from
