@@ -58,7 +58,7 @@
                         <hftl:formField label="#{messages['quote.category']}" field="category" />
 
                         <hftl:formField id="userAccountQuote" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code" popup="true"
-                            popupId="userAccountPopupQuote" />
+                            popupId="userAccountPopupQuote" showResetButton="true" />
 
                         <hftl:formField label="#{messages['quote.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{quoteBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['quote.externalId']}" field="externalId" edit="false"

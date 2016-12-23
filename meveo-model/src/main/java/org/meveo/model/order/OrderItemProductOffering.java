@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +47,7 @@ public class OrderItemProductOffering implements IEntity {
     @NotNull
     private OrderItem orderItem;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "PRD_OFFERING_ID")
     @NotNull
     private ProductOffering productOffering;

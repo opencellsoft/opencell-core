@@ -82,7 +82,6 @@ import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
-
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1202,7 +1201,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return invoice;
 	}
 	
-	public void cancelInvoice(Invoice invoice) throws BusinessException {		
+	@SuppressWarnings("unchecked")
+    public void cancelInvoice(Invoice invoice) throws BusinessException {		
 		if(invoice.getInvoiceNumber() != null){
 			throw new BusinessException("Can't cancel an invoice validated");
 		}

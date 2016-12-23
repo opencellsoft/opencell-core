@@ -200,6 +200,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         selectedQuoteItem = new QuoteItem();
         offerConfigurations = null;
 
+        if (entity.getUserAccount() != null) {
+            selectedQuoteItem.setUserAccount(entity.getUserAccount());
+        }
+
         if (entity.getQuoteItems() == null) {
             selectedQuoteItem.setItemId("1");
         } else {
@@ -221,16 +225,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     @ActionMethod
     public void saveQuoteItem() {
-
-        // Validate quote item user account field
-        if (selectedQuoteItem.getUserAccount() != null) {
-            UserAccount selectedQuoteItemUA = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
-            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItemUA.getBillingAccount());
-
-            if (entity.getQuoteItems() == null) {
-                entity.setQuoteItems(new ArrayList<QuoteItem>());
-            }
-        }
 
         try {
 
@@ -371,7 +365,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         // Default quote item user account field to quote user account field value if applicable.
-        // Validate that user accounts belong to the same billing account
+        // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
         if (entity.getUserAccount() != null) {
             UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
@@ -385,17 +379,13 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 }
 
                 UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
-                if (billingAccount == null) {
-                    billingAccount = billingAccountService.refreshOrRetrieve(itemUa.getBillingAccount());
-                } else {
-                    if (!billingAccount.equals(itemUa.getBillingAccount())) {
+                if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
                         messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
                         FacesContext.getCurrentInstance().validationFailed();
                         return null;
                     }
                 }
             }
-        }
 
         String result = super.saveOrUpdate(killConversation);
 
