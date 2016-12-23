@@ -12,6 +12,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.ProviderApi;
 import org.meveo.api.SuperAdminPermission;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -36,6 +37,9 @@ public abstract class BaseWs {
 
     @Inject
     protected UserService userService;
+    
+    @Inject
+    private ProviderApi providerApi;
 
     @WebMethod
     public ActionStatus index() {
@@ -56,24 +60,28 @@ public abstract class BaseWs {
      * @param permissionResource Resource of permission
      * @param permissionAction Permission action of permission
      * @return Authenticated user
-     * @throws LoginException In case a user does not have a required permission
+     * @throws MeveoApiException 
      */
-    protected User getCurrentUser(String permissionResource, String permissionAction) throws LoginException {
+    protected User getCurrentUser(String permissionResource, String permissionAction) throws MeveoApiException {
         User user = getCurrentUser();
         if (user.hasPermission(permissionResource, permissionAction)) {
             return user;
         }
         throw new LoginException("User does not have permission '" + permissionAction + "' on resource '" + permissionResource + "'");
     }
+    
+    protected User getCurrentUser() throws MeveoApiException {
+    	return getCurrentUser(null);
+    }
 
     /**
      * Authenticate a user requiring a standard permission user/apiAccess to access WS
      * 
      * @return Authenticated user
-     * @throws LoginException In case a user does not have a required permission
+     * @throws MeveoApiException 
      */
     @SuppressWarnings("unchecked")
-    protected User getCurrentUser() throws LoginException {
+    protected User getCurrentUser(String providerCode) throws MeveoApiException {
         MessageContext messageContext = webServiceContext.getMessageContext();
 
         // get request headers
@@ -116,7 +124,11 @@ public abstract class BaseWs {
         boolean isAllowed = false;
 
         if( this.getClass().isAnnotationPresent(SuperAdminPermission.class)){
-        	  isAllowed = user.hasPermission("superAdmin", "superAdminManagement");
+			if (!StringUtils.isBlank(providerCode)) {
+				isAllowed = providerApi.isOwnProvider(providerCode, user);
+			} else {
+				isAllowed = user.hasPermission("superAdmin", "superAdminManagement");
+			}
         }else{
         	isAllowed = user.hasPermission("user", "apiAccess");
         }

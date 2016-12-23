@@ -57,13 +57,12 @@ public class PrimitiveFilterProcessorFactory {
 		logger.info("Initializing PrimitiveFilterProcessors");
 		processors = new ArrayList<>();
 		Reflections reflections = new Reflections("org.meveo.service.filter.processor");
-		Set<Class<? extends PrimitiveFilterProcessor>> processorClasses = reflections
-				.getSubTypesOf(PrimitiveFilterProcessor.class);
+		Set<Class<? extends PrimitiveFilterProcessor>> processorClasses = reflections.getSubTypesOf(PrimitiveFilterProcessor.class);
 		PrimitiveFilterProcessor processor = null;
 		for (Class<? extends PrimitiveFilterProcessor> processorClass : processorClasses) {
 			try {
 				processor = processorClass.newInstance();
-				if(processor instanceof StringProcessor){
+				if (processor.getClass().equals(StringProcessor.class)) {
 					// StringProcessor is the default processor
 					defaultProcessor = processor;
 				} else {

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -160,5 +161,63 @@ public interface CatalogRs {
     @Path("/productTemplate/list")
     public Response listProductTemplate();    
     
+    /**
+     * Get a single productChargeTemplate by its code
+     * 
+     * @param code productChargeTemplate code
+     * @return Single productChargeTemplate information
+     */
+    @GET
+    @Path("/productChargeTemplate/{code}")
+    public Response getProductChargeTemplate(@PathParam("code") String code);
+
+    /**
+     * Create product charge template
+     * 
+     * @param postData product charge template information
+     * @return
+     */
+    @POST
+    @Path("/productChargeTemplate")
+    public Response createProductChargeTemplate(ProductChargeTemplateDto postData);
+    
+    /**
+     * Create or update product charge template
+     * 
+     * @param postData product charge template information
+     * @return
+     */
+    @POST
+    @Path("/productChargeTemplate/createOrUpdate")
+    public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData);
+    
+    /**
+     * Update product charge template
+     * 
+     * @param postData product charge template information
+     * @return
+     */
+    @PUT
+    @Path("/productChargeTemplate")
+    public Response updateProductChargeTemplate(ProductChargeTemplateDto postData);    
+    
+    /**
+     * Delete a single productChargeTemplate by its code
+     * 
+     * @param code productChargeTemplate code
+     * @return 
+     */
+    @DELETE
+    @Path("/productChargeTemplate/{code}")
+    public Response removeProductChargeTemplate(@PathParam("code") String code);
+    
+    
+    /**
+     * List all  productChargeTemplates
+     * @return 
+     */
+    @GET
+    @Path("/productChargeTemplate/list")
+    public Response listProductChargeTemplate();  
 
 }

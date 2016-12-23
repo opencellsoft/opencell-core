@@ -842,20 +842,20 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
-		if(expression.indexOf("serviceInstance") >= 0){
+		if (expression.indexOf("serviceInstance") >= 0) {
 			ServiceInstance service = null;
-			if(bareOperation.getChargeInstance() instanceof RecurringChargeInstance){
-				service=((RecurringChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
-			}else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance){
-				service=((UsageChargeInstance)bareOperation.getChargeInstance()).getServiceInstance();
-			}else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance){
-				service=((OneShotChargeInstance)bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
-				if(service==null){
-					((OneShotChargeInstance)bareOperation.getChargeInstance()).getTerminationServiceInstance();
+			if (bareOperation.getChargeInstance() instanceof RecurringChargeInstance) {
+				service = ((RecurringChargeInstance) bareOperation.getChargeInstance()).getServiceInstance();
+			} else if (bareOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) bareOperation.getChargeInstance()).getServiceInstance();
+			} else if (bareOperation.getChargeInstance() instanceof OneShotChargeInstance) {
+				service = ((OneShotChargeInstance) bareOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if (service == null) {
+					((OneShotChargeInstance) bareOperation.getChargeInstance()).getTerminationServiceInstance();
 				}
 			}
-			if(service !=null){
-				userMap.put("serviceIntance", service);
+			if (service != null) {
+				userMap.put("serviceInstance", service);
 			}
 		}
 		if(expression.indexOf("productInstance") >= 0){
