@@ -187,7 +187,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
             if (this.selectedQuoteItem.getQuoteItemDto() != null) {
                 offersTree = constructOfferItemsTreeAndConfiguration(this.entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || this.entity.getStatus() == QuoteStatusEnum.PENDING,
-                    this.entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || this.entity.getStatus() == QuoteStatusEnum.PENDING, null, null);
+                    this.entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || this.entity.getStatus() == QuoteStatusEnum.PENDING);
             }
 
         } catch (Exception e) {
@@ -199,6 +199,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public void newQuoteItem() {
         selectedQuoteItem = new QuoteItem();
         offerConfigurations = null;
+
+        if (entity.getUserAccount() != null) {
+            selectedQuoteItem.setUserAccount(entity.getUserAccount());
+        }
 
         if (entity.getQuoteItems() == null) {
             selectedQuoteItem.setItemId("1");
@@ -221,16 +225,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     @ActionMethod
     public void saveQuoteItem() {
-
-        // Validate quote item user account field
-        if (selectedQuoteItem.getUserAccount() != null) {
-        	UserAccount selectedQuoteItemUA = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
-            BillingAccount itemBillingAccount = billingAccountService.refreshOrRetrieve(selectedQuoteItemUA.getBillingAccount());          
-            
-			if (entity.getQuoteItems() == null) {
-				entity.setQuoteItems(new ArrayList<QuoteItem>());
-			}                       
-        }
 
         try {
 
@@ -371,31 +365,27 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         // Default quote item user account field to quote user account field value if applicable.
-        // Validate that user accounts belong to the same billing account
+        // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
-		if (entity.getUserAccount() != null) {
-			UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
-			billingAccount = billingAccountService.refreshOrRetrieve(baUserAccount.getBillingAccount());
-		}
+        if (entity.getUserAccount() != null) {
+            UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
+            billingAccount = billingAccountService.refreshOrRetrieve(baUserAccount.getBillingAccount());
+        }
 
         if (entity.getQuoteItems() != null) {
             for (QuoteItem quoteItem : entity.getQuoteItems()) {
                 if (quoteItem.getUserAccount() == null && entity.getUserAccount() != null) {
                     quoteItem.setUserAccount(entity.getUserAccount());
                 }
-                
+
                 UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
-                if (billingAccount == null) {
-                    billingAccount = billingAccountService.refreshOrRetrieve(itemUa.getBillingAccount());
-                } else {                    
-                    if (!billingAccount.equals(itemUa.getBillingAccount())) {
+                if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
                         messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
                         FacesContext.getCurrentInstance().validationFailed();
                         return null;
                     }
                 }
             }
-        }
 
         String result = super.saveOrUpdate(killConversation);
 
@@ -430,8 +420,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * @param showAvailable Should checkboxes be shown for tree item selection
      * @return A tree
      */
-    private TreeNode constructOfferItemsTreeAndConfiguration(boolean showAvailableServices, boolean showAvailableProducts,
-            Map<String, Map<OrderProductCharacteristicEnum, Object>> subscriptionConfiguration, Map<String, BusinessCFEntity> existingOfferEntities) {
+    private TreeNode constructOfferItemsTreeAndConfiguration(boolean showAvailableServices, boolean showAvailableProducts) {
 
         offerConfigurations = new ArrayList<>();
 
@@ -442,18 +431,22 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedQuoteItem.getMainOffering());
 
-        // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering quote item to modify
-        // or delete and subscription is selected)
+        // Take offer characteristics from DTO
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
         Subscription subscriptionEntity = null;
         if (quoteItemDto != null && quoteItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(quoteItemDto.getProduct().getProductCharacteristic());
+        }
 
-        } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(mainOffering.getCode())) {
-            mainOfferCharacteristics = subscriptionConfiguration.get(mainOffering.getCode());
-            if (existingOfferEntities != null) {
-                subscriptionEntity = (Subscription) existingOfferEntities.get(mainOffering.getCode());
-            }
+        // Default subscription date field to quote date
+        if (!mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE)) {
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE, entity.getQuoteDate());
+        }
+        Date mainOfferSubscriptionDate = (Date) mainOfferCharacteristics.get(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE);
+
+        // Default quantity to 1 for product and bundle templates
+        if (!(mainOffering instanceof OfferTemplate) && !mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
         }
 
         OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, subscriptionEntity);
@@ -468,7 +461,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         // For offer templates list services and products subscribed
         if (mainOffering instanceof OfferTemplate) {
-
             List<Product>[] productsAndServices = quoteApi.getProductsAndServices(quoteItemDto, this.selectedQuoteItem);
 
             // Show services - all or only the ones quoteed
@@ -478,7 +470,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 for (OfferServiceTemplate offerServiceTemplate : ((OfferTemplate) mainOffering).getOfferServiceTemplates()) {
 
-                    // Find a matching quoteed service product from DTO by comparing product characteristic "serviceCode"
+                    // Find a matching quoted service product from DTO by comparing product characteristic "serviceCode"
                     Product serviceProductMatched = null;
                     for (Product serviceProduct : productsAndServices[1]) {
                         String serviceCode = (String) quoteApi.getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(),
@@ -489,8 +481,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         }
                     }
 
-                    if (showAvailableServices || serviceProductMatched != null
-                            || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()))) {
+                    if (showAvailableServices || serviceProductMatched != null) {
 
                         // Take service characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering
                         // quote item to modify or delete and subscription is selected
@@ -498,14 +489,16 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         ServiceInstance serviceInstanceEntity = null;
                         if (serviceProductMatched != null) {
                             serviceCharacteristics = productCharacteristicsToMap(serviceProductMatched.getProductCharacteristic());
-                        } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode())) {
-                            serviceCharacteristics = subscriptionConfiguration.get(offerServiceTemplate.getServiceTemplate().getCode());
-                            if (existingOfferEntities != null) {
-                                serviceInstanceEntity = (ServiceInstance) existingOfferEntities.get(offerServiceTemplate.getServiceTemplate().getCode());
-                            }
                         }
-                        boolean isMandatory = offerServiceTemplate.isMandatory()
-                                || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()));
+                        // Default service subscription date field to subscription's subscription date and quantity to 1
+                        if (!serviceCharacteristics.containsKey(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE)) {
+                            serviceCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE, mainOfferSubscriptionDate);
+                        }
+                        if (!serviceCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
+                            serviceCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+                        }
+
+                        boolean isMandatory = offerServiceTemplate.isMandatory();
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
                         offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
@@ -533,7 +526,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 for (OfferProductTemplate offerProductTemplate : ((OfferTemplate) mainOffering).getOfferProductTemplates()) {
 
-                    // Find a matching quoteed product offering
+                    // Find a matching quoted product offering
                     Product productProductMatched = null;
                     int index = 0;
                     for (QuoteItemProductOffering quoteItemoffering : this.selectedQuoteItem.getQuoteItemProductOfferings().subList(1,
@@ -554,11 +547,15 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         ProductInstance productInstanceEntity = null;
                         if (productProductMatched != null) {
                             productCharacteristics = productCharacteristicsToMap(productProductMatched.getProductCharacteristic());
-                        } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerProductTemplate.getProductTemplate().getCode())) {
-                            productCharacteristics = subscriptionConfiguration.get(offerProductTemplate.getProductTemplate());
-                            if (existingOfferEntities != null) {
-                                productInstanceEntity = (ProductInstance) existingOfferEntities.get(offerProductTemplate.getProductTemplate());
-                            }
+                        }
+
+                        // Default service subscription date field to subscription's subscription date or quote date if product is not part of offer template and quantity to 1
+                        if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE)) {
+                            productCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE,
+                                mainOfferSubscriptionDate != null ? mainOfferSubscriptionDate : entity.getQuoteDate());
+                        }
+                        if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
+                            productCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
                         }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false, productProductMatched != null
@@ -593,7 +590,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             selectedQuoteItem.resetMainOffering((ProductOffering) event.getObject());
             offerConfigurations = null;
 
-            offersTree = constructOfferItemsTreeAndConfiguration(true, true, null, null);
+            offersTree = constructOfferItemsTreeAndConfiguration(true, true);
         }
     }
 

@@ -75,7 +75,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.update(postData, getCurrentUser());
+			providerApi.update(postData, getCurrentUser(postData.getCode()));
 		} catch (Exception e) {
 			super.processException(e, result);
 		}

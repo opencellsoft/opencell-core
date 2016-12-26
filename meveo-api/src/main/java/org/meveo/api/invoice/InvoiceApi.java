@@ -534,7 +534,7 @@ public class InvoiceApi extends BaseApi {
         	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
         }    
         
-        GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto(invoice);
+        GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto(invoice, true);
         if(isDraft){        	
         	invoiceService.cancelInvoice(invoice);
         }

@@ -14,12 +14,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -104,6 +102,8 @@ public class ProductQuote implements Serializable {
     protected List<ProductQuoteItem> quoteItem;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
+
+    private List<GenerateInvoiceResultDto> invoices;
 
     /**
      * 
@@ -601,5 +601,13 @@ public class ProductQuote implements Serializable {
 
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public List<GenerateInvoiceResultDto> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(List<GenerateInvoiceResultDto> invoices) {
+        this.invoices = invoices;
     }
 }
