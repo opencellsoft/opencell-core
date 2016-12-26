@@ -51,7 +51,7 @@
 							oncomplete="PF('dlg_sellerSequenceChgPopup').show()" update=":sellerFormId:tabView:sellerSequenceChgPopup"
 							icon="ui-icon-document" /> 
 						<p:commandButton
-							action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.key)}"
+							action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.invoiceType)}"
 							icon="ui-icon-trash"
 							update="@form" />
 					</p:column>					  

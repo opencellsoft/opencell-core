@@ -136,10 +136,16 @@ public class SellerBean extends CustomFieldBean<Seller> {
 		 }
 		 resetSequenceField();	 
 	 }	
-	 
-	 public void deleteSellerSequence(InvoiceType invoiceType){
-		 entity.getInvoiceTypeSequence().remove(invoiceType);
-		 messages.info(new BundleKey("messages", "delete.successful"));
+
+    public void deleteSellerSequence(InvoiceType invoiceType) {
+
+        for (int i = 0; i < entity.getInvoiceTypeSequence().size(); i++) {
+            if (entity.getInvoiceTypeSequence().get(i).getInvoiceType().equals(invoiceType)) {
+                entity.getInvoiceTypeSequence().remove(i);
+                break;
+            }
+        }
+        messages.info(new BundleKey("messages", "delete.successful"));
 	 }
 
     public void getSequenceSelected(InvoiceTypeSellerSequence invoiceTypeSellerSequence) {

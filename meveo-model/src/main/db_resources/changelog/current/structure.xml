@@ -3155,4 +3155,8 @@
         <dropColumn tableName="BILLING_SEQ_INVTYP_SELL" columnName="currentinvoicenb"/>        
     </changeSet>
 
+    <changeSet id="#2296_20161225-5" author="AndriusKarpavicius">
+        <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL"/>
+    </changeSet>
+
 </databaseChangeLog>

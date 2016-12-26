@@ -417,9 +417,9 @@
             <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
         </classesToExportAsFull>
     </template>
-    <template name="InvoiceType" entityToExport="org.meveo.model.billing.InvoiceType">
-        <classesToIgnoreFKNotFound>
-            <java-class>org.meveo.model.admin.Seller</java-class>
-        </classesToIgnoreFKNotFound>
-    </template>
+    <template name="Seller" entityToExport="org.meveo.model.admin.Seller">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.billing.InvoiceTypeSellerSequence</java-class>
+        </classesToExportAsFull>
+    </template>    
 </list>
