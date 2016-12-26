@@ -20,7 +20,6 @@ package org.meveo.api.dto;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,8 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 /**
  * @author Edward P. Legaspi
@@ -78,8 +76,8 @@ public class SellerDto extends BaseDto {
 		code = seller.getCode();
 		description = seller.getDescription();
 		if(seller.getInvoiceTypeSequence() != null){
-			for(Entry<InvoiceType, Sequence> entry : seller.getInvoiceTypeSequence().entrySet() ){
-				invoiceTypeSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
+			for(InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence() ){
+				invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
 			}
 		}
 

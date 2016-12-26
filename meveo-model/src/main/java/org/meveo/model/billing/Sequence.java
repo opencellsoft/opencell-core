@@ -68,6 +68,4 @@ public class Sequence {
 	public String toString() {
 		return "Sequence [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
 	}
-
-    
 }

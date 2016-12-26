@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,9 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.SequenceDto;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,8 +58,8 @@ public class InvoiceTypeDto  extends BaseDto{
 					this.getAppliesTo().add(tmpInvoiceType.getCode());
 				}
 			}			
-			for(Entry<Seller,Sequence> entry : invoiceType.getSellerSequence().entrySet()){
-				sellerSequences.put(entry.getKey().getCode(), new SequenceDto(entry.getValue()));
+			for(InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()){
+				sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
 			}		
 			this.matchingAuto = invoiceType.isMatchingAuto();
 		}

@@ -20,6 +20,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.admin.impl.SellerService;
@@ -103,7 +104,11 @@ public class InvoiceTypeApi extends BaseApi {
 	        	if(entry.getValue().getCurrentInvoiceNb().intValue()<0){
 	        		throw new MeveoApiException("current invoice number value must be positive");
 	        	}
-	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
+	        	if (entry.getValue() == null){
+	        	    invoiceType.getSellerSequence().remove(seller);
+	        	} else {
+	        	    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+	        	}
 	        }
         }      
         invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
@@ -178,7 +183,14 @@ public class InvoiceTypeApi extends BaseApi {
 	        	if(entry.getValue().getCurrentInvoiceNb().intValue()<0){
 	        		throw new MeveoApiException("current invoice number value must be positive");
 	        	}
-	        	invoiceType.getSellerSequence().put(seller, entry.getValue() == null ? null : entry.getValue().fromDto());
+
+                if (entry.getValue() == null){
+                    invoiceType.getSellerSequence().remove(seller);
+                } else if (invoiceType.isContainsSellerSequence(seller)){
+                    invoiceType.getSellerSequenceByType(seller).setSequence(entry.getValue().fromDto());
+                } else {
+                    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                }
 	        }
         }              
         invoiceTypeService.update(invoiceType, currentUser);
