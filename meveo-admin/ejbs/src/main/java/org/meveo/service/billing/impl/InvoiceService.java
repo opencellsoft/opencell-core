@@ -531,21 +531,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
 			// getEntityManager().merge(invoice);
 				
-			List<String> orderNums = new ArrayList<String>();
+			List<String> orderNums = null;
 			if(!StringUtils.isBlank(orderNumber)){
+				orderNums = new ArrayList<String>();
 				orderNums.add(orderNumber);
 			}else{
 				ratedTransactionService.commit();				
 				orderNums = (List<String>) getEntityManager().createNamedQuery("RatedTransaction.getDistinctOrderNumsByInvoice", String.class).setParameter("invoice", invoice).getResultList();
+				if(orderNums != null && orderNums.size() == 1 && orderNums.get(0) == null ){
+					orderNums = null;
+				}
+			}		
+			if(orderNums != null && !orderNums.isEmpty()){							
+				List<Order> orders = new ArrayList<Order>();
+				for(String orderNum : orderNums){
+					orders.add(orderService.findByCode(orderNum, invoice.getProvider()));
+				}
+				invoice.setOrders(orders);
 			}			
-			List<Order> orders = new ArrayList<Order>();
-			for(String orderNum : orderNums){
-				orders.add(orderService.findByCode(orderNum, invoice.getProvider()));
-			}
-			invoice.setOrders(orders);
-			
 			Long endDate = System.currentTimeMillis();
-
 			log.info("createAgregatesAndInvoice BR_ID=" +( billingRun==null?"null":billingRun.getId() )+ ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
 		} catch (BusinessException e) {

@@ -234,10 +234,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
 			if (invoicingThreshold != null) {
 				if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
 					return false;
 				} else {
-					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
 				}
 			} else {
 				log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
