@@ -2941,7 +2941,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains2" id="e0178d56-e4eb-41cf-bb4f-865515db302c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;longValue>18&lt;/longValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -2950,7 +2950,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains3" id="e0178d56-e4eb-41cf-bb4f-865515db303c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;longValue>19&lt;/longValue>
                   &lt;/customField></token>
                 <ignoreCase>true</ignoreCase>
@@ -2959,7 +2959,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains4" id="e0178d56-e4eb-41cf-bb4f-865515db304c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;doubleValue>20.21&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>true</ignoreCase>
@@ -2968,7 +2968,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains5" id="e0178d56-e4eb-41cf-bb4f-865515db305c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;doubleValue>22.23&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -2986,7 +2986,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains7" id="e0178d56-e4eb-41cf-bb4f-865515db307c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <listValue>
                         <value>
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY2"/>
@@ -3002,7 +3002,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains8" id="e0178d56-e4eb-41cf-bb4f-865515db308c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <listValue>
                         <value>
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY3"/>
@@ -3018,7 +3018,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains9" id="e0178d56-e4eb-41cf-bb4f-865515db309c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY0"/>
@@ -3034,7 +3034,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains10" id="e0178d56-e4eb-41cf-bb4f-865515db310c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY1"/>
@@ -3050,7 +3050,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains11" id="e0178d56-e4eb-41cf-bb4f-865515db311c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>o</key>
@@ -3072,7 +3072,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains12" id="e0178d56-e4eb-41cf-bb4f-865515db312c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>q</key>
@@ -3094,7 +3094,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains13" id="e0178d56-e4eb-41cf-bb4f-865515db313c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>s</key>
@@ -3116,7 +3116,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains14" id="e0178d56-e4eb-41cf-bb4f-865515db314c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>t</key>
@@ -3141,10 +3141,10 @@ public class Action1 extends Script {
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_NV">
                      <listValue>
                         <value>
-                           <dateValue>2012-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2012-08-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                         <value>
-                           <dateValue>2012-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2012-09-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                      </listValue>
                   </customField>]]></token>
@@ -3154,8 +3154,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains16" id="e0178d56-e4eb-41cf-bb4f-865515db316c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
-                     &lt;dateValue>2014-06-01T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
+                     &lt;dateValue>2014-06-01T00:00:00${#Project#timezone}&lt;/dateValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -3163,8 +3163,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains17" id="e0178d56-e4eb-41cf-bb4f-865515db317c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
-                     &lt;dateValue>2014-05-01T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
+                     &lt;dateValue>2014-05-01T00:00:00${#Project#timezone}&lt;/dateValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -3216,7 +3216,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains20" id="e0178d56-e4eb-41cf-bb4f-865515db320c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>36</longValue>
@@ -3232,7 +3232,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains21" id="e0178d56-e4eb-41cf-bb4f-865515db321c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>38</longValue>
@@ -3248,7 +3248,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains22" id="e0178d56-e4eb-41cf-bb4f-865515db322c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <doubleValue>40.41</doubleValue>
@@ -3264,7 +3264,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains23" id="e0178d56-e4eb-41cf-bb4f-865515db323c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <doubleValue>44.45</doubleValue>
@@ -3280,7 +3280,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains24" id="e0178d56-e4eb-41cf-bb4f-865515db324c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <listValue>
                         <value>
                            <stringValue>SELLER_STRING_VALUE_11</stringValue>
@@ -3296,7 +3296,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains25" id="e0178d56-e4eb-41cf-bb4f-865515db325c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <listValue>
                         <value>
                            <stringValue>SELLER_STRING_VALUE_13</stringValue>
@@ -3312,7 +3312,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains26" id="e0178d56-e4eb-41cf-bb4f-865515db326c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;stringValue>SELLER_STRING_VALUE_3&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3321,7 +3321,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains27" id="e0178d56-e4eb-41cf-bb4f-865515db327c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;stringValue>SELLER_STRING_VALUE_4&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3348,7 +3348,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains30" id="e0178d56-e4eb-41cf-bb4f-865515db330c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>bb</key>
@@ -3370,7 +3370,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains31" id="e0178d56-e4eb-41cf-bb4f-865515db331c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>dd</key>
@@ -3392,13 +3392,13 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains32" id="e0178d56-e4eb-41cf-bb4f-865515db332c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <listValue>
                         <value>
-                           <dateValue>2009-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2009-08-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                         <value>
-                           <dateValue>2009-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2009-09-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                      </listValue>
                   </customField>]]></token>
@@ -3408,13 +3408,13 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains33" id="e0178d56-e4eb-41cf-bb4f-865515db333c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <listValue>
                         <value>
-                           <dateValue>2008-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2008-08-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                         <value>
-                           <dateValue>2008-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2008-09-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                      </listValue>
                   </customField>]]></token>
@@ -3424,7 +3424,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains34" id="e0178d56-e4eb-41cf-bb4f-865515db334c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>nn</key>
@@ -3446,7 +3446,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains35" id="e0178d56-e4eb-41cf-bb4f-865515db335c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>pp</key>
@@ -3468,18 +3468,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains36" id="e0178d56-e4eb-41cf-bb4f-865515db336c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>rr</key>
                            <value>
-                              <dateValue>2005-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ss</key>
                            <value>
-                              <dateValue>2005-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -3490,18 +3490,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains37" id="e0178d56-e4eb-41cf-bb4f-865515db337c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>tt</key>
                            <value>
-                              <dateValue>2004-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2004-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>uu</key>
                            <value>
-                              <dateValue>2004-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2004-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -3512,7 +3512,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains38" id="e0178d56-e4eb-41cf-bb4f-865515db338c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>jj</key>
@@ -3534,7 +3534,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains39" id="e0178d56-e4eb-41cf-bb4f-865515db339c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>ll</key>
@@ -3556,7 +3556,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains40" id="e0178d56-e4eb-41cf-bb4f-865515db340c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>26.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3565,7 +3565,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains41" id="e0178d56-e4eb-41cf-bb4f-865515db341c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>28.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3590,7 +3590,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains43" id="e0178d56-e4eb-41cf-bb4f-865515db343c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>vv</key>
@@ -3606,7 +3606,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains44" id="e0178d56-e4eb-41cf-bb4f-865515db344c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>xx</key>
@@ -3628,7 +3628,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains45" id="e0178d56-e4eb-41cf-bb4f-865515db345c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>SELLER_STRING_VALUE_1&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3637,7 +3637,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains46" id="e0178d56-e4eb-41cf-bb4f-865515db346c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>SELLER_STRING_VALUE_2&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3668,7 +3668,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains48" id="e0178d56-e4eb-41cf-bb4f-865515db348c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <listValue>
                         <value>
                            <doubleValue>52.53</doubleValue>
@@ -3684,7 +3684,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains49" id="e0178d56-e4eb-41cf-bb4f-865515db349c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <listValue>
                         <value>
                            <doubleValue>56.57</doubleValue>
@@ -3700,18 +3700,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains50" id="e0178d56-e4eb-41cf-bb4f-865515db350c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>x</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -3722,18 +3722,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains51" id="e0178d56-e4eb-41cf-bb4f-865515db351c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>z</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aa</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -3744,13 +3744,13 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains52" id="e0178d56-e4eb-41cf-bb4f-865515db352c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
-                           <dateValue>2011-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2011-08-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                         <value>
-                           <dateValue>2011-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2011-09-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                      </listValue>
                   </customField>]]></token>
@@ -3760,13 +3760,13 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains53" id="e0178d56-e4eb-41cf-bb4f-865515db353c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
-                           <dateValue>2010-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2010-08-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                         <value>
-                           <dateValue>2010-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                           <dateValue>2010-09-01T00:00:00${#Project#timezone}</dateValue>
                         </value>
                      </listValue>
                   </customField>]]></token>
@@ -3776,7 +3776,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains54" id="e0178d56-e4eb-41cf-bb4f-865515db354c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff</key>
@@ -3798,7 +3798,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains55" id="e0178d56-e4eb-41cf-bb4f-865515db355c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>hh</key>
@@ -3858,7 +3858,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains58" id="e0178d56-e4eb-41cf-bb4f-865515db358c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3867,7 +3867,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains59" id="e0178d56-e4eb-41cf-bb4f-865515db359c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -3876,7 +3876,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains60" id="e0178d56-e4eb-41cf-bb4f-865515db360c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <listValue>
                         <value>
                            <longValue>48</longValue>
@@ -3892,7 +3892,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains61" id="e0178d56-e4eb-41cf-bb4f-865515db361c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <listValue>
                         <value>
                            <longValue>50</longValue>
@@ -3908,7 +3908,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains62" id="e0178d56-e4eb-41cf-bb4f-865515db362c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>k</key>
@@ -3930,7 +3930,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" name="Contains63" id="e0178d56-e4eb-41cf-bb4f-865515db363c">
               <con:configuration>
                 <token><![CDATA[</customField>
-                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                  <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>m</key>
@@ -3952,7 +3952,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains64" id="e0178d56-e4eb-41cf-bb4f-865515db364c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <stringValue>SELLER_STRING_VALUE_7</stringValue>
@@ -3968,7 +3968,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains65" id="e0178d56-e4eb-41cf-bb4f-865515db365c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <stringValue>SELLER_STRING_VALUE_9</stringValue>
@@ -3984,8 +3984,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains66" id="e0178d56-e4eb-41cf-bb4f-865515db366c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
-                     &lt;dateValue>2013-04-01T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
+                     &lt;dateValue>2013-04-01T00:00:00${#Project#timezone}&lt;/dateValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -3993,8 +3993,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains67" id="e0178d56-e4eb-41cf-bb4f-865515db367c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
-                     &lt;dateValue>2013-02-01T00:00:00${#Project#timezone2}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
+                     &lt;dateValue>2013-02-01T00:00:00${#Project#timezone2}&lt;/dateValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -4003,7 +4003,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" name="Contains68" id="e0178d56-e4eb-41cf-bb4f-865515db368c">
               <con:configuration>
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_NV">
-                     &lt;dateValue>2015-06-01T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                     &lt;dateValue>2015-06-01T00:00:00${#Project#timezone}&lt;/dateValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -4016,13 +4016,13 @@ public class Action1 extends Script {
                         <entry>
                            <key>g</key>
                            <value>
-                              <dateValue>2008-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2008-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>h</key>
                            <value>
-                              <dateValue>2008-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2008-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -4033,7 +4033,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains70" id="e0178d56-e4eb-41cf-bb4f-865515db370c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="MONTHLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -4042,7 +4042,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains71" id="e0178d56-e4eb-41cf-bb4f-865515db371c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.CalendarYearly" code="YEARLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -4051,7 +4051,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains710" id="e0178d56-e4eb-41cf-bb4f-865515db710c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;longValue>24&lt;/longValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -4060,7 +4060,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains72" id="e0178d56-e4eb-41cf-bb4f-865515db372c">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;longValue>25&lt;/longValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -4190,13 +4190,13 @@ public class Action1 extends Script {
                         <entry>
                            <key>g|13&lt;83</key>
                            <value>
-                              <dateValue>2008-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2008-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>h|14&lt;84</key>
                            <value>
-                              <dateValue>2008-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2008-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -4241,7 +4241,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f393f102-e948-455f-822b-ecc68e4d3527" name="Contains 80">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>k|17&lt;87</key>
@@ -4269,7 +4269,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="de26f43b-d68b-444f-9ad1-4ed59867cc7c" name="Contains 81">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>m|1&lt;8</key>
@@ -4297,7 +4297,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="a01c11fc-4a3f-438d-be08-981c455f97d5" name="Contains 82">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>o|1&lt;8</key>
@@ -4325,7 +4325,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="540a42aa-a055-4c16-abff-cbeef4ed4195" name="Contains 83">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>q|11&lt;81</key>
@@ -4353,7 +4353,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="747614c8-d461-4915-a46f-b9200f90440b" name="Contains 84">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>s|12&lt;82</key>
@@ -4381,7 +4381,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f7fc282e-0b2b-49df-b6e1-3124109bd4f6" name="Contains 85">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>t|13&lt;83</key>
@@ -4409,18 +4409,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="20c26967-9432-43a2-9fd7-3b873dd5004e" name="Contains 86">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>x|14&lt;84</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>y|15&lt;85</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -4437,18 +4437,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="74d28737-884b-41f4-b8b7-36ce5920dd40" name="Contains 87">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>z|16&lt;86</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aa|17&lt;87</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -4465,7 +4465,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="0e2d4bcd-9b73-4df9-86d0-5ff08e56ba0f" name="Contains 88">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>bb|1&lt;8</key>
@@ -4493,7 +4493,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="79193ae5-cae6-45ab-9c18-fefbbe5a8c8f" name="Contains 89">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>dd|1&lt;8</key>
@@ -4521,7 +4521,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="63d3a823-35ee-41ce-8fbc-32e2f7a0befe" name="Contains 90">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff|1&lt;8</key>
@@ -4549,7 +4549,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="5ee9b478-9e71-4287-a173-c90089ceeaf9" name="Contains 91">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>hh|11&lt;81</key>
@@ -4577,7 +4577,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfabfa57-7600-4e9c-a29e-73beb394ccf6" name="Contains 92">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>jj|13&lt;83</key>
@@ -4605,7 +4605,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3e08a615-13d0-4858-af32-de61c1a57b0c" name="Contains 93">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>ll|1&lt;8</key>
@@ -4633,7 +4633,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="71918a87-b907-4a5e-9af7-7d7f8c0794fc" name="Contains 94">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>nn|1&lt;8</key>
@@ -4661,7 +4661,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="d14efdbe-2898-479e-8ef8-aaf76b9ce1e8" name="Contains 95">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>pp|12&lt;82</key>
@@ -4689,18 +4689,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="506a38c7-47c3-4969-ad7c-a5ddd850eb17" name="Contains 96">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>rr|1&lt;8</key>
                            <value>
-                              <dateValue>2005-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ss|1&lt;8</key>
                            <value>
-                              <dateValue>2005-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2005-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -4717,18 +4717,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="a7423054-8025-4610-9503-94eb2faf1f7a" name="Contains 97">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>tt|13&lt;83</key>
                            <value>
-                              <dateValue>2004-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2004-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>uu|14&lt;84</key>
                            <value>
-                              <dateValue>2004-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2004-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
@@ -4745,7 +4745,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="71260bb8-1c89-4a95-bbc9-fbb4403d71ce" name="Contains 98">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>vv|1&lt;8</key>
@@ -4773,7 +4773,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="9803df74-d2f6-4ebb-9f18-e478836b895c" name="Contains 99">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_ENTITY_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>xx|1&lt;8</key>
@@ -4881,7 +4881,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="9dbff307-2877-4fff-87ea-27141504aad6" name="XPath Match 3">
               <con:configuration>
                 <path>//childEntityValue[@code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_CET_CFT4"][@valuePeriodPriority="1"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_CET_CFT4" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_CET_CFT4" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
   <mapValue>
     <entry>
       <key>bb</key>
@@ -4905,7 +4905,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="cbaff615-3984-43a6-b7a7-bb7effdc3ff2" name="XPath Match 4">
               <con:configuration>
                 <path>//childEntityValue[@code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_CET_CFT4"][@valuePeriodPriority="2"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_CET_CFT4" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_CET_CFT4" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
   <mapValue>
     <entry>
       <key>aa</key>
@@ -5060,7 +5060,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="aefef24e-3719-4510-afbe-adcea610dc51">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <doubleValue>40.41</doubleValue>
@@ -5076,7 +5076,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="ddc8be16-cfbe-4cf8-bcd3-5570fc267743">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <doubleValue>44.45</doubleValue>
@@ -5092,7 +5092,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 3" id="83b25b71-d057-40de-a114-b2e972e9033f">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-10-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-11-01T00:00:00${#Project#timezone2}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-10-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-11-01T00:00:00${#Project#timezone2}">
                      <listValue>
                         <value>
                            <doubleValue>140.41</doubleValue>
@@ -5108,7 +5108,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 4" id="54a68b79-9edd-4c8b-818d-3cde9c8f1e85">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-07-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-08-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" valuePeriodStartDate="2015-07-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-08-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <doubleValue>244.45</doubleValue>
@@ -5895,18 +5895,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -5917,18 +5917,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -5977,18 +5977,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>x</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -5999,18 +5999,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>z</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aa</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -6124,7 +6124,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="e01aa4e2-4502-443b-a8b6-8eefda4f6815">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_1&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6133,7 +6133,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="84db416e-dc67-4c56-9291-53b7e2b47338">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_2&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6180,7 +6180,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8400ff96-e6eb-4ef0-88d5-a608ceb1f83b">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>26.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6189,7 +6189,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="68e4c55a-ffc5-4678-b109-7f8d8c30216a">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>28.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6597,18 +6597,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-07-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-07-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-06-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-06-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -6619,12 +6619,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -6673,18 +6673,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>x</key>
                            <value>
-                              <dateValue>2002-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2002-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>z</key>
                            <value>
-                              <dateValue>2017-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2017-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -6695,18 +6695,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>z</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aa</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -6820,7 +6820,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="e01aa4e2-4502-443b-a8b6-8eefda4f6815">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_1&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6829,7 +6829,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="84db416e-dc67-4c56-9291-53b7e2b47338">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_2&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6841,7 +6841,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 3" id="7d4c00e2-6a8f-4360-a216-a8bc5b6d7ac9">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-07-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-08-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-07-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-08-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_244&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6888,7 +6888,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8400ff96-e6eb-4ef0-88d5-a608ceb1f83b">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>26.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6897,7 +6897,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="68e4c55a-ffc5-4678-b109-7f8d8c30216a">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>128.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -6906,7 +6906,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 3" id="78a7cfb2-5f5e-48f0-9cd1-1fbed698469f">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-11-04T00:00:00${#Project#timezone2}:00" valuePeriodEndDate="2015-11-30T00:00:00${#Project#timezone2}:00" valuePeriodPriority="3">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-11-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-11-30T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
                      &lt;doubleValue>126.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -7535,7 +7535,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="5155584b-2214-4f04-aed8-3c4b4df21ce0">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>bb</key>
@@ -7557,7 +7557,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="2db0f088-888b-4311-8fb0-4350a3f5bb67">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>dd</key>
@@ -7617,7 +7617,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="3501a7be-76b9-45d1-8111-b6254bde97d7">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff</key>
@@ -7639,7 +7639,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="ce84ec44-b4f4-4ad0-978b-6410349e00bb">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>hh</key>
@@ -7699,7 +7699,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="82a7b33d-dbd9-4409-a358-7c6f76941944">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>26.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -7708,7 +7708,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="8a6b9f42-8d9c-41df-a3a5-9aa94cbee382">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>28.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -7771,7 +7771,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="09156ed2-7210-4629-8a0d-c8cea31cb2f4">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -7819,7 +7819,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="6a7d7ee6-0330-479d-bbeb-c5fc385a008c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>vv</key>
@@ -7835,7 +7835,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="cf1a9840-3a04-4956-b5eb-1cca872d648d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>xx</key>
@@ -8491,7 +8491,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="5155584b-2214-4f04-aed8-3c4b4df21ce0">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>bb</key>
@@ -8513,7 +8513,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="2db0f088-888b-4311-8fb0-4350a3f5bb67">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_ENTITY_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>dd</key>
@@ -8573,7 +8573,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="3501a7be-76b9-45d1-8111-b6254bde97d7">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff</key>
@@ -8595,7 +8595,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="ce84ec44-b4f4-4ad0-978b-6410349e00bb">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>mm</key>
@@ -8655,7 +8655,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="82a7b33d-dbd9-4409-a358-7c6f76941944">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>126.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -8664,7 +8664,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="8a6b9f42-8d9c-41df-a3a5-9aa94cbee382">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_CHARGE_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>28.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -8727,7 +8727,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="09156ed2-7210-4629-8a0d-c8cea31cb2f4">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_ENTITY_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY"/>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -8775,7 +8775,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="6a7d7ee6-0330-479d-bbeb-c5fc385a008c">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>vv</key>
@@ -8797,7 +8797,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="cf1a9840-3a04-4956-b5eb-1cca872d648d">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OFFER_ENTITY_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      <mapValue>
                         <entry>
                            <key>xx</key>
@@ -9173,7 +9173,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="611a199d-dc06-4bec-add2-2272535ed0cf">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>36</longValue>
@@ -9189,7 +9189,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="be43110e-2082-47ae-a6ef-7b60d42542d9">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>38</longValue>
@@ -9424,7 +9424,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="611a199d-dc06-4bec-add2-2272535ed0cf">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>136</longValue>
@@ -9440,7 +9440,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="be43110e-2082-47ae-a6ef-7b60d42542d9">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>38</longValue>
@@ -9614,7 +9614,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="611a199d-dc06-4bec-add2-2272535ed0cf">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>136</longValue>
@@ -9630,7 +9630,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="be43110e-2082-47ae-a6ef-7b60d42542d9">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>38</longValue>
@@ -9663,8 +9663,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="5e487e70-a3d1-47c7-a123-f407806937f2" name="Contains 5">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
-                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
+                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -9673,7 +9673,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="30158110-3b2c-4f3f-bf66-f8bbf6b57f0c" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1']/subscriptionDate</path>
-                <content>2015-06-01T00:00:00${#Project#timezone}:00</content>
+                <content>2015-06-01T00:00:00${#Project#timezone}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -9782,7 +9782,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="611a199d-dc06-4bec-add2-2272535ed0cf">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>136</longValue>
@@ -9798,7 +9798,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="be43110e-2082-47ae-a6ef-7b60d42542d9">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>38</longValue>
@@ -9839,8 +9839,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="d9032aeb-be94-430f-b52a-d2f28d7e0f8b" name="Contains 6">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
-                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
+                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -9857,7 +9857,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="a33a48d9-bebb-45a7-9d34-fdafcc40e7e2" name="Contains 8">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="3">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="3">
                            &lt;stringValue>Service2 activated&lt;/stringValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -9876,7 +9876,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="66e836a0-8b40-4080-852a-6fc1b8b3b42a" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1']/subscriptionDate</path>
-                <content>2015-06-01T00:00:00${#Project#timezone}:00</content>
+                <content>2015-06-01T00:00:00${#Project#timezone}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -9894,7 +9894,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="7e9b1fc6-d074-4493-bc27-121dafe205ff" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path>
-                <content>2016-04-08T00:00:00${#Project#timezone}:00</content>
+                <content>2016-04-08T00:00:00${#Project#timezone}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -10245,7 +10245,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-06-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-07-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_VC" valuePeriodStartDate="2015-06-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-07-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>+32</key>
@@ -10305,7 +10305,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_STRING_MAP_VC" valuePeriodStartDate="2015-06-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-07-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_STRING_MAP_VC" valuePeriodStartDate="2015-06-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-07-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>+32</key>
@@ -10430,7 +10430,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="e01aa4e2-4502-443b-a8b6-8eefda4f6815">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_11&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10439,7 +10439,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="84db416e-dc67-4c56-9291-53b7e2b47338">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      &lt;stringValue>BA_STRING_VALUE_21&lt;/stringValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10486,7 +10486,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8400ff96-e6eb-4ef0-88d5-a608ceb1f83b">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                      &lt;doubleValue>261.27&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10495,7 +10495,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="68e4c55a-ffc5-4678-b109-7f8d8c30216a">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;doubleValue>281.29&lt;/doubleValue>
                   &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10542,7 +10542,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="611a199d-dc06-4bec-add2-2272535ed0cf">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>136</longValue>
@@ -10558,7 +10558,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="be43110e-2082-47ae-a6ef-7b60d42542d9">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_LONG_LIST_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <listValue>
                         <value>
                            <longValue>138</longValue>
@@ -10582,7 +10582,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="87b76f4b-23f4-4ca8-a070-08bc0f3e5879" name="Contains 4">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone}:00" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="1">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10591,8 +10591,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="342ecf78-6b58-468a-95a9-697720aa6b65" name="Contains 5">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone2}:00" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone2}:00" valuePeriodPriority="2">
-                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}:00&lt;/dateValue>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
+                           &lt;dateValue>2015-09-24T00:00:00${#Project#timezone}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -10609,7 +10609,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="3f1c878b-dd7b-4756-b311-5c58f1263ddc" name="Contains 7">
               <con:configuration>
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_NV">
-                           &lt;dateValue>2015-12-24T00:00:00${#Project#timezone2}:00&lt;/dateValue>
+                           &lt;dateValue>2015-12-24T00:00:00${#Project#timezone2}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -10636,7 +10636,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="d8310d26-0739-45cd-a18f-8b176024e547" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path>
-                <content>2016-01-09T00:00:00${#Project#timezone2}:00</content>
+                <content>2016-01-09T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -18474,18 +18474,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18496,18 +18496,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18556,18 +18556,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>x</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18578,18 +18578,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>z</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aa</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18752,18 +18752,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18774,18 +18774,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18891,18 +18891,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -18913,18 +18913,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -19079,18 +19079,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -19101,18 +19101,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -19282,18 +19282,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>xe</key>
                            <value>
-                              <dateValue>2007-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>ye</key>
                            <value>
-                              <dateValue>2007-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2007-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -19304,18 +19304,18 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d" disabled="true">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}:00" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}:00">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_MAP_VC" valuePeriodStartDate="2015-08-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-01T00:00:00${#Project#timezone}">
                      <mapValue>
                         <entry>
                            <key>y</key>
                            <value>
-                              <dateValue>2006-08-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-08-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                         <entry>
                            <key>aayy</key>
                            <value>
-                              <dateValue>2006-09-01T00:00:00${#Project#timezone}:00</dateValue>
+                              <dateValue>2006-09-01T00:00:00${#Project#timezone}</dateValue>
                            </value>
                         </entry>
                      </mapValue>
@@ -25272,11 +25272,11 @@ public class Action1 extends Script {
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>
