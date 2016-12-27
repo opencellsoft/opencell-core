@@ -18,6 +18,7 @@ import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
@@ -219,9 +220,6 @@ public class BillingAccountApi extends AccountApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
-		if (StringUtils.isBlank(postData.getCustomerAccount())) {
-			missingParameters.add("customerAccount");
-		}
 		if (StringUtils.isBlank(postData.getBillingCycle())) {
 			missingParameters.add("billingCycle");
 		}
@@ -248,7 +246,9 @@ public class BillingAccountApi extends AccountApi {
 			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(), provider);
 			if (customerAccount == null) {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
-			}
+			} else if (!billingAccount.getCustomerAccount().equals(customerAccount)) {
+                throw new InvalidParameterException("Can not change the parent account. Current parent account (customer account) is " + billingAccount.getCustomerAccount().getCode());
+            }
 			billingAccount.setCustomerAccount(customerAccount);
 		}
 
