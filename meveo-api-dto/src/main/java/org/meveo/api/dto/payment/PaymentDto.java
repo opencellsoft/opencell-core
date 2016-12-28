@@ -50,6 +50,9 @@ public class PaymentDto extends BaseDto {
 	private Date transactionDate;
 	private List<String> listOCCReferenceforMatching;
 	private boolean isToMatching;
+    private String paymentOrder;
+    private BigDecimal fees = BigDecimal.ZERO; 
+    private String comment;
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -178,15 +181,60 @@ public class PaymentDto extends BaseDto {
 	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
+	
+	
 
+	/**
+	 * @return the paymentOrder
+	 */
+	public String getPaymentOrder() {
+		return paymentOrder;
+	}
+
+	/**
+	 * @param paymentOrder the paymentOrder to set
+	 */
+	public void setPaymentOrder(String paymentOrder) {
+		this.paymentOrder = paymentOrder;
+	}
+
+	/**
+	 * @return the fees
+	 */
+	public BigDecimal getFees() {
+		return fees;
+	}
+
+	/**
+	 * @param fees the fees to set
+	 */
+	public void setFees(BigDecimal fees) {
+		this.fees = fees;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod
-				+ ", occTemplateCode=" + occTemplateCode + ", amount=" + amount + ", customerAccountCode="
-				+ customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate="
-				+ depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate
-				+ ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
-				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + ", customFields=" + customFields + "]";
+		return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount=" + amount + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate=" + depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
+				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
 	}
+
+	
 
 }

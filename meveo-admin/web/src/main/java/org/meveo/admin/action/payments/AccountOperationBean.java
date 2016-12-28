@@ -43,6 +43,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -131,6 +132,9 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 		if (accountOperation instanceof AutomatedPayment) {
 			page = "/pages/payments/accountOperations/showAutomatedPayment.xhtml";
 		}
+		if (accountOperation instanceof Payment) {
+			page = "/pages/payments/accountOperations/showPayment.xhtml";
+		}		
 		return page;
 	}
 
