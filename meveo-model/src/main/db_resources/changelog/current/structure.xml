@@ -3117,4 +3117,16 @@
         <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and notification_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
     </changeSet> 
+    
+    <changeSet id="#2302_20161227" author="anasseh"> 
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="PAYMENT_ORDER" type="VARCHAR(70)"/>
+        </addColumn>
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="PAYMENT_FEES" type="numeric(23, 12)"/>
+        </addColumn>        
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="COMMENT" type="text"/>
+        </addColumn>
+    </changeSet>               
 </databaseChangeLog>

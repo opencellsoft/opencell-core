@@ -20,7 +20,12 @@
             <hftl:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" isMessage="true" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" maxlength="50" disabled="true" />
             <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" disabled="true" />
-            <hftl:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
+                 		<hftl:decorateFormField fieldId="amount_text" label="#{messages['accountOperation.amount']}">
+			<h:outputText id="amount_text" disabled="true"
+			rendered="#{true}"
+			value="#{paymentBean.entity.amount}"
+			 converter="bigDecimalConverter" />
+					</hftl:decorateFormField>   
          </p:tab>
 				<hftl:customFields backingBean="#{automatedPaymentBean}" messagesId=":apFormId:messages" />
 			</p:tabView>
