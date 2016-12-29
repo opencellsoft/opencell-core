@@ -56,6 +56,7 @@ import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -96,6 +97,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 
 
 
@@ -249,7 +253,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String generateInvoice() {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,true, currentUser);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false, currentUser);
+       	    invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
+        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser));
+        	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
+
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
         } catch (Exception e) {
