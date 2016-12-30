@@ -23,6 +23,7 @@
         prefix - prefix for component to distinguish when used multiple times in the same page (for different entities)
         clientGuiId - current component's ID
         componentWidth - component width
+        hasInheritedValue - if value is set in parent CF entity
  -->
 
 <ui:composition>
@@ -33,12 +34,15 @@
     <c:if test="${empty(componentWidth)}">
         <c:set var="componentWidth" value="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP?45:100}" />
     </c:if>
+    <c:if test="#{empty(hasInheritedValue)}">
+        <c:set var="hasInheritedValue" value="false" />
+    </c:if>
     <c:set var="idPrefix" value="#{prefix}_#{inherited?'i':'c'}" />
     <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
-    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''} #{inherited?messages['customField.inheritedValue']:''}" componentWidth="#{componentWidth}"
+    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}" componentWidth="#{componentWidth}"
         displayOneLine="false">
 
         <p:messages id="#{idPrefix}_cfMessages" globalOnly="false" redisplay="false" />
@@ -130,7 +134,7 @@
         <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
             <p:dataTable id="#{idPrefix}_customFields_map_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues" editable="#{edit and !disabled}"
                 editMode="cell" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
-				 paginator="true" rows="10"  styleClass="custom-grid" 
+				 paginator="true" rows="10"  styleClass="custom-grid" paginatorAlwaysVisible="false"
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="10,20,30">
 

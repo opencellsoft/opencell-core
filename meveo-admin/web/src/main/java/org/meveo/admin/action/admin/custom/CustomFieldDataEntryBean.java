@@ -507,21 +507,35 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
             // evaluates to false
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
 
-            } else if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+                // Single field's mandatory requirement are taken care in GUI level, otherwise it will generate multiple error messages (one from GUI required="true" validation and
+                // another one from here)
+            } else if ((cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
-                for (CustomFieldInstance cfi : getFieldValueHolderByUUID(entity.getUuid()).getValues(cft)) {
+                List<CustomFieldInstance> cfis = getFieldValueHolderByUUID(entity.getUuid()).getValues(cft);
 
-                    // Fail validation on non empty values
-                    if (cfi.isValueEmptyForGui()) {
-
+                // Fail validation on non empty values only if it does not have inherited value
+                if (cfis == null || cfis.isEmpty()) {
+                    if (customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), null) == null) {
                         FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
                         msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                         fc.addMessage(null, msg);
                         valid = false;
+                    }
+                } else {
+                    for (CustomFieldInstance cfi : cfis) {                        
+                        if (cfi.isValueEmptyForGui()) {
+                            if (customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), null) != null) {
+                                break;
+                            }
+                            FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
+                            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            fc.addMessage(null, msg);
+                            valid = false;
+                        }
                     }
                 }
             }
