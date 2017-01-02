@@ -19,8 +19,10 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
@@ -32,7 +34,10 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class TriggeredEDRTemplateService extends
 		BusinessService<TriggeredEDRTemplate> {
-	
+
+	@Inject
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
+
 	public synchronized void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
 		String code=findDuplicateCode(entity,currentUser);
@@ -42,5 +47,11 @@ public class TriggeredEDRTemplateService extends
 		entity.setId(null);
 		entity.setCode(code);
 		create(entity, getCurrentUser());
+	}
+	
+	public TriggeredEDRTemplate update(TriggeredEDRTemplate triggerEDRTemplate,User user) throws BusinessException{
+		TriggeredEDRTemplate result = super.update(triggerEDRTemplate, user);
+		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(triggerEDRTemplate);
+		return result;	
 	}
 }
