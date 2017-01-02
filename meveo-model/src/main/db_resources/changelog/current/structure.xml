@@ -3128,5 +3128,23 @@
         <addColumn tableName="AR_ACCOUNT_OPERATION">
             <column name="COMMENT" type="text"/>
         </addColumn>
-    </changeSet>               
+    </changeSet> 
+    
+    <changeSet id="#2303_20161228" author="anasseh"> 
+        <addColumn tableName="billing_invoice_configuration">
+           <column name="display_orders" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>     
+        <addColumn tableName="ord_order_item">
+            <column name="description" type="VARCHAR(100)" />
+            <column name="address_1" type="VARCHAR(50)" />
+            <column name="address_2" type="VARCHAR(50)" />
+            <column name="address_3" type="VARCHAR(50)" />
+            <column name="address_city" type="VARCHAR(50)" />
+            <column name="address_country" type="VARCHAR(50)" />
+            <column name="address_state" type="VARCHAR(50)" />
+            <column name="address_zipcode" type="VARCHAR(10)" /> 
+        </addColumn>  
+    </changeSet>    
+    
+   
 </databaseChangeLog>

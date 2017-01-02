@@ -31,6 +31,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.shared.Address;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
@@ -291,4 +292,12 @@ public class Order extends BusinessCFEntity {
     public String getOrderNumber() {
         return StringUtils.isBlank(externalId) ? code : externalId;
     }
+    
+    public Address getShippingAddress(){
+    	if(getOrderItems() != null && !getOrderItems().isEmpty() ){
+    		return getOrderItems().get(0).getShippingAddress();
+    	}
+    	return null;
+    }
+    
 }

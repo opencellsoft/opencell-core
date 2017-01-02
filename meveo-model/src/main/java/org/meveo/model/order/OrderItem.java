@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,6 +28,7 @@ import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.shared.Address;
 
 @Entity
 @ExportIdentifier({ "order.code", "itemId", "provider" })
@@ -98,6 +100,9 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCRIPTION_ID")
     private Subscription subscription;
+    
+	@Embedded
+	private Address shippingAddress = new Address();
 
     @Transient
     private Object orderItemDto;
@@ -168,8 +173,24 @@ public class OrderItem extends BaseEntity {
     public void setProductInstances(List<ProductInstance> productInstances) {
         this.productInstances = productInstances;
     }
+    
+    
 
-    public void addProductInstance(ProductInstance productInstance) {
+    /**
+	 * @return the shippingAddress
+	 */
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
+
+	/**
+	 * @param shippingAddress the shippingAddress to set
+	 */
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public void addProductInstance(ProductInstance productInstance) {
         if (this.productInstances == null) {
             this.productInstances = new ArrayList<>();
         }
