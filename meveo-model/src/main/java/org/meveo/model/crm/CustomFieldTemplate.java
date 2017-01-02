@@ -99,8 +99,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "CACHE_VALUE_FOR")
     private Integer cacheValueTimeperiod;
 
-    @Column(name = "DEFAULT_VALUE", length = 50)
-    @Size(max = 50)
+    @Column(name = "DEFAULT_VALUE", length = 250)
+    @Size(max = 250)
     private String defaultValue;
 
     /**
