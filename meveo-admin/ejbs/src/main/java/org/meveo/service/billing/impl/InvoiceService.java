@@ -1106,9 +1106,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File xmlFile = null;
         if(refreshInvoice){
-        	xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
         } else {
-        	xmlInvoiceCreator.create(invoice, currentUser);
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
         }
 
         Scanner scanner = new Scanner(xmlFile);
