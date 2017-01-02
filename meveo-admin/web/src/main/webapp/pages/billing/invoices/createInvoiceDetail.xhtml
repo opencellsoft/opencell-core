@@ -6,11 +6,14 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{creationInvoiceBean.preRenderView}" />
-            <f:viewParam name="objectId" value="#{creationInvoiceBean.objectId}" />
-            <f:viewParam name="tab" value="#{creationInvoiceBean.activeTab}" />
+			<f:event type="preRenderView"
+				listener="#{creationInvoiceBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,7 +22,7 @@
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
-				updateField=":formId:tabView:linkedInvoices :invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text :formId:tabView:panelAddLinkedInvoice"
+				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text"
 				selection="#{creationInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
@@ -29,10 +32,10 @@
 				column2="description">
 			</hftl:entityPopup>
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
-				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs  :formId:tabView:panelAddLinkedInvoice"
+				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs"
 				selection="#{creationInvoiceBean.invoiceToAdd}"
 				dataModel="#{creationInvoiceBean.getInvoicesByTypeAndBA()}"
-				backingBean="#{creationInvoiceBean}" selectionListenerBean="#{creationInvoiceBean}" selectionListenerMethod="onInvoiceSelect"
+				backingBean="#{creationInvoiceBean}"
 				searchField1Label="#{messages['invoice.invoiceNumber']}"
 				searchField1="invoiceNumber"
 				column1Label="#{messages['invoice.invoiceNumber']}"

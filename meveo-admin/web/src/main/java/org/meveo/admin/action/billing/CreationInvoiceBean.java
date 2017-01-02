@@ -128,7 +128,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private boolean includeBalance;
 
-	private InvoiceAgregateHandler agregateHandler = new InvoiceAgregateHandler(invoiceSubCategoryService);
+	@Inject
+	private  InvoiceAgregateHandler agregateHandler;
 	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
 
 	@Inject
@@ -159,6 +160,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	@Override
 	public Invoice initEntity() {
+		agregateHandler.reset();
 		entity = super.initEntity();
 		entity.setDueDate(new Date());
 		entity.setInvoiceDate(new Date());
