@@ -24,11 +24,10 @@
 				</p:breadCrumb>
 			</h:form>
 
-		<p:panel>
+		<hftl:formPanel  formId="userFormId" backingBean="#{userBean}" columns="1" ajaxSubmit="true" submitPartialProcess=":userFormId:tabView">
 			<p:tabView id="tabView" activeIndex="#{userBean.activeTab}">
 				<p:tab title="#{messages['commons.tab.information']}">
-					<hftl:formPanel
-						backingBean="#{userBean}" columns="1">
+					
 						<hftl:formField label="#{messages['user.userName']}"
 							field="userName" required="true" validateUnique="true"
 							useConverter="false" />
@@ -69,7 +68,7 @@
                 rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userGroupLevel userRoles" actionListenerBean="#{userBean}"
                 actionListenerMethod="onProviderChange" />
 
-            <hftl:decorateFormField fieldId="formId:userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">
+            <hftl:decorateFormField fieldId=":userFormId:tabView:userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">
                 <p:tree id="userGroupLevel" value="#{userBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"
                     selection="#{userBean.userGroupSelectedNode}">
                     <p:treeNode>
@@ -81,7 +80,7 @@
             <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles" listType="pickUpList" valueLabelField="name" required="true"
                 dualListModel="#{userBean.dualListModel}" />
 
-        </hftl:formPanel>
+        
 				</p:tab>
 
 
@@ -193,8 +192,9 @@
 						</h:panelGroup>
 					</p:dialog>
 				</p:tab>
+				<hftl:customFields backingBean="#{userBean}" messagesId=":userFormId:messages" />
 			</p:tabView>
-		</p:panel>
+			</hftl:formPanel>
     </ui:define>
 
 </ui:composition>

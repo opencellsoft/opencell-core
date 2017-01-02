@@ -3147,4 +3147,11 @@
     </changeSet>    
     
    
+    <changeSet id="#2304_20170102" author="anasseh"> 
+    	<addColumn tableName="adm_user">
+           <column name="UUID" type="VARCHAR(60)">                
+            </column>
+        </addColumn>
+         <sql>update ADM_USER set UUID =concat('USER-', id) </sql>   
+    </changeSet>  
 </databaseChangeLog>
