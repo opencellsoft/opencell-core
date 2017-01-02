@@ -81,6 +81,10 @@ public class InvoiceConfiguration implements Serializable, IEntity {
     @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_BILLING_CYCLE")
     private Boolean displayBillingCycle = false;
+    
+    @Type(type="numeric_boolean")
+    @Column(name = "DISPLAY_ORDERS")
+    private Boolean displayOrders = false;
 
     @OneToOne
     @JoinColumn(name="PROVIDER_ID")
@@ -172,7 +176,8 @@ public class InvoiceConfiguration implements Serializable, IEntity {
 	public String toString() {
 		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
 				+ "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", "
-				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + "]"+ ", displayBillingCycle=" + displayBillingCycle + "]";
+				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods
+				+ ", displayBillingCycle=" + displayBillingCycle +",displayOrders="+displayOrders + "]";
 	}
 
 	public Long getId() {
@@ -203,5 +208,21 @@ public class InvoiceConfiguration implements Serializable, IEntity {
 	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
+
+	/**
+	 * @return the displayOrders
+	 */
+	public Boolean getDisplayOrders() {
+		return displayOrders;
+	}
+
+	/**
+	 * @param displayOrders the displayOrders to set
+	 */
+	public void setDisplayOrders(Boolean displayOrders) {
+		this.displayOrders = displayOrders;
+	}
+	
+	
 
 }

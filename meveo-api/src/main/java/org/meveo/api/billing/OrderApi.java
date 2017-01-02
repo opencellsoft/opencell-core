@@ -43,6 +43,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
+import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -204,6 +205,18 @@ public class OrderApi extends BaseApi {
             } else {
                 orderItem.setStatus(OrderStatusEnum.ACKNOWLEDGED);
             }
+            
+    		if (productOrderItem.getProduct() != null && productOrderItem.getProduct().getPlace() != null && productOrderItem.getProduct().getPlace().getAddress() != null ) {
+    			Address shippingAddress = new Address(); 
+    			shippingAddress.setAddress1(productOrderItem.getProduct().getPlace().getAddress().getAddress1());
+    			shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
+    			shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
+    			shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
+    			shippingAddress.setCountry(productOrderItem.getProduct().getPlace().getAddress().getCountry());
+    			shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
+    			shippingAddress.setState(productOrderItem.getProduct().getPlace().getAddress().getState());
+    			orderItem.setShippingAddress(shippingAddress);
+    		}
 
             // Extract products that are not services. For each product offering there must be a product. Products that exceed the number of product offerings are treated as
             // services.

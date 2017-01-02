@@ -18,7 +18,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOError;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -79,6 +82,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -92,8 +97,10 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
@@ -431,7 +438,29 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual);
 			addCustomFields(invoice, invoice, doc, invoiceTag);
-			
+			if(provider.getInvoiceConfiguration() != null
+					&& provider.getInvoiceConfiguration().getDisplayOrders() != null
+					&& provider.getInvoiceConfiguration().getDisplayOrders() ){
+				Element ordersTag = doc.createElement("orders");
+				for(Order order : invoice.getOrders()){					
+					Element orderTag = doc.createElement("order");
+					orderTag.setAttribute("orderNumber", order.getCode());
+					orderTag.setAttribute("orderDate", DateUtils.formatDateWithPattern(order.getOrderDate(),DEFAULT_DATE_TIME_PATTERN));
+					orderTag.setAttribute("orderStatus", order.getStatus().name());
+					orderTag.setAttribute("deliveryInstructions", order.getDeliveryInstructions());
+					Element orderItemsTag = doc.createElement("orderItems");					
+					for(OrderItem orderItem : order.getOrderItems()){
+						String orderItemContent = orderItem.getSource().replaceAll("\\<\\?xml(.+?)\\?\\>", "").trim();						
+						Element orderItemElement =  docBuilder.parse(new ByteArrayInputStream(orderItemContent.getBytes())).getDocumentElement();							
+						Element firstDocImportedNode = (Element) doc.importNode(orderItemElement, true);
+						orderItemsTag.appendChild(firstDocImportedNode );							
+					}		
+					orderTag.appendChild(orderItemsTag);
+					addCustomFields(order, invoice, doc, orderTag);
+					ordersTag.appendChild(orderTag);					
+				}
+				invoiceTag.appendChild(ordersTag);
+			}			
 			Transformer trans = transfac.newTransformer();
 			// trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -454,7 +483,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             
             return xmlFile;
 
-        } catch (TransformerException | ParserConfigurationException e) {
+        } catch (TransformerException | ParserConfigurationException | SAXException | IOException e) {
             throw new BusinessException(
                 "Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber()
                         : invoice.getTemporaryInvoiceNumber(), e);
