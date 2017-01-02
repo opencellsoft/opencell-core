@@ -247,11 +247,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		recordedInvoice.setTaxAmount(amountTax);
 		recordedInvoice.setNetToPay(invoice.getNetToPay());
 		List<String> orderNums = new ArrayList<String>();
-		for(Order order : invoice.getOrders()){
-			orderNums.add(order.getCode());
+		if(invoice.getOrders()!=null){
+			for(Order order : invoice.getOrders()){
+				orderNums.add(order.getCode());
+			}
+			recordedInvoice.setOrderNumber(StringUtils.concatenate("\\|", orderNums));
 		}
-		recordedInvoice.setOrderNumber(StringUtils.concatenate("\\|", orderNums));
-		
 		try {
 			recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
 		} catch (Exception e) {
