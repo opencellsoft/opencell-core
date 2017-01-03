@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -30,7 +30,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Stateless
+@Stateful
 public class InvoiceAgregateHandler {
 	private Logger log = LoggerFactory.getLogger(InvoiceAgregateHandler.class);
 	 
