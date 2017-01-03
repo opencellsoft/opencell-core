@@ -72,7 +72,9 @@
                 </p:column>
                 <p:column headerText="#{messages['commons.actions']}" rendered="#{edit and !disabled}" width="15%">
                     <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="#{updateOnAddEdit} #{idPrefix}_customFields_map_omitFromSubmit"
-                        action="#{field.mapValuesForGUI.remove(mapValues)}" />
+                        action="#{field.mapValuesForGUI.remove(mapValues)}">
+                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                    </p:commandButton>
                 </p:column>
                 <c:if test="#{!inherited}">
                     <f:facet name="footer" layout="block">
@@ -128,11 +130,10 @@
         </c:if>
 
         <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
-            <p:dataTable id="#{idPrefix}_customFields_map_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues" editable="#{edit and !disabled}"
-                editMode="cell" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
-				 paginator="true" rows="10"  styleClass="custom-grid" 
-				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="10,20,30">
+            <p:dataTable id="#{idPrefix}_customFields_matrix_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues" editable="#{edit and !disabled}"
+                editMode="cell" reflow="false" resizableColumns="true" rowIndexVar="rowIndex" paginator="true" rows="10" styleClass="custom-grid"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="10,20,30">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
                 <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}" style="height:25px;">
@@ -161,12 +162,58 @@
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
+                <p:column headerText="#{messages['commons.actions']}" width="10%" rendered="#{edit and !disabled}">
+
+                    <p:commandButton icon="ui-icon-minus" action="#{field.matrixValuesForGUI.remove(mapValues)}" partialSubmit="true" process="@this"
+                        update="#{updateOnAddEdit} #{idPrefix}_customFields_matrix_omitFromSubmit">
+                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
                 <c:if test="#{!inherited}">
                     <f:facet name="footer" layout="block">
 
-                        <p:commandButton value="#{messages['customFieldTemplate.addRow']}" partialSubmit="true" process="@this" update="#{idPrefix}_customFields_map_omitFromSubmit"
-                            action="#{customFieldDataEntryBean.addMatrixRow(cft, field.matrixValuesForGUI)}" rendered="#{edit and !disabled}">
-                        </p:commandButton>
+                        <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" rendered="#{edit and !disabled}" />
+
+                        <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
+
+                            <c:forEach items="#{cft.matrixColumnsSorted}" var="column">
+
+                                <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.STRING}">
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}"
+                                        size="30" maxlength="50" />
+                                </c:if>
+
+                                <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
+
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_from')]}" converter="javax.faces.Double"
+                                        placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
+                                    <h:outputText value=" - " />
+                                    <p:inputText id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_to')]}"
+                                        converter="javax.faces.Double" placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
+                                </c:if>
+
+                                <h:outputText value=" &nbsp; " escape="false" />
+                            </c:forEach>
+
+                            <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}"
+                                label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
+
+                        </hf:namingContainer>
+
+                        <c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
+                            <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
+                                update="#{idPrefix}_customFields_matrix_omitFromSubmit" action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}"
+                                oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
+                                <p:resetInput target="addNewFields" />
+                            </p:commandButton>
+                        </c:if>
+
+                        <c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
+                            <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
+                                update="#{idPrefix}_customFields_matrix_omitFromSubmit" action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}">
+                                <p:resetInput target="addNewFields" />
+                            </p:commandButton>
+                        </c:if>
 
                         <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar) and edit and !disabled}"
                             update="@this #{updateOnAddEdit}" oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()"
