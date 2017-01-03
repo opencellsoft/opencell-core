@@ -262,9 +262,8 @@
                                                     </hftl:decorateFormField>
 
                                                     <div class="clearLeft"></div>
-                                                    <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}"
-                                                        cfFormId="offerCFForm_#{itemStatus.index}" />
+                                                    <hftl:customFields prefix="offer_cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
 
                                                 </p:tab>
                                             </c:forEach>

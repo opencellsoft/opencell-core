@@ -99,7 +99,7 @@
 							showEnableDisableButton="true"
 							updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 							ajaxSubmit="true"
-							submitPartialProcess=":tabView:formId #{exp:getFormIds(':tabView:cfForm', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size)}"
+							submitPartialProcess=":tabView:formId #{exp:getFormIds(':tabView:cf', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size)}"
 							enctype="multipart/form-data">
 
 							<hftl:formField label="#{messages['commons.image']}"
@@ -125,8 +125,7 @@
 				</p:tab>
 
 				<hftl:customFields backingBean="#{serviceTemplateBean}"
-					messagesId=":tabView:formId:messages" renderForm="true"
-					cfFormId="cfForm" />
+					messagesId=":tabView:formId:messages" renderForm="true" />
 
 				<p:tab title="#{messages['serviceTemplate.recurringCharges']}"
 					id="tab2" rendered="#{serviceTemplateBean.entity.id!=null}">

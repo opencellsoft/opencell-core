@@ -41,7 +41,7 @@
 		</h:form>
 		
 		<hftl:formPanel formId="offerForm" ajaxSubmit="true"
-			submitPartialProcess=":offerForm:tabView:offerInfo #{exp:getFormIds(':offerForm:tabView:cfForm', customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size)}"
+			submitPartialProcess=":offerForm:tabView:offerInfo #{exp:getFormIds(':offerForm:tabView:cf', customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size)}"
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 			enctype="multipart/form-data">
@@ -101,7 +101,7 @@
 				</p:tab>
 
 				<hftl:customFields backingBean="#{offerTemplateBean}"
-					messagesId="offerForm:messages" cfFormId="cfForm" />
+					messagesId="offerForm:messages" />
 
 				<p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 

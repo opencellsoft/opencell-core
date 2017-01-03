@@ -20,7 +20,6 @@
         messagesId - an ID of messages component for validation messages
         defaultTabLabel - a default tab label if it was not set during entity customization. If not provided a messages['customFieldTemplate.cfValues'] will be used
         renderForm - adds a form inside the tab
-        cfFormId - id of the form inside the tab
         
 -->
 
@@ -57,15 +56,9 @@
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
-
-    <c:set var="index" value="0" />
     
     <c:if test="${empty(renderForm)}">
     	<c:set var="renderForm" value="false" />
-    </c:if>
-    
-    <c:if test="${empty(cfFormId)}">
-    	<c:set var="cfFormId" value="cfForm" />
     </c:if>
 	
 	<c:forEach
@@ -78,18 +71,23 @@
 		
 		<p:tab title="#{tabLabel}" rendered="#{renderTab}">
 			<c:if test="#{renderForm}">
-				<h:form id="#{cfFormId}_#{index}">
-					<hftl:customElement />	
+				<h:form id="#{prefix}_form_#{cfTabStatus.index}">
+					<hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}"
+						cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}"
+						datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
+						prefix="#{prefix}" />
 				</h:form>
 			</c:if>
 
 			<c:if test="#{!renderForm}">
-				<p:outputPanel id="#{cfFormId}_#{index}">
-					<hftl:customElement />
-				</p:outputPanel>
+				<h:panelGroup id="#{prefix}_form_#{cfTabStatus.index}">
+					<hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}"
+						cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}"
+						datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
+						prefix="#{prefix}" />
+				</h:panelGroup>
 			</c:if>
 		</p:tab>
-		<c:set var="index" value="#{index+1}" />
 	</c:forEach>
 
 </ui:composition>

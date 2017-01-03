@@ -322,9 +322,8 @@
 
 
                                                     <div class="clearLeft"></div>
-                                                    <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
-                                                        cfFormId="offerCFForm_#{itemStatus.index}" />
+                                                    <hftl:customFields prefix="offer_cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                        messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
                                                 </p:tab>
                                             </c:forEach>

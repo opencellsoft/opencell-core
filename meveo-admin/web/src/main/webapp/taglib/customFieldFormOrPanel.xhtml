@@ -17,14 +17,14 @@
     Makes part of custom field management tag group 
     
     Attributes
+        cfTab - list of GroupedCustomField
         prefix - prefix for component to distinguish when used multiple times in save page
-        backingBean - backing bean associated with entity
-        entity - entity associated with custom fields. If not provided a backingBean.entity will be used
+        entity - entity, custom fields are related to
         edit - edit mode. Inherited from formPanel otherwise
         datePattern - date pattern for date entry/display
         dateTimePattern - date time pattern for period date display
         messagesId - an ID of messages component for validation messages
-        defaultTabLabel - a default tab label if it was not set during entity customization. If not provided a messages['customFieldTemplate.cfValues'] will be used
+        cft - custom field template
         
 -->
 
