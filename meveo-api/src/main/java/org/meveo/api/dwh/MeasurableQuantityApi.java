@@ -69,16 +69,16 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     }
 
-    public MeasurableQuantityDto find(String measurableQuantityCode, User currentUser) throws MeveoApiException {
+    public MeasurableQuantityDto find(String code, User currentUser) throws MeveoApiException {
 
-        if (StringUtils.isBlank(measurableQuantityCode)) {
-            missingParameters.add("measurableQuantityCode");
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
             handleMissingParameters();
         }
 
-        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(code, currentUser.getProvider());
         if (measurableQuantity == null) {
-            throw new EntityDoesNotExistsException(MeasurableQuantity.class, measurableQuantityCode);
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, code);
         }
 
         MeasurableQuantityDto result = new MeasurableQuantityDto(measurableQuantity);
@@ -86,16 +86,16 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
         return result;
     }
 
-    public void remove(String measurableQuantityCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(measurableQuantityCode)) {
-            missingParameters.add("measurableQuantityCode");
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
             handleMissingParameters();
         }
 
-        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(measurableQuantityCode, currentUser.getProvider());
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(code, currentUser.getProvider());
         if (measurableQuantity == null) {
-            throw new EntityDoesNotExistsException(MeasurableQuantity.class, measurableQuantityCode);
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, code);
         }
 
         measurableQuantityService.remove(measurableQuantity, currentUser);
