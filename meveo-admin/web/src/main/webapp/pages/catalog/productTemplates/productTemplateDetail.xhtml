@@ -12,16 +12,18 @@
 	</ui:define>
 
 	<ui:define name="body">
-
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="productTemplates"
-						value="#{messages['menu.productTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="productTemplates"
+					value="#{messages['menu.productTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['productTemplate']}"
+					disabled="true" rendered="#{productTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['productTemplate']} #{messages['commons.configuration']} - #{productTemplateBean.entity.code}"
+					disabled="true" rendered="#{!productTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel label="#{messages['menu.productTemplates']}"
 			backingBean="#{productTemplateBean}" showEnableDisableButton="true">

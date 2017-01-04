@@ -1,23 +1,44 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{creditCategoryListBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{creditCategoryListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-    
-	<ui:define name="body">
 
-		<hftl:searchPanel label="#{messages['creditCategory.search']}" backingBean="#{creditCategoryListBean}">
-			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}"
+					disabled="true" />
+				<p:menuitem value="#{messages['menu.creditCategories']}"
+					outcome="creditCategories" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['creditCategory.search']}"
+			backingBean="#{creditCategoryListBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}"
+				id="description" field="description" />
 		</hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{creditCategoryListBean}" label="#{messages['customerBrand.title']}" sortBy="code">
+		<hftl:dataList backingBean="#{creditCategoryListBean}"
+			label="#{messages['customerBrand.title']}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

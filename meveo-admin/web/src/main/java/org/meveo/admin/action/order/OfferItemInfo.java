@@ -55,10 +55,12 @@ public class OfferItemInfo implements Serializable {
         } else if (template instanceof OfferTemplate) {
             this.entityForCFValues = new Subscription();
             ((Subscription) this.entityForCFValues).setOffer((OfferTemplate) template);
+            ((Subscription) this.entityForCFValues).setCode((String) characteristics.get(OrderProductCharacteristicEnum.SUBSCRIPTION_CODE));
 
         } else if (template instanceof ProductTemplate) {
             this.entityForCFValues = new ProductInstance();
             ((ProductInstance) this.entityForCFValues).setProductTemplate((ProductTemplate) template);
+            ((ProductInstance) this.entityForCFValues).setCode((String) characteristics.get(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE));
 
         } else if (template instanceof ServiceTemplate) {
             this.entityForCFValues = new ServiceInstance();

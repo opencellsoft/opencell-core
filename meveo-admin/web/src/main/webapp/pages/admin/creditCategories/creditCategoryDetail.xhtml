@@ -13,15 +13,18 @@
     </ui:define>
     
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="creditCategories"
-						value="#{messages['menu.creditCategories']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="creditCategories"
+					value="#{messages['menu.creditCategories']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['creditCategory']}"
+					disabled="true" rendered="#{creditCategoryBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['creditCategory']} #{messages['commons.configuration']} - #{creditCategoryBean.entity.code}"
+					disabled="true" rendered="#{!creditCategoryBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 	
 		<hftl:formPanel label="#{messages['creditCategory.title']}" backingBean="#{creditCategoryBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>

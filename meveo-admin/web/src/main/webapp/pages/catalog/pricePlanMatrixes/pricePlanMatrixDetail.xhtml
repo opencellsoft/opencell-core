@@ -91,17 +91,21 @@
 		<!--             searchField2="description" column1Label="#{messages['calendar.name']}" column1="code" -->
 		<!--             column2Label="#{messages['BusinessEntity.description']}" column2="description"> -->
 		<!--         </hftl:entityPopup>         -->
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
-					<p:menuitem outcome="pricePlanMatrixes"
-						value="#{messages['menu.pricePlanMatrixes']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
 
-			<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
+				<p:menuitem outcome="pricePlanMatrixes"
+					value="#{messages['menu.pricePlanMatrixes']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['pricePlanMatrix']}"
+					disabled="true" rendered="#{pricePlanMatrixBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['pricePlanMatrix']} #{messages['commons.configuration']} - #{pricePlanMatrixBean.entity.code}"
+					disabled="true" rendered="#{!pricePlanMatrixBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['pricePlanMatrix.panel']}"
 			    ajaxSubmit="true" submitPartialProcess=":formPricePlan:tabView"
 				backingBean="#{pricePlanMatrixBean}" formId="formPricePlan" showBackButton="#{pricePlanMatrixBean.chargeTemplateId eq null or pricePlanMatrixBean.chargeTemplateId eq 0}">
 

@@ -6,7 +6,6 @@
     xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
-
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{titleBean.objectId}" />
@@ -14,14 +13,18 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="titles" value="#{messages['menu.titles']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="titles" value="#{messages['menu.titles']}" />
+				<p:menuitem
+					value="#{messages['commons.new']} #{messages['title']}"
+					disabled="true" rendered="#{titleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['title']} #{messages['commons.configuration']} - #{titleBean.entity.code}"
+					disabled="true" rendered="#{!titleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel label="#{messages['title.panel']}"
 			backingBean="#{titleBean}">

@@ -3,7 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jstl/core"
-	template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -15,26 +15,33 @@
 	<ui:define name="body">
 
 		<!-- Entity select popup. -->
-<!-- 		<hftl:entityPopup id="searchInvoiceCategoryPopup" -->
-<!-- 			header="#{messages['customer.popup.header']}" -->
-<!-- 			updateField=":searchForm:invoiceCategoryField" -->
-<!-- 			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}" -->
-<!-- 			backingBean="#{invoiceCategoryBean}" -->
-<!-- 			searchField1Label="#{messages['invoiceCategory.code']}" -->
-<!-- 			searchField1="code" -->
-<!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code"> -->
-<!-- 		</hftl:entityPopup> -->
-
-		<hftl:searchPanel 
-			label="#{messages['invoiceSubCategory.search']}"
+		<!-- 		<hftl:entityPopup id="searchInvoiceCategoryPopup" -->
+		<!-- 			header="#{messages['customer.popup.header']}" -->
+		<!-- 			updateField=":searchForm:invoiceCategoryField" -->
+		<!-- 			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}" -->
+		<!-- 			backingBean="#{invoiceCategoryBean}" -->
+		<!-- 			searchField1Label="#{messages['invoiceCategory.code']}" -->
+		<!-- 			searchField1="code" -->
+		<!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code"> -->
+		<!-- 		</hftl:entityPopup> -->
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="invoiceSubCategories"
+					value="#{messages['invoiceSubCategory.title']}" />
+			</p:breadCrumb>
+		</h:form>
+		<hftl:searchPanel label="#{messages['invoiceSubCategory.search']}"
 			backingBean="#{invoiceSubCategoryListBean}">
 			<hftl:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
-				field="invoiceCategory" valueLabelField="code" listBean="#{invoiceCategoryBean}"/>
-<!--                 popup="true" popupId="searchInvoiceCategoryPopup" clearButton="true" /> -->
+				field="invoiceCategory" valueLabelField="code"
+				listBean="#{invoiceCategoryBean}" />
+			<!--                 popup="true" popupId="searchInvoiceCategoryPopup" clearButton="true" /> -->
 			<hftl:searchField label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
-			<hftl:searchField label="#{messages['invoiceSubCategory.description']}"
+			<hftl:searchField
+				label="#{messages['invoiceSubCategory.description']}"
 				field="description" id="description" />
 			<!-- <hftl:searchField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
@@ -53,8 +60,8 @@
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-<!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
-<!-- 				permission="#{identity.hasPermission('catalog','catalogManagement')}" /> -->
+			<!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
+			<!-- 				permission="#{identity.hasPermission('catalog','catalogManagement')}" /> -->
 		</hftl:dataList>
 
 	</ui:define>

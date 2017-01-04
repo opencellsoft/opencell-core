@@ -9,17 +9,19 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="roles" value="#{messages['menu.userRoles']}" />
-                    <p:menuitem value="#{messages['role.new']}" disabled="true" rendered="#{userRoleBean.entity.transient}" />
-					<p:menuitem value="#{messages['role.editView']} - #{userRoleBean.entity.name}" disabled="true" rendered="#{!userRoleBean.entity.transient}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
-        <hftl:formPanel label="#{messages['role.userRolePanel']}" backingBean="#{userRoleBean}">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="roles" value="#{messages['menu.userRoles']}" />
+				<p:menuitem value="#{messages['role.new']}" disabled="true"
+					rendered="#{userRoleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['role.editView']} - #{userRoleBean.entity.name}"
+					disabled="true" rendered="#{!userRoleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['role.userRolePanel']}" backingBean="#{userRoleBean}">
             <hftl:formField label="#{messages['role.name']}" field="name" required="true" />
             <hftl:formField label="#{messages['role.description']}" field="description" size="50" maxlength="50" />
             <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"

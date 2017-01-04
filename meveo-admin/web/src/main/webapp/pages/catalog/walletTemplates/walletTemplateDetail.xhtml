@@ -12,15 +12,18 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="walletTemplates"
-						value="#{messages['menu.wallets']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="walletTemplates"
+					value="#{messages['menu.wallets']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['walletTemplate']}"
+					disabled="true" rendered="#{walletTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['walletTemplate']} #{messages['commons.configuration']} - #{walletTemplateBean.entity.code}"
+					disabled="true" rendered="#{!walletTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel id="formPanel" formId="walletTemplatId"
 			label="#{messages['menu.wallets']}"

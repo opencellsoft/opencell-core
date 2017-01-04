@@ -15,6 +15,13 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="productTemplates"
+					value="#{messages['menu.productTemplates']}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:searchPanel label="#{messages['productTemplate.search']}"
 			backingBean="#{productTemplateListBean}">

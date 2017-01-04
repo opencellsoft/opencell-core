@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
@@ -12,6 +13,13 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="invoiceCategories"
+					value="#{messages['menu.invoiceCategories']}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:searchPanel label="#{messages['invoiceCategory.search']}"
 			backingBean="#{invoiceCategoryListBean}">
@@ -30,8 +38,7 @@
 			<!-- <hftl:column label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
 			<hftl:column label="#{messages['invoiceCategory.subcategories']}"
 				field="invoiceSubCategories" valueLabelField="code" isList="true"
-				valueIdField="id"
-				entityView="invoiceSubCategoryDetail"
+				valueIdField="id" entityView="invoiceSubCategoryDetail"
 				backView="invoiceCategories" showPopup="true"
 				popupFields="accountingCode" />
 

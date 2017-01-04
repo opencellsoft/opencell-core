@@ -23,16 +23,20 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description">
-		</hftl:entityPopup>		
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="billingCycles"
-						value="#{messages['menu.billingCycles']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		</hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="billingCycles"
+					value="#{messages['menu.billingCycles']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['billingCycle']}"
+					disabled="true" rendered="#{billingCycleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['billingCycle']} #{messages['commons.configuration']} - #{billingCycleBean.entity.code}"
+					disabled="true" rendered="#{!billingCycleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" submitPartialProcess=":formBillingCycle:tabView"
 			label="#{messages['billingCycle.panel']}"

@@ -15,17 +15,6 @@
 	</ui:define>
 
 	<ui:define name="body">
-	
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="catMessagess"
-						value="#{messages['menu.catMessages']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
-		
 		<hftl:entityPopup id="Title_"
 			header="#{messages['title.search']}"
 			backingBean="#{titleBean}"
@@ -103,6 +92,19 @@
 			column2="description" selection="#{catMessagesBean.businessEntity}"
 			updateField=":catMessageFormId">
 		</hftl:entityPopup>
+		
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="catMessagess"
+					value="#{messages['menu.catMessages']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['BusinessEntity.description']}"
+					disabled="true" rendered="#{catMessagesBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['BusinessEntity.description']} #{messages['commons.configuration']} - #{catMessagesBean.entity.code}"
+					disabled="true" rendered="#{!catMessagesBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 		
 		<hftl:formPanel formId="catMessageFormId"
 				label="#{messages['catMessages.descriptionTranslation']}"
