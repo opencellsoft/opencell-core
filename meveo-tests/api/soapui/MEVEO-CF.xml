@@ -1512,7 +1512,8 @@ public class Action1 extends Script {
           <con:returnProperties/>
           <con:runMode>PARALLELL</con:runMode>
         </con:config>
-      </con:testStep><con:properties/>
+      </con:testStep>
+      <con:properties/>
       <con:reportParameters/>
     </con:testCase>
     <con:testCase id="b2563788-a6d0-442a-bac1-3467999e030c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Test all CF types" searchProperties="true">
@@ -2953,9 +2954,13 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains2" id="e0178d56-e4eb-41cf-bb4f-865515db302c">
-              <con:configuration><token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_VC" valuePeriodStartDate="2015-09-01T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-10-01T00:00:00${#Project#timezone}">
                      &lt;longValue>18&lt;/longValue>
-                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains3" id="e0178d56-e4eb-41cf-bb4f-865515db303c">
               <con:configuration>
@@ -4001,9 +4006,13 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains67" id="e0178d56-e4eb-41cf-bb4f-865515db367c">
-              <con:configuration><token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                      &lt;dateValue>2013-02-01T00:00:00${#Project#timezone2}&lt;/dateValue>
-                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains68" id="e0178d56-e4eb-41cf-bb4f-865515db368c">
               <con:configuration>
@@ -5650,7 +5659,11 @@ public class Action1 extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
-              <con:configuration><token>The following parameters are required or contain invalid values: CF_BASE_STRING_REQUIRED</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: CF_BASE_STRING_REQUIRED</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -6341,7 +6354,11 @@ public class Action1 extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="9ae44202-d28b-4d62-8afc-db139ff746e9"/>
             <con:assertion type="Simple Contains" name="Contains" id="a8ac1d5c-be71-4d37-b42d-51a157a476e8">
-              <con:configuration><token>The following parameters are required or contain invalid values: CF_BASE_STRING_REQUIRED</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: CF_BASE_STRING_REQUIRED</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -7965,14 +7982,17 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="82a7b33d-dbd9-4409-a358-7c6f76941944">
-              <con:configuration><token><![CDATA[<customField code="CF_BASE_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00+02:00" valuePeriodEndDate="2015-09-30T00:00:00+02:00" valuePeriodPriority="1">
+              <con:configuration>
+                <token><![CDATA[<customField code="CF_BASE_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00+02:00" valuePeriodEndDate="2015-09-30T00:00:00+02:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff</key>
                            <value>
-                              <stringValue>CHARGE_STRING_VALUE_21</stringValue>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                              <stringValue>CHARGE_STRING_VALUE_21</stringValue>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -8012,16 +8032,18 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="82a7b33d-dbd9-4409-a358-7c6f76941944">
-              <con:configuration><token><![CDATA[               <customFields>
+              <con:configuration>
+                <token><![CDATA[<customFields>
                   <customField code="CF_BASE_PRODUCT_STRING_MAP_V" valuePeriodStartDate="2015-09-04T00:00:00+02:00" valuePeriodEndDate="2015-09-30T00:00:00+02:00" valuePeriodPriority="1">
                      <mapValue>
                         <entry>
                            <key>ff</key>
                            <value>
-                              <stringValue>CHARGE_STRING_VALUE_21</stringValue>
-  ]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                              <stringValue>CHARGE_STRING_VALUE_21</stringValue>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
-            
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -9136,7 +9158,8 @@ public class Action1 extends Script {
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="Create price plan - one shot" id="598a636e-880d-466c-8cff-28dcf24f88f8">
+      </con:testStep>
+      <con:testStep type="request" name="Create price plan - one shot" id="598a636e-880d-466c-8cff-28dcf24f88f8">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>CatalogWsSoapBinding</con:interface>
@@ -9177,7 +9200,8 @@ public class Action1 extends Script {
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="Create price plan - recurring" id="b73789e1-0d0b-44e2-a014-6cfc3317f350">
+      </con:testStep>
+      <con:testStep type="request" name="Create price plan - recurring" id="b73789e1-0d0b-44e2-a014-6cfc3317f350">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>CatalogWsSoapBinding</con:interface>
@@ -9218,7 +9242,8 @@ public class Action1 extends Script {
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:testStep type="request" name="Create price plan - usage" id="c9f070a6-123e-45a3-a483-2d5b4a0d5d34">
+      </con:testStep>
+      <con:testStep type="request" name="Create price plan - usage" id="c9f070a6-123e-45a3-a483-2d5b4a0d5d34">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>CatalogWsSoapBinding</con:interface>
@@ -9259,7 +9284,8 @@ public class Action1 extends Script {
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep><con:properties>
+      </con:testStep>
+      <con:properties>
         <con:property>
           <con:name>index</con:name>
           <con:value>684</con:value>
@@ -16132,7 +16158,8 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
@@ -16355,7 +16382,8 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
@@ -17686,6 +17714,89 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
               <con:configuration>
                 <token>Invalid value 'I_DO_NOT_EXIST' for field appliesTo</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test CFT default value length" id="96e85299-b3c2-4042-94f9-fdf02dd916fd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test CFT default value length" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createField>
+         <!--Optional:-->
+         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_DEF_VAL" description="Default value test">
+            <fieldType>STRING</fieldType>
+            <accountLevel>CUST</accountLevel> 
+            <storageType>SINGLE</storageType> 
+            <defaultValue>01234567890123456789012345678901234567890123456789012345678901324567890123456789</defaultValue>
+         </customField>
+      </ws:createField>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT default value length" id="c9e52924-cce3-40b5-9977-ea8b5d21d639">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Delete CFT default value length" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeField>
+         <customFieldTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_CF_DEF_VAL</customFieldTemplateCode>
+         <appliesTo>CUST</appliesTo>
+      </ws:removeField>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
