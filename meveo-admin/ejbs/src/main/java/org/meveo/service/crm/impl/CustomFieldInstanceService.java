@@ -818,10 +818,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return Custom field value
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, User currentUser) {
-        Object value = getCFValue(entity, code, currentUser);
+
+        // Get value without instantiating a default value if value not found
+        Object value = getCFValue(entity, code, null);
         if (value != null) {
             return value;
         }
+
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
@@ -835,7 +838,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 }
             }
         }
-        return null;
+
+        // Instantiate default value if applicable
+        return instantiateCFWithDefaultValue(entity, code, currentUser);
+
     }
 
     /**
@@ -848,10 +854,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
-        Object value = getCFValue(entity, code, date, currentUser);
+        // Get value without instantiating a default value if value not found
+        Object value = getCFValue(entity, code, date, null);
         if (value != null) {
             return value;
         }
+
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
@@ -865,7 +873,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 }
             }
         }
-        return null;
+
+        // Instantiate default value if applicable
+        return instantiateCFWithDefaultValue(entity, code, date, currentUser);
     }
 
     /**
@@ -1049,7 +1059,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
-        Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
+        Object value = getCFValueByRangeOfNumbers(entity, code, date, numberToMatch);
         if (value != null) {
             return value;
         }
@@ -1452,7 +1462,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (numberToMatchObj == null) {
             return false;
         }
-        
+
         String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
         Double fromNumber = null;
         try {
@@ -1480,18 +1490,18 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         } else if (numberToMatchObj instanceof BigDecimal) {
             numberToMatchDbl = ((BigDecimal) numberToMatchObj).doubleValue();
-            
+
         } else if (numberToMatchObj instanceof String) {
             try {
                 numberToMatchDbl = Double.parseDouble(((String) numberToMatchObj));
-                
+
             } catch (NumberFormatException e) {
                 Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
                 log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
                     numberToMatchObj != null ? numberToMatchObj.getClass() : null);
                 return false;
             }
-            
+
         } else {
             Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
             log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
@@ -1524,5 +1534,74 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public List<CustomFieldInstance> getCustomFieldInstances(List<String> uuids) {
         return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityListForIndex", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids)
             .getResultList();
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return Custom field value
+     */
+    private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, User currentUser) {
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null || cft.getDefaultValue() == null) {
+            // log.trace("No CFT found or no default value specified {}/{}", entity, code);
+            return null;
+        } else if (currentUser == null) {
+            log.trace("No current user is available to set a default value for {}/{}", entity, code);
+            return null;
+        }
+
+        if (cft.isVersionable()) {
+            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used", entity
+                .getClass().getSimpleName(), code);
+            return instantiateCFWithDefaultValue(entity, code, new Date(), currentUser);
+        }
+
+        // Create such CF with default value if one is specified on CFT
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, code, value, currentUser);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
+        }
+
+        return value;
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity and a date
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param date Date
+     * @return Custom field value
+     */
+    public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
+
+        // If field is not versionable - get the value without the date
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null || cft.getDefaultValue() == null || cft.getCalendar() == null) {
+            // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
+            return null;
+        } else if (currentUser == null) {
+            log.trace("No current user is available to set a default value for {}/{}", entity, code);
+            return null;
+        }
+
+        if (!cft.isVersionable()) {
+            return instantiateCFWithDefaultValue(entity, code, currentUser);
+        }
+
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, code, value, date, currentUser);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
+        }
+
+        return value;
     }
 }
