@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Main provider" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Main provider" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -57671,7 +57671,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createProvider</con:operation>
           <con:request name="Create Provider" id="5fe54926-c495-4c0b-9a75-bf4b2e24d787">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SuperAdminSettingsWs</con:endpoint>
@@ -57729,7 +57729,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateRole</con:operation>
           <con:request name="Create Role Admin" id="13c9dfd6-cd69-4ac9-852f-a963ac53ff59">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -57789,7 +57789,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateRole</con:operation>
           <con:request name="Create Role MARKETING_MANAGER" id="13c9dfd6-cd69-4ac9-852f-a963ac53ff59">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -57834,7 +57834,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateUser</con:operation>
           <con:request name="Create User provider.admin" id="49070757-2f09-4c1c-a5a6-7be296580b3b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -57875,7 +57875,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateUser</con:operation>
           <con:request name="Create User provider.marketingmanager" id="49070757-2f09-4c1c-a5a6-7be296580b3b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -57911,6 +57911,46 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create Seller PROVIDER" id="6bad6d3e-4d09-4ada-a0cb-9f1699974143">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create Seller PROVIDER" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSeller>
+         <seller code="${#Project#provider}" description="Seller for ${#Project#provider}" />
+      </ws:createOrUpdateSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e99396bc-7954-42aa-a627-9f8044354851"/>
+            <con:assertion type="Simple Contains" id="a121a63b-c4ab-4548-acd7-8e6d4a0e14ac" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find Role" id="838119c6-ef6d-40c4-ae99-fe138f141e67" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -57918,7 +57958,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:operation>createOrUpdateUser</con:operation>
           <con:request name="Find Role" id="49070757-2f09-4c1c-a5a6-7be296580b3b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjo0UkNhRkN4YkNxcWZtR0Q=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -59299,7 +59339,7 @@ public class ShellExecutor extends org.meveo.service.script.Script {
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/meveo</con:value>
+      <con:value>http://integratoin.i.opencellsoft.com/meveo</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
@@ -59316,5 +59356,6 @@ public class ShellExecutor extends org.meveo.service.script.Script {
   </con:properties>
   <con:wssContainer/>
   <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
   <con:sensitiveInformation/>
 </con:soapui-project>

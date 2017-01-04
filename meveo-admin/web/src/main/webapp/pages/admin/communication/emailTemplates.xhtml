@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -15,6 +15,13 @@
 	</ui:define>
 
     <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="emailTemplates"
+					value="#{messages['menu.emailTemplates']}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:searchPanel backingBean="#{emailTemplateListBean}"
 			label="#{messages['emailTemplate.search']}">
@@ -24,8 +31,9 @@
 		           
 		<hftl:dataList backingBean="#{emailTemplateListBean}" sortBy="subject">
 			<hftl:column label="#{messages['emailTemplate.subject']}"
-				field="subject" entityView="emailTemplateDetail" valueIdField="id"/>
-			<hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}"/>           
+				field="subject" entityView="emailTemplateDetail" valueIdField="id" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />           
 		</hftl:dataList>                    
                 
     </ui:define>

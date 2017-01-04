@@ -123,10 +123,10 @@ public class QuoteApi extends BaseApi {
     public ProductQuote createQuote(ProductQuote productQuote, User currentUser) throws MeveoApiException, BusinessException {
 
         if (productQuote.getQuoteItem() == null || productQuote.getQuoteItem().isEmpty()) {
-            missingParameters.add("orderItem");
+            missingParameters.add("quoteItem");
         }
         if (productQuote.getQuoteDate() == null) {
-            missingParameters.add("orderDate");
+            missingParameters.add("quoteDate");
         }
 
         handleMissingParameters();

@@ -823,4 +823,14 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         }
         return null;
     }
+
+    /**
+     * Update entity used for CF field association with entered code. Applies to subscriptions and product instances
+     * 
+     * @param itemInfo Configuration item info (tree item)
+     * @param characteristicName Characteristic's name corresponding to code value
+     */
+    public void updateCFEntityCode(OfferItemInfo itemInfo, OrderProductCharacteristicEnum characteristicName) {
+        itemInfo.getEntityForCFValues().setCode((String) itemInfo.getCharacteristics().get(characteristicName));
+    }
 }

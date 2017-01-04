@@ -97,6 +97,10 @@ public class InvoicingApi extends BaseApi {
     }
 
     public BillingRunDto getBillingRunInfo(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException {
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
+        }
         BillingRun billingRunEntity = getBillingRun(billingRunId, currentUser);
 
         BillingRunDto billingRunDtoResult = new BillingRunDto();
@@ -105,6 +109,10 @@ public class InvoicingApi extends BaseApi {
     }
 
     public BillingAccountsDto getBillingAccountListInRun(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException {
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
+        }
         BillingRun billingRunEntity = getBillingRun(billingRunId, currentUser);
         BillingAccountsDto billingAccountsDtoResult = new BillingAccountsDto();
         List<BillingAccount> baEntities = billingRunEntity.getBillableBillingAccounts();
@@ -135,6 +143,10 @@ public class InvoicingApi extends BaseApi {
 
     public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException,
             BusinessException {
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
+        }
         BillingRun billingRun = getBillingRun(billingRunId, currentUser);
         if (!BillingRunStatusEnum.PREINVOICED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("BillingRun is not at the PREINVOICED status");
@@ -145,6 +157,10 @@ public class InvoicingApi extends BaseApi {
 
     public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException,
             EntityDoesNotExistsException, BusinessException {
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
+        }
         BillingRun billingRun = getBillingRun(billingRunId, currentUser);
         if (!BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("BillingRun is not at the POSTINVOICED status");
@@ -153,17 +169,21 @@ public class InvoicingApi extends BaseApi {
         return postInvoicingReportsDTO;
     }
 
-    public void validateBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
-            BusinessApiException, BusinessException {
-        try {
-            billingRunService.forceValidate(billingRunId, currentUser);
-        } catch (Exception e) {
-            throw new BusinessException(e);
+    public void validateBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, BusinessException {
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
         }
+            billingRunService.forceValidate(billingRunId, currentUser);
+       
     }
 
     public void cancelBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
-        BillingRun billingRun = getBillingRun(billingRunId, currentUser);
+        if (billingRunId == null || billingRunId.longValue() == 0) {
+            missingParameters.add("billingRunId");
+            handleMissingParameters();
+        }
+    	BillingRun billingRun = getBillingRun(billingRunId, currentUser);
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a POSTVALIDATED billingRun");
         }

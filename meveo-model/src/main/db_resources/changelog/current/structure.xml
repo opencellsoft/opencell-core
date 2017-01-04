@@ -3154,4 +3154,8 @@
         </addColumn>
          <sql>update ADM_USER set UUID =concat('USER-', id) </sql>   
     </changeSet>  
+    
+    <changeSet id="#2289_20170102" author="AndriusKarpavicius"> 
+        <modifyDataType tableName="CRM_CUSTOM_FIELD_TMPL" columnName="DEFAULT_VALUE" newDataType="VARCHAR(250)"/>
+    </changeSet>         
 </databaseChangeLog>

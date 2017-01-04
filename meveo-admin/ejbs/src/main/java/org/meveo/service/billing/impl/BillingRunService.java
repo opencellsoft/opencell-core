@@ -668,6 +668,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@SuppressWarnings("unchecked")
 	public void validate(Long billingRunId,User currentUser,long nbRuns,long waitingMillis) throws Exception{
 		BillingRun billingRun = findById(billingRunId);
+		if(billingRun == null){
+			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
+		}
 		log.debug("validate, billingRun status={}",billingRun.getStatus());
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			refreshOrRetrieve(billingRun);
@@ -713,6 +716,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	
 	public void forceValidate(Long billingRunId,User currentUser) throws BusinessException{
 		BillingRun billingRun = findById(billingRunId);
+		if(billingRun == null){
+			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
+		}
 		log.debug("forceValidate, billingRun status={}",billingRun.getStatus());
 		switch(billingRun.getStatus()){
 		case POSTINVOICED:
@@ -733,9 +739,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) {
+	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) throws BusinessException {
 		BillingRun billingRun = findById(billingRunId, currentUser.getProvider());
-
+		if(billingRun == null){
+			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
+		}
 		if(sizeBA != null){
 			billingRun.setBillingAccountNumber(sizeBA);
 		}

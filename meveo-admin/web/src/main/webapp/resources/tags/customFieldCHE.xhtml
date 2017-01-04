@@ -43,7 +43,7 @@
         <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
             <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
                 <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}"
-                    entity="#{cc.attrs.entity}" disabled="#{cc.attrs.disabled}" />
+                    entity="#{cc.attrs.entity}" datePattern="#{cc.attrs.datePattern}" disabled="#{cc.attrs.disabled}" />
             </hftl:decorateFormField>
         </c:if>
 

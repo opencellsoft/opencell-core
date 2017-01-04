@@ -2,6 +2,7 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
     xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
@@ -13,8 +14,15 @@
 	</ui:define>
 	    
     <ui:define name="body">
-    	
-    		<hftl:searchPanel label="#{messages['wallet.search']}" backingBean="#{walletTemplateListBean}">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="walletTemplates"
+					value="#{messages['menu.wallets']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['wallet.search']}" backingBean="#{walletTemplateListBean}">
     			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
     			<hftl:searchField label="#{messages['businessEntity.description']}" field="description"/>
     		</hftl:searchPanel>	

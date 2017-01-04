@@ -36,15 +36,20 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description">
 		</hftl:entityPopup>
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="calendars"
-						value="#{messages['menu.calendars']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="calendars"
+					value="#{messages['menu.calendars']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['calendar']}"
+					disabled="true" rendered="#{calendarBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['calendar']} #{messages['commons.configuration']} - #{calendarBean.entity.code}"
+					disabled="true" rendered="#{!calendarBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel label="#{messages['calendar.panel']}"
 			backingBean="#{calendarBean}">
 
