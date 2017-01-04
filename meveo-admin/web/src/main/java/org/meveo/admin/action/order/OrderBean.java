@@ -40,7 +40,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -111,8 +110,6 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     private OrderItem selectedOrderItem;
 
@@ -823,5 +820,15 @@ public class OrderBean extends CustomFieldBean<Order> {
         }
 
         return editable;
+    }
+
+    /**
+     * Update entity used for CF field association with entered code. Applies to subscriptions and product instances
+     * 
+     * @param itemInfo Configuration item info (tree item)
+     * @param characteristicName Characteristic's name corresponding to code value
+     */
+    public void updateCFEntityCode(OfferItemInfo itemInfo, OrderProductCharacteristicEnum characteristicName) {
+        itemInfo.getEntityForCFValues().setCode((String) itemInfo.getCharacteristics().get(characteristicName));
     }
 }
