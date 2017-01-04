@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
@@ -12,6 +13,13 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="usageChargeTemplates"
+					value="#{messages['menu.usageChargeTemplates']}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:searchPanel label="#{messages['usageChargeTemplate.title']}"
 			backingBean="#{usageChargeTemplateListBean}">
@@ -25,13 +33,12 @@
 				field="disabled" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['usageChargeTemplate.title']}" sortBy="code"
-			backingBean="#{usageChargeTemplateListBean}">
+		<hftl:dataList label="#{messages['usageChargeTemplate.title']}"
+			sortBy="code" backingBean="#{usageChargeTemplateListBean}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
-			<hftl:column
-				label="#{messages['chargeTemplate.unitMultiplicator']}"
+			<hftl:column label="#{messages['chargeTemplate.unitMultiplicator']}"
 				field="unitMultiplicator" converterParam="12digits" />
 			<hftl:column
 				label="#{messages['chargeTemplate.ratingUnitDescription']}"
@@ -40,15 +47,17 @@
 				field="filterParam1" />
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
 				field="filterParam2" />
-			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				valueLabelField="code" isList="true" sort="false" />
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}"
+				field="edrTemplates" valueLabelField="code" isList="true"
+				sort="false" />
 			<hftl:column label="#{messages['usageChargeTemplate.priority']}"
 				field="priority" />
 
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" renderDuplicateLink="true" />
+				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				renderDuplicateLink="true" />
 		</hftl:dataList>
 
 	</ui:define>

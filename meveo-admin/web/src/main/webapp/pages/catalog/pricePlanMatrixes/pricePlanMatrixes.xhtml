@@ -65,6 +65,14 @@
 <!-- 			updateField=":searchForm:tradingCurrency"> -->
 <!-- 		</hftl:entityPopup> -->
 
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
+				<p:menuitem outcome="pricePlanMatrixes"
+					value="#{messages['menu.pricePlanMatrixes']}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:searchPanel columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}"

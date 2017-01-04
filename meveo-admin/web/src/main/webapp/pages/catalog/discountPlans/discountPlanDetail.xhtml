@@ -15,17 +15,20 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
-					<p:menuitem outcome="discountPlans"
-						value="#{messages['menu.discountPlans']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
-	
-	<hftl:entityPopup id="searchInvoiceCategoryPopup"
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
+				<p:menuitem outcome="discountPlans"
+					value="#{messages['menu.discountPlans']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['discountPlan']}"
+					disabled="true" rendered="#{discountPlanBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['discountPlan']} #{messages['commons.configuration']} - #{discountPlanBean.entity.code}"
+					disabled="true" rendered="#{!discountPlanBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
 			updateField=":tabView:formDiscountPlanItem:categorySelectId :tabView:formDiscountPlanItem:categorySelectId_text :tabView:formDiscountPlanItem:invoiceSubCategories"
 			selection="#{discountPlanBean.discountPlanItem.invoiceCategory}"

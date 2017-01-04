@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
@@ -13,7 +14,13 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="oneShotChargeTemplates"
+					value="#{messages['menu.oneShotChargeTemplates']}" />
+			</p:breadCrumb>
+		</h:form>
 		<hftl:searchPanel label="#{messages['oneShotChargeTemplate.search']}"
 			backingBean="#{oneShotChargeTemplateListBean}">
 			<hftl:searchField label="#{messages['chargeTemplate.code']}"
@@ -23,12 +30,13 @@
 			<!-- <hftl:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
 			<hftl:searchField label="#{messages['chargeTemplate.type']}"
 				field="oneShotChargeTemplateType" childField="label" />
-			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" />
 
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"
-		    noClose="false" sortBy="code"
+			noClose="false" sortBy="code"
 			backingBean="#{oneShotChargeTemplateListBean}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
@@ -36,14 +44,14 @@
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
 				field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}"
-				field="oneShotChargeTemplateType.label"
-				isMessage="true" />
+				field="oneShotChargeTemplateType.label" isMessage="true" />
 			<hftl:column label="#{messages['charge.subCategory']}"
 				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
 				entityView="invoiceSubCategoryDetail" propagateConversation="false"
 				backView="invoiceCategories" />
-			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				valueLabelField="code" valueIdField="id" isList="true" entityView="triggeredEdrTemplateDetail"/>
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}"
+				field="edrTemplates" valueLabelField="code" valueIdField="id"
+				isList="true" entityView="triggeredEdrTemplateDetail" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:column
@@ -51,7 +59,8 @@
 				field="immediateInvoicing" isMessage="true" />
 
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" renderDuplicateLink="true"/>
+				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				renderDuplicateLink="true" />
 		</hftl:dataList>
 
 	</ui:define>
