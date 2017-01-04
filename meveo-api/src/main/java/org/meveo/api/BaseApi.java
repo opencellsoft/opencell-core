@@ -243,7 +243,7 @@ public abstract class BaseApi {
             }
         }
 
-        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
+        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory. Check inherited values as well.
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
         if (entity.getParentCFEntities() != null) {
             for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
@@ -252,16 +252,20 @@ public abstract class BaseApi {
         }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
+            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
             }
             if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
-                missingParameters.add(cft.getCode());
+                if (customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser) == null) {
+                    missingParameters.add(cft.getCode());
+                }
             } else {
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
                     if (cfi == null || cfi.isValueEmpty()) {
-                        missingParameters.add(cft.getCode());
+                        if (customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser) == null) {
+                            missingParameters.add(cft.getCode());
+                        }
                         break;
                     }
                 }
