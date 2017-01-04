@@ -194,7 +194,7 @@
 							label="#{messages['oneShotChargeInstance.criteria3']}"
 							field="criteria3" edit="true" />
 						<hftl:decorateFormField fieldId="quantity"
-							label="#{messages['serviceInstance.quantity']}">
+							label="#{messages['serviceInstance.quantity']}" rendered="false">
 							<p:inputText id="quantity" rendered="#{subscriptionBean.edit}"
 								value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 								size="5" maxlength="3">
