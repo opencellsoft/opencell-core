@@ -12,15 +12,19 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="terminationReasons"
-						value="#{messages['menu.terminationReason']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="terminationReasons"
+					value="#{messages['menu.terminationReason']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['terminationReason']}"
+					disabled="true" rendered="#{terminationReasonBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['terminationReason']} #{messages['commons.configuration']} - #{terminationReasonBean.entity.code}"
+					disabled="true" rendered="#{!terminationReasonBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel label="#{messages['terminationReason.title']}"
 			backingBean="#{terminationReasonBean}" columns="2">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"

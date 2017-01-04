@@ -50,14 +50,19 @@
 			column1="code" column2Label="#{messages['tax.description']}"
 			column2="description" />
 
-		<p:panel>
-			<h:form id="crumbmenuForm">
+		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true"/>
-				<p:menuitem outcome="invoiceSubCategories" value="#{messages['invoiceSubCategory.title']}"/>
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="invoiceSubCategories"
+					value="#{messages['invoiceSubCategory.title']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['invoiceSubCategory']}"
+					disabled="true" rendered="#{invoiceSubCategoryBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['invoiceSubCategory']} #{messages['commons.configuration']} - #{invoiceSubCategoryBean.entity.code}"
+					disabled="true" rendered="#{!invoiceSubCategoryBean.entity.transient}" />
 			</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		</h:form>
+
 		<p:panel header="#{messages['invoiceSubCategory.panel']}">
 			<p:tabView id="tabView" activeIndex="#{invoiceSubCategoryBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">

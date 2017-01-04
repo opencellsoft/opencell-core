@@ -15,15 +15,18 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="emailTemplates"
-						value="#{messages['menu.emailTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="emailTemplates"
+					value="#{messages['menu.emailTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['emailTemplate']}"
+					disabled="true" rendered="#{emailTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['emailTemplate']} #{messages['commons.configuration']} - #{emailTemplateBean.entity.code}"
+					disabled="true" rendered="#{!emailTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel edit="#{emailTemplateBean.edit}"
 			label="#{messages['emailTemplate.Panel']}"

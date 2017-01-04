@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -13,10 +13,18 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="invoiceTypes"
+					value="#{messages['menu.invoiceTypes']}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:searchPanel label="#{messages['invoiceType.search']}"
 			backingBean="#{invoiceTypeListBean}">
-			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
 			<hftl:searchField label="#{messages['businessEntity.description']}"
 				field="description" />
 		</hftl:searchPanel>
@@ -24,11 +32,15 @@
 		<hftl:dataList label="#{messages['invoiceTypes.title']}"
 			backingBean="#{invoiceTypeListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['invoiceType.occTemplate']}" field="occTemplate.code" />
-			<hftl:column label="#{messages['invoiceType.appliesTo']}" field="appliesTo" isList="true" valueLabelField="code"
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['invoiceType.occTemplate']}"
+				field="occTemplate.code" />
+			<hftl:column label="#{messages['invoiceType.appliesTo']}"
+				field="appliesTo" isList="true" valueLabelField="code"
 				valueIdField="id" entityView="invoiceTypeDetail" />
-			<hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

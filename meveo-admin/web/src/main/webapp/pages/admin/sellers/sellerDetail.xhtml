@@ -9,15 +9,20 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
-        <hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView" label="#{messages['seller.title']}" backingBean="#{sellerBean}">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
+				<p:menuitem
+					value="#{messages['commons.new']} #{messages['seller']}"
+					disabled="true" rendered="#{sellerBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['seller']} #{messages['commons.configuration']} - #{sellerBean.entity.code}"
+					disabled="true" rendered="#{!sellerBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView" label="#{messages['seller.title']}" backingBean="#{sellerBean}">
             <p:tabView id="tabView">
                 <p:tab title="#{messages['customer.tab.information']}">                 
                     <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" />

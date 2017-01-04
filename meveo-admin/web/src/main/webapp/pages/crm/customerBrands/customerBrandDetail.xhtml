@@ -13,16 +13,19 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="customerBrands"
-						value="#{messages['menu.customerBrands']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
-	
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="customerBrands"
+					value="#{messages['menu.customerBrands']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['customerBrand']}"
+					disabled="true" rendered="#{customerBrandBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['customerBrand']} #{messages['commons.configuration']} - #{customerBrandBean.entity.code}"
+					disabled="true" rendered="#{!customerBrandBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel label="#{messages['customerBrand.panel']}" backingBean="#{customerBrandBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" />

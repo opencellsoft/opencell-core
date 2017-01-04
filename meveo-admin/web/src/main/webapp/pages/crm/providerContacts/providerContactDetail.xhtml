@@ -13,21 +13,21 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
-					<p:menuitem outcome="providerContacts"
-						value="#{messages['menu.providerContacts']}" />
-					<p:menuitem value="#{messages['providerContact.new']}" disabled="true" rendered="#{providerContactBean.entity.transient}" />
-					<p:menuitem value="#{messages['providerContact.editView']} - #{providerContactBean.entity.code}" disabled="true" rendered="#{!providerContactBean.entity.transient}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}"
+					disabled="true" />
+				<p:menuitem outcome="providerContacts"
+					value="#{messages['menu.providerContacts']}" />
+				<p:menuitem value="#{messages['providerContact.new']}"
+					disabled="true" rendered="#{providerContactBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['providerContact.editView']} - #{providerContactBean.entity.code}"
+					disabled="true" rendered="#{!providerContactBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
-		<hftl:formPanel edit="#{providerContactBean.edit}"
-			label="#{messages['providerContact.title']}"
-			backingBean="#{providerContactBean}" columns="1">
+		<hftl:formPanel edit="#{providerContactBean.edit}" backingBean="#{providerContactBean}" columns="1">
 
 			<p:fieldset legend="#{messages['commons.contact']}">
 				<hftl:formField label="#{messages['businessEntity.code']}"
