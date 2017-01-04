@@ -56,39 +56,34 @@
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
-    
+
     <c:if test="${empty(renderForm)}">
-    	<c:set var="renderForm" value="false" />
+        <c:set var="renderForm" value="false" />
     </c:if>
-	
-	<c:forEach
-		items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}"
-		var="cfTab" varStatus="cfTabStatus">
 
-		<c:set var="tabLabel"
-			value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
-		<c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
-		
-		<p:tab title="#{tabLabel}" rendered="#{renderTab}">
-			<c:if test="#{renderForm}">
-				<h:form id="#{prefix}_form_#{cfTabStatus.index}">
-					<hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}"
-						cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}"
-						datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
-						prefix="#{prefix}" />
-				</h:form>
-			</c:if>
+    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
 
-			<c:if test="#{!renderForm}">
-				<h:panelGroup id="#{prefix}_form_#{cfTabStatus.index}">
-					<hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}"
-						cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}"
-						datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
-						prefix="#{prefix}" />
-				</h:panelGroup>
-			</c:if>
-		</p:tab>
-	</c:forEach>
+        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
+        <c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
+
+        <p:tab title="#{tabLabel}" rendered="#{renderTab}">
+            <c:if test="#{renderForm}">
+                <h:form id="#{prefix}_form_#{cfTabStatus.index}">
+                    <h:panelGroup id="form_panel">
+                        <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                            dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                    </h:panelGroup>
+                </h:form>
+            </c:if>
+
+            <c:if test="#{!renderForm}">
+                <h:panelGroup id="#{prefix}_form_#{cfTabStatus.index}">
+                    <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                </h:panelGroup>
+            </c:if>
+        </p:tab>
+    </c:forEach>
 
 </ui:composition>
 </html>
