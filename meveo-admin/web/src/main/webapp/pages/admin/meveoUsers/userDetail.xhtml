@@ -113,7 +113,7 @@
 								<p:commandButton
 									action="#{userBean.deleteSecuredEntity(securedEntity)}"
 									rendered="#{userBean.canUserUpdateEntity()}"
-									icon="ui-icon-trash" update=":tabView:selectedEntitiesPanel" />
+									icon="ui-icon-trash" update=":userFormId:tabView:selectedEntitiesPanel" />
 							</p:column>
 							<f:facet name="footer">
 								<p:commandButton id="addEntity"
@@ -146,7 +146,7 @@
 													var="item" itemLabel="#{item.key}"
 													itemValue="#{item.value}" />
 												<p:ajax listener="#{userBean.updateSelectedAccountBean}"
-													update=":tabView:securedEntitiesDialogPanel" />
+													update=":userFormId:tabView:securedEntitiesDialogPanel" />
 											</p:selectOneMenu>
 										</hftl:decorateFormField>
 										<hftl:decorateFormField fieldId="codeSearchField"
@@ -164,7 +164,7 @@
 										<p:commandButton id="buttonClear"
 											action="#{userBean.selectedAccountBean.clean}"
 											value="#{messages['commons.clean']}"
-											update=":tabView:securedEntitiesDialogForm" />
+											update=":userFormId:tabView:securedEntitiesDialogForm" />
 									</h:panelGroup>
 								</h:panelGroup>
 
@@ -178,7 +178,7 @@
 										<p:ajax event="rowSelect"
 											listener="#{userBean.saveSecuredEntity}"
 											oncomplete="PF('securedEntitiesDialog').hide()"
-											update=":tabView:selectedEntitiesPanel" />
+											update=":userFormId:tabView:selectedEntitiesPanel" />
 										<p:column headerText="#{messages['BusinessEntity.code']}">
 											<h:outputText value="#{e.code}" />
 										</p:column>
