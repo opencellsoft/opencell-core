@@ -425,12 +425,15 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
         return cfi;
     }
 
@@ -465,12 +468,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
+
         return cfi;
     }
 
@@ -507,12 +514,15 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
         return cfi;
     }
@@ -1543,7 +1553,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @param code Custom field code
      * @return Custom field value
      */
-    private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, User currentUser) {
+    public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, User currentUser) {
 
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null || cft.getDefaultValue() == null) {
