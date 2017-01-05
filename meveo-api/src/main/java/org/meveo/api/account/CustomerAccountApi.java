@@ -202,7 +202,7 @@ public class CustomerAccountApi extends AccountApi {
 			if (customer == null) {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
-                throw new InvalidParameterException("Can not change the parent account. Current parent account (customer) is " + customerAccount.getCustomer().getCode());
+                throw new InvalidParameterException("Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
             }
 			customerAccount.setCustomer(customer);
 		}
@@ -504,6 +504,10 @@ public class CustomerAccountApi extends AccountApi {
 			create(customerAccountDto, currentUser);
 		} else {// update
 
+            if (!StringUtils.isBlank(customerAccountDto.getCustomer())) {
+                existedCustomerAccountDto.setCustomer(customerAccountDto.getCustomer());
+            }
+		    
 			if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
 				existedCustomerAccountDto.setCurrency(customerAccountDto.getCurrency());
 			}

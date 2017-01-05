@@ -210,7 +210,7 @@ public class SubscriptionApi extends BaseApi {
             if (userAccount == null) {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
             } else if (!subscription.getUserAccount().equals(userAccount)) {
-                throw new InvalidParameterException("Can not change the parent account. Current parent account (user account) is "
+                throw new InvalidParameterException("Can not change the parent account. Subscription's current parent account (user account) is "
                         + subscription.getUserAccount().getCode());
             }
             subscription.setUserAccount(userAccount);
@@ -855,6 +855,10 @@ public class SubscriptionApi extends BaseApi {
                 return;
             } else {
 
+                if (!StringUtils.isBlank(subscriptionDto.getUserAccount())) {
+                    existedSubscriptionDto.setUserAccount(subscriptionDto.getUserAccount());
+                }
+                
                 if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
                     existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
                 }

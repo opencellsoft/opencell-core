@@ -247,7 +247,7 @@ public class BillingAccountApi extends AccountApi {
 			if (customerAccount == null) {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
 			} else if (!billingAccount.getCustomerAccount().equals(customerAccount)) {
-                throw new InvalidParameterException("Can not change the parent account. Current parent account (customer account) is " + billingAccount.getCustomerAccount().getCode());
+                throw new InvalidParameterException("Can not change the parent account. Billing account's current parent account (customer account) is " + billingAccount.getCustomerAccount().getCode());
             }
 			billingAccount.setCustomerAccount(customerAccount);
 		}
@@ -533,6 +533,10 @@ public class BillingAccountApi extends AccountApi {
 				}
 				terminate(billingAccountDto, currentUser);
 			} else {
+
+                if (!StringUtils.isBlank(billingAccountDto.getCustomerAccount())) {
+                    existedBillingAccountDto.setCustomerAccount(billingAccountDto.getCustomerAccount());
+                }
 
 				if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
 					existedBillingAccountDto.setBillingCycle(billingAccountDto.getBillingCycle());
