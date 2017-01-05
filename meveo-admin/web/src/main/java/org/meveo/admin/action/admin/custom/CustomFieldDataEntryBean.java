@@ -454,9 +454,20 @@ public class CustomFieldDataEntryBean implements Serializable {
                 }
                 newKey = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
             }
+
+            if (newKey == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
         }
 
         Object newValue = entityValueHolder.getNewValue(cft.getCode() + "_value");
+        if (newValue == null) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
 
         Map<String, Object> value = new HashMap<String, Object>();
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
@@ -570,12 +581,83 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Add row to a matrix.
      * 
-     * @param cft Custom field template
-     * @param matrixValues Matrix values
+     * @param entityValueHolder Entity custom field value holder
+     * @param cfv Map value holder
+     * @param cft Custom field definition
      */
-    public void addMatrixRow(CustomFieldTemplate cft, List<Map<String, Object>> matrixValues) {
+    public void addMatrixRow(CustomFieldValueHolder entityValueHolder, CustomFieldValue cfv, CustomFieldTemplate cft) {
         Map<String, Object> rowValues = new HashMap<String, Object>();
-        matrixValues.add(rowValues);
+
+        for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+
+            String newKey = null;
+
+            if (column.getKeyType() == CustomFieldMapKeyEnum.STRING) {
+                newKey = (String) entityValueHolder.getNewValue(cft.getCode() + "_" + column.getCode());
+
+            } else if (column.getKeyType() == CustomFieldMapKeyEnum.RON) {
+                // Validate that at least one value is provided and in correct order
+                Double from = (Double) entityValueHolder.getNewValue(cft.getCode() + "_" + column.getCode() + "_from");
+                Double to = (Double) entityValueHolder.getNewValue(cft.getCode() + "_" + column.getCode() + "_to");
+
+                if (from == null && to == null) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+
+                } else if (from != null && to != null && from.compareTo(to) >= 0) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+                }
+                newKey = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
+            }
+
+            if (newKey != null) {
+                rowValues.put(column.getCode(), newKey);
+            }
+        }
+
+        if (rowValues.isEmpty()) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+
+        Object newValue = entityValueHolder.getNewValue(cft.getCode() + "_value");
+        if (newValue == null) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+
+        rowValues.put(CustomFieldValue.MAP_VALUE, newValue);
+
+        // Validate that key or value is not duplicate
+        for (Map<String, Object> mapItem : cfv.getMatrixValuesForGUI()) {
+            boolean allMatch = true;
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+                if (mapItem.get(column.getCode()) == null && rowValues.get(column.getCode()) == null) {
+
+                } else if (mapItem.get(column.getCode()) != null && !mapItem.get(column.getCode()).equals(rowValues.get(column.getCode()))) {
+                    allMatch = false;
+                    break;
+                } else if (rowValues.get(column.getCode()) != null && !rowValues.get(column.getCode()).equals(mapItem.get(column.getCode()))) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyExists"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+        }
+
+        cfv.getMatrixValuesForGUI().add(rowValues);
+
+        entityValueHolder.clearNewValues();
     }
 
     /**
@@ -719,8 +801,8 @@ public class CustomFieldDataEntryBean implements Serializable {
                     }
                 }
             }
-            }
         }
+    }
 
     /**
      * Get a child entity column corresponding to a given code
@@ -1203,5 +1285,26 @@ public class CustomFieldDataEntryBean implements Serializable {
             cfi.setValue(cfValueInfo.getValue());
             deserializeForGUI(cfi.getCfValue(), cfValueInfo.getKey());
         }
+    }
+
+    /**
+     * Get names of repeated custom field component forms and tabs ids
+     * 
+     * @param prefix prefix to apply
+     * @param suffix suffix to apply
+     * @param length Number of repeated items
+     * @return A concatenated string of component ID values
+     */
+    public static String getCFComponentIds(String prefix, String suffix, int length) {
+        if (length == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(prefix + i + (suffix != null ? suffix : "") + " ");
+        }
+
+        return sb.deleteCharAt(sb.length() - 1).toString();
     }
 }

@@ -16,10 +16,9 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<o:importFunctions
-			type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+        <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
 
-		<hftl:entityPopup id="searchRecurringChargeTemplatePopup"
+        <hftl:entityPopup id="searchRecurringChargeTemplatePopup"
 			header="#{messages['serviceTemplate.recurringCharges']}"
 			updateField=":tabView:formRecurringCharge:recurringChargeTemplateSelectedId :tabView:formRecurringCharge:recurringChargeTemplateSelectedId_text"
 			selection="#{serviceTemplateBean.serviceChargeTemplateRecurring.chargeTemplate}"
@@ -80,17 +79,21 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description">
 		</hftl:entityPopup>
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="serviceTemplates"
-						value="#{messages['menu.serviceTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
 
-		<p:panel header="#{messages['menu.serviceTemplates']}">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="serviceTemplates"
+					value="#{messages['menu.serviceTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['serviceTemplate']}"
+					disabled="true" rendered="#{serviceTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['serviceTemplate']} #{messages['commons.configuration']} - #{serviceTemplateBean.entity.code}"
+					disabled="true" rendered="#{!serviceTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel>
 			<p:tabView id="tabView"
 				activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
@@ -99,7 +102,7 @@
 							showEnableDisableButton="true"
 							updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 							ajaxSubmit="true"
-							submitPartialProcess=":tabView:formId #{exp:getFormIds(':tabView:cfForm', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size)}"
+							submitPartialProcess=":tabView:formId #{cfde:getCFComponentIds(':tabView:cf_form_',':form_panel', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size)}"
 							enctype="multipart/form-data">
 
 							<hftl:formField label="#{messages['commons.image']}"
@@ -125,8 +128,7 @@
 				</p:tab>
 
 				<hftl:customFields backingBean="#{serviceTemplateBean}"
-					messagesId=":tabView:formId:messages" renderForm="true"
-					cfFormId="cfForm" />
+					messagesId=":tabView:formId:messages" renderForm="true" />
 
 				<p:tab title="#{messages['serviceTemplate.recurringCharges']}"
 					id="tab2" rendered="#{serviceTemplateBean.entity.id!=null}">

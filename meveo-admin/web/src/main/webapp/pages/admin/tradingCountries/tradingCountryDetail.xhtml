@@ -24,15 +24,19 @@
 			column2Label="#{messages['tradingLanguage.prDescription']}"
 			column2="descriptionEn" selectionListenerBean="#{tradingCountryBean}" selectionListenerMethod="onCountrySelect">
 		</hftl:entityPopup>
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="tradingCountries"
-						value="#{messages['menu.tradingCountries']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="tradingCountries"
+					value="#{messages['menu.tradingCountries']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCountry']}"
+					disabled="true" rendered="#{tradingCountryBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tradingCountry']} #{messages['commons.configuration']} - #{tradingCountryBean.entity.prDescription}"
+					disabled="true" rendered="#{!tradingCountryBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel formId="formCountries" 
 			label="#{messages['tradingCountry.tradingCountryPanel']}"

@@ -1104,7 +1104,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	public String getXMLInvoice(Invoice invoice, String invoiceNumber, User currentUser, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
 
-        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        File xmlFile = null;
+        if(refreshInvoice){
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        } else {
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
+        }
 
         Scanner scanner = new Scanner(xmlFile);
         String xmlContent = scanner.useDelimiter("\\Z").next();

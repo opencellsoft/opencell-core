@@ -27,15 +27,19 @@
 <!-- 			column2Label="#{messages['invoiceSubCategory.description']}" -->
 <!-- 			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}"> -->
 <!-- 		</hftl:entityPopup> -->
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-					<p:menuitem outcome="oneShotChargeTemplates"
-						value="#{messages['menu.oneShotChargeTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="oneShotChargeTemplates"
+					value="#{messages['menu.oneShotChargeTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['oneShotChargeTemplate']}"
+					disabled="true" rendered="#{oneShotChargeTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['oneShotChargeTemplate']} #{messages['commons.configuration']} - #{oneShotChargeTemplateBean.entity.code}"
+					disabled="true" rendered="#{!oneShotChargeTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView"
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"

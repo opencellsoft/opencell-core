@@ -47,6 +47,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
@@ -87,7 +88,7 @@ import org.primefaces.model.UploadedFile;
  */
 @Named
 @ViewScoped
-public class UserBean extends BaseBean<User> {
+public class UserBean extends CustomFieldBean<User> {
 
     private static final long serialVersionUID = 1L;
 

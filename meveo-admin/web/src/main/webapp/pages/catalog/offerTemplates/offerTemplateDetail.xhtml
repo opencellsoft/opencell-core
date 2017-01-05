@@ -14,8 +14,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<o:importFunctions
-			type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+		<o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
 
 		<hftl:entityPopup id="searchServiceTemplatePopup"
 			header="#{messages['offerServiceTemplate.serviceTemplate']}"
@@ -41,7 +40,7 @@
 		</h:form>
 		
 		<hftl:formPanel formId="offerForm" ajaxSubmit="true"
-			submitPartialProcess=":offerForm:tabView:offerInfo #{exp:getFormIds(':offerForm:tabView:cfForm', customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size)}"
+			submitPartialProcess=":offerForm:tabView:offerInfo #{cfde:getCFComponentIds(':offerForm:tabView:cf_form_',null, customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size)}"
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 			enctype="multipart/form-data">
@@ -101,7 +100,7 @@
 				</p:tab>
 
 				<hftl:customFields backingBean="#{offerTemplateBean}"
-					messagesId="offerForm:messages" cfFormId="cfForm" />
+					messagesId="offerForm:messages" />
 
 				<p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 

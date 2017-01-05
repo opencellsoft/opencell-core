@@ -10,6 +10,12 @@
     </ui:define>
 
     <ui:define name="body">
+    	<h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.provider']} #{messages['commons.configuration']} - #{providerBean.entity.code}" disabled="true" rendered="#{!providerBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
         <hftl:formPanel formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormId:tabView" label="#{messages['provider.title']}" backingBean="#{providerBean}"
             showBackButton="false" showDeleteButton="false">
@@ -83,6 +89,7 @@
                         
                         <hftl:formField label="#{messages['invoiceConfiguration.displayBillingCycle']}" field="invoiceConfiguration" childField="displayBillingCycle" id="displayBillingCycle" />
 
+                        <hftl:formField label="#{messages['invoiceConfiguration.displayOrders']}" field="invoiceConfiguration" childField="displayOrders" id="displayOrders" />
                     </p:fieldset>
 					
                 </p:tab>

@@ -42,11 +42,11 @@ public interface InvoicingRs extends IBaseRs {
 
     @POST
     @Path("/getPreInvoicingReport")
-    GetPreInvoicingReportsResponseDto getPreInvoicingReport(@FormParam("billingRunId") Long billingRunId);
+    GetPreInvoicingReportsResponseDto getPreInvoicingReport(Long billingRunId);
 
     @POST
     @Path("/getPostInvoicingReport")
-    GetPostInvoicingReportsResponseDto getPostInvoicingReport(@FormParam("billingRunId") Long billingRunId);
+    GetPostInvoicingReportsResponseDto getPostInvoicingReport(Long billingRunId);
 
     /**
      * Depending on the status of the billing run, produce the preinvoicing report, the postInvoicing report or validates a billing run. Sets the next invoice date of a billing
@@ -57,7 +57,7 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/validateBillingRun")
-    ActionStatus validateBillingRun(@FormParam("billingRunId") Long billingRunId);
+    ActionStatus validateBillingRun(Long billingRunId);
 
     /**
      * Cancels a billing run. Sets RatedTransaction.status associated to billingRun to OPEN. Remove aggregates and invoice associated to the billingRun. Set
@@ -68,6 +68,6 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/cancelBillingRun")
-    ActionStatus cancelBillingRun(@FormParam("billingRunId") Long billingRunId);
+    ActionStatus cancelBillingRun(Long billingRunId);
 
 }

@@ -743,7 +743,7 @@ public class AccountHierarchyApi extends BaseApi {
 												for (SubscriptionDto subscriptionDto : userAccountDto.getSubscriptions().getSubscription()) {
 													if (StringUtils.isBlank(subscriptionDto.getCode())) {
 														log.warn("code is null={}", subscriptionDto);
-														continue;
+														throw new MeveoApiException("Subscription's code is null");
 													}
 													if (!StringUtils.isBlank(subscriptionDto.getUserAccount())
 															&& !subscriptionDto.getUserAccount().equalsIgnoreCase(userAccountDto.getCode())) {

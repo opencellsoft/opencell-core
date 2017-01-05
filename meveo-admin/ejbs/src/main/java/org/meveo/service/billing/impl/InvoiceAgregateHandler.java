@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import javax.ejb.Stateful;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
@@ -27,22 +30,20 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Stateful
 public class InvoiceAgregateHandler {
 	private Logger log = LoggerFactory.getLogger(InvoiceAgregateHandler.class);
 	 
-	Map<String, CategoryInvoiceAgregate> catInvAgregateMap = new HashMap<String, CategoryInvoiceAgregate>();
-	Map<String, SubCategoryInvoiceAgregate> subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();
-	Map<String, TaxInvoiceAgregate> taxInvAgregateMap = new HashMap<String, TaxInvoiceAgregate>();
+	private Map<String, CategoryInvoiceAgregate> catInvAgregateMap = new HashMap<String, CategoryInvoiceAgregate>();
+	private Map<String, SubCategoryInvoiceAgregate> subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();
+	private Map<String, TaxInvoiceAgregate> taxInvAgregateMap = new HashMap<String, TaxInvoiceAgregate>();
 
-	BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
-	BigDecimal invoiceAmountTax = BigDecimal.ZERO;
-	BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
+	private BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
+	private	BigDecimal invoiceAmountTax = BigDecimal.ZERO;
+	private BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
 
-	private InvoiceSubCategoryService invoiceSubCategoryService;
-	
-	public InvoiceAgregateHandler(InvoiceSubCategoryService invoiceSubCategoryService) {
-		this.invoiceSubCategoryService=invoiceSubCategoryService;
-	}
+	@Inject 
+	private InvoiceSubCategoryService invoiceSubCategoryService;	
 
 	/**
 	 * 
@@ -290,7 +291,15 @@ public class InvoiceAgregateHandler {
 				if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
 					currentTax = invoicesubcatCountry.getTax();
 				} else {
-					currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, null);
+					currentTax = 
+							invoiceSubCategoryService.
+							evaluateTaxCodeEL(
+									invoicesubcatCountry
+									.
+									getTaxCodeEL(),
+									userAccount,
+									billingAccount,
+									null);
 				}
 				if (currentTax != null) {
 					return currentTax;
@@ -459,5 +468,5 @@ public class InvoiceAgregateHandler {
 	public void setInvoiceAmountWithTax(BigDecimal invoiceAmountWithTax) {
 		this.invoiceAmountWithTax = invoiceAmountWithTax;
 	}
-
+	
 }

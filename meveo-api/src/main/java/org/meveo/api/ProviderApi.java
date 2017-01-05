@@ -627,6 +627,9 @@ public class ProviderApi extends BaseApi {
             if(invoiceConfigurationDto.getDisplayBillingCycle()!=null){
                 provider.getInvoiceConfiguration().setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
             }
+            if(invoiceConfigurationDto.getDisplayOrders()!=null){
+                provider.getInvoiceConfiguration().setDisplayOrders(invoiceConfigurationDto.getDisplayOrders());
+            }
         }
         return provider;
     }

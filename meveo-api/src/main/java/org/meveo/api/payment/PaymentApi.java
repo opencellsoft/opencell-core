@@ -30,18 +30,18 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.payments.impl.AutomatedPaymentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 @Stateless
 public class PaymentApi extends BaseApi {
 
 	@Inject
-	AutomatedPaymentService automatedPaymentService;
+	PaymentService paymentService;
 
 	@Inject
 	RecordedInvoiceService recordedInvoiceService;
@@ -95,26 +95,29 @@ public class PaymentApi extends BaseApi {
 			throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
 		}
 
-		AutomatedPayment automatedPayment = new AutomatedPayment();
-		automatedPayment.setProvider(provider);
-		automatedPayment.setPaymentMethod(paymentDto.getPaymentMethod());
-		automatedPayment.setAmount(paymentDto.getAmount());
-		automatedPayment.setUnMatchingAmount(paymentDto.getAmount());
-		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
-		automatedPayment.setAccountCode(occTemplate.getAccountCode());
-		automatedPayment.setOccCode(occTemplate.getCode());
-		automatedPayment.setOccDescription(occTemplate.getDescription());
-		automatedPayment.setTransactionCategory(occTemplate.getOccCategory());
-		automatedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-		automatedPayment.setCustomerAccount(customerAccount);
-		automatedPayment.setReference(paymentDto.getReference());
-		automatedPayment.setDueDate(paymentDto.getDueDate());
-		automatedPayment.setTransactionDate(paymentDto.getTransactionDate());
-		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-		automatedPaymentService.create(automatedPayment, currentUser);
+		Payment payment = new Payment();
+		payment.setProvider(provider);
+		payment.setPaymentMethod(paymentDto.getPaymentMethod());
+		payment.setAmount(paymentDto.getAmount());
+		payment.setUnMatchingAmount(paymentDto.getAmount());
+		payment.setMatchingAmount(BigDecimal.ZERO);
+		payment.setAccountCode(occTemplate.getAccountCode());
+		payment.setOccCode(occTemplate.getCode());
+		payment.setOccDescription(occTemplate.getDescription());
+		payment.setTransactionCategory(occTemplate.getOccCategory());
+		payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+		payment.setCustomerAccount(customerAccount);
+		payment.setReference(paymentDto.getReference());
+		payment.setDueDate(paymentDto.getDueDate());
+		payment.setTransactionDate(paymentDto.getTransactionDate());
+		payment.setMatchingStatus(MatchingStatusEnum.O);
+		payment.setPaymentOrder(paymentDto.getPaymentOrder());
+		payment.setFees(paymentDto.getFees());
+		payment.setComment(paymentDto.getComment());
+		paymentService.create(payment, currentUser);
 		// populate customFields
         try {
-            populateCustomFields(paymentDto.getCustomFields(), automatedPayment, true, currentUser); 
+            populateCustomFields(paymentDto.getCustomFields(), payment, true, currentUser); 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -135,14 +138,14 @@ public class PaymentApi extends BaseApi {
 					}
 					listReferenceToMatch.add(accountOperationToMatch.getId());
 				}
-				listReferenceToMatch.add(automatedPayment.getId());
+				listReferenceToMatch.add(payment.getId());
 				matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A, currentUser);
 			}
 
 		}else {
 			log.info("no matching created ");
 		}
-		log.debug("automatedPayment created for amount:" + automatedPayment.getAmount());
+		log.debug("payment created for amount:" + payment.getAmount());
 	}
 
 	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {
@@ -173,6 +176,9 @@ public class PaymentApi extends BaseApi {
 				paymentDto.setPaymentMethod(p.getPaymentMethod());
 				paymentDto.setReference(p.getReference());
 				paymentDto.setTransactionDate(p.getTransactionDate()); 
+				paymentDto.setPaymentOrder(p.getOrderNumber());
+				paymentDto.setFees(p.getFees());
+				paymentDto.setComment(p.getComment());
 				paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op));
 				if (p instanceof AutomatedPayment) {
 					AutomatedPayment ap = (AutomatedPayment) p;

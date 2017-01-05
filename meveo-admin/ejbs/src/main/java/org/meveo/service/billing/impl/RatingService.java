@@ -912,19 +912,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
             userMap.put("charge", charge);
 		}
-		if(expression.indexOf("serviceInstance") >= 0){
+		if (expression.indexOf("serviceInstance") >= 0) {
 			ServiceInstance service = null;
-			if(walletOperation.getChargeInstance() instanceof RecurringChargeInstance){
-				service=((RecurringChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
-			}else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance){
-				service=((UsageChargeInstance)walletOperation.getChargeInstance()).getServiceInstance();
-			}else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance){
-				service=((OneShotChargeInstance)walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
-				if(service==null){
-					((OneShotChargeInstance)walletOperation.getChargeInstance()).getTerminationServiceInstance();
+			if (walletOperation.getChargeInstance() instanceof RecurringChargeInstance) {
+				service = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+			} else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+			} else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance) {
+				service = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+				if (service == null) {
+					service = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
 				}
 			}
-			if(service !=null){
+			if (service != null) {
 				userMap.put("serviceInstance", service);
 			}
 		}

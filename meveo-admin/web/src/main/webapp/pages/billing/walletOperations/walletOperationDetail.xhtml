@@ -28,6 +28,9 @@
             <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="code" />
             <hftl:formField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.offer']}" field="offerCode" />
+            <hftl:decorateFormField label="#{messages['userAccount']}" fieldId="userAccount">
+            	<h:outputText id="userAccount" value="#{walletOperationBean.entity.wallet.userAccount.code}" styleClass="field-value" />
+            </hftl:decorateFormField>
             <hftl:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
             <hftl:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />

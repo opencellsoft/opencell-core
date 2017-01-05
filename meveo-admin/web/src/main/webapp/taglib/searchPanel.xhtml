@@ -13,7 +13,7 @@
     Attributes
         formId - form id value. Defaults to "searchForm"
         backingBean - backing bean associated with search.
-        label - a panel header
+        label - a panel header (@deprecated, replaced by breadcrumb)
         renderNewButton - should a "create new entity" button be displayed   
         newButtonView - an outcome view for "create new entity"
         ajax and ajaxUpdateIds - should search be done in ajax way and a list of component ids to update upon completion
@@ -42,7 +42,7 @@
     </c:if>
 
     <h:form id="${empty(formId)?'searchForm':formId}">
-        <p:panel header="#{label}">
+        <p:panel>
             <h:panelGroup layout="block" styleClass="search-panel">
                 <p:messages id="search_messages" autoUpdate="true"/>
                 <p:outputPanel styleClass="search-panel-fields">

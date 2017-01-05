@@ -18,6 +18,8 @@
  */
 package org.meveo.model.payments;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -33,7 +35,25 @@ public class Payment extends AccountOperation {
     @Column(name = "PAYMENT_METHOD")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
+   
+    /**
+     * Number assigned by the Operator bank
+     */
+    @Column(name = "PAYMENT_ORDER")
+    private String paymentOrder;
+    
+   /**
+    *  Amount of financial expenses exluded in the amount
+    */
+    @Column(name = "PAYMENT_FEES")
+    private BigDecimal fees = BigDecimal.ZERO; 
 
+    /**
+     * Comments Text free if litigation or special conditions
+     */
+    @Column(name = "COMMENT")
+    private String comment;
+    
     public PaymentMethodEnum getPaymentMethod() {
         return paymentMethod;
     }
@@ -41,5 +61,49 @@ public class Payment extends AccountOperation {
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+	/**
+	 * @return the paymentOrder
+	 */
+	public String getPaymentOrder() {
+		return paymentOrder;
+	}
+
+	/**
+	 * @param paymentOrder the paymentOrder to set
+	 */
+	public void setPaymentOrder(String paymentOrder) {
+		this.paymentOrder = paymentOrder;
+	}
+
+	/**
+	 * @return the fees
+	 */
+	public BigDecimal getFees() {
+		return fees;
+	}
+
+	/**
+	 * @param fees the fees to set
+	 */
+	public void setFees(BigDecimal fees) {
+		this.fees = fees;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+    
+    
 
 }

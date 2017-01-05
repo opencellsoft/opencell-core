@@ -13,15 +13,19 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
-					<p:menuitem outcome="occTemplates"
-						value="#{messages['menu.occTemplates']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+				<p:menuitem outcome="occTemplates"
+					value="#{messages['menu.occTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['occTemplate']}"
+					disabled="true" rendered="#{occTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['occTemplate']} #{messages['commons.configuration']} - #{occTemplateBean.entity.code}"
+					disabled="true" rendered="#{!occTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />

@@ -170,6 +170,7 @@
 			
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['userAccount']}" field="wallet.userAccount.code" />
 			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
 			<hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance.code" />
 			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
@@ -182,7 +183,7 @@
 		</f:facet>
 			<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
-			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
+			  <p:tooltip for="updateWallet" value="#{messages['action.rerate']}"
 			  		rendered="#{walletOperationBean.canUserUpdateEntity()}"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"

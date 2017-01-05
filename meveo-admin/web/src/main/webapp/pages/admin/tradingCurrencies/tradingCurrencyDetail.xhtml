@@ -32,15 +32,20 @@
 				column2="descriptionEn" selectionListenerBean="#{tradingCurrencyBean}" selectionListenerMethod="onCurrencySelect">
 			</hftl:entityPopup>
 		</c:if>
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="tradingCurrencies"
-						value="#{messages['menu.tradingCurrencies']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="tradingCurrencies"
+					value="#{messages['menu.tradingCurrencies']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCurrency']}"
+					disabled="true" rendered="#{tradingCurrencyBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tradingCurrency']} #{messages['commons.configuration']} - #{tradingCurrencyBean.entity.prDescription}"
+					disabled="true" rendered="#{!tradingCurrencyBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel id="formPanel" formId="currenciesFormId"
 			edit="#{tradingCurrencyBean.edit}"
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"

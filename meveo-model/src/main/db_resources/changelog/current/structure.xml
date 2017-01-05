@@ -3117,4 +3117,45 @@
         <sql>update ADM_NOTIF_WEBHOOK_PARAM set webhookparams= replace(webhookparams, 'event','event.entity') where webhookparams is not null and webhook_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>
         <sql>update ADM_NOTIFICATION_PARAMS set params= replace(params, 'event','event.entity') where params is not null and notification_id in (select id from ADM_NOTIFICATION where EVENT_TYPE_FILTER='COUNTER_DEDUCED')</sql>            
     </changeSet> 
+    
+    <changeSet id="#2302_20161227" author="anasseh"> 
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="PAYMENT_ORDER" type="VARCHAR(70)"/>
+        </addColumn>
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="PAYMENT_FEES" type="numeric(23, 12)"/>
+        </addColumn>        
+        <addColumn tableName="AR_ACCOUNT_OPERATION">
+            <column name="COMMENT" type="text"/>
+        </addColumn>
+    </changeSet> 
+    
+    <changeSet id="#2303_20161228" author="anasseh"> 
+        <addColumn tableName="billing_invoice_configuration">
+           <column name="display_orders" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>     
+        <addColumn tableName="ord_order_item">
+            <column name="description" type="VARCHAR(100)" />
+            <column name="address_1" type="VARCHAR(50)" />
+            <column name="address_2" type="VARCHAR(50)" />
+            <column name="address_3" type="VARCHAR(50)" />
+            <column name="address_city" type="VARCHAR(50)" />
+            <column name="address_country" type="VARCHAR(50)" />
+            <column name="address_state" type="VARCHAR(50)" />
+            <column name="address_zipcode" type="VARCHAR(10)" /> 
+        </addColumn>  
+    </changeSet>    
+    
+   
+    <changeSet id="#2304_20170102" author="anasseh"> 
+    	<addColumn tableName="adm_user">
+           <column name="UUID" type="VARCHAR(60)">                
+            </column>
+        </addColumn>
+         <sql>update ADM_USER set UUID =concat('USER-', id) </sql>   
+    </changeSet>  
+    
+    <changeSet id="#2289_20170102" author="AndriusKarpavicius"> 
+        <modifyDataType tableName="CRM_CUSTOM_FIELD_TMPL" columnName="DEFAULT_VALUE" newDataType="VARCHAR(250)"/>
+    </changeSet>         
 </databaseChangeLog>

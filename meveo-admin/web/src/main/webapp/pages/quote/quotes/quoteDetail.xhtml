@@ -236,7 +236,11 @@
                                                         rendered="#{itemConfiguration.isOffer()}">
                                                         <p:inputText id="subscriptionCode_#{itemStatus.index}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
-                                                            rendered="#{quoteBean.quoteEditable}" />
+                                                            rendered="#{quoteBean.quoteEditable}" >
+                                                            <p:ajax update=":quoteForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                                listener="#{quoteBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.SUBSCRIPTION_CODE)}" event="change"
+                                                                partialSubmit="true" process="@this" />
+                                                        </p:inputText>
                                                         <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}" styleClass="field-value"
                                                             rendered="#{!quoteBean.quoteEditable}" />
                                                     </hftl:decorateFormField>
@@ -246,7 +250,11 @@
                                                         rendered="#{itemConfiguration.isProduct()}">
                                                         <p:inputText id="productInstanceCode_#{itemStatus.index}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
-                                                            rendered="#{quoteBean.quoteEditable}" />
+                                                            rendered="#{quoteBean.quoteEditable}">
+                                                            <p:ajax update=":quoteForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                                listener="#{quoteBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.PRODUCT_INSTANCE_CODE)}"
+                                                                event="change" partialSubmit="true" process="@this" />
+                                                        </p:inputText>
                                                         <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
                                                             styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}" />
                                                     </hftl:decorateFormField>
@@ -262,10 +270,11 @@
                                                     </hftl:decorateFormField>
 
                                                     <div class="clearLeft"></div>
-                                                    <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                        messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}"
-                                                        cfFormId="offerCFForm_#{itemStatus.index}" />
-
+                                                    <h:panelGroup id="cf_#{itemStatus.index}_panel">
+                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}"
+                                                            entity="#{itemConfiguration.entityForCFValues}" messagesId=":quoteForm:tabView:quoteItemMessages"
+                                                            edit="#{quoteBean.quoteEditable}" />
+                                                    </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>
                                         </p:tabView>

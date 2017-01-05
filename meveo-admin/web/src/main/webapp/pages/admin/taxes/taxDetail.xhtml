@@ -11,15 +11,18 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="taxes"
-						value="#{messages['menu.taxes']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="taxes" value="#{messages['menu.taxes']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tax']}"
+					disabled="true" rendered="#{taxBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tax']} #{messages['commons.configuration']} - #{taxBean.entity.code}"
+					disabled="true" rendered="#{!taxBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel label="#{messages['tax.panel']}" formId="taxFormId" submitPartialProcess=":taxFormId:tabView"
 			backingBean="#{taxBean}" columns="1">
 			<p:tabView id="tabView" activeIndex="#{taxBean.activeTab}">

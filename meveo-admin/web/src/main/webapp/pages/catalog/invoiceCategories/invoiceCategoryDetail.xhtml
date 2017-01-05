@@ -11,14 +11,19 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="invoiceCategories" value="#{messages['menu.invoiceCategories']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="invoiceCategories"
+					value="#{messages['menu.invoiceCategories']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['invoiceCategory']}"
+					disabled="true" rendered="#{invoiceCategoryBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['invoiceCategory']} #{messages['commons.configuration']} - #{invoiceCategoryBean.entity.code}"
+					disabled="true" rendered="#{!invoiceCategoryBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
 		<hftl:formPanel formId="invoiceCatFormId" edit="#{invoiceCategoryBean.edit}" submitPartialProcess=":invoiceCatFormId:tabView"
 			label="#{messages['invoiceCategory.panel']}"
 			backingBean="#{invoiceCategoryBean}">

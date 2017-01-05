@@ -133,7 +133,7 @@ public abstract class BaseRs implements IBaseRs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
         } else {
-            log.error("Failed to execute API", e);
+            log.warn("Failed to execute API", e);
             status.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());

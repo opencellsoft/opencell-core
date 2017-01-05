@@ -314,7 +314,7 @@ public class BillingAccountApi extends AccountApi {
 		if(!StringUtils.isBlank(postData.getDiscountPlan())){
 			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan(), provider);
 			billingAccount.setDiscountPlan(discountPlan);
-		} else {
+		} else if(postData.getDiscountPlan()!=null){
 			billingAccount.setDiscountPlan(null);
 		}
 
