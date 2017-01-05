@@ -693,6 +693,13 @@ public class UsageRatingService {
         if (expression.indexOf("ua") >= 0) {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
+		if (expression.indexOf("serviceInstance") >= 0) {
+			ServiceInstance service = null;
+			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+				userMap.put("serviceInstance", service);
+			}
+		}
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
@@ -714,6 +721,14 @@ public class UsageRatingService {
         if (expression.indexOf("ua") >= 0) {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
+        if (expression.indexOf("serviceInstance") >= 0) {
+			ServiceInstance service = null;
+			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+				userMap.put("serviceInstance", service);
+			}
+		}
+        
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         try {
             result = (String) res;
@@ -731,6 +746,14 @@ public class UsageRatingService {
         if (expression.indexOf("ua") >= 0) {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
+        if (expression.indexOf("serviceInstance") >= 0) {
+			ServiceInstance service = null;
+			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+				userMap.put("serviceInstance", service);
+			}
+		}
+        
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
         try {
             result = (Double) res;
