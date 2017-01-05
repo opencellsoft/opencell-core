@@ -1286,4 +1286,25 @@ public class CustomFieldDataEntryBean implements Serializable {
             deserializeForGUI(cfi.getCfValue(), cfValueInfo.getKey());
         }
     }
+
+    /**
+     * Get names of repeated custom field component forms and tabs ids
+     * 
+     * @param prefix prefix to apply
+     * @param suffix suffix to apply
+     * @param length Number of repeated items
+     * @return A concatenated string of component ID values
+     */
+    public static String getCFComponentIds(String prefix, String suffix, int length) {
+        if (length == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(prefix + i + (suffix != null ? suffix : "") + " ");
+        }
+
+        return sb.deleteCharAt(sb.length() - 1).toString();
+    }
 }
