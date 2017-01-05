@@ -535,6 +535,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			
 			if (walletOps == null || walletOps.size() == 0) {
 				messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));
+			} else {
+				customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 			}
 			
 		} catch (BusinessException e) {

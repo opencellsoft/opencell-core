@@ -574,6 +574,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		try {
 			productInstanceService.create(productInstance, currentUser);
 			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+			customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		} catch (Exception e) {

@@ -237,6 +237,8 @@
 										field="offerTemplate" listBean="#{offerTemplateBean}"
 										entity="#{userAccountBean.productChargeInstance}"
 										valueLabelField="code" />
+										
+									<hftl:customFields backingBean="#{productInstanceBean}" messagesId=":parentTab:productInstancesTab:applyProductMessages" prefix="pi" />
 
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton value="#{messages['action.save']}"
@@ -244,6 +246,7 @@
 											oncomplete="PF('applyProductPanel').toggle()"
 											update=":parentTab:productInstanceResultsForm :parentTab:applyProductMessages"></p:commandButton>
 									</h:panelGroup>
+																		
 								</hftl:formPanel>
 							</p:panel>
 

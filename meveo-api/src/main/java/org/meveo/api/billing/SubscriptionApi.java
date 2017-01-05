@@ -631,9 +631,18 @@ public class SubscriptionApi extends BaseApi {
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}
+			
+			// populate customFields
+			try {
+				populateCustomFields(postData.getCustomFields(), productInstance, true, currentUser);
+	        } catch (MissingParameterException e) {
+	            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+	            throw e;
+			}		
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
+		
 		return result;
 	}
 
