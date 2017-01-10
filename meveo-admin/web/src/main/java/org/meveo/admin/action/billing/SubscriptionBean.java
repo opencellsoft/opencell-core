@@ -282,7 +282,19 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
-		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns); 
+		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns);
+		
+		if (this.oneShotChargeInstance.getSubscriptionServiceInstance() != null) {
+			// subscription
+			setOneShotChargeInstanceQuantity(this.oneShotChargeInstance.getSubscriptionServiceInstance().getQuantity());
+		} else if (this.oneShotChargeInstance.getTerminationServiceInstance() != null) {
+			// termination
+			setOneShotChargeInstanceQuantity(this.oneShotChargeInstance.getTerminationServiceInstance().getQuantity());
+		} else {
+			// charge
+			setOneShotChargeInstanceQuantity(this.getOneShotWalletOperations().get(0).getQuantity());
+		}
+		
 		selectedWalletTemplate = new WalletTemplate();
 		selectedWalletTemplateCode=null;
 	}
@@ -946,5 +958,21 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
          }
 
 		return result;
+	}
+	
+	public BigDecimal getServiceAmountWithoutTax() {
+		BigDecimal quantity = BigDecimal.ONE;
+		if (this.oneShotChargeInstance.getSubscriptionServiceInstance() != null) {
+			// subscription
+			quantity = this.oneShotChargeInstance.getSubscriptionServiceInstance().getQuantity();
+		} else if (this.oneShotChargeInstance.getTerminationServiceInstance() != null) {
+			// termination
+			quantity = this.oneShotChargeInstance.getTerminationServiceInstance().getQuantity();
+		} else {
+			// charge
+			quantity = this.getOneShotWalletOperations().get(0).getQuantity();
+		}
+
+		return quantity.multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
 	}
 }
