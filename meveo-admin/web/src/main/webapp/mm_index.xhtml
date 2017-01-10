@@ -1,122 +1,320 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" xmlns:of="http://omnifaces.org/functions" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<p:panel styleClass="no-border-radius">
-			<h:outputText value="#{messages['commons.welcome']} #{identity.user.user.name.fullName}" rendered="#{identity.loggedIn}" />
-		</p:panel>
+        <script type="application/javascript" src="./js/Chart.min.js"></script>
 
-		<p:panel styleClass="box-wrapper no-border-radius">
-			<p:panel styleClass="clearfix">
-				<!-- <p:panelGrid columns="2" layout="grid">
-                    <c:forEach items="#{chartBean.stats}" var="stat" varStatus="i">
-                        <p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius">
-                            <div class="box-title">#{stat.description}</div>
-                            <div class="box-percentage">#{stat.value}</div>
-                            <div class="box-direction">
-                                <i class="fa fa-arrow-right"></i>
-                                #{stat.difference}%
-                            </div>
-                            <div class="box-last-update">#{messages['report.lastUpdated']} at #{stat.lastUpdateFormatted}</div>
-                        </p:panel>
-                    </c:forEach>
-                </p:panelGrid> -->
-				<p:panel styleClass="TexAlCenter bg-goldenrod box pull-left no-border-radius Wid50 Responsive100">
-					<div class="box-title">#{chartBean.churn.description}</div>
-					<p:outputPanel rendered="#{chartBean.churn.value eq 0}">
-						<div class="box-percentage">#{chartBean.churn.value}</div>
-					</p:outputPanel>
-					<p:outputPanel rendered="#{chartBean.churn.value ne 0}">
-						<div class="box-percentage">#{of:formatNumber(chartBean.churn.value, '#.00')}</div>
-					</p:outputPanel>
-					<div class="box-direction">
-						<p:outputPanel rendered="#{chartBean.churn.difference gt 0}">
-							<i class="fa fa-arrow-up" />#{of:formatNumber(chartBean.churn.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.churn.difference lt 0}">
-							<i class="fa fa-arrow-down" />#{of:formatNumber(chartBean.churn.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.churn.difference eq 0}">
-							<i class="fa fa-arrow-left" />
-							<i class="fa fa-arrow-right" /> #{chartBean.churn.difference} %
-						</p:outputPanel>
-					</div>
-					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.churn.lastUpdateFormatted}</div>
-				</p:panel>
+        <p:panel styleClass="no-border-radius user-title">
+            <h3><h:outputText value="#{messages['commons.welcome']} #{identity.user.user.name.fullName}" rendered="#{identity.loggedIn}"/></h3>
+        </p:panel>
 
-				<p:panel styleClass="TexAlCenter bg-royalblue box pull-right no-border-radius Wid50 Responsive100">
-					<div class="box-title">#{messages['marketingManager.catalog.newOrders']}</div>
-					<p:outputPanel rendered="#{chartBean.newOrderStats.value eq 0}">
-						<div class="box-percentage">#{chartBean.newOrderStats.value}</div>
-					</p:outputPanel>
-					<p:outputPanel rendered="#{chartBean.newOrderStats.value ne 0}">
-						<div class="box-percentage">#{of:formatNumber(chartBean.newOrderStats.value, '#.00')}</div>
-					</p:outputPanel>
-					<div class="box-direction">
-						<p:outputPanel rendered="#{chartBean.newOrderStats.difference gt 0}">
-							<i class="fa fa-arrow-up" />#{of:formatNumber(chartBean.newOrderStats.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.newOrderStats.difference lt 0}">
-							<i class="fa fa-arrow-down" />#{of:formatNumber(chartBean.newOrderStats.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.newOrderStats.difference eq 0}">
-							<i class="fa fa-arrow-left" />
-							<i class="fa fa-arrow-right" /> #{chartBean.newOrderStats.difference} %
-						</p:outputPanel>
-					</div>
-					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.newOrderStats.lastUpdateFormatted}</div>
-				</p:panel>
-			</p:panel>
+        <div class="no-border-radius ui-grid-responsive">
+            <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                <div class="box-title">Monthly Recurring Revenue
+                    <span title="#{messages['marketingManager.home.mrrTrendLabel']}" class="trend">↗ 34 %</span>
+                </div>
+                <div class="draw">
+                    <canvas id="mrr"/>
+                </div>
+            </div>
+            <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                <div class="box-title">Subscriptions Churn
+                    <span title="#{messages['marketingManager.home.mrrChurnLabel']}" class="trend">↗ 34 %</span>
+                </div>
+                <div class="draw">
+                    <canvas id="churn"/>
+                </div>
+            </div>
+            <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                <div class="box-title">MRR per Offer
+                    <span title="#{messages['marketingManager.home.mrrByOrderLabel']}" class="trend">↗ 34 %</span>
+                </div>
+                <div class="draw">
+                    <canvas id="mrrPerOffer"/>
+                </div>
+            </div>
+            <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                <div class="box-title">Orders by status
+                    <span title="#{messages['marketingManager.home.ordersByStatusLabel']}" class="trend">↗ 34 %</span>
+                </div>
+                <div class="draw">
+                    <canvas id="ordersByStatus"/>
+                </div>
+            </div>
+        </div>
 
-			<p:panel styleClass="clearfix">
-				<p:panel styleClass="TexAlCenter bg-darkgoldenrod box pull-left no-border-radius Wid50 Responsive100">
-					<div class="box-title">#{chartBean.MRR.description}</div>
-					<p:outputPanel rendered="#{chartBean.MRR.value eq 0}">
-						<div class="box-percentage">#{chartBean.MRR.value}</div>
-					</p:outputPanel>
-					<p:outputPanel rendered="#{chartBean.MRR.value ne 0}">
-						<div class="box-percentage">#{of:formatNumber(chartBean.MRR.value, '#.00')}</div>
-					</p:outputPanel>				
-					<div class="box-direction">
-						<p:outputPanel rendered="#{chartBean.MRR.difference gt 0}">
-							<i class="fa fa-arrow-up" />#{of:formatNumber(chartBean.MRR.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.MRR.difference lt 0}">
-							<i class="fa fa-arrow-down" />#{of:formatNumber(chartBean.MRR.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.MRR.difference eq 0}">
-							<i class="fa fa-arrow-left" />
-							<i class="fa fa-arrow-right" /> #{chartBean.MRR.difference} %
-						</p:outputPanel>
-					</div>
-					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.MRR.lastUpdateFormatted}</div>
-				</p:panel>
+        <script type="application/javascript">
+			//<![CDATA[
 
-				<p:panel styleClass="TexAlCenter bg-olivedrab box pull-right no-border-radius Wid50 Responsive100">
-					<div class="box-title">#{messages['marketingManager.catalog.pendingOrders']}</div>
-					<p:outputPanel rendered="#{chartBean.pendingOrderStats.value eq 0}">
-						<div class="box-percentage">#{chartBean.pendingOrderStats.value}</div>
-					</p:outputPanel>
-					<p:outputPanel rendered="#{chartBean.pendingOrderStats.value ne 0}">
-						<div class="box-percentage">#{of:formatNumber(chartBean.pendingOrderStats.value, '#.00')}</div>
-					</p:outputPanel>	
-					<div class="box-direction">
-						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference gt 0}">
-							<i class="fa fa-arrow-up" />#{of:formatNumber(chartBean.pendingOrderStats.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference lt 0}">
-							<i class="fa fa-arrow-down" />#{of:formatNumber(chartBean.pendingOrderStats.difference, '#.00')} %
-						</p:outputPanel>
-						<p:outputPanel rendered="#{chartBean.pendingOrderStats.difference eq 0}">
-							<i class="fa fa-arrow-left" />
-							<i class="fa fa-arrow-right" /> #{chartBean.pendingOrderStats.difference} %
-						</p:outputPanel>
-					</div>
-					<div class="box-last-update">#{messages['report.lastUpdated']} at #{chartBean.pendingOrderStats.lastUpdateFormatted}</div>
-				</p:panel>
-			</p:panel>
-		</p:panel>
-	</ui:define>
+            // MRR
+			var mrr_1 = [0, 1, 2, 3, 4];
+			var mrr_2 = [4, 3, 2, 1, 0];
+			var mrr_3 = [-3, -1, -2, -1, -3];
+			var mrrLabels = ["A", "B", "C", "D", "E"];
+
+			var mrrDataSet_1 = {
+				type: 'bar',
+				label: 'Blue bars',
+				data: mrr_1,
+				backgroundColor: 'rgba(  0, 32, 80, 0.6)',
+				hoverBackgroundColor: 'rgba(  0, 32, 80, 0.8)',
+				borderColor: 'rgba(  0, 32, 80, 1)',
+				borderWidth: 0
+			};
+			var mrrDataSet_2 = {
+				type: 'bar',
+				label: 'Red bars',
+				data: mrr_2,
+				backgroundColor: 'rgba(231, 61, 59, 0.6)',
+				hoverBackgroundColor: 'rgba(231, 61, 59, 0.8)',
+				borderColor: 'rgba(231, 61, 59, 1)',
+				borderWidth: 0
+			};
+			var mrrDataSet_3 = {
+				type: 'bar',
+				label: 'Green bars',
+				data: mrr_3,
+				backgroundColor: 'rgba(64, 192, 64, 0.6)',
+				hoverBackgroundColor: 'rgba(64, 192, 64, 0.8)',
+				borderColor: 'rgba(64, 192, 64, 1)',
+				borderWidth: 0
+			};
+
+			var mrrData = {
+				labels: mrrLabels,
+				datasets: [
+					mrrDataSet_3,
+					mrrDataSet_1,
+					mrrDataSet_2
+				]
+			};
+			var mrrOptions = {
+				scales: {
+					xAxes: [{
+						stacked: true
+					}],
+					yAxes: [{
+						stacked: true,
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			};
+
+			var mrrCanvas = document.getElementById("mrr");
+			var mrr = new Chart(mrrCanvas, {
+					type: 'bar',
+					data: mrrData,
+					options: mrrOptions
+				}
+			);
+
+			// Churn
+			var churnLabels = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Novembre", "Décembre"];
+			var churn_1 = [10, 5, 8, 12, 4, 8, 10, 12, 7, 5, 2, 15];
+			var churn_2 = [-4, -3, -10, -8, -3, -5, -1, -5, -6, -7, -10, -5];
+			var churn_3 = [];
+			for (var i = 0; i < churnLabels.length; i++) {
+				churn_3.push(churn_1[i] + churn_2[i]);
+			}
+
+			var churnDataSet_1 = {
+				type: 'bar',
+				label: 'Souscriptions',
+				data: churn_1,
+				backgroundColor: 'rgba(  0, 32, 80, 0.6)',
+				hoverBackgroundColor: 'rgba(  0, 32, 80, 0.8)',
+				borderColor: 'rgba(  0, 32, 80, 1)',
+				borderWidth: 0
+			};
+			var churnDataSet_2 = {
+				type: 'bar',
+				label: 'Résiliations',
+				data: churn_2,
+				backgroundColor: 'rgba(231, 61, 59, 0.6)',
+				hoverBackgroundColor: 'rgba(231, 61, 59, 0.8)',
+				borderColor: 'rgba(231, 61, 59, 1)',
+				borderWidth: 0
+			};
+			var churnDataSet_3 = {
+				type: 'line',
+				label: "Évolution",
+				fill: false,
+				lineTension: 0.3,
+				backgroundColor: "rgba(  0, 32, 80,0)",
+				borderColor: "rgba(  0, 32, 80,1)",
+				borderCapStyle: 'butt',
+				borderJoinStyle: 'miter',
+				pointBorderColor: "rgba(  0, 32, 80,1)",
+				pointBackgroundColor: "#fff",
+				pointBorderWidth: 1,
+				pointHoverRadius: 6,
+				pointHoverBackgroundColor: "rgba(  0, 32, 80,1)",
+				pointHoverBorderColor: "rgba(  0, 32, 80,1)",
+				pointHoverBorderWidth: 2,
+				pointRadius: 3,
+				pointHitRadius: 6,
+				data: churn_3,
+				spanGaps: true
+			};
+
+			var churnData = {
+				labels: churnLabels,
+				datasets: [
+					churnDataSet_1,
+					churnDataSet_2,
+					churnDataSet_3
+				]
+			};
+			var churnOptions = {
+				scales: {
+					xAxes: [{
+						stacked: true
+					}],
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			};
+
+			var churnCanvas = document.getElementById("churn");
+			var churn = new Chart(churnCanvas, {
+					type: 'bar',
+					data: churnData,
+					options: churnOptions
+				}
+			);
+
+			// MRR per Offer
+			var mrrPerOffer_1 = [0, 1, 2, 3, 4];
+			var mrrPerOffer_2 = [4, 3, 2, 1, 0];
+			var mrrPerOffer_3 = [-3, -1, -2, -1, -3];
+			var mrrPerOfferLabels = ["A", "B", "C", "D", "E"];
+
+			var mrrPerOfferDataSet_1 = {
+				type: 'bar',
+				label: 'Blue bars',
+				data: mrrPerOffer_1,
+				backgroundColor: 'rgba(  0, 32, 80, 0.6)',
+				hoverBackgroundColor: 'rgba(  0, 32, 80, 0.8)',
+				borderColor: 'rgba(  0, 32, 80, 1)',
+				borderWidth: 0
+			};
+			var mrrPerOfferDataSet_2 = {
+				type: 'bar',
+				label: 'Red bars',
+				data: mrrPerOffer_2,
+				backgroundColor: 'rgba(231, 61, 59, 0.6)',
+				hoverBackgroundColor: 'rgba(231, 61, 59, 0.8)',
+				borderColor: 'rgba(231, 61, 59, 1)',
+				borderWidth: 0
+			};
+			var mrrPerOfferDataSet_3 = {
+				type: 'bar',
+				label: 'Green bars',
+				data: mrrPerOffer_3,
+				backgroundColor: 'rgba(64, 192, 64, 0.6)',
+				hoverBackgroundColor: 'rgba(64, 192, 64, 0.8)',
+				borderColor: 'rgba(64, 192, 64, 1)',
+				borderWidth: 0
+			};
+
+			var mrrPerOfferData = {
+				labels: mrrPerOfferLabels,
+				datasets: [
+					mrrPerOfferDataSet_3,
+					mrrPerOfferDataSet_1,
+					mrrPerOfferDataSet_2
+				]
+			};
+			var mrrPerOfferOptions = {
+				scales: {
+					xAxes: [{
+						stacked: true
+					}],
+					yAxes: [{
+						stacked: true,
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			};
+
+			var mrrPerOfferCanvas = document.getElementById("mrrPerOffer");
+			var mrrPerOffer = new Chart(mrrPerOfferCanvas, {
+					type: 'bar',
+					data: mrrPerOfferData,
+					options: mrrPerOfferOptions
+				}
+			);
+
+			// Orders by status
+			var ordersByStatus_1 = [1, 3, 5, 2, 1, 4];
+			var ordersByStatusLabels = ["A", "B", "C", "D", "E", "F"];
+			var ordersByStatusDataSet = {
+				type: 'pie',
+				label: "Pie chart",
+				fill: false,
+				backgroundColor: [
+					"rgba(128,192,192,0.4)",
+                    "rgba(192,128,192,0.4)",
+                    "rgba(192,192,128,0.4)",
+                    "rgba(160,160,192,0.4)",
+                    "rgba(192,160,160,0.4)",
+                    "rgba(160,192,160,0.4)"
+                ],
+				borderColor: "white",
+				hoverBackgroundColor: [
+					"rgba(128,192,192,1)",
+                    "rgba(192,128,192,1)",
+                    "rgba(192,192,128,1)",
+                    "rgba(160,160,192,1)",
+                    "rgba(192,160,160,1)",
+                    "rgba(160,192,160,1)"
+                ],
+				hoverBorderColor: [
+					"rgba(128,192,192,0.4)",
+                    "rgba(192,128,192,0.4)",
+                    "rgba(192,192,128,0.4)",
+                    "rgba(160,160,192,0.4)",
+                    "rgba(192,160,160,0.4)",
+                    "rgba(160,192,160,0.4)"
+                ],
+				data: ordersByStatus_1,
+			};
+			var ordersByStatusData = {
+				labels: ordersByStatusLabels,
+				datasets: [
+					ordersByStatusDataSet
+				]
+			};
+			var ordersByStatusOptions = {
+				display: false,
+				cutoutPercentage: 70,
+				circumference: 5,
+				rotation: 0.6,
+				animation: {
+					animateScale: true
+				},
+				legend: {
+					position: "right",
+				}
+			};
+
+			var ordersByStatusCanvas = document.getElementById("ordersByStatus");
+			var ordersByStatus = new Chart(ordersByStatusCanvas, {
+					type: 'pie',
+					data: ordersByStatusData,
+					options: ordersByStatusOptions
+				}
+			);
+			//]]>
+        </script>
+    </ui:define>
 </ui:composition>

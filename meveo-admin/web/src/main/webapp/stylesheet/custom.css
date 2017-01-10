@@ -594,6 +594,14 @@ input[type="text"] {
 
 /* Marketing Home
 ====================================*/
+.user-title h3 {
+  font-family: "Segoe UI Light","Helvetica Neue","Segoe UI","Segoe WP",sans-serif;
+  font-weight: 100;
+  font-size: 24px;
+  line-height: 1.1;
+  color: inherit;
+}
+
 .bg-darkgoldenrod {
   background: #b45f06;
 }
@@ -611,10 +619,7 @@ input[type="text"] {
 }
 
 .box {
-  width: calc(50% - 32px);
   font-family: 'Segoe UI', 'wf_segoe-ui_normal', 'Source Sans Pro', Arial, sans-serif;
-  margin: 15px;
-  padding: 15px;
   border: 1px solid rgba(0, 0, 0, .1);
   box-sizing: border-box;
   -moz-transform: scale(1);
@@ -625,19 +630,40 @@ input[type="text"] {
   transition: all .35s ease;
 }
 
-.box:hover {
-  -moz-transform: scale(1.05);
-  -webkit-transform: scale(1.05);
-  transform: scale(1.05);
-  -moz-transition: all .35s ease;
-  -webkit-transition: all .35s ease;
-  transition: all .35s ease;
+@media (min-width: 641px) {
+  .box {
+    width: calc(50% - 32px);
+    margin: 15px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .box {
+    margin: 10px 0 10px -5px;
+    padding: 0;
+  }
 }
 
 .box-title {
-  color: #fff;
-  font-size: 1.5em;
-  font-weight: 700;
+  color: #264676;
+  font-size: 1.3em;
+  font-weight: 200;
+}
+
+.box-title .trend {
+  border: none;
+  border-radius: 8px;
+  padding: 3px 7px 2px 7px;
+  background-color: rgba(0, 32, 80, 0.8);
+  color: white;
+  font-family: monospace;
+  font-size: 0.8em;
+  font-weight: 400;
+  white-space: nowrap;
+  position: absolute;
+  right: 0;
+  vertical-align: middle;
 }
 
 .box-percentage {
