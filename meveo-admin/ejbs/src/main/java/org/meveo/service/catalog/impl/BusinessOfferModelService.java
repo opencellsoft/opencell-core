@@ -152,6 +152,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		
 		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
 		try {
+			if (StringUtils.isBlank(imagePath)) {
+				imagePath = bomOffer.getImagePath();
+			}
 			String newImagePath = offerImageUploadEventHandler.duplicateImage(newOfferTemplate, imagePath, code, currentUser.getProvider().getCode());
 			newOfferTemplate.setImagePath(newImagePath);
 		} catch (IOException e1) {
