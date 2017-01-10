@@ -18,7 +18,9 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="body">
+	<ui:define name="body">	
+		<o:importConstants type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum" />
+	
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
@@ -238,14 +240,14 @@
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['marketingManager.catalog.OneTimeFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}" />
+												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}" />
 										</f:facet>
 
 										<p:dataList styleClass="dataList" paginatorPosition="bottom"
 											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']}"
+											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
 											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType['SUBSCRIPTION']!=null}">
+											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
 											<h:outputText value="#{service.descriptionOrCode}"
 												styleClass="text-bold" />
 											<h:panelGroup layout="block">
@@ -264,13 +266,13 @@
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['marketingManager.catalog.recurringFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}" />
+												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}" />
 										</f:facet>
 										<p:dataList styleClass="dataList" paginatorPosition="bottom"
 											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType['RECURRING']}"
+											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
 											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType['RECURRING']!=null}">
+											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
 											<h:outputText value="#{service.descriptionOrCode}"
 												styleClass="text-bold" />
 											<h:panelGroup layout="block">
@@ -286,16 +288,16 @@
 									</p:panel>
 									<p:panel
 										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
-										<f:facet name="header">
+										<f:facet name="header">										
 											<h:outputText
 												value="#{messages['marketingManager.catalog.usageFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}" />
+												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}" />
 										</f:facet>
 										<p:dataList styleClass="dataList" paginatorPosition="bottom"
 											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType['USAGE']}"
+											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
 											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType['USAGE']!=null}">
+											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
 											<h:outputText value="#{service.descriptionOrCode}"
 												styleClass="text-bold" />
 											<h:panelGroup layout="block">
