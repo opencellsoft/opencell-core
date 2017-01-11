@@ -279,9 +279,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             List<CustomFieldValue> cfvs = query.getResultList();
             if (!cfvs.isEmpty()) {
                 CustomFieldValue cfv = cfvs.get(0);
-
-                cfv.deserializeValue();
-                value = cfv.getValue();
+				if (cfv != null && !cfv.isValueEmpty()) {
+					cfv.deserializeValue();
+					value = cfv.getValue();
+				}
             }
         }
 
