@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -191,9 +192,11 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.valueRequired = valueRequired;
     }
 
-    public Map<String, String> getListValues() {
-        return listValues;
-    }
+	public Map<String, String> getListValues() {
+		listValues = new TreeMap<String, String>(listValues);
+
+		return listValues;
+	}
 
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
