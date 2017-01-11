@@ -3,6 +3,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
@@ -57,209 +58,26 @@
 		</c:if>
 	</c:forEach>
 
-	<p:panel styleClass="FLeft Wid5">
-		<a href="/meveo/loginRedirect.jsf" class="fa fw fa-home"></a>
-	</p:panel>
-	
-	<p:menubar styleClass="horizontal-nav FLeft Wid90" rendered="#{identity.loggedIn}">
-		<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
-			<p:menuitem id="providers" outcome="providers" value="#{messages['menu.providers']}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
-			<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.provider']}" rendered="#{identity.hasPermission('administration','administrationManagement')}">
-				<f:param name="objectId" value="#{providerBean.getCurrentProvider().id}" />
-				<f:param name="edit" value="true" />
-			</p:menuitem>
-			<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" />
-			<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
-			<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}" outcome="roles" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
-			<p:menuitem id="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}" outcome="userGroupHierarchy" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />			
-			<p:menuitem id="sellers" outcome="sellers" value="#{messages['menu.sellers']}" />
-			<p:submenu id="menu" label="#{messages['menu.crm']}">
-				<p:menuitem id="titles" outcome="titles" value="#{messages['menu.titles']}" />
-				<p:menuitem id="customerBrands" outcome="customerBrands" value="#{messages['menu.customerBrands']}" />
-				<p:menuitem id="customerCategories" outcome="customerCategories" value="#{messages['menu.customerCategories']}" />
-				<p:menuitem id="creditCategories" outcome="creditCategories" value="#{messages['menu.creditCategories']}" />
-				<p:menuitem id="occTemplates" rendered="#{identity.hasPermission('billing','billingManagement')}" outcome="occTemplates" value="#{messages['menu.occTemplates']}" />
-			</p:submenu>
-			<p:submenu id="trading" label="#{messages['menu.trading']}" rendered="#{identity.hasPermission('administration','administrationVisualization') and !identity.hasPermission('superAdmin','superAdminManagement')}">
-				<p:menuitem id="tradingLanguages" outcome="tradingLanguages" value="#{messages['menu.comLanguages']}" />
-				<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies" value="#{messages['menu.tradingCurrencies']}" />
-				<p:menuitem id="tradingCountries" outcome="tradingCountries" value="#{messages['menu.tradingCountries']}" />
-				<p:menuitem id="catMessages" outcome="catMessagess" value="#{messages['menu.catMessages']}" />
-				<p:menuitem id="emailTemplates" outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
-			</p:submenu>
-			<p:menuitem rendered="#{identity.hasPermission('administration','administrationVisualization')}" outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
-			<p:submenu id="invoicingconfig" label="#{messages['menu.invoicing']}">
-				<p:menuitem id="billingCycles" rendered="#{identity.hasPermission('billing','billingVisualization')}" outcome="billingCycles" value="#{messages['menu.billingCycles']}" />
-				<p:menuitem id="taxes" rendered="#{identity.hasPermission('administration','administrationVisualization')}" outcome="taxes" value="#{messages['menu.taxes']}" />
-				<p:menuitem id="invoiceCategories" rendered="#{identity.hasPermission('catalog','catalogVisualization')}" outcome="invoiceCategories" value="#{messages['menu.invoiceCategories']}" />
-				<p:menuitem id="invoiceSubCategories" rendered="#{identity.hasPermission('catalog','catalogVisualization')}" outcome="invoiceSubCategories" value="#{messages['menu.invoiceSubCategories']}" />
-				<p:menuitem id="invoiceTypes" rendered="#{identity.hasPermission('billing','billingVisualization')}" outcome="invoiceTypes" value="#{messages['menu.invoiceTypes']}" />
-			</p:submenu>
-			<p:menuitem id="terminationReasons" rendered="#{identity.hasPermission('administration','administrationVisualization')}" outcome="terminationReasons" value="#{messages['menu.terminationReason']}" />
-			<p:menuitem id="currencies" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="currencies" value="#{messages['menu.currencies']}" />
-			<p:menuitem id="languages" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="languages" value="#{messages['menu.languages']}" />
-			<p:menuitem id="countries" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="countries" value="#{messages['menu.countries']}" />
-			<p:menuitem id="meveoProperties" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="meveoProperties" value="#{messages['menu.properties']}" />
-			<p:menuitem id="channels" outcome="channels" value="#{messages['menu.channels']}" />
-		</p:submenu>
-<!-- Catalog -->
-		<p:submenu id="catalog" label="#{messages['menu.catalog']}" rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-			<p:submenu id="offerManagement" label="#{messages['menu.catalog.offerManagement']}">
-				<p:menuitem id="offerTemplates" outcome="offerTemplates" value="#{messages['menu.offers']}" />
-				<p:menuitem id="offerTemplateCategories" outcome="offerTemplateCategories" value="#{messages['menu.offerTemplateCategories']}" />
-			</p:submenu>
-			<p:submenu id="serviceManagement" label="#{messages['menu.catalog.serviceManagement']}">
-				<p:menuitem id="serviceTemplates" outcome="serviceTemplates" value="#{messages['menu.serviceTemplates']}" />
-				<p:submenu id="charges" label="#{messages['menu.charges']}">
-					<p:menuitem id="chargeTemplates" outcome="chargeTemplates" value="#{messages['menu.chargeTemplates']}" />
-					<p:menuitem id="recurringChargeTemplate" outcome="recurringChargeTemplates" value="#{messages['menu.recurringChargeTemplates']}" />
-					<p:menuitem id="oneShotChargeTemplates" outcome="oneShotChargeTemplates" value="#{messages['menu.oneShotChargeTemplates']}" />
-					<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates" value="#{messages['menu.usageChargeTemplates']}" />
-				</p:submenu>
-				<p:menuitem id="counterTemplates" outcome="counterTemplates" value="#{messages['menu.counterTemplates']}" />
-			</p:submenu>
-			<p:submenu id="productManagement" label="#{messages['menu.catalog.productManagement']}">
-				<p:menuitem id="productTemplates" outcome="productTemplates" value="#{messages['menu.productTemplates']}" />
-				<p:menuitem id="productChargeTemplates" outcome="productChargeTemplates" value="#{messages['menu.productChargeTemplates']}" />
-				<p:menuitem id="bundleTemplates" outcome="bundleTemplates" value="#{messages['menu.bundleTemplates']}" />
-			</p:submenu>
-			<p:menuitem id="triggeredEdrTemplates" outcome="triggeredEdrTemplates" value="#{messages['menu.triggeredEdrTemplates']}" />
-			<p:menuitem id="walletTemplates" outcome="walletTemplates" value="#{messages['menu.wallets']}" />
-			<p:submenu id="models" label="#{messages['menu.catalog.models']}">
-				<p:menuitem id="businessOfferModels" outcome="businessOfferModels" value="#{messages['menu.businessOffers']}" />
-				<p:menuitem id="businessServiceModels" outcome="businessServiceModels" value="#{messages['menu.businessServiceModels']}" />
-				<p:menuitem id="businessProductModels" outcome="businessProductModels" value="#{messages['menu.businessProductModels']}" />
-			</p:submenu>
-			<p:submenu id="pricePlanMatrixes_menu" label="#{messages['menu.pricePlanMatrixes']}">
-				<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes" value="#{messages['menu.pricePlanMatrixes']}" />
-				<p:menuitem id="discountPlans" outcome="discountPlans" value="#{messages['menu.discountPlans']}" />
-			</p:submenu>
-		</p:submenu>
+	<div class="Container">
+		<div class="Container5 NoIndent">
+			<a href="/meveo/loginRedirect.jsf" class="fa fw fa-home fa-3x"></a>
+		</div>
 
-		<p:submenu styleClass="mmOffersSM" label="#{messages['menu.offers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
-			<p:menuitem outcome="mm_offers" value="#{messages['menu.marketingManager.catalogList']}" />
-		</p:submenu>
+		<div class="Container95 NoIndent">
+			<c:if
+				test="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE'}">
 
-		<p:submenu styleClass="mmProductsSM" label="#{messages['menu.marketingManager.products']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
-			<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
-		</p:submenu>
+				<!-- Mobile Navigation -->
+				<ui:include src="mobileNavigation.xhtml" />
+			</c:if>
+			<c:if
+				test="#{facesContext.viewRoot.renderKitId ne 'PRIMEFACES_MOBILE'}">
 
-		<p:submenu id="crm" label="#{messages['menu.crm']}" rendered="#{identity.hasPermission('account','accountVisualization') or identity.hasPermission('customerSummary','customerSummaryVisualization')}">
-			<p:menuitem id="customerSearch" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="customerSearch" value="#{messages['menu.customerSearch']}" />
-			<p:menuitem id="customers" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="customers" value="#{messages['menu.customers']}" />
-			<p:menuitem id="customerAccounts" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
-			<p:menuitem id="billingAccounts" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="billingAccounts" value="#{messages['menu.billingAccounts']}" />
-			<p:menuitem id="userAccounts" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="userAccounts" value="#{messages['menu.userAccounts']}" />
-			<p:menuitem id="crmAccounts" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="crmAccounts" value="#{messages['menu.crmAccounts']}" />
-			<p:menuitem id="subscriptions" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
-			<p:menuitem id="accessPoints" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="access" value="#{messages['menu.accessPoints']}" />
-			<p:menuitem id="businessAccountModels" rendered="#{identity.hasPermission('account','accountVisualization')}" outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
-		</p:submenu>
-
-		<p:submenu id="orderAndQuotes" label="#{messages['menu.ordersAndQuotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement') or identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}">
-			<p:menuitem id="quotes" outcome="quotes" value="#{messages['menu.quotes']}" rendered="#{identity.hasPermission('quote','quoteVisualization') or identity.hasPermission('quote','quoteManagement')}"/>
-            <p:menuitem id="orders" outcome="orders" value="#{messages['menu.orders']}" rendered="#{identity.hasPermission('order','orderVisualization') or identity.hasPermission('order','orderManagement')}"/>
-		</p:submenu>
-        
-		<p:submenu styleClass="mmCustomersSM" label="#{messages['menu.customers']}"  rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }" >
-			<p:menuitem id="mm_workflows" value="#{messages['menu.marketingManager.workflowList']}" outcome="mm_workflows" />
-		</p:submenu>
-
-		<p:submenu id="mediation" label="#{messages['menu.mediation']}" rendered="#{identity.hasPermission('billing','billingVisualization') or identity.hasPermission('billing','billingManagement')}">
-			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
-			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" rendered="#{identity.hasPermission('billing','billingManagement')}" />
-		</p:submenu>
-
-		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{identity.hasPermission('billing','billingVisualization') or identity.hasPermission('billing','billingManagement') }">
-			<p:submenu id="rating" label="#{messages['menu.rating']}" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-				<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
-			</p:submenu>
-			<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
-			<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
-				<p:menuitem id="billingRuns" outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
-				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing" rendered="#{identity.hasPermission('billing','billingManagement')}" value="#{messages['menu.globalExecution']}" />
-				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing" value="#{messages['menu.exceptionalInvoicing']}" />
-			</p:submenu>
-			<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
-				<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" />
-				<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" />
-				<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" />
-			</p:submenu>
-		</p:submenu>
-
-		<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">			
-	   	 	<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
-			<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
-		</p:submenu>
-		
-		<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
-			<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
-		</p:submenu>		
-		
-		<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{identity.hasPermission('finance','financeVisualization') or identity.hasPermission('finance','financeManagement') }">
-			<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
-			<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
-		</p:submenu>
-
-		<p:submenu id="reporting" label="#{messages['menu.reporting']}" rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
-			<p:menuitem id="measurableQuantities" value="#{messages['menu.measurableQuantities']}" outcome="measurableQuantities" />
-			<p:menuitem id="measuredValues" value="#{messages['menu.measuredValues']}" outcome="measuredValueDetail" />
-			<p:menuitem id="charts" value="#{messages['menu.charts']}" outcome="charts" />
-		</p:submenu>
-
-		<p:submenu id="customEntites" label="#{messages['menu.customEntities']}" rendered="#{!empty(customEntityTemplateBean.listAll())}">
-			<c:set var="cetIndex" value="0" />
-			<c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
-				<c:if
-					test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
-					<p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}">
-						<f:param name="cet" value="#{cet.code}"></f:param>
-					</p:menuitem>
-					<c:set var="cetIndex" value="#{cetIndex + 1}" />
-				</c:if>
-			</c:forEach>
-		</p:submenu>
-		
-		<p:submenu label="#{messages['menu.myCompany']}" rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
-			<p:menuitem id="mm_users" value="#{messages['menu.users']}" outcome="users" />
-			<p:menuitem id="mmUserGroups" outcome="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}" />			
-		</p:submenu>
-
-		<p:submenu styleClass="mmSettingsSM" id="settings" label="#{messages['menu.settings']}" rendered="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
-			<p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories" value="#{messages['menu.marketingManager.manageCategories']}" />
-		</p:submenu>
-
-		<p:submenu id="automation" label="#{messages['menu.admin']}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
-			<p:submenu id="adminJobs" label="#{messages['menu.jobs']}">
-				<p:menuitem id="jobs" outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
-				<p:menuitem id="timers" outcome="timerEntities" value="#{messages['menu.timerEntities']}" />
-			</p:submenu>
-			<p:menuitem id="MeveoInstances" outcome="meveoInstances" value="#{messages['menu.meveoInstance']}" />
-			<p:menuitem id="meveoModules" outcome="meveoModules" value="#{messages['menu.meveoModules']}" />
-			<p:menuitem id="customizedEntities" outcome="customizedEntities" value="#{messages['menu.customizedEntities']}" />
-			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
-			<p:menuitem id="filters" outcome="filters" value="#{messages['menu.filters']}" />
-			<p:submenu id="workflows" label="#{messages['menu.workflow']}" outcome="workflows">
-				<p:menuitem id="crud_workflows" value="#{messages['menu.workflow']}" outcome="workflows" />
-				<p:menuitem id="workflowHistory" value="#{messages['menu.workflowHistory']}" outcome="workflowHistory" />
-			</p:submenu>
-			<p:submenu id="notifications" label="#{messages['menu.notifications']}" outcome="notifications">
-				<p:menuitem id="internalNotifications" value="#{messages['menu.notifications']}" outcome="notifications" />
-				<p:menuitem id="webHooks" value="#{messages['menu.webHooks']}" outcome="webHooks" />
-				<p:menuitem id="emailNotifications" value="#{messages['menu.emailNotifications']}" outcome="emailNotifications" />
-				<p:menuitem id="jobTriggers" value="#{messages['menu.jobTriggers']}" outcome="jobTriggers" />
-				<p:menuitem id="notificationHistory" value="#{messages['menu.notificationHistories']}" outcome="notificationHistories" />
-				<p:menuitem id="inboundRequests" value="#{messages['menu.inboundRequests']}" outcome="inboundRequests" />
-			</p:submenu>
-			<p:submenu id="tools" label="#{messages['menu.tools']}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
-				<p:menuitem id="import" outcome="import" rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationManagement')}" value="#{messages['menu.import']}" />
-				<p:menuitem id="export" outcome="export" value="#{messages['menu.export']}" />
-			</p:submenu>
-			<p:menuitem id="fileExplorerMenu" rendered="#{identity.hasPermission('administration','administrationVisualization')}" outcome="fileExplorer" value="#{messages['menu.fileExplorer']}" />
-			<p:menuitem id="cache" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="caches" value="#{messages['menu.cacheInfo']}" />
-			<p:menuitem id="indexing" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" outcome="indexing" value="#{messages['menu.indexing']}" />
-		</p:submenu>
-	</p:menubar>
+				<!-- Desktop Navigation -->
+				<ui:include src="desktopNavigation.xhtml" />
+			</c:if>
+		</div>
+	</div>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
