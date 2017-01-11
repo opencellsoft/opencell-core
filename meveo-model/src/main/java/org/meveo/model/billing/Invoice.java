@@ -481,6 +481,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 		}
 		return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id == null ? 0 : id.intValue();
+	}
 
 	/**
 	 * @return the invoiceType
