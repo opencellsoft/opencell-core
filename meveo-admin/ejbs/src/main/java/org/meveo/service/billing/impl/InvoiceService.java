@@ -1230,7 +1230,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
 				((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
 			}
-		}
+		}		
+		invoice.setOrders(null);		
 		Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		dropAgregats.setParameter("invoice",invoice);
 		dropAgregats.executeUpdate();		

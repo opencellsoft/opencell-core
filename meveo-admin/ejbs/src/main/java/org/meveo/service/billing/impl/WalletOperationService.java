@@ -727,7 +727,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				chargeInstance.getSubscriptionDate(), chargeInstance.getId(), chargeInstance.getNextChargeDate());
 
 		Date applicationDate = chargeInstance.getTerminationDate();
-		applicationDate = DateUtils.addDaysToDate(applicationDate, 1);
+		//applicationDate = DateUtils.addDaysToDate(applicationDate, 1);
 
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 		if (recurringChargeTemplate.getCalendar() == null) {
