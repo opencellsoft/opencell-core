@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -97,7 +96,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
@@ -445,6 +443,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				for(Order order : invoice.getOrders()){					
 					Element orderTag = doc.createElement("order");
 					orderTag.setAttribute("orderNumber", order.getCode());
+					orderTag.setAttribute("externalId", order.getExternalId());
 					orderTag.setAttribute("orderDate", DateUtils.formatDateWithPattern(order.getOrderDate(),DEFAULT_DATE_TIME_PATTERN));
 					orderTag.setAttribute("orderStatus", order.getStatus().name());
 					orderTag.setAttribute("deliveryInstructions", order.getDeliveryInstructions());
