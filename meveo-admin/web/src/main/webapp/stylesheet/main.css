@@ -686,6 +686,19 @@ form.formNoBottomBorder {
 .Wid25{ width:25%;}
 .Wid20{ width:20%;}
 .Wid10{ width:10%;}
+
+/* Height */
+.Hei100{ height:100%;}
+.Hei90{ height:90%;}
+.Hei80{ height:80%;}
+.Hei70{ height:70%;}
+.Hei60{ height:60%;}
+.Hei40{ height:40%;}
+.Hei50{ height:50%;}
+.Hei30{ height:30%;}
+.Hei20{ height:20%;}
+.Hei10{ height:10%;}
+
 .custom-grid .ui-paginator, .dataGrid .ui-paginator { margin-left: auto; width: 300px !important; }
 .custom-grid .ui-paginator > select, .dataGrid .ui-paginator > select { margin-left: 0; }
 .dataGrid .ui-paginator span { text-align: left !important; }
@@ -786,14 +799,14 @@ form.formNoBottomBorder {
 .FontItalic{font-style:italic;}
 
 .dataGrid .status-wrapper .text-bold { text-align: left; }
-
+.LeftBorder { border-left: 1px solid #ddd !important; }
 * MEDIA QUERIES FOR CORE LAYOUT **************************************************************************************************************** */
 /* Large desktop */
-
 @media (min-width: 960px) {
     /*visibilities according to the platform*/
    	.ShowOnMobile{display:none;opacity:0;}
  	.ShowOnDesktop{display:inherit;opacity:1;}
+ 	
  	#mq{color:red;}	
 }
 @media (min-width: 960px) and (max-width: 1200px) {
