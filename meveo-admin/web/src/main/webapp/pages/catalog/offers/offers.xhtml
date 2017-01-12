@@ -124,7 +124,7 @@
 					styleClass="no-border-radius offer-wrapper">
 					<p:tab
 						title="#{messages['marketingManager.catalog.view.detailed']}">
-						<h:form id="mainForm">
+						<h:form id="mainForm" styleClass="ui-fluid">
 							<p:dataGrid id="dataGrid"
 								value="#{offerTemplateListBean.listFromBOM()}" var="entity"
 								paginator="true" rows="10" columns="1" layout="grid"
@@ -236,7 +236,7 @@
 
 								<p:panel styleClass="VAlignTop Wid60 Responsive100">
 									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['marketingManager.catalog.OneTimeFee']}"
@@ -262,7 +262,7 @@
 										</p:dataList>
 									</p:panel>
 									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['marketingManager.catalog.recurringFee']}"
@@ -287,7 +287,7 @@
 										</p:dataList>
 									</p:panel>
 									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop border-left no-border-radius">
+										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
 										<f:facet name="header">										
 											<h:outputText
 												value="#{messages['marketingManager.catalog.usageFee']}"
@@ -312,7 +312,7 @@
 										</p:dataList>
 									</p:panel>
 									<p:panel
-										styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
+										styleClass="Wid20 Responsive100 VAlignTop no-border-radius">
 										<f:facet name="header">
 											<h:outputText
 												value="#{messages['menu.productTemplates']}"
