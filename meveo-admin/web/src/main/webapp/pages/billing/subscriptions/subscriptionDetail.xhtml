@@ -25,6 +25,17 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm1">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu1">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['subscription.panel']}"
+					disabled="true" rendered="#{subscriptionBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['subscription.panel']} - #{subscriptionBean.entity.code}"
+					disabled="true" rendered="#{!subscriptionBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
 		<script type="text/javascript">
 		checked=false;
 		function unCheckedAll (id,frm1) {
