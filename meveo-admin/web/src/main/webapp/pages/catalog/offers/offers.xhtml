@@ -214,7 +214,7 @@
 															<f:param name="tab" value="0"></f:param>
 														</p:link></li>
 													<li><p:commandLink id="duplicateLink"
-															action="#{offerTemplateListBean.duplicate()}"
+															action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
 															update=":tabView"
 															styleClass="fa fa-copy fa-2x no-text-decoration text-blue">
 															<f:setPropertyActionListener value="#{entity}"
@@ -387,7 +387,7 @@
 									<f:param name="backView" value="mm_offers"></f:param>
 									<f:param name="tab" value="1"></f:param>
 								</p:link>
-								<p:commandLink action="#{offerTemplateListBean.duplicate()}"
+								<p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
 									update=":tabView"
 									styleClass="Padding5 fa fa-copy no-text-decoration text-blue fa-2x">
 									<f:setPropertyActionListener

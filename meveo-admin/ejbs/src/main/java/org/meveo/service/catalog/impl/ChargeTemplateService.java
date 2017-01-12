@@ -18,14 +18,17 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.MultilanguageEntityService;
@@ -68,5 +71,24 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 		entity.setCode(code);
 		create(entity, getCurrentUser());
         customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+	}
+	
+	/**
+	 * Copy basic properties of a chargeTemplate to another object.
+	 * @param sourceChargeTemplate
+	 * @param targetTemplate
+	 * @param prefix
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 */
+	public void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
+		BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+		targetTemplate.setAuditable(null);
+		targetTemplate.setId(null);
+		targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
+		targetTemplate.clearUuid();
+		targetTemplate.setVersion(0);
+		targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
+		targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
 	}
 }

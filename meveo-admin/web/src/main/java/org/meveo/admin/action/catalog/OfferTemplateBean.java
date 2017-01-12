@@ -157,6 +157,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             }
         }
     }
+    
+    @ActionMethod
+    public void duplicateCatalogHierarchy() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                offerTemplateService.duplicate(entity, getCurrentUser(), true);
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
+        }
+    }
 
     public boolean isUsedInSubscription() {
         return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
