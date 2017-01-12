@@ -164,3 +164,7 @@
 .OpencellMegaMenu .layout-menu > li ul li ul.active-menu {
 	height: auto;
 }
+
+#layout-topbar {
+	padding-bottom: 10px !important;
+}

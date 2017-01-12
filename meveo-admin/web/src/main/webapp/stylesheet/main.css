@@ -651,6 +651,19 @@ form.formNoBottomBorder {
 
 .ListNoStyle { list-style-type: none; }
 
+/* Display */
+.DispBlock{ display:block;}
+.DispTable{ display:table; vertical-align:middle;}
+.DispTableCell{ display:table-cell; vertical-align:middle;}
+.DispNone{ display:none;}
+.DispInlBlock{display:inline-block;}
+.DispInline{display:inline;}
+
+.DispAlTop { vertical-align: top !important; }
+.DispAlMid { vertical-align: middle !important; }
+.DispAlBot { vertical-align: bottom !important; }
+.DispAlMidEl { position: relative; top: 50%; transform: translateY(-50%); }
+
 .Wid100, table.Wid100 tbody, table.Wid100 tr { width: 100%; }
 .Wid100{ width:100%;}
 .Wid95{ width:95%;}
