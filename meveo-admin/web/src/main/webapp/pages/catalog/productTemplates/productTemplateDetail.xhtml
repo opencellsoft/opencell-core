@@ -38,14 +38,66 @@
 				</p:tab>
 				<p:tab tab="productCharges"
 					title="#{messages['productTemplate.productCharges']}" rendered="#{!productTemplateBean.entity.transient}">
-					<hftl:dataList backingBean="#{productTemplateBean}"
-						dataModel="#{productTemplateBean.entity.productChargeTemplates}">
-						<hftl:column label="#{messages['BusinessEntity.code']}"
-							field="code" editView="productChargeTemplateDetail"
-							valueIdField="id" backView="productTemplates" />
-						<hftl:column field="description"
-							label="#{messages['BusinessEntity.description']}" />
-					</hftl:dataList>
+					<p:outputPanel id="productCharges_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+					<h:panelGroup id="productChargeTemplate_panel">
+						<p:outputPanel autoUpdate="true">
+							<hftl:dataList backingBean="#{productTemplateBean}"
+								dataModel="#{productTemplateBean.entity.productChargeTemplates}">
+								<hftl:column label="#{messages['BusinessEntity.code']}"
+									field="code" editView="productChargeTemplateDetail"
+									valueIdField="id" backView="productTemplates" />
+								<hftl:column field="description"
+									label="#{messages['BusinessEntity.description']}" />
+								<p:column styleClass="actions-column">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+									<p:commandButton update=":tabView:formProductCharge"
+										action="#{productTemplateBean.editProductChargeTemplate(entity)}"
+										icon="ui-icon-document" />
+									<p:commandButton
+										action="#{productTemplateBean.deleteProductChargeTemplate(entity.getId())}"
+										icon="ui-icon-trash"
+										update=":tabView:productChargeTemplate_panel,:tabView:formProductCharge" />
+								</p:column>
+							</hftl:dataList>
+						</p:outputPanel>
+					</h:panelGroup>
+					<p:panel id="productChargediv">
+						<hftl:formPanel formId="formProductCharge"
+							edit="#{productTemplateBean.edit}"
+							backingBean="#{productTemplateBean}"
+							entity="#{productTemplateBean.productChargeTemplate}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField id="productChargeTemplateSelectedId"
+								label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate" valueLabelField="code" popup="true"
+								popupId="searchProductChargeTemplatePopup" clearButton="true"
+								required="true"/>
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{productTemplateBean.canUserUpdateEntity()}"
+									action="#{productTemplateBean.saveProductChargeTemplate}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:productCharges:productChargediv" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{serviceTemplateBean.newProductChargeTemplate}"
+									update=":tabView:productCharges:productChargediv" />
+								<p:button id="buttonBack5" value="#{messages['action.back']}"
+									outcome="#{productTemplateBean.back()}"
+									includeViewParams="true">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+					
 				</p:tab>
 			</p:tabView>
 

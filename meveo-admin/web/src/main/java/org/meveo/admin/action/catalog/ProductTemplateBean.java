@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -20,7 +21,9 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.base.local.IPersistenceService;
@@ -28,6 +31,7 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.omnifaces.cdi.ViewScoped;
@@ -59,6 +63,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	@Inject
 	private ChannelService channelService;
+	
+	@Inject
+	private ProductChargeTemplateService productChargeTemplateService;
 
 	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
 	private DualListModel<DigitalResource> attachmentsDM;
@@ -68,6 +75,11 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 	private String editMode;
 
+	@Produces
+	@Named
+	private ProductChargeTemplate productChargeTemplate = new ProductChargeTemplate();
+	
+	
 	public ProductTemplateBean() {
 		super(ProductTemplate.class);
 	}
@@ -326,4 +338,57 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
 		return false;
 	}
+
+	public void newProductChargeTemplate(){
+		productChargeTemplate=new ProductChargeTemplate();
+		productChargeTemplate.setProvider(getCurrentProvider());
+	}
+	
+	public void editProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+		this.productChargeTemplate = productChargeTemplate;
+	}
+	
+	public void deleteProductChargeTemplate(Long id) throws BusinessException {
+		ProductChargeTemplate productCharge=productChargeTemplateService.findById(id);
+		entity.getProductChargeTemplates().remove(productCharge);
+		productCharge.getProductTemplates().remove(entity);
+		entity=getPersistenceService().update(entity, getCurrentUser());
+		messages.info(new BundleKey("messages", "delete.successful"));
+	}
+	
+	public void saveProductChargeTemplate(){
+		log.info("saveProductChargeTemplate getObjectId=" + getObjectId());
+
+		try {
+			if(productChargeTemplate==null){
+				return;
+			}
+			if (productChargeTemplate.getId() != null) {
+				productChargeTemplateService.update(productChargeTemplate, getCurrentUser());
+                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+                messages.info(new BundleKey("messages", "update.successful"));
+            } else {
+            	if(!productChargeTemplate.getProductTemplates().contains(entity)){
+            		productChargeTemplate.getProductTemplates().add(entity);
+            	}
+            	productChargeTemplateService.create(productChargeTemplate, getCurrentUser());
+                entity.getProductChargeTemplates().add(productChargeTemplate);
+                messages.info(new BundleKey("messages", "save.successful"));
+            }
+			newProductChargeTemplate();
+		} catch (Exception e){
+			log.error("error when saving productCharge",e);
+            messages.error("error when creating product charge:"+e.getMessage());
+		}
+	}
+
+	public ProductChargeTemplate getProductChargeTemplate() {
+		return productChargeTemplate;
+	}
+
+	public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+		this.productChargeTemplate = productChargeTemplate;
+	}
+	
+	
 }
