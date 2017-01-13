@@ -216,6 +216,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 				OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateService(offerServiceTemplate, prefix, pricePlansInMemory,
 						chargeTemplateInMemory, currentUser);
+				newOfferServiceTemplates.add(newOfferServiceTemplate);
 
 				if (bsm != null && bsm.getScript() != null) {
 					try {

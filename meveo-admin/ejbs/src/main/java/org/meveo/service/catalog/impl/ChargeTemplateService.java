@@ -72,23 +72,4 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 		create(entity, getCurrentUser());
         customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 	}
-	
-	/**
-	 * Copy basic properties of a chargeTemplate to another object.
-	 * @param sourceChargeTemplate
-	 * @param targetTemplate
-	 * @param prefix
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 */
-	public void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
-		BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
-		targetTemplate.setAuditable(null);
-		targetTemplate.setId(null);
-		targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
-		targetTemplate.clearUuid();
-		targetTemplate.setVersion(0);
-		targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-		targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-	}
 }
