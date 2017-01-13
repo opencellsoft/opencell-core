@@ -57,13 +57,13 @@
 									<f:facet name="header">
 										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
-									<p:commandButton update=":tabView:formProductCharge"
+									<p:commandButton update=":#{p:component('formProductCharge')}"
 										action="#{productTemplateBean.editProductChargeTemplate(entity)}"
 										icon="ui-icon-document" />
 									<p:commandButton
 										action="#{productTemplateBean.deleteProductChargeTemplate(entity.getId())}"
 										icon="ui-icon-trash"
-										update=":tabView:productChargeTemplate_panel,:tabView:formProductCharge" />
+										update=":#{p:component('productChargeTemplate_panel')} :#{p:component('formProductCharge')}" />
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -85,10 +85,10 @@
 									rendered="#{productTemplateBean.canUserUpdateEntity()}"
 									action="#{productTemplateBean.saveProductChargeTemplate}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:productCharges:productChargediv" />
+									update=":#{p:component('productChargediv')}" />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newProductChargeTemplate}"
-									update=":tabView:productCharges:productChargediv" />
+									update=":#{p:component('productChargediv')}" />
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{productTemplateBean.back()}"
 									includeViewParams="true">
