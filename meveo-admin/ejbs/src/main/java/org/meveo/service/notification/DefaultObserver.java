@@ -139,9 +139,9 @@ public class DefaultObserver {
         }
     }
 
-    private void fireNotification(Notification notif, Object entityOrEvent) {
+    private boolean fireNotification(Notification notif, Object entityOrEvent) {
         if (notif == null) {
-            return;
+            return false;
         }
 
         IEntity entity = null;
@@ -155,7 +155,7 @@ public class DefaultObserver {
         try {
             if (!matchExpression(notif.getElFilter(), entityOrEvent)) {
                 log.debug("Expression {} does not match", notif.getElFilter());
-                return;
+                return false;
             }
 
             boolean sendNotify = true;
@@ -170,7 +170,7 @@ public class DefaultObserver {
             }
 
             if (!sendNotify) {
-                return;
+                return false;
             }
 
             Map<String, Object> context = new HashMap<String, Object>();
@@ -218,6 +218,8 @@ public class DefaultObserver {
                 log.error("Failed to create notification history", e2);
             }
         }
+        
+        return true;
     }
 
     private void fireCdrNotification(Notification notif, IProvider cdr) {
@@ -232,11 +234,19 @@ public class DefaultObserver {
 
     }
 
-    private void checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) {
+   /**
+    * 
+    * @param type
+    * @param entityOrEvent
+    * @return return true if one notification has been trigerred
+    */
+    private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) {
+    	boolean result=false;
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
             notif = genericNotificationService.findById(notif.getId());
-            fireNotification(notif, entityOrEvent);
+            result = result || fireNotification(notif, entityOrEvent);
         }
+        return result;
     }
 
     public void entityCreated(@Observes @Created BaseEntity e) {
@@ -293,7 +303,8 @@ public class DefaultObserver {
 
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
-        checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
+        boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
+        e.getHeaders().put("fired", fired?"true":"false");
     }
 
     public void LowBalance(@Observes @LowBalance WalletInstance e) {
