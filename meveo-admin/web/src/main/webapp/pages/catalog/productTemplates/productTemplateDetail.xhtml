@@ -12,6 +12,17 @@
 	</ui:define>
 
 	<ui:define name="body">
+	   <hftl:entityPopup id="searchProductChargeTemplatePopup"
+			header="#{messages['productTemplate.productCharges']}"
+			updateField="formId:tabView:formProductCharge:productChargeTemplateSelectedId formId:tabView:formProductCharge:productChargeTemplateSelectedId_text"
+			selection="#{productTemplateBean.productChargeTemplate}"
+			backingBean="#{productChargeTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
@@ -72,23 +83,23 @@
 						<hftl:formPanel formId="formProductCharge"
 							edit="#{productTemplateBean.edit}"
 							backingBean="#{productTemplateBean}"
-							entity="#{productTemplateBean.productChargeTemplate}"
 							showFormButtons="false" ajaxSubmit="true">
 							<hftl:formField id="productChargeTemplateSelectedId"
+							    entity="#{productTemplateBean.productChargeTemplate}"
 								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="chargeTemplate" valueLabelField="code" popup="true"
+								field="code" popup="true"
 								popupId="searchProductChargeTemplatePopup" clearButton="true"
 								required="true"/>
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">
 								<p:commandButton
 									rendered="#{productTemplateBean.canUserUpdateEntity()}"
-									action="#{productTemplateBean.saveProductChargeTemplate}"
+									action="#{productTemplateBean.saveProductChargeTemplate()}"
 									value="#{messages['action.addSave']}"
-									update=":#{p:component('productChargediv')}" />
+									update="formId:tabView:productChargediv formId:tabView:productCharges_MSG_panel" />
 								<p:commandButton value="#{messages['action.cancel']}"
-									action="#{serviceTemplateBean.newProductChargeTemplate}"
-									update=":#{p:component('productChargediv')}" />
+									action="#{productTemplateBean.newProductChargeTemplate()}"
+									update="formId:tabView:productChargediv" />
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{productTemplateBean.back()}"
 									includeViewParams="true">
