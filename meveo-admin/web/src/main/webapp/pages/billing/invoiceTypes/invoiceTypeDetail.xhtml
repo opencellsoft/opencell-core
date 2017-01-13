@@ -36,13 +36,13 @@
 
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
 				<p:menuitem outcome="invoiceTypes"
 					value="#{messages['menu.invoiceTypes']}" />
 				<p:menuitem value="#{messages['commons.new']} #{messages['invoiceType']}"
 					disabled="true" rendered="#{invoiceTypeBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['invoiceType']} #{messages['commons.configuration']} - #{invoiceTypeBean.entity.code}"
+					value="#{messages['invoiceType']} - #{invoiceTypeBean.entity.code}"
 					disabled="true" rendered="#{!invoiceTypeBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>

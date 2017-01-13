@@ -27,7 +27,7 @@
                     <p:outputPanel>
                         <p:panel rendered="#{not offerTemplateBean.edit}">
                             <ul class="list-inline">
-                                <li class=""><p:commandLink action="#{offerTemplateBean.duplicate()}" update="@form" styleClass="fa fa-copy text-blue fa-2x">
+                                <li class=""><p:commandLink action="#{offerTemplateBean.duplicateCatalogHierarchy()}" update="@form" styleClass="fa fa-copy text-blue fa-2x">
                                         <f:param name="edit" value="false"></f:param>
                                         <f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />

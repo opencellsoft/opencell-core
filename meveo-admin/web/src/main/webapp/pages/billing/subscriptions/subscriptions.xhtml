@@ -2,6 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://java.sun.com/jsf/html"	
 	template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -12,6 +14,12 @@
     </ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
+			</p:breadCrumb>
+		</h:form> 	
 
 		<hftl:searchPanel columns="3" label="#{messages['subscription.search']}"
 			backingBean="#{subscriptionListBean}">

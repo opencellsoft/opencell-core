@@ -20,6 +20,17 @@
     </ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.customerAccount']}"
+					disabled="true" rendered="#{customerAccountBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}"
+					disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
 
 		<hftl:entityPopup id="searchCustomerPopup"
 			header="#{messages['customer.popup.header']}"
@@ -55,15 +66,7 @@
 <!-- 				selection="#{customerAccountBean.entity.tradingLanguage}" -->
 <!-- 				updateField=":parentTab:formCustomerAccount:childTab:trLanguageSelectId"> -->
 <!-- 		</hftl:entityPopup> -->
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
-					<p:menuitem outcome="customerAccounts"
-						value="#{messages['menu.customerAccounts']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
