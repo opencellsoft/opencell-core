@@ -802,13 +802,6 @@ form.formNoBottomBorder {
 .LeftBorder { border-left: 1px solid #ddd !important; }
 * MEDIA QUERIES FOR CORE LAYOUT **************************************************************************************************************** */
 /* Large desktop */
-@media (min-width: 960px) {
-    /*visibilities according to the platform*/
-   	.ShowOnMobile{display:none;opacity:0;}
- 	.ShowOnDesktop{display:inherit;opacity:1;}
- 	
- 	#mq{color:red;}	
-}
 @media (min-width: 960px) and (max-width: 1200px) {
 	#mq { color: green; }
     /* responsive support */
@@ -820,7 +813,7 @@ form.formNoBottomBorder {
 }
 /* Portrait tablet to landscape and desktop */
 
-@media (min-width: 640px) and (max-width: 960px) {
+@media (min-width: 640px) and (max-width: 959px) {
 	#mq { color: orange; }
     /*visibilities according to the platform*/
 
@@ -874,7 +867,7 @@ form.formNoBottomBorder {
 }
 /* Landscape phone to portrait tablet */
 
-@media (min-width: 480px) and (max-width: 640px) {
+@media (min-width: 480px) and (max-width: 639px) {
 	#mq { color: yellow; }
     /*visibilities according to the platform*/
 
@@ -930,7 +923,7 @@ form.formNoBottomBorder {
 }
 /* Portrait phones and down */
 
-@media (min-width: 320px) and (max-width: 480px) {
+@media (min-width: 320px) and (max-width: 479px) {
 	#mq { color: pink; }
     /*visibilities according to the platform*/
 
