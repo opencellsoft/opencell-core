@@ -2,6 +2,8 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -12,7 +14,12 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+			</p:breadCrumb>
+		</h:form> 
 		<hftl:searchPanel columns="2"
 			label="#{messages['importedFile.search']}"
 			backingBean="#{ftpImportedFileListBean}" renderNewButton="false">

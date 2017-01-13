@@ -14,15 +14,15 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
-					<p:menuitem outcome="importedFiles"
-						value="#{messages['menu.importedFiles']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+				<p:menuitem
+					value="#{messages['menu.importedFiles']} - #{ftpImportedFileBean.entity.code}"
+					disabled="true"  />
+			</p:breadCrumb>
+		</h:form>
 		<hftl:formPanel id="formPanel" formId="importedFilesFormId"
 			label="#{messages['menu.importedFiles']}" edit="false" showEditButton="false"
 			backingBean="#{ftpImportedFileBean}">

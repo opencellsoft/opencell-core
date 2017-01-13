@@ -15,7 +15,13 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="body">    
+	<ui:define name="body">   
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
+			</p:breadCrumb>
+		</h:form>		 
 			<hftl:entityPopup id="searchWalletInstancePopup"
 			header="#{messages['walletTemplate.title']}"
 			updateField=":searchForm:wallet"

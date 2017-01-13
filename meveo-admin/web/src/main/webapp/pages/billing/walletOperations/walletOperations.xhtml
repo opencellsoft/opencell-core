@@ -13,6 +13,12 @@
 	</ui:define>
 
 	<ui:define name="body">  
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
+			</p:breadCrumb>
+		</h:form>	
 	 
 <!-- 	<hftl:entityPopup id="searchSellerPopup" -->
 <!-- 			header="#{messages['seller.search']}" -->

@@ -17,7 +17,13 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
+			</p:breadCrumb>
+		</h:form>
+			
 		<hftl:searchPanel backingBean="#{billingRunListBean}"
 			label="#{messages['billingRun.search']}" renderNewButton="false">
 			<hftl:searchField label="#{messages['billingRun.status']}"
