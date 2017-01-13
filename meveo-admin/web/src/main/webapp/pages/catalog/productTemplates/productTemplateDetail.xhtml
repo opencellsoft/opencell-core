@@ -14,7 +14,7 @@
 	<ui:define name="body">
 	   <hftl:entityPopup id="searchProductChargeTemplatePopup"
 			header="#{messages['productTemplate.productCharges']}"
-			updateField="formId:tabView:formProductCharge:productChargeTemplateSelectedId formId:tabView:formProductCharge:productChargeTemplateSelectedId_text"
+			updateField=":tabView:formProductCharge:productChargeTemplateSelectedId :tabView:formProductCharge:productChargeTemplateSelectedId_text"
 			selection="#{productTemplateBean.productChargeTemplate}"
 			backingBean="#{productChargeTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -36,16 +36,17 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:formPanel label="#{messages['menu.productTemplates']}"
-			backingBean="#{productTemplateBean}" showEnableDisableButton="true">
 
 			<p:tabView id="tabView"
 				activeIndex="#{productTemplateBean.activeTab}">
 				<p:tab tab="information" title="#{messages['commons.information']}">
-					<ui:include src="productTemplateDetailCommon.xhtml">
-						<ui:param name="backingBean" value="#{productTemplateBean}" />
-						<ui:param name="mode" value="PRODUCT" />
-					</ui:include>
+				<hftl:formPanel label="#{messages['menu.productTemplates']}"
+					backingBean="#{productTemplateBean}" showEnableDisableButton="true">
+						<ui:include src="productTemplateDetailCommon.xhtml">
+							<ui:param name="backingBean" value="#{productTemplateBean}" />
+							<ui:param name="mode" value="PRODUCT" />
+						</ui:include>
+				</hftl:formPanel>
 				</p:tab>
 				<p:tab tab="productCharges"
 					title="#{messages['productTemplate.productCharges']}" rendered="#{!productTemplateBean.entity.transient}">
@@ -96,10 +97,10 @@
 									rendered="#{productTemplateBean.canUserUpdateEntity()}"
 									action="#{productTemplateBean.saveProductChargeTemplate()}"
 									value="#{messages['action.addSave']}"
-									update="formId:tabView:productChargediv formId:tabView:productCharges_MSG_panel" />
+									update=":tabView:productChargediv :tabView:productCharges_MSG_panel" />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{productTemplateBean.newProductChargeTemplate()}"
-									update="formId:tabView:productChargediv" />
+									update=":tabView:productChargediv" />
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{productTemplateBean.back()}"
 									includeViewParams="true">
@@ -112,7 +113,6 @@
 				</p:tab>
 			</p:tabView>
 
-		</hftl:formPanel>
 
 	</ui:define>
 </ui:composition>
