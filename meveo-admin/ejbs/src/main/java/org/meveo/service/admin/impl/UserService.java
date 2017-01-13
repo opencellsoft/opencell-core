@@ -405,5 +405,19 @@ public class UserService extends PersistenceService<User> {
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> listUsersInMM(List<String> roleNames, Provider provider) {
+		List<User> users = null;
+
+		try {
+			users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames).setParameter("provider", provider)
+					.getResultList();
+		} catch (Exception e) {
+			log.error("listUserByPermissionResources error ", e.getMessage());
+		}
+
+		return users;
+	}
 
 }
