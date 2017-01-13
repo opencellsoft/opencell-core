@@ -100,16 +100,18 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
-		createEventHelper.register(evt.getException());
+		//createEventHelper.register(evt.getException());
 		log.error("Caught in handleRuntimeException exception={}", (evt.getException()!=null?evt.getException().getMessage():null),evt.getException());
-
-		try {
-			if(!response.isCommitted()){
-				response.sendRedirect(response.encodeRedirectURL(request
-						.getContextPath() + "/errors/bug.jsf"));
+		log.info("request requestUri="+request.getRequestURI());
+		if(!request.getRequestURI().contains("inbound")){
+			try {
+				if(!response.isCommitted()){
+					response.sendRedirect(response.encodeRedirectURL(request
+							.getContextPath() + "/errors/bug.jsf"));
+				}
+			} catch (Exception e) {
+				log.error("failed to redirect in handleRuntimeException exception={}",e.getMessage(),e);
 			}
-		} catch (Exception e) {
-			log.error("failed to redirect in handleRuntimeException exception={}",e.getMessage(),e);
 		}
 	}
 
