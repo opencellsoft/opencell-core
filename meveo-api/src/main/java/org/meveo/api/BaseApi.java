@@ -243,7 +243,7 @@ public abstract class BaseApi {
             }
         }
 
-        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
+        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory. Check inherited values as well. Instantiate CF with default value in case of a new entity
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
         if (entity.getParentCFEntities() != null) {
             for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
@@ -252,17 +252,42 @@ public abstract class BaseApi {
         }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
-                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+            if (cft.isDisabled()) {
                 continue;
             }
+
+            // Does not apply at this moment
+            if ((isNewEntity && cft.isHideOnNew())  || (!isNewEntity && !cft.isAllowEdit()) || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                continue;
+            }
+
+            // When no instance was found
             if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
-                missingParameters.add(cft.getCode());
+                Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                if (value == null && isNewEntity) {
+                    value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                }
+                if (value == null && cft.isValueRequired()) {
+                    missingParameters.add(cft.getCode());
+                }
+                
+                // When instance, or multiple instances in case of versioned values, were found
             } else {
+                boolean allEmpty = true;
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
-                    if (cfi == null || cfi.isValueEmpty()) {
-                        missingParameters.add(cft.getCode());
+                    if (cfi != null && !cfi.isValueEmpty()) {
+                        allEmpty = false;
                         break;
+                    }
+                }
+
+                if (allEmpty) {
+                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                    if (value == null && isNewEntity) {
+                        value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                    }
+                    if (value == null && cft.isValueRequired()) {
+                        missingParameters.add(cft.getCode());
                     }
                 }
             }
