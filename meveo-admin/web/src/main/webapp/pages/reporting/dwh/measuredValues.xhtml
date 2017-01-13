@@ -13,6 +13,12 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measuredValues" value="#{messages['menu.measuredValues']}" />
+			</p:breadCrumb>
+		</h:form>	
 
 		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 		<hftl:searchPanel label="#{messages['menu.measuredValues']}" columns="3"

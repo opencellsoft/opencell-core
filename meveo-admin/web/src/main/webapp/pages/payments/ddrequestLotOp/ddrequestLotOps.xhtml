@@ -13,7 +13,12 @@
     </ui:define>
 
 	<ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />
+			</p:breadCrumb>
+		</h:form>
 		<hftl:searchPanel
 			label="#{messages['menu.ddrequestLotOp']}"
 			backingBean="#{ddRequestLotOpListBean}">

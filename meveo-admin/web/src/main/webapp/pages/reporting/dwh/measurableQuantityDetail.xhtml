@@ -11,15 +11,17 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
-					<p:menuitem outcome="measurableQuantities"
-						value="#{messages['menu.measurableQuantities']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measurableQuantities" value="#{messages['menu.measurableQuantities']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['measurableQuantity.popup.header']}"
+					disabled="true" rendered="#{measurableQuantityBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['measurableQuantity.popup.header']} - #{measurableQuantityBean.entity.code}"
+					disabled="true" rendered="#{!measurableQuantityBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel backingBean="#{measurableQuantityBean}" columns="1">
 			<hftl:formField label="#{messages['entity.measurablequantity.code']}"

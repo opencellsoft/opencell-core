@@ -12,15 +12,17 @@
         </f:metadata>
     </ui:define>
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="revenueSchedules"
-						value="#{messages['menu.revenueSchedules']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['revenueSchedule.panel']}"
+					disabled="true" rendered="#{revenueScheduleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['revenueSchedule.panel']} - #{revenueScheduleBean.entity.chargeInstance.code}"
+					disabled="true" rendered="#{!revenueScheduleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 	
 		<hftl:formPanel label="#{messages['revenueSchedule.panel']}" backingBean="#{revenueScheduleBean}" >
 			<hftl:formEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" fieldItem="chargeInstance"/>
