@@ -9,15 +9,17 @@
     </ui:define>
 
     <ui:define name="body">
-    	<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
-					<p:menuitem outcome="walletOperations"
-						value="#{messages['menu.walletOperations']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['ratedTransaction.walletOperation']}"
+					disabled="true" rendered="#{walletOperationBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['ratedTransaction.walletOperation']} - #{walletOperationBean.entity.code}"
+					disabled="true" rendered="#{!walletOperationBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
         <hftl:formPanel edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 

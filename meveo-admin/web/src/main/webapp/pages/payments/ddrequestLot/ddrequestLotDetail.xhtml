@@ -12,15 +12,15 @@
         </f:metadata>
     </ui:define>
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
-					<p:menuitem outcome="ddrequestLots"
-						value="#{messages['menu.ddrequestLot']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />				
+				<p:menuitem
+					value="#{messages['ddrequestLot.panel']} - #{ddRequestLOTBean.entity.fileName}"
+					disabled="true" rendered="#{!ddRequestLOTBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 	
 		<hftl:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
 		    <p:panel>

@@ -3,7 +3,8 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:hftl="http://hftl.org"
-    template="/layout/template.xhtml">
+    template="/layout/template.xhtml"
+    	xmlns:p="http://primefaces.org/ui">
   	
 	<ui:define name="metadata">
 		<f:metadata>
@@ -12,7 +13,12 @@
 		</f:metadata>
 	</ui:define>
 	<ui:define name="body">
-   		
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measurableQuantities" value="#{messages['menu.measurableQuantities']}" />
+			</p:breadCrumb>
+		</h:form>   		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
 			<hftl:searchPanel label="#{messages['menu.measurableQuantities']}" columns="3" backingBean="#{measurableQuantityListBean}">

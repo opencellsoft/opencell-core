@@ -39,6 +39,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -66,6 +68,15 @@ import org.meveo.model.shared.Name;
 @ExportIdentifier({ "userName", "provider" })
 @Table(name = "ADM_USER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
+@NamedQueries({ @NamedQuery(name = "User.listByPermissionResource", query = ""
+		+ "SELECT u FROM User u"
+		+ " LEFT JOIN u.roles as role"
+		+ " LEFT JOIN role.permissions as permission"
+		+ " WHERE permission.resource IN (:permissionResources) AND u.provider=:provider"),
+		@NamedQuery(name = "User.listUsersInMM", query = ""
+				+ "SELECT u FROM User u"
+				+ " LEFT JOIN u.roles as role"
+				+ " WHERE role.name IN (:roleNames) AND u.provider=:provider") })
 public class User extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

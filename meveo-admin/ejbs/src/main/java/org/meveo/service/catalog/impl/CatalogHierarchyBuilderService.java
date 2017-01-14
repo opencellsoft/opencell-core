@@ -30,6 +30,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,9 @@ public class CatalogHierarchyBuilderService {
 
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
+	
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
 
 	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix, Auditable auditable, User currentUser)
 			throws BusinessException {
@@ -121,6 +125,8 @@ public class CatalogHierarchyBuilderService {
 		serviceTemplate.getServiceUsageCharges().size();
 
 		ServiceTemplate newServiceTemplate = new ServiceTemplate();
+		String sourceAppliesToEntity = serviceTemplate.getUuid();
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, serviceTemplate, currentUser);
 
 		try {
 			BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);

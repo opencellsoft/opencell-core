@@ -15,6 +15,12 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="edrList" value="#{messages['menu.edr']}" />
+			</p:breadCrumb>
+		</h:form> 	
 
 		<hftl:entityPopup id="searchEdrPopup"
 			header="#{messages['commons.search']}"
