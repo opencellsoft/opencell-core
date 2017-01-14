@@ -138,7 +138,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
+		productTemplateService.refreshOrRetrieve(entity);
 		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
 			entity.getOfferTemplateCategories().clear();
 			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
@@ -363,19 +363,15 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 			if(productChargeTemplate==null){
 				return;
 			}
-			if (productChargeTemplate.getId() != null) {
-				productChargeTemplateService.update(productChargeTemplate, getCurrentUser());
-                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
-                messages.info(new BundleKey("messages", "update.successful"));
-            } else {
-            	if(!productChargeTemplate.getProductTemplates().contains(entity)){
-            		productChargeTemplate.getProductTemplates().add(entity);
-            	}
-            	productChargeTemplateService.create(productChargeTemplate, getCurrentUser());
-                entity.getProductChargeTemplates().add(productChargeTemplate);
-                messages.info(new BundleKey("messages", "save.successful"));
-            }
-			newProductChargeTemplate();
+			entity = productTemplateService.refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+            productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
+        	if(!productChargeTemplate.getProductTemplates().contains(entity)){
+        		productChargeTemplate.getProductTemplates().add(entity);
+        	}
+			entity.getProductChargeTemplates().add(productChargeTemplate);
+			productChargeTemplateService.update(productChargeTemplate, getCurrentUser());
+            messages.info(new BundleKey("messages", "save.successful"));
+            newProductChargeTemplate();
 		} catch (Exception e){
 			log.error("error when saving productCharge",e);
             messages.error("error when creating product charge:"+e.getMessage());
