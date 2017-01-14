@@ -222,10 +222,6 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
         BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
         BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
-        log.debug("first 9: " + trendList.subList(0, 9));
-        log.debug("last 3: " + trendList.subList(9, trendList.size()));
-        log.debug("previousAverage: " + firstAverage);
-        log.debug("latestAverage: " + lastAverage);
         BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
         averageTrend = averageTrend.subtract(BigDecimal.ONE);
         averageTrend = averageTrend.multiply(new BigDecimal(100));
