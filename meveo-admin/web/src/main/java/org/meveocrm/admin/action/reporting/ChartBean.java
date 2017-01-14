@@ -225,7 +225,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         double averageTrend = lastAverage / firstAverage;
         averageTrend -= 1;
         averageTrend *= 100;
-        return new BigDecimal(averageTrend).setScale(0, RoundingMode.HALF_UP);
+        return new BigDecimal(averageTrend).setScale(1, RoundingMode.HALF_UP);
     }
 
     private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
@@ -236,7 +236,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             double growthRate = Math.pow(last / first, 1.0d / count);
             growthRate -= 1;
             growthRate *= 100;
-            return new BigDecimal(growthRate).setScale(0, RoundingMode.HALF_UP);
+            return new BigDecimal(growthRate).setScale(1, RoundingMode.HALF_UP);
         }
         return BigDecimal.ZERO;
     }
@@ -256,7 +256,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
                 double avg = total / lastValue;
                 avg -= 1;
                 avg *= 100;
-                average = new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP);
+                average = new BigDecimal(avg).setScale(1, RoundingMode.HALF_UP);
             }
         }
         return average;

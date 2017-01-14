@@ -15,7 +15,9 @@
         <div class="no-border-radius ui-grid-responsive">
             <div class="chart-row">
                 <div class="text-center box no-border no-border-radius ui-grid-col-6">
-                    <div class="box-title">#{messages['marketingManager.home.mrrLabel']}</div>
+                    <div class="box-title">#{messages['marketingManager.home.mrrLabel']}
+                        <span id="mrrTrend" title="#{messages['marketingManager.home.mrrTrendLabel']}" class="trend" />
+                    </div>
                     <div class="draw">
                         <canvas id="mrr"/>
                     </div>
@@ -302,6 +304,8 @@
 					}
 				);
 
+				var mrrTrend = document.getElementById("mrrTrend");
+				mrrTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
 				var mrrPerOfferTrend = document.getElementById("mrrPerOfferTrend");
 				mrrPerOfferTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
             }
