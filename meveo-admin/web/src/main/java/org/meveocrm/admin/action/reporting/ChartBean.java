@@ -214,18 +214,22 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         }
         BigDecimal average = new BigDecimal(0);
         if (values.size() > 0) {
-            average = total.divide(new BigDecimal(values.size()), 2, BigDecimal.ROUND_HALF_UP);
+            average = total.divide(new BigDecimal(values.size()), 15, BigDecimal.ROUND_HALF_UP);
         }
         return average;
     }
 
     private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
-        double firstAverage = computeAverage(trendList.subList(0, 8)).doubleValue();
-        double lastAverage = computeAverage(trendList.subList(9, trendList.size())).doubleValue();
-        double averageTrend = lastAverage / firstAverage;
-        averageTrend -= 1;
-        averageTrend *= 100;
-        return new BigDecimal(averageTrend).setScale(1, RoundingMode.HALF_UP);
+        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
+        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
+        log.debug("first 9: " + trendList.subList(0, 9));
+        log.debug("last 3: " + trendList.subList(9, trendList.size()));
+        log.debug("previousAverage: " + firstAverage);
+        log.debug("latestAverage: " + lastAverage);
+        BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
+        averageTrend = averageTrend.subtract(BigDecimal.ONE);
+        averageTrend = averageTrend.multiply(new BigDecimal(100));
+        return averageTrend.setScale(1, RoundingMode.HALF_UP);
     }
 
     private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
@@ -244,7 +248,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     private BigDecimal computeMeasuredValuesAverage(List<MeasuredValue> measuredValues) {
         BigDecimal average = BigDecimal.ZERO;
         boolean isEmpty = measuredValues == null || measuredValues.size() == 0;
-        if(!isEmpty){
+        if (!isEmpty) {
             MeasuredValue last = measuredValues.get(measuredValues.size() - 1);
             double lastValue = last.getValue().doubleValue();
             boolean isLastValueZero = lastValue == 0;
