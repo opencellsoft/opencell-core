@@ -220,7 +220,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
-        double firstAverage = computeAverage(trendList.subList(0, 9)).doubleValue();
+        double firstAverage = computeAverage(trendList.subList(0, 8)).doubleValue();
         double lastAverage = computeAverage(trendList.subList(9, trendList.size())).doubleValue();
         double averageTrend = lastAverage / firstAverage;
         averageTrend -= 1;
