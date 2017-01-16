@@ -491,7 +491,7 @@ public class Invoice4_2Api extends BaseApi {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
         }
 
-        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId(),currentUser);
         Scanner scanner = new Scanner(xmlFile);
         String xmlContent = scanner.useDelimiter("\\Z").next();
         scanner.close();

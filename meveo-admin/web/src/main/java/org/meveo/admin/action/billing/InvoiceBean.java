@@ -386,7 +386,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generateXMLInvoice() throws BusinessException {
 		try {
-			xmlInvoiceCreator.createXMLInvoice(entity.getId());
+			xmlInvoiceCreator.createXMLInvoice(entity.getId(),getCurrentUser());
 			messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 		} catch (Exception e) {
 			log.error("failed to generate xml invoice", e);
@@ -705,7 +705,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 		invoiceService.commit();
 		// create xml invoice adjustment
-		xmlInvoiceCreator.createXMLInvoice(entity.getId());
+		xmlInvoiceCreator.createXMLInvoice(entity.getId(),getCurrentUser());
 		
 		// create pdf
 		invoiceService.producePdf(entity.getId(), currentUser);

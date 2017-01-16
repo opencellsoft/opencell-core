@@ -89,7 +89,7 @@ public class XMLInvoiceGenerationJobBean {
 				result.setNbItemsToProcess(subListCreator.getListSize());
 
 				while (subListCreator.isHasNext()) {
-					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result));
+					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result,currentUser));
 					if(result.getNbItemsProcessedWithError()==0){
 					updateBillingRun(billingRun.getId(), currentUser);
 					}
