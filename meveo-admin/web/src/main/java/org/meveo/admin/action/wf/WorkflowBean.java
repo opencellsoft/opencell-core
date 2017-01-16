@@ -101,7 +101,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
     private transient WFTransition wfTransition = new WFTransition();
 
     private transient WFDecisionRule newWFDecisionRule = new WFDecisionRule();
-    
+
 	@Inject
 	@RequestParam
 	private Instance<String> isDunning;
@@ -194,9 +194,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @ActionMethod
     public void deleteWfTransition(WFTransition transitionToDelete) {
         try {
-            WFTransition transition = wFTransitionService.findById(transitionToDelete.getId());
-            wFTransitionService.remove(transition, getCurrentUser());
-            entity.getTransitions().remove(transitionToDelete);
+            wFTransitionService.remove(transitionToDelete.getId(), getCurrentUser());
+            entity = workflowService.refreshOrRetrieve(entity);
             wfDecisionRulesByName.clear();
             selectedRules.clear();
             wfActions.clear();
@@ -204,10 +203,35 @@ public class WorkflowBean extends BaseBean<Workflow> {
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {
+            log.info("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }
 
+    @ActionMethod
+    public void duplicateWfTransition(WFTransition wfTransition) {
+        try {
+            this.wfTransition = wFTransitionService.duplicate(wfTransition, entity, getCurrentUser());
+
+            // Set max priority +1
+            int priority = 1;
+            if (entity.getTransitions().size() > 0) {
+                for (WFTransition wfTransitionInList : entity.getTransitions()) {
+                    if (WfTransitionBean.CATCH_ALL_PRIORITY != wfTransitionInList.getPriority() && priority <= wfTransitionInList.getPriority()) {
+                        priority = wfTransitionInList.getPriority() + 1;
+                    }
+                }
+            }
+            this.wfTransition.setPriority(priority);
+            editWfTransition(this.wfTransition);
+
+        } catch (Exception e) {
+            log.error("Failed to duplicate WF transition!", e);
+            messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+        }
+    }
+    
+    @ActionMethod
     public void editWfTransition(WFTransition transitionToEdit) {
         this.wfTransition = transitionToEdit;
         WFTransition wfTransition1 = wFTransitionService.findById(this.wfTransition.getId(), Arrays.asList("provider", "wfDecisionRules", "wfActions"), true);
@@ -241,13 +265,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
         List<Class<?>> allWFType = workflowService.getAllWFTypes(getCurrentProvider());
         List<String> classNames = new ArrayList<String>();
         for (Class<?> clazz : allWFType) {
-        	if(!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())){
-	            if (StringUtils.isBlank(query)) {
-	                classNames.add(clazz.getName());
-	            } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
-	                classNames.add(clazz.getName());
-	            }
-        	}
+            if (!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())) {
+                if (StringUtils.isBlank(query)) {
+                    classNames.add(clazz.getName());
+                } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
+                    classNames.add(clazz.getName());
+                }
+            }
         }
         Collections.sort(classNames);
         return classNames;
@@ -274,15 +298,17 @@ public class WorkflowBean extends BaseBean<Workflow> {
     @SuppressWarnings({ "unchecked" })
     public Map<String, String> getTransitionStatusFromWorkflowType() {
         try {
-            Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(), getCurrentProvider());
-            Object obj = clazz.newInstance();
-            Method testMethod = obj.getClass().getMethod("getStatusList");
-            List<String> statusList = (List<String>) testMethod.invoke(obj);
-            Map<String, String> statusMap = new TreeMap<>();
-            for (String s : statusList) {
-                statusMap.put(s, s);
+            if (entity.getWfType() != null) {
+                Class<?> clazz = workflowService.getWFTypeClassForName(entity.getWfType(), getCurrentProvider());
+                Object obj = clazz.newInstance();
+                Method testMethod = obj.getClass().getMethod("getStatusList");
+                List<String> statusList = (List<String>) testMethod.invoke(obj);
+                Map<String, String> statusMap = new TreeMap<>();
+                for (String s : statusList) {
+                    statusMap.put(s, s);
+                }
+                return statusMap;
             }
-            return statusMap;
         } catch (Exception e) {
             log.error("Unable to get/instantiate or retrieve status list for class " + entity.getWfType(), e);
         }
@@ -615,19 +641,19 @@ public class WorkflowBean extends BaseBean<Workflow> {
             return result;
         }
     }
-    
+
     @ActionMethod
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			try {
-				workflowService.duplicate(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessException e) {
-				log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-		}
-	}
+    public void duplicate() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                workflowService.duplicate(entity, getCurrentUser());
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
+                messages.error(new BundleKey("messages", "save.unsuccessful"));
+            }
+        }
+    }
     
     @Override
     public Map<String, Object> getFilters() {
