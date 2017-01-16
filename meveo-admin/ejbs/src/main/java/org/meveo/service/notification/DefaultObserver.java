@@ -123,19 +123,22 @@ public class DefaultObserver {
 
         try {
             ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getProvider(), scriptInstance.getCode());
-            Map<Object, Object> userMap = new HashMap<Object, Object>();
+            Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
             userMap.put("manager", manager);
-            for (@SuppressWarnings("rawtypes")
-            Map.Entry entry : params.entrySet()) {
-                context.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, Object.class));
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
             scriptInterface.init(context, scriptInstance.getAuditable().getCreator());
             scriptInterface.execute(context, scriptInstance.getAuditable().getCreator());
             scriptInterface.finalize(context, scriptInstance.getAuditable().getCreator());
-
         } catch (Exception e) {
             log.error("failed script execution", e);
+            if(e instanceof BusinessException) {
+                throw e;
+            } else {
+                throw new BusinessException(e);
+            }
         }
     }
 
