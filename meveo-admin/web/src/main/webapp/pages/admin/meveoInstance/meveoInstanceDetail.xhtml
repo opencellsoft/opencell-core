@@ -8,6 +8,17 @@
     </ui:define>
 
     <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="meveoInstances" value="#{messages['menu.meveoInstance']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['meveoInstance.panel']}"
+					disabled="true" rendered="#{meveoInstanceBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['meveoInstance.panel']} - #{meveoInstanceBean.entity.code}"
+					disabled="true" rendered="#{!meveoInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>    
 
         <hftl:entityPopup id="searchUserPopup" header="#{messages['meveoInstance.panel']}" backingBean="#{userBean}" updateField=":meveoInstanceForm:userSelectedId"
             selection="#{meveoInstanceBean.entity.user}" searchField1Label="#{messages['user.userName']}" searchField1="userName" column1Label="#{messages['user.userName']}"
@@ -18,14 +29,7 @@
             searchField2Label="#{messages['meveoInstance.description']}" searchField2="description" column1Label="#{messages['meveoInstance.code']}" column1="code"
             column2Label="#{messages['meveoInstance.description']}" column2="description">
         </hftl:entityPopup>
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="meveoInstances" value="#{messages['menu.meveoInstance']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+
         <hftl:formPanel id="formPanel" label="#{messages['meveoInstance.panel']}" formId="meveoInstanceForm" backingBean="#{meveoInstanceBean}" columns="1">
             <hftl:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
             <hftl:formField label="#{messages['meveoInstance.url']}" field="url" required="true" size="60" componentWidth="75" />

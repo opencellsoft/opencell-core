@@ -9,6 +9,12 @@
     </ui:define>
 
     <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
+			</p:breadCrumb>
+		</h:form>     
         <hftl:searchPanel label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
             <h:panelGrid columns="2">
                 <p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}" />

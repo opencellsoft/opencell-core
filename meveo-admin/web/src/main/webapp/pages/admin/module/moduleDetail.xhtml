@@ -9,15 +9,17 @@
     </ui:define>
 
     <ui:define name="body">
-
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="meveoModules" value="#{messages['menu.meveoModules']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+				<p:menuitem value="#{messages['commons.new']} #{messages['meveoModule.title']}"
+					disabled="true" rendered="#{meveoModuleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['meveoModule.title']} - #{meveoModuleBean.entity.code}"
+					disabled="true" rendered="#{!meveoModuleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
         <ui:include src="modulePopups.xhtml">
             <ui:param name="backingBean" value="#{meveoModuleBean}" />

@@ -11,14 +11,17 @@
 
     <ui:param name="pageTitle" value="#{messages['job.page.title']}" />
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="jobInstances" value="#{messages['menu.jobs']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['jobInstance.title']}"
+					disabled="true" rendered="#{jobInstanceBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['jobInstance.title']} - #{jobInstanceBean.entity.code}"
+					disabled="true" rendered="#{!jobInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
         <p:panel>
             <f:facet name="header">
