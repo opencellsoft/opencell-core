@@ -279,10 +279,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             List<CustomFieldValue> cfvs = query.getResultList();
             if (!cfvs.isEmpty()) {
                 CustomFieldValue cfv = cfvs.get(0);
-				if (cfv != null && !cfv.isValueEmpty()) {
-					cfv.deserializeValue();
-					value = cfv.getValue();
-				}
+                if (cfv != null && !cfv.isValueEmpty()) {
+                    cfv.deserializeValue();
+                    value = cfv.getValue();
+                }
             }
         }
 
@@ -418,18 +418,22 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
             remove(cfi, entity, currentUser);
@@ -460,19 +464,22 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         // Should not match more then one record as periods are calendar based
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code, valueDate);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            // Nothing found and nothing to save
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
             remove(cfi, entity, currentUser);
@@ -507,18 +514,22 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         // Should not match more then one record
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code, valueDateFrom, valueDateTo);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDateFrom, valueDateTo, valuePriority);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else if (value != null || (value == null && cft.getDefaultValue() == null)) {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
             remove(cfi, entity, currentUser);

@@ -243,7 +243,8 @@ public abstract class BaseApi {
             }
         }
 
-        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory. Check inherited values as well. Instantiate CF with default value in case of a new entity
+        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory. Check inherited values as well.
+        // Instantiate CF with default value in case of a new entity
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
         if (entity.getParentCFEntities() != null) {
             for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
@@ -273,17 +274,22 @@ public abstract class BaseApi {
                 
                 // When instance, or multiple instances in case of versioned values, were found
             } else {
-                boolean allEmpty = true;
+                boolean noCfi = true;
+                boolean emptyValue = true;
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
-                    if (cfi != null && !cfi.isValueEmpty()) {
-                        allEmpty = false;
-                        break;
+                    if (cfi != null) {
+                        noCfi = false;
+                        
+                        if (!cfi.isValueEmpty()) {
+                            emptyValue = false;
+                            break;
+                        }
                     }
                 }
 
-                if (allEmpty) {
+                if (noCfi || emptyValue) {
                     Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
-                    if (value == null && isNewEntity) {
+                    if (value == null && isNewEntity && !emptyValue) {
                         value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
                     }
                     if (value == null && cft.isValueRequired()) {
