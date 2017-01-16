@@ -1,14 +1,15 @@
 package org.meveo.service.filter.processor;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 public class CustomBigDecimalProcessor extends BigDecimalProcessor {
 
@@ -26,6 +27,12 @@ public class CustomBigDecimalProcessor extends BigDecimalProcessor {
             if (value != null) {
                 buildQuery(queryBuilder, alias, condition, value);
             }
+        } else if(!StringUtils.isBlank(condition.getOperand())) {
+			buildQuery(queryBuilder, alias, condition, getParameterValue(condition.getOperand()));
         }
+    }
+    
+    private BigDecimal getParameterValue(String operand) {
+    	return new BigDecimal(operand.substring(FilterParameterTypeEnum.BIG_DECIMAL.getPrefix().length() + 1));    	
     }
 }

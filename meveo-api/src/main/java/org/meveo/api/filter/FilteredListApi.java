@@ -28,8 +28,12 @@ public class FilteredListApi extends BaseApi {
 
     @Inject
     private ElasticClient elasticClient;
-
+    
     public Filter getFilterFromDto(FilterDto filter, User currentUser) throws MeveoApiException {
+    	return getFilterFromDto(filter, currentUser, null);
+    }
+
+    public Filter getFilterFromDto(FilterDto filter, User currentUser, Map<String, String> parameters) throws MeveoApiException {
         Filter result = null;
         if (StringUtils.isBlank(filter.getCode()) && StringUtils.isBlank(filter.getInputXml())) {
             throw new MissingParameterException("code or inputXml");
@@ -46,16 +50,37 @@ public class FilteredListApi extends BaseApi {
                 }
             }
         }
-        if (result == null) {
-            result = filterService.parse(filter.getInputXml());
-        }
+        
+        //if there are parameters we recreate a transient filter by replacing the parameter
+        //values in the xml
+		if (parameters != null) {
+			String filterXmlInput = replaceCFParameters(result.getInputXml(), parameters);
+			result = filterService.parse(filterXmlInput);
+		}
+
         return result;
     }
+    
+	private String replaceCFParameters(String xmlInput, Map<String, String> parameters) {
+		String result = xmlInput;
 
-    public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException, BusinessException {
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			result = result.replaceAll("cf(.*):" + entry.getKey(), entry.getValue());
+		}
+
+		log.debug("replaced filter xml :" + result);
+
+		return result;
+	}
+	
+	public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException, BusinessException {
+		return listByFilter(filter, firstRow, numberOfRows, currentUser, null);
+	}
+
+    public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, User currentUser, Map<String, String> parameters) throws MeveoApiException, BusinessException {
 
         String result = "";
-        Filter filterEntity = getFilterFromDto(filter, currentUser);
+        Filter filterEntity = getFilterFromDto(filter, currentUser, parameters);
         result = filterService.filteredList(filterEntity, firstRow, numberOfRows, currentUser);
         return result;
     }

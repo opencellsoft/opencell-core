@@ -3,6 +3,7 @@ package org.meveo.service.filter.processor;
 import org.apache.commons.validator.routines.LongValidator;
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
@@ -24,6 +25,12 @@ public class CustomLongProcessor extends LongProcessor {
             if (value != null) {
                 buildQuery(queryBuilder, alias, condition, value);
             }
+        } else if(!StringUtils.isBlank(condition.getOperand())) {
+			buildQuery(queryBuilder, alias, condition, getParameterValue(condition.getOperand()));
         }
+    }
+    
+    private Long getParameterValue(String operand) {
+    	return Long.valueOf(operand.substring(FilterParameterTypeEnum.LONG.getPrefix().length() + 1));    	
     }
 }
