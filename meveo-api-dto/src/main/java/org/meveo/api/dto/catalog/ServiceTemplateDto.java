@@ -42,6 +42,7 @@ public class ServiceTemplateDto extends BaseDto {
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
+    @Deprecated
     private boolean mandatory;
 
     /**
