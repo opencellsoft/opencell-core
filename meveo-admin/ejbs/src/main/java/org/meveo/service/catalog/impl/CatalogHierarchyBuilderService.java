@@ -142,6 +142,9 @@ public class CatalogHierarchyBuilderService {
 		try {
 			BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
 			newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
+			if (serviceConfiguration != null) {
+				newServiceTemplate.setDescription(serviceConfiguration.getDescription());
+			}
 			newServiceTemplate.setId(null);
 			newServiceTemplate.clearUuid();
 			newServiceTemplate.setVersion(0);
