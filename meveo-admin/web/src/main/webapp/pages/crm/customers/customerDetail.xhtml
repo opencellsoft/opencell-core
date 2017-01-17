@@ -85,7 +85,7 @@
 										listBean="#{customerBrandBean}" />
 									<hftl:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}"/> 
+										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}" listenerUpdate="@this"/> 
 <!--                                         popup="true" popupId="sellerParentPopup" /> -->
 								
 							</p:tab>
