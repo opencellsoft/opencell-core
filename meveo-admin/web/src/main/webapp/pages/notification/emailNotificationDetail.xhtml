@@ -9,14 +9,17 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="emailNotifications" value="#{messages['menu.emailNotifications']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.emailNotification']}"
+					disabled="true" rendered="#{emailNotificationBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['menu.emailNotification']} - #{emailNotificationBean.entity.code}"
+					disabled="true" rendered="#{!emailNotificationBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
         <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"

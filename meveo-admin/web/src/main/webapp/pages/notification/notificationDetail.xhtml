@@ -11,15 +11,17 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="notifications"
-						value="#{messages['menu.notifications']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="notifications" value="#{messages['menu.notifications']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['entity.notification']}"
+					disabled="true" rendered="#{notificationBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['entity.notification']} - #{notificationBean.entity.code}"
+					disabled="true" rendered="#{!notificationBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 		
 		<hftl:entityPopup id="scriptInstancePopup"
 			header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"

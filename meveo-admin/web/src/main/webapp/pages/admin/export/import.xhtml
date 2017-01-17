@@ -9,6 +9,12 @@
     </ui:define>
 
     <ui:define name="body">
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="import" value="#{messages['menu.import']}" />
+                </p:breadCrumb>
+            </h:form>      
         <h:form id="searchForm" enctype="multipart/form-data">
             <p:panel id="searchPanel" styleClass="search-panel">
                 <f:facet name="header">

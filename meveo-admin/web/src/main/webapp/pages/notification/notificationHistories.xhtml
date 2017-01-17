@@ -7,7 +7,12 @@
         </f:metadata>
     </ui:define>
     <ui:define name="body">
-
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="notificationHistories" value="#{messages['menu.notificationHistories']}" />
+                </p:breadCrumb>
+            </h:form>
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
         <hftl:searchPanel label="#{messages['menu.notificationHistories']}" columns="2" backingBean="#{notificationHistoryBean}" renderNewButton="false">
