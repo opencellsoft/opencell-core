@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
+import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -107,11 +108,22 @@ public class CatalogHierarchyBuilderService {
 		OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
 		newOfferProductTemplate.setMandatory(offerProductTemplate.isMandatory());
 	}
-
+	
 	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
 			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
+		return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser);
+	}
+
+	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix, List<PricePlanMatrix> pricePlansInMemory,
+			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
 		OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
-		newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
+		
+		if(serviceConfiguration != null) {
+			newOfferServiceTemplate.setMandatory(serviceConfiguration.isMandatory());
+		} else {
+			newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
+		}
+		
 		if (offerServiceTemplate.getIncompatibleServices() != null) {
 			newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
 		}
@@ -125,8 +137,7 @@ public class CatalogHierarchyBuilderService {
 		serviceTemplate.getServiceUsageCharges().size();
 
 		ServiceTemplate newServiceTemplate = new ServiceTemplate();
-		String sourceAppliesToEntity = serviceTemplate.getUuid();
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, serviceTemplate, currentUser);
+		String sourceAppliesToEntity = serviceTemplate.getUuid();		
 
 		try {
 			BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
@@ -148,6 +159,9 @@ public class CatalogHierarchyBuilderService {
 			}
 
 			serviceTemplateService.create(newServiceTemplate, currentUser);
+			
+			// duplicate custom field instances
+			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newServiceTemplate, currentUser);
 
 			duplicatePrices(serviceTemplate, prefix, pricePlansInMemory, currentUser);
 			duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory, currentUser);

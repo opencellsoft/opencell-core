@@ -214,7 +214,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					}
 				}
 
-				OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateService(offerServiceTemplate, prefix, pricePlansInMemory,
+				OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateService(offerServiceTemplate, serviceConfigurationDto, prefix, pricePlansInMemory,
 						chargeTemplateInMemory, currentUser);
 				newOfferServiceTemplates.add(newOfferServiceTemplate);
 

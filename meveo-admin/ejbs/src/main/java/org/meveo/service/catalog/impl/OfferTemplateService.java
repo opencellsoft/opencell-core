@@ -18,6 +18,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
@@ -161,6 +163,14 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 		entity.setVersion(0);
 		entity.setAuditable(auditable);
 		String sourceAppliesToEntity = entity.clearUuid();
+		
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
+		try {
+			String newImagePath = offerImageUploadEventHandler.duplicateImage(entity, entity.getImagePath(), code, currentUser.getProvider().getCode());
+			entity.setImagePath(newImagePath);
+		} catch (IOException e1) {
+			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
+		}
 
 		entity.setCode(code);
 
