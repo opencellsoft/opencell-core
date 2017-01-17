@@ -1,5 +1,7 @@
 package org.meveo.api.dto.filter;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FilteredListDto {
 
 	private String xmlInput;
+	private Map<String,String> parameters;
 	private int firstRow;
 	private int numberOfRows;
 
@@ -37,6 +40,14 @@ public class FilteredListDto {
 
 	public void setNumberOfRows(int numberOfRows) {
 		this.numberOfRows = numberOfRows;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
 	}
 
 }

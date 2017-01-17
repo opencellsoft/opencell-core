@@ -21,6 +21,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
@@ -177,9 +178,6 @@ public class CustomerAccountApi extends AccountApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
-		if (StringUtils.isBlank(postData.getCustomer())) {
-			missingParameters.add("customer");
-		}
 		if (StringUtils.isBlank(postData.getCurrency())) {
 			missingParameters.add("currency");
 		}
@@ -203,7 +201,9 @@ public class CustomerAccountApi extends AccountApi {
 			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
 			if (customer == null) {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
-			}
+            } else if (!customerAccount.getCustomer().equals(customer)) {
+                throw new InvalidParameterException("Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
+            }
 			customerAccount.setCustomer(customer);
 		}
 
@@ -504,6 +504,10 @@ public class CustomerAccountApi extends AccountApi {
 			create(customerAccountDto, currentUser);
 		} else {// update
 
+            if (!StringUtils.isBlank(customerAccountDto.getCustomer())) {
+                existedCustomerAccountDto.setCustomer(customerAccountDto.getCustomer());
+            }
+		    
 			if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
 				existedCustomerAccountDto.setCurrency(customerAccountDto.getCurrency());
 			}

@@ -14,7 +14,7 @@
 		</div>
 
 		<div id="responsive-menu-button">
-			<a id="menu-button"><i class="fa fa-bars fa-5x"></i> </a>
+			<a id="menu-button"><i class="fa fa-bars"></i> </a>
 		</div>
 
 		<h:form id="primary-nav-form">
@@ -82,7 +82,8 @@
 		</h:form>
 		<!-- / topbar-wrapper -->
 	</div>
-	<div id="top-menu-cover" class="FLeft">		
+	
+	<div id="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}" class="FLeft">		
 		 <c:if test="#{!hideNavigation}">
 		 	<h:form>
   				<ui:include src="/layout/navigation.xhtml" />

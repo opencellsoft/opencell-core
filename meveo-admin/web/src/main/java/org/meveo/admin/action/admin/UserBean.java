@@ -94,7 +94,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     /** Injected @{link User} service. Extends {@link PersistenceService}. */
     @Inject
-    private UserService userService;
+    protected UserService userService;
 
     @Inject
     private RoleService roleService;

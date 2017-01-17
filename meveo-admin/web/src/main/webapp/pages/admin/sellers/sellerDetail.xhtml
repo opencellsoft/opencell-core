@@ -11,13 +11,13 @@
     <ui:define name="body">
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
 				<p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
 				<p:menuitem
 					value="#{messages['commons.new']} #{messages['seller']}"
 					disabled="true" rendered="#{sellerBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['seller']} #{messages['commons.configuration']} - #{sellerBean.entity.code}"
+					value="#{messages['seller']} - #{sellerBean.entity.code}"
 					disabled="true" rendered="#{!sellerBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>
@@ -30,7 +30,7 @@
                     <hftl:formField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />               
                     <hftl:formField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />                 
                     <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode" listBean="#{tradingLanguageBean}" />                   
-                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" />
+                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" listenerUpdate="@this" />
                     
                     <h:panelGroup>	
 						 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"

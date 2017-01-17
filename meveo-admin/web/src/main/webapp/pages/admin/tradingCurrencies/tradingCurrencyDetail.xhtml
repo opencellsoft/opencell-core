@@ -35,13 +35,13 @@
 
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
 				<p:menuitem outcome="tradingCurrencies"
 					value="#{messages['menu.tradingCurrencies']}" />
 				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCurrency']}"
 					disabled="true" rendered="#{tradingCurrencyBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['tradingCurrency']} #{messages['commons.configuration']} - #{tradingCurrencyBean.entity.prDescription}"
+					value="#{messages['tradingCurrency']} - #{tradingCurrencyBean.entity.prDescription}"
 					disabled="true" rendered="#{!tradingCurrencyBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>

@@ -18,6 +18,14 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm1">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu1">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="invoices" value="#{messages['menu.invoices']}" />
+			    <p:menuitem value="#{messages['commons.new']} #{messages[creationInvoiceBean.pageMode == 'detailed' ? 'invoice.detailed' : 'invoice.aggregated']}"
+					disabled="true" rendered="#{invoiceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
 
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
@@ -45,27 +53,14 @@
 				column2Converter="4digits">
 			</hftl:entityPopup>
 		</c:if>
+
 		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
-		<p:panel>
-			<c:if test="#{creationInvoiceBean.pageMode == 'agregated'}">
-				<f:facet name="header">#{messages['invoice.aggregated']}</f:facet>
-			</c:if>
-			<c:if test="#{creationInvoiceBean.pageMode == 'detailed'}">
-				<f:facet name="header">#{messages['invoice.detailed']}</f:facet>
-			</c:if>
-		
 			  <hftl:formPanel ajaxSubmit="true"
 				backingBean="#{creationInvoiceBean}"
 				submitPartialProcess=":formId:tabView" ignoreEnterKey="true">
 				<p:tabView id="tabView"
-				activeIndex="#{creationInvoiceBean.activeTab}">
-				<p:tab title="#{messages['menu.invoice']}">
+				activeIndex="#{creationInvoiceBean.activeTab}">				
+				<p:tab title="#{messages[creationInvoiceBean.pageMode == 'detailed' ? 'invoice.detailed' : 'invoice.aggregated']}">
 <!-- Header     -->			
 						<p:fieldset legend="Header"
 							style="float: left; width: 95%; margin-top: 10px;">

@@ -23,15 +23,17 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
-					<p:menuitem outcome="billingAccounts"
-						value="#{messages['menu.billingAccounts']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="billingAccounts" value="#{messages['menu.billingAccounts']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['billingAccount']}"
+					disabled="true" rendered="#{billingAccountBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['billingAccount']} - #{billingAccountBean.entity.code}"
+					disabled="true" rendered="#{!billingAccountBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 		<c:if test="${billingAccountBean.edit}">
 
 			<hftl:entityPopup id="customerAccountPopup"

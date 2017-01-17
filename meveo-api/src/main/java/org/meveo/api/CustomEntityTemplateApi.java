@@ -196,7 +196,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
     private void synchronizeCustomFieldsAndActions(String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions, User currentUser)
             throws MeveoApiException, BusinessException {
 
-        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesToNoCache(appliesTo, currentUser.getProvider());
 
         // Create, update or remove fields as necessary
         List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();

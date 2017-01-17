@@ -48,11 +48,14 @@
     <c:if test="#{cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHILD_ENTITY}">
         <c:if test="#{!cc.attrs.cft.versionable}">
             <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
-                <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
-                    <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}"
-                        entity="#{cc.attrs.entity}" disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" />
-                </hftl:decorateFormField>
+                
                 <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}" />
+                
+                <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired and inheritedValue ==null?' *':''}" componentWidth="25" displayOneLine="false">
+                    <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}"
+                        entity="#{cc.attrs.entity}" disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
+                </hftl:decorateFormField>
+                
                 <c:if test="#{inheritedValue !=null}">
                     <hftl:decorateFormField fieldId="cfField_stringI" label="#{cc.attrs.cft.description} #{messages['customField.inheritedValue']}" componentWidth="50"
                         displayOneLine="false">
@@ -63,11 +66,13 @@
 
             <c:if
                 test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MATRIX) }">
+                
+                <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValueAsCFValue(cc.attrs.entity, cc.attrs.cft, cc.attrs.cft.code)}" />
+                
                 <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
                     datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}" messagesId="#{cc.attrs.messagesId}"
-                    disabled="#{cc.attrs.disabled}" />
+                    disabled="#{cc.attrs.disabled}" hasInheritedValue="#{inheritedValue !=null}"/>
 
-                <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValueAsCFValue(cc.attrs.entity, cc.attrs.cft, cc.attrs.cft.code)}" />
                 <c:if test="#{inheritedValue !=null}">
                     <hftl:customFieldListTable inherited="true" edit="false" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}"
                         datePattern="#{cc.attrs.datePattern}" prefix="#{cc.attrs.prefix}" field="#{inheritedValue}" messagesId="#{cc.attrs.messagesId}"

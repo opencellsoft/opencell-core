@@ -619,8 +619,10 @@ public class CustomFieldValue implements Serializable {
 
         String sValue = CustomFieldValue.serializeValueToString(valueToSerialize);
 
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.trace("Serialized to value {}", sValue);
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // if (log.isTraceEnabled()) {
+        // log.trace("Serialized to value {}", sValue != null ? sValue.substring(100) : null);
+        // }
         serializedValue = sValue;
 
     }
@@ -731,9 +733,9 @@ public class CustomFieldValue implements Serializable {
         }
 
         String serializedValue = null;
-        
+
         // Add seralization metadata if it is not available in json string
-        if (!jsonValue.contains(SERIALIZATION_SEPARATOR) || jsonValue.indexOf("{")<  jsonValue.indexOf(SERIALIZATION_SEPARATOR)) {
+        if (!jsonValue.contains(SERIALIZATION_SEPARATOR) || jsonValue.indexOf("{") < jsonValue.indexOf(SERIALIZATION_SEPARATOR)) {
             if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.ENTITY) {
                 serializedValue = "entity" + SERIALIZATION_SEPARATOR + jsonValue;
 
@@ -868,8 +870,8 @@ public class CustomFieldValue implements Serializable {
             deserializedValue = mapValue;
         }
 
-        Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
-        log.trace("Value {} deserialized to {}", serializedValue, deserializedValue);
+        // Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+        // log.trace("Value {} deserialized to {}", serializedValue, deserializedValue);
         return deserializedValue;
     }
 

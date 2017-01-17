@@ -16,6 +16,12 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measuredValueDetail" value="#{messages['menu.measuredValues']}" />				
+			</p:breadCrumb>
+		</h:form>	
 
 			<hftl:decorateFormPanel formId="measurementForm" label="#{messages['page.title.measuredValue']}">
 					<ui:define name="fields">

@@ -347,6 +347,13 @@ public class CustomFieldDataEntryBean implements Serializable {
             return;
         }
 
+        // Validate that value is set
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && value == null) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+        
         CustomFieldInstance period = null;
         // First check if any period matches the dates
         if (entityValueHolder.getValuePeriodMatched() == null || !entityValueHolder.getValuePeriodMatched()) {
@@ -518,21 +525,34 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
             // evaluates to false
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
 
-            } else if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+                // Single field's mandatory requirement are taken care in GUI level, new values are not available yet here at validation stage
+            } else if ((cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
-                for (CustomFieldInstance cfi : getFieldValueHolderByUUID(entity.getUuid()).getValues(cft)) {
+                List<CustomFieldInstance> cfis = getFieldValueHolderByUUID(entity.getUuid()).getValues(cft);
 
-                    // Fail validation on non empty values
-                    if (cfi.isValueEmptyForGui()) {
-
+                // Fail validation on non empty values only if it does not have inherited value
+                if (cfis == null || cfis.isEmpty()) {
+                    if (!customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode())) {
                         FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
                         msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                         fc.addMessage(null, msg);
                         valid = false;
+                    }
+                } else {
+                    for (CustomFieldInstance cfi : cfis) {
+                        if (cfi.isValueEmptyForGui()) {
+                            if (customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode())) {
+                                break;
+                            }
+                            FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
+                            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            fc.addMessage(null, msg);
+                            valid = false;
+                        }
                     }
                 }
             }

@@ -113,7 +113,9 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 		entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
 
 		create(entity, currentUser);
-
+		
+		workflow.getTransitions().add(entity);
+		
 		if (wfActions != null) {
 			for (WFAction wfAction : wfActions) {
 				wfActionService.detach(wfAction);
@@ -127,8 +129,6 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 
 		if (wfDecisionRules != null) {
 			for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
-				wfDecisionRuleService.detach(wfDecisionRule);
-				wfDecisionRule.setId(null);
 				entity.getWfDecisionRules().add(wfDecisionRule);
 			}
 		}

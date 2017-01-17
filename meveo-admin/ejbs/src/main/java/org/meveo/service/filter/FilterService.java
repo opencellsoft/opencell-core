@@ -556,6 +556,7 @@ public class FilterService extends BusinessService<Filter> {
         }
 
         filteredQueryBuilder = new FilteredQueryBuilder(filter, provider);
+        
         if (provider != null && obj instanceof Provider) {
             filteredQueryBuilder.addSqlCriterion(filter.getPrimarySelector().getAlias() + "=:provider", "provider", currentUser.getProvider());
         }

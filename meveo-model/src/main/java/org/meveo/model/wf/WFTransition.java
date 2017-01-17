@@ -79,7 +79,7 @@ public class WFTransition extends AuditableEntity implements Comparable<WFTransi
     @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
     @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 

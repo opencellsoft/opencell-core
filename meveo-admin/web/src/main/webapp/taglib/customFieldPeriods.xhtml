@@ -91,7 +91,7 @@
                 </p:calendar>
 
                 <c:if test="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
-                    <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" required="true"
+                    <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}"
                         label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
                 </c:if>
             </hf:namingContainer>

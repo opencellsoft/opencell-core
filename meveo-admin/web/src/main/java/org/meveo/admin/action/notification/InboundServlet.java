@@ -182,7 +182,7 @@ public class InboundServlet extends HttpServlet {
 		// synchronous mode. Other type notifications will produce notification
 		// history in asynchronous mode and thus
 		// will not be related to inbound request.
-		if (inReq.getNotificationHistories().size() == 0) {
+		if ((!inReq.getHeaders().containsKey("fired"))||inReq.getHeaders().get("fired").equals("false")) {
 			res.setStatus(404);
 		} else {
 			// produce the response
@@ -209,7 +209,6 @@ public class InboundServlet extends HttpServlet {
 
 		try {
 			inboundRequestService.create(inReq, currentUser);
-            res.setStatus(200);
 		} catch (BusinessException e1) {
 			log.error("Failed to create InboundRequest ", e1);
 		}

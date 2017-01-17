@@ -23,7 +23,7 @@ public interface FilteredListWs extends IBaseWs {
      */
     @WebMethod
     public FilteredListResponseDto listByFilter(@WebParam(name = "filter") FilterDto filter, @WebParam(name = "from") Integer from,
-    		@WebParam(name = "size") Integer size);
+    		@WebParam(name = "size") Integer size, @WebParam(name = "parameters") Map<String, String> parameters);
     
 
     /**

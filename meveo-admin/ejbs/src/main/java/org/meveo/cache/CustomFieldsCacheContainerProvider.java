@@ -715,4 +715,29 @@ public class CustomFieldsCacheContainerProvider {
             return null;
         }
     }
+
+    /**
+     * Check if entity has a custom field value for a given custom field code (versioned or unversioned)
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @return True if value is found (any period for versioned fields)
+     */
+    public boolean hasValue(ICustomFieldEntity entity, String code) {
+        return hasValue(entity.getUuid(), code);
+    }
+
+    /**
+     * Check if entity has a custom field value for a given custom field code (versioned or unversioned)
+     * 
+     * @param entityIdentifier Unique entity identifier
+     * @param code Custom field code
+     * @return A single custom field value
+     */
+    public boolean hasValue(String entityIdentifier, String code) {
+
+        String cacheKey = entityIdentifier;
+
+        return customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(code) && !customFieldValueCache.get(cacheKey).get(code).isEmpty();
+    }
 }

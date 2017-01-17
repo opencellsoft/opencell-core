@@ -1,5 +1,8 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" 
+xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" 
+        xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -8,6 +11,12 @@
     </ui:define>
 
     <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
+			</p:breadCrumb>
+		</h:form>     
         <!-- Entity select popup. -->
         <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}" searchField1Label="#{messages['customer.code']}"
             searchField1="code" column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountListBean.filters['customer']}"

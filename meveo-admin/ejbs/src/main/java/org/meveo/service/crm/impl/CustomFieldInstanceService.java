@@ -279,9 +279,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             List<CustomFieldValue> cfvs = query.getResultList();
             if (!cfvs.isEmpty()) {
                 CustomFieldValue cfv = cfvs.get(0);
-
-                cfv.deserializeValue();
-                value = cfv.getValue();
+                if (cfv != null && !cfv.isValueEmpty()) {
+                    cfv.deserializeValue();
+                    value = cfv.getValue();
+                }
             }
         }
 
@@ -417,20 +418,27 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
         return cfi;
     }
 
@@ -456,21 +464,28 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         // Should not match more then one record as periods are calendar based
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code, valueDate);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            // Nothing found and nothing to save
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
+
         return cfi;
     }
 
@@ -499,20 +514,27 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         // Should not match more then one record
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code, valueDateFrom, valueDateTo);
         CustomFieldInstance cfi = null;
+        // No existing CFIs. Create CFI with new value. NULL value only if cft.defaultValue is present
         if (cfis.isEmpty()) {
-            if (value == null) {
+            if (value == null && cft.getDefaultValue() == null) {
                 return null;
             }
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDateFrom, valueDateTo, valuePriority);
             cfi.setValue(value);
             create(cfi, cft, entity, currentUser);
 
-        } else {
+            // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
+        } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
             cfi = cfis.get(0);
             cfi.setValue(value);
             cfi = update(cfi, cft, entity, currentUser);
+
+            // Existing CFI found, but new value is null, so remove CFI
+        } else {
+            cfi = cfis.get(0);
+            remove(cfi, entity, currentUser);
+            return null;
         }
-        customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
 
         return cfi;
     }
@@ -707,6 +729,94 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
+     * Check if give entity's parent has any custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasInheritedOnlyCFValue(ICustomFieldEntity entity, String code) {
+        ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
+        if (parentCFEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                boolean hasValue = hasInheritedCFValue(parentCfEntity, code);
+                if (hasValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    /**
+     * Check if given entity or any of its parent has any custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasInheritedCFValue(ICustomFieldEntity entity, String code) {
+
+        boolean hasValue = hasCFValue(entity, code);
+        if (hasValue) {
+            return true;
+        }
+
+        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+        if (parentCfEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                hasValue = hasInheritedCFValue(parentCfEntity, code);
+                if (hasValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if given entity has custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasCFValue(ICustomFieldEntity entity, String code) {
+
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null) {
+            // log.trace("No CFT found {}/{}", entity, code);
+            return false;
+        }
+
+        // Try cache if applicable
+        if (cft.isCacheValue() && useCache) {
+            return customFieldsCacheContainerProvider.hasValue(entity, code);
+
+            // Or retrieve directly from DB
+        } else {
+            TypedQuery<CustomFieldValue> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiValueByCode", CustomFieldValue.class);
+            query.setParameter("appliesToEntity", entity.getUuid());
+            query.setParameter("code", code);
+            query.setParameter("provider", getProvider(entity));
+
+            List<CustomFieldValue> cfvs = query.getResultList();
+            return !cfvs.isEmpty();
+        }
+    }
+
+    /**
      * get hierarchy parents of cf entity
      * 
      * @param entity
@@ -818,10 +928,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return Custom field value
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, User currentUser) {
-        Object value = getCFValue(entity, code, currentUser);
+
+        // Get value without instantiating a default value if value not found
+        Object value = getCFValue(entity, code, null);
         if (value != null) {
             return value;
         }
+
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
@@ -835,7 +948,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 }
             }
         }
-        return null;
+
+        // Instantiate default value if applicable
+        return instantiateCFWithDefaultValue(entity, code, currentUser);
+
     }
 
     /**
@@ -848,10 +964,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
-        Object value = getCFValue(entity, code, date, currentUser);
+        // Get value without instantiating a default value if value not found
+        Object value = getCFValue(entity, code, date, null);
         if (value != null) {
             return value;
         }
+
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
@@ -865,7 +983,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 }
             }
         }
-        return null;
+
+        // Instantiate default value if applicable
+        return instantiateCFWithDefaultValue(entity, code, date, currentUser);
     }
 
     /**
@@ -1049,7 +1169,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
-        Object value = getCFValueByRangeOfNumbers(entity, code, numberToMatch);
+        Object value = getCFValueByRangeOfNumbers(entity, code, date, numberToMatch);
         if (value != null) {
             return value;
         }
@@ -1452,7 +1572,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (numberToMatchObj == null) {
             return false;
         }
-        
+
         String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
         Double fromNumber = null;
         try {
@@ -1480,18 +1600,18 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         } else if (numberToMatchObj instanceof BigDecimal) {
             numberToMatchDbl = ((BigDecimal) numberToMatchObj).doubleValue();
-            
+
         } else if (numberToMatchObj instanceof String) {
             try {
                 numberToMatchDbl = Double.parseDouble(((String) numberToMatchObj));
-                
+
             } catch (NumberFormatException e) {
                 Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
                 log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
                     numberToMatchObj != null ? numberToMatchObj.getClass() : null);
                 return false;
             }
-            
+
         } else {
             Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
             log.error("Failed to match CF value for a range of numbers. Value passed is not a number {} {}", numberToMatchObj,
@@ -1524,5 +1644,74 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public List<CustomFieldInstance> getCustomFieldInstances(List<String> uuids) {
         return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityListForIndex", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids)
             .getResultList();
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return Custom field value
+     */
+    public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, User currentUser) {
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null || cft.getDefaultValue() == null) {
+            // log.trace("No CFT found or no default value specified {}/{}", entity, code);
+            return null;
+        } else if (currentUser == null) {
+            log.trace("No current user is available to set a default value for {}/{}", entity, code);
+            return null;
+        }
+
+        if (cft.isVersionable()) {
+            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used", entity
+                .getClass().getSimpleName(), code);
+            return instantiateCFWithDefaultValue(entity, code, new Date(), currentUser);
+        }
+
+        // Create such CF with default value if one is specified on CFT
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, code, value, currentUser);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
+        }
+
+        return value;
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity and a date
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param date Date
+     * @return Custom field value
+     */
+    public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
+
+        // If field is not versionable - get the value without the date
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null || cft.getDefaultValue() == null || cft.getCalendar() == null) {
+            // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
+            return null;
+        } else if (currentUser == null) {
+            log.trace("No current user is available to set a default value for {}/{}", entity, code);
+            return null;
+        }
+
+        if (!cft.isVersionable()) {
+            return instantiateCFWithDefaultValue(entity, code, currentUser);
+        }
+
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, code, value, date, currentUser);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
+        }
+
+        return value;
     }
 }

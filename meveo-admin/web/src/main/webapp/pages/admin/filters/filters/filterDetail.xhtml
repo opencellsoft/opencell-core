@@ -13,15 +13,17 @@
     </ui:define>
     
 	<ui:define name="body">
-
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 					<p:menuitem outcome="filters" value="#{messages['menu.filters']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+				<p:menuitem value="#{messages['commons.new']} #{messages['filter.title']}"
+					disabled="true" rendered="#{filterBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['filter.title']} - #{filterBean.entity.code}"
+					disabled="true" rendered="#{!filterBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<p:panel header="#{messages['menu.filters']}">
 

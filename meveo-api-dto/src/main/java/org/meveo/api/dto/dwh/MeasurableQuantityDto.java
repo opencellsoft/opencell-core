@@ -9,8 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.serialize.CustomDateSerializer;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +40,7 @@ public class MeasurableQuantityDto extends BaseDto {
     private boolean additive;
     private String sqlQuery;
     private MeasurementPeriodEnum measurementPeriod;
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date lastMeasureDate;
 
     public boolean isCodeOnly() {

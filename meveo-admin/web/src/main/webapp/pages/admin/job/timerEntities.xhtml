@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -14,7 +15,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="timerEntities"
+						value="#{messages['menu.timerEntities']}" />
+				</p:breadCrumb>
+			</h:form>
+		
 		<hftl:searchPanel columns="3" label="#{messages['timers.page.title']}"
 			backingBean="#{timerEntityListBean}">
 

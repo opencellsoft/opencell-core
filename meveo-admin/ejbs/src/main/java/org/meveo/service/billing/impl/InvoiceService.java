@@ -1106,9 +1106,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File xmlFile = null;
         if(refreshInvoice){
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId(),currentUser);
         } else {
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false,currentUser);
         }
 
         Scanner scanner = new Scanner(xmlFile);
@@ -1230,7 +1230,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
 				((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
 			}
-		}
+		}		
+		invoice.setOrders(null);		
 		Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		dropAgregats.setParameter("invoice",invoice);
 		dropAgregats.executeUpdate();		
