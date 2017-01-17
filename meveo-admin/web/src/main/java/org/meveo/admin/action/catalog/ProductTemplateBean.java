@@ -138,7 +138,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		productTemplateService.refreshOrRetrieve(entity);
+		if(!entity.isTransient()){
+			productTemplateService.refreshOrRetrieve(entity);
+		}		
 		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
 			entity.getOfferTemplateCategories().clear();
 			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
