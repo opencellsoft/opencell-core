@@ -537,7 +537,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		List<MeasuredValue> result = new ArrayList<>();
 
 		MeasurableQuantity mq = mqService.findByCode(mqCode, getCurrentProvider());
-		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, beforeDate.getTime(), currentDate.getTime(), mq.getMeasurementPeriod(), mq);
+		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, beforeDate.getTime(), currentDate.getTime(),mq == null ? null: mq.getMeasurementPeriod(), mq);
 		if(measuredValues != null){
 			for(MeasuredValue value : measuredValues){
 				result.add(value);

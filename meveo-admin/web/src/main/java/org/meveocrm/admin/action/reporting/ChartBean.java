@@ -151,7 +151,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         Provider provider = getCurrentProvider();
 
-        String labelsValue = cfiService.getCFValue(provider, "CF_MQ_MRR_OFFER_LABELS", getCurrentUser()).toString();
+        String labelsValue = (String)cfiService.getCFValue(provider, "CF_MQ_MRR_OFFER_LABELS", getCurrentUser());
         if (!StringUtils.isBlank(labelsValue)) {
             for (String label : labelsValue.split(",")) {
                 jsModel.getLegendLabels().add(label);
@@ -164,19 +164,20 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         return gson.toJson(jsModel);
     }
 
-    public String getOrdersByStatus() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+    public String getOrdersByStatus() throws BusinessException {       
         List<MeasuredValue> measuredValues = getMeasuredValues(null, "MQ_ORDERS_BY_STATUS", -31, Calendar.DAY_OF_MONTH);
         ChartJsModel jsModel = new ChartJsModel();
 
         jsModel.getLegendLabels().addAll(Arrays.asList("New", "Pending", "Validated", "Cancelled"));
 
         List<BigDecimal> data = new ArrayList<>();
-        MeasuredValue latestValue = measuredValues.get(measuredValues.size() - 1);
-        data.add(latestValue.getValue());
-        data.add(new BigDecimal(latestValue.getDimension1()));
-        data.add(new BigDecimal(latestValue.getDimension2()));
-        data.add(new BigDecimal(latestValue.getDimension3()));
+        if(measuredValues != null && measuredValues.size() > 0){
+	        MeasuredValue latestValue = measuredValues.get(measuredValues.size() - 1);
+	        data.add(latestValue.getValue());
+	        data.add(new BigDecimal(latestValue.getDimension1()));
+	        data.add(new BigDecimal(latestValue.getDimension2()));
+	        data.add(new BigDecimal(latestValue.getDimension3()));
+        }
         jsModel.getDatasets().put("data", data);
 
         jsModel.setTrendValue(computeMeasuredValuesAverage(measuredValues));
@@ -220,12 +221,15 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
-        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
-        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
-        BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
-        averageTrend = averageTrend.subtract(BigDecimal.ONE);
-        averageTrend = averageTrend.multiply(new BigDecimal(100));
-        return averageTrend.setScale(1, RoundingMode.HALF_UP);
+    	if(trendList != null && trendList.size()>=10){    	
+	        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
+	        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
+	        BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
+	        averageTrend = averageTrend.subtract(BigDecimal.ONE);
+	        averageTrend = averageTrend.multiply(new BigDecimal(100));
+	        return averageTrend.setScale(1, RoundingMode.HALF_UP);    	
+    	}
+    	return null;
     }
 
     private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
