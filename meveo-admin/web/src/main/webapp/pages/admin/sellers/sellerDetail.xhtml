@@ -30,7 +30,7 @@
                     <hftl:formField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />               
                     <hftl:formField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />                 
                     <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode" listBean="#{tradingLanguageBean}" />                   
-                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" />
+                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" listenerUpdate="@this" />
                     
                     <h:panelGroup>	
 						 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"

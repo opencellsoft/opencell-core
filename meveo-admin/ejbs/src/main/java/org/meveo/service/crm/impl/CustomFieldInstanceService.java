@@ -729,6 +729,94 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
+     * Check if give entity's parent has any custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasInheritedOnlyCFValue(ICustomFieldEntity entity, String code) {
+        ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
+        if (parentCFEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                boolean hasValue = hasInheritedCFValue(parentCfEntity, code);
+                if (hasValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    /**
+     * Check if given entity or any of its parent has any custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasInheritedCFValue(ICustomFieldEntity entity, String code) {
+
+        boolean hasValue = hasCFValue(entity, code);
+        if (hasValue) {
+            return true;
+        }
+
+        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+        if (parentCfEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                hasValue = hasInheritedCFValue(parentCfEntity, code);
+                if (hasValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if given entity has custom field value defined (in any period for versionable fields)
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
+     */
+    public boolean hasCFValue(ICustomFieldEntity entity, String code) {
+
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null) {
+            // log.trace("No CFT found {}/{}", entity, code);
+            return false;
+        }
+
+        // Try cache if applicable
+        if (cft.isCacheValue() && useCache) {
+            return customFieldsCacheContainerProvider.hasValue(entity, code);
+
+            // Or retrieve directly from DB
+        } else {
+            TypedQuery<CustomFieldValue> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiValueByCode", CustomFieldValue.class);
+            query.setParameter("appliesToEntity", entity.getUuid());
+            query.setParameter("code", code);
+            query.setParameter("provider", getProvider(entity));
+
+            List<CustomFieldValue> cfvs = query.getResultList();
+            return !cfvs.isEmpty();
+        }
+    }
+
+    /**
      * get hierarchy parents of cf entity
      * 
      * @param entity
