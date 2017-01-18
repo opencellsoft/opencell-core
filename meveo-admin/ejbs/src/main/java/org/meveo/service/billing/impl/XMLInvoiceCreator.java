@@ -78,7 +78,6 @@ import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -1082,15 +1081,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									chargeInstance = (ChargeInstance) chargeInstanceService.findById(walletOperation.getChargeInstance().getId(), false);
 								}
 								ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-
-								// get periodStartDate and periodEndDate for recurrents
-								if (chargeTemplate instanceof RecurringChargeTemplate) {
-									periodStartDate = walletOperation.getStartDate();
-									periodEndDate = walletOperation.getEndDate();
-
-									// get periodStartDate and periodEndDate for usages
-									// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-								} else if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && walletOperation.getOperationDate() != null) {
+								// get periodStartDate and periodEndDate for recurrents							
+								periodStartDate = walletOperation.getStartDate();
+								periodEndDate = walletOperation.getEndDate();
+								// get periodStartDate and periodEndDate for usages
+								// instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
+								 if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && walletOperation.getOperationDate() != null) {
 									CounterPeriod counterPeriod = null;
 									if (!isVirtual) {
 										counterPeriod = counterPeriodService.getCounterPeriod(walletOperation.getCounter(), walletOperation.getOperationDate());
@@ -1101,13 +1097,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 										periodStartDate = counterPeriod.getPeriodStartDate();
 										periodEndDate = counterPeriod.getPeriodEndDate();
 									}
-								}
-								line.setAttribute("periodStartDate",
-										periodStartDate != null ? DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN))
-												+ "" : "");
-								line.setAttribute("periodEndDate",
-										periodEndDate != null ? DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)) + ""
-												: "");
+								}																
+								line.setAttribute("periodEndDate", periodEndDate != null ? DateUtils.formatDateWithPattern(periodEndDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)): "");
+								line.setAttribute("periodStartDate", periodStartDate != null ? DateUtils.formatDateWithPattern(periodStartDate, paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN)): "");								
 							}
 						}
 
