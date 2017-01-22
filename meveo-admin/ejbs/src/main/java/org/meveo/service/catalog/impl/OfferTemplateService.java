@@ -43,7 +43,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -51,7 +51,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  * 
  */
 @Stateless
-public class OfferTemplateService extends BusinessService<OfferTemplate> {
+public class OfferTemplateService extends MultilanguageEntityService<OfferTemplate>{
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;

@@ -205,14 +205,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
             for (CatMessages catMessages : catMessagesList) {
                 this.getLanguageMessagesMap().put(catMessages.getLanguageCode(), catMessages.getDescription());
             }
-            if (entity.getLanguageCode() != null) {
-                CatMessages temp = catMessagesService.findByCodeClassAndLanguage(businessEntity.getCode(), getEntityClass().getSimpleName(), entity.getLanguageCode(),
-                    currentProvider);
-                if (temp != null) {
-                    this.setObjectId(temp.getId());
-                    initEntity();
-                }
-            }
         }
     }
 
@@ -220,10 +212,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         return popupId;
     }
 
-    public void updateBusinessEntity() {
+    public void clearBusinessEntity() {
         this.businessEntity = null;
-        this.setObjectId(null);
-        initEntity();
     }
 
     public String getObjectType() {
@@ -243,54 +233,29 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if (entity.getLanguageCode() == null) { // multilanguage
-            String statusKey = null;
-            String description = null;
-            CatMessages catMsg = null;
-            if (businessEntity != null && businessEntity.getId() != null) {
-                statusKey = "update.successful";
-                for (String key : languageMessagesMap.keySet()) {
-                    description = languageMessagesMap.get(key);
-                    catMsg = catMessagesService.getCatMessages(businessEntity, key);
-                    if (catMsg != null) {
-                        if (StringUtils.isBlank(description)) {
-                            catMessagesService.remove(catMsg, getCurrentUser());
-                        } else {
-                            catMsg.setDescription(description);
-                            catMessagesService.update(catMsg, getCurrentUser());
-                        }
-                    } else if (!StringUtils.isBlank(description)) {
-                        catMsg = new CatMessages(businessEntity, key, description);
-                        catMessagesService.create(catMsg, getCurrentUser());
-                    }
-                }
-            } else {
-                statusKey = "save.successful";
-                for (String key : languageMessagesMap.keySet()) {
-                    description = languageMessagesMap.get(key);
-                    if (!StringUtils.isBlank(description)) {
-                        catMsg = new CatMessages(businessEntity, key, description);
-                        catMessagesService.create(catMsg, getCurrentUser());
-                    }
-                }
-            }
 
-            if (businessEntity.getDescription() != null) {
-                if (businessEntity.isTransient()) {
-                    getEntityService().create(businessEntity, getCurrentUser());
+        String description = null;
+        CatMessages catMsg = null;
+
+        for (String key : languageMessagesMap.keySet()) {
+            description = languageMessagesMap.get(key);
+            catMsg = catMessagesService.getCatMessages(businessEntity, key);
+            if (catMsg != null) {
+                if (StringUtils.isBlank(description)) {
+                    catMessagesService.remove(catMsg, getCurrentUser());
                 } else {
-                    getEntityService().update(businessEntity, getCurrentUser());
+                    catMsg.setDescription(description);
+                    catMessagesService.update(catMsg, getCurrentUser());
                 }
+            } else if (!StringUtils.isBlank(description)) {
+                catMsg = new CatMessages(businessEntity, key, description);
+                catMessagesService.create(catMsg, getCurrentUser());
             }
-            messages.info(new BundleKey("messages", statusKey));
-            return back();
-        } else { // single entity
-            if (entity.isTransient()) {
-                entity.setEntityCode(businessEntity.getCode());
-                entity.setEntityClass(catMessagesService.getEntityClass(businessEntity));
-            }
-            return super.saveOrUpdate(killConversation);
         }
+
+        getEntityService().update(businessEntity, getCurrentUser());
+        messages.info(new BundleKey("messages", "update.successful"));
+        return back();
     }
 
     @SuppressWarnings("rawtypes")
@@ -305,16 +270,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         return service;
     }
 
-    private Class<?> getEntityClass() throws BusinessException {
-        if (businessEntity == null) {
-            throw new BusinessException(INVALID_CLASS_TYPE);
-        }
-        return businessEntity.getClass();
-    }
-
     @Override
     protected String getDefaultSort() {
         return "entityCode";
     }
-
 }

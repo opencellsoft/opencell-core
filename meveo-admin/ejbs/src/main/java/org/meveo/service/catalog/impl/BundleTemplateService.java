@@ -18,14 +18,14 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
  */
 @Stateless
-public class BundleTemplateService extends BusinessService<BundleTemplate> {
+public class BundleTemplateService extends MultilanguageEntityService<BundleTemplate> {
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
