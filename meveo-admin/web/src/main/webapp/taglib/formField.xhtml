@@ -130,7 +130,7 @@
     <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
 
     <c:if test="${empty(required)}">
-        <c:set var="required" value="false" />
+        <c:set var="required" value="${fieldInfo.required}" />
     </c:if>
     <c:if test="${empty(disabled)}">
         <c:set var="disabled" value="false" />

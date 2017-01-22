@@ -24,6 +24,8 @@ public class FieldInformation {
 
     @SuppressWarnings("rawtypes")
     protected Class fieldGenericsType;
+    
+    protected boolean required;
 
     public FieldTypeEnum getFieldType() {
         return fieldType;
@@ -52,5 +54,9 @@ public class FieldInformation {
     
     public String getEnumClassname() {
         return enumClassname;
+    }
+    
+    public boolean isRequired() {
+        return required;
     }
 }
