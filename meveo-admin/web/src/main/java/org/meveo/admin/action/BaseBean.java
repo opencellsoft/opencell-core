@@ -1109,12 +1109,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return back() page if deleted success, if not, return a callback result to UI for validate
      */
     public String deleteWithBack() {
+    	boolean okFlag = true;
         try {
             this.delete();
             getPersistenceService().commit();
             return back();
 
         } catch (Throwable t) {
+        	okFlag = false;
             messages.getAll();
             messages.clear();
             if (t.getCause() instanceof EntityExistsException) {
@@ -1126,6 +1128,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
             }
         }
+        
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result", okFlag);
+        
         FacesContext.getCurrentInstance().validationFailed();
         return null;
     }
