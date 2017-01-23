@@ -34,47 +34,32 @@
                     
                     <h:panelGroup>	
 						 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
-						value="#{sellerBean.getInvoiceTypeSequencesList}" 
+						value="#{sellerBean.entity.invoiceTypeSequence}" 
 						var="invoiceTypeSeq" paginator="false" resizableColumns="true">
 					   <f:facet name="header">
 						#{messages['seller.invoiceTypeSequences']}
 					   </f:facet>
-					   <p:column>
-					   <f:facet name="header">
-							<h:outputText value="#{messages['invoiceType.panel']}" />
-						</f:facet>
-						  <h:outputText value="#{invoiceTypeSeq.key.code}" />
+					   <p:column headerText="#{messages['invoiceType.panel']}">
+						  <h:outputText value="#{invoiceTypeSeq.invoiceType.code}" />
 					   </p:column>
-					  <p:column>
-						<f:facet name="header">
-							<h:outputText value="#{messages['seller.currentInvoiceNb']}" />
-						</f:facet>
-						 <h:outputText value="#{invoiceTypeSeq.value.currentInvoiceNb}" />  
+					  <p:column headerText="#{messages['seller.currentInvoiceNb']}">
+						 <h:outputText value="#{invoiceTypeSeq.sequence.currentInvoiceNb}" />  
 					  </p:column>
-					   <p:column>
-						<f:facet name="header">
-							<h:outputText value="#{messages['seller.invoiceSequenceSize']}" />
-						</f:facet>
-						 <h:outputText value="#{invoiceTypeSeq.value.sequenceSize}" />  
+					   <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
+						 <h:outputText value="#{invoiceTypeSeq.sequence.sequenceSize}" />  
 					  </p:column>
-						<p:column>
-						<f:facet name="header">
-							<h:outputText value="#{messages['invoiceType.sequence.prefixEl']}" />
-						</f:facet>
-						 <h:outputText value="#{invoiceTypeSeq.value.prefixEL}" />  
+					  <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
+						 <h:outputText value="#{invoiceTypeSeq.sequence.prefixEL}" />  
 					  </p:column>					  
-                    	<p:column  width="60px;" >
-								<f:facet name="header">
-									<h:outputText value="#{messages['commons.actions']}" />
-								</f:facet>
-								<p:commandButton  action="#{sellerBean.getSequenceSelected(invoiceTypeSeq.key)}"
-									oncomplete="PF('dlg_sellerSequenceChgPopup').show()" update=":sellerFormId:tabView:sellerSequenceChgPopup"
-									icon="ui-icon-document" /> 
-								<p:commandButton
-									action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.key)}"
-									icon="ui-icon-trash"
-									update="@form" />
-							</p:column>					  
+                      <p:column  width="60px;" headerText="#{messages['commons.actions']}">
+						<p:commandButton  action="#{sellerBean.getSequenceSelected(invoiceTypeSeq)}"
+							oncomplete="PF('dlg_sellerSequenceChgPopup').show()" update=":sellerFormId:tabView:sellerSequenceChgPopup"
+							icon="ui-icon-document" /> 
+						<p:commandButton
+							action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.invoiceType)}"
+							icon="ui-icon-trash"
+							update="@form" />
+					</p:column>					  
 					</p:dataTable>
 					<p:commandButton
 					oncomplete="PF('dlg_sellerSequenceChgPopup').show()" value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:sellerSequenceChgPopup"

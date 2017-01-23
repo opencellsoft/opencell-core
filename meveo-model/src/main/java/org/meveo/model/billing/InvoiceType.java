@@ -19,13 +19,10 @@
 package org.meveo.model.billing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,9 +30,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -68,13 +65,11 @@ public class InvoiceType extends BusinessEntity {
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 	
 	@Embedded
-	Sequence sequence = new Sequence();
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
-	@MapKeyJoinColumn(name="SELLER_ID")
-	Map<Seller,Sequence> sellerSequence = new HashMap<Seller,Sequence>();
-	
+	private Sequence sequence = new Sequence();
+
+    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceTypeSellerSequence> sellerSequence = new ArrayList<InvoiceTypeSellerSequence>();
+
 	@Type(type="numeric_boolean")
     @Column(name = "MATCHING_AUTO")
 	private boolean matchingAuto = false;
@@ -140,19 +135,13 @@ public class InvoiceType extends BusinessEntity {
 		this.sequence = sequence;
 	}
 
-	/**
-	 * @return the sellerSequence
-	 */
-	public Map<Seller, Sequence> getSellerSequence() {
-		return sellerSequence;
-	}
+    public List<InvoiceTypeSellerSequence> getSellerSequence() {
+        return sellerSequence;
+    }
 
-	/**
-	 * @param sellerSequence the sellerSequence to set
-	 */
-	public void setSellerSequence(Map<Seller, Sequence> sellerSequence) {
-		this.sellerSequence = sellerSequence;
-	}
+    public void setSellerSequence(List<InvoiceTypeSellerSequence> sellerSequence) {
+        this.sellerSequence = sellerSequence;
+    }
 
 	/**
 	 * @return the occTemplateNegative
@@ -172,5 +161,18 @@ public class InvoiceType extends BusinessEntity {
 	public int hashCode() { 
 	  return id!=null?id.intValue():0;
 	}
- 
+
+    public InvoiceTypeSellerSequence getSellerSequenceByType(Seller seller) {
+        for (InvoiceTypeSellerSequence seq : sellerSequence) {
+            if (seq.getSeller().equals(seller)) {
+                return seq;
+            }
+        }
+        return null;
+    }
+    
+    public boolean isContainsSellerSequence(Seller seller) {        
+        InvoiceTypeSellerSequence seq = getSellerSequenceByType(seller);
+        return seq != null;
+    }
 }

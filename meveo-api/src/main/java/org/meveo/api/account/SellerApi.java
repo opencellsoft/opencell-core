@@ -28,6 +28,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -92,7 +93,7 @@ public class SellerApi extends BaseApi {
         		if(invoiceType == null){
         			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
         		}
-        		seller.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        		seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
         	}
         }
         
@@ -188,8 +189,11 @@ public class SellerApi extends BaseApi {
         				< invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider(), invoiceType.getCode()).longValue()) {
                 	throw new MeveoApiException("Not able to update, check the current number");
                 }
-        		
-        		seller.getInvoiceTypeSequence().put(invoiceType, entry.getValue().fromDto());
+        		if (seller.isContainsInvoiceTypeSequence(invoiceType)){
+        		    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().fromDto());
+        		} else {
+        		    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+        		}
         	}
         }
         // check trading entities

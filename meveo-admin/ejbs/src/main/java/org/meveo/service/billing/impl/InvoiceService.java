@@ -342,11 +342,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		InvoiceType invoiceType = invoice.getInvoiceType();
 		invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceType);
 		Sequence sequence = null;			
-		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){			
-			sequence =  invoiceType.getSellerSequence().get(seller);
+		if(invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)){			
+			sequence =  invoiceType.getSellerSequenceByType(seller).getSequence();
 			if(increment && currentNbFromCF == null){				
 				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
-				invoiceType.getSellerSequence().put(seller,sequence);
+				invoiceType.getSellerSequenceByType(seller).setSequence(sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}else{			
@@ -1093,7 +1093,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(currentValObj != null){		
 			return seller;
 		}
-		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
+		if(invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)){
 			return  seller;
 		}
 		

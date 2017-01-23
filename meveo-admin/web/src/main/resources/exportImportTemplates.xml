@@ -284,12 +284,13 @@
             <template ref="Country" />
             <template ref="Provider" />
             <template ref="ProviderContact" />
+            <template ref="OCCTemplate" />
+            <template ref="InvoiceType" />
             <template ref="Seller" />
             <template ref="Title" />
             <template ref="CustomerBrand" />
             <template ref="CustomerCategory" />
             <template ref="CreditCategory" />
-            <template ref="OCCTemplate" />
             <!-- <template ref="CatMessages" /> -->
             <template ref="MessageTemplate" />
             <template ref="Calendar" />
@@ -416,4 +417,9 @@
             <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
         </classesToExportAsFull>
     </template>
+    <template name="Seller" entityToExport="org.meveo.model.admin.Seller">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.billing.InvoiceTypeSellerSequence</java-class>
+        </classesToExportAsFull>
+    </template>    
 </list>

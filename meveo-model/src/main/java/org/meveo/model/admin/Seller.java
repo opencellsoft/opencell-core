@@ -18,17 +18,16 @@
  */
 package org.meveo.model.admin;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -40,7 +39,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -76,13 +75,10 @@ public class Seller extends BusinessCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PARENT_SELLER_ID")
 	private Seller seller;
-	
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "BILLING_SEQ_INVTYP_SELL") 
-	@MapKeyJoinColumn(name="INVOICETYPE_ID")
-	Map<InvoiceType,Sequence> invoiceTypeSequence = new HashMap<InvoiceType,Sequence>();
 
+	@OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<InvoiceTypeSellerSequence>();
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BAM_ID")
 	private BusinessAccountModel businessAccountModel;
@@ -141,19 +137,14 @@ public class Seller extends BusinessCFEntity {
 		return new ICustomFieldEntity[]{getProvider()};
 	}
 
-	/**
-	 * @return the invoiceTypeSequence
-	 */
-	public Map<InvoiceType, Sequence> getInvoiceTypeSequence() {
-		return invoiceTypeSequence;
-	}
 
-	/**
-	 * @param invoiceTypeSequence the invoiceTypeSequence to set
-	 */
-	public void setInvoiceTypeSequence(Map<InvoiceType, Sequence> invoiceTypeSequence) {
-		this.invoiceTypeSequence = invoiceTypeSequence;
-	}
+	public List<InvoiceTypeSellerSequence> getInvoiceTypeSequence() {
+        return invoiceTypeSequence;
+    }
+	
+	public void setInvoiceTypeSequence(List<InvoiceTypeSellerSequence> invoiceTypeSequence) {
+        this.invoiceTypeSequence = invoiceTypeSequence;
+    }
 
 	public BusinessAccountModel getBusinessAccountModel() {
 		return businessAccountModel;
@@ -167,6 +158,20 @@ public class Seller extends BusinessCFEntity {
 	public BusinessEntity getParentEntity() {
 		return seller;
 	}
+	
+    public InvoiceTypeSellerSequence getInvoiceTypeSequenceByType(InvoiceType invoiceType) {
+        for (InvoiceTypeSellerSequence seq : invoiceTypeSequence) {
+            if (seq.getInvoiceType().equals(invoiceType)) {
+                return seq;
+            }
+        }
+        return null;
+    }
+    
+    public boolean isContainsInvoiceTypeSequence(InvoiceType invoiceType) {        
+        InvoiceTypeSellerSequence seq = getInvoiceTypeSequenceByType(invoiceType);
+        return seq != null;
+    }
 	
 	@Override
 	public Class<? extends BusinessEntity> getParentEntityType() {
