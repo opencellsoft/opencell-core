@@ -364,6 +364,10 @@ input[type="text"] .ui-button-text,
   border: 1px solid #ddd !important;
 }
 
+.ui-tree-draghelper.ui-state-highlight {
+  background: none transparent !important;
+}
+
 .position-relative {
   position: relative;
 }

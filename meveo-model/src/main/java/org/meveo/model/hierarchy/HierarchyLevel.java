@@ -107,4 +107,23 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
     public int compareTo(HierarchyLevel hierarchyLevel) {
         return Long.compare(this.orderLevel, hierarchyLevel.orderLevel);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        HierarchyLevel<?> that = (HierarchyLevel<?>) o;
+
+        return code.equals(that.code) && hierarchyType.equals(that.hierarchyType);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + hierarchyType.hashCode();
+        result = 31 * result + code.hashCode();
+        return result;
+    }
 }

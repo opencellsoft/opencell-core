@@ -32,12 +32,14 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ExistsRelatedEntityException;
+import org.meveo.model.admin.User;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
@@ -159,6 +161,43 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         selectedNode.setSelected(true);
         showUserGroupDetail = true;
         isEdit = true;
+    }
+
+    public void onDragDrop(TreeDragDropEvent event) {
+        TreeNode dragNode = event.getDragNode();
+        TreeNode dropNode = event.getDropNode();
+        UserHierarchyLevel child = null;
+        UserHierarchyLevel parent = null;
+        UserHierarchyLevel previousParent = null;
+        if(dragNode != null && dragNode.getData() instanceof UserHierarchyLevel){
+            child = (UserHierarchyLevel) dragNode.getData();
+            child = userHierarchyLevelService.refreshOrRetrieve(child);
+            if(child.getParentLevel() instanceof UserHierarchyLevel){
+                previousParent = (UserHierarchyLevel) child.getParentLevel();
+                previousParent = userHierarchyLevelService.refreshOrRetrieve(previousParent);
+                previousParent.getChildLevels().remove(child);
+            }
+            child.setParentLevel(null);
+            child.setOrderLevel((long)event.getDropIndex() + 1); //orderLevel is 1-based while dropIndex is 0-based
+        }
+        if(dropNode != null && dropNode.getData() instanceof UserHierarchyLevel){
+            parent = (UserHierarchyLevel) dropNode.getData();
+            parent = userHierarchyLevelService.refreshOrRetrieve(parent);
+            child.setParentLevel(parent);
+            parent.getChildLevels().add(child);
+        }
+
+        try {
+            userHierarchyLevelService.update(child, getCurrentUser());
+            if(parent != null) {
+                userHierarchyLevelService.update(parent, getCurrentUser());
+            }
+            if(previousParent != null) {
+                userHierarchyLevelService.update(previousParent, getCurrentUser());
+            }
+        } catch (BusinessException e) {
+            messages.error(new BundleKey("messages", "userGroupHierarchy.errorChangeLevel"));
+        }
     }
 
     public void newUserHierarchyLevel() {
