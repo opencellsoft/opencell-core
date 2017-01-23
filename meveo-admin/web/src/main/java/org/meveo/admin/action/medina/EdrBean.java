@@ -36,9 +36,12 @@ public class EdrBean extends BaseBean<EDR> {
 	}
 
 	public void updateStatus(EDR selectedEdr) throws BusinessException {
-		selectedEdr.setStatus(EDRStatusEnum.OPEN);
-
-		getPersistenceService().update(selectedEdr, getCurrentUser());
+		if(EDRStatusEnum.REJECTED.equals(selectedEdr.getStatus())) {
+			selectedEdr.setStatus(EDRStatusEnum.OPEN);
+			getPersistenceService().update(selectedEdr, getCurrentUser());
+		} else {
+			messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
+		}
 	}
 
 	public void massUpdate() {
