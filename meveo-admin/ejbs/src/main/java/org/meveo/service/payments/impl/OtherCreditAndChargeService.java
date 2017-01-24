@@ -127,10 +127,10 @@ public class OtherCreditAndChargeService extends
      * @throws BusinessException 
      */
     @Override
-    public void create(OtherCreditAndCharge occ, User creator) throws BusinessException {
+    public void create(OtherCreditAndCharge occ) throws BusinessException {
 
         occ.setType(OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value());
-        super.create(occ, creator);
+        super.create(occ);
     }
 	
 	// public void addOCCk(String codeOCCTemplate, Long customerAccountId,

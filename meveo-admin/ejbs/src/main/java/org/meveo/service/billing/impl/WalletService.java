@@ -48,8 +48,8 @@ public class WalletService extends PersistenceService<WalletInstance> {
 	private WalletCacheContainerProvider walletCacheContainerProvider;
 
 	@Override
-	public void create(WalletInstance walletInstance, User creator) throws BusinessException {
-		super.create(walletInstance, creator);
+	public void create(WalletInstance walletInstance) throws BusinessException {
+		super.create(walletInstance);
 		walletCacheContainerProvider.updateBalanceCache(walletInstance);
 	}
 
@@ -82,7 +82,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		}
 	}
 
-	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, boolean isVirtual, User creator) throws BusinessException {
+	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, boolean isVirtual) throws BusinessException {
 		String walletCode = walletTemplate.getCode();
 		log.debug("get wallet instance for userAccount {} and wallet template {}", userAccount.getCode(), walletCode);
 		if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
@@ -93,7 +93,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 				wallet.setUserAccount(userAccount);
                 
 				if (!isVirtual) {
-                    create(wallet, creator);
+                    create(wallet);
                 }
 				
 				log.debug("add prepaid wallet {} to useraccount {}", walletCode, userAccount.getCode());

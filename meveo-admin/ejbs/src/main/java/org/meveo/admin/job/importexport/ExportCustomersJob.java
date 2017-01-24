@@ -23,8 +23,8 @@ public class ExportCustomersJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        exportCustomersJobBean.execute(result, jobInstance.getParametres(), currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        exportCustomersJobBean.execute(result, jobInstance.getParametres());
     }
 
     @Override

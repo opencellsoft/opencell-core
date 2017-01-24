@@ -19,8 +19,8 @@ public class PrepaidWalletMatchJob extends Job {
     private PrepaidWalletMatchJobBean prepaidWalletMatchJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        prepaidWalletMatchJobBean.execute(jobInstance.getParametres(), result, currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        prepaidWalletMatchJobBean.execute(jobInstance.getParametres(), result);
 
     }
 

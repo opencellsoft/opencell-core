@@ -56,7 +56,7 @@ public class MediationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
+	public void execute(JobExecutionResultImpl result, String parameter,File file) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
 		report="";
 		Provider provider = currentUser.getProvider();
@@ -95,7 +95,7 @@ public class MediationJobBean {
 				while ((line = cdrReader.readLine()) != null) {
 					processed++;
 					try {
-						createEdr(line, currentUser);
+						createEdr(line);
 						outputCDR(line);
 						result.registerSucces();
                     } catch (CDRParsingException e) {
@@ -174,11 +174,11 @@ public class MediationJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	private void createEdr(String line, User currentUser) throws CDRParsingException, BusinessException {
-		List<EDR> edrs = cdrParser.getEDRList(line, currentUser.getProvider(), CDRParsingService.CDR_ORIGIN_JOB);
+	private void createEdr(String line) throws CDRParsingException, BusinessException {
+		List<EDR> edrs = cdrParser.getEDRList(line, CDRParsingService.CDR_ORIGIN_JOB);
 		if (edrs != null && edrs.size() > 0) {
 			for (EDR edr : edrs) {
-				createEdr(edr, currentUser);
+				createEdr(edr);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ public class MediationJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createEdr(EDR edr, User currentUser) throws BusinessException {
-		edrService.create(edr, currentUser);
+	public void createEdr(EDR edr) throws BusinessException {
+		edrService.create(edr);
 	}
 }

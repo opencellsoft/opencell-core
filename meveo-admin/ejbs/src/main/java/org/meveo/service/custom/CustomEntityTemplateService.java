@@ -56,15 +56,15 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
-    public void create(CustomEntityTemplate cet, User creator) throws BusinessException {
-        super.create(cet, creator);
+    public void create(CustomEntityTemplate cet) throws BusinessException {
+        super.create(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         elasticClient.createCETMapping(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -72,13 +72,13 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     @Override
-    public CustomEntityTemplate update(CustomEntityTemplate cet, User updater) throws BusinessException {
-        CustomEntityTemplate cetUpdated = super.update(cet, updater);
+    public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
+        CustomEntityTemplate cetUpdated = super.update(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);

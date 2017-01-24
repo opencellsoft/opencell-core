@@ -51,7 +51,7 @@ public class ImportCatalogJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter) {
 		Provider provider = currentUser.getProvider();
 
 		InputStream excelInputStream = null;
@@ -117,7 +117,7 @@ public class ImportCatalogJobBean {
 					for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {
 						Row row = (Row) rowsObj[rowIndex];
 						try {
-							pricePlanService.importExcelLine(row, currentUser, provider);
+							pricePlanService.importExcelLine(row, provider);
 							result.registerSucces();
 						} catch (BusinessException ex) {
 							result.registerError(ex.getMessage() + ";");

@@ -72,18 +72,18 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-    	log.info("Running for user={}, parameter={}, provider={}", currentUser, null, currentUser.getProvider().getCode());
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    	log.info("Running for user={}", currentUser);
 		
         StringBuilder report = new StringBuilder();
         if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
 
-            MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres(), currentUser.getProvider()).get(0);
-            aggregateMeasuredValues(result, report, mq,currentUser);
+            MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres().getProvider()).get(0);
+            aggregateMeasuredValues(result, report, mq);
             result.setReport(report.toString());
 
         } else {
-            aggregateMeasuredValues(result, report, mqService.list(currentUser.getProvider()),currentUser);
+            aggregateMeasuredValues(result, report, mqService.list());
             result.setReport(report.toString());
         }
     }

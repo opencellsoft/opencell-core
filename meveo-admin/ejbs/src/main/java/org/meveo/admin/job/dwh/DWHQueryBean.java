@@ -52,7 +52,7 @@ public class DWHQueryBean {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void executeQuery(JobExecutionResultImpl result, String parameter, User currentUser) throws BusinessException {
+    public void executeQuery(JobExecutionResultImpl result, String parameter) throws BusinessException {
 
         Provider provider = currentUser.getProvider();
         String measurableQuantityCode = parameter;
@@ -170,7 +170,7 @@ public class DWHQueryBean {
                         mv.setDimension3(dimension3);
                         mv.setDimension4(dimension4);
                         if (mv.getId() == null) {
-                            mvService.create(mv, currentUser);
+                            mvService.create(mv);
                         }
                     }
                     mq.increaseMeasureDate();

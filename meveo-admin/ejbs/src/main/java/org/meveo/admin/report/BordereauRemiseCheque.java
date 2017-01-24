@@ -51,12 +51,12 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.slf4j.Logger;
@@ -69,7 +69,10 @@ public class BordereauRemiseCheque {
 	@Inject
 	protected Logger log;
 
-
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
     @Inject
     private Messages messages;
 
@@ -78,9 +81,6 @@ public class BordereauRemiseCheque {
 	@Inject
 	private AccountOperationService accountOperationService;
 	
-	@Inject
-	private Identity identity;
-
 	public JasperReport jasperReport;
 
 	public JasperPrint jasperPrint;
@@ -95,8 +95,7 @@ public class BordereauRemiseCheque {
 		String fileName = "reports/bordereauRemiseCheque.jasper";
 		InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		parameters.put("date", new Date());
-		Provider currentProvider=getCurrentProvider();
-		String providerCode = currentProvider.getCode();
+		String providerCode = currentUser.getProviderCode();
 
 		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes","RG_CHQ,RG_CHQNI").split(",");
 		try {
@@ -154,9 +153,7 @@ public class BordereauRemiseCheque {
 
 		List<AccountOperation> records = new ArrayList<AccountOperation>();
 		for (String occCode : occCodes) {
-			Provider currentProvider=getCurrentProvider();
-			records.addAll(accountOperationService.getAccountOperations(this.date, occCode,
-					currentProvider));
+            records.addAll(accountOperationService.getAccountOperations(this.date, occCode, currentUser.getProvider()));
 		}
 		Iterator<AccountOperation> itr = records.iterator();
 		try {
@@ -212,11 +209,4 @@ public class BordereauRemiseCheque {
 		List<BordereauRemiseChequeRecord> bordereauRemiseChequeRecords = new ArrayList<BordereauRemiseChequeRecord>();
 		return bordereauRemiseChequeRecords;
 	}
-	private Provider getCurrentProvider() throws BusinessEntityException{
-		if(identity.isLoggedIn()){
-			return ((MeveoUser)identity.getUser()).getCurrentProvider();
-		}
-		throw new BusinessEntityException("Not login!");
-	}
-
 }

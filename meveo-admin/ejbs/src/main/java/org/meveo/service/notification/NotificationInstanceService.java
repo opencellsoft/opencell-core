@@ -18,26 +18,26 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(T notification, User creator) throws BusinessException {
+    public void create(T notification) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(notification, creator);
+            manageCounterInstantiation(notification);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        super.create(notification, creator);
+        super.create(notification);
         notificationCacheContainerProvider.addNotificationToCache(notification);
     }
 
     @Override
-    public T update(T notification, User updater) throws BusinessException {
+    public T update(T notification) throws BusinessException {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(notification, updater);
+            manageCounterInstantiation(notification);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        notification = super.update(notification, updater);
+        notification = super.update(notification);
         notificationCacheContainerProvider.updateNotificationInCache(notification);
         return notification;
     }

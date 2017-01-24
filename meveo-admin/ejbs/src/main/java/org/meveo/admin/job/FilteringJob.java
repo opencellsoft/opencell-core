@@ -21,6 +21,8 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.ScriptInstanceService;
@@ -39,13 +41,17 @@ public class FilteringJob extends Job {
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
 	@SuppressWarnings("unchecked")
     @Override
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser)
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance)
 			throws BusinessException {
-        String filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_filter", currentUser)).getCode();
-        String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_script", currentUser)).getCode();
-        String recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_recordVariableName", currentUser);
+        String filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_filter")).getCode();
+        String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_script")).getCode();
+        String recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_recordVariableName");
 
         ScriptInterface scriptInterface = null;
         try {
@@ -56,11 +62,11 @@ public class FilteringJob extends Job {
             return;
         }
         
-        Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables", currentUser);
+        Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables");
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        filteringJobBean.execute(result, jobInstance.getParametres(), filterCode, scriptInterface, context, recordVariableName, currentUser);
+        filteringJobBean.execute(result, jobInstance.getParametres(), filterCode, scriptInterface, context, recordVariableName);
     }
 
 	@Override

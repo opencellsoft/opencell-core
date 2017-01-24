@@ -36,14 +36,14 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(ScriptNotification scriptNotification, User creator) throws BusinessException {
-        super.create(scriptNotification, creator);
+    public void create(ScriptNotification scriptNotification) throws BusinessException {
+        super.create(scriptNotification);
         notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
     }
 
     @Override
-    public ScriptNotification update(ScriptNotification scriptNotification, User updater) throws BusinessException {
-    	scriptNotification = super.update(scriptNotification, updater);
+    public ScriptNotification update(ScriptNotification scriptNotification) throws BusinessException {
+    	scriptNotification = super.update(scriptNotification);
         notificationCacheContainerProvider.updateNotificationInCache(scriptNotification);
         return scriptNotification;
     }

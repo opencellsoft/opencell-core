@@ -43,9 +43,9 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         Provider provider = currentUser.getProvider();
-        String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat", currentUser);
+        String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
         String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*":"Pain002_";
         String defaultExtension =  "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv":"xml";
         
@@ -73,9 +73,9 @@ public class SepaRejectedTransactionsJob extends Job {
                     log.info("InputFiles job " + file.getName() + " in progres");
                     currentFile = FileUtils.addExtension(file, ".processing");
                     if("PAYNUM".equalsIgnoreCase(fileFormat)){
-                    	paynumFile.processRejectFile(currentFile, file.getName(), currentUser);
+                    	paynumFile.processRejectFile(currentFile, file.getName());
                     }else{
-                    	sepaService.processRejectFile(currentFile, file.getName(), currentUser);
+                    	sepaService.processRejectFile(currentFile, file.getName());
                     }
                     
                     FileUtils.moveFile(dirOK, currentFile, file.getName());

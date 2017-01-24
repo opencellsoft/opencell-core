@@ -19,8 +19,8 @@ public class ReRatingJob extends Job {
     private ReRatingJobBean reRatingJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        reRatingJobBean.execute(result, currentUser, "justPrice".equalsIgnoreCase(jobInstance.getParametres()));
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        reRatingJobBean.execute(result, "justPrice".equalsIgnoreCase(jobInstance.getParametres()));
     }
 
     @Override

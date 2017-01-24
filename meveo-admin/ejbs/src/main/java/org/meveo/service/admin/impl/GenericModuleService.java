@@ -27,11 +27,9 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -60,18 +58,18 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
     @Inject
     private OfferTemplateService offerTemplateService;
 
-    public void loadModuleItem(MeveoModuleItem item, Provider provider) {
+    public void loadModuleItem(MeveoModuleItem item) {
 
         BusinessEntity entity = null;
         if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), provider);
+            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), item.getMeveoModule().getProvider());
 
         } else {
 
-            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code and mi.provider=:provider";
+            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code and mi.provider.id=:providerId";
             TypedQuery<BusinessEntity> query = getEntityManager().createQuery(sql, BusinessEntity.class);
             query.setParameter("code", item.getItemCode());
-            query.setParameter("provider", provider);
+            query.setParameter("providerId", currentUser.getProvider().getId);
             try {
                 entity = query.getSingleResult();
 
@@ -88,11 +86,11 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public T disable(T module, User currentUser) throws BusinessException {
+    public T disable(T module) throws BusinessException {
 
         // if module is local module (was not downloaded) just disable as any other entity without iterating module items
         if (!module.isDownloaded()) {
-            return super.disable(module, currentUser);
+            return super.disable(module);
         }
 
         if (!module.isInstalled()) {
@@ -101,17 +99,17 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.preDisableModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.preDisableModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate());
         } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
-            loadModuleItem(item, currentUser.getProvider());
+            loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
                 continue;
@@ -130,7 +128,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
                     continue;
                 }
 
-                persistenceServiceForItem.disable(itemEntity, currentUser);
+                persistenceServiceForItem.disable(itemEntity);
 
             } catch (Exception e) {
                 log.error("Failed to disable module item. Module item {}", item, e);
@@ -138,18 +136,18 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.postDisableModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.postDisableModule(module.getScript().getCode(), module);
         }
 
-        return super.disable(module, currentUser);
+        return super.disable(module);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public T enable(T module, User currentUser) throws BusinessException {
+    public T enable(T module) throws BusinessException {
 
         // if module is local module (was not downloaded) just disable as any other entity without iterating module items
         if (!module.isDownloaded()) {
-            return super.enable(module, currentUser);
+            return super.enable(module);
         }
 
         if (!module.isInstalled()) {
@@ -158,17 +156,17 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.preEnableModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.preEnableModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+            serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate());
         } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+            offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
-            loadModuleItem(item, currentUser.getProvider());
+            loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
                 continue;
@@ -187,7 +185,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
                     continue;
                 }
 
-                persistenceServiceForItem.enable(itemEntity, currentUser);
+                persistenceServiceForItem.enable(itemEntity);
 
             } catch (Exception e) {
                 log.error("Failed to enable module item. Module item {}", item, e);
@@ -195,15 +193,15 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.postEnableModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.postEnableModule(module.getScript().getCode(), module);
         }
 
-        return super.enable(module, currentUser);
+        return super.enable(module);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void remove(T module, User currentUser) throws BusinessException {
+    public void remove(T module) throws BusinessException {
 
         // If module was downloaded, remove all submodules as well
         if (module.isDownloaded() && module.getModuleItems() != null) {
@@ -211,9 +209,9 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             for (MeveoModuleItem item : module.getModuleItems()) {
                 try {
                     if (MeveoModule.class.isAssignableFrom(Class.forName(item.getItemClass()))) {
-                        loadModuleItem(item, module.getProvider());
+                        loadModuleItem(item);
                         T itemModule = (T) item.getItemEntity();
-                        remove(itemModule, currentUser);
+                        remove(itemModule);
                     }
                 } catch (Exception e) {
                     log.error("Failed to delete a submodule", e);
@@ -221,7 +219,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             }
         }
 
-        super.remove(module, currentUser);
+        super.remove(module);
     }
 
 }

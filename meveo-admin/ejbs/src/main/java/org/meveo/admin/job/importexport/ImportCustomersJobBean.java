@@ -112,7 +112,7 @@ public class ImportCustomersJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(JobExecutionResultImpl result, User currentUser) {
+	public void execute(JobExecutionResultImpl result) {
 		Provider provider = currentUser.getProvider();
 
 		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator + "customers"
@@ -138,7 +138,7 @@ public class ImportCustomersJobBean {
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
-				importFile(currentFile, file.getName(), currentUser);
+				importFile(currentFile, file.getName());
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
 			} catch (Exception e) {
@@ -177,7 +177,7 @@ public class ImportCustomersJobBean {
 		return files;
 	}
 
-	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
+	public void importFile(File file, String fileName) throws JAXBException, Exception {
 
 		log.info("start import file :" + fileName);
 
@@ -240,17 +240,17 @@ public class ImportCustomersJobBean {
 					continue;
 				}
 
-				seller = createSeller(sell, fileName, i, currentUser, provider);
+				seller = createSeller(sell, fileName, i, provider);
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
-					if (customerCheckError(sell, cust, currentUser.getProvider())) {
+					if (customerCheckError(sell, cust.getProvider())) {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
 						continue;
 					}
 
 					nbCustomers++;
-					createCustomer(fileName, currentUser, seller, sell, cust, i);
+					createCustomer(fileName, seller, sell, cust, i);
 				}
 			} catch (Exception e) {
 				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
@@ -266,7 +266,7 @@ public class ImportCustomersJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, User currentUser, Provider provider) throws BusinessException {
+	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, Provider provider) throws BusinessException {
 		org.meveo.model.admin.Seller seller = null;
 		try {
 			seller = sellerService.findByCode(sell.getCode(), provider);
@@ -312,14 +312,14 @@ public class ImportCustomersJobBean {
                 seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
             }
 			seller.setProvider(provider);
-			customerImportService.createSeller(seller, currentUser);
+			customerImportService.createSeller(seller);
 		}
 
 		return seller;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomer(String fileName, User currentUser, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
+	private void createCustomer(String fileName, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, int i) {
 		Provider provider = currentUser.getProvider();
 		nbSellers++;
@@ -344,7 +344,7 @@ public class ImportCustomersJobBean {
 				}
 
 				nbCustomersUpdated++;
-				customer = customerImportService.updateCustomer(customer, currentUser, seller, sell, cust);
+				customer = customerImportService.updateCustomer(customer, seller, sell, cust);
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Updated");
 			} else {
 				customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
@@ -366,7 +366,7 @@ public class ImportCustomersJobBean {
 					log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " Code:" + custAcc.getCode() + ", status:Warning");
 				}
 
-				createCustomerAccount(fileName, currentUser, customer, seller, custAcc, cust, sell, i, j);
+				createCustomerAccount(fileName, customer, seller, custAcc, cust, sell, i, j);
 			}
 		} catch (Exception e) {
 			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
@@ -377,13 +377,13 @@ public class ImportCustomersJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomerAccount(String fileName, User currentUser, Customer customer, org.meveo.model.admin.Seller seller,
+	private void createCustomerAccount(String fileName, Customer customer, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer","customFields"));
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode().getProvider(), Arrays.asList("customer","customFields"));
 		} catch (Exception e) {
 			log.error("failed to create customer account",e);
 		}
@@ -395,7 +395,7 @@ public class ImportCustomersJobBean {
 				return;
 			}
 
-			customerImportService.updateCustomerAccount(customerAccountTmp, currentUser, customer, seller, custAcc, cust, sell);
+			customerImportService.updateCustomerAccount(customerAccountTmp, customer, seller, custAcc, cust, sell);
 			nbCustomerAccountsUpdated++;
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
 			
@@ -424,7 +424,7 @@ public class ImportCustomersJobBean {
 		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
 		customerImportHisto.setNbSellersWarning(nbSellersWarning);
 		customerImportHisto.setProvider(provider);
-		customerImportHistoService.create(customerImportHisto, currentUser);
+		customerImportHistoService.create(customerImportHisto);
 	}
 
 	private void generateReport(String fileName, Provider provider) throws Exception {

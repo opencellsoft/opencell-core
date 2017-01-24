@@ -48,10 +48,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@Inject
 	private WalletService walletService;
 	
-	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
+	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
 			throws BusinessException {
 
-		log.debug("creating userAccount with details {}, creator={}, provider={}", new Object[] { userAccount, creator,
+		log.debug("creating userAccount with details {}, provider={}", new Object[] { userAccount,
 				billingAccount.getProvider() });
 
 		UserAccount existingUserAccount = findByCode(userAccount.getCode(), billingAccount.getProvider());
@@ -60,17 +60,17 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setBillingAccount(billingAccount);
-		create(userAccount, creator); // AKK was with billingAccount.getProvider()
+		create(userAccount); // AKK was with billingAccount.getProvider()
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet, creator); // AKK was with billingAccount.getProvider()
+		walletService.create(wallet); // AKK was with billingAccount.getProvider()
 
 		userAccount.setWallet(wallet);
 	}
 
 	public UserAccount userAccountTermination(UserAccount userAccount, Date terminationDate,
-			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
+			SubscriptionTerminationReason terminationReason) throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 		if (terminationDate == null) {
@@ -78,15 +78,15 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, null, updater);
+			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, null);
 		}
 		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.TERMINATED);
-		return update(userAccount, updater);
+		return update(userAccount);
 	}
 
-	public UserAccount userAccountCancellation(UserAccount userAccount, Date cancelationDate, User updater)
+	public UserAccount userAccountCancellation(UserAccount userAccount, Date cancelationDate)
 			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
@@ -96,14 +96,14 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionCancellation(subscription, cancelationDate, updater);
+			subscriptionService.subscriptionCancellation(subscription, cancelationDate);
 		}
 		userAccount.setTerminationDate(cancelationDate);
 		userAccount.setStatus(AccountStatusEnum.CANCELED);
-		return update(userAccount, updater);
+		return update(userAccount);
 	}
 
-	public UserAccount userAccountReactivation(UserAccount userAccount, Date activationDate, User updater)
+	public UserAccount userAccountReactivation(UserAccount userAccount, Date activationDate)
 			throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
@@ -114,7 +114,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
-		return update(userAccount, updater);
+		return update(userAccount);
 	}
 
 	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {

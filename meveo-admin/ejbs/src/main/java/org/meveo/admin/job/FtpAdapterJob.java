@@ -39,13 +39,13 @@ public class FtpAdapterJob extends Job {
 
 	@Override
 	@Asynchronous
-	public void execute(JobInstance jobInstance, User currentUser) {
-		super.execute(jobInstance, currentUser);
+	public void execute(JobInstance jobInstance) {
+		super.execute(jobInstance);
 	}
 
 	@Override
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 		String distDirectory = null;
 		String remoteServer = null;
 		int remotePort = 21;
@@ -57,20 +57,20 @@ public class FtpAdapterJob extends Job {
 		String ftpProtocol = null;
 		
 		try {
-			distDirectory = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory", currentUser)).replaceAll("\\..", "");
-		    remoteServer = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remoteServer", currentUser);
-			remotePort = ((Long) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remotePort", currentUser)).intValue();
-			removeDistantFile = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_removeDistantFile", currentUser);
-			ftpInputDirectory = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpInputDirectory", currentUser);
-			ftpExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpFileExtension", currentUser);
-			ftpUsername = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpUsername", currentUser);
-			ftpPassword = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpPassword", currentUser);
-			ftpProtocol = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpProtocol", currentUser);
+			distDirectory = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
+		    remoteServer = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remoteServer");
+			remotePort = ((Long) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remotePort")).intValue();
+			removeDistantFile = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_removeDistantFile");
+			ftpInputDirectory = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpInputDirectory");
+			ftpExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpFileExtension");
+			ftpUsername = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpUsername");
+			ftpPassword = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpPassword");
+			ftpProtocol = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpProtocol");
 
 		} catch (Exception e) {
 			log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
 		}
-		ftpAdapterJobBean.execute(result, jobInstance, currentUser, distDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeDistantFile), ftpInputDirectory,ftpExtension, ftpUsername, ftpPassword,ftpProtocol);
+		ftpAdapterJobBean.execute(result, jobInstance, distDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeDistantFile), ftpInputDirectory,ftpExtension, ftpUsername, ftpPassword,ftpProtocol);
 	}
 
 	@Override

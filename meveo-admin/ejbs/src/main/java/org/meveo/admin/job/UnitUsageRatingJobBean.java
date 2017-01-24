@@ -49,16 +49,16 @@ public class UnitUsageRatingJobBean {
 
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
+    public void execute(JobExecutionResultImpl result, Long edrId) {
         log.debug("Running for user={}, edrId={}", currentUser, edrId);
 
         EDR edr = null;
         try {
-            edr = edrService.findById(edrId, currentUser.getProvider());
+            edr = edrService.findById(edrId);
             if (edr == null) {
                 return;
             }
-            usageRatingService.ratePostpaidUsage(edr, currentUser);
+            usageRatingService.ratePostpaidUsage(edr);
             
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);

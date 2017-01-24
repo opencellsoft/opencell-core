@@ -107,7 +107,7 @@ public class QueryBuilder {
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
 		this(getInitQuery(clazz, alias, fetchFields));
 		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
-			addCriterionEntity(alias + ".provider", provider);
+			addCriterionEntity(alias + ".provider.id", provider.getId());
 		}
 	}
 
@@ -115,7 +115,7 @@ public class QueryBuilder {
 			Provider provider) {
 		this(getInitJoinQuery(clazz, alias, fetchFields, joinFields));
 		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
-			addCriterionEntity(alias + ".provider", provider);
+			addCriterionEntity(alias + ".provider.id", provider.getId());
 		}
 	}
 

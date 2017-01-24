@@ -48,20 +48,20 @@ public class MediationJob extends Job {
 	@Override
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance, User currentUser) {
-		super.execute(jobInstance, currentUser);
+	public void execute(JobInstance jobInstance) {
+		super.execute(jobInstance);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 		try {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -94,7 +94,7 @@ public class MediationJob extends Job {
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser));
+				futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres()));
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());

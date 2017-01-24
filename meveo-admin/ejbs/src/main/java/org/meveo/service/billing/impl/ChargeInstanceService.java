@@ -87,7 +87,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	}
 
 	public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInst,
-			RecurringChargeTemplate recurringChargeTemplate, Date subscriptionDate, Seller seller, User creator)
+			RecurringChargeTemplate recurringChargeTemplate, Date subscriptionDate, Seller seller)
 			throws BusinessException {
 
 		if (serviceInst == null) {
@@ -125,13 +125,13 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 				.getCustomerAccount().getTradingCurrency());
         chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
         
-		recurringChargeInstanceService.create(chargeInstance, creator); // AKK was with recurringChargeTemplate.getProvider()
+		recurringChargeInstanceService.create(chargeInstance); // AKK was with recurringChargeTemplate.getProvider()
 		return chargeInstance;
 	}
 
-	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate, User updater)
+	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate)
 			throws BusinessException {
-		recurringChargeDeactivation(getEntityManager(), recurringChargeInstanId, terminationDate, updater);
+		recurringChargeDeactivation(getEntityManager(), recurringChargeInstanId, terminationDate);
 	}
 
 	public void recurringChargeDeactivation(EntityManager em, long recurringChargeInstanId, Date terminationDate,
@@ -146,14 +146,14 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
 		// chargeApplicationService.cancelChargeApplications(recurringChargeInstanId,
-		// null, updater);
+		// null);
 
-		recurringChargeInstanceService.update(recurringChargeInstance, updater);
+		recurringChargeInstanceService.update(recurringChargeInstance);
 
 	}
 
 	public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription,
-			Date subscriptionDate, User updater) throws BusinessException {
+			Date subscriptionDate) throws BusinessException {
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new BusinessException("subscription is " + subscription.getStatus());
@@ -171,7 +171,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 			// recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
 			recurringChargeInstance.setChargeDate(subscriptionDate);
-			recurringChargeInstanceService.update(recurringChargeInstance, updater);
+			recurringChargeInstanceService.update(recurringChargeInstance);
 		}
 	}
 

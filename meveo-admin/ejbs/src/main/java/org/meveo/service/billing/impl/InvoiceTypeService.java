@@ -43,8 +43,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	
 	ParamBean param  = ParamBean.getInstance();
 
-	public InvoiceType getDefaultType(String invoiceTypeCode, User currentUser) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode, currentUser.getProvider());
+	public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
+		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
 		if (defaultInvoiceType != null) {
 			return defaultInvoiceType;
 		}
@@ -61,9 +61,9 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		}
 		String occTemplateCode = null;
 		try {
-			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, currentUser.getProvider(), true, currentUser);
+			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, true);
 			log.debug("occTemplateCode:" + occTemplateCode);
-			occTemplate = oCCTemplateService.findByCode(occTemplateCode, currentUser.getProvider());
+			occTemplate = oCCTemplateService.findByCode(occTemplateCode);
 		} catch (Exception e) {
 			log.error("error while getting occ template ", e);
 			throw new BusinessException("Cannot found OCC Template for invoice");
@@ -74,13 +74,13 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 			occTemplate.setCode(occTemplateCode);
 			occTemplate.setDescription(occTemplateCode);
 			occTemplate.setOccCategory(operationCategory);
-			oCCTemplateService.create(occTemplate, currentUser);			
+			oCCTemplateService.create(occTemplate);			
 		}
 
 		defaultInvoiceType = new InvoiceType();
 		defaultInvoiceType.setCode(invoiceTypeCode);
 		defaultInvoiceType.setOccTemplate(occTemplate);
-		create(defaultInvoiceType, currentUser);
+		create(defaultInvoiceType);
 		return defaultInvoiceType;
 	}
 	
@@ -96,15 +96,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 	}
 
 	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
-		return getDefaultType(getAdjustementCode(), currentUser);
+		return getDefaultType(getAdjustementCode());
 	}
 
 	public InvoiceType getDefaultCommertial(User currentUser) throws BusinessException {
-		return getDefaultType(getCommercialCode(), currentUser);
+		return getDefaultType(getCommercialCode());
 	}
 
     public InvoiceType getDefaultQuote(User currentUser) throws BusinessException {
-        return getDefaultType(getQuoteCode(), currentUser);
+        return getDefaultType(getQuoteCode());
     }
 
 	public String getCommercialCode() {

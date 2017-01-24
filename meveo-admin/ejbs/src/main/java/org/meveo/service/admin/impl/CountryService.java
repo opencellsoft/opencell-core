@@ -21,7 +21,6 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -34,12 +33,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 public class CountryService extends PersistenceService<Country> {
-
-	@Inject
-	private CurrencyService currencyService;
-
-	@Inject
-	private UserService userService;
 
 	public Country findByCode(String countryCode) {
 		return findByCode(getEntityManager(), countryCode);
@@ -62,8 +55,7 @@ public class CountryService extends PersistenceService<Country> {
 
 	@SuppressWarnings("unchecked")
 	public List<Country> list() {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
-				getCurrentProvider());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, currentUser.getProvider());
 		queryBuilder.addOrderCriterion("a.descriptionEn", true);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
@@ -84,7 +76,7 @@ public class CountryService extends PersistenceService<Country> {
 //		c.setDescriptionEn(name);
 //		c.setCurrency(currencyService.findByCode(currencyCode));
 //
-//		create(c, creator);
+//		create(c);
 //	}
 
 }

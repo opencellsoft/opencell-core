@@ -46,8 +46,6 @@ import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.ModuleLicenseEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @XmlRootElement(name = "Module")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -161,12 +159,7 @@ public class MeveoModuleDto extends BaseDataModelDto {
         this.moduleItems = moduleItems;
     }
 
-    @SuppressWarnings("unused")
     public void addModuleItem(BaseDto item) {
-        if (item instanceof ScriptInstanceDto) {
-            Logger log = LoggerFactory.getLogger(getClass());
-        }
-
         if (!moduleItems.contains(item)) {
             moduleItems.add(item);
         }

@@ -16,7 +16,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
+import org.infinispan.commons.api.BasicCache;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;

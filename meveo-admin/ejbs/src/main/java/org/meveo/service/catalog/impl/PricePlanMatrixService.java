@@ -69,8 +69,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
 	@Override
-	public void create(PricePlanMatrix pricePlan, User creator) throws BusinessException {
-		super.create(pricePlan, creator);
+	public void create(PricePlanMatrix pricePlan) throws BusinessException {
+		super.create(pricePlan);
 		ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
 	}
 
@@ -95,8 +95,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@Override
-	public PricePlanMatrix update(PricePlanMatrix pricePlan, User updater) throws BusinessException {
-		pricePlan = super.update(pricePlan, updater);
+	public PricePlanMatrix update(PricePlanMatrix pricePlan) throws BusinessException {
+		pricePlan = super.update(pricePlan);
 		ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
 		return pricePlan;
 	}

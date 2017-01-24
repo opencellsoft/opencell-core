@@ -165,7 +165,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void create(CustomFieldTemplate cft, User creator) throws BusinessException {
+    public void create(CustomFieldTemplate cft) throws BusinessException {
 
         if ("INVOICE_SEQUENCE".equals(cft.getCode())
                 && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
@@ -175,13 +175,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
-        super.create(cft, creator);
+        super.create(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
     }
 
     @Override
-    public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) throws BusinessException {
+    public CustomFieldTemplate update(CustomFieldTemplate cft) throws BusinessException {
 
         if ("INVOICE_SEQUENCE".equals(cft.getCode())
                 && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
@@ -191,7 +191,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
-        CustomFieldTemplate cftUpdated = super.update(cft, updater);
+        CustomFieldTemplate cftUpdated = super.update(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
 

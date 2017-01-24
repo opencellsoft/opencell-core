@@ -55,8 +55,9 @@ public class CurrencyService extends PersistenceService<Currency> {
 	// TODO use it
 	public void validateBeforeRemove(Currency currency)
 			throws BusinessException {
-		if (currency.getSystemCurrency())
+		if (currency.getSystemCurrency()){
 			throw new BusinessException("System currency can not be deleted.");
+		}
 	}
 
 	public Currency findByCode(String currencyCode) {
@@ -72,19 +73,4 @@ public class CurrencyService extends PersistenceService<Currency> {
 			return null;
 		}
 	}
-
-	public Currency findByCode(EntityManager em, String currencyCode) {
-		if (currencyCode == null) {
-			return null;
-		}
-		QueryBuilder qb = new QueryBuilder(Currency.class, "c");
-		qb.addCriterion("currencyCode", "=", currencyCode, false);
-
-		try {
-			return (Currency) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
 }

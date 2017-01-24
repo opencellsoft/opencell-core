@@ -44,7 +44,7 @@ public class ReRatingJobBean implements Serializable {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
+	public void execute(JobExecutionResultImpl result, boolean useSamePricePlan) {
 		Provider currentProvider=currentUser.getProvider();
 		log.debug("Running for user={}, useSamePricePlan={}", currentUser, useSamePricePlan);
 		
@@ -55,7 +55,7 @@ public class ReRatingJobBean implements Serializable {
 			result.setNbItemsToProcess(walletOperationIds.size());
 			for (Long walletOperationId : walletOperationIds) {
 				try {
-					ratingService.reRate(walletOperationId, useSamePricePlan,currentUser);
+					ratingService.reRate(walletOperationId, useSamePricePlan);
 					result.registerSucces();
 				} catch (Exception e) {
 					//rejectededOperationProducer.fire(walletOperationId);

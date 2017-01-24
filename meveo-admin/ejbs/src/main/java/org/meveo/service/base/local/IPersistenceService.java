@@ -27,8 +27,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 
 /**
  * Generic interface that defines the methods to implement for every persistence service.
@@ -77,90 +75,81 @@ public interface IPersistenceService<E extends IEntity> {
      * Persist an entity.
      * 
      * @param e Entity to persist.
-     * @param updater User who performs entity persist.
      * 
      * @throws BusinessException
      */
-    public void create(E e, User creator) throws BusinessException;
+    public void create(E e) throws BusinessException;
 
     /**
      * Update an entity.
      * 
      * @param e Entity to update.
-     * @param updater User who performs entity update.
      * 
      * @throws BusinessException
      */
-    public E update(E e, User updater) throws BusinessException;
+    public E update(E e) throws BusinessException;
 
     /**
      * Disable an entity.
      * 
      * @param id Entity id which has to be disabled.
-     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public void disable(Long id, User currentUser) throws BusinessException;
+    public void disable(Long id) throws BusinessException;
 
     /**
      * Disable an entity.
      * 
      * @param id Entity to be disabled.
-     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public E disable(E e, User currentUser) throws BusinessException;
+    public E disable(E e) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
      * @param id Entity id which has to be enabled.
-     * @param currentUser
      * 
      * @throws BusinessException
      */
-    public void enable(Long id, User currentUser) throws BusinessException;
+    public void enable(Long id) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
      * @param id Entity to be enabled.
-     * @param currentUser Current user
      * @throws BusinessException
      */
-    public E enable(E e, User currentUser) throws BusinessException;
+    public E enable(E e) throws BusinessException;
 
     /**
      * Delete an entity.
      * 
      * @param id Entity id which has to be deleted.
-     * @param currentUser Current user
      * 
      * @throws BusinessException
      */
-    public void remove(Long id, User currentUser) throws BusinessException;
+    public void remove(Long id) throws BusinessException;
 
     /**
      * Delete an entity.
      * 
      * @param e Entity to delete.
-     * @param currentUser Current user
      * 
      * @throws BusinessException
      */
-    public void remove(E e, User currentUser) throws BusinessException;
+    public void remove(E e) throws BusinessException;
 
     /**
      * Delete list of entities by provided ids.
      * 
      * @param ids Entities ids to delete.
-     * @param currentUser Current user
      * 
      * @throws BusinessException
      */
-    public void remove(Set<Long> ids, User currentUser) throws BusinessException;
+    public void remove(Set<Long> ids) throws BusinessException;
 
     /**
      * The entity class which the persistence is managed by the persistence service.
@@ -240,11 +229,5 @@ public interface IPersistenceService<E extends IEntity> {
 
     public E findByIdNoCheck(Long id, boolean refresh);
 
-    public E findByIdNoCheck(EntityManager em, Long id, boolean refresh);
-
-    public E findById(Long id, Provider provider, boolean refresh);
-
-    public E findById(Long id, Provider provider);
-
-	Set<E> refreshOrRetrieve(Set<E> entities);
+	public Set<E> refreshOrRetrieve(Set<E> entities);
 }

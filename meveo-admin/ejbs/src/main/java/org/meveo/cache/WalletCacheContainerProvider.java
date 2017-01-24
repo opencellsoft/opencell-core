@@ -15,7 +15,7 @@ import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
+import org.infinispan.commons.api.BasicCache;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.UsageChargeInstance;

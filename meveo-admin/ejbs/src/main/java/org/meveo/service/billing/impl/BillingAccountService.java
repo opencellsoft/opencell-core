@@ -77,7 +77,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 	}
 
-	public void createBillingAccount(BillingAccount billingAccount, User creator) throws BusinessException {
+	public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
 	    billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		if (billingAccount.getSubscriptionDate() == null) {
@@ -92,52 +92,52 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.setProvider(billingAccount.getCustomerAccount().getProvider());
 		}
 
-		create(billingAccount, creator);
+		create(billingAccount);
 	}
 
-	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling, User updater,
+	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling,
 			Provider provider) throws BusinessException {
 		billingAccount.setElectronicBilling(electronicBilling);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
-	public BillingAccount updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount, User updater)
+	public BillingAccount updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount)
 			throws BusinessException {
 		billingAccount.setDiscountRate(ratedDiscount);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
 	public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate,
-			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
+			SubscriptionTerminationReason terminationReason) throws BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
 		
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountTermination(userAccount, terminationDate, terminationReason, updater);
+			userAccountService.userAccountTermination(userAccount, terminationDate, terminationReason);
 		}
 		billingAccount.setTerminationReason(terminationReason);
 		billingAccount.setTerminationDate(terminationDate);
 		billingAccount.setStatus(AccountStatusEnum.TERMINATED);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
-	public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate, User updater)
+	public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate)
 			throws BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountCancellation(userAccount, terminationDate, updater);
+			userAccountService.userAccountCancellation(userAccount, terminationDate);
 		}
 		billingAccount.setTerminationDate(terminationDate);
 		billingAccount.setStatus(AccountStatusEnum.CANCELED);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
-	public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate, User updater)
+	public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate)
 			throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
@@ -148,10 +148,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
-	public BillingAccount closeBillingAccount(BillingAccount billingAccount, User updater) throws BusinessException {
+	public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
 		/**
 		 * *
@@ -163,7 +163,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
 		}
 		billingAccount.setStatus(AccountStatusEnum.CLOSED);
-		return update(billingAccount, updater);
+		return update(billingAccount);
 	}
 
 	public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {

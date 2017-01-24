@@ -28,13 +28,13 @@ public class ExportAccountsJob extends Job {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(JobInstance jobIntstance, User currentUser) {
-        super.execute(jobIntstance, currentUser);
+    public void execute(JobInstance jobIntstance) {
+        super.execute(jobIntstance);
     }
 
     @Override
-    protected void execute(JobExecutionResultImpl result,JobInstance jobIntstance, User currentUser) throws BusinessException {
-        exportAccountsJobBean.execute(result, jobIntstance.getParametres(), currentUser);
+    protected void execute(JobExecutionResultImpl result,JobInstance jobIntstance) throws BusinessException {
+        exportAccountsJobBean.execute(result, jobIntstance.getParametres());
     }
 
     @Override

@@ -32,7 +32,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -66,10 +65,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
+import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -130,6 +131,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CatMessagesService catMessagesService;
+
+    @EJB
+    private ProviderService providerService;
 
     /**
      * Constructor.
@@ -220,7 +224,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @SuppressWarnings("unchecked")
     public E findById(Long id, Provider provider) {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider.getId() : currentUser.getProviderId());
         queryBuilder.addCriterion("id", "=", id, true);
         Query query = queryBuilder.getQuery(getEntityManager());
         return (E) query.getSingleResult();
@@ -264,18 +268,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E findByIdNoCheck(Long id, boolean refresh) {
-        return findByIdNoCheck(getEntityManager(), id, refresh);
-    }
-
-    @Override
-    public E findByIdNoCheck(EntityManager em, Long id, boolean refresh) {
         log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
-        E e = em.find(productClass, id);
+        E e = getEntityManager().find(productClass, id);
         if (e != null) {
             if (refresh) {
                 log.debug("refreshing loaded entity");
-                em.refresh(e);
+                getEntityManager().refresh(e);
             }
         }
         log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
@@ -286,20 +285,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void disable(Long id, User currentUser) throws BusinessException {
+    public void disable(Long id) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            disable(e, currentUser);
+            disable(e);
         }
     }
 
     @Override
-    public E disable(E e, User currentUser) throws BusinessException {
+    public E disable(E e) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
             log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(true);
             if (e instanceof IAuditable) {
-                ((IAuditable) e).updateAudit(getCurrentUser());
+                ((IAuditable) e).updateAudit(currentUser);
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
@@ -315,20 +314,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void enable(Long id, User currentUser) throws BusinessException {
+    public void enable(Long id) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            enable(e, currentUser);
+            enable(e);
         }
     }
 
     @Override
-    public E enable(E e, User currentUser) throws BusinessException {
+    public E enable(E e) throws BusinessException {
         if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
             log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(false);
             if (e instanceof IAuditable) {
-                ((IAuditable) e).updateAudit(getCurrentUser());
+                ((IAuditable) e).updateAudit(currentUser);
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
@@ -341,7 +340,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @Override
-    public void remove(E e, User currentUser) throws BusinessException {
+    public void remove(E e) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
         getEntityManager().remove(e);
@@ -357,7 +356,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         // Remove custom field values from cache if applicable
         if (e instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e, currentUser);
+            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
         }
 
         // Remove description translations
@@ -372,10 +371,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
      */
     @Override
-    public void remove(Long id, User currentUser) throws BusinessException {
+    public void remove(Long id) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            remove(e, currentUser);
+            remove(e);
         }
     }
 
@@ -383,26 +382,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
      */
     @Override
-    public void remove(Set<Long> ids, User currentUser) throws BusinessException {
+    public void remove(Set<Long> ids) throws BusinessException {
         Query query = getEntityManager().createQuery("delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
         query.setParameter("ids", ids);
-        query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
+        query.setParameter("providerId", currentUser.getProvider().getId());
         query.executeUpdate();
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity, org.manaty.model.user.User)
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
      */
     @Override
-    public E update(E e, User updater) throws BusinessException {
+    public E update(E e) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 
         if (e instanceof IAuditable) {
-            if (updater != null) {
-                ((IAuditable) e).updateAudit(updater);
-            } else {
-                ((IAuditable) e).updateAudit(getCurrentUser());
-            }
+            ((IAuditable) e).updateAudit(currentUser);
         }
         checkProvider(e);
 
@@ -428,18 +423,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity, org.manaty.model.user.User)
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
      */
     @Override
-    public void create(E e, User creator) throws BusinessException {
+    public void create(E e) throws BusinessException {
         log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
         if (e instanceof IAuditable) {
-            if (creator != null) {
-                ((IAuditable) e).updateAudit(creator);
-            } else {
-                ((IAuditable) e).updateAudit(getCurrentUser());
-            }
+            ((IAuditable) e).updateAudit(currentUser);
         }
 
         if (e instanceof IProvider && (((IProvider) e).getProvider() == null)) {
@@ -466,12 +457,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public List<E> list() {
-        return list(getCurrentProvider(), null);
+        return list(null, null);
     }
 
     @Override
     public List<E> listActive() {
-        return list(getCurrentProvider(), true);
+        return list(null, true);
     }
 
     public List<E> list(Provider provider) {
@@ -481,7 +472,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @SuppressWarnings("unchecked")
     public List<E> list(Provider provider, Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider : currentUser.getProvider());
         if (active != null && EnableEntity.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
@@ -499,7 +490,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @SuppressWarnings("unchecked")
     public List<E> findByCodeLike(String wildcode, Provider provider) {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider : currentUser.getProvider());
         if (EnableEntity.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", false);
         }
@@ -609,7 +600,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return refreshedEntities;
     }
-    
+
     @Override
     public Set<E> refreshOrRetrieve(Set<E> entities) {
 
@@ -639,7 +630,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Map<String, Object> filters = config.getFilters();
 
         // If provider is not retrievable from service, get it from a filter
-        Provider provider = getCurrentProvider();
+        Provider provider = currentUser.getProvider();
         if (provider == null && filters.containsKey(SEARCH_CURRENT_PROVIDER)) {
             provider = (Provider) filters.get(SEARCH_CURRENT_PROVIDER);
         }
@@ -664,8 +655,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         continue;
                     }
 
-					// condition field1 field2
-					// example1 ne code, condition=code, fieldName=code, fieldName2=null
+                    // condition field1 field2
+                    // example1 ne code, condition=code, fieldName=code, fieldName2=null
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
@@ -852,53 +843,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     protected void checkProvider(E e) throws ProviderNotAllowedException {
 
-        if (isConversationScoped() && getCurrentProvider() != null) {
+        if (isConversationScoped() && currentUser != null) {
             if (e instanceof BaseEntity) {
-                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
+                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(currentUser.getProvider());
                 if (notSameProvider) {
-					if (!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
-						log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}", new Object[] { getCurrentProvider().getId(),
-								((BaseEntity) e).getProvider().getId() });
-						throw new ProviderNotAllowedException();
-					}
+                    if (!currentUser.hasRole("superAdminManagement")) {
+                        log.debug("CheckProvider getCurrentProvider() code={}, entityProvider id={}",
+                            new Object[] { currentUser.getProviderCode(), ((BaseEntity) e).getProvider().getId() });
+                        throw new ProviderNotAllowedException();
+                    }
                 }
             }
         }
-    }
-
-    protected void checkProvider(E e, Provider provider) throws ProviderNotAllowedException {
-        if (getCurrentProvider() != null) {
-            if (e instanceof BaseEntity) {
-                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(provider);
-                if (notSameProvider) {
-                    log.debug("CheckProvider currentUser.getProvider() id={}, entityProvider id={}", new Object[] { provider.getId(), ((BaseEntity) e).getProvider().getId() });
-                    throw new ProviderNotAllowedException();
-                }
-            }
-        }
-    }
-
-    public Provider getCurrentProvider() {
-
-        Provider result = null;
-
-        // This gets a current provider as set in MeveoUser uppon login
-        try {
-            if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
-                result = ((MeveoUser) identity.getUser()).getCurrentProvider();
-            }
-        } catch (ContextNotActiveException e) {
-            // Ignore this exception as in async methods no context is available
-
-        } catch (Exception e) {
-            log.error("failed to get current provider", e);
-        }
-
-        // This gets a provider directly from a current user
-        if (result == null && getCurrentUser() != null) {
-            result = getCurrentUser().getProvider();
-        }
-        return result;
     }
 
     public E attach(E e) {
@@ -933,10 +889,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public void updateAudit(E e) {
-        updateAudit(e, getCurrentUser());
-    }
-
-    public void updateAudit(E e, User currentUser) {
+        
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
         }

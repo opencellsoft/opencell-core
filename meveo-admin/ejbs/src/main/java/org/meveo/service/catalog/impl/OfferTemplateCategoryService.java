@@ -21,12 +21,12 @@ import org.meveo.service.base.BusinessService;
 public class OfferTemplateCategoryService extends BusinessService<OfferTemplateCategory> {
 
 	@Override
-	public void create(OfferTemplateCategory e, User creator) throws BusinessException {
+	public void create(OfferTemplateCategory e) throws BusinessException {
 		if (e.getOfferTemplateCategory() != null) {
 			e.setOrderLevel(e.getOfferTemplateCategory().getOrderLevel() + 1);
 		}
 
-		super.create(e, creator);
+		super.create(e);
 	}
 
 	@SuppressWarnings("unchecked")

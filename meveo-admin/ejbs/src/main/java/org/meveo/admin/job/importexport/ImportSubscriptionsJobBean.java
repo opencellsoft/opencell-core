@@ -76,7 +76,7 @@ public class ImportSubscriptionsJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, User currentUser) {
+	public void execute(JobExecutionResultImpl result) {
 		Provider provider = currentUser.getProvider();
 
 		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
@@ -104,7 +104,7 @@ public class ImportSubscriptionsJobBean {
 				log.info("InputFiles job {} in progress...", file.getName());
 				currentFile = FileUtils.addExtension(file, ".processing");
 
-				importFile(currentFile, file.getName(), currentUser);
+				importFile(currentFile, file.getName());
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job {} done.", file.getName());
 			} catch (Exception e) {
@@ -126,7 +126,7 @@ public class ImportSubscriptionsJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
+	public void importFile(File file, String fileName) throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
 
 		Provider provider = currentUser.getProvider();
@@ -171,7 +171,7 @@ public class ImportSubscriptionsJobBean {
 				}
 
 				nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription,
-						jaxbSubscription, fileName, currentUser, i);
+						jaxbSubscription, fileName, i);
 			} catch (ImportIgnoredException ie) {
 				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Ignored");
@@ -205,7 +205,7 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHisto.setNbSubscriptionsIgnored(nbSubscriptionsIgnored);
 		subscriptionImportHisto.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
 		subscriptionImportHisto.setProvider(provider);
-		subscriptionImportHistoService.create(subscriptionImportHisto, currentUser);
+		subscriptionImportHistoService.create(subscriptionImportHisto);
 	}
 
 	private void generateReport(String fileName, Provider provider) throws Exception {

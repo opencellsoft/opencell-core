@@ -87,9 +87,9 @@ public class SellerService extends PersistenceService<Seller> {
 	}
 	
 	@Override
-    public void create(Seller seller,User creator) throws BusinessException{
+    public void create(Seller seller) throws BusinessException{
         log.info("start of create seller");
-        super.create(seller, creator);
+        super.create(seller);
         InvoiceType commType = invoiceTypeService.getDefaultCommertial(creator);
         log.debug("InvoiceTypeCode for commercial bill :"+(commType==null?null:commType.getCode()));
         InvoiceType adjType = invoiceTypeService.getDefaultAdjustement(creator);

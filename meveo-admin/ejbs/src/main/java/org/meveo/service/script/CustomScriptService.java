@@ -47,12 +47,12 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.service.admin.impl.UserService;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 
 public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
@@ -61,8 +61,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     private ResourceBundle resourceMessages;
     
     @Inject
-    private UserService userService;
-
+    @CurrentUser
+    private MeveoUser currentUser;
+    
     protected final Class<SI> scriptInterfaceClass;
 
     private Map<String, Map<String, List<String>>> allLogs = new HashMap<String, Map<String, List<String>>>();
@@ -115,7 +116,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     @Override
-    public void create(T script, User creator) throws BusinessException {
+    public void create(T script) throws BusinessException {
 
         String className = getClassName(script.getScript());
         if (className == null) {
@@ -128,12 +129,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
         script.setCode(fullClassName);
 
-        super.create(script, creator);
+        super.create(script);
         compileScript(script, false);
     }
 
     @Override
-    public T update(T script, User updater) throws BusinessException {
+    public T update(T script) throws BusinessException {
 
         String className = getClassName(script.getScript());
         if (className == null) {
@@ -147,7 +148,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         script.setCode(fullClassName);
 
-        script = super.update(script, updater);
+        script = super.update(script);
 
         compileScript(script, false);
 
@@ -469,16 +470,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
-     * @param currentUser Current user
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser) throws InvalidPermissionException, ElementNotFoundException,
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException,
             BusinessException {
 
-        return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters), currentUser);
+        return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
 
     /**
@@ -487,22 +487,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Additional parameters
-     * @param currentUser Current user
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser) throws InvalidScriptException, ElementNotFoundException,
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context) throws InvalidScriptException, ElementNotFoundException,
             InvalidPermissionException, BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
         }
         context.put(Script.CONTEXT_ENTITY, entity);
-        currentUser = userService.attach(currentUser);
-        Map<String, Object> result = execute(scriptCode, context, currentUser);
+        Map<String, Object> result = execute(scriptCode, context);
         return result;
     }
 
@@ -519,7 +517,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws ElementNotFoundException, InvalidScriptException,
             InvalidPermissionException, BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
@@ -540,7 +538,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
-    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context, User currentUser) throws BusinessException {
+    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context) throws BusinessException {
         if (context == null) {
             context = new HashMap<String, Object>();
         }

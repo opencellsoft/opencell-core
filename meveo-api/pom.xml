@@ -6,7 +6,7 @@
         <groupId>org.meveo</groupId>
         <artifactId>meveo</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>4.4</version>
+        <version>5.0-SNAPSHOT</version>
     </parent>
     <artifactId>meveo-api</artifactId>
     <name>MEVEO API</name>
@@ -23,14 +23,14 @@
         <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
         <dependency>
             <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <!-- Import the JPA API, we use provided scope as the API is included in JBoss AS 7 -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -74,15 +74,16 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.jboss.resteasy</groupId> -->
+<!--             <artifactId>jaxrs-api</artifactId> -->
+<!--         </dependency> -->
 
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-rest-client-impl-3x</artifactId>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.jboss.arquillian.extension</groupId> -->
+<!--             <artifactId>arquillian-rest-client-impl-3x</artifactId> -->
+<!--             <scope>test</scope> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
@@ -93,17 +94,17 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-rest-client-impl-jersey</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.jboss.arquillian.extension</groupId> -->
+<!--             <artifactId>arquillian-rest-client-impl-jersey</artifactId> -->
+<!--             <scope>test</scope> -->
+<!--         </dependency> -->
 
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>com.sun.jersey</groupId> -->
+<!--             <artifactId>jersey-client</artifactId> -->
+<!--             <scope>test</scope> -->
+<!--         </dependency> -->
 
         <dependency>
             <groupId>javax.validation</groupId>

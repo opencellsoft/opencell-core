@@ -25,6 +25,8 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
@@ -41,9 +43,13 @@ public class BillingRunJobBean {
 	@Inject
 	private BillingCycleService billingCycleService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,String billingCycleCode,Date invoiceDate,Date lastTransactionDate, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter,String billingCycleCode,Date invoiceDate,Date lastTransactionDate) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
 		
 		Provider provider = currentUser.getProvider();
@@ -80,7 +86,7 @@ public class BillingRunJobBean {
 		            }
 					billingRun.setProcessType(BillingProcessTypesEnum.AUTOMATIC);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
-					billingRunService.create(billingRun, currentUser);
+					billingRunService.create(billingRun);
 					result.registerSucces();
 				} else {
 					result.registerError("Cannot find billingCycle with code '" + parameter

@@ -15,10 +15,10 @@ import org.meveo.admin.async.AccOpGenerationAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -41,22 +41,25 @@ public class AccountOperationsGenerationJobBean {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {
-		Provider currentProvider = currentUser.getProvider();
-		log.info("Running for user={}, provider={}", currentUser,currentProvider.getCode());
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+		log.info("Running for user={}", currentUser);
 		try {
 			
-			List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null, currentProvider);
+			List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null.getProvider());
 			log.debug("invoices to traite:" +( ids == null ? null:ids.size()));
 			
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -70,7 +73,7 @@ public class AccountOperationsGenerationJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser));
+				futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

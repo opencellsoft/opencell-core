@@ -73,7 +73,7 @@ public class PDFParametersConstruction {
 			new URL[] { PDFParametersConstruction.class.getClassLoader()
 					.getResource("reports/fonts.jar") });
 
-	public Map<String, Object> constructParameters(Invoice invoice, User currentUser) {
+	public Map<String, Object> constructParameters(Invoice invoice) {
 		
 		try {
 			Provider provider = currentUser.getProvider();
@@ -168,7 +168,7 @@ public class PDFParametersConstruction {
 			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
 					billingAccount.getCustomerAccount());
 			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
-			Map<String, String> baCustomFields=getBACustomFields(billingAccount, currentUser);
+			Map<String, String> baCustomFields=getBACustomFields(billingAccount);
 			for(String key:baCustomFields.keySet()){
 				parameters.put(key,baCustomFields.get(key));
 			}
@@ -181,13 +181,13 @@ public class PDFParametersConstruction {
 		}
 	}
 	
-    private Map<String, String> getBACustomFields(BillingAccount billingAccount, User currentUser) {
+    private Map<String, String> getBACustomFields(BillingAccount billingAccount) {
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount, billingAccount.getProvider());
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (String cfCode : customFieldTemplates.keySet()) {
 
-                Object cfValue = customFieldInstanceService.getInheritedCFValue(billingAccount, cfCode, currentUser);
+                Object cfValue = customFieldInstanceService.getInheritedCFValue(billingAccount, cfCode);
                 if (cfValue != null && cfValue instanceof Date) {
                     customFields.put(cfCode, DateUtils.formatDateWithPattern((Date) cfValue, "MM-dd-yyyy"));
                 } else if (cfValue != null) {

@@ -44,14 +44,14 @@ public class UsageChargeTemplateService extends ChargeTemplateService<UsageCharg
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	@Override
-	public void create(UsageChargeTemplate e, User creator) throws BusinessException {
-		super.create(e, creator);
+	public void create(UsageChargeTemplate e) throws BusinessException {
+		super.create(e);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 	}
 
 	@Override
-	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) throws BusinessException {
-		e = super.update(e, updater);
+	public UsageChargeTemplate update(UsageChargeTemplate e) throws BusinessException {
+		e = super.update(e);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 		return e;
 	}

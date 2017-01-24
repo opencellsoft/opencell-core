@@ -33,7 +33,7 @@ public class PrepaidWalletMatchJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(String matchingChargeCode, JobExecutionResultImpl result, User currentUser) {
+	public void execute(String matchingChargeCode, JobExecutionResultImpl result) {
 		log.debug("Running for user={}, matchingChargeCode={}", currentUser, matchingChargeCode);
 		
 		Provider currentProvider=currentUser.getProvider();
@@ -46,7 +46,7 @@ public class PrepaidWalletMatchJobBean {
 				log.debug("match wallet={}", wallet.getId());
 
 				try {
-					oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode, currentUser);
+					oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
 					result.registerSucces();
 				} catch (Exception e) {
 				    log.error("Failed to match prepaid wallet {}", wallet.getId(), e);

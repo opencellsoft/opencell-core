@@ -18,12 +18,10 @@
  */
 package org.meveo.model;
 
-import org.meveo.model.admin.User;
-
 public interface IAuditable {
 
     public Auditable getAuditable();
 
-    public void updateAudit(User u);
+    public void updateAudit(MeveoUser u);
 
 }

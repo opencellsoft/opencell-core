@@ -44,20 +44,20 @@ public class PurgeJobBean implements Serializable {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) {
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         Provider currentProvider = currentUser.getProvider();
         log.debug("Running for user={}", currentUser);
 
         try {
             // Purge job execution history
-            String jobname = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName", currentUser);
-            Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays", currentUser);
+            String jobname = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName");
+            Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date, currentProvider);
                 if (nbItemsToProcess > 0) {
                     result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date, currentUser.getProvider());
+                    int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
                     result.setNbItemsCorrectlyProcessed(nbSuccess);
                     result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
@@ -67,13 +67,13 @@ public class PurgeJobBean implements Serializable {
             }
 
             // Purge counter periods
-            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays", currentUser);
+            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date, currentProvider);
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    long nbSuccess = counterInstanceService.deleteCounterPeriods(date, currentUser.getProvider());
+                    long nbSuccess = counterInstanceService.deleteCounterPeriods(date);
                     result.addNbItemsCorrectlyProcessed(nbSuccess);
                     result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {

@@ -28,9 +28,9 @@ public class PurgeJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        purgeJobBean.execute(result, jobInstance, currentUser);
+        purgeJobBean.execute(result, jobInstance);
 
     }
 

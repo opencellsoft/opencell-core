@@ -140,13 +140,13 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
      * @throws RemoteAuthenticationException
      */
     @SuppressWarnings("unchecked")
-    public void publishModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance, User currentUser) throws BusinessException, RemoteAuthenticationException {
+    public void publishModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
         log.debug("export module {} to {}", module, meveoInstance);
         final String url = "api/rest/module/createOrUpdate";
 
         try {
             ApiService<MeveoModule, MeveoModuleDto> moduleApi = (ApiService<MeveoModule, MeveoModuleDto>) EjbUtils.getServiceInterface("MeveoModuleApi");
-            MeveoModuleDto moduleDto = moduleApi.find(module.getCode(), currentUser);
+            MeveoModuleDto moduleDto = moduleApi.find(module.getCode());
 
             log.debug("Export module dto {}", moduleDto);
             Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
@@ -340,29 +340,29 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         return moduleDto;
     }
 
-    public MeveoModule uninstall(MeveoModule module, User currentUser) throws BusinessException {
-        return uninstall(module, currentUser, false);
+    public MeveoModule uninstall(MeveoModule module) throws BusinessException {
+        return uninstall(module, false);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private MeveoModule uninstall(MeveoModule module, User currentUser, boolean childModule) throws BusinessException {
+    private MeveoModule uninstall(MeveoModule module, boolean childModule) throws BusinessException {
 
         if (!module.isInstalled()) {
             throw new BusinessException("Module is not installed");
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.preUninstallModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.preUninstallModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate(), currentUser);
+            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate());
         } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate(), currentUser);
+            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
-            loadModuleItem(item, currentUser.getProvider());
+            loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
                 continue;
@@ -370,7 +370,7 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
             try {
                 if (itemEntity instanceof MeveoModule) {
-                    uninstall((MeveoModule) itemEntity, currentUser, true);
+                    uninstall((MeveoModule) itemEntity, true);
                 } else {
 
                     // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
@@ -385,7 +385,7 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
                         continue;
                     }
 
-                    persistenceServiceForItem.disable(itemEntity, currentUser);
+                    persistenceServiceForItem.disable(itemEntity);
 
                 }
             } catch (Exception e) {
@@ -394,19 +394,19 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
 
         if (module.getScript() != null) {
-            moduleScriptService.postUninstallModule(module.getScript().getCode(), module, currentUser);
+            moduleScriptService.postUninstallModule(module.getScript().getCode(), module);
         }
 
         // Remove if it is a child module
         if (childModule) {
-            remove(module, currentUser);
+            remove(module);
             return null;
 
             // Otherwise mark it uninstalled and clear module items
         } else {
             module.setInstalled(false);
             module.getModuleItems().clear();
-            return update(module, currentUser);
+            return update(module);
         }
     }
 

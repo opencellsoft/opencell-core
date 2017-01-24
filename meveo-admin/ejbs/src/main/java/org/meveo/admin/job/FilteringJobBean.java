@@ -14,10 +14,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -31,10 +32,14 @@ public class FilteringJobBean {
     @Inject
     private FilterService filterService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter, String filterCode, ScriptInterface scriptInterface, Map<String, Object> variables,
-            String recordVariableName, User currentUser) {
+            String recordVariableName) {
         log.debug("Running for user={}, parameter={}", currentUser, parameter);
 
         Provider provider = currentUser.getProvider();
@@ -43,16 +48,16 @@ public class FilteringJobBean {
             return;
         }
         try {
-            scriptInterface.init(variables, currentUser);
+            scriptInterface.init(variables);
 
-            List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, currentUser);
+            List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter);
             result.setNbItemsToProcess(xmlEntities.size());
 
             for (Object obj : xmlEntities) {
                 Map<String, Object> context = new HashMap<String, Object>();
                 context.put(recordVariableName, obj);
                 try {
-                    scriptInterface.execute(context, currentUser);
+                    scriptInterface.execute(context);
                     result.registerSucces();
                 } catch (BusinessException ex) {
                     result.registerError(ex.getMessage());
@@ -64,7 +69,7 @@ public class FilteringJobBean {
 
         } finally {
             try {
-                scriptInterface.finalize(variables, currentUser);
+                scriptInterface.finalize(variables);
 
             } catch (Exception e) {
                 log.error("Error on finally execute", e);

@@ -37,8 +37,8 @@ public class ImportCatalogJob extends Job {
     private ImportCatalogJobBean importCatalogJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        importCatalogJobBean.execute(result, jobInstance.getParametres(), currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        importCatalogJobBean.execute(result, jobInstance.getParametres());
     }
 
     @Override

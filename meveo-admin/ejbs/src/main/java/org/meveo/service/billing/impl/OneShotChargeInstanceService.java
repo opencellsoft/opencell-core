@@ -86,7 +86,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 	public OneShotChargeInstance oneShotChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
 			OneShotChargeTemplate chargeTemplate, Date effetDate, BigDecimal amoutWithoutTax,
-			BigDecimal amoutWithoutTx2, Integer quantity, User creator, boolean isSubscriptionCharge, boolean isVirtual)
+			BigDecimal amoutWithoutTx2, Integer quantity, boolean isSubscriptionCharge, boolean isVirtual)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -139,7 +139,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 				}
 				WalletInstance walletInstance=walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-						walletTemplate, isVirtual, creator);
+						walletTemplate, isVirtual);
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),oneShotChargeInstance.getId());
 				oneShotChargeInstance.getWalletInstances().add(walletInstance);
 			}
@@ -150,7 +150,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}
 		
 		if (!isVirtual){
-		    create(oneShotChargeInstance, creator); // AKK was with chargeTemplate.getProvider()
+		    create(oneShotChargeInstance); // AKK was with chargeTemplate.getProvider()
 		}
 
 		return oneShotChargeInstance;
@@ -159,15 +159,15 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	// apply a oneShotCharge on the postpaid wallet
 	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber, User creator,boolean applyCharge)
+			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber,boolean applyCharge)
 			throws BusinessException {
 		return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax,
-				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null, orderNumber, creator,true);
+				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null, orderNumber,true);
 	}
 	
 	public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
 			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, User creator,boolean applyCharge)
+			BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber,boolean applyCharge)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -207,10 +207,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			}
 		}
 
-		create(oneShotChargeInstance, creator); // AKK was with chargetemplate.getProvider()
+		create(oneShotChargeInstance); // AKK was with chargetemplate.getProvider()
 
 		if(applyCharge){
-			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, false, null, creator);
+			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, false, null);
 		}
 		return oneShotChargeInstance;
 	}

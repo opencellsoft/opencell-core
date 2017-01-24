@@ -49,7 +49,7 @@ public class ExportSubscriptionsJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter) {
 		Provider provider = currentUser.getProvider();
 
 		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()

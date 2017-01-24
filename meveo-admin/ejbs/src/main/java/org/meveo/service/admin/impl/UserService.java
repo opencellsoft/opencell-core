@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -46,15 +48,13 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
-import org.meveo.security.authorization.UserCreate;
-import org.meveo.security.authorization.UserDelete;
-import org.meveo.security.authorization.UserUpdate;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * User service implementation.
  */
 @Stateless
+@DeclareRoles({"userManagement"})
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
@@ -62,8 +62,8 @@ public class UserService extends PersistenceService<User> {
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@Override
-	@UserCreate
-	public void create(User user, User currentUser) throws UsernameAlreadyExistsException, BusinessException {
+	@RolesAllowed({"userManagement"}) 
+	public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -75,12 +75,12 @@ public class UserService extends PersistenceService<User> {
 		// Set provider to the first provider from a user related provider list
 //		user.setProvider(user.getProviders().iterator().next());
 
-		super.create(user, currentUser);
+		super.create(user);
 	}
 
 	@Override
-	@UserUpdate
-	public User update(User user,User currentUser) throws UsernameAlreadyExistsException, BusinessException {
+    @RolesAllowed({"userManagement"}) 
+	public User update(User user) throws UsernameAlreadyExistsException, BusinessException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			getEntityManager().refresh(user);
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -92,13 +92,13 @@ public class UserService extends PersistenceService<User> {
 			user.setPassword(encryptedPassword);
 		}
 
-		return super.update(user, currentUser);
+		return super.update(user);
 	}
 
 	@Override
-	@UserDelete
-	public void remove(User user, User currentUser) throws BusinessException {
-		super.remove(user, currentUser);
+    @RolesAllowed({"userManagement"}) 
+	public void remove(User user) throws BusinessException {
+		super.remove(user);
 	}
 
 	public User getSystemUser() {
@@ -113,7 +113,7 @@ public class UserService extends PersistenceService<User> {
 		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) and u.provider=:provider";
 		Query query = getEntityManager().createQuery(queryString);
 		query.setParameter("roles", Arrays.asList(roles));
-		query.setParameter("provider", getCurrentProvider());
+		query.setParameter("provider.id", currentUser.getProvider().getId());
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
 	}
@@ -184,7 +184,7 @@ public class UserService extends PersistenceService<User> {
 		getEntityManager().refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
-		super.update(user, currentUser);
+		super.update(user);
 		return user;
 	}
 
@@ -341,7 +341,7 @@ public class UserService extends PersistenceService<User> {
 	@Override
 	protected void checkProvider(User entity) {
 		// Super administrator - don't care
-		if (identity.hasPermission("superAdmin", "superAdminManagement")) {
+		if (currentUser.hasRole("superAdminManagement")) {
 			return;
 			// Other users - a regular check
 		} else {

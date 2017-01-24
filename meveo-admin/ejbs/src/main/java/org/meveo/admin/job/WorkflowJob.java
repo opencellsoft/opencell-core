@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.filter.Filter;
@@ -43,14 +42,14 @@ public class WorkflowJob extends Job {
     @Override
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance, User currentUser) {
-        super.execute(jobInstance, currentUser);
+    public void execute(JobInstance jobInstance) {
+        super.execute(jobInstance);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {    	
-    	workflowJobBean.execute(result, currentUser,jobInstance);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {    	
+    	workflowJobBean.execute(result,jobInstance);
     }
 
     @Override

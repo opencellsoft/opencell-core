@@ -166,7 +166,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      */
     public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
-            String city, String state, String email, Long customerId, String creditCategory, PaymentMethodEnum paymentMethod, User creator)
+            String city, String state, String email, Long customerId, String creditCategory, PaymentMethodEnum paymentMethod)
             throws BusinessException;
 
     /**

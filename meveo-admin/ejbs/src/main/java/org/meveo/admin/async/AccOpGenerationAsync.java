@@ -30,9 +30,9 @@ public class AccOpGenerationAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
         for (Long id : ids) {
-        	unitAccountOperationsGenerationJobBean.execute(result, currentUser, id);
+        	unitAccountOperationsGenerationJobBean.execute(result, id);
         }
         return new AsyncResult<String>("OK");
     }

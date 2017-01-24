@@ -45,7 +45,7 @@ public class PDFInvoiceGenerationJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result,JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 		
 		try{
@@ -70,8 +70,8 @@ public class PDFInvoiceGenerationJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);              
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");              
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -84,7 +84,7 @@ public class PDFInvoiceGenerationJobBean {
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			SubListCreator subListCreator = new SubListCreator(invoices,nbRuns.intValue());
 			while (subListCreator.isHasNext()) {
-				futures.add(pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), currentUser, result));
+				futures.add(pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result));
 
 				if (subListCreator.isHasNext()) {
 					try {

@@ -47,19 +47,19 @@ public class UsageRatingJobBean {
 	@SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 		
 		try {
 			
-			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());		
+			List<Long> ids = edrService.getEDRidsToRate();		
 			log.debug("edr to rate:" + ids.size());
 			result.setNbItemsToProcess(ids.size());
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);  			
-				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");  			
+				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -74,7 +74,7 @@ public class UsageRatingJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser));
+				futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result));
 
                 if (subListCreator.isHasNext()) {
                     try {

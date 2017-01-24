@@ -28,10 +28,10 @@ public class ScriptingJobBean {
 
 	
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void init(JobExecutionResultImpl result, User currentUser, String scriptCode, Map<String, Object> context) throws BusinessException {
+	public void init(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
 		ScriptInterface script = null;
 		try {
-			script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);			
+			script = scriptInstanceService.getScriptInstance(scriptCode);			
 			script.init(context, currentUser);
 		} catch (Exception e) {
 			log.error("Exception on init script", e);
@@ -46,10 +46,10 @@ public class ScriptingJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute( JobExecutionResultImpl result, User currentUser, String scriptCode, Map<String, Object> context) throws BusinessException {
+	public void execute( JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
 		ScriptInterface script = null;
 		try {
-			script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);			
+			script = scriptInstanceService.getScriptInstance(scriptCode);			
 			script.execute(context, currentUser);
 			if(context.containsKey(Script.JOB_RESULT_NB_OK)){
 				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
@@ -75,10 +75,10 @@ public class ScriptingJobBean {
 	}
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void finalize(JobExecutionResultImpl result, User currentUser, String scriptCode, Map<String, Object> context) throws BusinessException {
+	public void finalize(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
 		ScriptInterface script = null;
 		try {
-			script = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+			script = scriptInstanceService.getScriptInstance(scriptCode);
 			script.finalize(context, currentUser);
 			
 		} catch (Exception e) {

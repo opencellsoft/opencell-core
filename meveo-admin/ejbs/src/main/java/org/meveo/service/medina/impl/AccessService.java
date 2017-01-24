@@ -105,14 +105,14 @@ public class AccessService extends PersistenceService<Access> {
     }
     
     @Override
-    public void create(Access access, User creator) throws BusinessException {
-        super.create(access, creator);
+    public void create(Access access) throws BusinessException {
+        super.create(access);
         cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
     }
 
     @Override
-    public Access update(Access access, User updater) throws BusinessException {
-        access = super.update(access, updater);
+    public Access update(Access access) throws BusinessException {
+        access = super.update(access);
         cdrEdrProcessingCacheContainerProvider.updateAccessInCache(access);
         return access;
     }

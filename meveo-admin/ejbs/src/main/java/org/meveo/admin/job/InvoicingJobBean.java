@@ -35,7 +35,7 @@ public class InvoicingJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result,JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 
 		try {
@@ -47,8 +47,8 @@ public class InvoicingJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);  			
-				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");  			
+				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -60,7 +60,7 @@ public class InvoicingJobBean {
 
 			for (BillingRun billingRun : billingRuns) {
 				try {
-					billingRunService.validate(billingRun.getId(), currentUser,nbRuns.longValue(),waitingMillis.longValue());
+					billingRunService.validate(billingRun.getId(),nbRuns.longValue(),waitingMillis.longValue());
 					result.registerSucces();
 				} catch (Exception e) {
 					log.error("Failed to run invoicing", e);

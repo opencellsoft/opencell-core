@@ -37,14 +37,14 @@ public class ImportAccountsJob extends Job {
     private CustomFieldInstanceService customFieldInstanceService;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         try {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
@@ -56,7 +56,7 @@ public class ImportAccountsJob extends Job {
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             for (int i = 0; i < nbRuns.intValue(); i++) {
-                futures.add(importAccountsAsync.launchAndForget(result, currentUser));
+                futures.add(importAccountsAsync.launchAndForget(result));
                 if (i > 0) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

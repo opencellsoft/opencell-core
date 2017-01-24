@@ -92,12 +92,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @throws BusinessException 
      */	
     @Override
-    public void create(AccountOperation aop, User creator) throws BusinessException {
+    public void create(AccountOperation aop) throws BusinessException {
 
         if (aop.getClass().isAnnotationPresent(DiscriminatorValue.class)) {
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop, creator);
+        super.create(aop);
     }
 }

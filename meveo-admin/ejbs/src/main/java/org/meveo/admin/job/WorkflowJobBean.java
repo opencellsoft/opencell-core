@@ -15,10 +15,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.WorkflowAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -50,7 +47,7 @@ public class WorkflowJobBean {
 	@SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 		
 		try {			
@@ -59,13 +56,13 @@ public class WorkflowJobBean {
 			String filterCode = null;
 			String workflowCode = null;
 			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_nbRuns", currentUser);  			
-				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_waitingMillis$", currentUser);
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_nbRuns");  			
+				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_waitingMillis$");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
-				filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_filter", currentUser)).getCode();
-				workflowCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_workflow", currentUser)).getCode();
+				filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_filter")).getCode();
+				workflowCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_workflow")).getCode();
 			}catch(Exception e){
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
 				log.error("error:",e);
@@ -73,11 +70,11 @@ public class WorkflowJobBean {
 				waitingMillis = new Long(0);				
 			}
 			
-			Filter filter = filterService.findByCode(filterCode, currentUser.getProvider());
-			Workflow workflow = workflowService.findByCode(workflowCode, currentUser.getProvider());
+			Filter filter = filterService.findByCode(filterCode);
+			Workflow workflow = workflowService.findByCode(workflowCode);
 
 			log.debug("filter:{}",filter == null ? null : filter.getCode());
-			List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, currentUser);
+			List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
 			log.debug("entities:" + entities.size());
 			result.setNbItemsToProcess(entities.size());
 			
@@ -86,7 +83,7 @@ public class WorkflowJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(workflowAsync.launchAndForget((List<BusinessEntity>) subListCreator.getNextWorkSet(),workflow,result, currentUser));
+				futures.add(workflowAsync.launchAndForget((List<BusinessEntity>) subListCreator.getNextWorkSet(),workflow,result));
 
                 if (subListCreator.isHasNext()) {
                     try {

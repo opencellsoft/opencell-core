@@ -24,8 +24,8 @@ public class WalletReservationJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        int rowsUpdated = reservationService.updateExpiredReservation(currentUser.getProvider());
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        int rowsUpdated = reservationService.updateExpiredReservation();
         if (rowsUpdated != 0) {
             log.info(rowsUpdated + " rows updated.");
         }

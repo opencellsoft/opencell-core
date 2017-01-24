@@ -49,7 +49,7 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
     @Override
     protected void checkProvider(UserHierarchyLevel entity) {
         // Super administrator - don't care
-        if (identity.hasPermission("superAdmin", "superAdminManagement")) {
+        if (currentUser.hasRole("superAdminManagement")) {
             return;
             // Other users - a regular check
         } else {

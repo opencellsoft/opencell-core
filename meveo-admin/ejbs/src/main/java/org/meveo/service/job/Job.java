@@ -23,6 +23,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -59,6 +61,10 @@ public abstract class Job {
     @Processed
     private Event<JobExecutionResultImpl> eventJobProcessed;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     @PostConstruct
@@ -74,29 +80,22 @@ public abstract class Job {
      * @return the result of execute(parameter,false) method
      */
         
-    public void execute(JobInstance jobInstance, User currentUser) {
+    public void execute(JobInstance jobInstance) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
     
-        if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
+        if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive())) {
             log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
             try {            	            	
             	JobInstanceService.runningJobs.add(jobInstance.getId());
-                if (currentUser == null) {
-                	log.debug("currentUser is null");                	
-                	long userId = (jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable().getCreator()).getId();
-                	log.debug("userId:"+userId);
-                    currentUser = userService.findByIdLoadProvider(userId);
-                }else{
-                	log.debug("currentUser not null");
-                }            
+                
                 log.debug("currentUser.getUserName = "+currentUser.getUserName());
-                log.debug("currentUser.getProvider().getCode() = "+currentUser.getProvider().getCode());
-                execute(result, jobInstance, currentUser);
+                log.debug("currentUser.getProvider().getCode() = "+currentUser.getProviderCode());
+                execute(result, jobInstance);
                 result.close();
 
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
-                jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
+                jobExecutionService.persistResult(this, result, jobInstance, getJobCategory());
                 log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
                 result.setProvider(currentUser.getProvider());
                 eventJobProcessed.fire(result); 
@@ -108,11 +107,11 @@ public abstract class Job {
             }
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser != null);
+            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser);
         }
     }
 
-    protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException;
+    protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
     
     /**
      * This method is called by the api to return the execution result id.
@@ -122,20 +121,16 @@ public abstract class Job {
      */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance, JobExecutionResultImpl result, User currentUser) {    
+    public void execute(JobInstance jobInstance, JobExecutionResultImpl result) {    
         if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
             log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
             try {
             	JobInstanceService.runningJobs.add(jobInstance.getId());
-                if (currentUser == null) {
-                    currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
-                        .getCreator());
-                }
-                execute(result, jobInstance, currentUser);
+                execute(result, jobInstance);
                 result.close();
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
-                jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
+                jobExecutionService.persistResult(this, result, jobInstance, getJobCategory());
                 log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
                 result.setProvider(currentUser.getProvider());
                 eventJobProcessed.fire(result);
@@ -146,7 +141,7 @@ public abstract class Job {
             }
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser != null);
+            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser);
         }
     }
 
@@ -178,7 +173,7 @@ public abstract class Job {
     @Timeout
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void trigger(Timer timer) {
-        execute((JobInstance) timer.getInfo(), null);
+        execute((JobInstance) timer.getInfo());
     }
 
     public JobExecutionService getJobExecutionService() {

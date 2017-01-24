@@ -77,8 +77,8 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
-    public void create(Provider provider, User creator) throws BusinessException {
-        super.create(provider, creator);
+    public void create(Provider provider) throws BusinessException {
+        super.create(provider);
         elasticClient.createIndexes(provider);
     }
     

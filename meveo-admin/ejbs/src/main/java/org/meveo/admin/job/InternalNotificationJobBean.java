@@ -24,6 +24,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -51,10 +53,14 @@ public class InternalNotificationJobBean {
 	@Inject
 	ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+
 	@SuppressWarnings("rawtypes")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result, User currentUser) {
+	public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result) {
 		log.debug("Running for user={}, filterCode={}", currentUser, filterCode);
 		Provider provider = currentUser.getProvider();
 		if (StringUtils.isBlank(filterCode)) {
@@ -100,7 +106,7 @@ public class InternalNotificationJobBean {
                         for (Map.Entry entry : notification.getParams().entrySet()) {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
-                        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated, currentUser);
+                        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated);
 						result.registerSucces();
 					} else {
 						log.debug("No script instance on this Notification");

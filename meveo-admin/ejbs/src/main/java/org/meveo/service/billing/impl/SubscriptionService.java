@@ -59,13 +59,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
     private AccessService accessService;
 
     @Override
-    public void create(Subscription subscription, User creator) throws BusinessException {
-        super.create(subscription, creator);
+    public void create(Subscription subscription) throws BusinessException {
+        super.create(subscription);
 
         // execute subscription script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), creator);
+                offerModelScriptService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
             }
@@ -83,21 +83,21 @@ public class SubscriptionService extends BusinessService<Subscription> {
             terminationReason.isApplyTerminationCharges(), orderNumber, user);
     }
 
-    public void subscriptionCancellation(Subscription subscription, Date cancelationDate, User updater) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+    public void subscriptionCancellation(Subscription subscription, Date cancelationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException {
         if (cancelationDate == null) {
             cancelationDate = new Date();
         }
         /*
          * List<ServiceInstance> serviceInstances = subscription .getServiceInstances(); for (ServiceInstance serviceInstance : serviceInstances) { if
-         * (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) { serviceInstanceService.serviceCancellation(serviceInstance, terminationDate, updater); } }
+         * (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) { serviceInstanceService.serviceCancellation(serviceInstance, terminationDate); } }
          */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
-        update(subscription, updater);
+        update(subscription);
     }
 
-    public void subscriptionSuspension(Subscription subscription, Date suspensionDate, User updater) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+    public void subscriptionSuspension(Subscription subscription, Date suspensionDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException {
         if (suspensionDate == null) {
             suspensionDate = new Date();
@@ -105,7 +105,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.suspendSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), suspensionDate, updater);
+                offerModelScriptService.suspendSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), suspensionDate);
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
             }
@@ -114,16 +114,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-                serviceInstanceService.serviceSuspension(serviceInstance, suspensionDate, updater);
+                serviceInstanceService.serviceSuspension(serviceInstance, suspensionDate);
             }
         }
 
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
-        update(subscription, updater);
+        update(subscription);
     }
 
-    public void subscriptionReactivation(Subscription subscription, Date reactivationDate, User updater) throws IncorrectSusbcriptionException,
+    public void subscriptionReactivation(Subscription subscription, Date reactivationDate) throws IncorrectSusbcriptionException,
             ElementNotResiliatedOrCanceledException, IncorrectServiceInstanceException, BusinessException {
 
         if (reactivationDate == null) {
@@ -142,15 +142,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
-                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate, updater);
+                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate);
             }
         }
 
-        update(subscription, updater);
+        update(subscription);
 
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.reactivateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), reactivationDate, updater);
+                offerModelScriptService.reactivateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), reactivationDate);
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
             }

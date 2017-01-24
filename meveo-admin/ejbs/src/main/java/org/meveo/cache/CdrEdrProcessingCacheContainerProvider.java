@@ -13,7 +13,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
+import org.infinispan.commons.api.BasicCache;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;

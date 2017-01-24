@@ -24,12 +24,12 @@ public class UnitRatedTransactionsJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, User currentUser,Long walletOperationId ) {
+	public void execute(JobExecutionResultImpl result,Long walletOperationId ) {
 		log.debug("Running for user={}, walletOperationId={}", currentUser, walletOperationId);
 		
 		try {
 			
-			ratedTransactionService.createRatedTransaction(walletOperationId,currentUser);
+			ratedTransactionService.createRatedTransaction(walletOperationId);
 			result.registerSucces();
 		} catch (Exception e) {
 			log.error("Failed to rate transaction for wallet operation {}", walletOperationId, e);

@@ -31,9 +31,9 @@ public class UnitWorkflowJobBean{
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, User currentUser, BusinessEntity entity,Workflow workflow) {    	
+    public void execute(JobExecutionResultImpl result, BusinessEntity entity,Workflow workflow) {    	
     	try {    		
-    		workflowService.executeWorkflow(entity, workflow, currentUser);
+    		workflowService.executeWorkflow(entity, workflow);
     		result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to unit workflow for {}", entity, e);           

@@ -37,6 +37,8 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.job.FtpImportedFileService;
 import org.slf4j.Logger;
 
@@ -49,6 +51,10 @@ public class FtpAdapterJobBean {
 	@Inject
 	private FtpImportedFileService ftpImportedFileService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
 	private File localDirFile;
 	private Pattern filePattern;
 	private FileSystemManager fsManager = null;
@@ -58,7 +64,7 @@ public class FtpAdapterJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser, String distDirectory, String remoteServer, int remotePort, boolean removeDistantFile, String ftpInputDirectory, String extention, String ftpUsername, String ftpPassword, String ftpProtocol) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance, String distDirectory, String remoteServer, int remotePort, boolean removeDistantFile, String ftpInputDirectory, String extention, String ftpUsername, String ftpPassword, String ftpProtocol) {
 		log.debug("start ftpClient...");
 
 		int cpOk = 0, cpKo = 0, cpAll = 0, cpWarn = 0;
@@ -101,7 +107,7 @@ public class FtpAdapterJobBean {
 					long lastModification = fileObject.getContent().getLastModifiedTime();
 					String code = getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size,new Date( lastModification));
 					log.debug("code with sha:"+code);
-					FtpImportedFile ftpImportedFile = ftpImportedFileService.findByCode(code, currentUser.getProvider());
+					FtpImportedFile ftpImportedFile = ftpImportedFileService.findByCode(code);
 					if (ftpImportedFile != null) {
 						log.debug("file already imported");
 						continue;
@@ -127,7 +133,7 @@ public class FtpAdapterJobBean {
 					}
 
 					cpOk++;
-					createImportedFileHistory(fileName, new Date(lastModification), size, remoteServer, remotePort, ftpInputDirectory, currentUser.getProvider(), currentUser);
+					createImportedFileHistory(fileName, new Date(lastModification), size, remoteServer, remotePort, ftpInputDirectory);
 
 				} catch (Exception ex) {
 					log.error("Error getting file type for " + fileObject.getName(), ex);
@@ -259,7 +265,7 @@ public class FtpAdapterJobBean {
 	 * @throws NoSuchAlgorithmException
 	 * @throws BusinessException 
 	 */
-	private void createImportedFileHistory(String fileName, Date lastModification, Long size, String remoteServer, int remotePort, String ftpInputDirectory, Provider provider, User currentUser) throws NoSuchAlgorithmException, UnsupportedEncodingException, BusinessException {
+	private void createImportedFileHistory(String fileName, Date lastModification, Long size, String remoteServer, int remotePort, String ftpInputDirectory, Provider provider) throws NoSuchAlgorithmException, UnsupportedEncodingException, BusinessException {
 		FtpImportedFile ftpImportedFile = new FtpImportedFile();
 		ftpImportedFile.setCode(getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size, lastModification));
 		ftpImportedFile.setDescription(fileName);
@@ -268,6 +274,6 @@ public class FtpAdapterJobBean {
 		ftpImportedFile.setImportDate(new Date());
 		ftpImportedFile.setUri(getUri(remoteServer, remotePort, fileName, ftpInputDirectory));
 		ftpImportedFile.setProvider(provider);
-		ftpImportedFileService.create(ftpImportedFile, currentUser);
+		ftpImportedFileService.create(ftpImportedFile);
 	}
 }

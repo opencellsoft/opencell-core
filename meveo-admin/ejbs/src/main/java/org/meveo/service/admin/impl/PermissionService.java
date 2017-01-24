@@ -48,7 +48,7 @@ public class PermissionService extends PersistenceService<Permission> {
     @Override
     public List<Permission> list() {
         QueryBuilder qb = new QueryBuilder("from Permission p");
-        boolean superAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
+        boolean superAdmin = currentUser.hasRole("superAdminManagement");
         if (!superAdmin) {
             qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
             qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");
@@ -70,7 +70,7 @@ public class PermissionService extends PersistenceService<Permission> {
 
     }
 
-    public Permission createIfAbsent(String permission, String resource, User currentUser, String... rolesToAddTo) throws BusinessException {
+    public Permission createIfAbsent(String permission, String resource, String... rolesToAddTo) throws BusinessException {
 
         // Create permission if does not exist yet
         Permission permissionEntity = findByPermissionAndResource(resource, permission);
@@ -79,22 +79,22 @@ public class PermissionService extends PersistenceService<Permission> {
             permissionEntity.setName(resource + "-" + permission);
             permissionEntity.setPermission(permission);
             permissionEntity.setResource(resource);
-            this.create(permissionEntity, currentUser);
+            this.create(permissionEntity);
         }
 
         // Add to a role, creating role first if does not exist yet
         for (String roleName : rolesToAddTo) {
-            Role role = roleService.findByName(roleName, currentUser.getProvider());
+            Role role = roleService.findByName(roleName);
             if (role == null) {
                 role = new Role();
                 role.setName(roleName);
                 role.setDescription(roleName);
-                roleService.create(role, currentUser);
+                roleService.create(role);
             }
 
             if (!role.getPermissions().contains(permissionEntity)) {
                 role.getPermissions().add(permissionEntity);
-                roleService.update(role, currentUser);
+                roleService.update(role);
             }
         }
 

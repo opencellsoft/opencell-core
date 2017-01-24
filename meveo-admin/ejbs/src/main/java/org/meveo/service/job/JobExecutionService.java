@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -47,19 +46,19 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     private JobInstanceService jobInstanceService;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeJob(String jobName, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
+    public void executeJob(String jobName, JobInstance jobInstance, JobCategoryEnum jobCategory) {
         try {
             HashMap<String, String> jobs = JobInstanceService.jobEntries.get(jobCategory);
             InitialContext ic = new InitialContext();
             Job job = (Job) ic.lookup(jobs.get(jobName));
-            job.execute(jobInstance, currentUser);
+            job.execute(jobInstance);
         } catch (Exception e) {
             log.error("failed to execute timer job", e);
         }
     }
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
+	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
 			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(jobInstance, result);
@@ -74,7 +73,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			}
 			if (persistResult) {
 				if (entity.isTransient()) {
-					create(entity, currentUser);
+					create(entity);
 				} else {
 					// search for job execution result
 					JobExecutionResultImpl updateEntity = findById(result.getId());
@@ -86,11 +85,11 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			}
 			log.info("PersistResult entity.isDone()=" + entity.isDone());
 			if (!entity.isDone()) {
-				executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
+				executeJob(job.getClass().getSimpleName(), jobInstance, jobCategory);
 			} else if (jobInstance.getFollowingJob() != null) {
 				try {
 					JobInstance jobFlow  = jobInstanceService.attach(jobInstance.getFollowingJob());
-					executeJob(jobFlow.getJobTemplate(), jobFlow, currentUser, jobFlow.getJobCategoryEnum());
+					executeJob(jobFlow.getJobTemplate(), jobFlow, jobFlow.getJobCategoryEnum());
 				} catch (Exception e) {
 					log.warn("PersistResult cannot excute the following jobs.");
 				}

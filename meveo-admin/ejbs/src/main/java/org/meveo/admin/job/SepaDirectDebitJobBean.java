@@ -59,11 +59,11 @@ public class SepaDirectDebitJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 		Provider currentProvider = currentUser.getProvider();
 		try {
-			String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat", currentUser);
+			String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
 
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(currentProvider, DDRequestFileFormatEnum.valueOf(fileFormat));
 
@@ -77,7 +77,7 @@ public class SepaDirectDebitJobBean {
 			for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
 				try {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-						DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), currentUser, DDRequestFileFormatEnum.valueOf(fileFormat));
+						DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), DDRequestFileFormatEnum.valueOf(fileFormat));
 						if (ddRequestLOT.getInvoicesNumber() > ddRequestLOT.getRejectedInvoices()) {
 							switch (DDRequestFileFormatEnum.valueOf(fileFormat)) {
 							case PAYNUM:								
@@ -91,7 +91,7 @@ public class SepaDirectDebitJobBean {
 							}
 							ddRequestLOT.setSendDate(new Date());
 							dDRequestLOTService.updateNoCheck(ddRequestLOT);
-							ddRequestItemService.createPaymentsForDDRequestLot(ddRequestLOT, currentUser);
+							ddRequestItemService.createPaymentsForDDRequestLot(ddRequestLOT);
 						}
 
 					} else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
@@ -112,14 +112,14 @@ public class SepaDirectDebitJobBean {
 					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-					dDRequestLotOpService.updateAudit(ddrequestLotOp, currentUser);
+					dDRequestLotOpService.updateAudit(ddrequestLotOp);
 					dDRequestLotOpService.updateNoCheck(ddrequestLotOp);
 
 				} catch (Exception e) {
 					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-					dDRequestLotOpService.updateAudit(ddrequestLotOp, currentUser);
+					dDRequestLotOpService.updateAudit(ddrequestLotOp);
 					dDRequestLotOpService.updateNoCheck(ddrequestLotOp);
 				}
 			}

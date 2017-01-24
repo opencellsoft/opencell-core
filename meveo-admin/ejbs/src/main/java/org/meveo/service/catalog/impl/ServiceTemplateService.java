@@ -62,13 +62,13 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
     private CustomFieldInstanceService customFieldInstanceService;
 	
 	@Override
-	public void create(ServiceTemplate serviceTemplate, User creator) throws BusinessException {
-		super.create(serviceTemplate, creator);
+	public void create(ServiceTemplate serviceTemplate) throws BusinessException {
+		super.create(serviceTemplate);
 	}
 
 	@Override
-	public ServiceTemplate update(ServiceTemplate serviceTemplate, User updater) throws BusinessException {
-		ServiceTemplate result = super.update(serviceTemplate, updater);
+	public ServiceTemplate update(ServiceTemplate serviceTemplate) throws BusinessException {
+		ServiceTemplate result = super.update(serviceTemplate);
 		return result;
 	}
 

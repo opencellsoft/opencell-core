@@ -26,6 +26,8 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -39,6 +41,10 @@ public class FlatFileProcessingJobBean {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+    
     String fileName;
     String inputDir;
     String outputDir;
@@ -51,7 +57,7 @@ public class FlatFileProcessingJobBean {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, String inputDir, User currentUser, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo) {
+    public void execute(JobExecutionResultImpl result, String inputDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo) {
         log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={},formatTransfo={}", currentUser, inputDir, scriptInstanceFlowCode, formatTransfo);
         Provider provider = currentUser.getProvider();
 
@@ -100,7 +106,7 @@ public class FlatFileProcessingJobBean {
                 script = scriptInstanceService.getScriptInstance(provider, scriptInstanceFlowCode);
                 
 
-                script.init(context, currentUser);
+                script.init(context);
 
                 FileParsers parserUsed = getParserType(mappingConf);
                 IFileParser fileParser = null;
@@ -129,7 +135,7 @@ public class FlatFileProcessingJobBean {
                         Map<String, Object> executeParams = new HashMap<String, Object>();
                         executeParams.put(recordVariableName, recordContext.getRecord());
                         executeParams.put(originFilename, fileName);
-                        script.execute(executeParams, currentUser);
+                        script.execute(executeParams);
                         outputRecord(recordContext);
                         result.registerSucces();
                     } catch (Throwable e) {
@@ -159,7 +165,7 @@ public class FlatFileProcessingJobBean {
                         beanReader.close();
                     }
                     if (script != null) {
-                        script.finalize(context, currentUser);
+                        script.finalize(context);
                     }
                 } catch (Exception e) {
                     report += "\r\n error in script finailzation" + e.getMessage();

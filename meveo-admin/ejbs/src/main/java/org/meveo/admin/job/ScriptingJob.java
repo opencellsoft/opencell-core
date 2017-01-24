@@ -36,8 +36,8 @@ public class ScriptingJob extends Job {
 	@Override
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance, User currentUser) {
-		super.execute(jobInstance, currentUser);
+	public void execute(JobInstance jobInstance) {
+		super.execute(jobInstance);
 	}
 
 
@@ -45,17 +45,17 @@ public class ScriptingJob extends Job {
 	@Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 		String scriptCode = null;
 		try { 
-			scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script", currentUser)).getCode();
-			Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
+			scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script")).getCode();
+			Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables");
 			if (context == null) {
 				context = new HashMap<String, Object>();
 			}
-			scriptingJobBean.init( result, currentUser,scriptCode,context);
-			scriptingJobBean.execute( result, currentUser,scriptCode,context);
-			scriptingJobBean.finalize( result, currentUser,scriptCode,context);
+			scriptingJobBean.init( result,scriptCode,context);
+			scriptingJobBean.execute( result,scriptCode,context);
+			scriptingJobBean.finalize( result,scriptCode,context);
 
 		} catch (Exception e) {
 			log.error("Exception on init/execute script",e);

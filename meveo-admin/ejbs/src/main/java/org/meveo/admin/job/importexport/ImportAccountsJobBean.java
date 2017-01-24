@@ -80,7 +80,7 @@ public class ImportAccountsJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, User currentUser) {
+	public void execute(JobExecutionResultImpl result) {
 		Provider provider = currentUser.getProvider();
 
 		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
@@ -109,7 +109,7 @@ public class ImportAccountsJobBean {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
 
-				importFile(currentFile, file.getName(), currentUser);
+				importFile(currentFile, file.getName());
 
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
@@ -147,7 +147,7 @@ public class ImportAccountsJobBean {
 		return files;
 	}
 
-	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
+	public void importFile(File file, String fileName) throws JAXBException, Exception {
 
 		Provider provider = currentUser.getProvider();
 		log.info("start import file : {} for provider {}", fileName, provider == null ? "null" : provider.getCode());
@@ -175,7 +175,7 @@ public class ImportAccountsJobBean {
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
-			createHistory(provider, currentUser);
+			createHistory(provider);
 			return;
 		}
 		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils.unmarshaller(BillingAccounts.class, file);
@@ -201,11 +201,11 @@ public class ImportAccountsJobBean {
 				continue;
 			}
 
-			createBillingAccount(billingAccountDto, fileName, i, currentUser, provider);
+			createBillingAccount(billingAccountDto, fileName, i, provider);
 		}
 
 		generateReport(fileName, provider);
-		createHistory(provider, currentUser);
+		createHistory(provider);
 
 		log.info("end import file ");
 	}
@@ -237,7 +237,7 @@ public class ImportAccountsJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
-			int i, User currentUser, Provider provider) throws BusinessException, ImportWarningException {
+			int i, Provider provider) throws BusinessException, ImportWarningException {
 		int j = -1;
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		try {
@@ -245,7 +245,7 @@ public class ImportAccountsJobBean {
 				billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
 				if (billingAccount == null) {
 					billingAccount = accountImportService
-							.importBillingAccount(billingAccountDto, provider, currentUser);
+							.importBillingAccount(billingAccountDto, provider);
 					log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 							+ billingAccountDto.getCode() + ", status:Created");
 					nbBillingAccountsCreated++;
@@ -253,7 +253,7 @@ public class ImportAccountsJobBean {
 					log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 							+ billingAccountDto.getCode() + ", status:Updated");
 					billingAccount = accountImportService
-							.updateBillingAccount(billingAccountDto, provider, currentUser);
+							.updateBillingAccount(billingAccountDto, provider);
 					nbBillingAccountsUpdated++;
 				}
 			} catch (ImportWarningException w) {
@@ -289,7 +289,7 @@ public class ImportAccountsJobBean {
 				continue;
 			}
 
-			createUserAccount(uAccount, billingAccount, billingAccountDto, fileName, i, j, currentUser, provider);
+			createUserAccount(uAccount, billingAccount, billingAccountDto, fileName, i, j, provider);
 		}
 	}
 
@@ -325,7 +325,7 @@ public class ImportAccountsJobBean {
 			nbUserAccountsUpdated++;
 			log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
 					+ " code:" + uAccount.getCode() + ", status:Updated");
-			accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount, provider, currentUser);
+			accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount, provider);
 		} else {
 			try {
 				accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, provider,

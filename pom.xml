@@ -1,869 +1,814 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.meveo</groupId>
-    <artifactId>meveo</artifactId>
-    <packaging>pom</packaging>
-    <version>4.4</version>
-    <name>MEVEO Parent Project</name>
-    <url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
-
-    <modules>
-        <module>meveo-model</module>
-        <module>meveo-api-dto</module>
-        <module>meveo-tmforum</module>
-        <module>meveo-admin</module>
-        <module>meveo-api</module>
-        <module>meveo-client</module>
-    </modules>
-
-    <properties>
-        <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
-        <env>dev</env>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Define the version of JBoss' Java EE 6 APIs and Tools we want to import. -->
-        <version.org.infinispan>5.1.7.Final</version.org.infinispan>
-        <version.jboss.bom>1.0.7.Final</version.jboss.bom>
-        <version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
-
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-
-        <dbtype>generic</dbtype>
-    </properties>
-
-    <scm>
-        <connection>scm:git:https://git.assembla.com/meveo.git</connection>
-        <url>https://git.assembla.com/meveo.git</url>
-    </scm>
-
-    <repositories>
-        <repository>
-            <id>jboss-repo</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-        </repository>
-        <repository>
-            <id>pentaho.repo</id>
-            <url>http://repository.pentaho.org/artifactory/repo/</url>
-        </repository>
-        <repository>
-            <id>opencell-repo</id>
-            <url>http://libs.opencellsoft.com/</url>
-        </repository>
-        <repository>
-            <id>sonatype-oss-public</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>prime-repo</id>
-            <name>PrimeFaces Maven Repository</name>
-            <url>http://repository.primefaces.org</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>opencast-public</id>
-            <url>http://nexus.opencast.org/nexus/content/repositories/public/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>central-maven</id>
-            <url>http://central.maven.org/maven2/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>${version.shrinkwrap.resolvers}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
-                <version>${version.jboss.bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-                <version>${version.jboss.bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.seam</groupId>
-                <artifactId>seam-bom</artifactId>
-                <version>3.1.0.Final</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.seam.faces</groupId>
-                <artifactId>seam-faces</artifactId>
-                <version>3.2.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.seam.faces</groupId>
-                <artifactId>seam-faces-api</artifactId>
-                <version>3.2.0.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-api-dto</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-admin-ejbs</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-admin-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.meveo</groupId>
-                <artifactId>meveo-tmforum</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-core</artifactId>
-                <version>${version.org.infinispan}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-vfs</groupId>
-                <artifactId>commons-vfs</artifactId>
-                <version>1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.9.2</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-validator</groupId>
-                <artifactId>commons-validator</artifactId>
-                <version>1.4.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.10</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.beanio</groupId>
-                <artifactId>beanio</artifactId>
-                <version>2.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>1.1.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.primefaces.extensions</groupId>
-                <artifactId>primefaces-extensions</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.primefaces.extensions</groupId>
-                <artifactId>resources-codemirror</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.primefaces</groupId>
-                <artifactId>primefaces</artifactId>
-                <version>5.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>0.9.9-RC1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections-maven</artifactId>
-                <version>0.9.8</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.blackbear</groupId>
-                <artifactId>flatworm</artifactId>
-                <version>3.0.2</version>
-            </dependency>
-
-            <!-- rest core library -->
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxrs</artifactId>
-                <scope>provided</scope>
-                <version>3.0.6.Final</version>
-            </dependency>
-
-            <!-- JAXB support -->
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxb-provider</artifactId>
-                <version>3.0.6.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>jaxrs-api</artifactId>
-                <version>3.0.6.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-multipart-provider</artifactId>
-                <version>3.0.6.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jackson-provider</artifactId>
-                <version>3.0.10.Final</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.2.12</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.2.4</version>
-            </dependency>
-            <!-- sftp -->
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-net</groupId>
-                <artifactId>commons-net</artifactId>
-                <version>3.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>0.1.53</version>
-            </dependency>
-            <!-- ftp -->
-            <dependency>
-                <groupId>org.apache.ftpserver</groupId>
-                <artifactId>ftpserver-core</artifactId>
-                <version>1.0.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream-hibernate</artifactId>
-                <version>1.4.8</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>2.3.7</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.jexcelapi</groupId>
-                <artifactId>jxl</artifactId>
-                <version>2.6.12</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.taksan</groupId>
-                <artifactId>skype-java-api</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss</groupId>
-                <artifactId>jboss-vfs</artifactId>
-                <version>3.2.10.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
-                <version>1.7R1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>3.12</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>3.12</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.jasperreports</groupId>
-                <artifactId>jasperreports</artifactId>
-                <version>6.2.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.7</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>jaxen</groupId>
-                <artifactId>jaxen</artifactId>
-                <version>1.1.6</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>jivesoftware</groupId>
-                <artifactId>smack</artifactId>
-                <version>3.1.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.googlecode.json-simple</groupId>
-                <artifactId>json-simple</artifactId>
-                <version>1.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.scannotation</groupId>
-                <artifactId>scannotation</artifactId>
-                <version>1.0.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.faces</groupId>
-                <artifactId>jsf-api</artifactId>
-                <version>2.1.7</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.omnifaces</groupId>
-                <artifactId>omnifaces</artifactId>
-                <version>2.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.lapis.jsfexporter</groupId>
-                <artifactId>jsf-exporter-core</artifactId>
-                <version>1.0.2.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.lapis.jsfexporter</groupId>
-                <artifactId>export-type-csv</artifactId>
-                <version>1.0.2.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.lapis.jsfexporter</groupId>
-                <artifactId>export-source-primefaces</artifactId>
-                <version>1.0.2.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.6.6</version>
-            </dependency>
-            
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>2.6.6</version>
-            </dependency>
-
-
-            <!-- For testing -->
-            <dependency>
-                <groupId>hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>1.8.0.10</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>2.5.1</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-rest-client-impl-3x</artifactId>
-                <version>1.0.0.Alpha3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-rest-client-impl-jersey</artifactId>
-                <version>1.0.0.Alpha3</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>1.18.3</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-jaxrs</artifactId>
-                <version>1.5.4</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Needed for running tests (you may also use TestNG) -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-
-        <!-- Optional, but highly recommended -->
-        <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>jboss-logmanager</artifactId>
-            <version>1.4.0.Final</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.7</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.0</version>
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.jboss.as.plugins</groupId>
-                    <artifactId>jboss-as-maven-plugin</artifactId>
-                    <version>7.5.Final</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <skipTests>false</skipTests>
-                </configuration>
-            </plugin>
-        </plugins>
-
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>1.0-beta-7</version>
-            </extension>
-        </extensions>
-    </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-            </plugin>
-        </plugins>
-    </reporting>
-
-    <profiles>
-        <profile>
-            <id>development</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-                <property>
-                    <name>env</name>
-                    <value>dev</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-postgresql</artifactId>
-                    <version>3.0</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>dev-mysql</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>dev-mysql</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.mariadb.jdbc.Driver</db.driver>
-                <db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
-                <db.username>root</db.username>
-                <db.password></db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.mariadb.jdbc</groupId>
-                    <artifactId>mariadb-java-client</artifactId>
-                    <version>1.5.4</version>
-                </dependency>   
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>integration</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>integr</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver</db.driver>
-                <db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
-                <db.username>integrmeveo</db.username>
-                <db.password>integrmeveo</db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-postgresql</artifactId>
-                    <version>3.0</version>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>production</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>prod</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-postgresql</artifactId>
-                    <version>3.0</version>
-                </dependency>
-
-                <!-- Dependency for testing -->
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
-                    <version>7.1.0.Beta1b</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-
-            <!-- We add the JBoss repository as we need the JBoss AS connectors for Arquillian -->
-            <repositories>
-                <!-- The JBoss Community public repository is a composite repository of several major repositories -->
-                <!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
-                <repository>
-                    <id>jboss-public-repository</id>
-                    <name>JBoss Repository</name>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                    <!-- These optional flags are designed to speed up your builds by reducing remote server calls -->
-                    <releases>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>jboss-public-repository</id>
-                    <name>JBoss Repository</name>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                    <releases>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-
-        <profile>
-            <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
-            <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
-            <!-- Run with: mvn clean test -Parq-jbossas-managed -->
-            <id>arq-jbossas-managed</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.17</version>
-                        <configuration>
-                            <skipTests>false</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>andrius_target</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>dev</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo_target</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-postgresql</artifactId>
-                    <version>3.0</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>rachid_target</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>dev</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Properties for liquibase plugin -->
-                <db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
-            </properties>
-            <dependencies>
-                <!-- Dependency for liquibase plugin -->
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.2-1002-jdbc4</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-postgresql</artifactId>
-                    <version>3.0</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.meveo</groupId>
+	<artifactId>meveo</artifactId>
+	<packaging>pom</packaging>
+	<version>5.0-SNAPSHOT</version>
+	<name>MEVEO Parent Project</name>
+	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
+
+	<modules>
+		<module>meveo-security</module>
+		<module>meveo-model</module>
+		<module>meveo-api-dto</module>
+		<module>meveo-tmforum</module>
+		<module>meveo-admin</module>
+		<module>meveo-api</module>
+		<module>meveo-client</module>
+	</modules>
+
+	<properties>
+		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
+		<env>dev</env>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Define the version of JBoss' Java EE 6 APIs and Tools we want to import. -->
+		<version.org.infinispan>5.1.7.Final</version.org.infinispan>
+		<version.jboss.bom>1.0.7.Final</version.jboss.bom>
+		<version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
+
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+
+		<dbtype>generic</dbtype>
+	</properties>
+
+	<scm>
+		<connection>scm:git:https://git.assembla.com/meveo.git</connection>
+		<url>https://git.assembla.com/meveo.git</url>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>jboss-repo</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+		</repository>
+		<repository>
+			<id>pentaho.repo</id>
+			<url>http://repository.pentaho.org/artifactory/repo/</url>
+		</repository>
+		<repository>
+			<id>opencell-repo</id>
+			<url>http://libs.opencellsoft.com/</url>
+		</repository>
+		<repository>
+			<id>sonatype-oss-public</id>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>opencast-public</id>
+			<url>http://nexus.opencast.org/nexus/content/repositories/public/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>central-maven</id>
+			<url>http://central.maven.org/maven2/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<dependency>
+				<groupId>org.wildfly.bom</groupId>
+				<artifactId>wildfly-javaee7-with-tools</artifactId>
+				<version>10.0.1.Final</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.interceptor</groupId>
+				<artifactId>javax.interceptor-api</artifactId>
+				<version>1.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-api-dto</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-admin-ejbs</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-admin-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-tmforum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-security</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-vfs</groupId>
+				<artifactId>commons-vfs</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>1.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.beanio</groupId>
+				<artifactId>beanio</artifactId>
+				<version>2.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.1.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.primefaces.extensions</groupId>
+				<artifactId>primefaces-extensions</artifactId>
+				<version>3.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.primefaces.extensions</groupId>
+				<artifactId>resources-codemirror</artifactId>
+				<version>3.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>5.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>0.9.9-RC1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections-maven</artifactId>
+				<version>0.9.8</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.blackbear</groupId>
+				<artifactId>flatworm</artifactId>
+				<version>3.0.2</version>
+			</dependency>
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.jboss.resteasy</groupId> -->
+			<!-- <artifactId>jaxrs-api</artifactId> -->
+			<!-- <version>3.0.6.Final</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.2.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.2.4</version>
+			</dependency>
+			<!-- sftp -->
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-net</groupId>
+				<artifactId>commons-net</artifactId>
+				<version>3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>0.1.53</version>
+			</dependency>
+			<!-- ftp -->
+			<dependency>
+				<groupId>org.apache.ftpserver</groupId>
+				<artifactId>ftpserver-core</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream-hibernate</artifactId>
+				<version>1.4.8</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-all</artifactId>
+				<version>2.3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sourceforge.jexcelapi</groupId>
+				<artifactId>jxl</artifactId>
+				<version>2.6.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.taksan</groupId>
+				<artifactId>skype-java-api</artifactId>
+				<version>1.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss</groupId>
+				<artifactId>jboss-vfs</artifactId>
+				<version>3.2.10.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>rhino</groupId>
+				<artifactId>js</artifactId>
+				<version>1.7R1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>3.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>6.2.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.7</version>
+			</dependency>
+
+			<dependency>
+				<groupId>xalan</groupId>
+				<artifactId>xalan</artifactId>
+				<version>2.7.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>1.1.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jivesoftware</groupId>
+				<artifactId>smack</artifactId>
+				<version>3.1.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>1.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.scannotation</groupId>
+				<artifactId>scannotation</artifactId>
+				<version>1.0.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-api</artifactId>
+				<version>2.2.14</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.omnifaces</groupId>
+				<artifactId>omnifaces</artifactId>
+				<version>2.5.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.lapis.jsfexporter</groupId>
+				<artifactId>jsf-exporter-core</artifactId>
+				<version>1.0.2.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.lapis.jsfexporter</groupId>
+				<artifactId>export-type-csv</artifactId>
+				<version>1.0.2.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.lapis.jsfexporter</groupId>
+				<artifactId>export-source-primefaces</artifactId>
+				<version>1.0.2.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>2.3.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.6.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.6.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.ejb3</groupId>
+				<artifactId>jboss-ejb3-ext-api</artifactId>
+				<version>2.2.0.Final</version>
+			</dependency>
+
+			<!-- For testing -->
+			<dependency>
+				<groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>1.8.0.10</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.dbunit</groupId>
+				<artifactId>dbunit</artifactId>
+				<version>2.5.1</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.jboss.arquillian.extension</groupId> -->
+			<!-- <artifactId>arquillian-rest-client-impl-3x</artifactId> -->
+			<!-- <version>1.0.0.Alpha3</version> -->
+			<!-- </dependency> -->
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.jboss.arquillian.extension</groupId> -->
+			<!-- <artifactId>arquillian-rest-client-impl-jersey</artifactId> -->
+			<!-- <version>1.0.0.Alpha3</version> -->
+			<!-- <scope>test</scope> -->
+			<!-- </dependency> -->
+
+			<!-- <dependency> -->
+			<!-- <groupId>com.sun.jersey</groupId> -->
+			<!-- <artifactId>jersey-client</artifactId> -->
+			<!-- <version>1.18.3</version> -->
+			<!-- <scope>test</scope> -->
+			<!-- </dependency> -->
+
+			<!-- <dependency> -->
+			<!-- <groupId>io.swagger</groupId> -->
+			<!-- <artifactId>swagger-jaxrs</artifactId> -->
+			<!-- <version>1.5.4</version> -->
+			<!-- </dependency> -->
+
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- <dependency> -->
+		<!-- <groupId>hsqldb</groupId> -->
+		<!-- <artifactId>hsqldb</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+		<!-- Needed for running tests (you may also use TestNG) -->
+		<!-- <dependency> -->
+		<!-- <groupId>junit</groupId> -->
+		<!-- <artifactId>junit</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+		<!-- Optional, but highly recommended -->
+		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.arquillian.junit</groupId> -->
+		<!-- <artifactId>arquillian-junit-container</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.arquillian.protocol</groupId> -->
+		<!-- <artifactId>arquillian-protocol-servlet</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.logmanager</groupId> -->
+		<!-- <artifactId>jboss-logmanager</artifactId> -->
+		<!-- <version>1.4.0.Final</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.shrinkwrap.resolver</groupId> -->
+		<!-- <artifactId>shrinkwrap-resolver-impl-maven</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.7</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.0</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.jboss.as.plugins</groupId>
+					<artifactId>jboss-as-maven-plugin</artifactId>
+					<version>7.5.Final</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<skipTests>false</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
+		</extensions>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver </db.driver>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>dev-mysql</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev-mysql</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.mariadb.jdbc.Driver</db.driver>
+				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
+				<db.username>root</db.username>
+				<db.password></db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.mariadb.jdbc</groupId>
+					<artifactId>mariadb-java-client</artifactId>
+					<version>1.5.4</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>integration</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>integr</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver</db.driver>
+				<db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
+				<db.username>integrmeveo</db.username>
+				<db.password>integrmeveo</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>prod</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver </db.driver>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+				</dependency>
+
+				<!-- Dependency for testing -->
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<version>7.1.0.Beta1b</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+
+			<!-- We add the JBoss repository as we need the JBoss AS connectors for Arquillian -->
+			<repositories>
+				<!-- The JBoss Community public repository is a composite repository of several major repositories -->
+				<!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
+				<repository>
+					<id>jboss-public-repository</id>
+					<name>JBoss Repository</name>
+					<url>http://repository.jboss.org/nexus/content/groups/public</url>
+					<!-- These optional flags are designed to speed up your builds by reducing remote server calls -->
+					<releases>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+
+			<pluginRepositories>
+				<pluginRepository>
+					<id>jboss-public-repository</id>
+					<name>JBoss Repository</name>
+					<url>http://repository.jboss.org/nexus/content/groups/public</url>
+					<releases>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+
+		<profile>
+			<!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
+			<!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
+			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
+			<id>arq-jbossas-managed</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.17</version>
+						<configuration>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>andrius_target</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver </db.driver>
+				<db.url>jdbc:postgresql://localhost/meveo_target</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>rachid_target</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver </db.driver>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

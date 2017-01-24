@@ -33,11 +33,11 @@ public class UnitAccountOperationsGenerationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, User currentUser, Long id) {
+	public void execute(JobExecutionResultImpl result, Long id) {
 
 		try {
 			Invoice invoice = invoiceService.findById(id);
-			recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
+			recordedInvoiceService.generateRecordedInvoice(invoice);
 			result.registerSucces();
 		} catch (Exception e) {
 			log.error("Failed to generate acount operations", e);

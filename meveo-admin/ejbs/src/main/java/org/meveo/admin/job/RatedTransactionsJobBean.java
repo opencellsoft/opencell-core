@@ -40,18 +40,18 @@ public class RatedTransactionsJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 		
 		try {			
-			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), currentUser.getProvider());
+			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date().getProvider());
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
 			result.setNbItemsToProcess(walletOperationIds.size());
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);              
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");              
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -64,7 +64,7 @@ public class RatedTransactionsJobBean {
 			SubListCreator subListCreator = new SubListCreator(walletOperationIds,nbRuns.intValue());
 			List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				asyncReturns.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, currentUser));
+				asyncReturns.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result));
 				try {
 					Thread.sleep(waitingMillis.longValue());
 				} catch (InterruptedException e) {

@@ -66,7 +66,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private CounterPeriodService counterPeriodService;
 
-    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual, User creator) throws BusinessException {
+    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
 
         if (userAccount == null) {
@@ -91,13 +91,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result.setBillingAccount(billingAccount);
                 
                 if (!isVirtual){
-                    create(result, creator); // AKK was with billingAccount.getProvider()
+                    create(result); // AKK was with billingAccount.getProvider()
                 }
                 
                 billingAccount.getCounters().put(counterTemplate.getCode(), result);
                 
                 if (!isVirtual){
-                    billingAccountService.update(billingAccount, creator);
+                    billingAccountService.update(billingAccount);
                 }
             } else {
                 result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
@@ -109,12 +109,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result.setUserAccount(userAccount);
 
                 if (!isVirtual){
-                    create(result, creator); // AKK was with userAccount.getProvider()
+                    create(result); // AKK was with userAccount.getProvider()
                 }
                 userAccount.getCounters().put(counterTemplate.getCode(), result);
 
                 if (!isVirtual){
-                    userAccountService.update(userAccount, creator);
+                    userAccountService.update(userAccount);
                 }
             } else {
                 result = userAccount.getCounters().get(counterTemplate.getCode());
@@ -124,11 +124,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return result;
     }
 
-    public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate, User creator) throws BusinessException {
-        return counterInstanciation(getEntityManager(), notification, counterTemplate, creator);
+    public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate) throws BusinessException {
+        return counterInstanciation(getEntityManager(), notification, counterTemplate);
     }
 
-    public CounterInstance counterInstanciation(EntityManager em, Notification notification, CounterTemplate counterTemplate, User creator) throws BusinessException {
+    public CounterInstance counterInstanciation(EntityManager em, Notification notification, CounterTemplate counterTemplate) throws BusinessException {
         CounterInstance counterInstance = null;
 
         if (notification == null) {
@@ -148,14 +148,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (notification.getCounterInstance() != null && !counterTemplate.getId().equals(notification.getCounterInstance().getCounterTemplate().getId())) {
             CounterInstance ci = notification.getCounterInstance();
             notification.setCounterInstance(null);
-            remove(ci, creator);
+            remove(ci);
         }
 
         // Instantiate counter instance if there is not one yet
         if (notification.getCounterInstance() == null) {
             counterInstance = new CounterInstance();
             counterInstance.setCounterTemplate(counterTemplate);
-            create(counterInstance, creator); // AKK was with notification.getProvider()
+            create(counterInstance); // AKK was with notification.getProvider()
 
             notification.setCounterTemplate(counterTemplate);
             notification.setCounterInstance(counterInstance);

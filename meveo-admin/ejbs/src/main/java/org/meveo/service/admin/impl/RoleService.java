@@ -61,7 +61,7 @@ public class RoleService extends PersistenceService<Role> {
     @Override
     protected void checkProvider(Role entity) {
         // Super administrator - don't care
-        if (identity.hasPermission("superAdmin", "superAdminManagement")) {
+        if (currentUser.hasRole("superAdminManagement")) {
             return;
             // Other users - a regular check
         } else {

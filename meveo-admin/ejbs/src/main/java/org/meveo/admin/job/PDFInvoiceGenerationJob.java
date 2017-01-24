@@ -33,16 +33,16 @@ public class PDFInvoiceGenerationJob extends Job {
     @Override
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance, User currentUser) {
-        super.execute(jobInstance, currentUser);
+    public void execute(JobInstance jobInstance) {
+        super.execute(jobInstance);
     }
 
 	
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-		pdfInvoiceGenerationJobBean.execute(result, currentUser, jobInstance);
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+		pdfInvoiceGenerationJobBean.execute(result, jobInstance);
 	}
 
 	@Override
