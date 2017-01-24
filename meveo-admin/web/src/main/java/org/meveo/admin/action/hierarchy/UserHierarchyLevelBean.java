@@ -21,8 +21,10 @@ package org.meveo.admin.action.hierarchy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,7 +58,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private static final long serialVersionUID = 1L;
     private static final String ROOT = "Root";
 
-    /** Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}. */
+    /**
+     * Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}.
+     */
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
@@ -169,31 +173,111 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         UserHierarchyLevel child = null;
         UserHierarchyLevel parent = null;
         UserHierarchyLevel previousParent = null;
-        if(dragNode != null && dragNode.getData() instanceof UserHierarchyLevel){
-            child = (UserHierarchyLevel) dragNode.getData();
-            child = userHierarchyLevelService.refreshOrRetrieve(child);
-            if(child.getParentLevel() instanceof UserHierarchyLevel){
-                previousParent = (UserHierarchyLevel) child.getParentLevel();
-                previousParent = userHierarchyLevelService.refreshOrRetrieve(previousParent);
-                previousParent.getChildLevels().remove(child);
-            }
-            child.setParentLevel(null);
-            child.setOrderLevel((long)event.getDropIndex() + 1); //orderLevel is 1-based while dropIndex is 0-based
-        }
-        if(dropNode != null && dropNode.getData() instanceof UserHierarchyLevel){
+        Set<UserHierarchyLevel> updatedSiblings = new HashSet<>();
+        Long index = event.getDropIndex() + 1L;
+        Long previousIndex = 0L;
+        boolean validChild = dragNode != null && dragNode.getData() instanceof UserHierarchyLevel;
+        boolean hasParent = dropNode != null && dropNode.getData() instanceof UserHierarchyLevel;
+        boolean hasPreviousParent = false;
+        boolean sameParent = false;
+        if (hasParent) {
             parent = (UserHierarchyLevel) dropNode.getData();
             parent = userHierarchyLevelService.refreshOrRetrieve(parent);
+        }
+        if (validChild) {
+            child = (UserHierarchyLevel) dragNode.getData();
+            child = userHierarchyLevelService.refreshOrRetrieve(child);
+            previousIndex = child.getOrderLevel();
+            hasPreviousParent = child.getParentLevel() != null;
+            if (hasPreviousParent) {
+                previousParent = userHierarchyLevelService.findByCode(child.getParentLevel().getCode(), getCurrentProvider());
+                sameParent = previousParent.equals(parent);
+                if (!sameParent) {
+                    for (HierarchyLevel<User> sibling : previousParent.getChildLevels()) {
+                        if (sibling.getOrderLevel() > previousIndex) {
+                            sibling.setOrderLevel(sibling.getOrderLevel() - 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    }
+                    previousParent.getChildLevels().remove(child);
+                } else {
+                    parent.getChildLevels().remove(child);
+                }
+            }
+            child.setParentLevel(null);
+        }
+        if (hasParent) {
             child.setParentLevel(parent);
+            for (HierarchyLevel<User> sibling : parent.getChildLevels()) {
+                Long siblingIndex = sibling.getOrderLevel();
+                if (sameParent) {
+                    boolean movedUp = previousIndex - index > 0;
+                    if(movedUp) { // the previous index was greater than new index
+                        if(siblingIndex < previousIndex && siblingIndex >= index) {
+                            sibling.setOrderLevel(siblingIndex + 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    } else {
+                        if(siblingIndex <= index && siblingIndex > previousIndex) {
+                            sibling.setOrderLevel(siblingIndex - 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    }
+                } else {
+                    if(!hasPreviousParent) {
+                        List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+                        for(UserHierarchyLevel root : roots) {
+                            if (root.getOrderLevel() > previousIndex) {
+                                root.setOrderLevel(root.getOrderLevel() - 1);
+                                updatedSiblings.add(root);
+                            }
+                        }
+                    } else if (siblingIndex >= index) {
+                        sibling.setOrderLevel(siblingIndex + 1);
+                        updatedSiblings.add((UserHierarchyLevel) sibling);
+                    }
+                }
+            }
             parent.getChildLevels().add(child);
+        } else if(!hasParent && !hasPreviousParent) {
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            for(UserHierarchyLevel root : roots) {
+                Long rootIndex = root.getOrderLevel();
+                boolean movedUp = previousIndex - index > 0;
+                if(movedUp) { // the previous index was greater than new index
+                    if(rootIndex < previousIndex && rootIndex >= index) {
+                        root.setOrderLevel(root.getOrderLevel() + 1);
+                        updatedSiblings.add(root);
+                    }
+                } else {
+                    if(rootIndex <= index && rootIndex > previousIndex) {
+                        root.setOrderLevel(root.getOrderLevel() - 1);
+                        updatedSiblings.add(root);
+                    }
+                }
+            }
+        } else if(!hasParent && hasPreviousParent) {
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            for(UserHierarchyLevel root : roots) {
+                Long rootIndex = root.getOrderLevel();
+                if (rootIndex >= index) {
+                    root.setOrderLevel(rootIndex + 1);
+                    updatedSiblings.add(root);
+                }
+            }
         }
 
         try {
+            child.setOrderLevel(index);
             userHierarchyLevelService.update(child, getCurrentUser());
-            if(parent != null) {
+            if (parent != null) {
                 userHierarchyLevelService.update(parent, getCurrentUser());
             }
-            if(previousParent != null) {
+            if (previousParent != null && !sameParent) {
                 userHierarchyLevelService.update(previousParent, getCurrentUser());
+            }
+            for (UserHierarchyLevel sibling : updatedSiblings) {
+                userHierarchyLevelService.update(sibling, getCurrentUser());
             }
         } catch (BusinessException e) {
             messages.error(new BundleKey("messages", "userGroupHierarchy.errorChangeLevel"));
@@ -366,7 +450,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     // Recursive function to create tree
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
         TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
@@ -485,5 +569,5 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             return new UserHierarchyLevel();
         }
         return userLevelFound;
-    }  
+    }
 }
