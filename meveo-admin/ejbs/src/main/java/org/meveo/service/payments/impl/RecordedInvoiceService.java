@@ -251,7 +251,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 			for(Order order : invoice.getOrders()){
 				orderNums.add(order.getCode());
 			}
-			recordedInvoice.setOrderNumber(StringUtils.concatenate("\\|", orderNums));
+			recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
 		}
 		try {
 			recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
