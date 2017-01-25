@@ -17,14 +17,21 @@
 				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 				<p:menuitem outcome="customizedEntities"
 					value="#{messages['menu.customizedEntities']}" />
+
 				<p:menuitem
-					value="#{messages['commons.new']} #{messages['customFieldTemplate.panel']}"
+					value="#{messages['commons.new']} #{messages['customizedEntities.customEntity']}"
 					disabled="true"
-					rendered="#{!customEntityTemplateBean.customEntityTemplate}" />
+					rendered="#{customEntityTemplateBean.entity.code==null and customEntityTemplateBean.customEntityTemplate}" />
+
+				<p:menuitem value="#{customEntityTemplateBean.entity.getCode}"
+					disabled="true"
+					rendered="#{customEntityTemplateBean.entity.code!=null}" />
+
 				<p:menuitem
-					value="#{customEntityTemplateBean.entity.code}"
+					value="#{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
 					disabled="true"
-					rendered="#{customEntityTemplateBean.customEntityTemplate}" />
+					rendered="#{! customEntityTemplateBean.customEntityTemplate}" />
+
 			</p:breadCrumb>
 		</h:form>
 
