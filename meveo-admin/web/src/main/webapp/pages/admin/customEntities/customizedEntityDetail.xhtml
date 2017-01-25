@@ -14,17 +14,21 @@
 
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="customizedEntities" value="#{messages['menu.customizedEntities']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['customizedEntities.detail']}"
-					disabled="true" rendered="#{customEntityTemplateBean.customEntityTemplate}" />
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="customizedEntities"
+					value="#{messages['menu.customizedEntities']}" />
 				<p:menuitem
 					value="#{messages['commons.new']} #{messages['customFieldTemplate.panel']}"
-					disabled="true" rendered="#{!customEntityTemplateBean.customEntityTemplate}" />
+					disabled="true"
+					rendered="#{!customEntityTemplateBean.customEntityTemplate}" />
+				<p:menuitem
+					value="#{customEntityTemplateBean.entity.code}"
+					disabled="true"
+					rendered="#{customEntityTemplateBean.customEntityTemplate}" />
 			</p:breadCrumb>
 		</h:form>
 
-        <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+		<o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
