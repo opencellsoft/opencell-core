@@ -48,14 +48,21 @@ public class EdrBean extends BaseBean<EDR> {
 		if (getSelectedEntities() != null) {
 			log.debug("updating {} edrs", getSelectedEntities().size());
 
+			boolean hasNotRejected = false;
+
 			Set<Long> selectedIds = new HashSet<Long>();
 			for (EDR edr : getSelectedEntities()) {
+				hasNotRejected = hasNotRejected || !EDRStatusEnum.REJECTED.equals(edr.getStatus());
 				selectedIds.add(edr.getId());
 			}
 
-			edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, getCurrentProvider());
+			if(selectedIds.size() > 0){
+				edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, getCurrentProvider());
+			}
 
-			messages.info(new BundleKey("messages", "update.successful"));
+			if(hasNotRejected){
+				messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
+			}
 		}
 	}
 
