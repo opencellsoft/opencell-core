@@ -55,6 +55,10 @@ public class PricePlanMatrixColumnSelectorBean implements Serializable {
 	 public List<Boolean> getColumnVisibilitylist() {
 	     return columnVisibilitylist;
 	 }
+
+	public String getColumnWidth(int index) {
+		return columnVisibilitylist.get(index) ? "15%" : "0";
+	}
 	 
 	 public void onToggle(ToggleEvent e) {
 	 	columnVisibilitylist.set((Integer) e.getData(), e.getVisibility() == Visibility.VISIBLE);
