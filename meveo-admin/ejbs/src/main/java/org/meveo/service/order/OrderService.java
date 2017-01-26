@@ -4,9 +4,12 @@ import java.util.Calendar;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
@@ -54,5 +57,22 @@ public class OrderService extends BusinessService<Order> {
         }
         entity.setRoutedToUserGroup(userHierarchyLevel);
         return this.update(entity, entity.getAuditable().getCreator());
+    }
+    
+    public Order findByCodeOrExternalId(String code, Provider provider) {
+    	Order order = null;
+    	Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a where (a.code = :code OR  a.externalId = :code) and  provider =:provider");
+    	query.setParameter("code", code);
+    	query.setParameter("provider", provider);
+    	try {
+    		order = (Order) query.getSingleResult();
+    	} catch (NoResultException e) {
+    		log.debug("No {} of code/externalId {} for provider {} found", Order.class.getSimpleName(), code, provider.getId());
+    		return null;
+    	} catch (NonUniqueResultException e) {
+    		log.error("More than one entity of type {} with code/externalId {} and provider {} found", Order.class, code, provider);
+    		return null;
+    	}
+    	return order;
     }
 }
