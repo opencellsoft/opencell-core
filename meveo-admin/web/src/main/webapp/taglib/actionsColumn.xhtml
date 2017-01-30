@@ -129,33 +129,14 @@
         <p:tooltip for="#{resultsId}disablelink" rendered="#{renderEnableLink}" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
 
 
-        <script type="text/javascript">
-			//<![CDATA[
-				function handleDeleteComplete(xhr, status, args) {
-					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
-						PF('#{resultsId}confirmCanotDeleteWidget').show();
-					}
-				}
-			//]]>
-		</script>
-        <p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}" name="#{resultsId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)"
-            update="@form" rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}" />
-        <p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-        <p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()"
-            rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}">
-            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}" />
-            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-        </p:commandButton>
-
-		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header="#{messages['commons.confirmCanotDeleteHeader']}" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="#{resultsId}confirmCanotDeleteWidget" appendTo="@(body)">
-			<p:panel styleClass="confirm-dialog-content">
-				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{resultsId}confirmCanotDeleteWidget').hide()" update="@this" />
-			</p:panel>
-		</p:confirmDialog>
+		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.delete}" name="#{resultsId}doDelete"
+						 update="@form" rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}" />
+		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()"
+						 rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}">
+			<f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}" />
+			<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+		</p:commandButton>
 		<ui:insert />
 	</p:column>
 </ui:composition>
