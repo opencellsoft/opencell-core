@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -18495,7 +18495,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="20911efb-6dd3-4ace-acd9-0e183ee2153e" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="9d3c83e9-b614-4886-8a9b-9e21e50f50f9" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -19360,7 +19360,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>19</con:value>
+        <con:value>23</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -19661,7 +19661,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
+            <orderNumber>1610a918-28fb-4c19-97b2-c44ff390fa8e</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -19746,7 +19746,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="414a2edb-ec88-4941-9134-22b5be163bff" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>FIX ME - verify the number of rated transactions</content>
+                <content>8</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -19831,7 +19831,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
+            <orderNumber>1610a918-28fb-4c19-97b2-c44ff390fa8e</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20022,7 +20022,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>0212e9b3-a59c-45b7-998c-de959312e08f</orderNumber>
+            <orderNumber>1610a918-28fb-4c19-97b2-c44ff390fa8e</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20090,8 +20090,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000028</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000002</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -20107,7 +20107,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>FIX ME - verify the number of rated transactions</content>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -20256,7 +20256,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>9a2221f7-7f85-4ad4-a27c-bac95d8d0495</orderNumber>
+            <orderNumber>861299cf-4799-4596-9b64-5368537682ac</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20324,7 +20324,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000002</invoiceNumber>
+         	<invoiceNumber>000000003</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -20341,7 +20341,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="aa448c6e-976e-44e8-9c32-c679cf855747" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>FIX ME - verify the number of rated transactions</content>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -20471,7 +20471,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>f8ee8615-62da-4c5c-bcff-4b090bead69f</orderNumber>
+            <orderNumber>fb2e760b-7927-45d8-a355-80b597aebe75</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20539,8 +20539,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000030</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000004</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -20556,7 +20556,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="264cc354-6f1c-4e17-a02e-5b0bfae9dd97" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>FIX ME - verify the number of rated transactions</content>
+                <content>1</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -20675,7 +20675,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>60115d43-7d74-448f-95f3-d5e30fc2f94b</orderNumber>
+            <orderNumber>a057d7d0-8960-4a7b-9bbb-2905b3a1a423</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -20743,8 +20743,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000031</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000005</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -20760,7 +20760,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="46049da8-6791-4e75-b3e9-74423a1c5689" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>FIX ME - verify the number of rated transactions</content>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -20840,11 +20840,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>meveoEndpoint</con:name>
-      <con:value>http://localhost:8080/meveo</con:value>
+      <con:value>http://integration.i.opencellsoft.com/meveo</con:value>
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+02:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>baseEntityPrefix</con:name>
@@ -20856,7 +20856,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>
@@ -20869,5 +20869,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   </con:properties>
   <con:wssContainer/>
   <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
   <con:sensitiveInformation/>
 </con:soapui-project>
