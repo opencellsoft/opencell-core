@@ -198,13 +198,13 @@
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_action" constraintName="fk_q7dvcjiuap29yhvq884lt0die" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-104">
-        <dropTable tableName="ar_action_plan_item"/>
+        <dropTable tableName="ar_action_plan_item" cascadeConstraints="true"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-106">
-        <dropTable tableName="ar_dunning_plan_transition"/>
+        <dropTable tableName="ar_dunning_plan_transition" cascadeConstraints="true"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-105">
-        <dropTable tableName="ar_dunning_plan"/>
+        <dropTable tableName="ar_dunning_plan" cascadeConstraints="true"/>
     </changeSet>
     <changeSet author="anasseh (generated)" id="#1841_13072016-144">
         <dropSequence sequenceName="ar_dunning_plan_seq"/>
@@ -285,13 +285,11 @@
 	<changeSet id="#1839_20160713_cat_product_offering" author="EdwardLegaspi">
 		<addColumn tableName="cat_offer_template">
 			<column name="life_cycle_status" type="VARCHAR(60)" />
-			<column name="type" type="VARCHAR(20)">
+			<column name="type" type="VARCHAR(20)" defaultValue="OFFER">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
-		
-		<sql>UPDATE cat_offer_template SET TYPE='OFFER'</sql>
-		
+				
 		<addForeignKeyConstraint baseColumnNames="business_offer_model_id"
 			baseTableName="cat_offer_template" constraintName="fk_prod_offer_template_bom"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -3199,5 +3197,5 @@
     <changeSet id="#2296_20161225-5" author="AndriusKarpavicius">
         <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL"/>
     </changeSet>
-
+    
 </databaseChangeLog>
