@@ -333,6 +333,12 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 quoteItemDto.getProduct().setProductCharacteristic(mapToProductCharacteristics(offerConfigurations.get(0).getCharacteristics()));
                 quoteItemDto.getProduct().getProductCharacteristic().addAll(customFieldsAsCharacteristics(offerConfigurations.get(0).getEntityForCFValues()));
             }
+            
+			// set billingAccount
+			org.tmf.dsmapi.catalog.resource.order.BillingAccount quoteBa = new org.tmf.dsmapi.catalog.resource.order.BillingAccount();
+			UserAccount quoteUa = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());  
+			quoteBa.setId(quoteUa.getBillingAccount().getCode());
+			quoteItemDto.getBillingAccount().add(quoteBa);
 
             selectedQuoteItem.setQuoteItemDto(quoteItemDto);
             selectedQuoteItem.setSource(ProductQuoteItem.serializeQuoteItem(quoteItemDto));
