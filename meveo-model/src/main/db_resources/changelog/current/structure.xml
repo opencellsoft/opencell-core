@@ -153,11 +153,11 @@
         </createTable>
     </changeSet>
 
-   <changeSet author="anasseh (generated)" id="#1841_13072016-165">
+   <changeSet author="anasseh (generated)" id="#1841_13072016-165" failOnError="false">
         <dropForeignKeyConstraint  baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx" />
     </changeSet>   
     
-   <changeSet author="anasseh (generated)" id="#1841_13072016-165-1" dbms="mysql">
+   <changeSet author="anasseh (generated)" id="#1841_13072016-165-1" failOnError="false" dbms="mysql">
         <dropIndex tableName="ar_action_dunning" indexName="fk_r8q3phft4xgm8lbfu6i7lo3kx"/>
     </changeSet>
  
@@ -1285,15 +1285,6 @@
         <sql>update CAT_PRICE_PLAN_MATRIX set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
         <dropColumn tableName="CAT_PRICE_PLAN_MATRIX" columnName="DISABLED_BOOL" />
 
-        <renameColumn tableName="WF_DECISION_RULE" oldColumnName="MODEL" newColumnName="MODEL_BOOL" />
-        <addColumn tableName="WF_DECISION_RULE">
-            <column name="MODEL" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_DECISION_RULE set MODEL= case when MODEL_BOOL then 1 else 0 end where MODEL_BOOL is not null </sql>
-        <dropColumn tableName="WF_DECISION_RULE" columnName="MODEL_BOOL" />
-
         <renameColumn tableName="DWH_CHART_LINE" oldColumnName="FILLED" newColumnName="FILLED_BOOL" />
         <addColumn tableName="DWH_CHART_LINE">
             <column name="FILLED" type="${type.boolean}" defaultValueNumeric="0">
@@ -1478,15 +1469,6 @@
             null </sql>
         <dropColumn tableName="BILLING_RATED_TRANSACTION" columnName="DO_NOT_TRIGGER_INVOICING_BOOL" />
 
-        <renameColumn tableName="WF_WORKFLOW" oldColumnName="ENABLE_HOSTORY" newColumnName="ENABLE_HOSTORY_BOOL" />
-        <addColumn tableName="WF_WORKFLOW">
-            <column name="ENABLE_HOSTORY" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_WORKFLOW set ENABLE_HOSTORY= case when ENABLE_HOSTORY_BOOL then 1 else 0 end where ENABLE_HOSTORY_BOOL is not null </sql>
-        <dropColumn tableName="WF_WORKFLOW" columnName="ENABLE_HOSTORY_BOOL" />
-
         <renameColumn tableName="BILLING_BILLING_ACCOUNT" oldColumnName="ELECTRONIC_BILLING" newColumnName="ELECTRONIC_BILLING_BOOL" />
         <addColumn tableName="BILLING_BILLING_ACCOUNT">
             <column name="ELECTRONIC_BILLING" type="${type.boolean}" defaultValueNumeric="0" />
@@ -1539,15 +1521,6 @@
         <sql>update COM_MSG_TMPL_VARIABLE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
         <dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="DISABLED_BOOL" />
 
-        <renameColumn tableName="WF_WORKFLOW" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="WF_WORKFLOW">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_WORKFLOW set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="WF_WORKFLOW" columnName="DISABLED_BOOL" />
-
         <renameColumn tableName="FTP_IMPORTED_FILE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
         <addColumn tableName="FTP_IMPORTED_FILE">
             <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
@@ -1590,15 +1563,6 @@
         </addColumn>
         <sql>update AR_DDREQUEST_LOT_OP set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
         <dropColumn tableName="AR_DDREQUEST_LOT_OP" columnName="DISABLED_BOOL" />
-
-        <renameColumn tableName="BILLING_PRODUCT_INSTANCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="BILLING_PRODUCT_INSTANCE">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update BILLING_PRODUCT_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="BILLING_PRODUCT_INSTANCE" columnName="DISABLED_BOOL" />
 
         <renameColumn tableName="AR_ACCOUNT_OPERATION" oldColumnName="EXCLUDED_FROM_DUNNING" newColumnName="EXCLUDED_FROM_DUNNING_BOOL" />
         <addColumn tableName="AR_ACCOUNT_OPERATION">
@@ -1793,15 +1757,6 @@
         </addColumn>
         <sql>update CRM_PROVIDER set MULTICURRENCY_FLAG= case when MULTICURRENCY_FLAG_BOOL then 1 else 0 end where MULTICURRENCY_FLAG_BOOL is not null </sql>
         <dropColumn tableName="CRM_PROVIDER" columnName="MULTICURRENCY_FLAG_BOOL" />
-
-        <renameColumn tableName="CAT_CHANNEL" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="CAT_CHANNEL">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update CAT_CHANNEL set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="CAT_CHANNEL" columnName="DISABLED_BOOL" />
 
         <renameColumn tableName="BILLING_INVOICE_TYPE" oldColumnName="MATCHING_AUTO" newColumnName="MATCHING_AUTO_BOOL" />
         <addColumn tableName="BILLING_INVOICE_TYPE">
@@ -2288,24 +2243,6 @@
         </sql>
         <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="TRIGGER_END_PERIOD_EVENT_BOOL" />
 
-        <renameColumn tableName="CAT_DIGITAL_RESOURCE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="CAT_DIGITAL_RESOURCE">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update CAT_DIGITAL_RESOURCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="CAT_DIGITAL_RESOURCE" columnName="DISABLED_BOOL" />
-
-        <renameColumn tableName="WF_DECISION_RULE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="WF_DECISION_RULE">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_DECISION_RULE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="WF_DECISION_RULE" columnName="DISABLED_BOOL" />
-
         <renameColumn tableName="AR_REVENUE_RECOG_RULE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
         <addColumn tableName="AR_REVENUE_RECOG_RULE">
             <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
@@ -2405,15 +2342,6 @@
         <sql>update DWH_CHART_LINE set ZOOM= case when ZOOM_BOOL then 1 else 0 end where ZOOM_BOOL is not null </sql>
         <dropColumn tableName="DWH_CHART_LINE" columnName="ZOOM_BOOL" />
 
-        <renameColumn tableName="ORD_ORDER" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="ORD_ORDER">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update ORD_ORDER set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="ORD_ORDER" columnName="DISABLED_BOOL" />
-
         <renameColumn tableName="RM_SERVICE_PARAM_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
         <addColumn tableName="RM_SERVICE_PARAM_TEMPLATE">
             <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
@@ -2440,15 +2368,6 @@
         </addColumn>
         <sql>update AR_DDREQUEST_LOT set IS_PAYMENT_CREATED= case when IS_PAYMENT_CREATED_BOOL then 1 else 0 end where IS_PAYMENT_CREATED_BOOL is not null </sql>
         <dropColumn tableName="AR_DDREQUEST_LOT" columnName="IS_PAYMENT_CREATED_BOOL" />
-
-        <renameColumn tableName="WF_ACTION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="WF_ACTION">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_ACTION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="WF_ACTION" columnName="DISABLED_BOOL" />
 
         <renameColumn tableName="BILLING_RESERVATION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
         <addColumn tableName="BILLING_RESERVATION">
@@ -2485,24 +2404,6 @@
         </addColumn>
         <sql>update COM_MSG_TMPL_VARIABLE set MANDATORY= case when MANDATORY_BOOL then 1 else 0 end where MANDATORY_BOOL is not null </sql>
         <dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="MANDATORY_BOOL" />
-
-        <renameColumn tableName="WF_TRANSITION" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="WF_TRANSITION">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_TRANSITION set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="WF_TRANSITION" columnName="DISABLED_BOOL" />
-
-        <renameColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE" oldColumnName="MANDATORY" newColumnName="MANDATORY_BOOL" />
-        <addColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE">
-            <column name="MANDATORY" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update CAT_OFFER_PRODUCT_TEMPLATE set MANDATORY= case when MANDATORY_BOOL then 1 else 0 end where MANDATORY_BOOL is not null </sql>
-        <dropColumn tableName="CAT_OFFER_PRODUCT_TEMPLATE" columnName="MANDATORY_BOOL" />
 
         <renameColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" oldColumnName="APPLY_REIMBURSMENT" newColumnName="APPLY_REIMBURSMENT_BOOL" />
         <addColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON">
@@ -2553,15 +2454,6 @@
         </addColumn>
         <sql>update BILLING_CHARGE_INSTANCE set IS_PREPAID= case when IS_PREPAID_BOOL then 1 else 0 end where IS_PREPAID_BOOL is not null </sql>
         <dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="IS_PREPAID_BOOL" />
-
-        <renameColumn tableName="HIERARCHY_ENTITY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="HIERARCHY_ENTITY">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update HIERARCHY_ENTITY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="HIERARCHY_ENTITY" columnName="DISABLED_BOOL" />
 
         <renameColumn tableName="ADM_TITLE" oldColumnName="IS_COMPANY" newColumnName="IS_COMPANY_BOOL" />
         <addColumn tableName="ADM_TITLE">
@@ -2730,15 +2622,6 @@
         </addColumn>
         <sql>update BILLING_SERVICE_INSTANCE set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
         <dropColumn tableName="BILLING_SERVICE_INSTANCE" columnName="DISABLED_BOOL" />
-
-        <renameColumn tableName="WF_HISTORY" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
-        <addColumn tableName="WF_HISTORY">
-            <column name="DISABLED" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update WF_HISTORY set DISABLED= case when DISABLED_BOOL then 1 else 0 end where DISABLED_BOOL is not null </sql>
-        <dropColumn tableName="WF_HISTORY" columnName="DISABLED_BOOL" />
 
         <renameColumn tableName="COM_MESSAGE_TEMPLATE" oldColumnName="DISABLED" newColumnName="DISABLED_BOOL" />
         <addColumn tableName="COM_MESSAGE_TEMPLATE">
