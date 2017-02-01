@@ -299,11 +299,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode) {
+    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode, boolean calculateBalances) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

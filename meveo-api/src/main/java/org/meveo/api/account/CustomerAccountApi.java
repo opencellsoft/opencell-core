@@ -286,8 +286,8 @@ public class CustomerAccountApi extends AccountApi {
 
 	@SecuredBusinessEntityMethod(
 			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
-	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
+			user = @SecureMethodParameter(index = 2, parser = UserParser.class))
+	public CustomerAccountDto find(String customerAccountCode, boolean calculateBalances, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
@@ -302,13 +302,20 @@ public class CustomerAccountApi extends AccountApi {
 
 		CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
-		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date(), customerAccount.getProvider());
+		if (calculateBalances) {
+			BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
+			BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, new Date());
 
-		if (balance == null) {
-			throw new BusinessException("account balance calculation failed");
+			if (balanceDue == null) {
+				throw new BusinessException("Balance due calculation failed.");
+			}
+
+			if (totalInvoiceBalance == null) {
+				throw new BusinessException("Total invoice balance calculation failed.");
+			}
+			customerAccountDto.setBalance(balanceDue);
+			customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
 		}
-
-		customerAccountDto.setBalance(balance);
 
 		return customerAccountDto;
 	}
@@ -495,7 +502,7 @@ public class CustomerAccountApi extends AccountApi {
 	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto, User currentUser) throws MeveoApiException, BusinessException {
 		CustomerAccountDto existedCustomerAccountDto = null;
 		try {
-			existedCustomerAccountDto = find(customerAccountDto.getCode(), currentUser);
+			existedCustomerAccountDto = find(customerAccountDto.getCode(), false, currentUser);
 		} catch (Exception e) {
 			existedCustomerAccountDto = null;
 		}

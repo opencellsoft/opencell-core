@@ -473,7 +473,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomerAccountDto customerAccountDto = null;
 		try {
-			customerAccountDto = customerAccountApi.find(customerAccountCode, currentUser);
+			customerAccountDto = customerAccountApi.find(customerAccountCode, false, currentUser);
 		} catch (Exception e) {
 			customerAccountDto = new CustomerAccountDto();
 			customerAccountDto.setCode(customerAccountCode);

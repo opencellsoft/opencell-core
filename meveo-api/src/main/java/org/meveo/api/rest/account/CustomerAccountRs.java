@@ -42,12 +42,13 @@ public interface CustomerAccountRs extends IBaseRs {
     /**
      * Search for a customer account with a given code.
      * 
-     * @param customerAccountCode
+     * @param customerAccountCode The customer account's code
+     *
      * @return
      */
     @GET
     @Path("/")
-    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode);
+    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances);
 
     @DELETE
     @Path("/{customerAccountCode}")

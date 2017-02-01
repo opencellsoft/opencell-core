@@ -72,11 +72,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode) {
+    public GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, getCurrentUser()));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
