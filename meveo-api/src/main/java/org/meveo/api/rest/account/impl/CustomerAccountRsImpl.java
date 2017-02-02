@@ -3,7 +3,6 @@ package org.meveo.api.rest.account.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -72,7 +71,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances) {
+    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {

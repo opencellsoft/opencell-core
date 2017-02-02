@@ -2,6 +2,7 @@ package org.meveo.api.rest.account;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -48,7 +49,7 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances);
+    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances);
 
     @DELETE
     @Path("/{customerAccountCode}")

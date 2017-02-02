@@ -287,11 +287,15 @@ public class CustomerAccountApi extends AccountApi {
 	@SecuredBusinessEntityMethod(
 			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
 			user = @SecureMethodParameter(index = 2, parser = UserParser.class))
-	public CustomerAccountDto find(String customerAccountCode, boolean calculateBalances, User currentUser) throws Exception {
+	public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, User currentUser) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
+		}
+
+		if(calculateBalances == null){
+			calculateBalances = Boolean.TRUE;
 		}
 
 		Provider provider = currentUser.getProvider();

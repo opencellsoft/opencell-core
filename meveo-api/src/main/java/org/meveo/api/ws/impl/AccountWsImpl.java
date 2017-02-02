@@ -299,7 +299,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode, boolean calculateBalances) {
+    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode, Boolean calculateBalances) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
