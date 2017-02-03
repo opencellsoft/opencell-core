@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -22667,7 +22667,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>255</con:value>
+        <con:value>257</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -25769,7 +25769,7 @@ public class Action1 extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>45</con:value>
+        <con:value>47</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -27325,7 +27325,7 @@ public class Action1 extends Script {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>7</con:value>
+        <con:value>9</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -28574,7 +28574,7 @@ public class Action1 extends Script {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>7</con:value>
+        <con:value>9</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -28586,7 +28586,7 @@ public class Action1 extends Script {
   <con:properties>
     <con:property>
       <con:name>meveoEndpoint</con:name>
-      <con:value>http://localhost:8080/meveo</con:value>
+      <con:value>http://integration.i.opencellsoft.com/meveo</con:value>
     </con:property>
     <con:property>
       <con:name>authorization</con:name>
@@ -28594,11 +28594,11 @@ public class Action1 extends Script {
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+02:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>
@@ -28628,6 +28628,7 @@ public class Action1 extends Script {
   <con:wssContainer/>
   <con:databaseConnectionContainer/>
   <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
   <con:reporting>
     <con:xmlTemplates/>
     <con:parameters/>

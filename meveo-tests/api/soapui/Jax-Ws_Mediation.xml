@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -8407,6 +8407,7 @@
       </ws:createOrUpdateUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateUserAccount"/>
       </con:call>
     </con:operation>
@@ -8979,6 +8980,7 @@
       </ws:createOrUpdateCustomer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomer"/>
       </con:call>
     </con:operation>
@@ -9152,6 +9154,7 @@
       </ws:createOrUpdateAccess>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateAccess"/>
       </con:call>
     </con:operation>
@@ -9626,6 +9629,7 @@
       </ws:createOrUpdateCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerAccount"/>
       </con:call>
     </con:operation>
@@ -9986,6 +9990,7 @@
       </ws:createOrUpdateBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateBillingAccount"/>
       </con:call>
     </con:operation>
@@ -11585,6 +11590,7 @@
       </ws:createOrUpdateRecurringChargeTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateRecurringChargeTemplate"/>
       </con:call>
     </con:operation>
@@ -11617,6 +11623,7 @@
       </ws:createOrUpdateTriggeredEdr>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateTriggeredEdr"/>
       </con:call>
     </con:operation>
@@ -11699,6 +11706,7 @@
       </ws:createOrUpdateOfferTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOfferTemplate"/>
       </con:call>
     </con:operation>
@@ -11758,6 +11766,7 @@
       </ws:createOrUpdateOneShotChargeTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOneShotChargeTemplate"/>
       </con:call>
     </con:operation>
@@ -11833,6 +11842,7 @@
       </ws:createOrUpdateServiceTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateServiceTemplate"/>
       </con:call>
     </con:operation>
@@ -11896,6 +11906,7 @@
       </ws:createOrUpdatePricePlan>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdatePricePlan"/>
       </con:call>
     </con:operation>
@@ -11926,6 +11937,7 @@
       </ws:createOrUpdateCounterTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateCounterTemplate"/>
       </con:call>
     </con:operation>
@@ -11993,6 +12005,7 @@
       </ws:createOrUpdateUsageChargeTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateUsageChargeTemplate"/>
       </con:call>
     </con:operation>
@@ -14985,6 +14998,7 @@
       </ws:removeScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeScriptInstance"/>
       </con:call>
     </con:operation>
@@ -15003,6 +15017,7 @@
       </ws:findScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findScriptInstance"/>
       </con:call>
     </con:operation>
@@ -15055,6 +15070,7 @@
       </ws:createScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createScriptInstance"/>
       </con:call>
     </con:operation>
@@ -15087,6 +15103,7 @@
       </ws:createOrUpdateProvider>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProvider"/>
       </con:call>
     </con:operation>
@@ -15113,6 +15130,7 @@
       </ws:createOrUpdateInvoiceSubCategoryCountry>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -15139,6 +15157,7 @@
       </ws:createOrUpdateInvoiceCategory>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -15729,6 +15748,7 @@
       </ws:createOrUpdateSeller>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateSeller"/>
       </con:call>
     </con:operation>
@@ -15757,6 +15777,7 @@
       </ws:createOrUpdateBillingCycle>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateBillingCycle"/>
       </con:call>
     </con:operation>
@@ -15778,6 +15799,7 @@
       </ws:createOrUpdateCurrency>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCurrency"/>
       </con:call>
     </con:operation>
@@ -15807,6 +15829,7 @@
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -15835,6 +15858,7 @@
       </ws:createOrUpdateUser>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateUser"/>
       </con:call>
     </con:operation>
@@ -15858,6 +15882,7 @@
       </ws:createOrUpdateOccTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateOccTemplate"/>
       </con:call>
     </con:operation>
@@ -15887,6 +15912,7 @@
       </ws:createOrUpdateTax>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateTax"/>
       </con:call>
     </con:operation>
@@ -15908,6 +15934,7 @@
       </ws:createOrUpdateLanguage>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateLanguage"/>
       </con:call>
     </con:operation>
@@ -15959,6 +15986,7 @@
       </ws:createOrUpdateCountry>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCountry"/>
       </con:call>
     </con:operation>
@@ -16001,6 +16029,7 @@
       </ws:createOrUpdateCalendar>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCalendar"/>
       </con:call>
     </con:operation>
@@ -16504,6 +16533,7 @@
       </ws:list>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/list"/>
       </con:call>
     </con:operation>
@@ -16527,6 +16557,7 @@
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/>
       </con:call>
     </con:operation>
@@ -16754,6 +16785,7 @@
       </ws:update>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/>
       </con:call>
     </con:operation>
@@ -16774,6 +16806,7 @@
       </ws:updateTimer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/updateTimer"/>
       </con:call>
     </con:operation>
@@ -16844,6 +16877,7 @@
       </ws:createOrUpdateJobInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateJobInstance"/>
       </con:call>
     </con:operation>
@@ -16864,10 +16898,62 @@
       </ws:createOrUpdateTimer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateTimer"/>
       </con:call>
     </con:operation>
   </con:interface>
+  <con:testSuite id="2ad11e44-363d-422c-b090-9bbf91832b55" name="Setup Authorization">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="9169215c-dde3-4f5b-8344-f4512b109a69" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
+      <con:settings/>
+      <con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+import com.eviware.soapui.support.types.*;
+
+StringToStringMap headers = new StringToStringMap();
+StringToStringMap headersForSuper = new StringToStringMap();
+
+String supeUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
+ log.info("userPass="+supeUserPass);
+ 
+String userPass = testCase.testSuite.project.getPropertyValue("meveoUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoPassword");
+ log.info("userPass="+userPass);
+headers.put("Authorization","Basic "+userPass.getBytes().encodeBase64());
+headersForSuper.put("Authorization","Basic "+supeUserPass.getBytes().encodeBase64());
+for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
+	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
+	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
+	    for( testStep in testCaseItem.getTestStepList() ) {
+	    	
+	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep )){
+	          	continue;
+	          }
+	          
+	    		testStep.getTestRequest().setPreemptive(true);
+	    	
+
+			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
+				
+		    	} else if (testStep.getName().contains("AUTHORIZATION_ADMIN")) {
+		    		testStep.getTestRequest().setRequestHeaders(headers);
+		    		
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") 
+		    	    || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")){
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
+		    	
+		    	} else if(!testStep.getName().contains("AUTHORIZATION_MANUAL")) {
+				testStep.getTestRequest().setRequestHeaders(headers);
+		    	}
+	    }
+	}
+}</con:setupScript>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+    <con:setupScript/>
+  </con:testSuite>
   <con:testSuite id="0c2315ed-45da-48e2-a86a-8f9083f8a792" name="custom mediation">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -16880,7 +16966,7 @@
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_CreateEdr" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -16974,6 +17060,7 @@ public class Mediation_CreateEdr extends org.meveo.service.script.Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -16990,7 +17077,7 @@ public class Mediation_CreateEdr extends org.meveo.service.script.Script {
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_DuplicatedCheck" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17067,6 +17154,7 @@ public class Mediation_DuplicatedCheck extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17083,7 +17171,7 @@ public class Mediation_DuplicatedCheck extends Script {
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_RoutingSub" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17131,6 +17219,7 @@ public class Mediation_RoutingSub extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17147,7 +17236,7 @@ public class Mediation_RoutingSub extends Script {
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17234,6 +17323,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17272,7 +17362,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_TopTen_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17392,6 +17482,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17408,7 +17499,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_TopTen_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17503,6 +17594,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17523,7 +17615,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createNotification</con:operation>
           <con:request name="Create notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint>
@@ -17589,7 +17681,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createCustomFieldTemplate</con:operation>
           <con:request name="create TOPTEN list CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -17612,6 +17704,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -17632,7 +17725,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17681,7 +17774,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service VOICE" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17723,7 +17816,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage TOPTEN" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17773,7 +17866,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createRecurringChargeTemplate</con:operation>
           <con:request name="Create recurring TOPTEN" id="e7e822cf-28a8-4719-add7-b603e34b3a5c">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17831,7 +17924,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service TOPTEN" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17878,7 +17971,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17921,7 +18014,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan recurring" id="db1f9f9c-224f-4da1-9535-9336110086aa">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -17966,7 +18059,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -18011,7 +18104,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage TOPTEN" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -18065,7 +18158,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>customerHierarchyUpdate</con:operation>
           <con:request name="creation SUB1" id="e1b0feec-6dd5-4190-bacc-23528f07519b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -18209,7 +18302,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -18237,7 +18330,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -18417,7 +18510,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createScriptInstance</con:operation>
           <con:request name="CreateFileFromContent" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -18491,6 +18584,7 @@ public class CreateFileFromContent extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -18511,7 +18605,7 @@ public class CreateFileFromContent extends Script {
           <con:operation>createNotification</con:operation>
           <con:request name="Create notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint>
@@ -18614,7 +18708,7 @@ public class CreateFileFromContent extends Script {
           <con:operation>createScriptInstance</con:operation>
           <con:request name="update Mediation_TopTen_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -18714,6 +18808,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -18734,7 +18829,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>create</con:operation>
           <con:request name="Create parsing job" id="0fffd33c-3f17-4027-9074-17dbbd4bc0d1">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint>
@@ -18820,7 +18915,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createCustomFieldTemplate</con:operation>
           <con:request name="create TOPTEN list CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -18843,6 +18938,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -18863,7 +18959,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -18912,7 +19008,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service VOICE" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -18954,7 +19050,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage TOPTEN" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19004,7 +19100,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createRecurringChargeTemplate</con:operation>
           <con:request name="Create recurring TOPTEN" id="e7e822cf-28a8-4719-add7-b603e34b3a5c">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19062,7 +19158,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service TOPTEN" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19109,7 +19205,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19152,7 +19248,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan recurring" id="db1f9f9c-224f-4da1-9535-9336110086aa">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19197,7 +19293,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19242,7 +19338,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage TOPTEN" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -19296,7 +19392,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>customerHierarchyUpdate</con:operation>
           <con:request name="creation SUB1" id="e1b0feec-6dd5-4190-bacc-23528f07519b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -19440,7 +19536,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -19468,7 +19564,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -19517,7 +19613,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>execute</con:operation>
           <con:request name="execute mediation job" id="8a305f24-bf57-4e5e-aeaf-080ba62f859a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint>
@@ -19554,7 +19650,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>listByXmlInput</con:operation>
           <con:request name="Check EDRs" id="c4ba7250-ba5a-44b2-b420-061434d5b232">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/FilteredListWs</con:endpoint>
@@ -19665,7 +19761,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
@@ -19788,6 +19884,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -19804,7 +19901,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_Zoning_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -19906,6 +20003,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -19926,7 +20024,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createNotification</con:operation>
           <con:request name="Create notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint>
@@ -19999,7 +20097,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createCustomFieldTemplate</con:operation>
           <con:request name="create ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -20028,6 +20126,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -20048,7 +20147,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_LOCAL" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20106,7 +20205,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_INTERNATIONAL" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20164,7 +20263,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_ROAMING" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20220,7 +20319,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service VOICE" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20275,7 +20374,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20323,7 +20422,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE LOCAL" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20368,7 +20467,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE INTERNATIONAL" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20413,7 +20512,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE ROAMING" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -20467,7 +20566,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>customerHierarchyUpdate</con:operation>
           <con:request name="creation SUB1" id="e1b0feec-6dd5-4190-bacc-23528f07519b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -20592,7 +20691,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access1" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -20620,7 +20719,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -20637,7 +20736,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access2" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -20664,7 +20763,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -20866,7 +20965,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>execute</con:operation>
           <con:request name="usage rating job" id="8a305f24-bf57-4e5e-aeaf-080ba62f859a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint>
@@ -20935,7 +21034,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
@@ -21043,6 +21142,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -21059,7 +21159,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
           <con:operation>createScriptInstance</con:operation>
           <con:request name="create Mediation_Zoning_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -21154,6 +21254,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -21174,7 +21275,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createNotification</con:operation>
           <con:request name="Create notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint>
@@ -21240,7 +21341,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createCustomFieldTemplate</con:operation>
           <con:request name="create ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
@@ -21262,6 +21363,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
             <con:credentials>
+              <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -21282,7 +21384,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_LOCAL" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21333,7 +21435,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_INTERNATIONAL" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21384,7 +21486,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create usage VOICE_ROAMING" id="cc679c7c-ccac-4b5b-9d10-0aeddfebfc2d">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21433,7 +21535,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createServiceTemplate</con:operation>
           <con:request name="Create service VOICE" id="cc2b2c13-1da0-4f94-ba22-741415a28a16">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21481,7 +21583,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createOfferTemplate</con:operation>
           <con:request name="Create offer" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21522,7 +21624,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE LOCAL" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21567,7 +21669,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE INTERNATIONAL" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21612,7 +21714,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createUsageChargeTemplate</con:operation>
           <con:request name="Create priceplan usage VOICE ROAMING" id="e6b8c4c0-0904-4f1e-a2af-d0c61a4f2965">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
@@ -21666,7 +21768,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>customerHierarchyUpdate</con:operation>
           <con:request name="creation SUB1" id="e1b0feec-6dd5-4190-bacc-23528f07519b">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -21791,7 +21893,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access1" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -21819,7 +21921,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -21836,7 +21938,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>createAccess</con:operation>
           <con:request name="Create access2" id="5c5e97f3-c8c3-4e37-9316-096c50a74732">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint>
@@ -21863,7 +21965,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
               <con:password>meveo.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>false</con:preemptive>
+              <con:preemptive>true</con:preemptive>
               <con:authType>Global HTTP Settings</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -22065,7 +22167,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
           <con:operation>execute</con:operation>
           <con:request name="usage rating job" id="8a305f24-bf57-4e5e-aeaf-080ba62f859a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint>
@@ -22115,14 +22217,23 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
   <con:properties>
     <con:property>
       <con:name>meveoEndpoint</con:name>
-      <con:value>localhost:8080/meveo</con:value>
+      <con:value>integration.i.opencellsoft.com/meveo</con:value>
     </con:property>
     <con:property>
       <con:name>Authorization</con:name>
       <con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value>
     </con:property>
+    <con:property>
+      <con:name>meveoUsername</con:name>
+      <con:value>opencell.admin</con:value>
+    </con:property>
+    <con:property>
+      <con:name>meveoPassword</con:name>
+      <con:value>opencell.admin</con:value>
+    </con:property>
   </con:properties>
   <con:wssContainer/>
   <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
   <con:sensitiveInformation/>
 </con:soapui-project>
