@@ -422,6 +422,398 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="85818023-0463-4a79-b638-316a7a4ac033" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint>
+      <con:endpoint>http://carbuncle:8080/meveo/SettingsWs</con:endpoint>
+      <con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="4b704e52-d6cd-4937-b6c2-965b123fca8d" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ddc24a0d-41f9-4d4c-a5bd-0b7535a08169" isOneWay="false" action="" name="createCalendar" bindingOperationName="createCalendar" type="Request-Response" outputName="createCalendarResponse" inputName="createCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3c6a04c0-2545-4e3b-bd29-15e43cfe28a7" isOneWay="false" action="" name="createCountry" bindingOperationName="createCountry" type="Request-Response" outputName="createCountryResponse" inputName="createCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="aebecafc-20c4-4061-add8-44dd6e4bf310" isOneWay="false" action="" name="createCurrency" bindingOperationName="createCurrency" type="Request-Response" outputName="createCurrencyResponse" inputName="createCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6f0e41bd-d188-451e-aebc-165d4c7a5e96" isOneWay="false" action="" name="createCustomFieldTemplate" bindingOperationName="createCustomFieldTemplate" type="Request-Response" outputName="createCustomFieldTemplateResponse" inputName="createCustomFieldTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c5c197fc-5b98-4520-8651-ddbbd15ddeb4" isOneWay="false" action="" name="createDescriptions" bindingOperationName="createDescriptions" type="Request-Response" outputName="createDescriptionsResponse" inputName="createDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7210b1b0-9fb8-4918-af55-ee667a93f023" isOneWay="false" action="" name="createInvoiceCategory" bindingOperationName="createInvoiceCategory" type="Request-Response" outputName="createInvoiceCategoryResponse" inputName="createInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f1055204-394a-44c2-9b7b-23839ea55a0d" isOneWay="false" action="" name="createInvoiceSubCategory" bindingOperationName="createInvoiceSubCategory" type="Request-Response" outputName="createInvoiceSubCategoryResponse" inputName="createInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b074d6e9-9b27-4a3c-985b-dd1e128df6a4" isOneWay="false" action="" name="createInvoiceSubCategoryCountry" bindingOperationName="createInvoiceSubCategoryCountry" type="Request-Response" outputName="createInvoiceSubCategoryCountryResponse" inputName="createInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5444df03-d7bc-4174-945e-96abadfd1d4c" isOneWay="false" action="" name="createLanguage" bindingOperationName="createLanguage" type="Request-Response" outputName="createLanguageResponse" inputName="createLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="1dcdc7ab-1e51-4988-86fe-79c64e1ceab8" isOneWay="false" action="" name="createOccTemplate" bindingOperationName="createOccTemplate" type="Request-Response" outputName="createOccTemplateResponse" inputName="createOccTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bc0b1027-db7a-4f6d-9f0a-c577a8e89838" isOneWay="false" action="" name="createOrUpdateBillingCycle" bindingOperationName="createOrUpdateBillingCycle" type="Request-Response" outputName="createOrUpdateBillingCycleResponse" inputName="createOrUpdateBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d7bed7db-4e7a-4301-ac36-c2337369ee9f" isOneWay="false" action="" name="createOrUpdateCalendar" bindingOperationName="createOrUpdateCalendar" type="Request-Response" outputName="createOrUpdateCalendarResponse" inputName="createOrUpdateCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="170e8cd3-d140-4124-bd08-cb51e760bba9" isOneWay="false" action="" name="createOrUpdateCountry" bindingOperationName="createOrUpdateCountry" type="Request-Response" outputName="createOrUpdateCountryResponse" inputName="createOrUpdateCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5df04eed-7771-4f5e-8154-3b6d9f395817" isOneWay="false" action="" name="createOrUpdateCurrency" bindingOperationName="createOrUpdateCurrency" type="Request-Response" outputName="createOrUpdateCurrencyResponse" inputName="createOrUpdateCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5ab52de2-f171-4cf4-852f-92e340454e04" isOneWay="false" action="" name="createOrUpdateCustomFieldTemplate" bindingOperationName="createOrUpdateCustomFieldTemplate" type="Request-Response" outputName="createOrUpdateCustomFieldTemplateResponse" inputName="createOrUpdateCustomFieldTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a22b081e-2e42-41df-ab27-ff9f67815f4b" isOneWay="false" action="" name="createOrUpdateDescriptions" bindingOperationName="createOrUpdateDescriptions" type="Request-Response" outputName="createOrUpdateDescriptionsResponse" inputName="createOrUpdateDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6c2d051f-d8d3-4154-9cba-4f2265a0c192" isOneWay="false" action="" name="createOrUpdateInvoiceCategory" bindingOperationName="createOrUpdateInvoiceCategory" type="Request-Response" outputName="createOrUpdateInvoiceCategoryResponse" inputName="createOrUpdateInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3d51b920-0240-4fa4-8b61-b6c72edd1e6e" isOneWay="false" action="" name="createOrUpdateInvoiceSubCategory" bindingOperationName="createOrUpdateInvoiceSubCategory" type="Request-Response" outputName="createOrUpdateInvoiceSubCategoryResponse" inputName="createOrUpdateInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="84eceb0b-25c5-4d41-b6ce-6c234a113271" isOneWay="false" action="" name="createOrUpdateInvoiceSubCategoryCountry" bindingOperationName="createOrUpdateInvoiceSubCategoryCountry" type="Request-Response" outputName="createOrUpdateInvoiceSubCategoryCountryResponse" inputName="createOrUpdateInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0ef23e00-cde6-45a4-a6d1-5b5d9603f8c5" isOneWay="false" action="" name="createOrUpdateLanguage" bindingOperationName="createOrUpdateLanguage" type="Request-Response" outputName="createOrUpdateLanguageResponse" inputName="createOrUpdateLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="09f1656c-6388-4b58-b26d-4877efcdbf84" isOneWay="false" action="" name="createOrUpdateOccTemplate" bindingOperationName="createOrUpdateOccTemplate" type="Request-Response" outputName="createOrUpdateOccTemplateResponse" inputName="createOrUpdateOccTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="24f97e2c-4a1d-4cfa-805f-0a88fc4eb9fb" isOneWay="false" action="" name="createOrUpdateProvider" bindingOperationName="createOrUpdateProvider" type="Request-Response" outputName="createOrUpdateProviderResponse" inputName="createOrUpdateProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f93507e9-0e1c-446b-8aaf-22c44a881170" isOneWay="false" action="" name="createOrUpdateRole" bindingOperationName="createOrUpdateRole" type="Request-Response" outputName="createOrUpdateRoleResponse" inputName="createOrUpdateRole" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0522ec79-d70e-494c-90a5-696531f48076" isOneWay="false" action="" name="createOrUpdateSeller" bindingOperationName="createOrUpdateSeller" type="Request-Response" outputName="createOrUpdateSellerResponse" inputName="createOrUpdateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5dc476bb-74bb-46a6-abe8-9e3d6c58ee61" isOneWay="false" action="" name="createOrUpdateTax" bindingOperationName="createOrUpdateTax" type="Request-Response" outputName="createOrUpdateTaxResponse" inputName="createOrUpdateTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="182afe02-b580-454e-ad34-7355e1c09f36" isOneWay="false" action="" name="createOrUpdateUser" bindingOperationName="createOrUpdateUser" type="Request-Response" outputName="createOrUpdateUserResponse" inputName="createOrUpdateUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="80aec75e-1bf1-4a96-91b7-72a740adfa3e" isOneWay="false" action="" name="createProvider" bindingOperationName="createProvider" type="Request-Response" outputName="createProviderResponse" inputName="createProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="55b785e3-a001-4fac-b456-e30bbe1a63c3" isOneWay="false" action="" name="createRole" bindingOperationName="createRole" type="Request-Response" outputName="createRoleResponse" inputName="createRole" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6f506f0c-beb6-4306-a85e-90d561244264" isOneWay="false" action="" name="createSeller" bindingOperationName="createSeller" type="Request-Response" outputName="createSellerResponse" inputName="createSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="21b04a4b-e2aa-4804-9a0d-efc5fd901785" isOneWay="false" action="" name="createTax" bindingOperationName="createTax" type="Request-Response" outputName="createTaxResponse" inputName="createTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="443b5b5d-2788-4646-be1c-585191ebc950" isOneWay="false" action="" name="createUser" bindingOperationName="createUser" type="Request-Response" outputName="createUserResponse" inputName="createUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bcc68304-85ce-44c2-a328-bcfbbc85bb78" isOneWay="false" action="" name="findBillingCycle" bindingOperationName="findBillingCycle" type="Request-Response" outputName="findBillingCycleResponse" inputName="findBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e771acb7-0daf-462c-b7ee-2b4776676620" isOneWay="false" action="" name="findCalendar" bindingOperationName="findCalendar" type="Request-Response" outputName="findCalendarResponse" inputName="findCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bc710104-bf37-4012-b40c-e9598448fb1b" isOneWay="false" action="" name="findCountry" bindingOperationName="findCountry" type="Request-Response" outputName="findCountryResponse" inputName="findCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="18b8e535-910a-4dce-aa1f-7917952600c0" isOneWay="false" action="" name="findCurrency" bindingOperationName="findCurrency" type="Request-Response" outputName="findCurrencyResponse" inputName="findCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="95df063c-661b-49e1-811e-91c171675adc" isOneWay="false" action="" name="findCustomerAccountConfiguration" bindingOperationName="findCustomerAccountConfiguration" type="Request-Response" outputName="findCustomerAccountConfigurationResponse" inputName="findCustomerAccountConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8101c9b7-ad8d-469b-b029-6c251292fef0" isOneWay="false" action="" name="findCustomerConfiguration" bindingOperationName="findCustomerConfiguration" type="Request-Response" outputName="findCustomerConfigurationResponse" inputName="findCustomerConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d2c581d3-e521-4ec6-98ae-8f5ed7cd1f9e" isOneWay="false" action="" name="findCustomFieldTemplate" bindingOperationName="findCustomFieldTemplate" type="Request-Response" outputName="findCustomFieldTemplateResponse" inputName="findCustomFieldTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0ba4c706-5401-4bca-ba0a-ac66c2deb325" isOneWay="false" action="" name="findDescriptions" bindingOperationName="findDescriptions" type="Request-Response" outputName="findDescriptionsResponse" inputName="findDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6d173269-a127-4e0f-a1d2-d55ee501e5d6" isOneWay="false" action="" name="findInvoiceCategory" bindingOperationName="findInvoiceCategory" type="Request-Response" outputName="findInvoiceCategoryResponse" inputName="findInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e7c93c27-6a86-4997-97e5-1c69b25f2af9" isOneWay="false" action="" name="findInvoiceSubCategory" bindingOperationName="findInvoiceSubCategory" type="Request-Response" outputName="findInvoiceSubCategoryResponse" inputName="findInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="1b681e2c-7f7e-4b29-a4fb-46b17ef54f1b" isOneWay="false" action="" name="findInvoiceSubCategoryCountry" bindingOperationName="findInvoiceSubCategoryCountry" type="Request-Response" outputName="findInvoiceSubCategoryCountryResponse" inputName="findInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="fbfb9155-d41f-4302-83df-9d244d7ba1f9" isOneWay="false" action="" name="findInvoicingConfiguration" bindingOperationName="findInvoicingConfiguration" type="Request-Response" outputName="findInvoicingConfigurationResponse" inputName="findInvoicingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="01348e17-fd97-4532-9d6d-b8984c297756" isOneWay="false" action="" name="findLanguage" bindingOperationName="findLanguage" type="Request-Response" outputName="findLanguageResponse" inputName="findLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4f191812-0687-44d1-a166-378feb83c55a" isOneWay="false" action="" name="findOccTemplate" bindingOperationName="findOccTemplate" type="Request-Response" outputName="findOccTemplateResponse" inputName="findOccTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b38b0ebe-24a9-4716-9879-0699badaf5a2" isOneWay="false" action="" name="findProvider" bindingOperationName="findProvider" type="Request-Response" outputName="findProviderResponse" inputName="findProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0e1fa62d-203e-44bb-9f96-c9fa44daa1c5" isOneWay="false" action="" name="findRole" bindingOperationName="findRole" type="Request-Response" outputName="findRoleResponse" inputName="findRole" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="750bfc0d-3b79-49d2-9428-87cfced021a4" isOneWay="false" action="" name="findSeller" bindingOperationName="findSeller" type="Request-Response" outputName="findSellerResponse" inputName="findSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e4485114-4e82-408c-9066-e11f4428b6d1" isOneWay="false" action="" name="findTax" bindingOperationName="findTax" type="Request-Response" outputName="findTaxResponse" inputName="findTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f0bfd5c3-f1b1-4a4a-9601-2d2a5eba109c" isOneWay="false" action="" name="findTradingConfiguration" bindingOperationName="findTradingConfiguration" type="Request-Response" outputName="findTradingConfigurationResponse" inputName="findTradingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6075922d-136f-42ae-bc44-b889a74932ed" isOneWay="false" action="" name="findUser" bindingOperationName="findUser" type="Request-Response" outputName="findUserResponse" inputName="findUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e3d8291d-7089-4299-ac0f-bf596e35238e" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="586066c1-fe16-46ac-806d-93e737ab4253" isOneWay="false" action="" name="listDescriptions" bindingOperationName="listDescriptions" type="Request-Response" outputName="listDescriptionsResponse" inputName="listDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8608a9e8-d271-4700-9b1d-7b7fc9f50eb4" isOneWay="false" action="" name="listPermissions" bindingOperationName="listPermissions" type="Request-Response" outputName="listPermissionsResponse" inputName="listPermissions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d6eba9e1-55ea-418a-bfc9-05b3c5b98665" isOneWay="false" action="" name="listSeller" bindingOperationName="listSeller" type="Request-Response" outputName="listSellerResponse" inputName="listSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="547a4d67-fe89-4e04-bd5b-a1f01f9f0b77" isOneWay="false" action="" name="listSellerCodes" bindingOperationName="listSellerCodes" type="Request-Response" outputName="listSellerCodesResponse" inputName="listSellerCodes" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="2fca403b-4168-4ac0-847d-5fde38d617f8" isOneWay="false" action="" name="listTaxes" bindingOperationName="listTaxes" type="Request-Response" outputName="listTaxesResponse" inputName="listTaxes" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="61bdbc75-389a-451a-a03d-a54ac5284066" isOneWay="false" action="" name="removeBillingCycle" bindingOperationName="removeBillingCycle" type="Request-Response" outputName="removeBillingCycleResponse" inputName="removeBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="9538f1fd-0118-4a38-964f-4c4b99850cfb" isOneWay="false" action="" name="removeCalendar" bindingOperationName="removeCalendar" type="Request-Response" outputName="removeCalendarResponse" inputName="removeCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a32812f5-3edf-43e3-b66c-d319d096dab1" isOneWay="false" action="" name="removeCountry" bindingOperationName="removeCountry" type="Request-Response" outputName="removeCountryResponse" inputName="removeCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="02daf1f9-8a9a-4faa-be23-48d5845a78a4" isOneWay="false" action="" name="removeCurrency" bindingOperationName="removeCurrency" type="Request-Response" outputName="removeCurrencyResponse" inputName="removeCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5336f045-bf44-42d2-b54f-8757e061fd3e" isOneWay="false" action="" name="removeCustomFieldTemplate" bindingOperationName="removeCustomFieldTemplate" type="Request-Response" outputName="removeCustomFieldTemplateResponse" inputName="removeCustomFieldTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ef86edb7-2293-4a4e-8286-970c4c056566" isOneWay="false" action="" name="removeDescriptions" bindingOperationName="removeDescriptions" type="Request-Response" outputName="removeDescriptionsResponse" inputName="removeDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bdc38560-9e77-4b55-a160-3b324deb0265" isOneWay="false" action="" name="removeInvoiceCategory" bindingOperationName="removeInvoiceCategory" type="Request-Response" outputName="removeInvoiceCategoryResponse" inputName="removeInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7546acaf-8f1c-4b00-99b3-1f3bb4afe493" isOneWay="false" action="" name="removeInvoiceSubCategory" bindingOperationName="removeInvoiceSubCategory" type="Request-Response" outputName="removeInvoiceSubCategoryResponse" inputName="removeInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="02d64982-f749-4c7d-be3f-cf0930d60301" isOneWay="false" action="" name="removeInvoiceSubCategoryCountry" bindingOperationName="removeInvoiceSubCategoryCountry" type="Request-Response" outputName="removeInvoiceSubCategoryCountryResponse" inputName="removeInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ec5c792a-3b09-4087-8f5e-8b1fe6e90db4" isOneWay="false" action="" name="removeLanguage" bindingOperationName="removeLanguage" type="Request-Response" outputName="removeLanguageResponse" inputName="removeLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ea89d108-059d-4f57-979e-58958c4527b2" isOneWay="false" action="" name="removeOccTemplate" bindingOperationName="removeOccTemplate" type="Request-Response" outputName="removeOccTemplateResponse" inputName="removeOccTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7bc2a1ac-abe2-4e98-8634-2c8db46604dd" isOneWay="false" action="" name="removeRole" bindingOperationName="removeRole" type="Request-Response" outputName="removeRoleResponse" inputName="removeRole" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="63a49474-0af3-487b-962d-28ed439aa8f3" isOneWay="false" action="" name="removeSeller" bindingOperationName="removeSeller" type="Request-Response" outputName="removeSellerResponse" inputName="removeSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a2fe2d61-60d4-4437-8da3-61784d189593" isOneWay="false" action="" name="removeTax" bindingOperationName="removeTax" type="Request-Response" outputName="removeTaxResponse" inputName="removeTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3e4a5765-3930-48ab-bf82-96e98df4f036" isOneWay="false" action="" name="removeUser" bindingOperationName="removeUser" type="Request-Response" outputName="removeUserResponse" inputName="removeUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d4fe3847-2e55-44c6-8d82-5a3f6409b9a6" isOneWay="false" action="" name="updateBillingCycle" bindingOperationName="updateBillingCycle" type="Request-Response" outputName="updateBillingCycleResponse" inputName="updateBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="940fe4bd-2d24-402b-b26b-f3074c45aa60" isOneWay="false" action="" name="updateCalendar" bindingOperationName="updateCalendar" type="Request-Response" outputName="updateCalendarResponse" inputName="updateCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8529233d-c2fb-43c1-a144-0d77f7256022" isOneWay="false" action="" name="updateCountry" bindingOperationName="updateCountry" type="Request-Response" outputName="updateCountryResponse" inputName="updateCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5615c35f-1303-4035-8ea3-ae80cb60ca37" isOneWay="false" action="" name="updateCurrency" bindingOperationName="updateCurrency" type="Request-Response" outputName="updateCurrencyResponse" inputName="updateCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="383f1fb6-f66a-4bd8-a8cd-12e09fd0b8f1" isOneWay="false" action="" name="updateCustomFieldTemplate" bindingOperationName="updateCustomFieldTemplate" type="Request-Response" outputName="updateCustomFieldTemplateResponse" inputName="updateCustomFieldTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="83d916db-3366-44d4-985d-9989e9a3068c" isOneWay="false" action="" name="updateDescriptions" bindingOperationName="updateDescriptions" type="Request-Response" outputName="updateDescriptionsResponse" inputName="updateDescriptions" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b8cea7a4-b80b-443e-8517-2ad30441a9cc" isOneWay="false" action="" name="updateInvoiceCategory" bindingOperationName="updateInvoiceCategory" type="Request-Response" outputName="updateInvoiceCategoryResponse" inputName="updateInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a6e0e902-d95f-4ab0-a9c1-75f95bcc462d" isOneWay="false" action="" name="updateInvoiceSubCategory" bindingOperationName="updateInvoiceSubCategory" type="Request-Response" outputName="updateInvoiceSubCategoryResponse" inputName="updateInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="033f634d-f470-4e94-bd66-c626689eb5de" isOneWay="false" action="" name="updateInvoiceSubCategoryCountry" bindingOperationName="updateInvoiceSubCategoryCountry" type="Request-Response" outputName="updateInvoiceSubCategoryCountryResponse" inputName="updateInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="fa64a480-0550-4ab4-a3b7-d3c5a4341240" isOneWay="false" action="" name="updateLanguage" bindingOperationName="updateLanguage" type="Request-Response" outputName="updateLanguageResponse" inputName="updateLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6c0fad37-f0a2-487d-8d68-bd435963046e" isOneWay="false" action="" name="updateOccTemplate" bindingOperationName="updateOccTemplate" type="Request-Response" outputName="updateOccTemplateResponse" inputName="updateOccTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bcaef5b3-b491-411b-8008-5c84dc8d3780" isOneWay="false" action="" name="updateProvider" bindingOperationName="updateProvider" type="Request-Response" outputName="updateProviderResponse" inputName="updateProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7a39890c-8b87-42fe-a3ac-d2be704983a3" isOneWay="false" action="" name="updateRole" bindingOperationName="updateRole" type="Request-Response" outputName="updateRoleResponse" inputName="updateRole" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b97d16ed-c51f-42b7-ae3c-f83e785111f8" isOneWay="false" action="" name="updateSeller" bindingOperationName="updateSeller" type="Request-Response" outputName="updateSellerResponse" inputName="updateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c4606bff-99fc-4971-9bff-a15d10927324" isOneWay="false" action="" name="updateTax" bindingOperationName="updateTax" type="Request-Response" outputName="updateTaxResponse" inputName="updateTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ff0a1e68-95c3-40cb-bfbd-6aac94d0a788" isOneWay="false" action="" name="updateUser" bindingOperationName="updateUser" type="Request-Response" outputName="updateUserResponse" inputName="updateUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d45c5dd0-368a-4988-b91e-246e7546022a" isOneWay="false" action="" name="updateTerminationReason" bindingOperationName="updateTerminationReason" type="Request-Response" outputName="updateTerminationReasonResponse" inputName="updateTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="952b4199-1b1e-4f48-8742-ee625f960469" isOneWay="false" action="" name="createOrUpdateTerminationReason" bindingOperationName="createOrUpdateTerminationReason" type="Request-Response" outputName="createOrUpdateTerminationReasonResponse" inputName="createOrUpdateTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f840d1ab-dd91-4ff9-8f41-e56cfc5551bd" isOneWay="false" action="" name="findTerminationReason" bindingOperationName="findTerminationReason" type="Request-Response" outputName="findTerminationReasonResponse" inputName="findTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0fe373ab-2239-49ed-a469-176fe9ea4d06" isOneWay="false" action="" name="removeTerminationReason" bindingOperationName="removeTerminationReason" type="Request-Response" outputName="removeTerminationReasonResponse" inputName="removeTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="03d807c4-3874-4bbc-a087-4d0498298f23" isOneWay="false" action="" name="createTerminationReason" bindingOperationName="createTerminationReason" type="Request-Response" outputName="createTerminationReasonResponse" inputName="createTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="21482605-bf92-4a77-9a8d-631d39e772f4" isOneWay="false" action="" name="listTerminationReason" bindingOperationName="listTerminationReason" type="Request-Response" outputName="listTerminationReasonResponse" inputName="listTerminationReason" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e13acb6a-0690-4602-8db0-b03238a778d5" isOneWay="false" action="" name="listCalendars" bindingOperationName="listCalendars" type="Request-Response" outputName="listCalendarsResponse" inputName="listCalendars" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5f041485-b329-4964-8050-96df58a024b0" isOneWay="false" action="" name="createInvoiceType" bindingOperationName="createInvoiceType" type="Request-Response" outputName="createInvoiceTypeResponse" inputName="createInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0a253cad-4490-4b97-bc79-8e0dcaadc410" isOneWay="false" action="" name="removeInvoiceType" bindingOperationName="removeInvoiceType" type="Request-Response" outputName="removeInvoiceTypeResponse" inputName="removeInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="cb73dc78-c252-4b98-aad3-5642c8bd400b" isOneWay="false" action="" name="createOrUpdateInvoiceType" bindingOperationName="createOrUpdateInvoiceType" type="Request-Response" outputName="createOrUpdateInvoiceTypeResponse" inputName="createOrUpdateInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6a073878-3aad-46d2-b817-e72bb7ce88c8" isOneWay="false" action="" name="findInvoiceType" bindingOperationName="findInvoiceType" type="Request-Response" outputName="findInvoiceTypeResponse" inputName="findInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8f77aab8-c8cb-4f6a-bda4-b9198f351098" isOneWay="false" action="" name="listInvoiceTypes" bindingOperationName="listInvoiceTypes" type="Request-Response" outputName="listInvoiceTypesResponse" inputName="listInvoiceTypes" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6f350553-c85d-424b-b0b5-00b42cd54c08" isOneWay="false" action="" name="updateInvoiceType" bindingOperationName="updateInvoiceType" type="Request-Response" outputName="updateInvoiceTypeResponse" inputName="updateInvoiceType" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4042647e-2c96-4c17-83c0-ed65c08fa49b" isOneWay="false" action="" name="findProviderCF" bindingOperationName="findProviderCF" type="Request-Response" outputName="findProviderCFResponse" inputName="findProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="dd01e09d-d53a-404c-b715-99c975bcafe4" isOneWay="false" action="" name="updateProviderCF" bindingOperationName="updateProviderCF" type="Request-Response" outputName="updateProviderCFResponse" inputName="updateProviderCF" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6063139d-3b7f-4f1b-ab8d-e9fcf962ffa2" isOneWay="false" action="" name="findRole4_2" bindingOperationName="findRole4_2" type="Request-Response" outputName="findRole4_2Response" inputName="findRole4_2" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="af685b8e-0b63-493e-b084-511278a3d073" isOneWay="false" action="" name="createOrUpdateProviderContact" bindingOperationName="createOrUpdateProviderContact" type="Request-Response" outputName="createOrUpdateProviderContactResponse" inputName="createOrUpdateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="89916434-cc72-49e8-9607-14f2deb8c249" isOneWay="false" action="" name="updateProviderContact" bindingOperationName="updateProviderContact" type="Request-Response" outputName="updateProviderContactResponse" inputName="updateProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="35763d4d-7d4e-4260-85e2-89057d17c29d" isOneWay="false" action="" name="listProviderContacts" bindingOperationName="listProviderContacts" type="Request-Response" outputName="listProviderContactsResponse" inputName="listProviderContacts" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f40dd9e8-4e65-49d4-95c9-b53d248d6086" isOneWay="false" action="" name="createProviderContact" bindingOperationName="createProviderContact" type="Request-Response" outputName="createProviderContactResponse" inputName="createProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="22c401f2-6082-464a-98b1-e24f53a39f71" isOneWay="false" action="" name="removeProviderContact" bindingOperationName="removeProviderContact" type="Request-Response" outputName="removeProviderContactResponse" inputName="removeProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e7d3d0d2-3d22-457c-8b46-7a98713b383a" isOneWay="false" action="" name="findProviderContact" bindingOperationName="findProviderContact" type="Request-Response" outputName="findProviderContactResponse" inputName="findProviderContact" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="28731333-e92f-4378-9ae2-c5110b328bf1" isOneWay="false" action="" name="findMeveoInstance" bindingOperationName="findMeveoInstance" type="Request-Response" outputName="findMeveoInstanceResponse" inputName="findMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="45bfb4e2-7653-4b6e-9e3b-f47551b190d0" isOneWay="false" action="" name="removeEmailTemplate" bindingOperationName="removeEmailTemplate" type="Request-Response" outputName="removeEmailTemplateResponse" inputName="removeEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ff0ae910-501b-4d67-bea2-d02ada6f1dcf" isOneWay="false" action="" name="createOrUpdateMeveoInstance" bindingOperationName="createOrUpdateMeveoInstance" type="Request-Response" outputName="createOrUpdateMeveoInstanceResponse" inputName="createOrUpdateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="56d24968-2813-40ba-97ed-bd7612a5a7c1" isOneWay="false" action="" name="listEmailTemplates" bindingOperationName="listEmailTemplates" type="Request-Response" outputName="listEmailTemplatesResponse" inputName="listEmailTemplates" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="824f11af-3391-41e7-a1a5-f12e5eee7e64" isOneWay="false" action="" name="createEmailTemplate" bindingOperationName="createEmailTemplate" type="Request-Response" outputName="createEmailTemplateResponse" inputName="createEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="853746d6-353c-440b-9321-4a24d50c816c" isOneWay="false" action="" name="listMeveoInstances" bindingOperationName="listMeveoInstances" type="Request-Response" outputName="listMeveoInstancesResponse" inputName="listMeveoInstances" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8cba3a9b-f78c-43de-b129-d3af637ebcc6" isOneWay="false" action="" name="updateEmailTemplate" bindingOperationName="updateEmailTemplate" type="Request-Response" outputName="updateEmailTemplateResponse" inputName="updateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="06405b94-916e-43a3-b9ea-aa1c5569b784" isOneWay="false" action="" name="findEmailTemplate" bindingOperationName="findEmailTemplate" type="Request-Response" outputName="findEmailTemplateResponse" inputName="findEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="961c7156-9995-412a-8245-08c6ab7fedd9" isOneWay="false" action="" name="updateMeveoInstance" bindingOperationName="updateMeveoInstance" type="Request-Response" outputName="updateMeveoInstanceResponse" inputName="updateMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="28cbad8c-9e22-42db-9ffa-dd07d4797d5e" isOneWay="false" action="" name="createMeveoInstance" bindingOperationName="createMeveoInstance" type="Request-Response" outputName="createMeveoInstanceResponse" inputName="createMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f3b63934-604a-45ed-a276-98529d65e5a3" isOneWay="false" action="" name="removeMeveoInstance" bindingOperationName="removeMeveoInstance" type="Request-Response" outputName="removeMeveoInstanceResponse" inputName="removeMeveoInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b9abf62e-05ae-485d-bfa1-6d8e1787137b" isOneWay="false" action="" name="createOrUpdateEmailTemplate" bindingOperationName="createOrUpdateEmailTemplate" type="Request-Response" outputName="createOrUpdateEmailTemplateResponse" inputName="createOrUpdateEmailTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="301aeea4-a6c3-49fa-ac8c-ca1b121aad17" isOneWay="false" action="" name="findUserHierarchyLevel" bindingOperationName="findUserHierarchyLevel" type="Request-Response" outputName="findUserHierarchyLevelResponse" inputName="findUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="b473feb9-aa46-4d0d-a41e-d007df6be3c0" isOneWay="false" action="" name="updateUserHierarchyLevel" bindingOperationName="updateUserHierarchyLevel" type="Request-Response" outputName="updateUserHierarchyLevelResponse" inputName="updateUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="da1fdfa3-f491-40da-8d38-a8ef921618a8" isOneWay="false" action="" name="createUserHierarchyLevel" bindingOperationName="createUserHierarchyLevel" type="Request-Response" outputName="createUserHierarchyLevelResponse" inputName="createUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="00ac072a-b2e7-4b1a-ad0d-23afe3a6e27f" isOneWay="false" action="" name="removeUserHierarchyLevel" bindingOperationName="removeUserHierarchyLevel" type="Request-Response" outputName="removeUserHierarchyLevelResponse" inputName="removeUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="886d2571-bf33-4627-9df9-f8db6feeed94" isOneWay="false" action="" name="createOrUpdateUserHierarchyLevel" bindingOperationName="createOrUpdateUserHierarchyLevel" type="Request-Response" outputName="createOrUpdateUserHierarchyLevelResponse" inputName="createOrUpdateUserHierarchyLevel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="e05136e9-6ffe-41bf-8d90-36401d9e877c" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -2329,7 +2721,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         </con:config>
       </con:testStep>
       <con:testStep type="manualTestStep" name="Approve postInvoicingReport" id="48b56023-c47f-4ff2-b753-bdc3fc49a1c3">
-        <con:description>Approve postInvoicingReport (Invoicing->Billing Runs)</con:description>
+        <con:description>Approve postInvoicingReport (Billing->Billing Run->Billing Runs)</con:description>
         <con:settings/>
         <con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </con:testStep>
@@ -2456,7 +2848,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:settings/>
       <con:testStep type="manualTestStep" name="Create a ddrequest state operation (Menu->Payments)" id="eee60524-a643-43d2-a267-2307e94d2776">
         <con:description>Create a ddrequest state operation (Menu->Payments)
-From=2015-07-01 To=2015-12-30</con:description>
+From=2015-07-01 To=2015-12-30
+File Format=SEPA</con:description>
         <con:settings/>
         <con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </con:testStep>
@@ -2533,14 +2926,63 @@ From=2015-07-01 To=2015-12-30</con:description>
         </con:config>
       </con:testStep>
       <con:testStep type="manualTestStep" name="Check customerAccount->accountOperations tab" id="9adbc823-f918-4d82-ad0b-e783db0cbbb8">
-        <con:description>There must be an accountOperation of type=Invoice created with debit=173.0300.</con:description>
+        <con:description>There must be an accountOperation of type=Invoice created with debit=718.5200.</con:description>
         <con:settings/>
         <con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase id="047609a8-1d90-48fe-90c4-53b03b1b4cfe" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true">
+    <con:testCase id="047609a8-1d90-48fe-90c4-53b03b1b4cfe" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" disabled="true">
       <con:settings/>
+      <con:testStep type="request" name="Create InvoiceType" id="331c86e9-d079-4daa-b604-93c28d54808c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createInvoiceType</con:operation>
+          <con:request name="Create InvoiceType" id="6bd029ac-1593-4e78-a7e9-2cb7af69ec3e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateInvoiceType>
+         <invoiceType>
+            <code>${#TestSuite#ticket}_Invoice_TEST-Type</code>
+            <description>Invoice Test Type</description>
+            <occTemplateCode>FA_FACT</occTemplateCode>            
+            <sequenceDto>
+               <prefixEL>Fact_</prefixEL>
+               <sequenceSize>9</sequenceSize>
+               <currentInvoiceNb>9</currentInvoiceNb>
+            </sequenceDto>          
+            <!-- <appliesTo>COM</appliesTo> -->
+  		  <matchingAuto>false</matchingAuto>
+         </invoiceType>
+      </ws:createOrUpdateInvoiceType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/>
+            <con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create_commercial_invoice" id="f0bf788f-9f34-4c26-bd90-2e915e296eaa">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -2560,7 +3002,7 @@ From=2015-07-01 To=2015-12-30</con:description>
          <invoice>
          	  <invoiceMode>AGGREGATED</invoiceMode>
          	  <invoiceDate>2015-12-12</invoiceDate>
-         	  <invoiceType>COMMERCIAL</invoiceType>
+         	  <invoiceType>${#TestSuite#ticket}_Invoice_TEST-Type</invoiceType>
             <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
             <dueDate>2015-12-12</dueDate>
              <amountWithoutTax>10</amountWithoutTax>
@@ -2787,7 +3229,7 @@ From=2015-07-01 To=2015-12-30</con:description>
       </con:property>
       <con:property>
         <con:name>last_tx_date</con:name>
-        <con:value>2015-09-08</con:value>
+        <con:value>2017-09-08</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -4774,7 +5216,7 @@ From=2015-07-01 To=2015-12-30</con:description>
         </con:config>
       </con:testStep>
       <con:testStep type="manualTestStep" name="Approve postInvoicingReport" id="9cbcae7c-f15b-4ea3-a031-6bd59375951b">
-        <con:description>Approve postInvoicingReport (Invoicing->Billing Runs)</con:description>
+        <con:description>Approve postInvoicingReport (Billing->Billing Run->Billing Runs)</con:description>
         <con:settings/>
         <con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </con:testStep>
@@ -5262,18 +5704,19 @@ From=2015-07-01 To=2015-12-30</con:description>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>6</con:value>
+        <con:value>10</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint>
+    <con:endpoint mode="OVERRIDE">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint>
   </con:endpointStrategy>
   <con:properties>
     <con:property>
       <con:name>meveoEndpoint</con:name>
-      <con:value>localhost:8080/meveo</con:value>
+      <con:value>integration.i.opencellsoft.com/meveo</con:value>
     </con:property>
     <con:property>
       <con:name>authorization</con:name>
