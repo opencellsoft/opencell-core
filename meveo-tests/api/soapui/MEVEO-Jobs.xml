@@ -2932,7 +2932,7 @@ File Format=SEPA</con:description>
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase id="047609a8-1d90-48fe-90c4-53b03b1b4cfe" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true" disabled="true">
+    <con:testCase id="047609a8-1d90-48fe-90c4-53b03b1b4cfe" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoicing" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Create InvoiceType" id="331c86e9-d079-4daa-b604-93c28d54808c">
         <con:settings/>
