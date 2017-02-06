@@ -3093,7 +3093,7 @@ File Format=SEPA</con:description>
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="generate invoice data" id="a2ae070d-507b-41d5-a4cf-37c95e1db2c1">
+      <con:testStep type="request" name="generate invoice data" id="a2ae070d-507b-41d5-a4cf-37c95e1db2c1" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>InvoiceWsSoapBinding</con:interface>
