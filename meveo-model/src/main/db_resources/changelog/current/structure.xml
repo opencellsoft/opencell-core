@@ -3040,29 +3040,32 @@
         <modifyDataType tableName="CRM_CUSTOM_FIELD_TMPL" columnName="DEFAULT_VALUE" newDataType="VARCHAR(250)"/>
     </changeSet>         
 
-    <changeSet id="#2296_20161225" author="AndriusKarpavicius">
-        <addColumn tableName="BILLING_SEQ_INVTYP_SELL">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
-            </column>                     
-        </addColumn>
-        <createSequence sequenceName="bill_seq_it_sell_seq"/>
-    </changeSet>
-    
-    <changeSet id="#2296_20161225-1" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update BILLING_SEQ_INVTYP_SELL set id = nextval('bill_seq_it_sell_seq') </sql>
-    </changeSet>
-    
     <changeSet id="#2296_20161225-2" author="AndriusKarpavicius" dbms="mysql">
         <dropIndex tableName="billing_seq_invtyp_sell" indexName="billing_seq_invtyp_sell_pkey"/>
     </changeSet>
-    
     <changeSet id="#2296_20161225-3" author="AndriusKarpavicius">
         <dropPrimaryKey tableName="BILLING_SEQ_INVTYP_SELL" constraintName="billing_seq_invtyp_sell_pkey"/>
+        <createSequence sequenceName="bill_seq_it_sell_seq"/>
+	</changeSet>
+
+    <changeSet id="#2296_20161225" author="AndriusKarpavicius" dbms="mysql">
+        <addColumn tableName="BILLING_SEQ_INVTYP_SELL">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_it_sell_pkey" />
+            </column>                     
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2296_20161225-1" author="AndriusKarpavicius" dbms="postgresql">
+    	<addColumn tableName="BILLING_SEQ_INVTYP_SELL">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+		    </column>                     
+        </addColumn>
+        <sql>update BILLING_SEQ_INVTYP_SELL set id = nextval('bill_seq_it_sell_seq') </sql>
         <addNotNullConstraint tableName="BILLING_SEQ_INVTYP_SELL" columnName="id" columnDataType="BIGINT" />        
         <addPrimaryKey columnNames="id" constraintName="bill_seq_it_sell_pkey" tableName="BILLING_SEQ_INVTYP_SELL" />
     </changeSet>
-
-
+    
     <changeSet id="#2296_20161225-4" author="AndriusKarpavicius">
         <addColumn tableName="BILLING_SEQ_INVTYP_SELL">
             <column name="prefix_el" type="VARCHAR(2000)" />

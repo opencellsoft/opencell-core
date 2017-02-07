@@ -461,10 +461,4 @@
             delete from adm_messages where entity_class='Title' and entity_code not in (select code from adm_title); 
         </sql>    
     </changeSet>
-    
-    <changeSet id="#20170201_majExistingData" author="anasseh">
-        <sql>
-            UPDATE billing_charge_instance AS chg SET user_account_id = s.user_account_id FROM billing_subscription AS s WHERE chg.subscription_id = s.id ; 
-        </sql>    
-    </changeSet>    
 </databaseChangeLog>

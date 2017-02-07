@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ import org.meveo.service.job.Job;
 
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class ImportCustomersJob extends Job {
 
     @Inject
