@@ -3007,7 +3007,7 @@
             <column name="PAYMENT_FEES" type="numeric(23, 12)"/>
         </addColumn>        
         <addColumn tableName="AR_ACCOUNT_OPERATION">
-            <column name="COMMENT" type="text"/>
+            <column name="COMMENT" type="${type.longText}"/>
         </addColumn>
     </changeSet> 
     
@@ -3038,25 +3038,36 @@
     
     <changeSet id="#2289_20170102" author="AndriusKarpavicius"> 
         <modifyDataType tableName="CRM_CUSTOM_FIELD_TMPL" columnName="DEFAULT_VALUE" newDataType="VARCHAR(250)"/>
-    </changeSet>         
-
-    <changeSet id="#2296_20161225-2" author="AndriusKarpavicius" dbms="mysql">
-        <dropIndex tableName="billing_seq_invtyp_sell" indexName="billing_seq_invtyp_sell_pkey"/>
-    </changeSet>
-    <changeSet id="#2296_20161225-3" author="AndriusKarpavicius">
-        <dropPrimaryKey tableName="BILLING_SEQ_INVTYP_SELL" constraintName="billing_seq_invtyp_sell_pkey"/>
-        <createSequence sequenceName="bill_seq_it_sell_seq"/>
-	</changeSet>
-
-    <changeSet id="#2296_20161225" author="AndriusKarpavicius" dbms="mysql">
-        <addColumn tableName="BILLING_SEQ_INVTYP_SELL">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+    </changeSet>         	
+ 
+    <changeSet id="#2296_20161225-1" author="AndriusKarpavicius" dbms="mysql">
+        <dropTable tableName="BILLING_SEQ_INVTYP_SELL"/>
+       	<createTable tableName="billing_seq_invtyp_sell">
+        	<column name="id" type="BIGINT" autoIncrement="${id.auto}">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_it_sell_pkey" />
-            </column>                     
-        </addColumn>        
+            </column>   
+            <column name="invoicetype_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="currentinvoicenb" type="BIGINT" />
+            <column name="prefixel" type="VARCHAR(255)" />
+            <column name="sequencesize" type="INT4" />
+            <column name="seller_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createSequence sequenceName="bill_seq_it_sell_seq"/> 
+        
+        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_2rjk30cy77bs2jxqwsbrhk6qb"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />               
     </changeSet>
     
     <changeSet id="#2296_20161225-1" author="AndriusKarpavicius" dbms="postgresql">
+        <dropPrimaryKey tableName="BILLING_SEQ_INVTYP_SELL" constraintName="billing_seq_invtyp_sell_pkey"/>
+        <createSequence sequenceName="bill_seq_it_sell_seq"/>    
     	<addColumn tableName="BILLING_SEQ_INVTYP_SELL">
             <column name="id" type="BIGINT" autoIncrement="${id.auto}">
 		    </column>                     
@@ -3083,5 +3094,4 @@
     <changeSet id="#2296_20161225-5" author="AndriusKarpavicius">
         <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL"/>
     </changeSet>
-    
 </databaseChangeLog>
