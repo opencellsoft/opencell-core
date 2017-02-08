@@ -976,4 +976,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 		return quantity.multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
 	}
+	
+	public void updateProductInstanceCode() {
+		productInstance.setCode(productInstance.getProductTemplate().getCode());
+	}
 }

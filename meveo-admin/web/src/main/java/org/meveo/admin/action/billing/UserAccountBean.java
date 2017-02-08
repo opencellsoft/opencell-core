@@ -513,6 +513,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		productInstance = new ProductInstance();
 		productChargeInstance = new ProductChargeInstance();
 	}
+	
+	public void updateProductInstanceCode() {
+		productInstance.setCode(productInstance.getProductTemplate().getCode());
+	}
 
 	public void applyProduct() {
 		if (productInstance != null) {
