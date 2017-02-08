@@ -224,7 +224,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     	if(trendList != null && trendList.size()>=10){    	
 	        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
 	        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
-	        BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
+	        BigDecimal averageTrend = (firstAverage == null || firstAverage.compareTo(BigDecimal.ZERO) == 0) ?  BigDecimal.ZERO : lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
 	        averageTrend = averageTrend.subtract(BigDecimal.ONE);
 	        averageTrend = averageTrend.multiply(new BigDecimal(100));
 	        return averageTrend.setScale(1, RoundingMode.HALF_UP);    	
