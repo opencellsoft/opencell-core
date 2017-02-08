@@ -177,4 +177,17 @@ public class OfferServiceTemplate implements IEntity {
 	public boolean isTransient() {
 		return id == null;
 	}
+
+    /**
+     * Update OfferServiceTemplate properties with properties of another OfferServiceTemplate
+     * 
+     * @param otherOst Other OfferServiceTemplate, to copy properties from
+     */
+    public void update(OfferServiceTemplate otherOst) {
+
+        setMandatory(otherOst.isMandatory());
+        setValidFrom(otherOst.getValidFrom());
+        setValidTo(otherOst.getValidTo());
+        setIncompatibleServices(otherOst.getIncompatibleServices());
+    }
 }
