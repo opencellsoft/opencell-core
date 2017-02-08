@@ -521,4 +521,29 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		result.setLastUpdated(currentDate.getTime());
 		return result;
 	}
+
+	public List<MeasuredValue> getMeasuredValuesPerYear(String code, String mqCode) throws BusinessException {
+		return getMeasuredValues(code, mqCode, -13, Calendar.MONTH);
+	}
+
+	public List<MeasuredValue> getMeasuredValues(String code, String mqCode, int countFromNow, int period) throws BusinessException {
+		Calendar currentDate = Calendar.getInstance();
+		Calendar beforeDate = Calendar.getInstance();
+
+		currentDate.set(Calendar.DATE, 1);
+		beforeDate.set(Calendar.DATE, 1);
+		beforeDate.add(period, countFromNow);
+
+		List<MeasuredValue> result = new ArrayList<>();
+
+		MeasurableQuantity mq = mqService.findByCode(mqCode, getCurrentProvider());
+		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, beforeDate.getTime(), currentDate.getTime(),mq == null ? null: mq.getMeasurementPeriod(), mq);
+		if(measuredValues != null){
+			for(MeasuredValue value : measuredValues){
+				result.add(value);
+			}
+		}
+
+		return result;
+	}
 }

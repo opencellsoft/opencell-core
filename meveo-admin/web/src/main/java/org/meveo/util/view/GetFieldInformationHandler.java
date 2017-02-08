@@ -23,6 +23,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.facelets.FaceletContext;
 import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
@@ -145,20 +148,24 @@ public class GetFieldInformationHandler extends TagHandler {
         Class<?> fieldClassType = field.getType();
 
         FieldInformation fieldInfo = new FieldInformation();
-        if (fieldClassType == String.class) {
-			if (field.isAnnotationPresent(ImageType.class)) {
-				fieldInfo.fieldType = FieldTypeEnum.Image;
-				
-			} else {
-				fieldInfo.fieldType = FieldTypeEnum.Text;
 
-				if (field.isAnnotationPresent(Size.class)) {
-					int maxLength = field.getAnnotation(Size.class).max();
-					if (maxLength > 0) {
-						fieldInfo.maxLength = maxLength;
-					}
-				}
-			}
+        fieldInfo.required = field.isAnnotationPresent(NotNull.class) || (field.isAnnotationPresent(Column.class) && !((Column) field.getAnnotation(Column.class)).nullable())
+                || (field.isAnnotationPresent(JoinColumn.class) && !((JoinColumn) field.getAnnotation(JoinColumn.class)).nullable());
+
+        if (fieldClassType == String.class) {
+            if (field.isAnnotationPresent(ImageType.class)) {
+                fieldInfo.fieldType = FieldTypeEnum.Image;
+
+            } else {
+                fieldInfo.fieldType = FieldTypeEnum.Text;
+
+                if (field.isAnnotationPresent(Size.class)) {
+                    int maxLength = field.getAnnotation(Size.class).max();
+                    if (maxLength > 0) {
+                        fieldInfo.maxLength = maxLength;
+                    }
+                }
+            }
 
         } else if (fieldClassType == Boolean.class || (fieldClassType.isPrimitive() && fieldClassType.getName().equals("boolean"))) {
             fieldInfo.fieldType = FieldTypeEnum.Boolean;

@@ -272,7 +272,16 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 			return super.saveOrUpdate(killConversation);
 		}
 	}
-  
+
+	@Override
+	public String back() {
+		if (chargeTemplateId != 0) {
+			return getBackCharge();
+		} else {
+			return super.back();
+		}
+	}
+
 	public String getBackCharge() {
 		String chargeName = null;
 		if (backPage.equals("recurringChargeTemplateDetail")) {

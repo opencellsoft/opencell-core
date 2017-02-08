@@ -727,7 +727,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				chargeInstance.getSubscriptionDate(), chargeInstance.getId(), chargeInstance.getNextChargeDate());
 
 		Date applicationDate = chargeInstance.getTerminationDate();
-		applicationDate = DateUtils.addDaysToDate(applicationDate, 1);
+		//applicationDate = DateUtils.addDaysToDate(applicationDate, 1);
 
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 		if (recurringChargeTemplate.getCalendar() == null) {
@@ -964,7 +964,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
         cal.setInitDate(chargeInstance.getSubscriptionDate());
-        Date nextApplicationDate = cal.nextCalendarDate(applicationDate);
+        Date endApplicationDate = cal.nextCalendarDate(toDate == null ? fromDate : toDate);
 
         InvoiceSubCategory invoiceSubCategory = chargeInstance.getRecurringChargeTemplate().getInvoiceSubCategory();
         if (invoiceSubCategory == null) {
@@ -995,7 +995,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
-        while (applicationDate.getTime() < nextApplicationDate.getTime()) {
+        while (applicationDate.getTime() < endApplicationDate.getTime()) {
             Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 
             String param2 = " " + sdf.format(applicationDate) + " au " + sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));

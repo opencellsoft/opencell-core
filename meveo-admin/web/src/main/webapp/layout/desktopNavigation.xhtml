@@ -1,0 +1,13 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:menubar styleClass="DispInlBlock" rendered="#{identity.loggedIn}">
+		<ui:include src="navigationItems.xhtml">
+			<ui:param name="menuId" value="desktop_menu"></ui:param>
+		</ui:include>
+	</p:menubar>
+
+</ui:composition>

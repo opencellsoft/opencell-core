@@ -21,8 +21,10 @@ package org.meveo.admin.action.hierarchy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,12 +34,14 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ExistsRelatedEntityException;
+import org.meveo.model.admin.User;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
@@ -54,7 +58,9 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     private static final long serialVersionUID = 1L;
     private static final String ROOT = "Root";
 
-    /** Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}. */
+    /**
+     * Injected @{link UserHierarchyLevel} service. Extends {@link org.meveo.service.base.PersistenceService}.
+     */
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
@@ -159,6 +165,123 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         selectedNode.setSelected(true);
         showUserGroupDetail = true;
         isEdit = true;
+    }
+
+    public void onDragDrop(TreeDragDropEvent event) {
+        TreeNode dragNode = event.getDragNode();
+        TreeNode dropNode = event.getDropNode();
+        UserHierarchyLevel child = null;
+        UserHierarchyLevel parent = null;
+        UserHierarchyLevel previousParent = null;
+        Set<UserHierarchyLevel> updatedSiblings = new HashSet<>();
+        Long index = event.getDropIndex() + 1L;
+        Long previousIndex = 0L;
+        boolean validChild = dragNode != null && dragNode.getData() instanceof UserHierarchyLevel;
+        boolean hasParent = dropNode != null && dropNode.getData() instanceof UserHierarchyLevel;
+        boolean hasPreviousParent = false;
+        boolean sameParent = false;
+        if (hasParent) {
+            parent = (UserHierarchyLevel) dropNode.getData();
+            parent = userHierarchyLevelService.refreshOrRetrieve(parent);
+        }
+        if (validChild) {
+            child = (UserHierarchyLevel) dragNode.getData();
+            child = userHierarchyLevelService.refreshOrRetrieve(child);
+            previousIndex = child.getOrderLevel();
+            hasPreviousParent = child.getParentLevel() != null;
+            if (hasPreviousParent) {
+                previousParent = userHierarchyLevelService.findByCode(child.getParentLevel().getCode(), getCurrentProvider());
+                sameParent = previousParent.equals(parent);
+                if (!sameParent) {
+                    for (HierarchyLevel<User> sibling : previousParent.getChildLevels()) {
+                        if (sibling.getOrderLevel() > previousIndex) {
+                            sibling.setOrderLevel(sibling.getOrderLevel() - 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    }
+                    previousParent.getChildLevels().remove(child);
+                } else {
+                    parent.getChildLevels().remove(child);
+                }
+            }
+            child.setParentLevel(null);
+        }
+        if (hasParent) {
+            child.setParentLevel(parent);
+            for (HierarchyLevel<User> sibling : parent.getChildLevels()) {
+                Long siblingIndex = sibling.getOrderLevel();
+                if (sameParent) {
+                    boolean movedUp = previousIndex - index > 0;
+                    if(movedUp) { // the previous index was greater than new index
+                        if(siblingIndex < previousIndex && siblingIndex >= index) {
+                            sibling.setOrderLevel(siblingIndex + 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    } else {
+                        if(siblingIndex <= index && siblingIndex > previousIndex) {
+                            sibling.setOrderLevel(siblingIndex - 1);
+                            updatedSiblings.add((UserHierarchyLevel) sibling);
+                        }
+                    }
+                } else {
+                    if(!hasPreviousParent) {
+                        List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+                        for(UserHierarchyLevel root : roots) {
+                            if (root.getOrderLevel() > previousIndex) {
+                                root.setOrderLevel(root.getOrderLevel() - 1);
+                                updatedSiblings.add(root);
+                            }
+                        }
+                    } else if (siblingIndex >= index) {
+                        sibling.setOrderLevel(siblingIndex + 1);
+                        updatedSiblings.add((UserHierarchyLevel) sibling);
+                    }
+                }
+            }
+            parent.getChildLevels().add(child);
+        } else if(!hasParent && !hasPreviousParent) {
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            for(UserHierarchyLevel root : roots) {
+                Long rootIndex = root.getOrderLevel();
+                boolean movedUp = previousIndex - index > 0;
+                if(movedUp) { // the previous index was greater than new index
+                    if(rootIndex < previousIndex && rootIndex >= index) {
+                        root.setOrderLevel(root.getOrderLevel() + 1);
+                        updatedSiblings.add(root);
+                    }
+                } else {
+                    if(rootIndex <= index && rootIndex > previousIndex) {
+                        root.setOrderLevel(root.getOrderLevel() - 1);
+                        updatedSiblings.add(root);
+                    }
+                }
+            }
+        } else if(!hasParent && hasPreviousParent) {
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            for(UserHierarchyLevel root : roots) {
+                Long rootIndex = root.getOrderLevel();
+                if (rootIndex >= index) {
+                    root.setOrderLevel(rootIndex + 1);
+                    updatedSiblings.add(root);
+                }
+            }
+        }
+
+        try {
+            child.setOrderLevel(index);
+            userHierarchyLevelService.update(child, getCurrentUser());
+            if (parent != null) {
+                userHierarchyLevelService.update(parent, getCurrentUser());
+            }
+            if (previousParent != null && !sameParent) {
+                userHierarchyLevelService.update(previousParent, getCurrentUser());
+            }
+            for (UserHierarchyLevel sibling : updatedSiblings) {
+                userHierarchyLevelService.update(sibling, getCurrentUser());
+            }
+        } catch (BusinessException e) {
+            messages.error(new BundleKey("messages", "userGroupHierarchy.errorChangeLevel"));
+        }
     }
 
     public void newUserHierarchyLevel() {
@@ -327,7 +450,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     // Recursive function to create tree
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private TreeNode createTree(HierarchyLevel userHierarchyLevel, TreeNode rootNode) {
         TreeNode newNode = new SortedTreeNode(userHierarchyLevel, rootNode);
         newNode.setExpanded(true);
@@ -446,5 +569,5 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             return new UserHierarchyLevel();
         }
         return userLevelFound;
-    }  
+    }
 }

@@ -10,7 +10,17 @@
     </ui:define>
 
     <ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="inboundRequests" value="#{messages['menu.inboundRequests']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.inboundRequest']}"
+					disabled="true" rendered="#{inboundRequestBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['menu.inboundRequest']} - #{inboundRequestBean.entity.code}"
+					disabled="true" rendered="#{!inboundRequestBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
         <hftl:formPanel id="inboundRequestForm" label="#{messages['menu.inboundRequest']}" backingBean="#{inboundRequestBean}" columns="2"
             showEditButton="false" edit="false">
 

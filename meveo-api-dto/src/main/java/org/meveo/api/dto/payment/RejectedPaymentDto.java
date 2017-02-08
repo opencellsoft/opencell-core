@@ -19,8 +19,6 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
 	private static final long serialVersionUID = 4498720672406401363L;
 
 	private RejectedType rejectedType;
-	private String bankLot;
-	private String bankReference;
 	private Date rejectedDate;
 	private String rejectedDescription;
 	private String rejectedCode;
@@ -35,22 +33,6 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
 
 	public void setRejectedType(RejectedType rejectedType) {
 		this.rejectedType = rejectedType;
-	}
-
-	public String getBankLot() {
-		return bankLot;
-	}
-
-	public void setBankLot(String bankLot) {
-		this.bankLot = bankLot;
-	}
-
-	public String getBankReference() {
-		return bankReference;
-	}
-
-	public void setBankReference(String bankReference) {
-		this.bankReference = bankReference;
 	}
 
 	public Date getRejectedDate() {

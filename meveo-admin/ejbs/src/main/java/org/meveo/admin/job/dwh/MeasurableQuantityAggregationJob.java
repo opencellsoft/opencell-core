@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -27,6 +29,7 @@ import org.meveocrm.services.dwh.MeasuredValueService;
 
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class MeasurableQuantityAggregationJob extends Job {
 
     @Inject

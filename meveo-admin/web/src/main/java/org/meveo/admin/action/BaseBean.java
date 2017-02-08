@@ -1109,23 +1109,33 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return back() page if deleted success, if not, return a callback result to UI for validate
      */
     public String deleteWithBack() {
+    	boolean okFlag = true;
         try {
             this.delete();
             getPersistenceService().commit();
             return back();
 
         } catch (Throwable t) {
+        	okFlag = false;
             messages.getAll();
             messages.clear();
             if (t.getCause() instanceof EntityExistsException) {
                 log.info("delete was unsuccessful because entity is used in the system {}", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
+            } else if (t.getCause() instanceof javax.persistence.PersistenceException) {
+            	log.info("delete was unsuccessful because entity is used in the system {}", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+                
             } else {
                 log.info("unexpected exception when deleting {}", t);
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
             }
         }
+        
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result", okFlag);
+        
         FacesContext.getCurrentInstance().validationFailed();
         return null;
     }

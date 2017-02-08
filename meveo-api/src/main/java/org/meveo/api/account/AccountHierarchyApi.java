@@ -60,7 +60,6 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -78,7 +77,6 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountModelScriptService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -102,6 +100,7 @@ import org.meveo.util.MeveoParamBean;
  * 
  */
 
+@SuppressWarnings("deprecation")
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountHierarchyApi extends BaseApi {
@@ -171,9 +170,6 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
-
-	@Inject
-	private DiscountPlanService discountPlanService;
 
 	@Inject
 	@MeveoParamBean
@@ -256,6 +252,10 @@ public class AccountHierarchyApi extends BaseApi {
 		sellerApi.createOrUpdate(sellerDto, currentUser);
 
 		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			customerCode = customerCodeOrId;
+		}
+		 
 		CustomerDto customerDto = new CustomerDto();
 		customerDto.setCode(customerCode);
 
@@ -299,6 +299,9 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 		String customerAccountCode = CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			customerAccountCode = customerCodeOrId;
+		}
 		customerAccountDto.setCode(customerAccountCode);
 		customerAccountDto.setCustomer(customerCode);
 		customerAccountDto.setAddress(address);
@@ -323,6 +326,9 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountDto.setEmail(postData.getEmail());
 		billingAccountDto.setPaymentMethod(PaymentMethodEnum.getValue(postData.getPaymentMethod()));
 		String billingAccountCode = BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			billingAccountCode = customerCodeOrId;
+		}
 		billingAccountDto.setCode(billingAccountCode);
 		billingAccountDto.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccountDto.setCustomerAccount(customerAccountCode);
@@ -338,6 +344,9 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountApi.create(billingAccountDto, currentUser);
 
 		String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			userAccountCode = customerCodeOrId;
+		}		
 		UserAccountDto userAccountDto = new UserAccountDto();
 		userAccountDto.setName(name);
 		userAccountDto.setStatus(AccountStatusEnum.ACTIVE);
@@ -355,9 +364,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	public void update(AccountHierarchyDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-		Provider provider = currentUser.getProvider();
-
+		
 		if (StringUtils.isBlank(postData.getCustomerId()) && StringUtils.isBlank(postData.getCustomerCode())) {
 			missingParameters.add("customerCode");
 		}
@@ -411,6 +418,9 @@ public class AccountHierarchyApi extends BaseApi {
 
 		CustomerDto customerDto = null;
 		String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			customerCode = customerCodeOrId;
+		}		
 		try {
 			customerDto = customerApi.find(customerCode, currentUser);
 		} catch (Exception e) {
@@ -457,6 +467,9 @@ public class AccountHierarchyApi extends BaseApi {
 		customerApi.update(customerDto, currentUser);
 
 		String customerAccountCode = CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			customerAccountCode = customerCodeOrId;
+		}		
 
 		CustomerAccountDto customerAccountDto = null;
 		try {
@@ -485,6 +498,9 @@ public class AccountHierarchyApi extends BaseApi {
 		String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
 
 		String billingAccountCode = BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			billingAccountCode = customerCodeOrId;
+		}	
 
 		BillingAccountDto billingAccountDto = null;
 		try {
@@ -515,6 +531,9 @@ public class AccountHierarchyApi extends BaseApi {
 		billingAccountApi.createOrUpdate(billingAccountDto, currentUser);
 
 		String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if(postData.getUsePrefix() != null && !postData.getUsePrefix()){			
+			userAccountCode = customerCodeOrId;
+		}
 
 		UserAccountDto userAccountDto = null;
 		try {
@@ -551,16 +570,13 @@ public class AccountHierarchyApi extends BaseApi {
 		String customerCodeOrId = postData.getCustomerCode();
 		if (StringUtils.isBlank(customerCodeOrId)) {
 			customerCodeOrId = postData.getCustomerId();
-		}
+		}		
 		
-		if(postData.getUsePrefix() != null && postData.getUsePrefix()){
-			if(!customerCodeOrId.startsWith(CUSTOMER_PREFIX)) {
-				customerCodeOrId = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);	
-			}
+		if(postData.getUsePrefix() != null && postData.getUsePrefix()){			
+			customerCodeOrId = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);				
 	    }
 
-		if (!StringUtils.isBlank(customerCodeOrId)) {
-			customerCodeOrId=StringUtils.normalizeHierarchyCode(customerCodeOrId);
+		if (!StringUtils.isBlank(customerCodeOrId)) {			
 			qb.addCriterion("c.code", "=", customerCodeOrId, true);
 		}
 		if (!StringUtils.isBlank(postData.getSellerCode())) {
@@ -743,7 +759,7 @@ public class AccountHierarchyApi extends BaseApi {
 												for (SubscriptionDto subscriptionDto : userAccountDto.getSubscriptions().getSubscription()) {
 													if (StringUtils.isBlank(subscriptionDto.getCode())) {
 														log.warn("code is null={}", subscriptionDto);
-														continue;
+														throw new MeveoApiException("Subscription's code is null");
 													}
 													if (!StringUtils.isBlank(subscriptionDto.getUserAccount())
 															&& !subscriptionDto.getUserAccount().equalsIgnoreCase(userAccountDto.getCode())) {

@@ -92,15 +92,15 @@ public class OfferTemplate extends ProductOffering {
 		if (getOfferServiceTemplates() == null) {
 			offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 		}
+		offerServiceTemplate.setOfferTemplate(this);
 		offerServiceTemplates.add(offerServiceTemplate);
 	}
 	
 	public void updateOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
-	 
-	    int index = offerServiceTemplates.indexOf(offerServiceTemplate);
-	    if (index>=0){
-	        offerServiceTemplates.set(index, offerServiceTemplate);
-	    }
+		int index = offerServiceTemplates.indexOf(offerServiceTemplate);
+		if (index >= 0) {
+			offerServiceTemplates.set(index, offerServiceTemplate);
+		}
 	}
 
 	public BusinessOfferModel getBusinessOfferModel() {
@@ -157,6 +157,7 @@ public class OfferTemplate extends ProductOffering {
 		if (getOfferProductTemplates() == null) {
 			offerProductTemplates = new ArrayList<OfferProductTemplate>();
 		}
+		offerProductTemplate.setOfferTemplate(this);
 		offerProductTemplates.add(offerProductTemplate);
 	}
 

@@ -11,12 +11,17 @@
 
     <ui:define name="body">
         <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
-                </p:breadCrumb>
-            </h:form>
+				<p:menuitem value="#{messages['commons.new']} #{messages['scriptInstance.panel']}"
+					disabled="true" rendered="#{scriptInstanceBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['scriptInstance.panel']} - #{scriptInstanceBean.entity.code}"
+					disabled="true" rendered="#{!scriptInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
             <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
         </p:panel>
         <hftl:formPanel label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false">

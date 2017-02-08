@@ -18,14 +18,17 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.crm']}" disabled="true" />
-                    <p:menuitem outcome="userAccounts" value="#{messages['menu.userAccounts']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="userAccounts" value="#{messages['menu.userAccounts']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['userAccount']}"
+					disabled="true" rendered="#{userAccountBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['userAccount']} - #{userAccountBean.entity.code}"
+					disabled="true" rendered="#{!userAccountBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
         <hftl:entityPopup id="billingAccountPopup" header="#{messages['billingAccount.popup.header']}" backingBean="#{billingAccountBean}"
             searchField1Label="#{messages['billingAccount.code']}" searchField1="code" column1Label="#{messages['billingAccount.code']}" column1="code"
             selection="#{userAccountBean.entity.billingAccount}" 

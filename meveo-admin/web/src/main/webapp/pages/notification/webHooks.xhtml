@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -7,7 +7,12 @@
         </f:metadata>
     </ui:define>
     <ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="webHooks" value="#{messages['menu.webHooks']}" />
+			</p:breadCrumb>
+		</h:form>  
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
         <hftl:searchPanel label="#{messages['menu.webHooks']}" columns="3" backingBean="#{webHookListBean}">

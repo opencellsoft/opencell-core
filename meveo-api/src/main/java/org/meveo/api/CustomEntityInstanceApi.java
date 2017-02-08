@@ -1,5 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -7,6 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -143,6 +147,27 @@ public class CustomEntityInstanceApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
         return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsDTO(cei));
+    }
+
+    public List<CustomEntityInstanceDto> list(String cetCode, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(cetCode)) {
+            missingParameters.add("customEntityTemplateCode");
+        }
+
+        handleMissingParameters();
+
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("cetCode", cetCode);
+        PaginationConfiguration config = new PaginationConfiguration(filter);
+
+        List<CustomEntityInstance> customEntityInstances = customEntityInstanceService.list(config);
+        List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
+
+        for(CustomEntityInstance instance : customEntityInstances) {
+            customEntityInstanceDtos.add(CustomEntityInstanceDto.toDTO(instance, entityToDtoConverter.getCustomFieldsDTO(instance)));
+        }
+
+        return customEntityInstanceDtos;
     }
 
     public void createOrUpdate(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {

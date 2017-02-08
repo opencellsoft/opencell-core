@@ -83,6 +83,10 @@ public abstract class PrimitiveFilterProcessor {
         }
         return customFieldEntry;
     }
+    
+    protected Object fetchCustomFieldParameterValue(Map<String, String> parameters, String key) {
+    	return null;
+    }
 
     private String getFieldName(String operand){
         String fieldName = null;

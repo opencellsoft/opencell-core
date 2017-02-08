@@ -243,26 +243,60 @@ public abstract class BaseApi {
             }
         }
 
-        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory
+        // After saving passed CF values, validate that CustomField value is not empty when field is mandatory. Check inherited values as well.
+        // Instantiate CF with default value in case of a new entity
         Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
-        if (entity.getParentCFEntities() != null) {
-            for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
-                cfisAsMap.putAll(customFieldInstanceService.getCustomFieldInstances(entityParent));
-            }
-        }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
+            if (cft.isDisabled()) {
+                continue;
+            }
+
+            // Does not apply at this moment
+            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
             }
+
+            // When no instance was found
             if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
-                missingParameters.add(cft.getCode());
+                boolean hasValue = false;
+                if (cft.isVersionable()) {
+                    hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
+                } else {
+                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                    hasValue = value != null;
+                }
+                if (!hasValue && isNewEntity) {
+                    Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                    hasValue = value != null;
+                }
+                if (!hasValue && cft.isValueRequired()) {
+                    missingParameters.add(cft.getCode());
+                }
+
+                // When instance, or multiple instances in case of versioned values, were found
             } else {
+                boolean noCfi = true;
+                boolean emptyValue = true;
                 for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
-                    if (cfi == null || cfi.isValueEmpty()) {
+                    if (cfi != null) {
+                        noCfi = false;
+
+                        if (!cfi.isValueEmpty()) {
+                            emptyValue = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (noCfi || emptyValue) {
+                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                    if (value == null && isNewEntity && !emptyValue) {
+                        value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                    }
+                    if (value == null && cft.isValueRequired()) {
                         missingParameters.add(cft.getCode());
-                        break;
                     }
                 }
             }
@@ -777,36 +811,36 @@ public abstract class BaseApi {
 
         return persistenceService;
     }
-    
+
     protected void saveImage(IEntity entity, String imagePath, String imageData, String providerCode) throws IOException, InvalidImageData, MissingParameterException {
-		if (StringUtils.isBlank(imageData)) {
-			return;
-		} else {
-			if (StringUtils.isBlank(imagePath)) {
-				missingParameters.add("imagePath");
-				handleMissingParameters();
-			}
-		}
-		
-		try {
-			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
-			imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
-		} catch (AccessDeniedException e1) {
-			throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
-		} catch (IOException e) {
-			throw new InvalidImageData("Failed saving image. " + e.getMessage());
-		}
-	}
-	
-	protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {
-		try {
-			ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
-			imageUploadEventHandler.deleteImage(entity, providerCode);
-		} catch (AccessDeniedException e1) {
-			throw new InvalidImageData("Failed deleting image. Access is denied: " + e1.getMessage());
-		} catch (IOException e) {
-			throw new InvalidImageData("Failed deleting image. " + e.getMessage());
-		}
-	}
-    
+        if (StringUtils.isBlank(imageData)) {
+            return;
+        } else {
+            if (StringUtils.isBlank(imagePath)) {
+                missingParameters.add("imagePath");
+                handleMissingParameters();
+            }
+        }
+
+        try {
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
+            imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
+        } catch (AccessDeniedException e1) {
+            throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
+        } catch (IOException e) {
+            throw new InvalidImageData("Failed saving image. " + e.getMessage());
+        }
+    }
+
+    protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {
+        try {
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
+            imageUploadEventHandler.deleteImage(entity, providerCode);
+        } catch (AccessDeniedException e1) {
+            throw new InvalidImageData("Failed deleting image. Access is denied: " + e1.getMessage());
+        } catch (IOException e) {
+            throw new InvalidImageData("Failed deleting image. " + e.getMessage());
+        }
+    }
+
 }

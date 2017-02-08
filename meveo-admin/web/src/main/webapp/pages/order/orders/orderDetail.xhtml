@@ -333,7 +333,7 @@
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
                                                         <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}"
                                                             entity="#{itemConfiguration.entityForCFValues}" messagesId=":orderForm:tabView:orderItemMessages"
-                                                            edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" cfFormId="offerCFForm_#{itemStatus.index}" />
+                                                            edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

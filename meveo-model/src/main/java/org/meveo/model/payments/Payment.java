@@ -51,7 +51,7 @@ public class Payment extends AccountOperation {
     /**
      * Comments Text free if litigation or special conditions
      */
-    @Column(name = "COMMENT")
+    @Column(name = "COMMENT", columnDefinition = "LONGTEXT")
     private String comment;
     
     public PaymentMethodEnum getPaymentMethod() {

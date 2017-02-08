@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
+import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -40,6 +41,10 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     @GET
     @Path("/{customEntityTemplateCode}/{code}")
     CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
+
+    @GET
+    @Path("/list/{customEntityTemplateCode}")
+    CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")

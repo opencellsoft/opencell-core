@@ -18,12 +18,8 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.Sequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -57,6 +54,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	 @Inject
 	 private InvoiceTypeService invoiceTypeService;
 	 
+	 private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
 	 private String prefixEl;
 	 private Integer sequenceSize= 9;
 	 private Long currentInvoiceNb = 0L; 
@@ -106,20 +104,16 @@ public class SellerBean extends CustomFieldBean<Seller> {
 //			return super.saveOrUpdate(killConversation);
 //		}
 	}
-	
-	public List<Map.Entry<InvoiceType,Sequence>> getInvoiceTypeSequencesList() {
-		Set<Entry<InvoiceType,Sequence>> sequencesSet = 
-				entity.getInvoiceTypeSequence().entrySet();
-		return new ArrayList<Map.Entry<InvoiceType,Sequence>>(sequencesSet);
-	}
-	 private Sequence getSequence(){
-			Sequence sequence = new Sequence();
-			sequence.setPrefixEL(getPrefixEl());
-			sequence.setSequenceSize(getSequenceSize());
-			sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
-			return sequence;
-		}
-	 public void saveOrUpdateSequence() throws BusinessException{ 
+
+    private Sequence getSequence() {
+        Sequence sequence = new Sequence();
+        sequence.setPrefixEL(getPrefixEl());
+        sequence.setSequenceSize(getSequenceSize());
+        sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+        return sequence;
+    }
+
+ public void saveOrUpdateSequence() throws BusinessException{ 
 		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), invoiceTypeCode).longValue()) {
 			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 			 return;
@@ -127,40 +121,51 @@ public class SellerBean extends CustomFieldBean<Seller> {
 		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
 		 if(invoiceType!=null){
 			 if(!editSellerSequence){
-				 if(entity.getInvoiceTypeSequence().containsKey(invoiceType)){
+				 if(entity.isContainsInvoiceTypeSequence(invoiceType)){
 					 messages.error(new BundleKey("messages","seller.sellerSequence.unique")); 
 				 }else{
-					 entity.getInvoiceTypeSequence().put(invoiceType, getSequence());
-					 messages.info(new BundleKey("messages","save.successful"));	 
+					 entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, getSequence()));
+					 messages.info(new BundleKey("messages","save.successful"));	
+			         super.saveOrUpdate(false); 
 				 }
 			 }else{ 
-				 entity.getInvoiceTypeSequence().put(invoiceType,getSequence());
+				 selectedInvoiceTypeSellerSequence.setSequence(getSequence());
 				 messages.info(new BundleKey("messages","update.successful"));
+		         super.saveOrUpdate(false);
 			 }
 		 }
 		 resetSequenceField();	 
-		 super.saveOrUpdate(false);
 	 }	
-	 
-	 public void deleteSellerSequence(InvoiceType invoiceType){
-		 entity.getInvoiceTypeSequence().remove(invoiceType);
-		 messages.info(new BundleKey("messages", "delete.successful"));
+
+    public void deleteSellerSequence(InvoiceType invoiceType) {
+
+        for (int i = 0; i < entity.getInvoiceTypeSequence().size(); i++) {
+            if (entity.getInvoiceTypeSequence().get(i).getInvoiceType().equals(invoiceType)) {
+                entity.getInvoiceTypeSequence().remove(i);
+                break;
+            }
+        }
+        messages.info(new BundleKey("messages", "delete.successful"));
 	 }
-	
-	public void getSequenceSelected(InvoiceType invoiceType){  
-		invoiceTypeCode=invoiceType.getCode(); 
-		prefixEl=entity.getInvoiceTypeSequence().get(invoiceType).getPrefixEL();
-		sequenceSize=entity.getInvoiceTypeSequence().get(invoiceType).getSequenceSize();
-		currentInvoiceNb=entity.getInvoiceTypeSequence().get(invoiceType).getCurrentInvoiceNb();
-		editSellerSequence=true;
-	}
-	public void resetSequenceField(){
-		invoiceTypeCode=null;
-		prefixEl="";
-		sequenceSize=9;
-		currentInvoiceNb=0L;
-		editSellerSequence=false;
-	}
+
+    public void getSequenceSelected(InvoiceTypeSellerSequence invoiceTypeSellerSequence) {
+        this.selectedInvoiceTypeSellerSequence = invoiceTypeSellerSequence;
+        invoiceTypeCode = invoiceTypeSellerSequence.getInvoiceType().getCode();
+        prefixEl = invoiceTypeSellerSequence.getSequence().getPrefixEL();
+        sequenceSize = invoiceTypeSellerSequence.getSequence().getSequenceSize();
+        currentInvoiceNb = invoiceTypeSellerSequence.getSequence().getCurrentInvoiceNb();
+        editSellerSequence = true;
+    }
+
+    public void resetSequenceField() {
+        this.selectedInvoiceTypeSellerSequence = null;
+        invoiceTypeCode = null;
+        prefixEl = "";
+        sequenceSize = 9;
+        currentInvoiceNb = 0L;
+        editSellerSequence = false;
+    }
+    
 	public String getPrefixEl() {
 		return prefixEl;
 	}

@@ -342,11 +342,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		InvoiceType invoiceType = invoice.getInvoiceType();
 		invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceType);
 		Sequence sequence = null;			
-		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){			
-			sequence =  invoiceType.getSellerSequence().get(seller);
+		if(invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)){			
+			sequence =  invoiceType.getSellerSequenceByType(seller).getSequence();
 			if(increment && currentNbFromCF == null){				
 				sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null?0L:sequence.getCurrentInvoiceNb()) +step);
-				invoiceType.getSellerSequence().put(seller,sequence);
+				invoiceType.getSellerSequenceByType(seller).setSequence(sequence);
 				invoiceTypeService.update(invoiceType,currentUser);
 			}
 		}else{			
@@ -544,7 +544,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(orderNums != null && !orderNums.isEmpty()){							
 				List<Order> orders = new ArrayList<Order>();
 				for(String orderNum : orderNums){
-					orders.add(orderService.findByCode(orderNum, invoice.getProvider()));
+					orders.add(orderService.findByCodeOrExternalId(orderNum, invoice.getProvider()));
 				}
 				invoice.setOrders(orders);
 			}			
@@ -1093,7 +1093,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(currentValObj != null){		
 			return seller;
 		}
-		if(invoiceType.getSellerSequence() != null && invoiceType.getSellerSequence().containsKey(seller)){
+		if(invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)){
 			return  seller;
 		}
 		
@@ -1106,9 +1106,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File xmlFile = null;
         if(refreshInvoice){
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId(),currentUser);
         } else {
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
+        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false,currentUser);
         }
 
         Scanner scanner = new Scanner(xmlFile);
@@ -1230,7 +1230,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
 				((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
 			}
-		}
+		}		
+		invoice.setOrders(null);		
 		Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		dropAgregats.setParameter("invoice",invoice);
 		dropAgregats.executeUpdate();		

@@ -13,15 +13,16 @@
     </ui:define>
 
 	<ui:define name="body"> 
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
-					<p:menuitem outcome="ddrequestLotOps"
-						value="#{messages['menu.ddrequestLotOp']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
+				<p:menuitem
+					value="#{messages['menu.ddrequestLotOp']} - #{ddRequestLotOpBean.entity.status}"
+					disabled="true" rendered="#{!ddRequestLotOpBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		
 		<hftl:formPanel formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
 		 
 			<hftl:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>

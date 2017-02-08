@@ -1,7 +1,10 @@
 package org.meveo.service.notification;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.IEvent;
 import org.meveo.model.IAuditable;
@@ -14,6 +17,9 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class NotificationHistoryService extends PersistenceService<NotificationHistory> {
+
+    @EJB
+    private NotificationHistoryService self;
 
     public NotificationHistory create(Notification notification, Object entityOrEvent, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         IEntity entity = null;
@@ -36,9 +42,14 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         } else {
             currentUser = getCurrentUser();
         }
-        super.create(history, currentUser); // AKK was with history.getProvider()
+        self.createHistory(history, currentUser); // AKK was with history.getProvider()
 
         return history;
 
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createHistory(NotificationHistory history, User currentUser) throws BusinessException {
+        super.create(history, currentUser);
     }
 }

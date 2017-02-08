@@ -12,16 +12,30 @@
 
     <ui:define name="body">
 
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="customizedEntities" value="#{messages['menu.customizedEntities']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="customizedEntities"
+					value="#{messages['menu.customizedEntities']}" />
 
-        <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+				<p:menuitem
+					value="#{messages['commons.new']} #{messages['customizedEntities.customEntity']}"
+					disabled="true"
+					rendered="#{customEntityTemplateBean.entity.code==null and customEntityTemplateBean.customEntityTemplate}" />
+
+				<p:menuitem value="#{customEntityTemplateBean.entity.getCode}"
+					disabled="true"
+					rendered="#{customEntityTemplateBean.entity.code!=null}" />
+
+				<p:menuitem
+					value="#{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
+					disabled="true"
+					rendered="#{! customEntityTemplateBean.customEntityTemplate}" />
+
+			</p:breadCrumb>
+		</h:form>
+
+		<o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">

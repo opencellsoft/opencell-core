@@ -71,11 +71,13 @@ public class AccountOperationApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
 
+
+
         if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
             otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
-            accountOperation = (AccountOperation) otherCreditAndCharge;
+            accountOperation = otherCreditAndCharge;
         } else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
@@ -88,7 +90,7 @@ public class AccountOperationApi extends BaseApi {
             rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
             rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
 
-            accountOperation = (AccountOperation) rejectedPayment;
+            accountOperation = rejectedPayment;
         }
 
         if (accountOperation == null) {
@@ -106,6 +108,11 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setMatchingAmount(postData.getMatchingAmount());
         accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
         accountOperation.setCustomerAccount(customerAccount);
+
+        accountOperation.setBankLot(postData.getBankLot());
+        accountOperation.setBankReference(postData.getBankReference());
+        accountOperation.setDepositDate(postData.getDepositDate());
+        accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
@@ -202,6 +209,10 @@ public class AccountOperationApi extends BaseApi {
             accountOperationDto.setOccCode(accountOp.getOccCode());
             accountOperationDto.setOccDescription(accountOp.getOccDescription());
             accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(accountOp));
+            accountOperationDto.setBankLot(accountOp.getBankLot());
+            accountOperationDto.setBankReference(accountOp.getBankReference());
+            accountOperationDto.setDepositDate(accountOp.getDepositDate());
+            accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
 
             List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
             MatchingAmountDto matchingAmountDto = null;

@@ -77,7 +77,7 @@
             <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
                 <p:calendar id="period_date" showButtonPanel="true" pattern="#{dateTimePattern}" value="#{cfValueHolder.newValues[cft.code.concat('_periodStartDate')]}"
-                    required="true" styleClass="minWidthCalendar" label="#{messages['customFieldTemplate.periodDate']}" placeholder="#{messages['customFieldTemplate.periodDate']}"
+                    required="false" styleClass="minWidthCalendar" label="#{messages['customFieldTemplate.periodDate']}" placeholder="#{messages['customFieldTemplate.periodDate']}"
                     rendered="#{cft.calendar!=null}">
                 </p:calendar>
                 <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{dateTimePattern}" value="#{cfValueHolder.newValues[cft.code.concat('_periodStartDate')]}"
@@ -91,7 +91,7 @@
                 </p:calendar>
 
                 <c:if test="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
-                    <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" required="true"
+                    <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}"
                         label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
                 </c:if>
             </hf:namingContainer>

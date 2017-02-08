@@ -1,4 +1,7 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" 
+    xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://java.sun.com/jsf/html"
     template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -8,6 +11,12 @@
     </ui:define>
 
     <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customers" value="#{messages['menu.customers']}" />
+			</p:breadCrumb>
+		</h:form>    
 
         <hftl:searchPanel label="#{messages['customer.search']}" backingBean="#{customerListBean}">
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />

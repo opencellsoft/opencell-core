@@ -46,8 +46,7 @@ public class FilteredQueryBuilder extends QueryBuilder {
 			processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
 		}
 	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	private void processFilterCondition(FilterCondition filterCondition, String alias) {
 		if (filterCondition instanceof OrCompositeFilterCondition) {
 			startOrClause();

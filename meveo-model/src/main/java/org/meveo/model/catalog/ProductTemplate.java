@@ -54,6 +54,24 @@ public class ProductTemplate extends ProductOffering {
 	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
 	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
+	
+	public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+		if (getProductChargeTemplates() == null) {
+			productChargeTemplates = new ArrayList<>();
+		}
+		if (!productChargeTemplates.contains(productChargeTemplate)) {
+			productChargeTemplates.add(productChargeTemplate);
+		}
+	}
+	
+	public void addWalletTemplate(WalletTemplate walletTemplate) {
+		if (getWalletTemplates() == null) {
+			walletTemplates = new ArrayList<>();
+		}
+		if (!walletTemplates.contains(walletTemplate)) {
+			walletTemplates.add(walletTemplate);
+		}
+	}
 
 	public List<ProductChargeTemplate> getProductChargeTemplates() {
 		if (productChargeTemplates == null) {

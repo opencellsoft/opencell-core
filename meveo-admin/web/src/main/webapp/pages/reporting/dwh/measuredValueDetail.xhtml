@@ -16,6 +16,12 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measuredValueDetail" value="#{messages['menu.measuredValues']}" />				
+			</p:breadCrumb>
+		</h:form>	
 
 			<hftl:decorateFormPanel formId="measurementForm" label="#{messages['page.title.measuredValue']}">
 					<ui:define name="fields">
@@ -31,7 +37,7 @@
 							</p:selectOneMenu>
 						</hftl:decorateFormField>
 
-						<hftl:decorateFormField fieldId="measurablePeriod" label="#{messages['entity.measuredvalue.measurementPeriod']}" rendered="#{measurementBean.measurableQuantity != null}" displayOneLine="true" componentWidth="100">
+						<hftl:decorateFormField fieldId="measurablePeriod" label="#{messages['entity.measuredvalue.measurementPeriod']}" rendered="#{measurementBean.measurableQuantity != null}">
 							<p:selectOneMenu id="measurablePeriod" required="true"
 								value="#{measurementBean.measuredPeriod}"
 								converter="omnifaces.SelectItemsConverter" style="width: 150px">
@@ -39,7 +45,7 @@
 								<f:selectItems value="#{measurementBean.getMeasurePeriods()}"
 									var="obj" itemValue="#{obj}"
 									itemLabel="#{messages['enum.measurementperiod.'.concat(obj)]}"></f:selectItems>
-								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
+								<p:ajax event="valueChange" update=":measurementForm:dimentions :measurementForm:decorateFormPanelButtons"></p:ajax>
 							</p:selectOneMenu>
 						</hftl:decorateFormField>
 
@@ -52,7 +58,7 @@
                         
 
 
-					<h:panelGroup rendered="#{measurementBean.measurableQuantityCode != null}">
+					<h:panelGroup id="dimentions" rendered="#{measurementBean.measurableQuantityCode != null}">
                         <hftl:decorateFormField fieldId="dimension1Filter" label="#{messages['entity.measurablequantity.dimension1']}" newLine="true">
 							<p:selectOneMenu id="dimension1Filter"
 								value="#{measurementBean.dimension1Filter}"

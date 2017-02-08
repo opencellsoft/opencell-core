@@ -55,7 +55,7 @@ public class DefaultImageStreamer {
 			String providerCode = context.getExternalContext().getRequestParameterMap().get("providerCode");
 			String groupName = context.getExternalContext().getRequestParameterMap().get("pictureGroupName");
 
-			String imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + fileName;			
+			String imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + fileName;
 			try {
 				streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath));
 			} catch (FileNotFoundException | NullPointerException e) {
@@ -64,7 +64,8 @@ public class DefaultImageStreamer {
 				try {
 					streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath), "image/png");
 				} catch (FileNotFoundException e1) {
-					log.error("no image or default image found");
+					log.error("no group default image, loading no image default...");
+					streamedFile = new DefaultStreamedContent(getClass().getClassLoader().getResourceAsStream("img/no_picture.png"), "image/png");
 				}
 			}
 		}

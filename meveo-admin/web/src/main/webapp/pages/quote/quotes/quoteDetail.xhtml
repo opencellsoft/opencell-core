@@ -146,7 +146,7 @@
                                 <hftl:formField entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.itemId']}" field="itemId" edit="false" componentWidth="10" />
                                 <hftl:formField id="userAccount" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.userAccount']}" field="userAccount"
                                     valueLabelField="code" required="#{quoteBean.entity.userAccount==null}" popup="true" popupId="userAccountPopup" />
-                                <hftl:formField id="offer" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.mainOffering']}" field="mainOffering"
+                                <hftl:formField id="offer" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['productTemplate.product']}" field="mainOffering"
                                     valueLabelField="code" popup="true" popupId="offerPopup" required="true" edit="#{quoteBean.quoteEditable}" />
 
 
@@ -273,7 +273,7 @@
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
                                                         <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}"
                                                             entity="#{itemConfiguration.entityForCFValues}" messagesId=":quoteForm:tabView:quoteItemMessages"
-                                                            edit="#{quoteBean.quoteEditable}" cfFormId="offerCFForm_#{itemStatus.index}" />
+                                                            edit="#{quoteBean.quoteEditable}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

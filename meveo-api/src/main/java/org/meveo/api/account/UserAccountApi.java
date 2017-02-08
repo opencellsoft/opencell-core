@@ -20,6 +20,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
@@ -138,9 +139,6 @@ public class UserAccountApi extends AccountApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
-		if (StringUtils.isBlank(postData.getBillingAccount())) {
-			missingParameters.add("billingAccount");
-		}
 
 		handleMissingParameters();
 
@@ -155,7 +153,9 @@ public class UserAccountApi extends AccountApi {
 			BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount(), provider);
 			if (billingAccount == null) {
 				throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
-			}
+			} else if (!userAccount.getBillingAccount().equals(billingAccount)) {
+                throw new InvalidParameterException("Can not change the parent account. User account's current parent account (billing account) is " + userAccount.getBillingAccount().getCode());
+            }
 			userAccount.setBillingAccount(billingAccount);
 		}
 
@@ -331,6 +331,10 @@ public class UserAccountApi extends AccountApi {
 				terminate(userAccountDto, currentUser);
 			} else {
 
+                if (!StringUtils.isBlank(userAccountDto.getBillingAccount())) {
+                    existedUserAccountDto.setBillingAccount(userAccountDto.getBillingAccount());
+                }
+			    
 				if (userAccountDto.getStatus() != null) {
 					existedUserAccountDto.setStatus(userAccountDto.getStatus());
 				}

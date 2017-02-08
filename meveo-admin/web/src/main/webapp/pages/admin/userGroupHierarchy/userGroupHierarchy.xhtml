@@ -6,7 +6,7 @@
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
                 <p:menuitem value="#{messages['menu.userGroupHierarchy']}" outcome="userGroupHierarchy" />
             </p:breadCrumb>
         </h:form>
@@ -18,8 +18,9 @@
                     <p:panel>
                         <p:outputPanel style="height: 100%;overflow: auto;display: block">
                             <p:tree style="height: 375px; width: 95%" value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel" selectionMode="single"
-                                rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
+                                    draggable="true" droppable="true" dragdropScope="userGroups" rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
                                 <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update="messages buttons userGroupLevelDetailPanel" />
+                                <p:ajax event="dragdrop" listener="#{userHierarchyLevelBean.onDragDrop}"/>
                                 <p:treeNode>
                                     <h:outputText value="#{userGroupLevel.descriptionOrCode}" />
                                 </p:treeNode>

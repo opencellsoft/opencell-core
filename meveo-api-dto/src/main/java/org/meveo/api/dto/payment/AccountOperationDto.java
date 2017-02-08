@@ -39,6 +39,11 @@ public class AccountOperationDto extends BaseDto {
 	private OtherCreditAndChargeDto otherCreditAndCharge;
 	private RecordedInvoiceDto recordedInvoice;
 	private RejectedPaymentDto rejectedPayment;
+
+	private String bankLot;
+	private String bankReference;
+	private Date bankCollectionDate;
+	private Date depositDate;
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -216,5 +221,35 @@ public class AccountOperationDto extends BaseDto {
 		this.id = id;
 	}
 
-	
+	public String getBankLot() {
+		return bankLot;
+	}
+
+	public void setBankLot(String bankLot) {
+		this.bankLot = bankLot;
+	}
+
+	public String getBankReference() {
+		return bankReference;
+	}
+
+	public void setBankReference(String bankReference) {
+		this.bankReference = bankReference;
+	}
+
+	public Date getBankCollectionDate() {
+		return bankCollectionDate;
+	}
+
+	public void setBankCollectionDate(Date bankCollectionDate) {
+		this.bankCollectionDate = bankCollectionDate;
+	}
+
+	public Date getDepositDate() {
+		return depositDate;
+	}
+
+	public void setDepositDate(Date depositDate) {
+		this.depositDate = depositDate;
+	}
 }

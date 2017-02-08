@@ -17,16 +17,16 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
-					<p:menuitem outcome="customers"
-						value="#{messages['menu.customers']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+	<ui:define name="body">	
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.customers']}" outcome="customers" />
+                <p:menuitem value="#{messages['menu.customers.newCustomer']}"  disabled="true" rendered="#{customerBean.entity.transient}" />
+                <p:menuitem value="#{messages['menu.customers.customer.configuration']} - #{customerBean.entity.descriptionOrCode}" disabled="true" rendered="#{!customerBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+		
 <!-- 		<hftl:entityPopup id="sellerParentPopup" -->
 <!-- 			header="#{messages['seller.title']}" backingBean="#{sellerBean}" -->
 <!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
@@ -85,7 +85,7 @@
 										listBean="#{customerBrandBean}" />
 									<hftl:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}"/> 
+										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}" listenerUpdate="@this"/> 
 <!--                                         popup="true" popupId="sellerParentPopup" /> -->
 								
 							</p:tab>

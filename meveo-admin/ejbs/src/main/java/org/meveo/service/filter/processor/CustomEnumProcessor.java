@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.FilterParameterTypeEnum;
 import org.meveo.model.filter.PrimitiveFilterCondition;
@@ -23,6 +24,12 @@ public class CustomEnumProcessor extends EnumProcessor {
             String enumClassName = stringValue.substring(0, stringValue.lastIndexOf("."));
             String enumValue = stringValue.substring(stringValue.lastIndexOf(".") + 1);
             buildQuery(queryBuilder, alias, condition, enumClassName, enumValue);
+        } else if(!StringUtils.isBlank(condition.getOperand())) {
+        	String stringValue = condition.getOperand().substring(FilterParameterTypeEnum.ENUM.getPrefix().length() + 1);
+            String enumClassName = stringValue.substring(0, stringValue.lastIndexOf("."));
+            String enumValue = stringValue.substring(stringValue.lastIndexOf(".") + 1);
+            
+			buildQuery(queryBuilder, alias, condition, enumClassName, enumValue);
         }
     }
 }

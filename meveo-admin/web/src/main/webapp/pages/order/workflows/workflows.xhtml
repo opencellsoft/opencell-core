@@ -59,8 +59,11 @@
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />
                             </p:button>
+                            <p:commandButton id="duplicateOperationBtn" icon="fa fa-plus" styleClass="no-text-decoration text-blue"
+                                action="#{wfTransitionBean.duplicateWfTransition(transition)}" update="messages">
+                            </p:commandButton>
                             <p:commandButton id="deleteOperationBtn" icon="fa fa-trash-o" styleClass="no-text-decoration text-blue"
-                                action="#{wfTransitionBean.deleteWfTransition(transition)}" update="transitions">
+                                action="#{wfTransitionBean.deleteWfTransition(transition)}" update="@all">
                                 <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['mmTransition.confirmDelete']}" icon="ui-icon-alert" />
                             </p:commandButton>
                             <p:commandButton id="moveUpBtn" icon="fa fa-arrow-up" styleClass="no-text-decoration text-blue"

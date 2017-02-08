@@ -11,6 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
+import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -120,10 +121,37 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
             // Check user has <cetCode>/modify permission
             User currentUser = getCurrentUser();
             if (!currentUser.hasPermission(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode), "read")) {
-                throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+                throw new LoginException("User does not have permission 'read' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
             }
 
             result.setCustomEntityInstance(customEntityInstanceApi.find(customEntityTemplateCode, code, currentUser));
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public CustomEntityInstancesResponseDto list(String customEntityTemplateCode) {
+        CustomEntityInstancesResponseDto result = new CustomEntityInstancesResponseDto();
+
+        try {
+            // Check user has <cetCode>/modify permission
+            User currentUser = getCurrentUser();
+            if (!currentUser.hasPermission(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode), "read")) {
+                throw new LoginException("User does not have permission 'read' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            }
+
+            result.setCustomEntityInstances(customEntityInstanceApi.list(customEntityTemplateCode, currentUser));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

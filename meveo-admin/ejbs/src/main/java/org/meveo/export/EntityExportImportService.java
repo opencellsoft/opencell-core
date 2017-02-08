@@ -775,7 +775,7 @@ public class EntityExportImportService implements Serializable {
             String version = null;
             // If it is a new format
             if (!rootNode.equals("meveoExport")) {
-                throw new Exception("Unknown export file format");
+                throw new Exception("Unknown import file format");
             }
             version = reader.getAttribute("version");
 

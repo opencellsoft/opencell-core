@@ -9,7 +9,12 @@
     </ui:define>
 
     <ui:define name="body">
-
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
+                </p:breadCrumb>
+            </h:form>
         <hftl:searchPanel columns="3" label="#{messages['scriptInstance.search']}" backingBean="#{scriptInstanceListBean}">
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
         </hftl:searchPanel>

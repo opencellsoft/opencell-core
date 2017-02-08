@@ -92,16 +92,29 @@
 			column2="description" selection="#{catMessagesBean.businessEntity}"
 			updateField=":catMessageFormId">
 		</hftl:entityPopup>
+
+        <hftl:entityPopup id="ProductOffering_"
+            header="#{messages['productOffering.search']}"
+            backingBean="#{productOfferingBean}"
+            searchField1Label="#{messages['catMessages.code']}"
+            searchField1="code"
+            searchField2Label="#{messages['catMessages.description']}"
+            searchField2="description"
+            column1Label="#{messages['catMessages.code']}" column1="code"
+            column2Label="#{messages['catMessages.description']}"
+            column2="description" selection="#{catMessagesBean.businessEntity}"
+            updateField=":catMessageFormId">
+        </hftl:entityPopup>        
 		
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
 				<p:menuitem outcome="catMessagess"
 					value="#{messages['menu.catMessages']}" />
 				<p:menuitem value="#{messages['commons.new']} #{messages['BusinessEntity.description']}"
 					disabled="true" rendered="#{catMessagesBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['BusinessEntity.description']} #{messages['commons.configuration']} - #{catMessagesBean.entity.code}"
+					value="#{messages['BusinessEntity.description']} - #{catMessagesBean.entity.code}"
 					disabled="true" rendered="#{!catMessagesBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>
@@ -112,7 +125,7 @@
 				
 				<p:fieldset styleClass="clearLeft" >
 					<hftl:decorateFormField fieldId="catMessagesType_text" label="#{messages['catMessages.objectType']}">
-						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.objectType}" required="true" valueChangeListener="#{catMessagesBean.updateBusinessEntity()}">
+						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.objectType}" required="true" valueChangeListener="#{catMessagesBean.clearBusinessEntity()}">
 							<f:selectItem itemLabel=""/>
 							<f:selectItems value="#{catMessagesBean.objectTypes.entrySet()}" var="item" itemLabel="#{messages[item.value]}" itemValue="#{item.key}"/>
 							<p:ajax update=":catMessageFormId" event="change" />

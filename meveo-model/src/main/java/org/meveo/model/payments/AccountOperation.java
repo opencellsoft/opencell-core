@@ -129,7 +129,23 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "UUID", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();	
+    private String uuid = UUID.randomUUID().toString();
+
+	@Column(name = "BANK_LOT", length = 255)
+	@Size(max = 255)
+	private String bankLot;
+
+	@Column(name = "BANK_REFERENCE", length = 255)
+	@Size(max = 255)
+	private String bankReference;
+
+	@Column(name = "DEPOSIT_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date depositDate;
+
+	@Column(name = "BANK_COLLECTION_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date bankCollectionDate;
 
 	public Date getDueDate() {
 		return dueDate;
@@ -320,6 +336,37 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 		 */
 		public void setOrderNumber(String orderNumber) {
 			this.orderNumber = orderNumber;
-		}	
+		}
 
+	public String getBankLot() {
+		return bankLot;
+	}
+
+	public void setBankLot(String bankLot) {
+		this.bankLot = bankLot;
+	}
+
+	public String getBankReference() {
+		return bankReference;
+	}
+
+	public void setBankReference(String bankReference) {
+		this.bankReference = bankReference;
+	}
+
+	public Date getDepositDate() {
+		return depositDate;
+	}
+
+	public void setDepositDate(Date depositDate) {
+		this.depositDate = depositDate;
+	}
+
+	public Date getBankCollectionDate() {
+		return bankCollectionDate;
+	}
+
+	public void setBankCollectionDate(Date bankCollectionDate) {
+		this.bankCollectionDate = bankCollectionDate;
+	}
 }

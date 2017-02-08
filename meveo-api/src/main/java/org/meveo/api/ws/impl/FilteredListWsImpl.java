@@ -26,10 +26,10 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     private FullTextSearchApi fullTextSearchApi;
     
     @Override
-    public FilteredListResponseDto listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) {
+    public FilteredListResponseDto listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, Map<String, String> parameters) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser());
+            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser(), parameters);
             result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());

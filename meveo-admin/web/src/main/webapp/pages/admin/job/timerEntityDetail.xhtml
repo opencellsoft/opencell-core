@@ -13,15 +13,17 @@
     </ui:define>
     
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="timerEntities"
-						value="#{messages['menu.timerEntities']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+					<p:menuitem outcome="timerEntities" value="#{messages['menu.timerEntities']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['timer.panel']}"
+					disabled="true" rendered="#{timerEntityBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['timer.panel']} - #{timerEntityBean.entity.code}"
+					disabled="true" rendered="#{!timerEntityBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 		<hftl:formPanel label="#{messages['timer.panel']}"
 			backingBean="#{timerEntityBean}" columns="1">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />			

@@ -4,6 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jstl/core"
+	 xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -14,6 +15,12 @@
     </ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="invoices" value="#{messages['menu.invoices']}" />
+			</p:breadCrumb>
+		</h:form>		
 	
 	<hftl:entityPopup id="searchBillingAccountPopup"
 			header="#{messages['billingAccount.popup.header']}"

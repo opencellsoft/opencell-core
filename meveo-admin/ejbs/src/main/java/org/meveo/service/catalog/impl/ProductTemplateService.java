@@ -18,11 +18,11 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 @Stateless
-public class ProductTemplateService extends BusinessService<ProductTemplate> {
+public class ProductTemplateService extends MultilanguageEntityService<ProductTemplate> {
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;

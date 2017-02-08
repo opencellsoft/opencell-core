@@ -12,15 +12,17 @@
     </ui:define>
 
 	<ui:define name="body">
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="revenueRecognitionRules"
-						value="#{messages['menu.revenueRecognitionRules']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['revenueRecognitionRule.panel']}"
+					disabled="true" rendered="#{revenueRecognitionRuleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['revenueRecognitionRule.panel']} - #{revenueRecognitionRuleBean.entity.code}"
+					disabled="true" rendered="#{!revenueRecognitionRuleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 		<hftl:formPanel label="#{messages['revenueRecognitionRule.panel']}"
 			backingBean="#{revenueRecognitionRuleBean}">

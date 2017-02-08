@@ -1,7 +1,6 @@
 package org.meveo.service.catalog.impl;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.CustomFieldDto;
@@ -17,27 +15,16 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModuleItem;
@@ -55,34 +42,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	private BusinessServiceModelService businessServiceModelService;
 
 	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
-
-	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
 	@Inject
-	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
-
-	@Inject
-	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
-
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
-
-	@Inject
-	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
-
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
-
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-	@Inject
-	private CounterTemplateService counterTemplateService;
+	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 
 	@Inject
 	private OfferTemplateService offerTemplateService;
@@ -95,6 +58,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 	/**
 	 * Creates an offer given a BusinessOfferModel.
+	 * 
 	 * @param businessOfferModel
 	 * @param customFields
 	 * @param code
@@ -112,6 +76,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 	/**
 	 * Creates an offer given a BusinessOfferModel.
+	 * 
 	 * @param businessOfferModel
 	 * @param customFields
 	 * @param code
@@ -137,7 +102,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		// check if offer already exists
 		if (offerTemplateService.findByCode(code, currentUser.getProvider()) != null) {
-			throw new BusinessException("Offer template with code "+code +" already exists");
+			throw new BusinessException("Offer template with code " + code + " already exists");
 		}
 
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
@@ -147,17 +112,20 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 				log.error("Failed to execute a script {}", businessOfferModel.getScript().getCode(), e);
 			}
 		}
-		
+
 		newOfferTemplate.setCode(code);
-		
+
 		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
 		try {
+			if (StringUtils.isBlank(imagePath)) {
+				imagePath = bomOffer.getImagePath();
+			}
 			String newImagePath = offerImageUploadEventHandler.duplicateImage(newOfferTemplate, imagePath, code, currentUser.getProvider().getCode());
 			newOfferTemplate.setImagePath(newImagePath);
 		} catch (IOException e1) {
 			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
 		}
-		
+
 		newOfferTemplate.setDescription(offerDescription);
 		if (StringUtils.isBlank(name)) {
 			newOfferTemplate.setName(bomOffer.getName());
@@ -166,7 +134,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
 		newOfferTemplate.setValidTo(bomOffer.getValidTo());
-		newOfferTemplate.setBusinessOfferModel(businessOfferModel);		
+		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
 		}
@@ -246,327 +214,28 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					}
 				}
 
-				OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
-				newOfferServiceTemplate.setMandatory(serviceConfigurationDto.isMandatory());
-				if (offerServiceTemplate.getIncompatibleServices() != null) {
-					newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
-				}
-				ServiceTemplate newServiceTemplate = new ServiceTemplate();
+				OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateService(offerServiceTemplate, serviceConfigurationDto, prefix, pricePlansInMemory,
+						chargeTemplateInMemory, currentUser);
+				newOfferServiceTemplates.add(newOfferServiceTemplate);
 
-				try {
-					BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
-					newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
-					newServiceTemplate.setDescription(serviceConfigurationDto.getDescription());
-					newServiceTemplate.setBusinessServiceModel(bsm);
-					newServiceTemplate.setAuditable(null);
-					newServiceTemplate.setId(null);
-					newServiceTemplate.clearUuid();
-					newServiceTemplate.setVersion(0);
-					newServiceTemplate.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
-					newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
-					newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
-					newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+				if (bsm != null && bsm.getScript() != null) {
 					try {
-						ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
-						String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode(), currentUser.getProvider().getCode());
-						newServiceTemplate.setImagePath(newImagePath);
-					} catch (IOException e1) {
-						log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
+						serviceModelScriptService.afterCreateServiceFromBSM(newOfferServiceTemplate.getServiceTemplate(), serviceConfigurationDto.getCustomFields(), bsm
+								.getScript().getCode(), currentUser);
+					} catch (BusinessException e) {
+						log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
 					}
-					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
-
-					serviceTemplateService.create(newOfferServiceTemplate.getServiceTemplate(), currentUser);
-
-					// create price plans
-					if (serviceTemplate.getServiceRecurringCharges() != null && serviceTemplate.getServiceRecurringCharges().size() > 0) {
-						for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-							// create price plan
-							String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
-							if (pricePlanMatrixes != null) {
-								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-									String ppCode = prefix + pricePlanMatrix.getCode();
-									PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider());
-									if (ppMatrix != null) {
-										continue;
-									}
-
-									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-									newPriceplanmaMatrix.setAuditable(null);
-									newPriceplanmaMatrix.setId(null);
-									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(ppCode);
-									newPriceplanmaMatrix.setVersion(0);
-									newPriceplanmaMatrix.setOfferTemplate(null);
-
-									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-										continue;
-									} else {
-										pricePlansInMemory.add(newPriceplanmaMatrix);
-									}
-
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
-								}
-							}
-						}
-					}
-
-					if (serviceTemplate.getServiceSubscriptionCharges() != null && serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
-						for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-							// create price plan
-							String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
-							if (pricePlanMatrixes != null) {
-								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-									String ppCode = prefix + pricePlanMatrix.getCode();
-									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
-										continue;
-									}
-
-									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-									newPriceplanmaMatrix.setAuditable(null);
-									newPriceplanmaMatrix.setId(null);
-									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(ppCode);
-									newPriceplanmaMatrix.setVersion(0);
-									newPriceplanmaMatrix.setOfferTemplate(null);
-
-									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-										continue;
-									} else {
-										pricePlansInMemory.add(newPriceplanmaMatrix);
-									}
-
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
-								}
-							}
-						}
-					}
-
-					if (serviceTemplate.getServiceTerminationCharges() != null && serviceTemplate.getServiceTerminationCharges().size() > 0) {
-						for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-							// create price plan
-							String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
-							if (pricePlanMatrixes != null) {
-								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-									String ppCode = prefix + pricePlanMatrix.getCode();
-									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
-										continue;
-									}
-
-									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-									newPriceplanmaMatrix.setAuditable(null);
-									newPriceplanmaMatrix.setId(null);
-									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(ppCode);
-									newPriceplanmaMatrix.setVersion(0);
-									newPriceplanmaMatrix.setOfferTemplate(null);
-
-									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-										continue;
-									} else {
-										pricePlansInMemory.add(newPriceplanmaMatrix);
-									}
-
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
-								}
-							}
-						}
-					}
-
-					if (serviceTemplate.getServiceUsageCharges() != null && serviceTemplate.getServiceUsageCharges().size() > 0) {
-						for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-							String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-							List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
-							if (pricePlanMatrixes != null) {
-								for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-									String ppCode = prefix + pricePlanMatrix.getCode();
-									if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
-										continue;
-									}
-
-									PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-									BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-									newPriceplanmaMatrix.setAuditable(null);
-									newPriceplanmaMatrix.setId(null);
-									newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-									newPriceplanmaMatrix.setCode(ppCode);
-									newPriceplanmaMatrix.setVersion(0);
-									newPriceplanmaMatrix.setOfferTemplate(null);
-
-									if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-										continue;
-									} else {
-										pricePlansInMemory.add(newPriceplanmaMatrix);
-									}
-
-									pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
-								}
-							}
-						}
-					}
-
-					// get charges
-					if (serviceTemplate.getServiceRecurringCharges() != null && serviceTemplate.getServiceRecurringCharges().size() > 0) {
-						for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-							RecurringChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-							RecurringChargeTemplate newChargeTemplate = new RecurringChargeTemplate();
-
-							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
-
-							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-								continue;
-							} else {
-								chargeTemplateInMemory.add(newChargeTemplate);
-							}
-
-							recurringChargeTemplateService.create(newChargeTemplate, currentUser);
-							
-							copyEdrTemplates(chargeTemplate, newChargeTemplate);
-
-							ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
-							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							if (serviceCharge.getWalletTemplates() != null) {
-								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-							}
-							serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser);
-
-							newServiceTemplate.getServiceRecurringCharges().add(serviceChargeTemplate);
-						}
-					}
-
-					if (serviceTemplate.getServiceSubscriptionCharges() != null && serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
-						for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
-
-							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
-
-							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-								continue;
-							} else {
-								chargeTemplateInMemory.add(newChargeTemplate);
-							}
-
-							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
-							
-							copyEdrTemplates(chargeTemplate, newChargeTemplate);
-
-							ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
-							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							if (serviceCharge.getWalletTemplates() != null) {
-								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-							}
-							serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser);
-
-							newServiceTemplate.getServiceSubscriptionCharges().add(serviceChargeTemplate);
-						}
-					}
-
-					if (serviceTemplate.getServiceTerminationCharges() != null && serviceTemplate.getServiceTerminationCharges().size() > 0) {
-						for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-							OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-							OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
-
-							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
-
-							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-								continue;
-							} else {
-								chargeTemplateInMemory.add(newChargeTemplate);
-							}
-
-							oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
-							
-							copyEdrTemplates(chargeTemplate, newChargeTemplate);
-
-							ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
-							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							if (serviceCharge.getWalletTemplates() != null) {
-								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-							}
-							serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser);
-
-							newServiceTemplate.getServiceTerminationCharges().add(serviceChargeTemplate);
-						}
-					}
-
-					if (serviceTemplate.getServiceUsageCharges() != null && serviceTemplate.getServiceUsageCharges().size() > 0) {
-						for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-							UsageChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-							UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
-
-							copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);							
-
-							if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-								continue;
-							} else {
-								chargeTemplateInMemory.add(newChargeTemplate);
-							}
-
-							usageChargeTemplateService.create(newChargeTemplate, currentUser);
-							
-							copyEdrTemplates(chargeTemplate, newChargeTemplate);
-
-							ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
-							serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-							serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-							if (serviceCharge.getWalletTemplates() != null) {
-								serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-								serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-							}
-							serviceChargeTemplateUsageService.create(serviceChargeTemplate, currentUser);
-
-							if (serviceCharge.getCounterTemplate() != null) {
-								CounterTemplate newCounterTemplate = new CounterTemplate();
-								BeanUtils.copyProperties(newCounterTemplate, serviceCharge.getCounterTemplate());
-								newCounterTemplate.setAuditable(null);
-								newCounterTemplate.setId(null);
-								newCounterTemplate.setCode(prefix + serviceCharge.getCounterTemplate().getCode());
-
-								counterTemplateService.create(newCounterTemplate, currentUser);
-
-								serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
-							}
-
-							newServiceTemplate.getServiceUsageCharges().add(serviceChargeTemplate);
-						}
-					}
-
-					if (bsm != null && bsm.getScript() != null) {
-						try {
-							serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplate, serviceConfigurationDto.getCustomFields(), bsm.getScript().getCode(), currentUser);
-						} catch (BusinessException e) {
-							log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
-						}
-					}
-
-					newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
-					newOfferServiceTemplates.add(newOfferServiceTemplate);
-				} catch (IllegalAccessException | InvocationTargetException e) {
-					throw new BusinessException(e.getMessage());
 				}
 			}
 		}
 
 		// add to offer
 		for (OfferServiceTemplate newOfferServiceTemplate : newOfferServiceTemplates) {
-			newOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
 			newOfferTemplate.addOfferServiceTemplate(newOfferServiceTemplate);
 		}
 
 		offerTemplateService.update(newOfferTemplate, currentUser);
-		
+
 		if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
 			try {
 				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode(), currentUser);
@@ -579,34 +248,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		return newOfferTemplate;
 	}
-	
-	private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
-		if (sourceChargeTemplate.getEdrTemplates() != null && sourceChargeTemplate.getEdrTemplates().size() > 0) {
-			for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
-				targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
-			}
-		}
-	}
-	
-	/**
-	 * Copy basic properties of a chargeTemplate to another object.
-	 * @param sourceChargeTemplate
-	 * @param targetTemplate
-	 * @param prefix
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 */
-	private void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
-		BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
-		targetTemplate.setAuditable(null);
-		targetTemplate.setId(null);
-		targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
-		targetTemplate.clearUuid();
-		targetTemplate.setVersion(0);
-		targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
-		targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<BusinessOfferModel> listInstalled(Provider provider) {
 		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b", null, null, provider);
@@ -614,7 +256,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		qb.addCriterion("installed", "=", true, true);
 		qb.addSql("moduleSource is null");
 		qb.endOrClause();
-		
+
 		try {
 			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {

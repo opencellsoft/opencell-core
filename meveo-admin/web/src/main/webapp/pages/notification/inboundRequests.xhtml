@@ -8,7 +8,12 @@
         </f:metadata>
     </ui:define>
     <ui:define name="body">
-
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="inboundRequests" value="#{messages['menu.inboundRequests']}" />
+                </p:breadCrumb>
+            </h:form>
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
         <hftl:searchPanel label="#{messages['menu.inboundRequests']}" columns="2" backingBean="#{inboundRequestListBean}" renderNewButton="false">

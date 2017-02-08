@@ -7,7 +7,14 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="body">
-
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />								
+		        <p:menuitem value="#{messages['commons.new']} #{messages['menu.exceptionalInvoicing']}"
+					disabled="true" rendered="#{billingRunBean.entity.transient}" />			
+			</p:breadCrumb>
+		</h:form>
 		<ui:define name="metadata">
 			<f:metadata>
 				<f:event type="preRenderView"
@@ -16,7 +23,7 @@
 		</ui:define>
 
 		<hftl:searchPanel label="#{messages['billingAccount.search']}"
-			backingBean="#{billingAccountBean}">
+			backingBean="#{billingAccountBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hftl:searchField
@@ -33,7 +40,7 @@
 			backingBean="#{billingAccountBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" 
 				propagateConversation="false" entityView="billingAccountDetail"
-				objectIdParamName="billingAccountId"/>
+				objectIdParamName="billingAccountId" backView="exceptionelInvoicing"/>
 			<hftl:column label="#{messages['billingAccount.status']}"
 				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"

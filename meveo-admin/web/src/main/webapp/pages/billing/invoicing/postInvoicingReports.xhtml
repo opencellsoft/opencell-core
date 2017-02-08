@@ -14,6 +14,15 @@
     </ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />				
+				<p:menuitem
+					value="#{messages['billingRun.panel']} - #{billingRunBean.entity.id}"
+					disabled="true" rendered="#{!billingRunBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
          <p:messages id="messages" />
 		<hftl:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"

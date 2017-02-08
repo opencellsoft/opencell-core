@@ -1,5 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hftl="http://hftl.org"
-	xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml">
+	xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml"
+		xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -8,6 +10,12 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />
+			</p:breadCrumb>
+		</h:form>	
 
 		<hftl:searchPanel label="#{messages['revenueRecognitionRule.search']}" backingBean="#{revenueRecognitionRuleListBean}">
 			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />

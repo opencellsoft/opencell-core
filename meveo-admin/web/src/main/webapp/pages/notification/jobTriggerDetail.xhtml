@@ -8,14 +8,17 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="jobTriggers" value="#{messages['menu.jobTriggers']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+				<p:menuitem value="#{messages['commons.new']} #{messages['jobTrigger.title']}"
+					disabled="true" rendered="#{jobTriggerBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['jobTrigger.title']} - #{jobTriggerBean.entity.code}"
+					disabled="true" rendered="#{!jobTriggerBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
 
         <hftl:entityPopup id="jobInstancePopup" header="#{messages['jobInstance.title']}" backingBean="#{jobInstanceBean}" searchField1Label="#{messages['BusinessEntity.code']}"

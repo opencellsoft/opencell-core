@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author seb
  * 
  */
+@Lock(LockType.READ)
 public abstract class Job {
 
     public static String CFT_PREFIX= "JOB";

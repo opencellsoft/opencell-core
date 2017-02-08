@@ -104,11 +104,11 @@ public class BusinessEntity extends AuditableEntity {
 		}
 		return null;
 	}
-
+ 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
+        int result = prime * 1; //super.hashCode();
         result = prime * result + ((code == null) ? 0 : code.hashCode());
         return result;
     }

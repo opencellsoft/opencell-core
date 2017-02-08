@@ -27,7 +27,7 @@
                     <p:outputPanel>
                         <p:panel rendered="#{not offerTemplateBean.edit}">
                             <ul class="list-inline">
-                                <li class=""><p:commandLink action="#{offerTemplateBean.duplicate()}" update="@form" styleClass="fa fa-copy text-blue fa-2x">
+                                <li class=""><p:commandLink action="#{offerTemplateBean.duplicateCatalogHierarchy()}" update="@form" styleClass="fa fa-copy text-blue fa-2x">
                                         <f:param name="edit" value="false"></f:param>
                                         <f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
@@ -149,11 +149,11 @@
                 </f:facet>
                 <!-- custom fields -->
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
-                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
+                    <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
                 </c:if>
                 <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
                     <p:tabView>
-                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" cfFormId="offerCFForm" />
+                        <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":offerForm:messages" defaultTabLabel="#{messages['commons.parameters']}" />
                     </p:tabView>
                 </c:if>
                 <hftl:displayWorkflowsHistory entity="#{offerTemplateBean.entity}" />
@@ -187,12 +187,12 @@
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
+                                            defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
                                     </c:if>
                                     <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" cfFormId="serviceCFForm_#{loopStatus.index}" />
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
                                         </p:tabView>
                                     </c:if>
                                 </p:panel>

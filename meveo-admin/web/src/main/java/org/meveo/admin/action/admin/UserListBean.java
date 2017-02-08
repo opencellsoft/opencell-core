@@ -18,12 +18,50 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
+
+import org.meveo.model.admin.User;
+import org.meveo.util.view.LazyDataModelWSize;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
 public class UserListBean extends UserBean {
 
-    private static final long serialVersionUID = 5761298784298195322L;
+	private static final long serialVersionUID = 5761298784298195322L;
+
+	private LazyDataModel<User> filteredUsers = null;	
+
+	public LazyDataModel<User> getFilteredLazyDataModel() {
+		if (getCurrentUser().hasRole("MARKETING_MANAGER")) {
+			if (filteredUsers != null) {
+				return filteredUsers;
+			}
+
+			filteredUsers = new LazyDataModelWSize<User>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+
+					List<User> entities = null;
+					entities = userService.listUsersInMM(Arrays.asList("MARKETING_MANAGER", "CUSTOMER_CARE_USER"), getCurrentProvider());
+					setRowCount(entities.size());
+
+					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+				}
+			};
+
+			return filteredUsers;
+		}
+
+		return super.getLazyDataModel();
+	}
+
 }

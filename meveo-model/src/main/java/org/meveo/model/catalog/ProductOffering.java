@@ -38,7 +38,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @Entity
 @ModuleItem
 @ObservableEntity
-@MultilanguageEntity
+@MultilanguageEntity(key="menu.catalog.offersAndProducts", group="ProductOffering")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
