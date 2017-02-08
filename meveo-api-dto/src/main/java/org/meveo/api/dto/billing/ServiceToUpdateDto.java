@@ -13,14 +13,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "ServiceToSuspend")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceToSuspendDto implements Serializable {
+public class ServiceToUpdateDto implements Serializable {
 
     private static final long serialVersionUID = -3815026205495621916L;
 
     @XmlAttribute(required = true)
     private String code;
 
-    private Date suspensionDate;
+    private Date actionDate;
 
 	public String getCode() {
 		return code;
@@ -30,17 +30,17 @@ public class ServiceToSuspendDto implements Serializable {
 		this.code = code;
 	}
 
-	public Date getSuspensionDate() {
-		return suspensionDate;
+	public Date getActionDate() {
+		return actionDate;
 	}
 
-	public void setSuspensionDate(Date suspensionDate) {
-		this.suspensionDate = suspensionDate;
+	public void setActionDate(Date actionDate) {
+		this.actionDate = actionDate;
 	}
 
 	@Override
 	public String toString() {
-		return "ServiceToSuspendDto [code=" + code + ", suspensionDate=" + suspensionDate + "]";
+		return "ServiceToSuspendDto [code=" + code + ", actionDate=" + actionDate + "]";
 	}
     
     }

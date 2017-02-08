@@ -14,18 +14,18 @@ import org.meveo.api.dto.BaseDto;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "SuspendServicesRequest")
+@XmlRootElement(name = "OperationServicesRequestDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SuspendServicesRequestDto extends BaseDto {
+public class OperationServicesRequestDto extends BaseDto {
 
 	private static final long serialVersionUID = 1150993171011072506L;
 
 	@XmlElement(required = true)
 	private String subscriptionCode;
 
-	@XmlElementWrapper(name="ListServiceToSuspend")
-    @XmlElement(name="ServiceToSuspend")
-	private List<ServiceToSuspendDto> servicesToSuspend = new ArrayList<ServiceToSuspendDto>();
+	@XmlElementWrapper(name="ListServiceToUpdate")
+    @XmlElement(name="serviceToUpdate")
+	private List<ServiceToUpdateDto> servicesToUpdate = new ArrayList<ServiceToUpdateDto>();
 
 	public String getSubscriptionCode() {
 		return subscriptionCode;
@@ -35,17 +35,17 @@ public class SuspendServicesRequestDto extends BaseDto {
 		this.subscriptionCode = subscriptionCode;
 	}
 
-	public List<ServiceToSuspendDto> getServicesToSuspend() {
-		return servicesToSuspend;
+	public List<ServiceToUpdateDto> getServicesToUpdate() {
+		return servicesToUpdate;
 	}
 
-	public void setServicesToSuspend(List<ServiceToSuspendDto> servicesToSuspend) {
-		this.servicesToSuspend = servicesToSuspend;
+	public void setServicesToUpdate(List<ServiceToUpdateDto> servicesToUpdate) {
+		this.servicesToUpdate = servicesToUpdate;
 	}
 
 	@Override
 	public String toString() {
-		return "SuspendServicesRequestDto [subscriptionCode=" + subscriptionCode + ", servicesToSuspend=" + servicesToSuspend + "]";
+		return "OperationServicesRequestDto [subscriptionCode=" + subscriptionCode + ", servicesToUpdate=" + servicesToUpdate + "]";
 	}
 
 	

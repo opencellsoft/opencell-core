@@ -15,7 +15,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
-import org.meveo.api.dto.billing.SuspendServicesRequestDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.SuspendSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
@@ -307,7 +307,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus suspendServices(SuspendServicesRequestDto postData) {
+	public ActionStatus suspendServices(OperationServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -320,7 +320,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus resumeServices(SuspendServicesRequestDto postData) {
+	public ActionStatus resumeServices(OperationServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             subscriptionApi.resumeServices(postData, getCurrentUser());

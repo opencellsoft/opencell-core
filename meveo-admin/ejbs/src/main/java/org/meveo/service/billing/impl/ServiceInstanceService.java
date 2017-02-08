@@ -445,7 +445,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-                recurringChargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), suspensionDate, updater);
+                recurringChargeInstanceService.recurringChargeSuspension(recurringChargeInstance.getId(), suspensionDate, updater);
             }
 
         }
@@ -482,7 +482,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setDescription(serviceTemplate.getDescription());
         serviceInstance.setTerminationDate(null);
 
-        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {        	
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
                 recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, reactivationDate, updater);
             }

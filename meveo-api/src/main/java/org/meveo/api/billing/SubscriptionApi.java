@@ -26,11 +26,11 @@ import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
-import org.meveo.api.dto.billing.ServiceToSuspendDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
-import org.meveo.api.dto.billing.SuspendServicesRequestDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -1016,42 +1016,42 @@ public class SubscriptionApi extends BaseApi {
      * @throws IncorrectServiceInstanceException
      * @throws BusinessException
      */
-	public void suspendServices(SuspendServicesRequestDto suspendServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		suspendOrResumeServices(suspendServicesRequestDto, currentUser, true);     
+	public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, currentUser, true);     
 	}	
 	
-	public void resumeServices(SuspendServicesRequestDto suspendServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		suspendOrResumeServices(suspendServicesRequestDto, currentUser, false);
+	public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, currentUser, false);
 	}	
 	
-	public void suspendOrResumeServices(SuspendServicesRequestDto suspendServicesRequestDto, User currentUser,boolean isToSuspend) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (suspendServicesRequestDto == null  ) {
-			missingParameters.add("suspendServicesRequestDto");	
+	private void suspendOrResumeServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser,boolean isToSuspend) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (provisionningServicesRequestDto == null  ) {
+			missingParameters.add("provisionningServicesRequestDto");	
 			handleMissingParameters();
 		}
 		
-		if (StringUtils.isBlank(suspendServicesRequestDto.getSubscriptionCode())) {
+		if (StringUtils.isBlank(provisionningServicesRequestDto.getSubscriptionCode())) {
 			missingParameters.add("subscriptionCode");			
 		}	
-		for(ServiceToSuspendDto serviceToSuspendDto: suspendServicesRequestDto.getServicesToSuspend()){
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){
 			if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
 				missingParameters.add("serviceToSuspend.code");			
 			}
 		}
 		handleMissingParameters();
-		Subscription subscription = subscriptionService.findByCode(suspendServicesRequestDto.getSubscriptionCode(), currentUser.getProvider());
+		Subscription subscription = subscriptionService.findByCode(provisionningServicesRequestDto.getSubscriptionCode(), currentUser.getProvider());
 		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, suspendServicesRequestDto.getSubscriptionCode());
+			throw new EntityDoesNotExistsException(Subscription.class, provisionningServicesRequestDto.getSubscriptionCode());
 		}				
-		for(ServiceToSuspendDto serviceToSuspendDto: suspendServicesRequestDto.getServicesToSuspend()){           
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){           
         	ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription); 
         	if(serviceInstanceToSuspend == null){
         		throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
         	}
         	if(isToSuspend){
-        		serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getSuspensionDate(), currentUser);
+        		serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate(), currentUser);
         	}else{
-        		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getSuspensionDate(), currentUser);
+        		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate(), currentUser);
         	}
         }	        
 	}	

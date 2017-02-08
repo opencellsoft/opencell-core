@@ -23338,16 +23338,19 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a20243ee-82df-445b-9ffa-b7d081be0227"/><con:assertion type="Simple Contains" id="589304ca-f325-465e-b953-8f997412e722" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="3afb73cf-de65-4038-b315-d28ca2f1ddc8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Service" searchProperties="true"><con:settings/><con:testStep type="request" name="suspend" id="84be8642-57e1-4be1-883d-d6ce7e809557"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>suspendServices</con:operation><con:request name="suspend" id="d6847ca1-a023-4d77-a7f2-76f9adf6a56d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:suspendServices><!--Optional:-->
-         <suspendServicesRequestDto>
+      <ws:suspendServices>
+         <!--Optional:-->
+         <operationServicesRequestDto>
             <subscriptionCode>${#TestSuite#ticket}_SUB</subscriptionCode>
             <!--Optional:-->
-            <ListServiceToSuspend>
+            <ListServiceToUpdate>
                <!--Zero or more repetitions:-->
-               <ServiceToSuspend code="${#TestSuite#ticket}_SERVICE1">                 
-               </ServiceToSuspend>
-            </ListServiceToSuspend>
-         </suspendServicesRequestDto>
+               <serviceToUpdate code="${#TestSuite#ticket}_SERVICE1">
+                  <!--Optional:
+                  <actionDate>?</actionDate>-->
+               </serviceToUpdate>
+            </ListServiceToUpdate>
+         </operationServicesRequestDto>
       </ws:suspendServices>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8088d3b-abed-49c5-86a6-5df54139e5da"/><con:assertion type="Simple Contains" id="9ef027fb-ba62-4cb6-90ad-657bb3bee5e0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="resume" id="8685087d-4018-483b-b769-4aae961a545e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>resumeServices</con:operation><con:request name="resume" id="671c0c22-560d-43b6-947a-dc8053b782df"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
