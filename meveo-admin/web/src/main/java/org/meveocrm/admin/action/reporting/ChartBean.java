@@ -232,18 +232,20 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     	return null;
     }
 
-    private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
-        if (totals.size() > 0) {
-            int count = totals.size();
-            double first = totals.get(0).doubleValue();
-            double last = totals.get(count - 1).doubleValue();
-            double growthRate = Math.pow(last / first, 1.0d / count);
-            growthRate -= 1;
-            growthRate *= 100;
-            return new BigDecimal(growthRate).setScale(1, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
-    }
+	private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
+		if (totals.size() > 0) {
+			int count = totals.size();
+			double first = totals.get(0).doubleValue();
+			double last = totals.get(count - 1).doubleValue();
+			double growthRate = Math.pow(last / first, 1.0d / count);
+			growthRate -= 1;
+			growthRate *= 100;
+
+			return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
+		}
+
+		return BigDecimal.ZERO;
+	}
 
     private BigDecimal computeMeasuredValuesAverage(List<MeasuredValue> measuredValues) {
         BigDecimal average = BigDecimal.ZERO;
