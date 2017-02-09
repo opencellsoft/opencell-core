@@ -238,10 +238,14 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 			double first = totals.get(0).doubleValue();
 			double last = totals.get(count - 1).doubleValue();
 			double growthRate = Math.pow(last / first, 1.0d / count);
-			growthRate -= 1;
-			growthRate *= 100;
+			if (Double.isNaN(growthRate) || Double.isInfinite(growthRate)) {
+				return BigDecimal.ZERO;
+			} else {
 
-			return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
+				growthRate -= 1;
+				growthRate *= 100;
+				return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
+			}
 		}
 
 		return BigDecimal.ZERO;
