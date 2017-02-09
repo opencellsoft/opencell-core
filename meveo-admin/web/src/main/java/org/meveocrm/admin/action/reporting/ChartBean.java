@@ -220,22 +220,17 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         return average;
     }
 
-	private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
-		if (trendList != null && trendList.size() >= 10) {
-			BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
-			BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
-			if (firstAverage.compareTo(BigDecimal.ZERO) != 0) {
-				BigDecimal averageTrend = lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
-				averageTrend = averageTrend.subtract(BigDecimal.ONE);
-				averageTrend = averageTrend.multiply(new BigDecimal(100));
-				return averageTrend.setScale(1, RoundingMode.HALF_UP);
-			} else {
-				return BigDecimal.ZERO;
-			}
-		}
-
-		return null;
-	}
+    private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
+    	if(trendList != null && trendList.size()>=10){    	
+	        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
+	        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
+	        BigDecimal averageTrend = (firstAverage == null || firstAverage.compareTo(BigDecimal.ZERO) == 0) ?  BigDecimal.ZERO : lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
+	        averageTrend = averageTrend.subtract(BigDecimal.ONE);
+	        averageTrend = averageTrend.multiply(new BigDecimal(100));
+	        return averageTrend.setScale(1, RoundingMode.HALF_UP);    	
+    	}
+    	return null;
+    }
 
     private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
         if (totals.size() > 0) {
