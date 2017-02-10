@@ -18,8 +18,6 @@
  */
 package org.meveocrm.admin.action.reporting;
 
-import com.google.gson.Gson;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -43,6 +41,8 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.ChartModel;
+
+import com.google.gson.Gson;
 
 @Named
 @ViewScoped
@@ -232,18 +232,24 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     	return null;
     }
 
-    private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
-        if (totals.size() > 0) {
-            int count = totals.size();
-            double first = totals.get(0).doubleValue();
-            double last = totals.get(count - 1).doubleValue();
-            double growthRate = Math.pow(last / first, 1.0d / count);
-            growthRate -= 1;
-            growthRate *= 100;
-            return new BigDecimal(growthRate).setScale(1, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
-    }
+	private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
+		if (totals.size() > 0) {
+			int count = totals.size();
+			double first = totals.get(0).doubleValue();
+			double last = totals.get(count - 1).doubleValue();
+			double growthRate = Math.pow(last / first, 1.0d / count);
+			if (Double.isNaN(growthRate) || Double.isInfinite(growthRate)) {
+				return BigDecimal.ZERO;
+			} else {
+
+				growthRate -= 1;
+				growthRate *= 100;
+				return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
+			}
+		}
+
+		return BigDecimal.ZERO;
+	}
 
     private BigDecimal computeMeasuredValuesAverage(List<MeasuredValue> measuredValues) {
         BigDecimal average = BigDecimal.ZERO;
