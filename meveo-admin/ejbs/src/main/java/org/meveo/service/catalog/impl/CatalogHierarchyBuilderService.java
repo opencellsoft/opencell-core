@@ -15,13 +15,18 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -31,6 +36,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +78,15 @@ public class CatalogHierarchyBuilderService {
 
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
-	
+
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
+
+	@Inject
+	private ProductTemplateService productTemplateService;
+
+	@Inject
+	private ProductChargeTemplateService productChargeTemplateService;
 
 	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix, Auditable auditable, User currentUser)
 			throws BusinessException {
@@ -91,39 +103,208 @@ public class CatalogHierarchyBuilderService {
 			for (OfferServiceTemplate newOfferServiceTemplate : newOfferServiceTemplates) {
 				entity.addOfferServiceTemplate(newOfferServiceTemplate);
 			}
+		}
+	}
 
-			// for (OfferProductTemplate offerProductTemplate :
-			// entity.getOfferProductTemplates()) {
-			// newOfferServiceTemplates.add(duplicateProduct(offerProductTemplate));
-			// }
+	public void buildOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix, Auditable auditable, User currentUser)
+			throws BusinessException {
+		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
+		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
+		List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
+
+		if (offerProductTemplates != null) {
+			for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+				newOfferProductTemplates.add(duplicateProduct(offerProductTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser));
+			}
+
+			// add to offer
+			for (OfferProductTemplate offerProductTemplate : newOfferProductTemplates) {
+				entity.addOfferProductTemplate(offerProductTemplate);
+			}
 		}
 	}
 
 	/**
-	 * TODO: Need to update product template model first.
+	 * Duplicate product, product charge template and prices.
 	 * 
 	 * @param offerProductTemplate
+	 * @param currentUser
+	 * @param chargeTemplateInMemory
+	 * @param pricePlansInMemory
+	 * @param prefix
+	 * @throws BusinessException
 	 */
-	public void duplicateProduct(OfferProductTemplate offerProductTemplate) {
+	public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
+			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
 		OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
+
 		newOfferProductTemplate.setMandatory(offerProductTemplate.isMandatory());
+
+		ProductTemplate productTemplate = productTemplateService.findByCode(offerProductTemplate.getProductTemplate().getCode(), currentUser.getProvider());
+
+		ProductTemplate newProductTemplate = new ProductTemplate();
+		String sourceAppliesToEntity = productTemplate.getUuid();
+
+		try {
+			BeanUtils.copyProperties(newProductTemplate, productTemplate);
+			newProductTemplate.setCode(prefix + productTemplate.getCode());
+
+			newProductTemplate.setId(null);
+			newProductTemplate.clearUuid();
+			newProductTemplate.setVersion(0);
+
+			newProductTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+			newProductTemplate.setAttachments(new ArrayList<DigitalResource>());
+			newProductTemplate.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+			newProductTemplate.setChannels(new ArrayList<Channel>());
+			newProductTemplate.setProductChargeTemplates(new ArrayList<ProductChargeTemplate>());
+
+			List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
+			newProductTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+
+			if (walletTemplates != null) {
+				for (WalletTemplate wt : walletTemplates) {
+					newProductTemplate.addWalletTemplate(wt);
+				}
+			}
+
+			try {
+				ImageUploadEventHandler<ProductTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
+				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath(), prefix + productTemplate.getCode(),
+						currentUser.getProvider().getCode());
+				newProductTemplate.setImagePath(newImagePath);
+			} catch (IOException e1) {
+				log.error("IPIEL: Failed duplicating product image: {}", e1.getMessage());
+			}
+
+			productTemplateService.create(newProductTemplate, currentUser);
+
+			// duplicate custom field instances
+			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newProductTemplate, currentUser);
+
+			duplicateProductPrices(productTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser);
+			duplicateProductOffering(productTemplate, newProductTemplate);
+			duplicateProductCharges(productTemplate, newProductTemplate, prefix, chargeTemplateInMemory, currentUser);
+
+			newOfferProductTemplate.setProductTemplate(newProductTemplate);
+			return newOfferProductTemplate;
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new BusinessException(e.getMessage());
+		}
 	}
-	
+
+	private void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory,
+			User currentUser) throws BusinessException, IllegalAccessException, InvocationTargetException {
+		if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
+			for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
+				ProductChargeTemplate newChargeTemplate = new ProductChargeTemplate();
+				copyChargeTemplate((ChargeTemplate) productCharge, newChargeTemplate, prefix);
+
+				newChargeTemplate.setProductTemplates(new ArrayList<ProductTemplate>());
+
+				if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+					continue;
+				} else {
+					chargeTemplateInMemory.add(newChargeTemplate);
+				}
+
+				productChargeTemplateService.create(newChargeTemplate, currentUser);
+
+				copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
+
+				newProductTemplate.addProductChargeTemplate(newChargeTemplate);
+			}
+		}
+	}
+
+	private void duplicateProductOffering(ProductTemplate productTemplate, ProductTemplate newProductTemplate) {
+		List<OfferTemplateCategory> offerTemplateCategories = productTemplate.getOfferTemplateCategories();
+		List<DigitalResource> attachments = productTemplate.getAttachments();
+		List<BusinessAccountModel> businessAccountModels = productTemplate.getBusinessAccountModels();
+		List<Channel> channels = productTemplate.getChannels();
+
+		if (offerTemplateCategories != null) {
+			for (OfferTemplateCategory otc : offerTemplateCategories) {
+				newProductTemplate.addOfferTemplateCategory(otc);
+			}
+		}
+
+		if (attachments != null) {
+			for (DigitalResource dr : attachments) {
+				newProductTemplate.addAttachment(dr);
+			}
+		}
+
+		if (businessAccountModels != null) {
+			for (BusinessAccountModel bam : businessAccountModels) {
+				newProductTemplate.addBusinessAccountModel(bam);
+			}
+		}
+
+		if (channels != null) {
+			for (Channel channel : channels) {
+				newProductTemplate.addChannel(channel);
+			}
+		}
+	}
+
+	private void duplicateProductPrices(ProductTemplate productTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory,
+			User currentUser) throws BusinessException {
+		// create price plans
+		if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
+			for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
+				// create price plan
+				String chargeTemplateCode = productCharge.getCode();
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				if (pricePlanMatrixes != null) {
+					try {
+						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+							String ppCode = prefix + pricePlanMatrix.getCode();
+							PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider());
+							if (ppMatrix != null) {
+								continue;
+							}
+
+							PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
+							BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
+							newPriceplanmaMatrix.setAuditable(null);
+							newPriceplanmaMatrix.setId(null);
+							newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
+							newPriceplanmaMatrix.setCode(ppCode);
+							newPriceplanmaMatrix.setVersion(0);
+							newPriceplanmaMatrix.setOfferTemplate(null);
+
+							if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+								continue;
+							} else {
+								pricePlansInMemory.add(newPriceplanmaMatrix);
+							}
+
+							pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+						}
+					} catch (IllegalAccessException | InvocationTargetException e) {
+						throw new BusinessException(e.getMessage());
+					}
+				}
+			}
+		}
+	}
+
 	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
 			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
 		return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser);
 	}
 
-	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
+	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix,
+			List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
 		OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
-		
-		if(serviceConfiguration != null) {
+
+		if (serviceConfiguration != null) {
 			newOfferServiceTemplate.setMandatory(serviceConfiguration.isMandatory());
 		} else {
 			newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
 		}
-		
+
 		if (offerServiceTemplate.getIncompatibleServices() != null) {
 			newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
 		}
@@ -137,7 +318,7 @@ public class CatalogHierarchyBuilderService {
 		serviceTemplate.getServiceUsageCharges().size();
 
 		ServiceTemplate newServiceTemplate = new ServiceTemplate();
-		String sourceAppliesToEntity = serviceTemplate.getUuid();		
+		String sourceAppliesToEntity = serviceTemplate.getUuid();
 
 		try {
 			BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
@@ -162,7 +343,7 @@ public class CatalogHierarchyBuilderService {
 			}
 
 			serviceTemplateService.create(newServiceTemplate, currentUser);
-			
+
 			// duplicate custom field instances
 			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newServiceTemplate, currentUser);
 

@@ -871,7 +871,7 @@
 			<from-outcome>discountPlanDetail</from-outcome>
 			<to-view-id>/pages/catalog/discountPlans/discountPlanDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>discountPlanItems</from-outcome>

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -30,6 +32,7 @@ import org.meveo.service.payments.impl.DDRequestItemService;
 
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class SepaRejectedTransactionsJob extends Job {
 
     @Inject

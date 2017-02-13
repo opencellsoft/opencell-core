@@ -1123,6 +1123,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 log.info("delete was unsuccessful because entity is used in the system {}", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
+            } else if (t.getCause() instanceof javax.persistence.PersistenceException) {
+            	log.info("delete was unsuccessful because entity is used in the system {}", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+                
             } else {
                 log.info("unexpected exception when deleting {}", t);
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));

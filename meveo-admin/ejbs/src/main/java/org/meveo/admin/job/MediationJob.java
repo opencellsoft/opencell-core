@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.Asynchronous;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -34,6 +36,7 @@ import org.meveo.service.job.Job;
 
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class MediationJob extends Job {
 
 	@Inject

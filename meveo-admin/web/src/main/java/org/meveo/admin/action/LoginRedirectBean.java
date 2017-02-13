@@ -40,8 +40,11 @@ public class LoginRedirectBean {
 		} else {
 			log.error("isNotLoggedIn, redirect to login.");
 		}
+		try{
+			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+			context.redirect(redirectUrl);
+		}catch(Exception e){
 
-		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-		context.redirect(redirectUrl);
+		}
 	}
 }

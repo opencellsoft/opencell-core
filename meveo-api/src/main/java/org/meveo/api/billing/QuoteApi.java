@@ -496,13 +496,15 @@ public class QuoteApi extends BaseApi {
             }
         }
 
-        // Use either subscription start/end dates from subscription/products or subscription start/end from quote item
+        // Use either subscription start/end dates from subscription/products or subscription start/end value from quote item
+        // TODO does not support if dates in subscription, services and products differ one from another one. 
         Date fromDate = null;
         Date toDate = null;
         if (subscription != null) {
             fromDate = subscription.getSubscriptionDate();
             toDate = subscription.getEndAgreementDate();
         }
+        // No toDate for products
         for (ProductInstance productInstance : productInstances) {
             if (fromDate == null) {
                 fromDate = productInstance.getApplicationDate();
@@ -515,7 +517,10 @@ public class QuoteApi extends BaseApi {
             fromDate = productQuoteItem.getSubscriptionPeriod().getStartDateTime();
         }
         if (toDate == null && productQuoteItem.getSubscriptionPeriod() != null) {
-            productQuoteItem.getSubscriptionPeriod().getEndDateTime();
+            toDate = productQuoteItem.getSubscriptionPeriod().getEndDateTime();
+        }
+        if (toDate == null) {
+            toDate = fromDate;
         }
 
         // log.error("AKK date from {} to {}", fromDate, toDate);

@@ -52,10 +52,16 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        super.saveOrUpdate(killConversation);
+    	boolean newEntity = (entity.getId() == null);
+    	
+        String outcome = super.saveOrUpdate(killConversation);
 
-        // return getListViewName();
-        return "/pages/catalog/discountPlans/discountPlanDetail?objectId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        if (outcome != null) {
+            return newEntity ? getEditViewName() : outcome;
+        }
+        
+        return null;
+        //return "/pages/catalog/discountPlans/discountPlanDetail?objectId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
     public DiscountPlanItem getDiscountPlanItem() {

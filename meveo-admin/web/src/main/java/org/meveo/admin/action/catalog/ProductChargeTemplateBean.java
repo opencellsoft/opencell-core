@@ -70,10 +70,12 @@ public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 		getEntity().getEdrTemplates().clear();
 		getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplatesDM.getTarget()));
 
+		boolean newEntity = (entity.getId() == null);
+		
 		String outcome = super.saveOrUpdate(killConversation);
 
 		if (outcome != null) {
-			return getEditViewName();
+			return newEntity ? getEditViewName() : outcome;
 		}
 		
 		return null;

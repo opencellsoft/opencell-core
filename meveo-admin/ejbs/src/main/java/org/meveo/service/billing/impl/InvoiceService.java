@@ -544,7 +544,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if(orderNums != null && !orderNums.isEmpty()){							
 				List<Order> orders = new ArrayList<Order>();
 				for(String orderNum : orderNums){
-					orders.add(orderService.findByCode(orderNum, invoice.getProvider()));
+					orders.add(orderService.findByCodeOrExternalId(orderNum, invoice.getProvider()));
 				}
 				invoice.setOrders(orders);
 			}			

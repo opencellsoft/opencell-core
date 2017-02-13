@@ -208,15 +208,7 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 			for (Channel channel : channels) {
 				entity.getChannels().add(channel);
 			}
-		}
-
-		if (offerProductTemplates != null) {
-			for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
-				offerProductTemplate.setId(null);
-				offerProductTemplate.setOfferTemplate(entity);
-				entity.getOfferProductTemplates().add(offerProductTemplate);
-			}
-		}
+		}		
 
 		if (offerTemplateCategories != null) {
 			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
@@ -240,17 +232,31 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 					entity.addOfferServiceTemplate(serviceTemplate);
 				}
 			}
+			
+			if (offerProductTemplates != null) {
+				for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+					offerProductTemplate.setId(null);
+					offerProductTemplate.setOfferTemplate(entity);
+					entity.getOfferProductTemplates().add(offerProductTemplate);
+				}
+			}
 		}
 
 		create(entity, currentUser);
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 
 		if (duplicateHierarchy) {
-			if (offerServiceTemplates != null) {
-				String prefix = entity.getId() + "_";
-				catalogHierarchyBuilderService.buildOfferServiceTemplate(entity, offerServiceTemplates, prefix, auditable, currentUser);
-				update(entity, currentUser);
+			String prefix = entity.getId() + "_";
+			
+			if (offerServiceTemplates != null) {			
+				catalogHierarchyBuilderService.buildOfferServiceTemplate(entity, offerServiceTemplates, prefix, auditable, currentUser);				
 			}
+			
+			if (offerProductTemplates != null) {
+				catalogHierarchyBuilderService.buildOfferProductTemplate(entity, offerProductTemplates, prefix, auditable, currentUser);
+			}
+			
+			update(entity, currentUser);
 		}
 
 		return entity;

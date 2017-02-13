@@ -23,7 +23,7 @@
 		</ui:define>
 
 		<hftl:searchPanel label="#{messages['billingAccount.search']}"
-			backingBean="#{billingAccountBean}">
+			backingBean="#{billingAccountBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hftl:searchField
@@ -40,7 +40,7 @@
 			backingBean="#{billingAccountBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" 
 				propagateConversation="false" entityView="billingAccountDetail"
-				objectIdParamName="billingAccountId"/>
+				objectIdParamName="billingAccountId" backView="exceptionelInvoicing"/>
 			<hftl:column label="#{messages['billingAccount.status']}"
 				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"
